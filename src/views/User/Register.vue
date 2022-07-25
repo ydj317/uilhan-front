@@ -1,0 +1,779 @@
+<template>
+  <div class="warp">
+    <h1><b>회원가입</b></h1>
+    <a-divider />
+    <div class="login">
+      <a-form
+          :rules="rulesRef"
+          ref="formRef"
+          class="registerForm"
+          :layout="`vertical`"
+          :model="formState"
+          @finish="handleFinish"
+          @finishFailed="handleFinishFailed"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+      >
+        <a-descriptions title="" :column="1" :bordered="true" :contentStyle="{'padding-top':'45px'}">
+          <a-descriptions-item label="아이디 [필수]" :labelStyle="{color: 'red',width: '220px'}">
+            <a-form-item name="username" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.username"
+                  placeholder="아이디 [필수]"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+          <a-descriptions-item label="비밀번호 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="password" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.password"
+                  type="password"
+                  placeholder="비밀번호 [필수]"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="비밀번호 확인 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="password_confirm" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.password_confirm"
+                  type="password"
+                  placeholder="비밀번호 확인 [필수]">
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="사용자명/사업자명 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="name" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.name"
+                  placeholder="사용자명/사업자명 [필수]"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="Email [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="email" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.email"
+                  placeholder="Email [필수]"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="휴대전화 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="phone" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.phone"
+                  placeholder="휴대전화 [필수]"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="업체명/사업자명 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="com_name" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.com_name"
+                  placeholder="업체명/사업자명 [필수]"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="사업자번호 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="com_number" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.com_number"
+                  placeholder="사업자번호 [필수]"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+          <a-descriptions-item label="사업장 전화번호 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="com_phone" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.com_phone"
+                  placeholder="사업장 전화번호 [필수]"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="대표자명 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="com_ceo" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.com_ceo"
+                  placeholder="대표자명"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="수수료율 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="commission" has-feedback>
+              <a-input class="inputStyle" v-model:value="formState.commission" placeholder="수수료율 [필수]">
+                <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="도매 수수료 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="wholesale_commission" has-feedback>
+              <a-input class="inputStyle" v-model:value="formState.wholesale_commission" placeholder="도매 수수료 [필수]">
+                <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="정산방식 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="account_type" v-bind="validateInfos.account_type">
+              <a-tooltip color="white"  placement="left">
+                <template #title>
+                  <span style="color: #848a8a" v-html="tooltip.account_type" />
+                </template>
+                <a-select
+                    class="inputStyle"
+                    v-model:value="formState.account_type"
+                >
+                  <a-select-option value="0">정산방식 [필수]</a-select-option>
+                  <a-select-option value="1">판매가</a-select-option>
+                  <a-select-option value="2">매입가</a-select-option>
+                  <a-select-option value="4">선불</a-select-option>
+                </a-select>
+              </a-tooltip>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="정산유형 [필수]" :labelStyle="{color: 'red'}">
+            <a-form-item name="account_div" v-bind="validateInfos.account_div">
+              <a-select
+                  class="inputStyle"
+                  v-model:value="formState.account_div"
+              >
+                <a-select-option value="0">정산유형 [필수]</a-select-option>
+                <a-select-option value="c">카테고리별 설정</a-select-option>
+                <a-select-option value="s">셀러별 설정</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="유선전화">
+            <a-form-item name="tel" has-feedback>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.tel"
+                  placeholder="유선전화"
+              >
+              </a-input>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="정산상품 기간설정">
+            <a-form-item name="ac_expect_date" has-feedback>
+              <a-tooltip color="white"  placement="left">
+                <template #title>
+                  <span style="color: #848a8a" v-html="tooltip.ac_expect_date" />
+                </template>
+                <a-input
+                    class="inputStyle"
+                    v-model:value="formState.ac_expect_date"
+                    placeholder="정산상품 기간설정"
+                >
+                </a-input>
+              </a-tooltip>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="정산일자유형" >
+            <a-form-item name="ac_delivery_type">
+              <a-select
+                  class="inputStyle"
+                  v-model:value="formState.ac_delivery_type"
+              >
+                <a-select-option value="0">처리상태를 선택해주세요</a-select-option>
+                <a-select-option value="IC">입금확인</a-select-option>
+                <a-select-option value="DI">배송중</a-select-option>
+                <a-select-option value="DC">배송완료</a-select-option>
+                <a-select-option value="BF">구매확정</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="결제유형">
+            <a-form-item name="account_method">
+              <a-select
+                  class="inputStyle"
+                  v-model:value="formState.account_method"
+              >
+                <a-select-option value="0">결제유형을 선택해주세요</a-select-option>
+                <a-select-option value="10">현금</a-select-option>
+                <a-select-option value="12">예치금</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-form-item>
+            <a-button
+                type="primary"
+                html-type="submit"
+                class="loginButton"
+                style="float: left"
+            >
+              회원가입
+            </a-button>
+            <a-button class="loginButton" @click="resetFields">Reset</a-button>
+          </a-form-item>
+        </a-descriptions>
+      </a-form>
+    </div>
+
+
+  </div>
+</template>
+<script>
+import router from "router/index.js";
+import {LoginRequest, NoAuthAjax} from 'util/request';
+import { defineComponent, reactive, onBeforeMount, ref } from 'vue';
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+import Cookie from "js-cookie";
+import { isLogin, cookieInit } from "util/auth";
+import {useForm} from "ant-design-vue/es/form";
+
+
+export default defineComponent({
+  components: {
+    UserOutlined,
+    LockOutlined
+  },
+
+  setup() {
+    onBeforeMount(() => {
+      if (isLogin() === true) {
+        router.push("/product");
+        return false;
+      }
+    });
+
+    const formRef = ref();
+    const formState = reactive({
+      username: '',
+      password: '',
+      password_confirm: '',
+      //[필수] 사용자명/사업자명
+      name: '',
+      //[필수] 이메일
+      email: '',
+      //[필수] 휴대전화
+      phone: '',
+      //유선전화
+      tel: '',
+      //[필수] 사업자명/업체명
+      com_name: '',
+      //[필수] 사업자번호
+      com_number: '',
+      //사업장전화번호
+      com_phone: '',
+      //대표자명
+      com_ceo: '',
+      //업종
+      //com_business_category: formState.com_business_category,
+      //업태
+      //com_business_status: formState.com_business_status,
+      //[필수] 정산방식 : 기본값( 미입력시 ) - 1
+      account_type: '0',
+      //정산 상품 기간설정 : 기본값( 미입력시 ) - 1
+      account_info: '',
+      //정산일자 IC - 입금확인
+      ac_delivery_type: '0',
+      //정산 상품 기간설정 : 1 ~ 30 일
+      ac_expect_date: '',
+      //정산 유형 : 기본값( 미입력시 ) - 10
+      account_method: '0',
+      //[필수] 정산방식 : 기본값( 미입력시 ) - s
+      account_div: '0',
+      //[필수]수수료율
+      commission: '',
+      //[필수]도매 수수료
+
+      wholesale_commission: '',
+    });
+
+    const tooltip = {
+      account_type: '판매가: 정산방식 판매가에 수수료 적용 후 정산처리됩니다. ' +
+          '<br/><br/>매입가: 정산방식 공급가로 정산되며, 하단 수수료에 0이 아닌 숫자를 입력시 그 숫자의 % 만큼 차감후 정산처리됩니다.' +
+          '<br/><br/>선불: 공급가로 정산되며, 발주 요청시 송금처리',
+      ac_expect_date: '정산상품 기간설정은 1~30일내로 입력가능합니다.',
+    };
+
+    const handleFinish = () => {
+      let user = {
+        username: formState.username,
+        password: formState.password,
+        name: formState.name,
+        email: formState.email,
+        phone: formState.phone,
+        tel: formState.tel,
+        com_name: formState.com_name,
+        com_number: formState.com_number,
+        com_phone: formState.com_phone,
+        com_ceo: formState.com_ceo,
+        //com_business_category: formState.com_business_category,
+        //com_business_status: formState.com_business_status,
+        account_type: formState.account_type,
+        account_info: formState.account_info,
+        ac_delivery_type: formState.ac_delivery_type,
+        ac_expect_date: formState.ac_expect_date,
+        account_method: formState.account_method,
+        account_div: formState.account_div,
+        commission: formState.commission,
+        wholesale_commission: formState.wholesale_commission,
+      };
+
+      NoAuthAjax.post(
+          process.env.VUE_APP_API_URL + '/api/register?XDEBUG_SESSION=PHPSTORM', user).then((res) => {
+        let returnData = res.data;
+        console.log(returnData);
+        if (returnData.status === undefined || returnData.status !== 2000) {
+          alert(returnData.msg);
+          return false;
+        }
+
+        let loginUser = {
+          username: formState.username,
+          password: formState.password
+        };
+
+        LoginRequest.post(
+            process.env.VUE_APP_API_URL + '/api/login', loginUser).then((res) => {
+          if (res.status === undefined || res.status !== 200) {
+            alert('일시적인 서버장애로 로그인에 실패하였습니다. 잠시 후 시도해주시길 바랍니다.');
+            Cookie.remove('token');
+            Cookie.remove('member_name');
+            Cookie.remove('member_roles');
+            router.push("/user/login");
+            return false;
+          }
+
+          let returnData = res.data;
+          if (returnData.member_roles === undefined || returnData.member_name === undefined) {
+            alert('일시적인 로그인 권한오류가 발생하였습니다. 로그인페이지에서 재시도 해주시길 바랍니다.');
+            Cookie.remove('token');
+            Cookie.remove('member_name');
+            Cookie.remove('member_roles');
+            router.push("/user/login");
+            return false;
+          }
+
+          Cookie.set('member_name', returnData.member_name);
+          Cookie.set('member_roles', returnData.member_roles);
+          alert('회원가입에 성공하였습니다.');
+          router.push("/product");
+          return false;
+        });
+      });
+    };
+
+    let oldName = '';
+    let validateUsername = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('아이디를 입력해주십시오');
+      } else {
+        if (oldName === value) {
+          return Promise.resolve();
+        }
+
+        if (value.length < 5 || value.length > 20) {
+          return Promise.reject('최소 5자 최대 20자이내로 입력해주십시오');
+        }
+
+        let returnData = await NoAuthAjax.post(
+            process.env.VUE_APP_API_URL + '/api/checkname', value).then((res) => {
+          return res.data;
+        });
+
+        if (returnData === undefined || returnData.status === undefined) {
+          alert("서버장애로 인해 회원가입에 실패하였습니다. \n 잠시후 시도해주시길 바랍니다.");
+          return false;
+        }
+
+        if (returnData.status !== 2000) {
+          return Promise.reject('이미 존재하는 아이디입니다.');
+        }
+
+        oldName = value;
+        return Promise.resolve();
+      }
+    };
+
+    let validatePass = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('비밀번호를 입력해주십시오');
+      } else {
+        //let password = "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$";
+        if (value.length < 8 || value.length > 20) {
+          return Promise.reject('비밀번호 길이는 최소 8자 최대 20자이내로 입력해주십시오');
+        }
+
+        if (formState.password_confirm !== '') {
+          formRef.value.validateFields('password_confirm');
+        }
+
+        return Promise.resolve();
+      }
+    };
+
+    let validatePassConfirm = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('비밀번호가 일치하지 않습니다');
+      } else if (value !== formState.password) {
+        return Promise.reject("비밀번호가 일치하지 않습니다");
+      } else {
+        return Promise.resolve();
+      }
+    };
+
+    let validateName = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('사업자명을 입력해주십시오');
+      } else {
+        if (value.length < 3 || value.length > 10) {
+          return Promise.reject('사업자명은 최소 3자 최대 10자이내로 입력해주십시오');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateEmail = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('메일을 입력해주십시오');
+      } else {
+        let regEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+        if (regEmail.test(value) !== true) {
+          return Promise.reject('메일 격식이 옳바르지 않습니다.');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validatePhone = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('휴대폰번호를 입력해주십시오');
+      } else {
+        let regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+        if (regPhone.test(value) !== true) {
+          return Promise.reject('휴대폰번호 격식이 옳바르지 않습니다.');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateComname = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('업체명을 입력해주십시오');
+      } else {
+        if (value.length < 3 || value.length > 20) {
+          return Promise.reject('업체명은 최소 3자 최대 20자이내로 입력해주십시오');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateComnumber = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('사업자번호를 입력해주십시오');
+      } else {
+        let comnumber = /^([0-9]{3})-?([0-9]{2})-?([0-9]{5})$/;
+
+        if (comnumber.test(value) !== true) {
+          return Promise.reject('사업자번호 격식이 옳바르지 않습니다.');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateCommission = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('수수료율을 입력해주십시오');
+      } else {
+        let commission = /^[0-9]*$/;
+        if (commission.test(value) !== true) {
+          return Promise.reject('수수료율 격식이 옳바르지 않습니다.');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateWholesale = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('도매수수료를 입력해주십시오');
+      } else {
+        let wholesale = /^[0-9]*$/;
+        if (wholesale.test(value) !== true) {
+          return Promise.reject('도매수수료 격식이 옳바르지 않습니다.');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateAcctype = async (rule, value) => {
+      if (value === '0') {
+        return Promise.reject('정선방식을 선택해주십시오');
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateAccdiv = async (rule, value) => {
+      if (value === '0') {
+        return Promise.reject('정선유형을 선택해주십시오');
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateExdate = async (rule, value) => {
+      if (value.length > 0) {
+        if (value < 1 || value > 30) {
+          return Promise.reject('최소 1일 최대 30일까지 가능합니다.');
+        }
+
+        return Promise.resolve();
+      }
+    };
+
+    let validateTel = async (rule, value) => {
+      if (value.length > 0) {
+        let tel = /^(0(2|3[1-9]|4[1-9]|5[1-9]|6[1-9]))-?(\d{3,4})-?(\d{4})$/
+        if (tel.test(value) !== true) {
+          return Promise.reject('전화번호 격식이 옳바르지 않습니다.');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateComphone = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('사업장전화번호 입력해주십시오');
+      } else {
+        if (value.length > 0) {
+          let tel = /^(0(2|3[1-9]|4[1-9]|5[1-9]|6[1-9]))-?(\d{3,4})-?(\d{4})$/
+          if (tel.test(value) !== true) {
+            return Promise.reject('사업장전화번호 격식이 옳바르지 않습니다.');
+          }
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateComCeo = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('대표자명을 입력해주십시오');
+      } else {
+        if (value.length < 3 || value.length > 10) {
+          return Promise.reject('대표자명은 최소 3자 최대 10자이내로 입력해주십시오');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    const handleFinishFailed = () => {
+      //alert('Login Error')
+    };
+
+    const remember = false;
+
+    const rulesRef = reactive({
+      username: [
+        {
+          required: true,
+          validator: validateUsername,
+          trigger: 'blur',
+        },
+      ],
+      password: [
+        {
+          validator: validatePass,
+          trigger: 'blur',
+        },
+      ],
+      password_confirm: [
+        {
+          validator: validatePassConfirm,
+          trigger: 'blur',
+        },
+      ],
+      name: [
+        {
+          required: true,
+          validator: validateName,
+          trigger: 'blur',
+        },
+      ],
+      email: [
+        {
+          required: true,
+          validator: validateEmail,
+          trigger: 'blur',
+        },
+      ],
+      phone: [
+        {
+          required: true,
+          validator: validatePhone,
+          trigger: 'blur',
+        },
+      ],
+      com_name: [
+        {
+          required: true,
+          validator: validateComname,
+          trigger: 'blur',
+        },
+      ],
+      com_number: [
+        {
+          required: true,
+          validator: validateComnumber,
+          trigger: 'blur',
+        },
+      ],
+      com_phone: [
+        {
+          required: true,
+          validator: validateComphone,
+          trigger: 'blur'
+        },
+      ],
+      com_ceo: [
+        {
+          required: true,
+          validator: validateComCeo,
+          trigger: 'blur'
+        },
+      ],
+      commission: [
+        {
+          required: true,
+          validator: validateCommission,
+          trigger: 'blur',
+        },
+      ],
+      wholesale_commission: [
+        {
+          required: true,
+          validator: validateWholesale,
+          trigger: 'blur',
+        },
+      ],
+      account_type: [
+        {
+          required: true,
+          validator: validateAcctype,
+          trigger: 'change',
+        },
+      ],
+      account_div: [
+        {
+          required: true,
+          validator: validateAccdiv,
+          trigger: 'change',
+        },
+      ],
+      tel: [
+        {
+          validator: validateTel,
+          trigger: 'blur',
+        },
+      ],
+      ac_expect_date: [
+        {
+          validator: validateExdate,
+          trigger: 'blur',
+        },
+      ],
+    });
+
+    const { resetFields, validate, validateInfos } = useForm(formState, rulesRef);
+
+
+    return {
+      labelCol: {
+        style: {
+          width: '400px',
+        },
+      },
+      wrapperCol: {
+        span: 25,
+      },
+      tooltip,
+      formRef,
+      rulesRef,
+      resetFields,
+      validate,
+      validateInfos,
+      remember,
+      formState,
+      handleFinish,
+      handleFinishFailed,
+    };
+  },
+});
+</script>
+
+<style>
+.login{
+  margin: 0 auto;
+  width: 800px;
+}
+
+.registerForm{
+  margin-left: 0px;
+}
+
+.inputStyle {
+  margin: 0 auto;
+  width: 400px;
+}
+
+.warp {
+  padding-top: 100px;
+  padding-bottom: 100px;
+  width: 100%;
+  text-align: center;
+}
+
+.loginButton{
+  width: 100px;
+}
+
+body {
+  /*background-color: #F0F2F5;*/
+  /*background-color: #F0F2F5;*/
+  height: 100%;
+}
+</style>

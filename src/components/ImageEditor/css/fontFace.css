@@ -1,0 +1,220 @@
+@font-face {
+    font-family: BlackAndWhitePicture-Regular;
+    src: url('../fontFace/BlackAndWhitePicture-Regular.ttf');
+}
+@font-face {
+    font-family: BlackHanSans-Regular;
+    src: url('../fontFace/BlackHanSans-Regular.ttf');
+}
+@font-face {
+    font-family: CuteFont-Regular;
+    src: url('../fontFace/CuteFont-Regular.ttf');
+}
+@font-face {
+    font-family: DoHyeon-Regular;
+    src: url('../fontFace/DoHyeon-Regular.ttf');
+}
+@font-face {
+    font-family: Dokdo-Regular;
+    src: url('../fontFace/Dokdo-Regular.ttf');
+}
+@font-face {
+    font-family: Dongle-Bold;
+    src: url('../fontFace/Dongle-Bold.ttf');
+}
+@font-face {
+    font-family: Dongle-Light;
+    src: url('../fontFace/Dongle-Light.ttf');
+}
+@font-face {
+    font-family: Dongle-Regular;
+    src: url('../fontFace/Dongle-Regular.ttf');
+}
+@font-face {
+    font-family: EastSeaDokdo-Regular;
+    src: url('../fontFace/EastSeaDokdo-Regular.ttf');
+}
+@font-face {
+    font-family: Gaegu-Bold;
+    src: url('../fontFace/Gaegu-Bold.ttf');
+}
+@font-face {
+    font-family: Gaegu-Light;
+    src: url('../fontFace/Gaegu-Light.ttf');
+}
+@font-face {
+    font-family: Gaegu-Regular;
+    src: url('../fontFace/Gaegu-Regular.ttf');
+}
+@font-face {
+    font-family: GamjaFlower-Regular;
+    src: url('../fontFace/GamjaFlower-Regular.ttf');
+}
+@font-face {
+    font-family: GothicA1-Black;
+    src: url('../fontFace/GothicA1-Black.ttf');
+}
+@font-face {
+    font-family: GothicA1-Bold;
+    src: url('../fontFace/GothicA1-Bold.ttf');
+}
+@font-face {
+    font-family: GothicA1-ExtraBold;
+    src: url('../fontFace/GothicA1-ExtraBold.ttf');
+}
+@font-face {
+    font-family: GothicA1-ExtraLight;
+    src: url('../fontFace/GothicA1-ExtraLight.ttf');
+}
+@font-face {
+    font-family: GothicA1-Light;
+    src: url('../fontFace/GothicA1-Light.ttf');
+}
+@font-face {
+    font-family: GothicA1-Medium;
+    src: url('../fontFace/GothicA1-Medium.ttf');
+}
+@font-face {
+    font-family: GothicA1-Regular;
+    src: url('../fontFace/GothicA1-Regular.ttf');
+}
+@font-face {
+    font-family: GothicA1-SemiBold;
+    src: url('../fontFace/GothicA1-SemiBold.ttf');
+}
+@font-face {
+    font-family: GothicA1-Thin;
+    src: url('../fontFace/GothicA1-Thin.ttf');
+}
+@font-face {
+    font-family: GowunBatang-Bold;
+    src: url('../fontFace/GowunBatang-Bold.ttf');
+}
+@font-face {
+    font-family: GowunBatang-Regular;
+    src: url('../fontFace/GowunBatang-Regular.ttf');
+}
+@font-face {
+    font-family: GowunDodum-Regular;
+    src: url('../fontFace/GowunDodum-Regular.ttf');
+}
+@font-face {
+    font-family: Gugi-Regular;
+    src: url('../fontFace/Gugi-Regular.ttf');
+}
+@font-face {
+    font-family: Hahmlet-VariableFont_wght;
+    src: url('../fontFace/Hahmlet-VariableFont_wght.ttf');
+}
+@font-face {
+    font-family: HiMelody-Regular;
+    src: url('../fontFace/HiMelody-Regular.ttf');
+}
+@font-face {
+    font-family: IBMPlexSansKR-Bold;
+    src: url('../fontFace/IBMPlexSansKR-Bold.ttf');
+}
+@font-face {
+    font-family: IBMPlexSansKR-ExtraLight;
+    src: url('../fontFace/IBMPlexSansKR-ExtraLight.ttf');
+}
+@font-face {
+    font-family: IBMPlexSansKR-Light;
+    src: url('../fontFace/IBMPlexSansKR-Light.ttf');
+}
+@font-face {
+    font-family: IBMPlexSansKR-Medium;
+    src: url('../fontFace/IBMPlexSansKR-Medium.ttf');
+}
+@font-face {
+    font-family: IBMPlexSansKR-Regular;
+    src: url('../fontFace/IBMPlexSansKR-Regular.ttf');
+}
+@font-face {
+    font-family: IBMPlexSansKR-SemiBold;
+    src: url('../fontFace/IBMPlexSansKR-SemiBold.ttf');
+}
+@font-face {
+    font-family: IBMPlexSansKR-Thin;
+    src: url('../fontFace/IBMPlexSansKR-Thin.ttf');
+}
+@font-face {
+    font-family: Jua-Regular;
+    src: url('../fontFace/Jua-Regular.ttf');
+}
+@font-face {
+    font-family: KirangHaerang-Regular;
+    src: url('../fontFace/KirangHaerang-Regular.ttf');
+}
+@font-face {
+    font-family: NanumBrushScript-Regular;
+    src: url('../fontFace/NanumBrushScript-Regular.ttf');
+}
+@font-face {
+    font-family: NanumGothic-Bold;
+    src: url('../fontFace/NanumGothic-Bold.ttf');
+}
+@font-face {
+    font-family: NanumGothic-ExtraBold;
+    src: url('../fontFace/NanumGothic-ExtraBold.ttf');
+}
+@font-face {
+    font-family: NanumGothic-Regular;
+    src: url('../fontFace/NanumGothic-Regular.ttf');
+}
+@font-face {
+    font-family: NanumGothicCoding-Bold;
+    src: url('../fontFace/NanumGothicCoding-Bold.ttf');
+}
+@font-face {
+    font-family: NanumGothicCoding-Regular;
+    src: url('../fontFace/NanumGothicCoding-Regular.ttf');
+}
+@font-face {
+    font-family: NanumMyeongjo-Bold;
+    src: url('../fontFace/NanumMyeongjo-Bold.ttf');
+}
+@font-face {
+    font-family: NanumMyeongjo-ExtraBold;
+    src: url('../fontFace/NanumMyeongjo-ExtraBold.ttf');
+}
+@font-face {
+    font-family: NanumMyeongjo-Regular;
+    src: url('../fontFace/NanumMyeongjo-Regular.ttf');
+}
+@font-face {
+    font-family: NanumPenScript-Regular;
+    src: url('../fontFace/NanumPenScript-Regular.ttf');
+}
+@font-face {
+    font-family: PoorStory-Regular;
+    src: url('../fontFace/PoorStory-Regular.ttf');
+}
+@font-face {
+    font-family: SingleDay-Regular;
+    src: url('../fontFace/SingleDay-Regular.ttf');
+}
+@font-face {
+    font-family: SongMyung-Regular;
+    src: url('../fontFace/SongMyung-Regular.ttf');
+}
+@font-face {
+    font-family: Stylish-Regular;
+    src: url('../fontFace/Stylish-Regular.ttf');
+}
+@font-face {
+    font-family: Sunflower-Bold;
+    src: url('../fontFace/Sunflower-Bold.ttf');
+}
+@font-face {
+    font-family: Sunflower-Light;
+    src: url('../fontFace/Sunflower-Light.ttf');
+}
+@font-face {
+    font-family: Sunflower-Medium;
+    src: url('../fontFace/Sunflower-Medium.ttf');
+}
+@font-face {
+    font-family: YeonSung-Regular;
+    src: url('../fontFace/YeonSung-Regular.ttf');
+}

@@ -1,0 +1,1216 @@
+@font-face {
+    font-family: Allura;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Allura-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Arimo;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Arimo-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Arimo;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Arimo-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Arimo;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Arimo-BoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Arimo;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Arimo-Italic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: EBGaramond;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/EBGaramond.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2 Black;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-Black.ttf) format("truetype");
+    font-weight: 900;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2 Black;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-BlackItalic.ttf) format("truetype");
+    font-weight: 900;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Exo2;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-BoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Exo2 ExtraBold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-ExtraBold.ttf) format("truetype");
+    font-weight: 800;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2 ExtraBold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-ExtraBoldItalic.ttf) format("truetype");
+    font-weight: 800;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Exo2 ExtraLight;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-ExtraLight.ttf) format("truetype");
+    font-weight: 200;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2 ExtraLight;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-ExtraLightItalic.ttf) format("truetype");
+    font-weight: 200;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Exo2;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-Italic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Exo2 Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-Light.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2 Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-LightItalic.ttf) format("truetype");
+    font-weight: 300;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Exo2 Medium;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-Medium.ttf) format("truetype");
+    font-weight: 500;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2 Medium;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-MediumItalic.ttf) format("truetype");
+    font-weight: 500;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Exo2 SemiBold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-SemiBold.ttf) format("truetype");
+    font-weight: 600;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2 SemiBold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-SemiBoldItalic.ttf) format("truetype");
+    font-weight: 600;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Exo2 Thin;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-Thin.ttf) format("truetype");
+    font-weight: 100;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Exo2 Thin;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Exo2-ThinItalic.ttf) format("truetype");
+    font-weight: 100;
+    font-style: italic
+}
+
+@font-face {
+    font-family: FZBangShuKaiS-R-GB;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/FZBANGSHUKAIJW--GB1-0.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: FZBeiWeiKaiShu_GB18030-S19;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/FZBWKS--GB4-0.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: FZFengYaSongS-GB;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/FZFYSJW--GB1-0.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: FZLanTingHei-EB-GBK;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/FZLTDHK--GBK1-0.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: FZLanTingHei-R-GB18030;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/FZLTH--GB1-4.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: FZLanTingHei-H-GBK;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/FZLTTHBK--GBK1-0.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: FZLanTingHei-DB-GBK;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/FZLTZHK--GBK1-0.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: FZLanTingHei-M-GBK;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/FZLTZHUNHK--GBK1-0.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: FZZhengHei-EB-GBK;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/FZZDHK--GBK1-0.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: GothicA1 Black;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/GothicA1-Black.ttf) format("truetype");
+    font-weight: 900;
+    font-style: normal
+}
+
+@font-face {
+    font-family: GothicA1;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/GothicA1-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: GothicA1 ExtraBold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/GothicA1-ExtraBold.ttf) format("truetype");
+    font-weight: 800;
+    font-style: normal
+}
+
+@font-face {
+    font-family: GothicA1 ExtraLight;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/GothicA1-ExtraLight.ttf) format("truetype");
+    font-weight: 200;
+    font-style: normal
+}
+
+@font-face {
+    font-family: GothicA1 Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/GothicA1-Light.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: GothicA1 Medium;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/GothicA1-Medium.ttf) format("truetype");
+    font-weight: 500;
+    font-style: normal
+}
+
+@font-face {
+    font-family: GothicA1;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/GothicA1-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: GothicA1 SemiBold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/GothicA1-SemiBold.ttf) format("truetype");
+    font-weight: 600;
+    font-style: normal
+}
+
+@font-face {
+    font-family: GothicA1 Thin;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/GothicA1-Thin.ttf) format("truetype");
+    font-weight: 100;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Graduate;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Graduate-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Lato Black;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-Black.ttf) format("truetype");
+    font-weight: 900;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Lato Black;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-BlackItalic.ttf) format("truetype");
+    font-weight: 900;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Lato;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Lato;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-BoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Lato Hairline;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-Hairline.ttf) format("truetype");
+    font-weight: 100;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Lato Hairline;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-HairlineItalic.ttf) format("truetype");
+    font-weight: 100;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Lato;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-Italic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Lato Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-Light.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Lato Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-LightItalic.ttf) format("truetype");
+    font-weight: 300;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Lato;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lato-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Lobster;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lobster-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Lora;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lora-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Lora;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lora-BoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Lora;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lora-Italic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Lora;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Lora-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Merriweather;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Merriweather-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Merriweather;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Merriweather-BoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Merriweather;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Merriweather-Italic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Merriweather Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Merriweather-LightIt.ttf) format("truetype");
+    font-weight: 300;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Merriweather;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Merriweather-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Merriweather Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/MerriweatherLight.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: OpenSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSans-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: OpenSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSans-BoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: OpenSans Extrabold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSans-Extrabold.ttf) format("truetype");
+    font-weight: 800;
+    font-style: normal
+}
+
+@font-face {
+    font-family: OpenSans Extrabold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSans-ExtraboldItalic.ttf) format("truetype");
+    font-weight: 800;
+    font-style: italic
+}
+
+@font-face {
+    font-family: OpenSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSans-Italic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: OpenSans Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSans-Light.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: OpenSans Semibold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSans-Semibold.ttf) format("truetype");
+    font-weight: 600;
+    font-style: normal
+}
+
+@font-face {
+    font-family: OpenSans Semibold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSans-SemiboldItalic.ttf) format("truetype");
+    font-weight: 600;
+    font-style: italic
+}
+
+@font-face {
+    font-family: OpenSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSans.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: OpenSans Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/OpenSansLight-Italic.ttf) format("truetype");
+    font-weight: 300;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Oswald;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Oswald-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Oswald Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Oswald-Light.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Oswald;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Oswald-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Raleway Black;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-Black.ttf) format("truetype");
+    font-weight: 900;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Raleway;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Raleway;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-BoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Raleway ExtraBold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-ExtraBold.ttf) format("truetype");
+    font-weight: 800;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Raleway ExtraLight;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-ExtraLight.ttf) format("truetype");
+    font-weight: 200;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Raleway Light;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-Light.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Raleway Medium;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-Medium.ttf) format("truetype");
+    font-weight: 500;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Raleway Medium;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-MediumItalic.ttf) format("truetype");
+    font-weight: 500;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Raleway;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Raleway SemiBold;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-SemiBold.ttf) format("truetype");
+    font-weight: 600;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Raleway Thin;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Raleway-Thin.ttf) format("truetype");
+    font-weight: 100;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Roboto Bk;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-Black.ttf) format("truetype");
+    font-weight: 900;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Roboto Bk;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-BlackItalic.ttf) format("truetype");
+    font-weight: 900;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Roboto Cn;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-BoldCondensed.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Roboto Cn;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-BoldCondensedItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-BoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Roboto Cn;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-Condensed.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Roboto Cn;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-CondensedItalic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-Italic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Roboto Lt;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-Light.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Roboto Lt;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-LightItalic.ttf) format("truetype");
+    font-weight: 300;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Roboto Medium;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-Medium.ttf) format("truetype");
+    font-weight: 500;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Roboto Medium;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-MediumItalic.ttf) format("truetype");
+    font-weight: 500;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Roboto Th;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-Thin.ttf) format("truetype");
+    font-weight: 100;
+    font-style: normal
+}
+
+@font-face {
+    font-family: Roboto Th;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Roboto-ThinItalic.ttf) format("truetype");
+    font-weight: 100;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-Italic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-ExtraLight.ttf) format("truetype");
+    font-weight: 200;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-ExtraLightItalic.ttf) format("truetype");
+    font-weight: 200;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-Light.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-LightItalic.ttf) format("truetype");
+    font-weight: 300;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-Medium.ttf) format("truetype");
+    font-weight: 500;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-MediumItalic.ttf) format("truetype");
+    font-weight: 500;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-Thin.ttf) format("truetype");
+    font-weight: 100;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-ThinItalic.ttf) format("truetype");
+    font-weight: 100;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-BoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-ExtraBold.ttf) format("truetype");
+    font-weight: 800;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-ExtraBoldItalic.ttf) format("truetype");
+    font-weight: 800;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-SemiBold.ttf) format("truetype");
+    font-weight: 600;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-SemiBoldItalic.ttf) format("truetype");
+    font-weight: 600;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans Black;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-Black.ttf) format("truetype");
+    font-weight: 900;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans Black;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-BlackItalic.ttf) format("truetype");
+    font-weight: 900;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-Condensed.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedBold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedItalic.ttf) format("truetype");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedLight.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedLightItalic.ttf) format("truetype");
+    font-weight: 300;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedBoldItalic.ttf) format("truetype");
+    font-weight: 700;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedExtraBold.ttf) format("truetype");
+    font-weight: 800;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedExtraBoldItalic.ttf) format("truetype");
+    font-weight: 800;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedExtraLight.ttf) format("truetype");
+    font-weight: 200;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedExtraLightItalic.ttf) format("truetype");
+    font-weight: 200;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedBlack.ttf) format("truetype");
+    font-weight: 900;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSans Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSans-CondensedBlackItalic.ttf) format("truetype");
+    font-weight: 900;
+    font-style: italic
+}
+
+@font-face {
+    font-family: NotoSans Thai;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThai-Black.ttf) format("truetype");
+    font-weight: 900
+}
+
+@font-face {
+    font-family: NotoSans Thai;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraBold.ttf) format("truetype");
+    font-weight: 800
+}
+
+@font-face {
+    font-family: NotoSans Thai;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-Bold.ttf) format("truetype");
+    font-weight: 700
+}
+
+@font-face {
+    font-family: NotoSans Thai;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiBold.ttf) format("truetype");
+    font-weight: 600
+}
+
+@font-face {
+    font-family: NotoSans Thai;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-Medium.ttf) format("truetype");
+    font-weight: 500
+}
+
+@font-face {
+    font-family: NotoSans Thai;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-Regular.ttf) format("truetype");
+    font-weight: 400
+}
+
+@font-face {
+    font-family: NotoSans Thai;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-Light.ttf) format("truetype");
+    font-weight: 300
+}
+
+@font-face {
+    font-family: NotoSans Thai;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraLight.ttf) format("truetype");
+    font-weight: 200
+}
+
+@font-face {
+    font-family: NotoSans Thai;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-Thin.ttf) format("truetype");
+    font-weight: 100
+}
+
+@font-face {
+    font-family: NotoSans Thai SemiCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiCondensedBlack.ttf) format("truetype");
+    font-weight: 900
+}
+
+@font-face {
+    font-family: NotoSans Thai SemiCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiCondensedExtraBold.ttf) format("truetype");
+    font-weight: 800
+}
+
+@font-face {
+    font-family: NotoSans Thai SemiCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiCondensedBold.ttf) format("truetype");
+    font-weight: 700
+}
+
+@font-face {
+    font-family: NotoSans Thai SemiCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiCondensedSemiBold.ttf) format("truetype");
+    font-weight: 600
+}
+
+@font-face {
+    font-family: NotoSans Thai SemiCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiCondensedMedium.ttf) format("truetype");
+    font-weight: 500
+}
+
+@font-face {
+    font-family: NotoSans Thai SemiCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiCondensed.ttf) format("truetype");
+    font-weight: 400
+}
+
+@font-face {
+    font-family: NotoSans Thai SemiCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiCondensedLight.ttf) format("truetype");
+    font-weight: 300
+}
+
+@font-face {
+    font-family: NotoSans Thai SemiCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiCondensedExtraLight.ttf) format("truetype");
+    font-weight: 200
+}
+
+@font-face {
+    font-family: NotoSans Thai SemiCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-SemiCondensedThin.ttf) format("truetype");
+    font-weight: 100
+}
+
+@font-face {
+    font-family: NotoSans Thai Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-CondensedBlack.ttf) format("truetype");
+    font-weight: 900
+}
+
+@font-face {
+    font-family: NotoSans Thai Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-CondensedExtraBold.ttf) format("truetype");
+    font-weight: 800
+}
+
+@font-face {
+    font-family: NotoSans Thai Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-CondensedBold.ttf) format("truetype");
+    font-weight: 700
+}
+
+@font-face {
+    font-family: NotoSans Thai Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-CondensedSemiBold.ttf) format("truetype");
+    font-weight: 600
+}
+
+@font-face {
+    font-family: NotoSans Thai Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-CondensedMedium.ttf) format("truetype");
+    font-weight: 500
+}
+
+@font-face {
+    font-family: NotoSans Thai Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-Condensed.ttf) format("truetype");
+    font-weight: 400
+}
+
+@font-face {
+    font-family: NotoSans Thai Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-CondensedLight.ttf) format("truetype");
+    font-weight: 300
+}
+
+@font-face {
+    font-family: NotoSans Thai Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-CondensedExtraLight.ttf) format("truetype");
+    font-weight: 200
+}
+
+@font-face {
+    font-family: NotoSans Thai Condensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-CondensedThin.ttf) format("truetype");
+    font-weight: 100
+}
+
+@font-face {
+    font-family: NotoSans Thai ExtraCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraCondensedBlack.ttf) format("truetype");
+    font-weight: 900
+}
+
+@font-face {
+    font-family: NotoSans Thai ExtraCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraCondensedExtraBold.ttf) format("truetype");
+    font-weight: 800
+}
+
+@font-face {
+    font-family: NotoSans Thai ExtraCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraCondensedBold.ttf) format("truetype");
+    font-weight: 700
+}
+
+@font-face {
+    font-family: NotoSans Thai ExtraCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraCondensedSemiBold.ttf) format("truetype");
+    font-weight: 600
+}
+
+@font-face {
+    font-family: NotoSans Thai ExtraCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraCondensedMedium.ttf) format("truetype");
+    font-weight: 500
+}
+
+@font-face {
+    font-family: NotoSans Thai ExtraCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraCondensed.ttf) format("truetype");
+    font-weight: 400
+}
+
+@font-face {
+    font-family: NotoSans Thai ExtraCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraCondensedLight.ttf) format("truetype");
+    font-weight: 300
+}
+
+@font-face {
+    font-family: NotoSans Thai ExtraCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraCondensedExtraLight.ttf) format("truetype");
+    font-weight: 200
+}
+
+@font-face {
+    font-family: NotoSans Thai ExtraCondensed;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/NotoSansThaiUI-ExtraCondensedThin.ttf) format("truetype");
+    font-weight: 100
+}
+
+@font-face {
+    font-family: AlibabaPuHuiTi;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Alibaba-PuHuiTi-Regular.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: AlibabaPuHuiTi;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Alibaba-PuHuiTi-Bold.ttf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: AlibabaPuHuiTi;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Alibaba-PuHuiTi-Heavy.ttf) format("truetype");
+    font-weight: 900;
+    font-style: normal
+}
+
+@font-face {
+    font-family: AlibabaPuHuiTi;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Alibaba-PuHuiTi-Medium.ttf) format("truetype");
+    font-weight: 500;
+    font-style: normal
+}
+
+@font-face {
+    font-family: AlibabaPuHuiTi;
+    src: url(https://next-ubanner.oss-cn-beijing.aliyuncs.com/Alibaba-PuHuiTi-Light.ttf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSansCJKkr;
+    src: url(https://alitranx-public-no-cors.oss-cn-zhangjiakou.aliyuncs.com/image_translate_font/ko/NotoSansCJKkr-Black.otf) format("truetype");
+    font-weight: 900;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSansCJKkr;
+    src: url(https://alitranx-public-no-cors.oss-cn-zhangjiakou.aliyuncs.com/image_translate_font/ko/NotoSansCJKkr-Bold.otf) format("truetype");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSansCJKkr;
+    src: url(https://alitranx-public-no-cors.oss-cn-zhangjiakou.aliyuncs.com/image_translate_font/ko/NotoSansCJKkr-Light.otf) format("truetype");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: NotoSansCJKkr;
+    src: url(https://alitranx-public-no-cors.oss-cn-zhangjiakou.aliyuncs.com/image_translate_font/ko/NotoSansCJKkr-Regular.otf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
