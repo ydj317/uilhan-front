@@ -41,7 +41,7 @@
   </div>
 </template>
 <script>
-// import 'vue-loading-overlay/dist/vue-loading.css';
+
 
 import {lib} from 'util/lib';
 import {forEach} from "lodash-es";
@@ -57,6 +57,7 @@ import Sku from 'components/Detail/sku';
 import Spec from 'components/Detail/Spec.vue';
 import Relaket from 'components/Detail/Relaket';
 // import Loading from 'vue-loading-overlay';
+// import 'vue-loading-overlay/dist/vue-loading.css';
 import BasicInfo from 'components/Detail/basicInfo';
 import Navigation from 'components/Detail/nanigation';
 import CustomsInfo from 'components/Detail/customsInfo';

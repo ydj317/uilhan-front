@@ -1,20 +1,29 @@
 <template>
-  <div class="warp">
-    <h1><b>회원가입</b></h1>
-    <a-divider />
-    <div class="login">
-      <a-form
-          :rules="rulesRef"
-          ref="formRef"
-          class="registerForm"
-          :layout="`vertical`"
-          :model="formState"
-          @finish="handleFinish"
-          @finishFailed="handleFinishFailed"
-          :label-col="labelCol"
-          :wrapper-col="wrapperCol"
-      >
-        <a-descriptions title="" :column="1" :bordered="true" :contentStyle="{'padding-top':'45px'}">
+  <div class="_container">
+    <div class="top">
+      <div class="icon">
+        <img src="../../assets/img/logo-light.png" alt="">
+      </div>
+      <div class="tip">
+        <h5>저희 릴라켓플러스 이용해주셔서 감사합니다!</h5>
+      </div>
+    </div>
+    <div class="item">
+        <div>
+          <h5>릴라켓플러스 회원가입</h5>
+        </div>
+        <a-form
+            :rules="rulesRef"
+            ref="formRef"
+            class="registerForm"
+            :layout="`vertical`"
+            :model="formState"
+            @finish="handleFinish"
+            @finishFailed="handleFinishFailed"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+        >
+<!--          <a-descriptions title="" :column="1" :bordered="true" :contentStyle="{'padding-top':'45px'}">-->
           <a-descriptions-item label="아이디 [필수]" :labelStyle="{color: 'red',width: '220px'}">
             <a-form-item name="username" has-feedback>
               <a-input
@@ -26,48 +35,48 @@
             </a-form-item>
           </a-descriptions-item>
           <a-descriptions-item label="비밀번호 [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="password" has-feedback>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.password"
-                  type="password"
-                  placeholder="비밀번호 [필수]"
-              >
-              </a-input>
-            </a-form-item>
+          <a-form-item name="password" has-feedback>
+            <a-input
+                class="inputStyle"
+                v-model:value="formState.password"
+                type="password"
+                placeholder="비밀번호 [필수]"
+            >
+            </a-input>
+          </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="비밀번호 확인 [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="password_confirm" has-feedback>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.password_confirm"
-                  type="password"
-                  placeholder="비밀번호 확인 [필수]">
-              </a-input>
-            </a-form-item>
+          <a-form-item name="password_confirm" has-feedback>
+            <a-input
+                class="inputStyle"
+                v-model:value="formState.password_confirm"
+                type="password"
+                placeholder="비밀번호 확인 [필수]">
+            </a-input>
+          </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="사용자명/사업자명 [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="name" has-feedback>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.name"
-                  placeholder="사용자명/사업자명 [필수]"
-              >
-              </a-input>
-            </a-form-item>
+          <a-form-item name="name" has-feedback>
+            <a-input
+                class="inputStyle"
+                v-model:value="formState.name"
+                placeholder="사용자명/사업자명 [필수]"
+            >
+            </a-input>
+          </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="Email [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="email" has-feedback>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.email"
-                  placeholder="Email [필수]"
-              >
-              </a-input>
-            </a-form-item>
+          <a-form-item name="email" has-feedback>
+            <a-input
+                class="inputStyle"
+                v-model:value="formState.email"
+                placeholder="Email [필수]"
+            >
+            </a-input>
+          </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="휴대전화 [필수]" :labelStyle="{color: 'red'}">
@@ -92,53 +101,80 @@
             </a-form-item>
           </a-descriptions-item>
 
-          <a-descriptions-item label="사업자번호 [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="com_number" has-feedback>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.com_number"
-                  placeholder="사업자번호 [필수]"
-              >
-              </a-input>
-            </a-form-item>
-          </a-descriptions-item>
+            <a-descriptions-item label="사업자번호 [필수]" :labelStyle="{color: 'red'}">
+          <a-form-item name="com_number" has-feedback>
+            <a-input
+                class="inputStyle"
+                v-model:value="formState.com_number"
+                placeholder="사업자번호 [필수]"
+            >
+            </a-input>
+          </a-form-item>
+            </a-descriptions-item>
           <a-descriptions-item label="사업장 전화번호 [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="com_phone" has-feedback>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.com_phone"
-                  placeholder="사업장 전화번호 [필수]"
-              >
-              </a-input>
-            </a-form-item>
+          <a-form-item name="com_phone" has-feedback>
+            <a-input
+                class="inputStyle"
+                v-model:value="formState.com_phone"
+                placeholder="사업장 전화번호 [필수]"
+            >
+            </a-input>
+          </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="대표자명 [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="com_ceo" has-feedback>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.com_ceo"
-                  placeholder="대표자명"
-              >
-              </a-input>
-            </a-form-item>
+          <a-form-item name="com_ceo" has-feedback>
+            <a-input
+                class="inputStyle"
+                v-model:value="formState.com_ceo"
+                placeholder="대표자명"
+            >
+            </a-input>
+          </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="수수료율 [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="commission" has-feedback>
-              <a-input class="inputStyle" v-model:value="formState.commission" placeholder="수수료율 [필수]">
-                <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
-              </a-input>
-            </a-form-item>
+          <a-form-item name="commission" has-feedback>
+            <a-input class="inputStyle" v-model:value="formState.commission" placeholder="수수료율 [필수]">
+              <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+            </a-input>
+          </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="도매 수수료 [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="wholesale_commission" has-feedback>
-              <a-input class="inputStyle" v-model:value="formState.wholesale_commission" placeholder="도매 수수료 [필수]">
-                <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
-              </a-input>
-            </a-form-item>
+          <a-form-item name="wholesale_commission" has-feedback>
+            <a-input class="inputStyle" v-model:value="formState.wholesale_commission" placeholder="도매 수수료 [필수]">
+              <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+            </a-input>
+          </a-form-item>
           </a-descriptions-item>
+
+            <a-descriptions-item label="유선전화">
+          <a-form-item name="tel" has-feedback>
+            <a-input
+                class="inputStyle"
+                v-model:value="formState.tel"
+                placeholder="유선전화"
+            >
+            </a-input>
+          </a-form-item>
+            </a-descriptions-item>
+
+            <a-descriptions-item label="정산상품 기간설정">
+          <a-form-item name="ac_expect_date" has-feedback>
+            <a-tooltip color="white"  placement="left">
+              <template #title>
+                <span style="color: #848a8a" v-html="tooltip.ac_expect_date" />
+              </template>
+              <a-input
+                  class="inputStyle"
+                  v-model:value="formState.ac_expect_date"
+                  placeholder="정산상품 기간설정"
+              >
+              </a-input>
+            </a-tooltip>
+          </a-form-item>
+            </a-descriptions-item>
 
           <a-descriptions-item label="정산방식 [필수]" :labelStyle="{color: 'red'}">
             <a-form-item name="account_type" v-bind="validateInfos.account_type">
@@ -172,62 +208,39 @@
             </a-form-item>
           </a-descriptions-item>
 
-          <a-descriptions-item label="유선전화">
-            <a-form-item name="tel" has-feedback>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.tel"
-                  placeholder="유선전화"
-              >
-              </a-input>
-            </a-form-item>
-          </a-descriptions-item>
+            <a-descriptions-item label="정산일자유형" >
+          <a-form-item name="ac_delivery_type">
+            <a-select
+                class="inputStyle"
+                v-model:value="formState.ac_delivery_type"
+            >
+              <a-select-option value="0">처리상태를 선택해주세요</a-select-option>
+              <a-select-option value="IC">입금확인</a-select-option>
+              <a-select-option value="DI">배송중</a-select-option>
+              <a-select-option value="DC">배송완료</a-select-option>
+              <a-select-option value="BF">구매확정</a-select-option>
+            </a-select>
+          </a-form-item>
+            </a-descriptions-item>
 
-          <a-descriptions-item label="정산상품 기간설정">
-            <a-form-item name="ac_expect_date" has-feedback>
-              <a-tooltip color="white"  placement="left">
-                <template #title>
-                  <span style="color: #848a8a" v-html="tooltip.ac_expect_date" />
-                </template>
-                <a-input
-                    class="inputStyle"
-                    v-model:value="formState.ac_expect_date"
-                    placeholder="정산상품 기간설정"
-                >
-                </a-input>
-              </a-tooltip>
-            </a-form-item>
-          </a-descriptions-item>
+            <a-descriptions-item label="결제유형">
+          <a-form-item name="account_method">
+            <a-select
+                class="inputStyle"
+                v-model:value="formState.account_method"
+            >
+              <a-select-option value="0">결제유형을 선택해주세요</a-select-option>
+              <a-select-option value="10">현금</a-select-option>
+              <a-select-option value="12">예치금</a-select-option>
+            </a-select>
+          </a-form-item>
+            </a-descriptions-item>
 
-          <a-descriptions-item label="정산일자유형" >
-            <a-form-item name="ac_delivery_type">
-              <a-select
-                  class="inputStyle"
-                  v-model:value="formState.ac_delivery_type"
-              >
-                <a-select-option value="0">처리상태를 선택해주세요</a-select-option>
-                <a-select-option value="IC">입금확인</a-select-option>
-                <a-select-option value="DI">배송중</a-select-option>
-                <a-select-option value="DC">배송완료</a-select-option>
-                <a-select-option value="BF">구매확정</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-descriptions-item>
+          <div class="foorterSetting">
+            <a-checkbox v-model:checked="checked">회원약관 동의. <a-button class="init" type="link">[관리자페이지]</a-button></a-checkbox>
+          </div>
 
-          <a-descriptions-item label="결제유형">
-            <a-form-item name="account_method">
-              <a-select
-                  class="inputStyle"
-                  v-model:value="formState.account_method"
-              >
-                <a-select-option value="0">결제유형을 선택해주세요</a-select-option>
-                <a-select-option value="10">현금</a-select-option>
-                <a-select-option value="12">예치금</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-descriptions-item>
-
-          <a-form-item>
+          <a-form-item class="buttons">
             <a-button
                 type="primary"
                 html-type="submit"
@@ -236,13 +249,12 @@
             >
               회원가입
             </a-button>
-            <a-button class="loginButton" @click="resetFields">Reset</a-button>
+<!--            <a-button class="loginButton" @click="resetFields">Reset</a-button>-->
+            <a-button class="init" type="link" :href="'/user/login'"><UserOutlined />이미 회원이신가요? 로그인하기</a-button>
           </a-form-item>
-        </a-descriptions>
-      </a-form>
-    </div>
-
-
+<!--          </a-descriptions>-->
+        </a-form>
+      </div>
   </div>
 </template>
 <script>
@@ -345,46 +357,46 @@ export default defineComponent({
       };
 
       NoAuthAjax.post(
-          process.env.VUE_APP_API_URL + '/api/register?XDEBUG_SESSION=PHPSTORM', user).then((res) => {
-        let returnData = res.data;
-        console.log(returnData);
-        if (returnData.status === undefined || returnData.status !== 2000) {
-          alert(returnData.msg);
-          return false;
-        }
-
-        let loginUser = {
-          username: formState.username,
-          password: formState.password
-        };
-
-        LoginRequest.post(
-            process.env.VUE_APP_API_URL + '/api/login', loginUser).then((res) => {
-          if (res.status === undefined || res.status !== 200) {
-            alert('일시적인 서버장애로 로그인에 실패하였습니다. 잠시 후 시도해주시길 바랍니다.');
-            Cookie.remove('token');
-            Cookie.remove('member_name');
-            Cookie.remove('member_roles');
-            router.push("/user/login");
-            return false;
-          }
-
+        process.env.VUE_APP_API_URL + '/api/register?XDEBUG_SESSION=PHPSTORM', user).then((res) => {
           let returnData = res.data;
-          if (returnData.member_roles === undefined || returnData.member_name === undefined) {
-            alert('일시적인 로그인 권한오류가 발생하였습니다. 로그인페이지에서 재시도 해주시길 바랍니다.');
-            Cookie.remove('token');
-            Cookie.remove('member_name');
-            Cookie.remove('member_roles');
-            router.push("/user/login");
+          console.log(returnData);
+          if (returnData.status === undefined || returnData.status !== 2000) {
+            alert(returnData.msg);
             return false;
           }
 
-          Cookie.set('member_name', returnData.member_name);
-          Cookie.set('member_roles', returnData.member_roles);
-          alert('회원가입에 성공하였습니다.');
-          router.push("/product");
-          return false;
-        });
+          let loginUser = {
+            username: formState.username,
+            password: formState.password
+          };
+
+          LoginRequest.post(
+            process.env.VUE_APP_API_URL + '/api/login', loginUser).then((res) => {
+            if (res.status === undefined || res.status !== 200) {
+              alert('일시적인 서버장애로 로그인에 실패하였습니다. 잠시 후 시도해주시길 바랍니다.');
+              Cookie.remove('token');
+              Cookie.remove('member_name');
+              Cookie.remove('member_roles');
+              router.push("/user/login");
+              return false;
+            }
+
+            let returnData = res.data;
+            if (returnData.member_roles === undefined || returnData.member_name === undefined) {
+              alert('일시적인 로그인 권한오류가 발생하였습니다. 로그인페이지에서 재시도 해주시길 바랍니다.');
+              Cookie.remove('token');
+              Cookie.remove('member_name');
+              Cookie.remove('member_roles');
+              router.push("/user/login");
+              return false;
+            }
+
+            Cookie.set('member_name', returnData.member_name);
+            Cookie.set('member_roles', returnData.member_roles);
+            alert('회원가입에 성공하였습니다.');
+            router.push("/product");
+            return false;
+          });
       });
     };
 
@@ -720,8 +732,10 @@ export default defineComponent({
 
     const { resetFields, validate, validateInfos } = useForm(formState, rulesRef);
 
+    const checked = ref(false);
 
     return {
+      checked,
       labelCol: {
         style: {
           width: '400px',
@@ -745,6 +759,157 @@ export default defineComponent({
 });
 </script>
 
+<!--container-->
+<style>
+/*::-webkit-scrollbar {*/
+/*  width: 0 !important;*/
+/*}*/
+
+.init {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+._container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 1900px;
+  width: 100%;
+  /*position: fixed;*/
+  /*overflow-y: hidden;*/
+
+  background-image: url(../../assets/img/bg-pattern.png);
+  background-color: #3051d3;
+
+  --uim-primary-opacity: 1;
+  --uim-secondary-opacity: 0.70;
+  --uim-tertiary-opacity: 0.50;
+  --uim-quaternary-opacity: 0.25;
+  --uim-quinary-opacity: 0;
+
+  --blue: #3051D3;
+  --indigo: #564ab1;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --red: #F06543;
+  --orange: #f1734f;
+  --yellow: #e4cc37;
+  --green: #3ddc97;
+  --teal: #008080;
+  --cyan: #00A7E1;
+  --white: #fff;
+  --gray: #7c8a96;
+  --gray-dark: #343a40;
+  --primary: #3051D3;
+  --secondary: #7c8a96;
+  --success: #3ddc97;
+  --info: #00A7E1;
+  --warning: #e4cc37;
+  --danger: #F06543;
+  --light: #eff2f7;
+  --dark: #343a40;
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --font-family-sans-serif: "Nunito",sans-serif;
+  --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding-top: 153px;
+  width: 100%;
+  height: 89px;
+}
+
+.icon img {
+  width: 180px;
+  height: 40px;
+}
+
+.tip {
+  margin-top: 9px;
+}
+
+.tip h5 {
+  font-size: 16px !important;
+  color: rgba(255,255,255,.5) !important;
+  font-weight: 600;
+  text-align: center !important;
+  font-family: Nunito, sans-serif;
+}
+</style>
+
+<!--item-->
+<style>
+.item {
+  width: 736px;
+  margin-top: 80px;
+  background-color: white;
+  padding: 24px;
+}
+.item h5 {
+  width: 672px;
+  height: 22px;
+  background-color: white;
+  margin-bottom: 48px;
+  text-align: center;
+  font-size: 1.1375rem;
+  font-weight: 600;
+  color: #495057;
+}
+.ant-descriptions-item-content input {
+  width: 100%;
+  height: 45px;
+}
+input,
+.ant-select,
+.ant-select-selector {
+  width: 100%;
+  height: 45px !important;
+}
+
+.ant-select-selection-item {
+  padding-top: 7px !important;
+  text-align: center;
+}
+
+.foorterSetting {
+  margin-bottom: 18px;
+}
+
+.buttons .ant-form-item-control-input-content {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  height: 90px;
+}
+
+.buttons .ant-form-item-control-input-content button {
+  height: 39px;
+  border-radius: 5px;
+}
+
+.buttons .ant-form-item-control-input-content button:first-child {
+  background-color: #3ddc97;
+  border: 1px solid #3ddc97;
+}
+
+.buttons .ant-form-item-control-input-content button:last-child {
+  margin-top: 20px;
+  color: gray;
+}
+</style>
+
+<!--
 <style>
 .login{
   margin: 0 auto;
@@ -776,4 +941,4 @@ body {
   /*background-color: #F0F2F5;*/
   height: 100%;
 }
-</style>
+</style>-->
