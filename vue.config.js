@@ -4,6 +4,7 @@ let configureWebpack = {
   resolve: {
     alias: {
       'src'       : path.resolve('./src'),
+      'public'    : path.resolve('./public'),
       'util'      : path.resolve('./src/util'),
       'views'     : path.resolve('./src/views'),
       'config'    : path.resolve('./src/config'),

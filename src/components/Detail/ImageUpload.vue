@@ -22,7 +22,6 @@
     <div id="eModelTitle_1_conent">
       <draggable
           class="row left wrap"
-          tag="transition-group"
           item-key="order"
           v-bind="dragOptions"
           v-model="fileList"
@@ -34,9 +33,9 @@
             <img class="w100" :src="element.url" @click="outElChecking(element, index)" alt=""/>
 
             <!--버튼-->
-            <div id="eModelTitle_1_conent_button_group" class="w100 center space-around">
-              <a-button class="w40 h30 center" type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
-              <a-popconfirm class="w40 h30 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
+            <div id="eModelTitle_1_conent_button_group" class="w100 center space-around h21">
+              <a-button class="w40 h70 center" type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
+              <a-popconfirm class="w40 h70 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
                 <a-button type="dashed"><span>삭제</span></a-button>
               </a-popconfirm>
             </div>
@@ -51,10 +50,10 @@
 </template>
 
 <script>
-import {lib} from '../../util/lib';
+import {lib} from '@/util/lib';
 import Cookie from 'js-cookie';
 import draggable from 'vuedraggable';
-import {AuthRequest} from '../../util/request';
+import {AuthRequest} from '@/util/request';
 import ImageEditorGroup from '../ImageEditor/imageEditorGroup';
 import {mapState} from 'vuex';
 

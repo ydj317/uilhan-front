@@ -55,7 +55,7 @@ import 'tinymce/plugins/textpattern'  //快速排版
 // import 'tinymce/plugins/visualchars'  //显示不可见字符
 import 'tinymce/plugins/wordcount'
 import {AuthRequest} from "util/request";  //字数统计
-import '../../../public/tinymce/axupimgs';
+import 'public/tinymce/axupimgs';
 
 
 export default {

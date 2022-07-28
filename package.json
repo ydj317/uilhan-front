@@ -21,6 +21,7 @@
     "path": "^0.12.7",
     "tui-image-editor": "^3.15.3",
     "vue": "^3.2.13",
+    "vue-loading-overlay": "^5.0.3",
     "vue-router": "^4.0.3",
     "vuedraggable": "^4.1.0",
     "vuex": "^4.0.0"
