@@ -1,12 +1,10 @@
 <template>
-  <div class="contentBackColor">
-    <div class="contentTitleWrap">
-      <div class="contentTitle"></div>
+  <div id="container">
+    <div id="header" style="height: 30px;" class="center bg-3051d3">
+      <div class="w97 h100 bg-white"></div>
     </div>
-    <div class="contentBodyWrap">
-      <div class="contentBody">
-        <router-view></router-view>
-      </div>
+    <div id="content" class="center">
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -24,36 +22,38 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.contentBackColor {
-  height: 100%;
-  background-color: #f4f8f9;
-}
+<style scoped></style>
 
-.contentTitleWrap {
-  height: 34px;
-  background-color: #3051d3!important;
-  text-align: center;
-  padding-left: 12px;
-  padding-right: 12px;
-}
+<!--<style scoped>-->
+<!--.contentBackColor {-->
+<!--  height: 100%;-->
+<!--  background-color: #f4f8f9;-->
+<!--}-->
 
-.contentBodyWrap {
-  width: 100%;
-  padding-left: 12px;
-  padding-right: 12px;
-}
+<!--.contentTitleWrap {-->
+<!--  height: 34px;-->
+<!--  background-color: #3051d3!important;-->
+<!--  text-align: center;-->
+<!--  padding-left: 20px;-->
+<!--  padding-right: 20px;-->
+<!--}-->
 
-.contentBody {
-  background-color: #fff;
-}
+<!--.contentBodyWrap {-->
+<!--  width: 100%;-->
+<!--  padding-left: 20px;-->
+<!--  padding-right: 20px;-->
+<!--}-->
 
-.contentBody {
-  height: 100%;
-}
+<!--.contentBody {-->
+<!--  background-color: #fff;-->
+<!--}-->
 
-.contentTitle {
-  background-color: #fff;
-  height: 100%;
-}
-</style>
+<!--.contentBody {-->
+<!--  height: 100%;-->
+<!--}-->
+
+<!--.contentTitle {-->
+<!--  background-color: #fff;-->
+<!--  height: 100%;-->
+<!--}-->
+<!--</style>-->

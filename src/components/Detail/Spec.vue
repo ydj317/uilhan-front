@@ -1,5 +1,5 @@
 <template>
-  <div id="eModelTitle_2" class="container basic" v-if="product.item_option">
+  <div id="eModelTitle_2" class="mt20 p20 bg-white" v-if="product.item_option">
     <!--세팅,추가-->
     <h1><strong>옵션</strong></h1>
 

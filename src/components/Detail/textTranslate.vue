@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import {lib} from 'util/lib';
-import {AuthRequest} from 'util/request';
+import {lib} from '@/util/lib';
+import {AuthRequest} from '@/util/request';
 import {mapState} from 'vuex';
 
 export default {
@@ -75,6 +75,4 @@ export default {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,8 +1,15 @@
 import { createStore } from "vuex";
 
 export default createStore({
-  state: {},
-  getters: {},
+  state: {
+    common: {},
+    product: {
+      onload: false,
+      loading: true,
+    },
+    relaket: {},
+    prdlist: [],
+  },
   mutations: {},
   actions: {},
   modules: {},

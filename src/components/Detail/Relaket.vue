@@ -1,35 +1,59 @@
 <template>
-  <div v-if="product.relaket_visivle" class="_container">
+  <div v-if="product.relaket_visivle" class="p20 bg-white">
     <!--title-->
-    <div style="display: flex;">
-
-        <span hidden style="font-size: 15px"><strong>릴라켓 연동</strong></span>
-
-        <a-switch hidden @change="syncSwitchChange" v-model:checked="isSync" style="margin-left: 20px"/>
-
+    <div>
+        <span hidden><strong>릴라켓 연동</strong></span>
+        <a-switch hidden @change="syncSwitchChange" v-model:checked="isSync"/>
     </div>
-    <div v-if="isSync === true" style="margin-top: 20px">
+    <div v-if="isSync === true">
       <p>상품 카테고리 번호</p>
-      <a-form-item style="margin-bottom: 15px">
+      <a-form-item class="mb15">
         <a-select
-            v-model:value="formState.cate_1_val" :options="formState.cate_1"
-            style="width: 150px; float: left;" @change="changeCateA"
+            class="w10 mr20"
+            v-model:value="formState.cate_1_val"
+            :options="formState.cate_1"
+            @change="changeCateA"
+        ></a-select>
+        <a-select
+            class="w10 mr20"
+            v-model:value="formState.cate_2_val"
+            :options="formState.cate_2"
+            :loading="loadingB"
+            :disabled="loadingB"
+            @change="changeCateB"
         >
         </a-select>
-        <a-select v-model:value="formState.cate_2_val" :options="formState.cate_2"
-         style="width: 150px; float: left;margin-left:10px" @change="changeCateB" :loading="loadingB" :disabled="loadingB"
+        <a-select
+            class="w10 mr20"
+            v-model:value="formState.cate_3_val"
+            :options="formState.cate_3"
+            :loading="loadingC"
+            :disabled="loadingC"
+            @change="changeCateC"
         >
         </a-select>
-        <a-select v-model:value="formState.cate_3_val" :options="formState.cate_3"  @change="changeCateC" :loading="loadingC" :disabled="loadingC"  style="width: 150px; float: left;margin-left:10px">
+        <a-select
+            class="w10 mr20"
+            v-model:value="formState.cate_4_val"
+            :options="formState.cate_4"
+            :loading="loadingD"
+            :disabled="loadingD"
+            @change="changeCateD"
+        >
         </a-select>
-        <a-select v-model:value="formState.cate_4_val" :options="formState.cate_4"  @change="changeCateD" :loading="loadingD" :disabled="loadingD" style="width: 150px; float: left;margin-left:10px">
-        </a-select>
-        <a-select v-model:value="formState.cate_5_val" :options="formState.cate_5" :loading="loadingE" @change="changeCateE" :disabled="loadingE" style="width: 150px; float: left;margin-left:10px">
+        <a-select
+            class="w10 mr20"
+            v-model:value="formState.cate_5_val"
+            :options="formState.cate_5"
+            :loading="loadingE"
+            :disabled="loadingE"
+            @change="changeCateE"
+        >
         </a-select>
       </a-form-item>
 
       <p>추천 카테고리</p>
-      <a-form-item  style="margin-bottom: 15px">
+      <a-form-item class="mb15">
         <a-alert
             show-icon
             v-if="recommendCategory.bAlertShow"
@@ -64,21 +88,21 @@
       </a-form-item>
 
       <p>면세제품</p>
-      <a-form-item  style="margin-bottom: 15px">
-        <a-select v-model:value="formState.surtax" placeholder="please select your zone"  style="width: 200px">
+      <a-form-item class="mb15">
+        <a-select v-model:value="formState.surtax" placeholder="please select your zone" class="w20">
           <a-select-option value="Y">면세</a-select-option>
           <a-select-option value="N">과세</a-select-option>
         </a-select>
       </a-form-item>
 
       <p>상품 고시</p>
-      <a-form-item  style="margin-bottom: 15px">
-        <a-select v-model:value="formState.mandatory_val" :options="formState.mandatory" style="width: 150px; float: left;">
+      <a-form-item class="mb15">
+        <a-select v-model:value="formState.mandatory_val" :options="formState.mandatory"  class="w20">
         </a-select>
       </a-form-item>
 
       <p>배송 정책</p>
-      <a-form-item  style="margin-bottom: 15px">
+      <a-form-item class="mb15">
         <a-select v-if="formState.delivery_template_sea_list !== undefined && formState.delivery_template_sea_list.length > 0" v-model:value="formState.delivery_template_sea_val" :options="formState.delivery_template_sea_list" style="width: 150px; float: left;" @change="isSelected('sea')">
         </a-select>
         <a-select v-if="formState.delivery_template_sky_list !== undefined && formState.delivery_template_sky_list.length > 0" v-model:value="formState.delivery_template_sky_val" :options="formState.delivery_template_sky_list" style="width: 150px; float: left; margin-left: 10px" @change="isSelected('sky')">
@@ -99,19 +123,19 @@
 <!--        <a-input style="width: 400px" v-model:value="formState.sellprice" placeholder="숫자만가능합니다"/>-->
 <!--      </a-form-item>-->
       <p>키워드</p>
-      <a-form-item  style="margin-bottom: 15px">
-        <a-input style="width: 400px" v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요"/>
+      <a-form-item  class="mb15">
+        <a-input class="w20" v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요"/>
       </a-form-item>
     </div>
   </div>
 </template>
 
 <script>
-import {AuthRequest} from 'util/request';
-import {mandatoryList} from 'config/Relaket/mandatory';
+import {AuthRequest} from '@/util/request';
+import { mandatoryList } from 'config/Relaket/mandatory'
 import { ref, reactive } from 'vue';
 import {mapState} from 'vuex';
-// import {lib} from '/util/lib';
+import {lib} from '@/util/lib';
 export default {
   components: {mandatoryList},
 
@@ -863,13 +887,4 @@ export default {
 </script>
 
 <style scoped>
-._container {
-  background-color: white;
-  margin: 0 24px 22px 24px;
-  padding: 0 22px 22px 22px;
-}
-
-.ant-row.ant-form-item {
-  margin: 0;
-}
 </style>

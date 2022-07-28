@@ -5,6 +5,7 @@ import store from "./store";
 import moment from "moment";
 import "moment/dist/locale/zh-cn";
 import 'ant-design-vue/dist/antd.css';
+import './assets/css/global.css';
 import {
     Button,
     Layout,

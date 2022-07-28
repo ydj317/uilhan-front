@@ -1,22 +1,24 @@
 <template>
-  <div>
-    <div>
-      <a-affix style="padding-top: 14px">
-        <a-button danger @click="textTransModal">
-          <FileWordTwoTone twoToneColor="white" />
-          텍스트 번역
-        </a-button>
-        <a-button danger @click="setNavigation('eModelTitle_' + i)" v-for="(name, i) in label">
-          <AppstoreTwoTone v-if="name === '기본 정보'" twoToneColor="red" />
-          <PictureTwoTone v-if="name === '상품 이미지'" twoToneColor="red" />
-          <SettingTwoTone v-if="name === 'Spec'" twoToneColor="red" />
-          <TagsTwoTone v-if="name === 'SKU'" twoToneColor="red" />
-          <BankTwoTone v-if="name === '통관정보'" twoToneColor="red" />
-          <SlidersTwoTone v-if="name === '배송설정'" twoToneColor="red" />
-          <ProjectTwoTone v-if="name === '간략설명'" twoToneColor="red" />
-          <BuildTwoTone v-if="name === '상세설명'" twoToneColor="red" />
-          {{ name }}
-        </a-button>
+  <div class="pl20 pr20 bg-white">
+    <div class="w70 bg-white">
+      <a-affix>
+        <div class="space-between">
+          <a-button danger @click="textTransModal">
+            <FileWordTwoTone twoToneColor="white" />
+            텍스트 번역
+          </a-button>
+          <a-button danger @click="setNavigation('eModelTitle_' + i)" v-for="(name, i) in label">
+            <AppstoreTwoTone v-if="name === '기본 정보'" twoToneColor="red" />
+            <PictureTwoTone v-if="name === '상품 이미지'" twoToneColor="red" />
+            <SettingTwoTone v-if="name === 'Spec'" twoToneColor="red" />
+            <TagsTwoTone v-if="name === 'SKU'" twoToneColor="red" />
+            <BankTwoTone v-if="name === '통관정보'" twoToneColor="red" />
+            <SlidersTwoTone v-if="name === '배송설정'" twoToneColor="red" />
+            <ProjectTwoTone v-if="name === '간략설명'" twoToneColor="red" />
+            <BuildTwoTone v-if="name === '상세설명'" twoToneColor="red" />
+            {{ name }}
+          </a-button>
+        </div>
       </a-affix>
     </div>
   </div>
@@ -90,14 +92,6 @@ export default {
 </script>
 
 <style scoped>
-div:first-child {
-  background-color: #3051d3;
-  padding: 0 24px 0 24px;
-  height: 34px;
-}
-div:first-child > div {
-  background-color: white;
-}
 button {
   height: 40px;
   text-align: left;

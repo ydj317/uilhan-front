@@ -1,7 +1,7 @@
 <template>
   <a-spin style="margin-top: 400px" :spinning="spinning" tip="Loading...">
     <div class="_container">
-      <div class="top">
+      <div class="header">
         <div class="icon">
           <img src="../../assets/img/logo-light.png" alt="">
         </div>
@@ -207,7 +207,7 @@ export default defineComponent({
   --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
 
-.top {
+.header {
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -4,11 +4,13 @@
            :can-cancel="false"
            :is-full-page="true"/>
   <a-drawer
-    width="450"
-    title="계정 설정"
-    placement="right"
-    :closable="false"
+      :visible="common.user_visible"
+      width="450"
+      title="계정 설정"
+      placement="right"
+      :closable="false"
   >
+    <CloseOutlined style="position: absolute; top: 0; right: 17px; padding: 5px;" @click="close"/>
     <div style="margin-bottom: 20px">
       <UserOutlined style="font-size: 20px;margin-right: 10px" />
       <h2 style="display: inline-block; width: 63%">{{memberName}}</h2>
@@ -103,11 +105,11 @@
       </div>
     </div>
 
-    <template v-slot:handle>
-      <div class="handle" @click="visible = !visible">
-        <SettingOutlined />
-      </div>
-    </template>
+    <!--    <template v-slot:handle>-->
+    <!--      <div class="handle" @click="visible = !visible">-->
+    <!--        <SettingOutlined />-->
+    <!--      </div>-->
+    <!--    </template>-->
 
     <div v-if="this.roles.length > 0 && this.roles.indexOf('ROLE_RELAKET') > -1">
       <a-divider />
@@ -118,7 +120,7 @@
             message="릴라켓에 배송적책 얻기에 실패하였습니다.
             해당 오류는 세션키 입력이 잘못되었거나
             릴라켓에 배송정책을 등록하지 않은경우 발생할수있습니다."
-                 type="error" /><br/>
+            type="error" /><br/>
       </div>
 
       <a-select
@@ -210,20 +212,28 @@
 <script>
 //<UserOutlined />
 import { UserOutlined } from '@ant-design/icons-vue';
-import { AuthRequest } from '../../util/request'
-import { SettingOutlined, UploadOutlined, DownOutlined } from '@ant-design/icons-vue';
+import { AuthRequest } from '@/util/request'
+import { SettingOutlined, UploadOutlined, DownOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import Cookie from "js-cookie";
-import { cookieInit } from "../../util/auth";
+import { cookieInit } from '@/util/auth';
 import router from "../../router/index.js";
 import Loading from 'vue-loading-overlay';
 import { cloneDeep } from "lodash-es";
+import {mapState} from 'vuex';
 export default {
   components: {
     SettingOutlined,
     UploadOutlined,
     UserOutlined,
     DownOutlined,
-    Loading
+    Loading,
+    CloseOutlined
+  },
+
+  computed: {
+    ...mapState([
+      'common',
+    ])
   },
 
   data() {
@@ -327,6 +337,10 @@ export default {
     }
   },
   methods: {
+    close() {
+      this.common.user_visible = false;
+    },
+
     addCollectionPrice() {
       if (this.priceRangeStart === undefined || this.priceRangeStart.length === 0) {
         alert('기준가 시작범위는 필수로 입력해주십시오');

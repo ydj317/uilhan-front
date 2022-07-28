@@ -1,5 +1,5 @@
 <template>
-  <div id="eModelTitle_3" class="container">
+  <div id="eModelTitle_3" class="mt20 p20 bg-white">
     <h1><strong>품목</strong></h1>
 
     <!--sku 상단 버튼-->
@@ -102,7 +102,7 @@
 <script>
 import {forEach} from 'lodash-es';
 import {mapState} from 'vuex';
-import {lib} from 'util/lib';
+import {lib} from '../../util/lib';
 import ImageEditorGroup from '../ImageEditor/imageEditorGroup.vue';
 
 export default {

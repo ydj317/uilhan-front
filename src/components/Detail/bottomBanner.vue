@@ -12,8 +12,8 @@
 
 <script>
 import {mapState} from 'vuex';
-import {AuthRequest} from 'util/request';
-import router from 'router';
+import {AuthRequest} from '../../util/request';
+import router from '../../router';
 
 export default {
   computed: {

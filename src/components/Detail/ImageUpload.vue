@@ -1,10 +1,10 @@
 <template>
-  <div id="eModelTitle_1" class="container">
+  <div id="eModelTitle_1" class="mt20 p20 bg-white">
     <!--title-->
     <h1><strong>이미지</strong></h1>
 
     <!--상단 버튼-->
-    <div class="top">
+    <div id="eModelTitle_1_header" class="w16 mb20 space-between">
       <a-button @click="showModal('batch')">일괄 번역</a-button>
       <a-upload
           name="file"
@@ -19,9 +19,9 @@
     </div>
 
     <!--이미지 리스트-->
-    <div>
+    <div id="eModelTitle_1_conent">
       <draggable
-          class="image_container"
+          class="row left wrap"
           tag="transition-group"
           item-key="order"
           v-bind="dragOptions"
@@ -29,14 +29,14 @@
           :component-data="dragConfig"
       >
         <template #item="{element, index}">
-          <div :key="index" :class="`image_item ${element.checked ? 'checkedEl' : 'checkedNot'}`">
+          <div id="eModelTitle_1_conent_group" class="w10 p5" :key="index" :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`">
             <!--이미지-->
-            <img :src="element.url" @click="outElChecking(element, index)" alt=""/>
+            <img class="w100" :src="element.url" @click="outElChecking(element, index)" alt=""/>
 
             <!--버튼-->
-            <div class="image_item_footer">
-              <a-button type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
-              <a-popconfirm title="삭제하시겠습니까?" @confirm="delElement(element)">
+            <div id="eModelTitle_1_conent_button_group" class="w100 center space-around">
+              <a-button class="w40 h30 center" type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
+              <a-popconfirm class="w40 h30 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
                 <a-button type="dashed"><span>삭제</span></a-button>
               </a-popconfirm>
             </div>
@@ -51,11 +51,11 @@
 </template>
 
 <script>
-import {lib} from 'util/lib';
+import {lib} from '../../util/lib';
 import Cookie from 'js-cookie';
 import draggable from 'vuedraggable';
-import {AuthRequest} from 'util/request';
-import ImageEditorGroup from 'components/ImageEditor/imageEditorGroup';
+import {AuthRequest} from '../../util/request';
+import ImageEditorGroup from '../ImageEditor/imageEditorGroup';
 import {mapState} from 'vuex';
 
 export default {
@@ -183,7 +183,7 @@ export default {
   },
 
   mounted() {
-    this.fileList = this.product.item_thumbnails;
+    this.fileList = JSON.parse(JSON.stringify(this.product.item_thumbnails));
     for (let i = 0; i < this.product.item_thumbnails.length; i++) {
       this.fileList[i].order = i + 1;
       this.fileList[i].checked = false;
@@ -194,81 +194,92 @@ export default {
 </script>
 
 <style scoped>
-/*DEBUG*/
-/*div {*/
-/*  outline: 1px solid red;*/
+#eModelTitle_1 img {
+  width: 120px;
+  height: 150px;
+}
+</style>
+
+<style scoped>
+/*.top {*/
+/*  display: flex;*/
+/*  justify-content: space-around;*/
+
+/*  width: 20%;*/
 /*}*/
 
-.top {
-  display: flex;
-  justify-content: space-around;
-
-  width: 20%;
-}
-
-.top button {
+#eModelTitle_1_header button {
   height: 39px;
   font-size: 16px;
   border-radius: 5px;
   border: 1px solid #3051d3;
   color: #3051d3;
 }
-
-.top button:first-child {
-  width: 44%;
+#eModelTitle_1_conent_group {
+  border: 1px solid #f0f2f5;
 }
 
-.image_container {
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
+/*.top button:first-child {*/
+/*  width: 44%;*/
+/*}*/
 
-.image_item {
-  display: flex;
-  flex-direction: column;
+/*.image_container {*/
+/*  display: flex;*/
+/*  justify-content: flex-start;*/
+/*  flex-direction: row;*/
+/*  flex-wrap: wrap;*/
+/*}*/
 
-  width: 10%;
-  padding: 5px;
-  outline: 1px solid #f0f2f5;
-}
+/*.image_item {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
 
-.image_item img {
-  width: 100%;
-  height: 150px;
-}
+/*  width: 10%;*/
+/*  padding: 5px;*/
+/*  outline: 1px solid #f0f2f5;*/
+/*}*/
 
-.image_item_footer {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+/*.image_item img {*/
+/*  width: 100%;*/
+/*  height: 150px;*/
+/*}*/
 
-  height: 30px;
-  padding-top: 10px;
-}
+/*.image_item_footer {*/
+/*  display: flex;*/
+/*  justify-content: space-evenly;*/
+/*  align-items: center;*/
 
-.image_item_footer button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/*  height: 30px;*/
+/*  padding-top: 10px;*/
+/*}*/
 
-  margin: 0;
-  padding: 0;
-  width: 44px;
-  height: 30px;
+#eModelTitle_1_conent button {
+  /*display: flex;*/
+  /*align-items: center;*/
+  /*justify-content: center;*/
+
+  /*margin: 0;*/
+  /*padding: 0;*/
+  /*width: 44px;*/
+  /*height: 30px;*/
   border-radius: 5px;
   border: 1px solid white;
-}
-
-.image_item_footer button {
   background-color: #00a7e1;
   color: white;
+  text-align: center;
 }
-
-.image_item_footer button:first-child {
+#eModelTitle_1_conent_button_group button:first-child {
   background-color: #3051d3;
 }
+
+/*.image_item_footer button {*/
+/*  background-color: #00a7e1;*/
+/*  color: white;*/
+/*}*/
+
+/*.image_item_footer button:first-child {*/
+/*  background-color: #3051d3;*/
+/*}*/
 
 .checkedEl {
   border: 4px solid #3ddc97

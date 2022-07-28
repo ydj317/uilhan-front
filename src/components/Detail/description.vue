@@ -1,5 +1,5 @@
 <template>
-  <div id="eModelTitle_7" class="container">
+  <div id="eModelTitle_7" class="mt20 p20 bg-white">
     <!--title-->
     <h1><strong>상세설명</strong></h1>
 
@@ -16,8 +16,8 @@
 
 <script>
 import {mapState} from 'vuex';
-import TEditor from 'components/ImageEditor/TEdtor';
-import ImageEditorGroup from 'components/ImageEditor/imageEditorGroup.vue';
+import TEditor from '../ImageEditor/TEdtor';
+import ImageEditorGroup from '../ImageEditor/imageEditorGroup.vue';
 
 export default {
   components: {

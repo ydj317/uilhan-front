@@ -1,5 +1,5 @@
 <template>
-  <a-layout class="layoutWrap">
+  <a-layout class="layoutWrap q">
     <a-layout-sider width="250" class="sideBar">
       <Sider />
     </a-layout-sider>
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import '../../assets/css/global.css'
 import { Layout } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 import Sider from 'views/Template/Sider.vue';

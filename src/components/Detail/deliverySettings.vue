@@ -1,5 +1,5 @@
 <template>
-  <div id="eModelTitle_5" class="container">
+  <div id="eModelTitle_5" class="mt20 p20 bg-white">
     <h1><strong>배송설정</strong></h1>
     <div v-for="item in CONFIG">
       <p>{{ item.label }}</p>

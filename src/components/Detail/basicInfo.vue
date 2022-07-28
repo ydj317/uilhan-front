@@ -1,18 +1,18 @@
 <template>
-  <div id="eModelTitle_0" class="_container">
+  <div id="eModelTitle_0" class="p20 bg-white">
     <h1><strong>기본정보</strong></h1>
 
     <!--항목 리스트-->
-    <div class="item" v-for="item in CONFIG">
+    <div class="mb12" v-for="item in CONFIG">
       <div v-if="!item.hide">
         <p>{{ item.text }}</p>
-        <a-input class="item" v-if="item.editor" v-model:value="product[item.key]" :placeholder="`${item.text} 값을 입력하세요.`"/>
-        <a-alert class="item not_editor" v-else :message="product[item.key]" type="info" />
+        <a-input class="mb12" v-if="item.editor" v-model:value="product[item.key]" :placeholder="`${item.text} 값을 입력하세요.`"/>
+        <a-alert class="mb12 bg-white" v-else :message="product[item.key]" type="info" />
       </div>
     </div>
 
     <!--마켓 상품상세 바로가기 버튼-->
-    <div class="button">
+    <div class="mt20">
       <a-button type="primary" ghost @click="openWindow(product.item_url)">
         <strong>상품상세페이지</strong>
       </a-button>
@@ -81,26 +81,4 @@ export default {
 
 </script>
 
-<style scoped>
-/*!*DEBUG*!*/
-/*div {*/
-/*  outline: 1px solid red;*/
-/*}*/
-
-.not_editor {
-  background-color: #f0f2f5;
-  border: none;
-}
-._container {
-  background-color: white;
-  margin:  0 24px 0 24px;
-  padding: 40px 20px 1px 20px;
-}
-
-.item {
-  margin-bottom: 12px;
-}
-.button {
-  margin-top: 20px
-}
-</style>
+<style scoped></style>

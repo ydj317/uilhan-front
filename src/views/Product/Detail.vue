@@ -1,8 +1,8 @@
 <template>
-  <div class="detail" v-if="product.onload">
+  <div id="container" class="w100 pl25 pr25" v-if="product.onload">
     <!--loading-->
-<!--    <loading v-model:active="product.loading" :can-cancel="false" :is-full-page="true"/>-->
-    <a-spin :indicator="product.loading" />
+    <loading v-model:active="product.loading" :can-cancel="false" :is-full-page="true"/>
+
     <!--번역팝업-->
     <TextTranslate></TextTranslate>
 
@@ -41,23 +41,23 @@
   </div>
 </template>
 <script>
+import 'vue-loading-overlay/dist/vue-loading.css';
+import '../../assets/css/global.css';
 
-
-import {lib} from 'util/lib';
+import {lib} from '@/util/lib';
 import {forEach} from "lodash-es";
 import {mapState} from 'vuex';
 import {useRoute} from 'vue-router';
-import {AuthRequest} from 'util/request';
+import {AuthRequest} from '@/util/request';
 import {defineComponent} from 'vue';
 
 import Cookie from 'js-cookie';
-import router from 'router';
+import router from '../../router';
 
-import Sku from 'components/Detail/sku';
+import Sku from 'components/Detail/Sku';
 import Spec from 'components/Detail/Spec.vue';
 import Relaket from 'components/Detail/Relaket';
-// import Loading from 'vue-loading-overlay';
-// import 'vue-loading-overlay/dist/vue-loading.css';
+import Loading from 'vue-loading-overlay';
 import BasicInfo from 'components/Detail/basicInfo';
 import Navigation from 'components/Detail/nanigation';
 import CustomsInfo from 'components/Detail/customsInfo';
@@ -73,6 +73,7 @@ export default defineComponent({
     Sku,
     Spec,
     Relaket,
+    Loading,
     BasicInfo,
     Navigation,
     CustomsInfo,
@@ -227,17 +228,4 @@ export default defineComponent({
 
 </script>
 
-<style scoped>
-/*!*DEBUG*!*/
-/*div {*/
-/*  outline: 1px solid red;*/
-/*}*/
-
-/* 상품상세 全局 CSS (수정함 안됨~!) */
-.container {
-  background-color: white;
-  margin: 22px;
-  padding: 22px;
-}
-
-</style>
+<style scoped></style>
