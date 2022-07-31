@@ -105,6 +105,19 @@
       </div>
     </div>
 
+    <div>
+      <h4>이미지 번역회수 :</h4>
+      <div>
+        100회
+      </div>
+
+      <div class="acc_input_block">
+        <a-input class="acc_input" v-model:value="marginName" placeholder="명" />
+        <a-input class="acc_input" v-model:value="marginValue" placeholder="값" />
+        <a-button @click="updateFormula('margin')" class="acc_button_margin" type="primary">등록</a-button>
+      </div>
+    </div>
+
     <!--    <template v-slot:handle>-->
     <!--      <div class="handle" @click="visible = !visible">-->
     <!--        <SettingOutlined />-->

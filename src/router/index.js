@@ -36,12 +36,13 @@ const routes = [
             /* webpackChunkName: '/prd_detail' */
             component: () => import("views/Product/Detail"),
           },
-          // {
-          //   path: "/user/Manager",
-          //   name: "user_manager",
-          //   /* webpackChunkName: 'user_manager' */
-          //   component: () => import("../views/User/Manager"),
-          // },
+          {
+            path: "/user/manage",
+            name: "user_manage",
+            /* webpackChunkName: 'user_manager' */
+            meta: { authority: ["ROLE_ADMIN"] },
+            component: () => import("views/User/Manage"),
+          },
           // {
           //   path: "/user/register",
           //   name: "user_register",
