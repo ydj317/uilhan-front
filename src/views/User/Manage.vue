@@ -1,5 +1,5 @@
 <template>
-  <div id="container" class="w100 pl25 pr25" >
+  <div id="container" >
     <loading v-model:active="bLoading"
              :can-cancel="false"
              :is-full-page="true"/>
@@ -8,8 +8,10 @@
       <a-select v-model:value="search_key" style="width: 120px">
         <a-select-option value="user_id">유저 아이디</a-select-option>
       </a-select>
-      <a-input style="width: 500px; margin-left: 10px" v-model:value="search_value" placeholder="키워드" />
+      <a-input style="width: 500px; margin-left: 10px" v-model:value="search_value" placeholder="유저아이디" />
+
       <a-button @click="getUserList" style="width: 100px; margin-left: 10px" type="primary">검색</a-button>
+      <a-button @click="getrate" style="width: 100px; margin-left: 10px" type="primary">getrate</a-button>
     </div>
     <div id="list" class="p20 bg-white">
       <a-table :bordered="false" :columns="columns" :data-source="userList" :pagination="{hideOnSinglePage:true}">
@@ -29,7 +31,7 @@
             </div>
           </template>
           <template v-else-if="column.key === 'action'">
-            <div style="text-align: center;"><a-button @click="openRechargePop">충전</a-button></div>
+            <div style="text-align: center;"><a-button @click="openRechargePop(record.id, record.now_recharge, record.username)">충전</a-button></div>
           </template>
           <template v-else>
             <div  style="text-align: center;">{{record[column.key]}}</div>
@@ -52,7 +54,7 @@
             dataIndex: 'now_recharge',
             key: 'now_recharge',
             width: 100,}]"
-            :data-source="[{now_recharge: 20, username: 'fdsafdsa22'}]"
+            :data-source="userRemaining"
             :pagination="{hideOnSinglePage:true}"
         >
           <template #headerCell="{ column }">
@@ -79,8 +81,8 @@
       </div>
       <template v-slot:footer>
         <div style="text-align: center">
-          <a-button type="primary" @click="recharge('single')">확인</a-button>
-          <a-button type="primary" @click="closeRecharge('single')">취소</a-button>
+          <a-button type="primary" @click="recharge()">확인</a-button>
+          <a-button type="primary" @click="closeRecharge()">취소</a-button>
         </div>
 
       </template>
@@ -123,6 +125,8 @@ export default defineComponent({
     let rechargePop = ref(false);
     let recharge_value = ref(0);
     let bLoading = ref(false);
+    let id = (0);
+    let userRemaining = ref([]);
     onMounted(async () => {
       if (roles.value === null || roles.value.indexOf('ROLE_ADMIN') === -1) {
         return false;
@@ -166,6 +170,7 @@ export default defineComponent({
           // for (res.data === undefined || res.data === null) {
           //
           // }
+
           for (let i=0; i < res.data.length; i++) {
             res.data[i].checked = false;
           }
@@ -179,6 +184,12 @@ export default defineComponent({
       });
     };
 
+    const getrate = () => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/getrate').then((res) => {
+        console.log(res)
+      });
+    };
+
     const recharge = () => {
       let intPattern = /^[0-9]*$/;
       if (isNaN(parseInt(recharge_value.value)) === true ||
@@ -188,9 +199,14 @@ export default defineComponent({
       }
 
       bLoading.value = true;
-      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/recharge', {}).then((res) => {
+
+      let data = {
+        recharge: recharge_value.value,
+        user: id
+      };
+
+      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/recharge', data).then((res) => {
         let returnData = res.data;
-        console.log(returnData)
         if (returnData.status === undefined || returnData.status !== '2000') {
           alert(returnData.msg);
           return false;
@@ -199,15 +215,20 @@ export default defineComponent({
         rechargePop.value = false;
         recharge_value.value = 0;
 
-        console.log('rechargePop', rechargePop);
         alert(returnData.msg);
         getUserList();
         bLoading.value = false;
       });
     };
-    const closeRecharge = () => {};
-    const openRechargePop = () => {
+    const closeRecharge = () => {
+      id = 0;
+      rechargePop.value = false;
+    };
+
+    const openRechargePop = (no, now_recharge, username) => {
+      id = no;
       rechargePop.value = true;
+      userRemaining.value = [{now_recharge: now_recharge, username: username}];
     };
 
     const register = () => {
@@ -239,15 +260,20 @@ export default defineComponent({
       key: 'recharge',
       width: 100,
     }, {
-      title: '남은 회수',
+      title: '기존 회수',
       dataIndex: 'remaining',
       key: 'remaining',
       width: 100,
     }, {
-      title: '충전유형',
-      dataIndex: 'type',
-      key: 'type',
-      width: 100,
+        title: '총수량',
+        dataIndex: 'total',
+        key: 'total',
+        width: 100,
+    }, {
+        title: '충전유형',
+        dataIndex: 'type',
+        key: 'type',
+        width: 100,
     }, {
       title: '충전시간',
       dataIndex: 'ins_time',
@@ -278,7 +304,9 @@ export default defineComponent({
       rechargePop,
       openRechargePop,
       recharge_value,
-      bLoading
+      bLoading,
+      userRemaining,
+      getrate
     };
   },
 });

@@ -1,11 +1,12 @@
 <template>
   <div>
-<!--    <loading :active="bLoading" :can-cancel="false" :is-full-page="true"/>-->
-    <a-spin :indicator="bLoading" />
+    <loading :active="bLoading" :can-cancel="false" :is-full-page="true"/>
+<!--    <a-spin :indicator="bLoading" />-->
     <!-- a-modal 渲染时 数据处理 同时使用 if 和 visible 请不要删除 -->
 
     <template title="번역팝업" >
       <a-modal v-if="bImageEditorModule" :visible="bImageEditorModule" @ok="mHandleOkTranslateWindow" @cancel="mCloseTranslateWindow" :title="sModuleTitle" :maskClosable="false" width="60%" >
+        <div class="w100 right center"><h3 class="mr50">남은회수: <span class="red">{{recharge}}</span></h3></div>
         <table style="width: 100%; height: 600px;">
           <tbody>
           <tr>
@@ -170,7 +171,7 @@
 <script>
 import {AuthRequest} from 'util/request';
 import ImageEditor from "./imageEditor.vue";
-// import Loading from 'vue-loading-overlay';
+import loading from 'vue-loading-overlay';
 
 export default {
   name: "ImageEditorGroup",
@@ -178,6 +179,7 @@ export default {
 
   components: {
     ImageEditor,
+    loading
   },
 
   props: {},
@@ -191,6 +193,8 @@ export default {
 
     return {
       oRadioStyle,
+
+      recharge: 0,
 
       // Status
       bLoading: false,
@@ -217,6 +221,23 @@ export default {
   },
 
   methods: {
+    getRecharge() {
+      AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/getrecharge').then((res) => {
+        if (res.data === undefined || res.data.status !== '2000') {
+          alert('남은회수 호출 실패');
+          return false;
+        }
+
+        try {
+          this.recharge = res.data.recharge;
+        } catch (e) {
+          alert('남은회수 호출 실패');
+        }
+
+        this.bLoading = false;
+      });
+    },
+
     mCopy(obj) {
       return JSON.parse(JSON.stringify(obj));
     },
@@ -292,6 +313,7 @@ export default {
       }
 
       try {
+        console.log(res.data);
         res.data['list'].map((aPhoto, i) => {
           this.aPhotoCollection[i] = {
             "msg" : aPhoto.msg || '',
@@ -307,6 +329,7 @@ export default {
         })
         this.mSetTranslateImage();
         this.bTranslateStatus = true;
+        this.recharge = res.data.recharge;
       } catch (e) {
         alert('번역api 호출 실패');
       }
@@ -627,6 +650,10 @@ export default {
         } catch (e) {}
       })
     },
+  },
+
+  mounted() {
+    this.getRecharge();
   }
 };
 </script>

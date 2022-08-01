@@ -1,7 +1,7 @@
 <template>
   <div id="eModelTitle_2" class="mt20 p20 bg-white" v-if="product.item_option">
     <!--세팅,추가-->
-    <h1><strong>옵션</strong></h1>
+    <h1><strong>옵션설정</strong></h1>
 
     <!--세팅버튼-->
     <div class="setting">
@@ -99,7 +99,6 @@ import {mapState} from 'vuex';
 export default {
   computed: {
     ...mapState([
-      'product',
       'product'
     ])
   },
@@ -158,7 +157,7 @@ export default {
         let bPush = true;
         forEach(this.product.sku, original_sku => {
           let aName = original_sku.spec.split('::');
-          if (aName.includes(sku[0].name) && aName.includes(sku[1].name)) {
+          if ((aName.includes(sku[0].name) && sku[1] === undefined) || (aName.includes(sku[0].name) && aName.includes(sku[1].name))) {
             bPush = false;
             // 기존 sku 는 그대로 유지
             format_sku.push(original_sku);

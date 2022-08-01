@@ -1,7 +1,7 @@
 <template>
   <div id="eModelTitle_1" class="mt20 p20 bg-white">
     <!--title-->
-    <h1><strong>이미지</strong></h1>
+    <h1><strong>상품 이미지</strong></h1>
 
     <!--상단 버튼-->
     <div id="eModelTitle_1_header" class="w16 mb20 space-between">
@@ -33,9 +33,9 @@
             <img class="w100" :src="element.url" @click="outElChecking(element, index)" alt=""/>
 
             <!--버튼-->
-            <div id="eModelTitle_1_conent_button_group" class="w100 center space-around h21">
-              <a-button class="w40 h70 center" type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
-              <a-popconfirm class="w40 h70 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
+            <div id="eModelTitle_1_conent_button_group" class="w100 center space-around h40">
+              <a-button class="w40 h30 center" type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
+              <a-popconfirm class="w40 h30 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
                 <a-button type="dashed"><span>삭제</span></a-button>
               </a-popconfirm>
             </div>

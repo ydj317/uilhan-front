@@ -1,6 +1,6 @@
 <template>
   <div id="eModelTitle_3" class="mt20 p20 bg-white">
-    <h1><strong>품목</strong></h1>
+<!--    <h1><strong>품목</strong></h1>-->
 
     <!--sku 상단 버튼-->
     <div class="top_button_container">
@@ -419,10 +419,14 @@ export default {
 }
 
 .top_button_left_item_button {
-  background-color: #3ddc97;
+  background-color: #f06543;
   color: white;
   border: none;
   border-radius: 5px;
+}
+
+.top_button_left_item_button:first-child {
+  background-color: #3ddc97;
 }
 
 .top_button_right_item {

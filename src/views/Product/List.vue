@@ -1,18 +1,14 @@
 <template>
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
 
-  <div id="container" class="w97 bg-f0f2f5">
+  <div id="container">
     <!--검색-->
-    <div id="search" class="pl20 pr20 pb20 mb30 bg-white">
+    <div id="header" class="plr20 bg-white">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
       <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
         <h1>{{ CONFIG.label }}</h1>
         <a-radio-group v-model:value="this[CONFIG.key]" :class="CONFIG.group_class">
-          <a-radio-button
-              v-for="options in CONFIG.options"
-              :class="CONFIG.key"
-              :value="options.value"
-          >
+          <a-radio-button v-for="options in CONFIG.options" :class="CONFIG.key" :value="options.value">
             {{ options.label }}
           </a-radio-button>
         </a-radio-group>
@@ -21,13 +17,13 @@
       <!--검색기간-->
       <div class="mt10">
         <h1>기간</h1>
-        <a-select class="w10 text-center" v-model:value="date_type">
+        <a-select v-model:value="date_type" class="w10 text-center">
           <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
         </a-select>
-        <a-space class="w25" direction="vertical">
+        <a-space direction="vertical" class="w25">
           <a-range-picker
               class="w100"
-              :value="date"
+              v-model:value="date"
               :placeholder="['Start Time', 'End Time']"
               format="YYYY-MM-DD"
               @change="onChangeDatePicker"
@@ -36,23 +32,21 @@
       </div>
 
       <!--검색입력창-->
-      <div class="mt10">
+      <div class="mt10 pb20">
         <h1>키워드</h1>
-        <a-select class="w10 mr1 text-center" v-model:value="search_key">
-          <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">{{
-              config.label
-            }}
+        <a-select v-model:value="search_key" class="w10 mr1 text-center">
+          <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">{{ config.label }}
           </a-select-option>
         </a-select>
-        <a-input class="w25 mr1 text-center" v-model:value="search_value" placeholder="키워드"/>
-        <a-button class="w5" @click="getList" type="primary">검색</a-button>
+        <a-input v-model:value="search_value" placeholder="키워드" class="w25 mr1 text-center"/>
+        <a-button @click="getList" type="primary" class="w5">검색</a-button>
       </div>
     </div>
 
     <!--상품 리스트-->
-    <div id="list" class="p20 bg-white">
+    <div id="content" class="mt20 plr20 bg-white">
       <!--top-->
-      <div id="list_header" class="mb20 row space-between">
+      <div id="content-header" class="pt20 row space-between">
         <!--left button-->
         <div class="w18 space-between">
           <!--상품번역-->
@@ -77,10 +71,15 @@
       </div>
 
       <!--content-->
-      <div id="list_content">
+      <div id="content-content" class="pt20">
         <!--전체선택-->
-        <a-checkbox class="check_all" v-model:checked="checked" @change="checkItem"></a-checkbox>
+<!--        <a-checkbox v-model:checked="checked" @change="checkItem" id="content-content-checkAll"></a-checkbox>-->
         <a-table :bordered="true" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination">
+          <template #headerCell="{ column }">
+            <template v-if="column.dataIndex === 'item_id'">
+              <a-checkbox v-model:checked="checked" @change="checkItem" id="content-content-checkAll"></a-checkbox>
+            </template>
+          </template>
           <template v-for="col in LIST_KEYS_CONFIG" #[col]="{ text, record, line }" :key="col">
             <!--체크박스-->
             <a-checkbox v-if="equal(col, 'item_id')" v-model:checked="record.checked"></a-checkbox>
@@ -90,9 +89,10 @@
             <div v-if="equal(col, 'item_name')">
               <!--상품명-->
               <div>
-                <a-button type="link" :href="`/product/detail/${record.item_id}`" :target="'_blank'">
+                <a-button class="init-pmbo" type="link" :href="`/product/detail/${record.item_id}`">
                   {{ record.item_name }}
                 </a-button>
+                <div>{{ record.item_trans_name }}</div>
               </div>
               <!--상품코드-->
               <div>
@@ -132,37 +132,50 @@
     </div>
 
     <!--제휴사연동-->
-    <div class="sync">
-      <a-modal width="600px" :maskClosable="false" v-model:visible="singleSyncPop" @ok="">
-        <template #title>
-          <h3 class="flex-center"><b>제휴사 상품연동</b></h3>
-        </template>
-        <a-checkbox style="margin-left: 20px" v-model:checked="checkAll" @click="checkAllMarket(checkAll)">전체선택
-        </a-checkbox>
-
-        <a-list :data-source="singleDetail.item_sync_market" style="height: 600px;overflow-y:scroll;">
-          <template #renderItem="{ item }">
-            <a-list-item>
-              <div v-if="item.status !== 'unsync'" :class="item.status + ` prdSyncResult`">
-                <a-checkbox v-model:checked="item.checked"></a-checkbox>
-                <span style="margin-left: 10px"><b>연동계정 : {{ item.market_account }}</b></span><br/>
-                <span style="margin-left: 20px;"><b>등록시간 : {{ item.ins_time }}</b></span><br/>
-                <span style="margin-left: 20px;"><b>재연동시간 : {{ item.upd_time }}</b></span><br/>
-                <span style="margin-left: 20px;"><b>연동결과 : {{ item.result }}</b></span>
-              </div>
-              <div v-else :class="item.status + ` prdSyncResult`">
-                <a-checkbox v-model:checked="item.checked"></a-checkbox>
-                <span style="margin-left: 10px"><b>연동계정 : {{ item.market_account }}</b></span><br/>
-                <span style="margin-left: 25px"><b>미연동</b></span>
-              </div>
-            </a-list-item>
+    <div id="footer">
+      <!--제휴사 상품연동-->
+      <a-modal :maskClosable="false" v-model:visible="singleSyncPop" class="col w50">
+        <h3><strong>제휴사 상품연동</strong></h3>
+<!--        <a-checkbox v-model:checked="checkAll" @click="checkAllMarket(checkAll)"></a-checkbox>-->
+        <!--개선로직-->
+        <a-table
+            class="tableSyncStatus"
+            :dataSource="singleDetail.item_sync_market"
+            :columns="SYNC_COLUMNS_CONFIG"
+        >
+          <template #headerCell="{ column }">
+            <template v-if="column.key === 'checked'">
+              <a-checkbox v-model:checked="checkAll" @click="checkAllMarket(checkAll)"></a-checkbox>
+            </template>
           </template>
-        </a-list>
+
+          <template #checked="{record, value}">
+            <a-checkbox v-model:checked="record.checked"></a-checkbox>
+          </template>
+          <template #market_account="{record, value}">
+            연동계정 : {{ record.market_account }}
+          </template>
+          <template #status="{record, value}">
+            <div class="syncStatus" :data-status="value">
+              {{ {"success": "성공", "failed": "실패", "unsync": "미연동"}[value] }}<span v-if="record.status === 'failed'"> 실패원인: {{record.result}}</span>
+            </div>
+          </template>
+          <template #ins_time="{record, value}">
+            <div v-if="record.status !== 'unsync'">
+<!--              <div>등록시간 : {{ record.ins_time }}</div>-->
+              <div>연동시간 : {{ record.upd_time }}</div>
+            </div>
+          </template>
+        </a-table>
+
         <template v-slot:footer>
           <a-button type="primary" @click="testsync('single')">선택제휴사연동</a-button>
           <a-button type="primary" @click="closeResultPop('single')">확인</a-button>
+          <a-button type="primary" @click="closeResultPop('single')" class="bg-697783">닫기</a-button>
         </template>
       </a-modal>
+
+      <!--제휴사 연동결과-->
       <a-modal width="600px" :maskClosable="false" v-model:visible="marketSyncPop" title="제휴사연동결과" @ok="">
         <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
         <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
@@ -186,7 +199,7 @@
 </template>
 
 <script>
-import {defineComponent} from 'vue';
+import {defineComponent, ref} from 'vue';
 import {AuthRequest} from '@/util/request';
 import moment from 'moment';
 import Loading from 'vue-loading-overlay';
@@ -201,7 +214,7 @@ export default defineComponent({
   computed: {
     ...mapState([
       'common',
-    ])
+    ]),
   },
 
   data() {
@@ -374,6 +387,40 @@ export default defineComponent({
           this.getList();
         },
       },
+      SYNC_COLUMNS_CONFIG: [
+        {
+          title: '',
+          dataIndex: 'checked',
+          key: 'checked',
+          slots: {
+            customRender: 'checked',
+          },
+        },
+        {
+          title: '쇼핑몰',
+          dataIndex: 'market_account',
+          key: 'market_account',
+          slots: {
+            customRender: 'market_account',
+          },
+        },
+        {
+          title: '연동상태',
+          dataIndex: 'status',
+          key: 'status',
+          slots: {
+            customRender: 'status',
+          }
+        },
+        {
+          title: '연동시간',
+          dataIndex: 'ins_time',
+          key: 'ins_time',
+          slots: {
+            customRender: 'ins_time',
+          }
+        },
+      ],
 
       checked: false,
       indicator: false,
@@ -410,6 +457,12 @@ export default defineComponent({
 
   methods: {
     MarketListPop() {
+      this.common.marketList = this.marketList;
+      this.common.indicator = this.indicator;
+      this.common.singleDetail = this.singleDetail;
+      this.common.prdlist = this.prdlist;
+      this.common.options = this.options;
+
       this.common.MarketListVisible = true;
     },
 
@@ -733,6 +786,18 @@ export default defineComponent({
         this.singleDetail.item_sync_market[i].checked = isChecked;
       }
 
+      setTimeout(()=>{
+        Object.values(document.querySelectorAll('.syncStatus')).map(el => {
+          el.parentElement.parentElement.style.backgroundColor = '#f9f9f9';
+          if (el.getAttribute('data-status') === 'success') {
+            el.parentElement.parentElement.style.backgroundColor = '#fff7f5';
+          }
+        })
+
+        Object.values(document.querySelectorAll('.tableSyncStatus thead th')).map(el => {
+          el.style.backgroundColor = '#f7fdff';
+        })
+      })
     },
 
     checkAllMarket(checkAll) {
@@ -758,14 +823,17 @@ export default defineComponent({
     },
 
     css() {
-      Object.values(document.querySelectorAll('#list_content th')).map(th => {
+      Object.values(document.querySelectorAll('#content-content th')).map(th => {
         th.style.margin = '0';
         th.style.padding = '0';
         th.style.backgroundColor = '#f7fdff';
         th.style.textAlign = 'center';
         th.style.height = '40px';
-      })
-    }
+      });
+
+      document.querySelector('[placeholder="Start Time"]').style.textAlign = 'center';
+      document.querySelector('[placeholder="End Time"]').style.textAlign = 'center';
+    },
   },
 
   mounted() {
@@ -779,25 +847,25 @@ export default defineComponent({
 <!--search-->
 <style scoped>
 /* ant vue 버튼 버그 */
-.ant-radio-button-wrapper:not(:first-child)::before {
+#header .ant-radio-button-wrapper:not(:first-child)::before {
   content: none;
 }
 
 /* 모든 title */
-#search h1 {
+#header h1 {
   font-size: 15px;
   font-weight: 600;
 }
 
 /* mouse leave */
-.market_code {
+#header .market_code {
   border: 1px solid #f06543 !important;
   border-radius: 5px !important;
   color: #f06543 !important;
   background-color: white !important;
 }
 
-.market_code:first-child {
+#header .market_code:first-child {
   border: 1px solid #3ddc97 !important;
   border-radius: 5px !important;
   color: white !important;
@@ -805,36 +873,36 @@ export default defineComponent({
 }
 
 /* mouse over */
-.market_code:hover {
+#header .market_code:hover {
   color: white !important;
   background-color: #f06543 !important;
 }
 
-.market_code:first-child:hover {
+#header .market_code:first-child:hover {
   color: white !important;
   background-color: #25ce85 !important;
 }
 
 /* checked */
-.market_code.ant-radio-button-wrapper-checked {
+#header .market_code.ant-radio-button-wrapper-checked {
   outline: 2px solid #f7b2a1 !important;
 }
 
-.market_code:first-child.ant-radio-button-wrapper-checked {
+#header .market_code:first-child.ant-radio-button-wrapper-checked {
   outline: 2px solid #acf0d3 !important;
 }
 
 /* mouse leave */
-.trans_status,
-.sync_status {
+#header .trans_status,
+#header .sync_status {
   border: 1px solid #eff2f7 !important;
   border-radius: 5px !important;
   background-color: #eff2f7 !important;
   color: black !important;
 }
 
-.trans_status:first-child,
-.sync_status:first-child {
+#header .trans_status:first-child,
+#header .sync_status:first-child {
   border: 1px solid #3051d3 !important;
   border-radius: 5px !important;
   background-color: #3051d3 !important;
@@ -842,29 +910,29 @@ export default defineComponent({
 }
 
 /* mouse over */
-.trans_status:hover,
-.sync_status:hover {
+#header .trans_status:hover,
+#header .sync_status:hover {
   background-color: #d6ddea !important;
 }
 
-.trans_status:first-child:hover,
-.sync_status:first-child:hover {
+#header .trans_status:first-child:hover,
+#header .sync_status:first-child:hover {
   background-color: #2744b6 !important;
 }
 
 /* checked */
-.trans_status.ant-radio-button-wrapper-checked,
-.sync_status.ant-radio-button-wrapper-checked {
+#header .trans_status.ant-radio-button-wrapper-checked,
+#header .sync_status.ant-radio-button-wrapper-checked {
   outline: 2px solid #e7e9eb !important;
 }
 
-.trans_status:first-child.ant-radio-button-wrapper-checked,
-.sync_status:first-child.ant-radio-button-wrapper-checked {
+#header .trans_status:first-child.ant-radio-button-wrapper-checked,
+#header .sync_status:first-child.ant-radio-button-wrapper-checked {
   outline: 2px solid #a7b5ec !important;
 }
 
 /* 검색버튼 */
-#search button:last-child {
+#header button:last-child {
   color: white;
   background-color: #2c4cc7;
 }
@@ -873,32 +941,41 @@ export default defineComponent({
 <!--list-->
 <style scoped>
 /* ant vue 버튼 버그 */
-.ant-radio-button-wrapper:not(:first-child)::before {
+#content .ant-radio-button-wrapper:not(:first-child)::before {
   content: none;
 }
 
-#list_header button {
+#content-header button {
   background-color: #f06543;
   border-radius: 5px;
   border: none;
 }
 
-#list_content .check_all {
+#content-content-checkAll {
   position: absolute;
   z-index: 9;
-  left: 310px;
-  top: 514px;
+  left: 305px;
+  top: 505px;
 }
 
-#list_content img {
+#content-content img {
   width: 100px;
   height: 100px;
 }
 
-#list_content .not_sync {
+#content-content .not_sync {
   background-color: #eff2f7;
   color: black;
   border: none
+}
+</style>
+
+<!--footer-->
+<style scoped>
+/* 모든 title */
+#footer h3 {
+  font-size: 15px !important;
+  font-weight: 600;
 }
 </style>
 

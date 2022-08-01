@@ -1,39 +1,44 @@
 <template>
   <div>
     <a-modal v-model:visible="common.MarketListVisible">
-      <!--   타이틀   -->
+      <!--title-->
       <template #title>
         <h3 class="titleStyle"><b>연동할 제휴사</b></h3>
       </template>
-      <a-table bordered="false" :columns="columns" :data-source="MarketList" :pagination="{hideOnSinglePage:true}">
+
+      <a-table :columns="columns" :data-source="common.options" :pagination="{hideOnSinglePage:true}">
+        <!--headerCell-->
         <template #headerCell="{ column }">
-          <template v-if="column.key === 'all'">
-            <div style="text-align: center"><a-button>{{column.title}}</a-button></div>
+          <template v-if="column.key === 'ssi_ix'">
+            <div class="center">
+              <a-checkbox v-model:checked="checkAll" @click="checkAllMarket(checkAll)"></a-checkbox>
+            </div>
           </template>
           <template v-else>
             <div style="text-align: center">{{column.title}}</div>
           </template>
         </template>
 
+        <!--bodyCell-->
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'all'">
-            <div style="text-align: center">
-              <a-checkbox v-model:checked="checked"></a-checkbox>
+          <template v-if="column.key === 'ssi_ix'">
+            <div class="center">
+              <a-checkbox v-model:checked="record.checked"></a-checkbox>
             </div>
           </template>
-          <template v-else-if="column.key === 'mallid'">
-            <div style="text-align: center;"> {{record.mallid}} </div>
+          <template v-else-if="column.title === '쇼핑몰'">
+            <div style="text-align: center;"> {{record.value.split('::')[1]}} </div>
           </template>
-          <template v-else-if="column.key === 'market'">
-            <div  style="text-align: center;">{{record.market}}</div>
+          <template v-else-if="column.title === '제휴사'">
+            <div  style="text-align: center;">{{record.value.split('::')[0]}}</div>
           </template>
         </template>
       </a-table>
 
-      <!--   버튼    -->
+      <!--footer-->
       <template v-slot:footer>
         <div style="text-align: center">
-          <a-button type="primary" @click="">연동</a-button>
+          <a-button type="primary" @click="testsync('multi')">연동</a-button>
           <a-button type="primary" @click="MarketListClose">닫기</a-button>
         </div>
       </template>
@@ -43,6 +48,7 @@
 
 <script>
 import {mapState} from 'vuex';
+import {AuthRequest} from '@/util/request';
 
 export default {
   computed: {
@@ -53,49 +59,142 @@ export default {
 
   data() {
     return {
-      MarketList,
-      columns
-    }
+      columns: [
+        {
+          title: '전체',
+          dataIndex: 'ssi_ix',
+          key: 'ssi_ix',
+          width: 20,
+        },
+        {
+          title: '쇼핑몰',
+          dataIndex: 'value',
+          key: 'value',
+          width: 100,
+        },
+        {
+          title: '제휴사',
+          dataIndex: 'value',
+          key: 'value',
+          width: 100,
+        },
+      ],
+      checkAll: false,
+    };
   },
 
   methods: {
     MarketListClose() {
       this.common.MarketListVisible = false;
-    }
+    },
+
+    testsync(type) {
+      this.common.indicator = true;
+      let list = '';
+      let marketList = [];
+      if (type === 'multi') {
+        marketList = this.common.marketList;
+        list = this.getCheckList();
+      } else {
+        marketList = this.getCheckedMarketList();
+        list = this.common.singleDetail.item_id + '';
+      }
+
+      if (list === ',' || list.length === 0) {
+        alert('상품을 선택해주세요');
+        this.common.indicator = false;
+        return false;
+      }
+
+      marketList = [];
+      this.common.options.map((options, i) => {
+        if (options.checked) {
+          delete this.common.options[i].checked;
+          marketList.push(options.value);
+        }
+      })
+
+      if (marketList.length === undefined) {
+        alert('선택된 제휴사가 없습니다.');
+        this.common.indicator = false;
+        return false;
+      }
+
+      AuthRequest.get(process.env.VUE_APP_API_URL + '/api/syncmarket',
+          {params: {list: list, market: marketList, options: this.common.options}}).then((res) => {
+        let returnData = res.data;
+
+        if (returnData.status === undefined || returnData.status !== '2000') {
+          alert(returnData.msg);
+        }
+
+        if (type === 'multi') {
+          // this.setResultPopData(true, [
+          //   returnData.data.success,
+          //   returnData.data.failedCode,
+          //   returnData.data.failed,
+          //   returnData.data.total,
+          //   returnData.data.data,
+          // ]);
+        } else {
+          this.common.MarketListVisible = false;
+          this.common.singleDetail = [];
+          // this.checkedList = [];
+
+          // this.setResultPopData(true, [
+          //   returnData.data.success,
+          //   returnData.data.failedCode,
+          //   returnData.data.failed,
+          //   returnData.data.total,
+          //   returnData.data.data,
+          // ]);
+        }
+
+        this.common.indicator = false;
+      });
+
+    },
+
+    getCheckList() {
+      let list = '';
+      for (let i = 0; i < this.common.prdlist.length; i++) {
+        if (this.common.prdlist[i].checked === true) {
+          let comma = i === 0 ? '' : ',';
+          list += comma + this.common.prdlist[i].item_id;
+        }
+      }
+
+      return list;
+    },
+
+    getCheckedMarketList() {
+      let list = [];
+
+      for (let i = 0; i < this.common.singleDetail.item_sync_market.length; i++) {
+        if (this.common.singleDetail.item_sync_market[i].checked === true) {
+          list.push(this.common.singleDetail.item_sync_market[i].market_account);
+        }
+      }
+
+      return list;
+    },
+
+    checkAllMarket(checkAll) {
+      for (let i = 0; i < this.common.options.length; i++) {
+        this.common.options[i].checked = !checkAll;
+      }
+    },
   },
 
   mounted() {},
 };
 
-const MarketList = [
-  {mallid: "rctaoye", market: '11st', ssi_ix: "2280"},
-  {mallid: "zhuoshun", market: 'auction', ssi_ix: "2281"},
-  {mallid: "yunmeng04", market: 'coupang', ssi_ix: "2319"}
-];
-
-const columns = [{
-  title: '전체',
-  dataIndex: 'all',
-  key: 'all',
-  width: 20,
-}, {
-  title: '쇼핑몰',
-  dataIndex: 'mallid',
-  key: 'mallid',
-  width: 100,
-}, {
-  title: '제휴사',
-  dataIndex: 'market',
-  key: 'market',
-  width: 100,
-}];
-
 </script>
 
 <style scoped>
-#container {
-  height: 800px;
-}
+/*#container {*/
+/*  height: 800px;*/
+/*}*/
 
 .titleStyle {
   text-align: center;

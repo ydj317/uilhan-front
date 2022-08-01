@@ -14,7 +14,7 @@ import {
     Menu,
     List,
     Input,
-    DatePicker,
+    // DatePicker,
     Select,
     Table,
     Descriptions,
@@ -36,6 +36,8 @@ import {
     Alert,
     Card,
 } from "ant-design-vue";
+
+import DatePicker from 'ant-design-vue/es/date-picker/moment';
 
 createApp(App)
     .use(store)

@@ -14,7 +14,7 @@
     <div style="margin-bottom: 20px">
       <UserOutlined style="font-size: 20px;margin-right: 10px" />
       <h2 style="display: inline-block; width: 63%">{{memberName}}</h2>
-      <a-button type="dashed" @click="logout">로그아웃</a-button>
+      <a-button class="bg-ff4d4f white" @click="logout">로그아웃</a-button>
     </div>
 
 
@@ -22,38 +22,39 @@
       <h4>세션키 설정 :</h4>
       <div>
         <a-input class="" v-model:value="accessKey" placeholder="AccessKey" />
-        <a-input style="margin-top: 10px" v-model:value="secretKey" placeholder="SecretKey" />
-        <a-button @click="addKey" style="margin-top: 10px" type="primary">등록</a-button>
+        <a-input class="mt5" v-model:value="secretKey" placeholder="SecretKey" />
+        <a-button class="mt20 w100 bg-3ddc97 init-pmbo" @click="addKey" type="primary">등록</a-button>
       </div>
       <a-divider />
     </div>
 
     <div>
       <h4>마진율 설정 :</h4>
-      <div>
+      <div class="space-between">
         <a-select
+            class="w79"
             ref="select"
             v-model:value="marginDefValue"
-            style="width: 180px"
             :options="margin"
             @change="marginChange"
         >
         </a-select>
-        <a-button @click="delFormula('margin')" class="acc_button_margin" type="primary">삭제</a-button>
+        <a-button @click="delFormula('margin')" class="w20 bg-00a7e1" type="primary">삭제</a-button>
       </div>
 
-      <div class="acc_input_block">
-        <a-input class="acc_input" v-model:value="marginName" placeholder="명" />
-        <a-input class="acc_input" v-model:value="marginValue" placeholder="값" />
-        <a-button @click="updateFormula('margin')" class="acc_button_margin" type="primary">등록</a-button>
+      <div class="mt5 space-between">
+        <a-input class="w39" v-model:value="marginName" placeholder="명" />
+        <a-input class="w39" v-model:value="marginValue" placeholder="값" />
+        <a-button @click="updateFormula('margin')" class="w20 bg-3051d3" type="primary">등록</a-button>
       </div>
     </div>
 
     <div>
       <a-divider />
       <h4>환율 설정 :</h4>
-      <div>
+      <div class="space-between">
         <a-select
+            class="w79"
             ref="select"
             v-model:value="rateDefValue"
             style="width: 180px"
@@ -61,33 +62,50 @@
             @change="rateChange"
         >
         </a-select>
-        <a-button @click="delFormula('rate')" class="acc_button_margin" type="primary">삭제</a-button>
+        <a-button @click="delFormula('rate')" class="w20 bg-00a7e1" type="primary">삭제</a-button>
       </div>
-      <div class="acc_input_block">
-        <a-input class="acc_input" v-model:value="rateName" placeholder="명" />
-        <a-input class="acc_input" v-model:value="rateValue" placeholder="값" />
-        <a-button  @click="updateFormula('rate')" class="acc_button_margin" type="primary">등록</a-button>
+      <div class="mt5 space-between">
+        <a-input class="w39" v-model:value="rateName" placeholder="명" />
+        <a-input class="w39" v-model:value="rateValue" placeholder="값" />
+        <a-button  @click="updateFormula('rate')" class="w20 bg-3051d3" type="primary">등록</a-button>
       </div>
     </div>
 
     <div>
       <a-divider />
+      <h4>이미지 번역 남은 회수</h4>
+      <a-input class="w39" :value="recharge" disabled />
+    </div>
+
+    <div>
+      <a-divider />
+      <h4>알리익스프래스 환율</h4>
+      <h4>한국 KRW {{this.rateKor}} : 중국 위안 1 위안</h4>
+    </div>
+
+    <div>
+      <a-divider />
       <h4>수집 가격 설정 :</h4>
-      <div class="acc_input_block">
-        <a-input class="price_input" v-model:value="priceRangeStart" placeholder="기준 시작" /> ~
-        <a-input class="price_input" v-model:value="priceRangeEnd" placeholder="기준 마감" />
-        <a-input style="margin-left: 5px" class="price_input" v-model:value="price" placeholder="가격" />
-        <a-select
-            ref="select"
-            v-model:value="priceType"
-            style="width: 80px;margin-right: 4px; margin-left: 4px;"
-        >
-          <a-select-option value="number">고정값</a-select-option>
-          <a-select-option value="percent">백분율</a-select-option>
-        </a-select>
-        <br/>
-        <a-button @click="addCollectionPrice" style="width: 44%; margin-top: 6px" type="primary">등록</a-button>
-        <a-button @click="delCollectionPrice" style="width: 43%; margin-top: 6px; margin-left: 10px" type="primary">삭제</a-button>
+      <div>
+        <div class="space-between">
+          <a-input class="w49" v-model:value="priceRangeStart" placeholder="기준 시작 ~" />
+          <a-input class="w49" v-model:value="priceRangeEnd" placeholder="기준 마감" />
+        </div>
+        <div class="mt5 space-between">
+          <a-input class="w49" v-model:value="price" placeholder="가격" />
+          <a-select
+              class="w49"
+              ref="select"
+              v-model:value="priceType"
+          >
+            <a-select-option value="number">고정값</a-select-option>
+            <a-select-option value="percent">백분율</a-select-option>
+          </a-select>
+        </div>
+        <div class="mt20 space-between">
+          <a-button class="w49 bg-3051d3" @click="addCollectionPrice" type="primary">등록</a-button>
+          <a-button class="w49 bg-00a7e1" @click="delCollectionPrice" type="primary">삭제</a-button>
+        </div>
       </div>
       <div style="margin-top: 10px;">
         <a-descriptions
@@ -102,19 +120,6 @@
             {{ item.price }} {{item.priceType === 'number' ? '원' : '%'}}
           </a-descriptions-item>
         </a-descriptions>
-      </div>
-    </div>
-
-    <div>
-      <h4>이미지 번역회수 :</h4>
-      <div>
-        100회
-      </div>
-
-      <div class="acc_input_block">
-        <a-input class="acc_input" v-model:value="marginName" placeholder="명" />
-        <a-input class="acc_input" v-model:value="marginValue" placeholder="값" />
-        <a-button @click="updateFormula('margin')" class="acc_button_margin" type="primary">등록</a-button>
       </div>
     </div>
 
@@ -136,37 +141,41 @@
             type="error" /><br/>
       </div>
 
-      <a-select
-          style="width: 200px; float: left"
-          :options="excelStyleDown"
-          v-model:value="excelStyleVal"
-      >
-      </a-select>
-      <a-button style="width: 120px; float: left; margin-left: 10px" @click="excelDown"><DownOutlined />양식따운</a-button>
+      <div class="space-between">
+        <a-select
+            class="w65"
+            :options="excelStyleDown"
+            v-model:value="excelStyleVal"
+        >
+        </a-select>
+        <a-button class="w33" @click="excelDown"><DownOutlined />양식따운</a-button>
+      </div>
 
-      <a-select
-          style="width: 200px; float: left; margin-top: 10px;"
-          :options="excelStyleUp"
-          v-model:value="excelStyleUpVal"
-      >
-      </a-select>
-      <a-upload
-          :showUploadList="false"
-          name="file"
-          :multiple="true"
-          :customRequest="excelUpload"
-          :beforeUpload="handleExcelBeforeUpload"
-          :headers="headers"
-      >
-        <a-button style="width: 120px; float: left; margin-left: 10px; margin-top: 10px" ><UploadOutlined />엑셀 업로드</a-button>
-      </a-upload>
+      <div class="space-between mt5">
+        <a-select
+            class="w65"
+            :options="excelStyleUp"
+            v-model:value="excelStyleUpVal"
+        >
+        </a-select>
+        <a-upload
+            :showUploadList="false"
+            name="file"
+            :multiple="true"
+            :customRequest="excelUpload"
+            :beforeUpload="handleExcelBeforeUpload"
+            :headers="headers"
+        >
+          <a-button><UploadOutlined />엑셀 업로드</a-button>
+        </a-upload>
+      </div>
     </div>
 
     <div v-if="this.roles.length > 0 && this.roles.indexOf('ROLE_RELAKET') > -1">
       <a-divider />
       <h4>아이콘 설정 :</h4>
       <div>
-        <a-button style="width: 120px; float: left; margin-top: 10px;margin-bottom: 20px" @click="openIconModal" ><UploadOutlined />업로드</a-button>
+        <a-button class="w49" @click="openIconModal" ><UploadOutlined />업로드</a-button>
       </div>
     </div>
 
@@ -183,9 +192,9 @@
       >
         <a-button @click="setType('logo')"><UploadOutlined />로고 업로드</a-button>
       </a-upload>
-      <a-button style="margin-left: 10px" @click="setLogo" type="primary"> 저장</a-button>
-      <a-button v-if="isLogInDetail === false" style="margin-left: 10px" @click="setLogoInDetail" type="primary"> 상품상세 적용</a-button>
-      <a-button v-else style="margin-left: 10px" @click="setLogoInDetail" type="primary"> 상품상세 적용 취소</a-button>
+      <a-button class="w30 ml10" @click="setLogo" type="primary"> 저장</a-button>
+      <a-button v-if="isLogInDetail === false" class="w30 ml10" @click="setLogoInDetail" type="primary"> 상품상세 적용</a-button>
+      <a-button v-else class="w30 ml10" @click="setLogoInDetail" type="primary"> 상품상세 적용 취소</a-button>
       <div class="logo" style="width: 100px;height: 100px;margin-top: 10px;">
         <img v-if="logoImg.length > 0" :src="logoImg" width="328" height="200" alt="">
       </div>
@@ -269,6 +278,8 @@ export default {
     const userData = {};
     const logoImg = '';
     const roles = [];
+    const rateCn = 0;
+    const rateKor = 0;
 
     const excelStyleDown = [
       {'label': '배송정책 양식', 'value': 'delivery'},
@@ -346,10 +357,27 @@ export default {
       price,
       priceRangeStart,
       priceRangeEnd,
-      indicator
+      indicator,
+      rateCn,
+      rateKor,
+      recharge: 0,
     }
   },
   methods: {
+    getRecharge() {
+      AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/getrecharge').then((res) => {
+        if (res.data === undefined || res.data.status !== '2000') {
+          alert('남은회수 호출 실패');
+          return false;
+        }
+
+        try {
+          this.recharge = res.data.recharge;
+        } catch (e) {
+          alert('남은회수 호출 실패');
+        }
+      });
+    },
     close() {
       this.common.user_visible = false;
     },
@@ -908,10 +936,31 @@ export default {
     setPrivilege() {
       this.roles = Cookie.get('member_roles');
     },
+
+    getRate() {
+      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/getrate').then((res) => {
+        if (res.data === undefined || res.status !== 200) {
+          alert('실시간환율 얻기에 실패하였습니다. 오류가 지속될경우 관리자에게 문의주시길 바랍니다.');
+          return false;
+        }
+
+        if (res.data.status !== '2000') {
+          alert('실시간환율 얻기에 실패하였습니다. 오류가 지속될경우 관리자에게 문의주시길 바랍니다.');
+          return false;
+        }
+        let ReturnData = res.data;
+        this.rateCn = ReturnData.cn;
+        this.rateKor = ReturnData.ko;
+      });
+    }
   },
+
+
   mounted() {
     this.getUser();
     this.setPrivilege();
+    this.getRecharge();
+    this.getRate();
   }
 };
 </script>

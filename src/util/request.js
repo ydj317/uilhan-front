@@ -13,7 +13,7 @@ export const NoAuthAjax = (function () {
     const NoAuthAjax = axios.create();
 
     NoAuthAjax.interceptors.request.use(function (config) {
-        config.url += '?XDEBUG_SESSION=PHPSTORM';
+        // config.url += '?XDEBUG_SESSION=PHPSTORM';
         config.headers['Accept'] = 'application/json';
         return config;
     });
@@ -50,7 +50,7 @@ export const LoginRequest = (function () {
 export const AuthRequest = (function () {
     const AuthRequest = axios.create()
     AuthRequest.interceptors.request.use(function (config) {
-        config.url += '?XDEBUG_SESSION=PHPSTORM';
+        // config.url += '?XDEBUG_SESSION=PHPSTORM';
         config.headers['Accept'] = 'application/json';
         let token = Cookie.get('token');
         if (token.length > 0) {

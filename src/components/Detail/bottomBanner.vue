@@ -72,7 +72,7 @@ export default {
 
     submit() {
       let formData = new FormData();
-      if (this.product.roles.indexOf('ROLE_RELAKET') > -1) {
+      // if (this.product.roles.indexOf('ROLE_RELAKET') > -1) {
         let send = this.checkMarket();
 
         //연동필수데이터 없는 상황
@@ -89,7 +89,7 @@ export default {
           formData.append('keyword', this.product.formState.keyword);
           formData.append('delivery_template', this.product.formState.delivery_template_real_val);
         }
-      }
+      // }
 
       this.product.loading = true;
       formData.append('use_sync', this.product.isSync);
@@ -103,7 +103,7 @@ export default {
       formData.append('margin', this.product.item_margin);
       formData.append('rate', this.product.item_rate);
       formData.append('stock', this.product.item_stock);
-      formData.append('translate_status', this.product.item_is_trans);
+      formData.append('trans_status', this.product.item_is_trans);
       formData.append('trans_name', this.product.item_trans_name);
       formData.append('shipping_fee', this.product.item_shipping_fee);
       if (!/^[0-9]+$/.test(this.product.item_weight) ||

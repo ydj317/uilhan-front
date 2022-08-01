@@ -1,5 +1,5 @@
 <template>
-  <div id="container" class="w100 pl25 pr25" v-if="product.onload">
+  <div id="container" class="w100" v-if="product.onload">
     <!--loading-->
     <loading v-model:active="product.loading" :can-cancel="false" :is-full-page="true"/>
 
@@ -25,13 +25,13 @@
     <Sku></Sku>
 
     <!--통관정보-->
-    <CustomsInfo></CustomsInfo>
+<!--    <CustomsInfo></CustomsInfo>-->
 
     <!--배송설정-->
-    <DeliverySettings></DeliverySettings>
+<!--    <DeliverySettings></DeliverySettings>-->
 
     <!--간략설명-->
-    <SimpleDescription></SimpleDescription>
+<!--    <SimpleDescription></SimpleDescription>-->
 
     <!--상세설명-->
     <Description></Description>
@@ -112,7 +112,7 @@ export default defineComponent({
         }
 
         this.$store.state.product = Object.assign(this.product, res.data);
-        console.log('getProduct', res.data);
+        // console.log('getProduct', res.data);
 
         this.initSku();
         // this.initRelaket();

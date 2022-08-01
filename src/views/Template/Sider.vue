@@ -50,24 +50,46 @@
         <img src="../../assets/img/side/other.png" >
         <span class="defaultColor defaultStyle">상품부가정보</span>
       </a-menu-item>
+      <a-menu-item key="11" v-if="isAdmin">
+        <DollarTwoTone style="font-size: 20px"/>
+        <router-link to="/user/manage">
+          <span class="defaultColor defaultStyle">회원충전</span>
+        </router-link>
+      </a-menu-item>
     </a-menu>
 
-    <div class="menuFooter">
-      <a href="https://relaket.com" target="_blank"></a>
-      <img class="menuFooterLogo" src="../../assets/img/side/relaket_logo_link.png" alt="">
-    </div>
+<!--    <div class="menuFooter" v-if="isAdmin">-->
+<!--      <router-link to="/user/manage">-->
+<!--        <a href="https://relaket.com" target="_blank"></a>-->
+<!--      </router-link>-->
+<!--    </div>-->
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive, toRefs } from 'vue';
+import { defineComponent, reactive, toRefs, ref, onMounted } from 'vue';
+import Cookie from "js-cookie";
+import { DollarTwoTone } from '@ant-design/icons-vue';
 export default defineComponent({
+  components: {
+    DollarTwoTone
+  },
   setup() {
     const state = reactive({
       rootSubmenuKeys: ['6'],
       openKeys: [],
       selectedKeys: [],
     });
+
+    const isAdmin = ref(false);
+    onMounted( () => {
+      const roles = Cookie.get('member_roles');
+      if (roles.indexOf('ROLE_ADMIN') > -1) {
+        isAdmin.value = true;
+      }
+    });
+
+    //const roles = Cookie.get('member_roles');
 
     const onOpenChange = openKeys => {
       const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
@@ -82,6 +104,7 @@ export default defineComponent({
     return {
       ...toRefs(state),
       onOpenChange,
+      isAdmin,
     };
   },
 

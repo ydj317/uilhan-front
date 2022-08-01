@@ -1,21 +1,21 @@
 <template>
-  <div v-if="product.relaket_visivle" class="p20 bg-white">
+  <div v-if="product.relaket_visivle" class="plrb20 bg-white">
     <!--title-->
     <div>
         <span hidden><strong>릴라켓 연동</strong></span>
         <a-switch hidden @change="syncSwitchChange" v-model:checked="isSync"/>
     </div>
     <div v-if="isSync === true">
-      <p>상품 카테고리 번호</p>
+      <p>카테고리</p>
       <a-form-item class="mb15">
         <a-select
-            class="w10 mr20"
+            class="w10 mr5"
             v-model:value="formState.cate_1_val"
             :options="formState.cate_1"
             @change="changeCateA"
         ></a-select>
         <a-select
-            class="w10 mr20"
+            class="w10 mr5"
             v-model:value="formState.cate_2_val"
             :options="formState.cate_2"
             :loading="loadingB"
@@ -24,7 +24,7 @@
         >
         </a-select>
         <a-select
-            class="w10 mr20"
+            class="w10 mr5"
             v-model:value="formState.cate_3_val"
             :options="formState.cate_3"
             :loading="loadingC"
@@ -33,7 +33,7 @@
         >
         </a-select>
         <a-select
-            class="w10 mr20"
+            class="w10 mr5"
             v-model:value="formState.cate_4_val"
             :options="formState.cate_4"
             :loading="loadingD"
@@ -42,7 +42,7 @@
         >
         </a-select>
         <a-select
-            class="w10 mr20"
+            class="w10 mr5"
             v-model:value="formState.cate_5_val"
             :options="formState.cate_5"
             :loading="loadingE"
@@ -52,7 +52,7 @@
         </a-select>
       </a-form-item>
 
-      <p>추천 카테고리</p>
+      <p>카테고리 검색</p>
       <a-form-item class="mb15">
         <a-alert
             show-icon
@@ -87,19 +87,29 @@
         </a-select>
       </a-form-item>
 
-      <p>면세제품</p>
-      <a-form-item class="mb15">
-        <a-select v-model:value="formState.surtax" placeholder="please select your zone" class="w20">
-          <a-select-option value="Y">면세</a-select-option>
-          <a-select-option value="N">과세</a-select-option>
-        </a-select>
-      </a-form-item>
+<!--      <p>면세제품</p>-->
+<!--      <a-form-item class="mb15">-->
+<!--        <a-select v-model:value="formState.surtax" placeholder="please select your zone" class="w20">-->
+<!--          <a-select-option value="Y">면세</a-select-option>-->
+<!--          <a-select-option value="N">과세</a-select-option>-->
+<!--        </a-select>-->
+<!--      </a-form-item>-->
 
-      <p>상품 고시</p>
-      <a-form-item class="mb15">
-        <a-select v-model:value="formState.mandatory_val" :options="formState.mandatory"  class="w20">
-        </a-select>
-      </a-form-item>
+      <div>
+        <p>상품고시 / 통관유형</p>
+        <div class="row w40">
+          <a-form-item class="w100">
+            <a-select v-model:value="formState.mandatory_val" :options="formState.mandatory" placeholder="상품고시 선택해주세요.">
+            </a-select>
+          </a-form-item>
+          <a-form-item class="ml20 w100">
+            <a-select v-model:value="formState.surtax" placeholder="통관유형 선택해주세요.">
+              <a-select-option value="Y">면세</a-select-option>
+              <a-select-option value="N">과세</a-select-option>
+            </a-select>
+          </a-form-item>
+      </div>
+      </div>
 
       <p>배송 정책</p>
       <a-form-item class="mb15">
@@ -124,7 +134,7 @@
 <!--      </a-form-item>-->
       <p>키워드</p>
       <a-form-item  class="mb15">
-        <a-input class="w20" v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요"/>
+        <a-input v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요"/>
       </a-form-item>
     </div>
   </div>
@@ -286,7 +296,7 @@ export default {
     };
 
     const syncSwitchChange = () => {
-      if (isSync.value === true) {
+      if (isSync.value === true && !formState.last_cate) {
         getCate({pid:0}, 'A');
       }
 
@@ -804,6 +814,7 @@ export default {
           this.product.item_sync_keyword = '';
         }
         this.formState.keyword = this.product.item_sync_keyword;
+        this.formState.surtax = this.product.item_surtax;
 
         let _ = this.recommendCategory;
 

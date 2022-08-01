@@ -199,7 +199,7 @@ export class ImageEditorExtend {
   }
 
   static initFile() {
-    let aFontFace = require["context"]("./fontFace", false, /.ttf$/).keys();
+    let aFontFace = require["context"]("../../../public/static/fontFace", false, /.ttf$/).keys();
     aFontFace.map((sFontFacePath) => {
       this.font.push(sFontFacePath.substr(2, sFontFacePath.length - 6));
     });

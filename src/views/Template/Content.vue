@@ -1,12 +1,7 @@
 <template>
-  <div id="container">
-    <div id="header" style="height: 30px;" class="center bg-3051d3">
-      <div class="w97 h100 bg-white"></div>
-    </div>
-    <div id="content" class="center">
-      <router-view></router-view>
-    </div>
-  </div>
+ <div>
+   <router-view></router-view>
+ </div>
 </template>
 
 <script>
