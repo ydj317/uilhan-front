@@ -231,7 +231,7 @@ export default {
     getRecharge() {
       AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/getrecharge').then((res) => {
         if (res.data === undefined || res.data.status !== '2000') {
-          alert('남은회수 호출 실패');
+          alert('데이터 받기에 실패하였습니다. 오류가 지속될시 관리자에게 문의하시길 바랍니다.');
           return false;
         }
 
@@ -306,15 +306,20 @@ export default {
         list: this.aPhotoCollection.filter(aPhotoCollection => aPhotoCollection.checked),
       };
 
+      if (this.recharge < 1 || param.list.length > this.recharge) {
+        alert('이미지번역 잔여 수가 부족합니다.');
+        return false;
+      }
+
       AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/transimage', param).then((res) => {
         if (res.status === undefined || res.status !== 200) {
-          alert('번역api 호출 실패');
+          alert('번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
           this.bLoading = false;
           return false;
         }
 
       if (res.data['list'] === 0) {
-        alert('번역api 호출 실패');
+        alert('번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
         this.bLoading = false;
         return false;
       }

@@ -69,7 +69,7 @@ tinymce.PluginManager.add('axupimgs', function(editor, url) {
 		getMetadata: function() {
 			return  {
 				name: pluginName,
-				url: "https://sym.s/api/image",
+				url: "https://test.kuaidiair-yuncongcon.com/api/image",
 			};
 		}
 	};
