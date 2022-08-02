@@ -13,7 +13,7 @@ export const NoAuthAjax = (function () {
     const NoAuthAjax = axios.create();
 
     NoAuthAjax.interceptors.request.use(function (config) {
-        // config.url += '?XDEBUG_SESSION=PHPSTORM';
+        config.url += '?XDEBUG_SESSION=PHPSTORM';
         config.headers['Accept'] = 'application/json';
         return config;
     });
@@ -50,7 +50,7 @@ export const LoginRequest = (function () {
 export const AuthRequest = (function () {
     const AuthRequest = axios.create()
     AuthRequest.interceptors.request.use(function (config) {
-        // config.url += '?XDEBUG_SESSION=PHPSTORM';
+        config.url += '?XDEBUG_SESSION=PHPSTORM';
         config.headers['Accept'] = 'application/json';
         let token = Cookie.get('token');
         if (token.length > 0) {
@@ -64,6 +64,17 @@ export const AuthRequest = (function () {
     AuthRequest.interceptors.response.use(function (res) {
         if (res.length > 0) {
             Cookie.set('token', res);
+        }
+
+        // DEBUG
+        if (res.config.url.indexOf('?XDEBUG_SESSION=PHPSTORM') !== -1) {
+            console.group(res.config.method.toUpperCase() + ': ' + res.config.url.replace('?XDEBUG_SESSION=PHPSTORM', ''));
+            console.log('request', {
+                data: res.config.data,
+                params: res.config.params
+            });
+            console.log('response', res.data);
+            console.groupEnd();
         }
 
         return res;

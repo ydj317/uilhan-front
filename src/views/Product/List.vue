@@ -73,36 +73,46 @@
       <!--content-->
       <div id="content-content" class="pt20">
         <!--전체선택-->
-<!--        <a-checkbox v-model:checked="checked" @change="checkItem" id="content-content-checkAll"></a-checkbox>-->
         <a-table :bordered="true" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination">
-          <template #headerCell="{ column }">
-            <template v-if="column.dataIndex === 'item_id'">
+          <!--table header-->
+          <template v-slot:headerCell="{title, column}">
+            <template v-if="column.key === 'checked'">
               <a-checkbox v-model:checked="checked" @change="checkItem" id="content-content-checkAll"></a-checkbox>
             </template>
           </template>
-          <template v-for="col in LIST_KEYS_CONFIG" #[col]="{ text, record, line }" :key="col">
+
+          <!--table body-->
+          <template v-slot:bodyCell="{text, record, index, column}">
             <!--체크박스-->
-            <a-checkbox v-if="equal(col, 'item_id')" v-model:checked="record.checked"></a-checkbox>
+            <template v-if="column.key === 'checked'">
+              <a-checkbox v-model:checked="record.checked"></a-checkbox>
+            </template>
+
             <!--사진-->
-            <img v-if="equal(col, 'item_thumb')" :src="text" alt="">
+            <template v-if="column.key === 'item_thumb'">
+              <img :src="record.item_thumb" alt="">
+            </template>
+
             <!--상품정보-->
-            <div v-if="equal(col, 'item_name')">
+            <template v-if="column.key === 'item_name'">
               <!--상품명-->
               <div>
                 <a-button class="init-pmbo" type="link" :href="`/product/detail/${record.item_id}`">
-                  {{ record.item_name }}
+                  {{ record.item_is_trans ? record.item_trans_name : record.item_name }}
                 </a-button>
-                <div>{{ record.item_trans_name }}</div>
               </div>
+
               <!--상품코드-->
               <div>
                 <span>상품 바로가기 :</span>
                 <a-button type="link" :href="record.item_url" :target="'_blank'">{{ record.item_code }}</a-button>
               </div>
+
               <!--미연동-->
               <div v-if="!record.item_sync_date && !record.item_sync_status">
                 <a-button type="primary" class="not_sync">릴라켓 미연동</a-button>
               </div>
+
               <!--연동-->
               <div v-if="record.item_sync_date">
                 <a-button type="primary" :style="buttonStyle(record.item_sync_status)">릴라켓 연동{{
@@ -112,20 +122,25 @@
                   }}
                 </a-button>
               </div>
-            </div>
+            </template>
+
             <!--등록&수정시간-->
-            <div v-if="equal(col, 'item_ins')" style="font-size: 15px">
+            <template v-if="column.key === 'item_ins'">
               <div>상품등록：{{ record.item_ins }}</div>
               <div>상품수정：{{ record.item_upd }}</div>
-            </div>
+            </template>
+
             <!--제휴사연동-->
-            <div v-if="equal(col, 'item_sync_status')" class="center">
-              <a-button
-                  @click="singlePop(record)" style="width: 80%; height: 40px; border-radius: 25px; font-size: 15px;"
-                  danger ghost
-              >제휴사연동
-              </a-button>
-            </div>
+            <template v-if="column.key === 'item_sync_status'">
+              <div class="center">
+                <a-button
+                    @click="singlePop(record)"
+                    style="width: 80%; height: 40px; border-radius: 25px; font-size: 15px;"
+                    danger ghost
+                >제휴사연동
+                </a-button>
+              </div>
+            </template>
           </template>
         </a-table>
       </div>
@@ -136,36 +151,48 @@
       <!--제휴사 상품연동-->
       <a-modal :maskClosable="false" v-model:visible="singleSyncPop" class="col w50">
         <h3><strong>제휴사 상품연동</strong></h3>
-<!--        <a-checkbox v-model:checked="checkAll" @click="checkAllMarket(checkAll)"></a-checkbox>-->
-        <!--개선로직-->
         <a-table
             class="tableSyncStatus"
             :dataSource="singleDetail.item_sync_market"
             :columns="SYNC_COLUMNS_CONFIG"
         >
-          <template #headerCell="{ column }">
+
+          <!--table header-->
+          <template v-slot:headerCell="{ text, record, index, column }">
+            <!--전체선택-->
             <template v-if="column.key === 'checked'">
               <a-checkbox v-model:checked="checkAll" @click="checkAllMarket(checkAll)"></a-checkbox>
             </template>
           </template>
 
-          <template #checked="{record, value}">
-            <a-checkbox v-model:checked="record.checked"></a-checkbox>
+          <!--table body-->
+          <template v-slot:bodyCell="{ text, record, index, column }">
+            <!--단일선택-->
+            <template v-if="column.key === 'checked'">
+              <a-checkbox v-model:checked="record.checked"></a-checkbox>
+            </template>
+
+            <!--연동계정-->
+            <template v-if="column.key === 'market_account'">
+              연동계정 : {{ record.market_account }}
+            </template>
+
+            <!--상태-->
+            <template v-if="column.key === 'status'">
+              <div class="syncStatus" :data-status="record.status">
+                {{ {"sending": "전송중", "success": "성공", "failed": "실패", "unsync": "미연동"}[record.status] }}<span v-if="record.status === 'failed'"> 실패원인: {{record.result}}</span>
+              </div>
+            </template>
+
+            <!--연동시간-->
+            <template v-if="column.key === 'ins_time'">
+              <div v-if="record.status !== 'unsync'">
+                <div v-if="!record.upd_time">{{ record.ins_time }}</div>
+                <div v-else>{{ record.upd_time }}</div>
+              </div>
+            </template>
           </template>
-          <template #market_account="{record, value}">
-            연동계정 : {{ record.market_account }}
-          </template>
-          <template #status="{record, value}">
-            <div class="syncStatus" :data-status="value">
-              {{ {"success": "성공", "failed": "실패", "unsync": "미연동"}[value] }}<span v-if="record.status === 'failed'"> 실패원인: {{record.result}}</span>
-            </div>
-          </template>
-          <template #ins_time="{record, value}">
-            <div v-if="record.status !== 'unsync'">
-<!--              <div>등록시간 : {{ record.ins_time }}</div>-->
-              <div>연동시간 : {{ record.upd_time }}</div>
-            </div>
-          </template>
+
         </a-table>
 
         <template v-slot:footer>
@@ -193,7 +220,7 @@
         </template>
       </a-modal>
 
-      <MarketList></MarketList>
+      <MarketList v-if="MarketListVisible"></MarketList>
     </div>
   </div>
 </template>
@@ -213,7 +240,7 @@ export default defineComponent({
 
   computed: {
     ...mapState([
-      'common',
+      'relaket',
     ]),
   },
 
@@ -323,52 +350,30 @@ export default defineComponent({
       ],
       LIST_COLUMNS_CONFIG: [
         {
-          title: '',
-          dataIndex: 'item_id',
+          title: '선택',
+          key: 'checked',
           width: '3%',
-          slots: {
-            customRender: 'item_id',
-          },
         },
         {
           title: '사진',
-          dataIndex: 'item_thumb',
+          key: 'item_thumb',
           width: '3%',
-          slots: {
-            customRender: 'item_thumb',
-          },
         },
         {
           title: '상품정보',
-          dataIndex: 'item_name',
+          key: 'item_name',
           width: '54%',
-          slots: {
-            customRender: 'item_name',
-          },
         },
         {
           title: '등록&수정시간',
-          dataIndex: 'item_ins',
+          key: 'item_ins',
           width: '20%',
-          slots: {
-            customRender: 'item_ins',
-          },
         },
         {
           title: '제휴사연동',
-          dataIndex: 'item_sync_status',
+          key: 'item_sync_status',
           width: '20%',
-          slots: {
-            customRender: 'item_sync_status',
-          },
         },
-      ],
-      LIST_KEYS_CONFIG: [
-        'item_id',
-        'item_thumb',
-        'item_name',
-        'item_ins',
-        'item_sync_status',
       ],
       pagination: {
         total: 0,
@@ -389,36 +394,20 @@ export default defineComponent({
       },
       SYNC_COLUMNS_CONFIG: [
         {
-          title: '',
-          dataIndex: 'checked',
+          title: '선택',
           key: 'checked',
-          slots: {
-            customRender: 'checked',
-          },
         },
         {
           title: '쇼핑몰',
-          dataIndex: 'market_account',
           key: 'market_account',
-          slots: {
-            customRender: 'market_account',
-          },
         },
         {
           title: '연동상태',
-          dataIndex: 'status',
           key: 'status',
-          slots: {
-            customRender: 'status',
-          }
         },
         {
           title: '연동시간',
-          dataIndex: 'ins_time',
           key: 'ins_time',
-          slots: {
-            customRender: 'ins_time',
-          }
         },
       ],
 
@@ -452,22 +441,14 @@ export default defineComponent({
       singleDetail: [],
       checkedList: [],
       checkAll: false,
+      MarketListVisible: false,
     };
   },
 
   methods: {
     MarketListPop() {
-      this.common.marketList = this.marketList;
-      this.common.indicator = this.indicator;
-      this.common.singleDetail = this.singleDetail;
-      this.common.prdlist = this.prdlist;
-      this.common.options = this.options;
-
-      this.common.MarketListVisible = true;
-    },
-
-    demoVisible() {
-      this.common.demo_visible = true;
+      this.relaket.data = this;
+      this.MarketListVisible = true;
     },
 
     reload() {
@@ -725,7 +706,7 @@ export default defineComponent({
           {params: {list: list, market: marketList, options: this.options}}).then((res) => {
         let returnData = res.data;
 
-        if (returnData.status === undefined || returnData.status !== '2000') {
+        if (returnData.status === undefined || returnData.status !== 2000) {
           alert(returnData.msg);
         }
 
@@ -865,32 +846,21 @@ export default defineComponent({
   background-color: white !important;
 }
 
-#header .market_code:first-child {
-  border: 1px solid #3ddc97 !important;
-  border-radius: 5px !important;
-  color: white !important;
-  background-color: #3ddc97 !important;
-}
-
 /* mouse over */
 #header .market_code:hover {
   color: white !important;
   background-color: #f06543 !important;
 }
 
-#header .market_code:first-child:hover {
-  color: white !important;
-  background-color: #25ce85 !important;
-}
-
 /* checked */
 #header .market_code.ant-radio-button-wrapper-checked {
-  outline: 2px solid #f7b2a1 !important;
+  outline: none !important;
+  border: none !important;
+  color: white !important;
+  background-color: #3ddc97 !important;
 }
 
-#header .market_code:first-child.ant-radio-button-wrapper-checked {
-  outline: 2px solid #acf0d3 !important;
-}
+/*********************************************************/
 
 /* mouse leave */
 #header .trans_status,
@@ -901,34 +871,19 @@ export default defineComponent({
   color: black !important;
 }
 
-#header .trans_status:first-child,
-#header .sync_status:first-child {
-  border: 1px solid #3051d3 !important;
-  border-radius: 5px !important;
-  background-color: #3051d3 !important;
-  color: white !important;
-}
-
 /* mouse over */
 #header .trans_status:hover,
 #header .sync_status:hover {
   background-color: #d6ddea !important;
 }
 
-#header .trans_status:first-child:hover,
-#header .sync_status:first-child:hover {
-  background-color: #2744b6 !important;
-}
-
 /* checked */
 #header .trans_status.ant-radio-button-wrapper-checked,
 #header .sync_status.ant-radio-button-wrapper-checked {
-  outline: 2px solid #e7e9eb !important;
-}
-
-#header .trans_status:first-child.ant-radio-button-wrapper-checked,
-#header .sync_status:first-child.ant-radio-button-wrapper-checked {
-  outline: 2px solid #a7b5ec !important;
+  outline: none !important;
+  border: none !important;
+  background-color: #3051d3 !important;
+  color: white !important;
 }
 
 /* 검색버튼 */
@@ -966,7 +921,8 @@ export default defineComponent({
 #content-content .not_sync {
   background-color: #eff2f7;
   color: black;
-  border: none
+  border: none;
+  width: 131px;
 }
 </style>
 

@@ -46,14 +46,15 @@
                       </template>
                       <img width="100" height="100" :src="item.original_url" alt=""/>
                     </a-tooltip>
-                    <input type="checkbox" class="description_image" v-show="bProductDetailsEditor" :value="index" style="position: absolute; left: 0; width: 20px; height: 20px;">
+                    <a-checkbox v-show="bProductDetailsEditor" v-model:checked="item.checked" style="position: absolute; left: 0; top: -3px; width: 20px; height: 20px;"></a-checkbox>
+<!--                    <input type="checkbox" class="description_image" v-show="bProductDetailsEditor" v-model:checked="item.checked" :value="index" style="position: absolute; left: 0; width: 20px; height: 20px;">-->
                   </div>
                 </li>
               </ul>
               <ul title="번역후" v-else style="float: left; list-style: none;padding: 0;height: 100%">
                 <li
                     @click="mSeleteTranslate(item, index)" :class="`${iSelectedPictureIndex === index ? 'checkedEl' : 'checkedNot'} `"
-                    v-for="(item, index) in aPhotoCollection" style="float: left;"
+                    v-for="(item, index) in aPhotoCollection.filter(data => data.checked)" style="float: left;"
                 >
                   <span @click="mEditorImageError()" class="trans_error" v-if="mEditCompleted(item.translate_url)">실패</span>
                   <span class="trans_success" v-if="item.translate_status">성공</span>
@@ -70,26 +71,27 @@
                 <a-radio :style="oRadioStyle" value="ja">to Japan</a-radio>
                 <a-radio :style="oRadioStyle" value="en">to English</a-radio>
               </a-radio-group>
-              <!-- 상품상세 이미지 전용 -->
-              <a-popconfirm v-if="!bTranslateStatus"
-                            title="삭제하시겠습니까?"
-                            ok-text="Yes"
-                            cancel-text="No"
-                            @confirm="mDeleteDetailImage"
-              >
-                <a-button type="primary" style="position: absolute; bottom: 100px; right: 118px;" v-show="bProductDetailsEditor">삭제</a-button>
-              </a-popconfirm>
-              <a-button type="primary" style="position: absolute; bottom: 100px; right: 186px;"  v-show="bProductDetailsEditor" @click="mSelectDelImageReverse">반대로 선택</a-button>
-              <a-button type="primary" style="position: absolute; bottom: 100px; right: 300px;"  v-show="bProductDetailsEditor" @click="mSelectDelImageReverseAll">전체 선택해제</a-button>
-
-              <a-popconfirm
-                  title="번역하시겠습니까?"
-                  ok-text="Yes"
-                  cancel-text="No"
-                  @confirm="mImageTranslate"
-              >
-                <a-button style="position: absolute; bottom: 100px; right: 50px;" type="primary">번역</a-button>
-              </a-popconfirm>
+<!--              &lt;!&ndash; 상품상세 이미지 전용 &ndash;&gt;-->
+<!--              <a-popconfirm v-if="!bTranslateStatus"-->
+<!--                            title="삭제하시겠습니까?"-->
+<!--                            ok-text="Yes"-->
+<!--                            cancel-text="No"-->
+<!--                            @confirm="mDeleteDetailImage"-->
+<!--              >-->
+<!--                <a-button type="primary" style="position: absolute; bottom: 100px; right: 118px;" v-show="bProductDetailsEditor">삭제</a-button>-->
+<!--              </a-popconfirm>-->
+              <div class="w22 space-between absolute right" style="bottom: 82px; right: 28px;">
+                <a-button class="bg-3051d3 mr5" type="primary" v-show="bProductDetailsEditor" @click="mSelectDelImageReverse">전체선택</a-button>
+                <a-button class="bg-3051d3 mr5" type="primary" v-show="bProductDetailsEditor" @click="mSelectDelImageReverseAll">선택취소</a-button>
+                <a-popconfirm
+                    title="번역하시겠습니까?"
+                    ok-text="Yes"
+                    cancel-text="No"
+                    @confirm="mImageTranslate"
+                >
+                  <a-button class="bg-ff4d4f" style="border: none;" type="primary">번역</a-button>
+                </a-popconfirm>
+              </div>
             </td>
             <td v-else style="border: 1px solid #d9d9d9; vertical-align: top;">
               <div style="width: calc(3 * 150px); height: calc(4 * 150px); margin: 0 auto;">
@@ -100,10 +102,10 @@
           </tbody>
         </table>
         <template title="번역팝업 하단버튼" v-slot:footer>
-          <a-button title="번역" v-if="bTranslateStatus" type="primary" @click="mHandleOkTranslateEditorImage">수동편집</a-button>
-          <a-button title="원본" v-else type="primary" @click="mHandleOkOriginalEditorImage">수동편집</a-button>
-          <a-button type="primary" @click="mCloseTranslateWindow">취소</a-button>
-          <a-button type="primary" @click="mHandleOkTranslateWindow">확인</a-button>
+          <a-button class="bg-3051d3" title="번역" v-if="bTranslateStatus" type="primary" @click="mHandleOkTranslateEditorImage">수동편집</a-button>
+          <a-button class="bg-3051d3" title="원본" v-else type="primary" @click="mHandleOkOriginalEditorImage">수동편집</a-button>
+          <a-button class="bg-3051d3" type="primary" @click="mHandleOkTranslateWindow">확인</a-button>
+          <a-button class="bg-3051d3" type="primary" @click="mCloseTranslateWindow">취소</a-button>
         </template>
       </a-modal>
     </template>
@@ -115,7 +117,7 @@
         </div>
         <div style="margin-top: 8px">
           <div class="newImageEditorList" style="height: 192px; overflow-x: auto; overflow-y: hidden; white-space: nowrap;">
-            <table style="display: inline-block;" v-for="(item, key) in aPhotoCollection">
+            <table style="display: inline-block;" v-for="(item, key) in aEditorImages">
               <tr>
                 <td>
                   <img style="display: block"
@@ -141,7 +143,7 @@
         </div>
         <div style="margin-top: 8px">
           <div class="newImageEditorList" style="height: 192px; overflow-x: auto; overflow-y: hidden;white-space: nowrap;">
-            <table style="display: inline-block;" v-for="(item, index) in aPhotoCollection">
+            <table style="display: inline-block;" v-for="(item, index) in aEditorImages">
               <tr v-if="item.translate_status">
                 <td style="width: 120px">
                   <a-button style="float: left; width: 50%" @click="mSeleteEditorImageType(item.original_url, index)">기존</a-button>
@@ -210,6 +212,7 @@ export default {
       aIcons: [],
       aPhotoCollection: [],
       aBakPhotoCollection: [],
+      aEditorImages: [],
 
       toLang: 'ko',
       sModuleTitle: '', // '이미지 편집', 'SKU 이미지 번역', '상세설명 이미지 번역'
@@ -221,6 +224,10 @@ export default {
   },
 
   methods: {
+    checkedImage() {
+      return this.aPhotoCollection.filter(aPhotoCollection => aPhotoCollection.checked)
+    },
+
     getRecharge() {
       AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/getrecharge').then((res) => {
         if (res.data === undefined || res.data.status !== '2000') {
@@ -249,7 +256,7 @@ export default {
 
     // 편집 여부 확인
     mEditCompleted(url) {
-      return url.indexOf('https://kuaidiair-yuncongcon.com') !== -1 || url.indexOf('https://sym.s') !== -1;
+      return url.indexOf('https://front.kuaidiair-yuncongcon.com') !== -1 || url.indexOf('https://sym.s') !== -1;
     },
 
     // 편집기에 이미지 추가
@@ -296,7 +303,7 @@ export default {
       let param = {
         from: 'zh',
         to: this.toLang,
-        list: this.aPhotoCollection,
+        list: this.aPhotoCollection.filter(aPhotoCollection => aPhotoCollection.checked),
       };
 
       AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/transimage', param).then((res) => {
@@ -313,9 +320,8 @@ export default {
       }
 
       try {
-        console.log(res.data);
         res.data['list'].map((aPhoto, i) => {
-          this.aPhotoCollection[i] = {
+          this.aPhotoCollection[aPhoto.key] = this.aPhotoCollection[aPhoto.key] = {
             "msg" : aPhoto.msg || '',
             "key" : aPhoto.key, // 필수!!!
             "name": aPhoto.name || '',
@@ -351,34 +357,43 @@ export default {
         this.sSelectedPictureLink = this.aPhotoCollection[0].original_url;
       } catch (e) {}
 
+      this.aPhotoCollection.map((aPhotoCollection, i) => {
+        this.aPhotoCollection[i].checked = !bProductDetailsEditor;
+      })
+
       this.aBakPhotoCollection = this.mCopy(this.aPhotoCollection);
       this.mGetIcon();
     },
 
     // [원본] 수동편집
     mHandleOkOriginalEditorImage() {
+      this.aEditorImages = this.aPhotoCollection.filter(aPhotoCollection => aPhotoCollection.checked);
+      if (this.aEditorImages.length === 0) {
+        alert('수동편집 대상이 없습니다.');
+        return false;
+      }
       this.aBakPhotoCollection = this.mCopy(this.aPhotoCollection);
       this.bOriginalImageEditorModule = true;
-      this.sSelectedPictureLink = this.aPhotoCollection[0].original_url;
+      this.sSelectedPictureLink = this.aEditorImages[0].original_url;
       this.mLoadImage(this.sSelectedPictureLink);
     },
 
     // [번역] 수동편집
     mHandleOkTranslateEditorImage() {
-      this.aBakPhotoCollection = this.mCopy(this.aPhotoCollection);
-
-      if (this.aPhotoCollection.length === 0) {
+      this.aEditorImages = this.aPhotoCollection.filter(aPhotoCollection => aPhotoCollection.checked && aPhotoCollection.translate_status);
+      if (this.aEditorImages.length === 0) {
         alert('수동편집 대상이 없습니다.');
         return false;
       }
+      this.aBakPhotoCollection = this.mCopy(this.aPhotoCollection);
 
-      this.sSelectedPictureLink = true;
-      this.aPhotoCollection.map(aPhotoCollection => {
-        if (this.sSelectedPictureLink && aPhotoCollection.translate_status) {
-          this.sSelectedPictureLink = aPhotoCollection.translate_url;
-        }
-      })
-      this.mLoadImage(this.sSelectedPictureLink);
+      // this.sSelectedPictureLink = true;
+      // this.aPhotoCollection.map(aPhotoCollection => {
+      //   if (this.sSelectedPictureLink && aPhotoCollection.translate_status) {
+      //     this.sSelectedPictureLink = aPhotoCollection.translate_url;
+      //   }
+      // })
+      this.mLoadImage(this.aEditorImages[0].original_url);
 
       // this.sSelectedPictureLink = this.aPhotoCollection[0].translate_status? this.aPhotoCollection[0].translate_url: '';
       this.bTranslateImageEditorModule = true;
@@ -446,10 +461,10 @@ export default {
         }
 
         let iImageIndex;
-        this.aPhotoCollection.map((oData, i) => {
+        this.aEditorImages.map((oData, i) => {
           if (oData.key === item.key) {
             iImageIndex = i;
-            this.aPhotoCollection[i].original_url = response['img_url'];
+            this.aEditorImages[i].original_url = response['img_url'];
           }
         })
 
@@ -492,10 +507,10 @@ export default {
           return false;
         }
 
-        if (this.aPhotoCollection[index].translate_status) {
-          this.aPhotoCollection[index].translate_url = response['img_url'];
+        if (this.aEditorImages[index].translate_status) {
+          this.aEditorImages[index].translate_url = response['img_url'];
         } else {
-          this.aPhotoCollection[index].original_url = response['img_url'];
+          this.aEditorImages[index].original_url = response['img_url'];
         }
 
         this.bImageEdited = true;
@@ -528,7 +543,7 @@ export default {
 
     // [팝업] 확인
     mHandleOkTranslateWindow() {
-      Object.values(this.aPhotoCollection).map(oImageInfo => {
+      Object.values(this.aEditorImages).map(oImageInfo => {
         let key = oImageInfo.order? oImageInfo.order: oImageInfo.key;
 
         if (oImageInfo.translate_status === false) {
@@ -576,7 +591,7 @@ export default {
 
     // 상세 이미지 삭제 (필터링 실제삭제가 아님)
     mDeleteDetailImage() {
-      let aDelImages = _$('.description_image:checked');console.log(aDelImages)
+      let aDelImages = _$('.description_image:checked');
       if (aDelImages.length === 0) {
         alert('삭제할 이미지를 선택해 주세요');
         return;
@@ -592,21 +607,27 @@ export default {
         aDelImagesIdx.push(Number(_$(this).val()));
       })
       aDelImages.attr('checked', false);
-      console.log(aDelImagesIdx)
       this.aPhotoCollection = this.aPhotoCollection.filter((item, i)=> aDelImagesIdx.includes(i) === false);
     },
 
     // 반대로 선택
     mSelectDelImageReverse() {
-      let aChecked = _$('.description_image:checked');
-      let aUnChecked = _$('.description_image:not(:checked)');
-      aChecked.prop('checked', false);
-      aUnChecked.prop('checked', true);
+      // let aChecked = _$('.description_image:checked');
+      // let aUnChecked = _$('.description_image:not(:checked)');
+      // aChecked.prop('checked', false);
+      // aUnChecked.prop('checked', true);
+
+      this.aPhotoCollection.map((aPhotoCollection, i) => {
+        this.aPhotoCollection[i].checked = true;
+      })
     },
 
     // 전체 선택해제
     mSelectDelImageReverseAll() {
-      _$('.description_image').removeAttr('checked');
+      // _$('.description_image').removeAttr('checked');
+      this.aPhotoCollection.map((aPhotoCollection, i) => {
+        this.aPhotoCollection[i].checked = false;
+      })
     },
 
     mHandleBeforeUpload(file) {

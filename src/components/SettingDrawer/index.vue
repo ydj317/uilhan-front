@@ -9,6 +9,7 @@
       title="계정 설정"
       placement="right"
       :closable="false"
+      @close="close"
   >
     <CloseOutlined style="position: absolute; top: 0; right: 17px; padding: 5px;" @click="close"/>
     <div style="margin-bottom: 20px">
@@ -80,8 +81,12 @@
     <div>
       <a-divider />
       <h4>알리익스프래스 환율</h4>
-      <h4>한국 KRW {{this.rateKor}} : 중국 위안 1 위안</h4>
+      <h4><b>참고</b>(신한은행) : 한국 KRW {{this.rateKor}} - 중국 위안 1 위안</h4>
+      <h4>{{ this.aliexpressCurrent }}</h4>
+      <a-input class="w49" v-model:value="this.aliexpressNew" placeholder="알리익스프래스 환율설정" />
+      <a-button class="w49 bg-3051d3" @click="addAliexpress" type="primary">등록</a-button>
     </div>
+
 
     <div>
       <a-divider />
@@ -316,6 +321,8 @@ export default {
     const priceRangeStart = '';
     const priceRangeEnd = '';
     const indicator = false;
+    const aliexpressCurrent = 0;
+    const aliexpressNew = 0;
     return {
       rateName,
       rateValue,
@@ -361,6 +368,8 @@ export default {
       rateCn,
       rateKor,
       recharge: 0,
+      aliexpressCurrent,
+      aliexpressNew
     }
   },
   methods: {
@@ -494,6 +503,40 @@ export default {
       for (let i=0; i < this.icons.length; i++) {
         this.icons[i].checked = false;
       }
+    },
+
+    addAliexpress() {
+      if (this.aliexpressNew === undefined || this.aliexpressNew.length === 0) {
+        alert('알리익스프래스 환율값을 입력해 주십시오');
+        return false;
+      }
+
+      let regPos = /^[0-9]+\.?[0-9]*$/;
+      if(!regPos.test(this.aliexpressNew)){
+        alert('기준 값과 가격 값은 숫자만 입력가능합니다.');
+        return false;
+      }
+
+
+      AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/userup', {
+        aliexpress: this.aliexpressNew,
+        type: 'aliexpress'
+      }).then((res) => {
+        let returnData = res.data;
+        if (returnData.status === undefined) {
+          return false;
+        }
+
+        if (returnData.status !== 2000) {
+          alert(returnData.msg);
+          return false;
+        }
+
+        this.aliexpressCurrent = returnData.data;
+        this.aliexpressNew = returnData.data;
+        alert('처리성공');
+        this.indicator = false;
+      });
     },
 
     delIcon() {

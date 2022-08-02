@@ -57,40 +57,40 @@
           :pagination="pagination"
           :data-source="product.sku"
       >
-        <template
-            v-for="col in column"
-            #[col]="{ text, record ,index }"
-            :key="col"
-        >
-          <div>
-            <!--id-->
-            <template v-if="col === 'id'">
-              <a-checkbox v-model:checked="record.checked"></a-checkbox>
-            </template>
+        <!--bodyCell-->
+        <template v-slot:bodyCell="{text, record, index, column}">
+          <!--선택-->
+          <template v-if="column.key === 'checked'">
+            <a-checkbox v-model:checked="record.checked"></a-checkbox>
+          </template>
 
-            <!--품목 이미지-->
-            <template v-else-if="col === 'img'">
+          <!--이미지-->
+          <template v-if="column.key === 'img'">
+            <div class="col center">
               <div>
-                <img class="sku_image" v-if="text" :src="text" @click="imageEditorVisible(record, text)" alt=""/>
+                <img class="sku_image" v-if="record.img" :src="record.img" @click="imageEditorVisible(record, record.img)" alt=""/>
               </div>
               <a-button class="sku_image_button" @click="skuImageWindowVisible(record.key)">선택</a-button>
-            </template>
+            </div>
+          </template>
 
-            <!--품목명-->
-            <template v-else-if="col === 'spec'">
-              <div :style="text.length > 20? 'color: red': ''">{{ text }}</div>
-            </template>
+          <!--스펙-->
+          <template v-if="column.key === 'spec'">
+            <div :style="text.length > 20? 'color: red': ''">{{ record.spec }}</div>
+          </template>
 
-            <!--기타 (입력가능)-->
+          <!--기타-->
+          <template v-if="!['checked', 'img', 'spec'].includes(column.key)">
             <a-input
-                v-else-if="!['id', 'img', 'spec'].includes(col)"
-                :style="product.sku[index].img?
+                :style="record.img?
                 `height: 130px; text-align: center; border: none;`:
                  `height: 30px; text-align: center; border: none;`"
-                v-model:value="product.sku[index][col]"
+                v-model:value="record[column.key]"
             />
-          </div>
+          </template>
+
         </template>
+
       </a-table>
     </div>
 
@@ -127,108 +127,69 @@ export default {
 
       columnConfig: [
         {
-          title: '',
-          dataIndex: 'id',
+          title: '선택',
+          key: 'checked',
           width: '1px',
-          slots: {
-            customRender: 'id',
-          },
         },
         {
           title: '이미지',
-          dataIndex: 'img',
+          key: 'img',
           width: '100px',
-          slots: {
-            customRender: 'img',
-          },
         },
         {
           title: '품목코드',
-          dataIndex: 'code',
+          key: 'code',
           width: '10%',
-          slots: {
-            customRender: 'code',
-          },
         },
         {
           title: '스펙',
-          dataIndex: 'spec',
+          key: 'spec',
           width: '15%',
-          slots: {
-            customRender: 'spec',
-          },
         },
         {
           title: '판매가',
-          dataIndex: 'selling_price',
+          key: 'selling_price',
           width: '10%',
-          slots: {
-            customRender: 'selling_price',
-          },
         },
         {
           title: '마진',
-          dataIndex: 'margin',
+          key: 'margin',
           width: '10%',
-          slots: {
-            customRender: 'margin',
-          },
         },
         {
           title: '환율',
-          dataIndex: 'rate',
+          key: 'rate',
           width: '10%',
-          slots: {
-            customRender: 'rate',
-          },
         },
         {
           title: '재고',
-          dataIndex: 'stock',
+          key: 'stock',
           width: '5%',
-          slots: {
-            customRender: 'stock',
-          },
         },
         {
           title: '운임',
-          dataIndex: 'shipping_fee',
+          key: 'shipping_fee',
           width: '5%',
-          slots: {
-            customRender: 'shipping_fee',
-          },
         },
         {
           title: '길이',
-          dataIndex: 'length',
+          key: 'length',
           width: '5%',
-          slots: {
-            customRender: 'length',
-          },
         },
         {
           title: '넓이',
-          dataIndex: 'width',
+          key: 'width',
           width: '5%',
-          slots: {
-            customRender: 'width',
-          },
         },
         {
           title: '높이',
-          dataIndex: 'height',
+          key: 'height',
           width: '5%',
-          slots: {
-            customRender: 'height',
-          },
         },
         {
           title: '중량',
-          dataIndex: 'weight',
+          key: 'weight',
           width: '5%',
-          slots: {
-            customRender: 'weight',
-          },
         },
       ],
       pagination: {

@@ -460,10 +460,8 @@ export default {
       this.common.loading = true;
 
       let param = this.getParam();
-      console.log('getList::param', param)
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', {params: param}).then((res) => {
         this.$store.state.prdlist = Object.assign([], res.data.list);
-        console.log('prdlist', res.data.list)
 
         for (let i = 0; i < this.prdlist.length; i++) {
           this.prdlist[i].checked = false;

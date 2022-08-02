@@ -7,7 +7,10 @@ export default createStore({
       onload: false,
       loading: true,
     },
-    relaket: {},
+    relaket: {
+      data: {},
+      methods: {}
+    },
     prdlist: [],
   },
   mutations: {},

@@ -64,7 +64,7 @@
 .text-right {text-align: right;}
 
 /* ------------------------------------------------------ flex ------------------------------------------------------ */
-.center {
+.center:not(.tui-image-editor-button) {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -77,11 +77,11 @@
     display: flex !important;
     flex-direction: column !important;
 }
-.left {
+.left:not(.tui-image-editor-button) {
     display: flex !important;
     justify-content: flex-start !important;
 }
-.right {
+.right:not(.tui-image-editor-button) {
     display: flex !important;
     justify-content: flex-end !important;
 }

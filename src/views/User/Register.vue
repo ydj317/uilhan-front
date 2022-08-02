@@ -357,9 +357,8 @@ export default defineComponent({
       };
 
       NoAuthAjax.post(
-        process.env.VUE_APP_API_URL + '/api/register?XDEBUG_SESSION=PHPSTORM', user).then((res) => {
+        process.env.VUE_APP_API_URL + '/api/register', user).then((res) => {
           let returnData = res.data;
-          console.log(returnData);
           if (returnData.status === undefined || returnData.status !== 2000) {
             alert(returnData.msg);
             return false;

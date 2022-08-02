@@ -103,8 +103,6 @@ export default {
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', {params: param}).then((res) => {
         this.prdlist = res.data.list;
         this.common = param;
-        console.log('prdlist', this.prdlist);
-        console.log('common', this.common);
 
         for (let i = 0; i < this.prdlist.length; i++) {
           this.prdlist[i].checked = false;

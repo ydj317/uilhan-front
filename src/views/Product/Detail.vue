@@ -25,7 +25,18 @@
     <Sku></Sku>
 
     <!--통관정보-->
-<!--    <CustomsInfo></CustomsInfo>-->
+    <a-collapse class="mt20 bg-white" v-model:activeKey="activeKey">
+      <a-collapse-panel key="1" header="통관정보 보기">
+        <CustomsInfo></CustomsInfo>
+      </a-collapse-panel>
+    </a-collapse>
+
+    <!--간략설명-->
+    <a-collapse class="mt20 bg-white" v-model:activeKey="activeKey">
+      <a-collapse-panel key="2" header="간략설명 보기">
+        <SimpleDescription></SimpleDescription>
+      </a-collapse-panel>
+    </a-collapse>
 
     <!--배송설정-->
 <!--    <DeliverySettings></DeliverySettings>-->
@@ -49,7 +60,7 @@ import {forEach} from "lodash-es";
 import {mapState} from 'vuex';
 import {useRoute} from 'vue-router';
 import {AuthRequest} from '@/util/request';
-import {defineComponent} from 'vue';
+import {defineComponent, ref} from 'vue';
 
 import Cookie from 'js-cookie';
 import router from '../../router';
@@ -89,6 +100,13 @@ export default defineComponent({
     ...mapState([
       'product',
     ])
+  },
+
+  setup() {
+    const activeKey = ref([]);
+    return {
+      activeKey,
+    }
   },
 
   methods: {

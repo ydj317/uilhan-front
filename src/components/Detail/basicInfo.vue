@@ -11,12 +11,12 @@
 <!--      </div>-->
 <!--    </div>-->
 
-    <div class="mb12">
+    <div class="mb12" v-if="product.item_is_trans === false">
       <p>상품명칭</p>
       <a-input class="mb12" v-model:value="product.item_name" :placeholder="`상품명칭을 입력하세요.`"/>
     </div>
 
-    <div class="mb12" v-if="product.item_is_trans">
+    <div class="mb12" v-else>
       <p>상품명칭</p>
       <a-input class="mb12" v-model:value="product.item_trans_name" :placeholder="`상품명칭을 입력하세요.`"/>
     </div>

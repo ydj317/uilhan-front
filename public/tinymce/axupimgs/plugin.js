@@ -1,11 +1,9 @@
-console.log(tinymce.PluginManager);
-
 tinymce.PluginManager.add('axupimgs', function(editor, url) {
 	var pluginName='이미지 업로드';
 	window.axupimgs={}; //扔外部公共变量，也可以扔一个自定义的位置
 
 	// var baseURL=tinymce.baseURL;
-	var baseURL='https://kuaidiair-yuncongcon.com';
+	var baseURL='https://front.kuaidiair-yuncongcon.com';
 	var iframe1 = baseURL+'/tinymce/axupimgs/upfiles.html';
     axupimgs.images_upload_handler = editor.getParam('images_upload_handler', undefined, 'function');
     axupimgs.images_upload_base_path = editor.getParam('images_upload_base_path', '', 'string');

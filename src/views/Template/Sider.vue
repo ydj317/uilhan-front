@@ -17,11 +17,11 @@
       </a-menu-item>
       <a-menu-item key="2">
         <img src="../../assets/img/side/order.png" >
-        <span class="defaultColor defaultStyle">주문관리</span>
+        <span class="defaultColor defaultStyle">주문관리(준비중)</span>
       </a-menu-item>
       <a-menu-item key="3">
         <img src="../../assets/img/side/pre.png" >
-        <span class="defaultColor defaultStyle">예치금관리</span>
+        <span class="defaultColor defaultStyle">예치금관리(준비중)</span>
       </a-menu-item>
       <a-menu-item key="4">
         <img src="../../assets/img/side/detail.png" >
@@ -34,7 +34,7 @@
       <a-sub-menu key="6">
         <template #title>
           <img src="../../assets/img/side/setting.png" >
-          <span class="defaultColor defaultStyle">설정</span>
+          <span class="defaultColor defaultStyle">설정(준비중)</span>
         </template>
         <a-menu-item key="7"><span class="defaultColor defaultStyle">릴라켓정보</span></a-menu-item>
         <a-menu-item key="7"><span class="defaultColor defaultStyle">배송정책</span></a-menu-item>
@@ -44,11 +44,11 @@
       </a-sub-menu>
       <a-menu-item key="9">
         <img src="../../assets/img/side/market.png" >
-        <span class="defaultColor defaultStyle">제휴사연동</span>
+        <span class="defaultColor defaultStyle">제휴사연동(준비중)</span>
       </a-menu-item>
       <a-menu-item key="10">
         <img src="../../assets/img/side/other.png" >
-        <span class="defaultColor defaultStyle">상품부가정보</span>
+        <span class="defaultColor defaultStyle">상품부가정보(준비중)</span>
       </a-menu-item>
       <a-menu-item key="11" v-if="isAdmin">
         <DollarTwoTone style="font-size: 20px"/>

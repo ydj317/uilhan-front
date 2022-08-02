@@ -4,7 +4,7 @@
     <h1><strong>상세설명</strong></h1>
 
     <!--button-->
-    <a-button class="button" type="primary" @click="detailTrans">상세 이미지번역</a-button>
+    <a-button class="button bg-3051d3" type="primary" @click="detailTrans">상세 이미지번역</a-button>
 
     <!-- 상세설명 편집기 -->
     <TEditor ref="editor" v-model:value="product.item_detail" :productId="Number(product.item_code)"/>
@@ -45,7 +45,8 @@ export default {
           return false;
         }
 
-        this.product.item_detail = content.replace(this.aBakDetailImages[key], url);
+        this.$refs.editor.contentValue = content.replace(this.aBakDetailImages[key], url);
+        this.product.item_detail = this.$refs.editor.contentValue;
         return false;
       }
 

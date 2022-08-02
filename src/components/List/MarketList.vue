@@ -1,12 +1,12 @@
 <template>
   <div>
-    <a-modal v-model:visible="common.MarketListVisible">
+    <a-modal v-model:visible="relaket.data.MarketListVisible">
       <!--title-->
       <template #title>
         <h3 class="titleStyle"><b>연동할 제휴사</b></h3>
       </template>
 
-      <a-table :columns="columns" :data-source="common.options" :pagination="{hideOnSinglePage:true}">
+      <a-table :columns="columns" :data-source="relaket.data.options" :pagination="{hideOnSinglePage:true}">
         <!--headerCell-->
         <template #headerCell="{ column }">
           <template v-if="column.key === 'ssi_ix'">
@@ -53,7 +53,7 @@ import {AuthRequest} from '@/util/request';
 export default {
   computed: {
     ...mapState([
-      'common',
+      'relaket',
     ])
   },
 
@@ -85,50 +85,59 @@ export default {
 
   methods: {
     MarketListClose() {
-      this.common.MarketListVisible = false;
+      this.relaket.data.MarketListVisible = false;
     },
 
     testsync(type) {
-      this.common.indicator = true;
+      this.relaket.data.indicator = true;
       let list = '';
       let marketList = [];
       if (type === 'multi') {
-        marketList = this.common.marketList;
+        marketList = this.relaket.data.marketList;
         list = this.getCheckList();
       } else {
         marketList = this.getCheckedMarketList();
-        list = this.common.singleDetail.item_id + '';
+        list = this.relaket.data.singleDetail.item_id + '';
       }
 
       if (list === ',' || list.length === 0) {
         alert('상품을 선택해주세요');
-        this.common.indicator = false;
+        this.relaket.data.indicator = false;
         return false;
       }
 
+      let aOptions = JSON.parse(JSON.stringify(this.relaket.data.options));
+
       marketList = [];
-      this.common.options.map((options, i) => {
+      aOptions.map((options, i) => {
         if (options.checked) {
-          delete this.common.options[i].checked;
+          delete aOptions[i].checked;
           marketList.push(options.value);
         }
       })
 
       if (marketList.length === undefined) {
         alert('선택된 제휴사가 없습니다.');
-        this.common.indicator = false;
+        this.relaket.data.indicator = false;
         return false;
       }
 
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/syncmarket',
-          {params: {list: list, market: marketList, options: this.common.options}}).then((res) => {
+          {params: {list: list, market: marketList, options: aOptions}}).then((res) => {
         let returnData = res.data;
 
-        if (returnData.status === undefined || returnData.status !== '2000') {
+        if (returnData.status === undefined || returnData.status !== 2000) {
           alert(returnData.msg);
         }
 
         if (type === 'multi') {
+          this.relaket.data.setResultPopData(true, [
+            returnData.data.success,
+            returnData.data.failedCode,
+            returnData.data.failed,
+            returnData.data.total,
+            returnData.data.data,
+          ])
           // this.setResultPopData(true, [
           //   returnData.data.success,
           //   returnData.data.failedCode,
@@ -137,8 +146,8 @@ export default {
           //   returnData.data.data,
           // ]);
         } else {
-          this.common.MarketListVisible = false;
-          this.common.singleDetail = [];
+          this.relaket.data.MarketListVisible = false;
+          this.relaket.data.singleDetail = [];
           // this.checkedList = [];
 
           // this.setResultPopData(true, [
@@ -150,17 +159,18 @@ export default {
           // ]);
         }
 
-        this.common.indicator = false;
+        this.relaket.data.MarketListVisible = false;
+        this.relaket.data.indicator = false;
       });
 
     },
 
     getCheckList() {
       let list = '';
-      for (let i = 0; i < this.common.prdlist.length; i++) {
-        if (this.common.prdlist[i].checked === true) {
+      for (let i = 0; i < this.relaket.data.prdlist.length; i++) {
+        if (this.relaket.data.prdlist[i].checked === true) {
           let comma = i === 0 ? '' : ',';
-          list += comma + this.common.prdlist[i].item_id;
+          list += comma + this.relaket.data.prdlist[i].item_id;
         }
       }
 
@@ -170,9 +180,9 @@ export default {
     getCheckedMarketList() {
       let list = [];
 
-      for (let i = 0; i < this.common.singleDetail.item_sync_market.length; i++) {
-        if (this.common.singleDetail.item_sync_market[i].checked === true) {
-          list.push(this.common.singleDetail.item_sync_market[i].market_account);
+      for (let i = 0; i < this.relaket.data.singleDetail.item_sync_market.length; i++) {
+        if (this.relaket.data.singleDetail.item_sync_market[i].checked === true) {
+          list.push(this.relaket.data.singleDetail.item_sync_market[i].market_account);
         }
       }
 
@@ -180,8 +190,8 @@ export default {
     },
 
     checkAllMarket(checkAll) {
-      for (let i = 0; i < this.common.options.length; i++) {
-        this.common.options[i].checked = !checkAll;
+      for (let i = 0; i < this.relaket.data.options.length; i++) {
+        this.relaket.data.options[i].checked = !checkAll;
       }
     },
   },

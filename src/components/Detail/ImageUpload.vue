@@ -35,7 +35,7 @@
             <!--버튼-->
             <div id="eModelTitle_1_conent_button_group" class="w100 center space-around h40">
               <a-button class="w40 h30 center" type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
-              <a-popconfirm class="w40 h30 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
+              <a-popconfirm class="w40 h30 ml20 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
                 <a-button type="dashed"><span>삭제</span></a-button>
               </a-popconfirm>
             </div>
@@ -124,13 +124,13 @@ export default {
     pushImageData(key, url) {
       Object.values(this.fileList).map((oImageInfo, i) => {
         if (oImageInfo.order === key) {
-          this.fileList[i].url = url;
+          this.product.item_thumbnails[i].url = this.fileList[i].url = url;
         }
       });
     },
 
     delElement(element) {
-      this.fileList = this.fileList.filter(
+      this.product.item_thumbnails = this.fileList = this.fileList.filter(
           item => item.name !== element.name && item.order !== element.order);
     },
 
@@ -182,7 +182,7 @@ export default {
   },
 
   mounted() {
-    this.fileList = JSON.parse(JSON.stringify(this.product.item_thumbnails));
+    this.fileList = this.product.item_thumbnails;
     for (let i = 0; i < this.product.item_thumbnails.length; i++) {
       this.fileList[i].order = i + 1;
       this.fileList[i].checked = false;
@@ -281,10 +281,14 @@ export default {
 /*}*/
 
 .checkedEl {
-  border: 4px solid #3ddc97
+  border: 4px solid #3ddc97 !important;
 }
 
 .checkedNot {
-  border: 4px solid white;
+  border: 4px solid white !important;
+}
+
+.thumnail {
+  border: 1px solid #ff5656;
 }
 </style>
