@@ -13,12 +13,12 @@
 
     <div class="mb12" v-if="product.item_is_trans === false">
       <p>상품명칭</p>
-      <a-input class="mb12" v-model:value="product.item_name" :placeholder="`상품명칭을 입력하세요.`"/>
+      <a-input v-model:value="product.item_name" :placeholder="`상품명칭을 입력하세요.`"/>
     </div>
 
     <div class="mb12" v-else>
       <p>상품명칭</p>
-      <a-input class="mb12" v-model:value="product.item_trans_name" :placeholder="`상품명칭을 입력하세요.`"/>
+      <a-input v-model:value="product.item_trans_name" :maxlength="max_name_length" :showCount="true" :placeholder="`상품명칭을 입력하세요.`"/>
     </div>
 
     <div>
@@ -50,6 +50,7 @@ export default {
 
   data() {
     return {
+      max_name_length: 50,
       item_trans_name: '',
       "CONFIG": [
         {
@@ -92,6 +93,10 @@ export default {
   },
 
   mounted() {
+    if (this.product.item_is_trans) {
+      this.product.item_trans_name = this.product.item_trans_name.substr(0, this.max_name_length);
+    }
+
     this.item_trans_name = this.product.item_trans_name;
   }
 };

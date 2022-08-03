@@ -12,18 +12,16 @@
 
       <!--sku 상단 right 버튼-->
       <div class="top_button_right_item">
-        <a-button class="top_button_right_item_button" type="primary" @click="skuBatch">설정</a-button>
+        <a-button class="top_button_right_item_button" type="primary" @click="setMarginRate">설정</a-button>
         <a-select
             class="top_button_right_item_select"
             :options="product.user.margin"
-            @change="selectMargin"
             v-model:value="product.margin_default"
         >
         </a-select>
         <a-select
             class="top_button_right_item_select"
             :options="product.user.rate"
-            @change="selectRate"
             v-model:value="product.rate_default"
         >
         </a-select>
@@ -221,6 +219,11 @@ export default {
   },
 
   methods: {
+    setMarginRate() {
+      this.selectMargin(this.product.margin_default);
+      this.selectRate(this.product.rate_default);
+    },
+
     // 상단 margin 선택
     selectMargin(value) {
       let marginVal = isNaN(parseFloat(value)) ? 0 : parseFloat(value);

@@ -1,6 +1,6 @@
 <template>
   <div class="pl20 pr20 bg-white">
-    <div class="w70 bg-white">
+    <div class="w63 bg-white">
       <a-affix>
         <div class="space-between">
           <a-button danger @click="textTransModal">
@@ -66,7 +66,7 @@ export default {
         'Spec',
         'SKU',
         '통관정보',
-        '배송설정',
+        // '배송설정',
         '간략설명',
         '상세설명',
       ],

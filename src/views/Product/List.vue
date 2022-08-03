@@ -90,7 +90,7 @@
 
             <!--사진-->
             <template v-if="column.key === 'item_thumb'">
-              <img :src="record.item_thumb" alt="">
+              <img :src="record.item_thumb[0]" alt="">
             </template>
 
             <!--상품정보-->
@@ -98,7 +98,7 @@
               <!--상품명-->
               <div>
                 <a-button class="init-pmbo" type="link" :href="`/product/detail/${record.item_id}`">
-                  {{ record.item_is_trans ? record.item_trans_name : record.item_name }}
+                  <span>{{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}</span>
                 </a-button>
               </div>
 
@@ -357,22 +357,26 @@ export default defineComponent({
         {
           title: '사진',
           key: 'item_thumb',
-          width: '3%',
+          width: '5%',
+          align: 'center',
         },
         {
           title: '상품정보',
           key: 'item_name',
-          width: '54%',
+          // width: '',
+          align: 'left',
         },
         {
           title: '등록&수정시간',
           key: 'item_ins',
-          width: '20%',
+          width: '18%',
+          align: 'center',
         },
         {
           title: '제휴사연동',
           key: 'item_sync_status',
-          width: '20%',
+          width: '12%',
+          align: 'center',
         },
       ],
       pagination: {
@@ -491,6 +495,14 @@ export default defineComponent({
         this.indicator = false;
         this.checked = false;
       });
+    },
+
+    substrName(sName) {
+      if (sName.length > 80) {
+        return sName.substr(0, 80) + '...';
+      }
+
+      return sName;
     },
 
     getParam() {

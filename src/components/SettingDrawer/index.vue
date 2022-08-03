@@ -80,11 +80,23 @@
 
     <div>
       <a-divider />
-      <h4>알리익스프래스 환율</h4>
-      <h4><b>참고</b>(신한은행) : 한국 KRW {{this.rateKor}} - 중국 위안 1 위안</h4>
-      <h4>{{ this.aliexpressCurrent }}</h4>
-      <a-input class="w49" v-model:value="this.aliexpressNew" placeholder="알리익스프래스 환율설정" />
-      <a-button class="w49 bg-3051d3" @click="addAliexpress" type="primary">등록</a-button>
+      <h4><b>알리익스프래스 환율설정 [참고:신한은행]</b></h4>
+<!--      <h4>한국 KRW <a-input v-model:value="this.rateKor" class="w18" disabled /> - 중국 위안 1 위안</h4>-->
+<!--      <h4>{{ // this.aliexpressCurrent }}</h4>-->
+      <a-table :columns="aliexpressTable" :data-source="aliexpressData" bordered :pagination="{hideOnSinglePage:true}">
+        <template #headerCell="{ column }">
+            <h4 style="text-align: center">
+              {{ column.title }} (원)
+            </h4>
+        </template>
+        <template #bodyCell="{ column, record }">
+            <h4 style="text-align: center">{{record[column.dataIndex] === 0 ? 'Loading...' : record[column.dataIndex]}}</h4>
+        </template>
+<!--        <template #title>(참고:신한은행)</template>-->
+<!--        <template #footer>Footer</template>-->
+      </a-table>
+      <a-input class="w49 mt10" v-model:value="this.aliexpressNew" placeholder="알리익스프래스 환율설정" />
+      <a-button class="w49 bg-3051d3 ml6" @click="addAliexpress" type="primary">등록</a-button>
     </div>
 
 
@@ -323,6 +335,15 @@ export default {
     const indicator = false;
     const aliexpressCurrent = 0;
     const aliexpressNew = 0;
+    const aliexpressTable = [{
+      title: '한국 KRW',
+      dataIndex: 'ko',
+
+    }, {
+      title: '중국 RMB',
+      dataIndex: 'cn',
+    },];
+    const aliexpressData = [{ko: rateCn, cn: rateKor}];
     return {
       rateName,
       rateValue,
@@ -369,7 +390,9 @@ export default {
       rateKor,
       recharge: 0,
       aliexpressCurrent,
-      aliexpressNew
+      aliexpressNew,
+      aliexpressTable,
+      aliexpressData
     }
   },
   methods: {
@@ -992,8 +1015,9 @@ export default {
           return false;
         }
         let ReturnData = res.data;
-        this.rateCn = ReturnData.cn;
-        this.rateKor = ReturnData.ko;
+        // this.rateCn = ReturnData.cn;
+        // this.rateKor = ReturnData.ko;
+        this.aliexpressData = [{ko: ReturnData.ko, cn: ReturnData.cn}];
       });
     }
   },

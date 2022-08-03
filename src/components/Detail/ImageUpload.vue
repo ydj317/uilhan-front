@@ -26,18 +26,21 @@
           v-bind="dragOptions"
           v-model="fileList"
           :component-data="dragConfig"
+          @dragend="setDraggaImageData"
       >
         <template #item="{element, index}">
           <div id="eModelTitle_1_conent_group" class="w10 p5" :key="index" :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`">
-            <!--이미지-->
-            <img class="w100" :src="element.url" @click="outElChecking(element, index)" alt=""/>
+            <div>
+              <!--이미지-->
+              <img class="w100" :src="element.url" @click="outElChecking(element, index)" alt=""/>
 
-            <!--버튼-->
-            <div id="eModelTitle_1_conent_button_group" class="w100 center space-around h40">
-              <a-button class="w40 h30 center" type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
-              <a-popconfirm class="w40 h30 ml20 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
-                <a-button type="dashed"><span>삭제</span></a-button>
-              </a-popconfirm>
+              <!--버튼-->
+              <div id="eModelTitle_1_conent_button_group" class="w100 center space-around h40">
+                <a-button class="w40 h30 center" type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
+                <a-popconfirm class="w40 h30 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
+                  <a-button type="dashed"><span>삭제</span></a-button>
+                </a-popconfirm>
+              </div>
             </div>
           </div>
         </template>
@@ -127,6 +130,11 @@ export default {
           this.product.item_thumbnails[i].url = this.fileList[i].url = url;
         }
       });
+    },
+
+    // 拖动完毕后保存
+    setDraggaImageData() {
+      this.product.item_thumbnails = this.fileList;
     },
 
     delElement(element) {
@@ -280,12 +288,14 @@ export default {
 /*  background-color: #3051d3;*/
 /*}*/
 
-.checkedEl {
+.checkedEl > div {
   border: 4px solid #3ddc97 !important;
+  padding: 5px;
 }
 
-.checkedNot {
+.checkedNot > div {
   border: 4px solid white !important;
+  padding: 5px;
 }
 
 .thumnail {

@@ -151,13 +151,18 @@ export default {
       forEach(this.temp_sku, sku => {
         let sName = sku[0].name;
         if (sku.length > 1) {
-          sName = `${sku[0].name}::${sku[1].name}`;
+          // sName = `${sku[0].name}::${sku[1].name}`;
+          let aTempName = [];
+          forEach(sku, _sku => {
+            aTempName.push(_sku.name);
+          })
+          sName = aTempName.join('::');
         }
 
         let bPush = true;
         forEach(this.product.sku, original_sku => {
-          let aName = original_sku.spec.split('::');
-          if ((aName.includes(sku[0].name) && sku[1] === undefined) || (aName.includes(sku[0].name) && aName.includes(sku[1].name))) {
+          // let aName = original_sku.spec.split('::');
+          if (original_sku.spec === sName) {
             bPush = false;
             // 기존 sku 는 그대로 유지
             format_sku.push(original_sku);
@@ -208,6 +213,14 @@ export default {
         if (data.name === this.old_option_value) {
           this.product.item_option[this.modify_option_index].data[i].name = this.new_option_value;
         }
+
+        this.product.sku.map((sku, i) => {
+          let aSkuName = sku.spec.split('::');
+          if (aSkuName[this.modify_option_index] === this.old_option_value) {
+            aSkuName[this.modify_option_index] = this.new_option_value;
+            this.product.sku[i].spec = aSkuName.join('::');
+          }
+        })
       })
       this.modify_option_value_visible = false;
     },

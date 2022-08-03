@@ -14,8 +14,8 @@
             </th>
             <td>
               <div v-if="bTranslateStatus">
-                <a-button @click="mSetOriginalImage">기존</a-button>
-                <a-button @click="mSetTranslateImage" style="margin-left: 5px">번역</a-button>
+                <a-button @click="mSetOriginalImage" :style="originalBtn">기존</a-button>
+                <a-button @click="mSetTranslateImage" :style="translateBtn" style="margin-left: 5px">번역</a-button>
               </div>
             </td>
           </tr>
@@ -53,7 +53,7 @@
               </ul>
               <ul title="번역후" v-else style="float: left; list-style: none;padding: 0;height: 100%">
                 <li
-                    @click="mSeleteTranslate(item, index)" :class="`${iSelectedPictureIndex === index ? 'checkedEl' : 'checkedNot'} `"
+                    @click="setSelectedPictureIndex(item.key, item.translate_status)" :class="`${iSelectedPictureIndex === item.key ? 'checkedEl' : 'checkedNot'} `"
                     v-for="(item, index) in aPhotoCollection.filter(data => data.checked)" style="float: left;"
                 >
                   <span @click="mEditorImageError()" class="trans_error" v-if="mEditCompleted(item.translate_url)">실패</span>
@@ -220,6 +220,9 @@ export default {
 
       iProductId: -1,
       iSelectedPictureIndex: 0,
+
+      originalBtn: '',
+      translateBtn: '',
     };
   },
 
@@ -307,7 +310,8 @@ export default {
       };
 
       if (this.recharge < 1 || param.list.length > this.recharge) {
-        alert('이미지번역 잔여 수가 부족합니다.');
+        alert('이미지번역 잔여수가 부족합니다.');
+        this.bLoading = false;
         return false;
       }
 
@@ -325,8 +329,12 @@ export default {
       }
 
       try {
+        this.iSelectedPictureIndex = -1;
         res.data['list'].map((aPhoto, i) => {
-          this.aPhotoCollection[aPhoto.key] = this.aPhotoCollection[aPhoto.key] = {
+          if (this.iSelectedPictureIndex === -1 && aPhoto.translate_status) {
+            this.iSelectedPictureIndex = aPhoto.key;
+          }
+          this.aEditorImages[aPhoto.key] = this.aPhotoCollection[aPhoto.key] = {
             "msg" : aPhoto.msg || '',
             "key" : aPhoto.key, // 필수!!!
             "name": aPhoto.name || '',
@@ -536,14 +544,25 @@ export default {
       this.mLoadImage(url);
     },
 
+    setSelectedPictureIndex(iSelectedPictureIndex, translate_status) {
+      this.iSelectedPictureIndex = iSelectedPictureIndex;
+      translate_status? this.mSetTranslateImage(): this.mSetOriginalImage();
+    },
+
     // [팝업] 기존 버튼
     mSetOriginalImage() {
-      this.sSelectedPictureLink = this.aPhotoCollection[this.iSelectedPictureIndex].original_url;
+      let aTemp = this.aPhotoCollection.filter(data => this.iSelectedPictureIndex === data.key);
+      this.sSelectedPictureLink = aTemp[0].original_url;
+      this.originalBtn = `border: none; background-color: #7093DB; color: white;`;
+      this.translateBtn = `border: 1px solid #7093DB; color: #7093DB;`;
     },
 
     // [팝업] 번역 버튼
     mSetTranslateImage() {
-      this.sSelectedPictureLink = this.aPhotoCollection[this.iSelectedPictureIndex].translate_url;
+      let aTemp = this.aPhotoCollection.filter(data => this.iSelectedPictureIndex === data.key);
+      this.sSelectedPictureLink = aTemp[0].translate_url;
+      this.originalBtn = `border: 1px solid #7093DB; color: #7093DB;`;
+      this.translateBtn = `border: none; background-color: #7093DB; color: white;`;
     },
 
     // [팝업] 확인
@@ -707,5 +726,14 @@ export default {
   display: block;
   text-align: center;
   cursor: pointer;
+}
+</style>
+
+<style scoped>
+.checkedEl{
+  border: 3px solid  #7093DB;
+}
+.checkedNot{
+  border: 3px solid  white;
 }
 </style>

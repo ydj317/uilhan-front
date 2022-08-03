@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal v-model:visible="product.text_trans_visible" title="Basic Modal" @ok="textTranslate">
+    <a-modal v-model:visible="product.text_trans_visible" title="텍스트 번역" @ok="textTranslate">
       <a-radio-group v-model:value="product.toLang">
         <a-radio  value="ko">to Korea</a-radio>
         <a-radio  value="ja">to Japan</a-radio>
@@ -64,6 +64,8 @@ export default {
         if (!lib.isEmpty(this.product.item_detail, true)) {
           this.product.item_detail = res.data.detailSpec + this.product.item_detail;
         }
+
+        this.product.item_trans_name = this.product.item_trans_name.substr(0, 50);
 
         this.product.toLang = 'ko';
         this.product.item_is_trans = true;
