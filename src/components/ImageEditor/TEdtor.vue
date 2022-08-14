@@ -1,6 +1,6 @@
 <template>
   <div class="tinymce-box">
-    <Editor v-model="contentValue" :init="init" :disabled="disabled" @onClick="onClick" />
+    <Editor v-model="contentValue" :init="init" :disabled="disabled" @onClick="onClick" @selectionChange="selectionChange" />
   </div>
 </template>
 
@@ -96,7 +96,7 @@ export default {
 
         skin_url: '/tinymce/skins/ui/oxide',  //皮肤：浅色
         // skin_url: '/tinymce/skins/ui/oxide-dark',//皮肤：暗色
-
+        content_css: '/tinymce/skins/content/default/content.css',
         plugins: this.plugins,  //插件配置
         toolbar: this.toolbar,  //工具栏配置，设为false则隐藏
         menubar: false,  //菜单栏配置，设为false则隐藏，不配置则默认显示全部菜单，也可自定义配置--查看 http://tinymce.ax-z.cn/configure/editor-appearance.php --搜索“自定义菜单”
@@ -181,6 +181,9 @@ export default {
     // 添加相关的事件，可用的事件参照文档=> https://github.com/tinymce/tinymce-vue => All available events
     onClick(e){
       this.$emit('onClick', e, tinymce)
+    },
+    selectionChange(){
+      this.$emit('contentUpdate', tinymce)
     },
     //清空内容
     clear(){

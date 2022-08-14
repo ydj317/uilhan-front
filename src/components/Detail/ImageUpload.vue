@@ -29,7 +29,7 @@
           @dragend="setDraggaImageData"
       >
         <template #item="{element, index}">
-          <div id="eModelTitle_1_conent_group" class="w10 p5" :key="index" :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`">
+          <div id="eModelTitle_1_conent_group" class="w10 p5 m5" :key="index" :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`">
             <div>
               <!--이미지-->
               <img class="w100" :src="element.url" @click="outElChecking(element, index)" alt=""/>
@@ -300,5 +300,9 @@ export default {
 
 .thumnail {
   border: 1px solid #ff5656;
+}
+
+#eModelTitle_1_conent #eModelTitle_1_conent_group:first-child {
+  border: 3px solid #f06543;
 }
 </style>

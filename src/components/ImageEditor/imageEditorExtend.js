@@ -177,6 +177,7 @@ export class ImageEditorExtend {
   static loadImage(sImageUrl) {
     setTimeout(() => {
       this.imageEditor.resetZoom();
+      console.log('sImageUrl', sImageUrl);
       this.imageEditor.loadImageFromURL(sImageUrl, "image").then((e) => {
 //        let oCanvasSize = this.imageEditor.getCanvasSize();
 //        setTimeout(() => {

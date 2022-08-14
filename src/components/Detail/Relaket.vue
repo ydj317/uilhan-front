@@ -143,21 +143,21 @@
 <script>
 import {AuthRequest} from '@/util/request';
 import { mandatoryList } from 'config/Relaket/mandatory'
-import { ref, reactive } from 'vue';
-import {mapState} from 'vuex';
+import { ref, reactive, computed } from 'vue';
+import {mapState, useStore} from 'vuex';
 import {lib} from '@/util/lib';
 export default {
   components: {mandatoryList},
 
   computed: {
     ...mapState([
-      'common',
       'product',
-      'relaket',
     ])
   },
 
   setup() {
+    const store = useStore()
+    const aProduct = computed(() => store.state.product)
     const formState = reactive({
       pid: '',
       co_pid: '',
@@ -343,9 +343,17 @@ export default {
       }
 
       formState.delivery_template_real_val = formState['delivery_template_' + type + '_val'];
+
+      if (!lib.isEmpty(formState.delivery_template_real_val) && formState.delivery_template_real_val !== '선택') {
+        let aDelivery = formState['delivery_template_' + type + '_list'].filter(data => data.value === formState.delivery_template_real_val);
+        aProduct.value.sku.map((data, i) => {
+          aProduct.value.sku[i].shipping_fee_ko = aDelivery[0].shipping_fee_ko;
+        });
+      }
     }
 
     const recommendCategory = reactive({
+      sMarket: '',
       bDisposable: false,
       aOptions: [],
       aSearchValue: [],
@@ -404,19 +412,27 @@ export default {
       },
 
       // 打开 联动
-      switchInit: (isSync) => {
-        let _ = recommendCategory;
+      switchInit: (onece = false) => {
+        try {
+          let _ = recommendCategory;
 
-        if (_.aOptions.length === 0 && _.bDisposable === false) {
-          _.bDisposable = true;
-          let sChineseProductName = document.querySelector('#eModelTitle_0 input').value;
-          let sKeyWords = _.automaticGenerate(sChineseProductName);
+          if (_.aOptions.length === 0 && _.bDisposable === false) {
+            _.bDisposable = true;
+            let sChineseProductName = document.querySelector('#eModelTitle_0 input').value;
+            let sKeyWords = _.automaticGenerate(sChineseProductName);
 
-          _.mAlert('추천 카테고리 조회중...');
-          _.getData(options => {
-            _.initData();
-            _.aOptions = options;
-          }, sKeyWords);
+            _.mAlert('추천 카테고리 조회중...');
+            _.getData(options => {
+              _.initData();
+              _.aOptions = options;
+            }, sKeyWords);
+          }
+        } catch (e) {
+          if (onece === false) {
+            setTimeout(() => {
+              recommendCategory.switchInit(true);
+            }, 1000)
+          }
         }
       },
 
@@ -472,6 +488,11 @@ export default {
       // 获取推荐分类
       getData: (callback, sKeyWord = '', sLanguageTypeSearched = 'cn') => {
         let _ = recommendCategory;
+
+        let oKoreanRegular = /[\uac00-\ud7ff]/gi;
+        if (oKoreanRegular.test(sKeyWord) && _.sMarket === 'Aliexpress') {
+          sLanguageTypeSearched = 'kor';
+        }
 
         _.requestData(
             {
@@ -568,7 +589,8 @@ export default {
             return false;
           }
 
-          callback(res.data);
+          let options = res.data || [];
+          callback(options);
         });
       },
 
@@ -751,6 +773,7 @@ export default {
 
     let cateLoading = false;
     return {
+      aProduct,
       recommendCategory,
       formState,
       isSync,
@@ -772,6 +795,7 @@ export default {
 
   mounted() {
     // 사양대로 무조건 노출
+    this.recommendCategory.sMarket = this.product.item_market;
     this.product.relaket_visivle = true;
     this.isSync = true;
 
@@ -817,15 +841,6 @@ export default {
         this.formState.surtax = this.product.item_surtax;
 
         let _ = this.recommendCategory;
-
-        let sChineseProductName = this.product.item_name;
-        let sKeyWords = _.automaticGenerate(sChineseProductName);
-
-        _.mAlert('추천 카테고리 조회중...');
-        _.getData(options => {
-          _.initData();
-          _.aOptions = options;
-        }, sKeyWords);
       }
 
       let delvTmp = this.product.delivery_template_list;
