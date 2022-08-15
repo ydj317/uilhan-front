@@ -198,6 +198,24 @@ export default {
       this._getSku([], 0, this.product.item_option);
       this._setSku();
       this.css();
+      this.skuLongName();
+    },
+
+    skuLongName() {
+      let aLongerSkuName = this.product.sku.filter(
+          (data) => data.spec.length > 20
+      );
+      this.product.sku_long_name = [];
+      aLongerSkuName.map((sku) => {
+        let aLongerSpec = sku.spec.split("::");
+        this.product.item_option.map((options) => {
+          options.data.map((data) => {
+            if (aLongerSpec.includes(data.name)) {
+              this.product.sku_long_name.push(data.name);
+            }
+          });
+        });
+      });
     },
 
     _getSku(aTempSku, i, aOptions) {

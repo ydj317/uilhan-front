@@ -25,6 +25,7 @@
         >
 <!--          <a-descriptions title="" :column="1" :bordered="true" :contentStyle="{'padding-top':'45px'}">-->
           <a-descriptions-item label="아이디 [필수]" :labelStyle="{color: 'red',width: '220px'}">
+            <span><strong>아이디 [필수]</strong></span>
             <a-form-item name="username" has-feedback>
               <a-input
                   class="inputStyle"
@@ -35,6 +36,7 @@
             </a-form-item>
           </a-descriptions-item>
           <a-descriptions-item label="비밀번호 [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>비밀번호 [필수]</strong></span>
           <a-form-item name="password" has-feedback>
             <a-input
                 class="inputStyle"
@@ -47,6 +49,7 @@
           </a-descriptions-item>
 
           <a-descriptions-item label="비밀번호 확인 [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>비밀번호 확인 [필수]</strong></span>
           <a-form-item name="password_confirm" has-feedback>
             <a-input
                 class="inputStyle"
@@ -58,6 +61,7 @@
           </a-descriptions-item>
 
           <a-descriptions-item label="사용자명/사업자명 [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>사용자명/사업자명 [필수]</strong></span>
           <a-form-item name="name" has-feedback>
             <a-input
                 class="inputStyle"
@@ -69,6 +73,7 @@
           </a-descriptions-item>
 
           <a-descriptions-item label="Email [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>Email [필수]</strong></span>
           <a-form-item name="email" has-feedback>
             <a-input
                 class="inputStyle"
@@ -80,17 +85,37 @@
           </a-descriptions-item>
 
           <a-descriptions-item label="휴대전화 [필수]" :labelStyle="{color: 'red'}">
-            <a-form-item name="phone" has-feedback>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.phone"
-                  placeholder="휴대전화 [필수]"
-              >
-              </a-input>
-            </a-form-item>
+            <span><strong>휴대전화 [필수]</strong></span>
+            <div class="center init-pmbo">
+              <a-form-item name="phone1" class="w32 mr12" has-feedback>
+                <a-input
+                    v-model:value="formState.phone1"
+                    placeholder="휴대전화 [필수]"
+                    :maxlength="4"
+                >
+                </a-input>
+              </a-form-item>
+              <a-form-item name="phone2" class="w32 mr12" has-feedback>
+                <a-input
+                    v-model:value="formState.phone2"
+                    placeholder="휴대전화 [필수]"
+                    :maxlength="4"
+                >
+                </a-input>
+              </a-form-item>
+              <a-form-item name="phone3" class="w32" has-feedback>
+                <a-input
+                    v-model:value="formState.phone3"
+                    placeholder="휴대전화 [필수]"
+                    :maxlength="4"
+                >
+                </a-input>
+              </a-form-item>
+            </div>
           </a-descriptions-item>
 
           <a-descriptions-item label="업체명/사업자명 [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>업체명/사업자명 [필수]</strong></span>
             <a-form-item name="com_name" has-feedback>
               <a-input
                   class="inputStyle"
@@ -102,6 +127,7 @@
           </a-descriptions-item>
 
             <a-descriptions-item label="사업자번호 [필수]" :labelStyle="{color: 'red'}">
+              <span><strong>사업자번호 [필수]</strong></span>
           <a-form-item name="com_number" has-feedback>
             <a-input
                 class="inputStyle"
@@ -112,17 +138,37 @@
           </a-form-item>
             </a-descriptions-item>
           <a-descriptions-item label="사업장 전화번호 [필수]" :labelStyle="{color: 'red'}">
-          <a-form-item name="com_phone" has-feedback>
-            <a-input
-                class="inputStyle"
-                v-model:value="formState.com_phone"
-                placeholder="사업장 전화번호 [필수]"
-            >
-            </a-input>
-          </a-form-item>
+            <span><strong>사업장 전화번호 [필수]</strong></span>
+            <div class="center init-pmbo">
+              <a-form-item name="com_phone1" class="w32 mr12" has-feedback>
+                <a-input
+                    v-model:value="formState.com_phone1"
+                    placeholder="사업장 전화번호 [필수]"
+                    :maxlength="4"
+                >
+                </a-input>
+              </a-form-item>
+              <a-form-item name="com_phone2" class="w32 mr12" has-feedback>
+                <a-input
+                    v-model:value="formState.com_phone2"
+                    placeholder="사업장 전화번호 [필수]"
+                    :maxlength="4"
+                >
+                </a-input>
+              </a-form-item>
+              <a-form-item name="com_phone3" class="w32" has-feedback>
+                <a-input
+                    v-model:value="formState.com_phone3"
+                    placeholder="사업장 전화번호 [필수]"
+                    :maxlength="4"
+                >
+                </a-input>
+              </a-form-item>
+            </div>
           </a-descriptions-item>
 
           <a-descriptions-item label="대표자명 [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>대표자명 [필수]</strong></span>
           <a-form-item name="com_ceo" has-feedback>
             <a-input
                 class="inputStyle"
@@ -134,6 +180,7 @@
           </a-descriptions-item>
 
           <a-descriptions-item label="수수료율 [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>수수료율 [필수]</strong></span>
           <a-form-item name="commission" has-feedback>
             <a-input class="inputStyle" v-model:value="formState.commission" placeholder="수수료율 [필수]">
               <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
@@ -142,6 +189,7 @@
           </a-descriptions-item>
 
           <a-descriptions-item label="도매 수수료 [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>도매 수수료 [필수]</strong></span>
           <a-form-item name="wholesale_commission" has-feedback>
             <a-input class="inputStyle" v-model:value="formState.wholesale_commission" placeholder="도매 수수료 [필수]">
               <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
@@ -150,17 +198,37 @@
           </a-descriptions-item>
 
             <a-descriptions-item label="유선전화">
-          <a-form-item name="tel" has-feedback>
-            <a-input
-                class="inputStyle"
-                v-model:value="formState.tel"
-                placeholder="유선전화"
-            >
-            </a-input>
-          </a-form-item>
+              <span><strong>유선전화</strong></span>
+              <div class="center init-pmbo">
+                <a-form-item name="tel1" class="w32 mr12" has-feedback>
+                  <a-input
+                      v-model:value="formState.tel1"
+                      placeholder="유선전화"
+                      :maxlength="4"
+                  >
+                  </a-input>
+                </a-form-item>
+                <a-form-item name="tel2" class="w32 mr12" has-feedback>
+                  <a-input
+                      v-model:value="formState.tel2"
+                      placeholder="유선전화"
+                      :maxlength="4"
+                  >
+                  </a-input>
+                </a-form-item>
+                <a-form-item name="tel3" class="w32" has-feedback>
+                  <a-input
+                      v-model:value="formState.tel3"
+                      placeholder="유선전화"
+                      :maxlength="4"
+                  >
+                  </a-input>
+                </a-form-item>
+              </div>
             </a-descriptions-item>
 
             <a-descriptions-item label="정산상품 기간설정">
+              <span><strong>정산상품 기간설정</strong></span>
           <a-form-item name="ac_expect_date" has-feedback>
             <a-tooltip color="white"  placement="left">
               <template #title>
@@ -177,6 +245,7 @@
             </a-descriptions-item>
 
           <a-descriptions-item label="정산방식 [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>정산방식 [필수]</strong></span>
             <a-form-item name="account_type" v-bind="validateInfos.account_type">
               <a-tooltip color="white"  placement="left">
                 <template #title>
@@ -196,6 +265,7 @@
           </a-descriptions-item>
 
           <a-descriptions-item label="정산유형 [필수]" :labelStyle="{color: 'red'}">
+            <span><strong>정산유형 [필수]</strong></span>
             <a-form-item name="account_div" v-bind="validateInfos.account_div">
               <a-select
                   class="inputStyle"
@@ -209,6 +279,7 @@
           </a-descriptions-item>
 
             <a-descriptions-item label="정산일자유형" >
+              <span><strong>정산일자유형</strong></span>
           <a-form-item name="ac_delivery_type">
             <a-select
                 class="inputStyle"
@@ -224,6 +295,7 @@
             </a-descriptions-item>
 
             <a-descriptions-item label="결제유형">
+              <span><strong>결제유형</strong></span>
           <a-form-item name="account_method">
             <a-select
                 class="inputStyle"
@@ -291,15 +363,21 @@ export default defineComponent({
       //[필수] 이메일
       email: '',
       //[필수] 휴대전화
-      phone: '',
+      phone1: '',
+      phone2: '',
+      phone3: '',
       //유선전화
-      tel: '',
+      tel1: '',
+      tel2: '',
+      tel3: '',
       //[필수] 사업자명/업체명
       com_name: '',
       //[필수] 사업자번호
       com_number: '',
       //사업장전화번호
-      com_phone: '',
+      com_phone1: '',
+      com_phone2: '',
+      com_phone3: '',
       //대표자명
       com_ceo: '',
       //업종
@@ -338,11 +416,11 @@ export default defineComponent({
         password: formState.password,
         name: formState.name,
         email: formState.email,
-        phone: formState.phone,
-        tel: formState.tel,
+        phone: formState.phone1 + "-" + formState.phone2 + "-" + formState.phone3,
+        tel: formState.tel1 + "-" + formState.tel2 + "-" + formState.tel3,
         com_name: formState.com_name,
         com_number: formState.com_number,
-        com_phone: formState.com_phone,
+        com_phone: formState.com_phone1 + "-" + formState.com_phone2 + "-" + formState.com_phone3,
         com_ceo: formState.com_ceo,
         //com_business_category: formState.com_business_category,
         //com_business_status: formState.com_business_status,
@@ -462,8 +540,8 @@ export default defineComponent({
       if (value === '') {
         return Promise.reject('사업자명을 입력해주십시오');
       } else {
-        if (value.length < 3 || value.length > 10) {
-          return Promise.reject('사업자명은 최소 3자 최대 10자이내로 입력해주십시오');
+        if (value.length < 2 || value.length > 20) {
+          return Promise.reject('사업자명은 최소 2자 최대 20자이내로 입력해주십시오');
         }
       }
 
@@ -487,9 +565,22 @@ export default defineComponent({
       if (value === '') {
         return Promise.reject('휴대폰번호를 입력해주십시오');
       } else {
-        let regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+        let regPhone = /^\d{4}$/;
         if (regPhone.test(value) !== true) {
-          return Promise.reject('휴대폰번호 격식이 옳바르지 않습니다.');
+          return Promise.reject('');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validatePhoneFirst = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('휴대폰번호를 입력해주십시오');
+      } else {
+        let regPhone = /^\d{2,4}$/;
+        if (regPhone.test(value) !== true) {
+          return Promise.reject('');
         }
       }
 
@@ -500,8 +591,8 @@ export default defineComponent({
       if (value === '') {
         return Promise.reject('업체명을 입력해주십시오');
       } else {
-        if (value.length < 3 || value.length > 20) {
-          return Promise.reject('업체명은 최소 3자 최대 20자이내로 입력해주십시오');
+        if (value.length < 2 || value.length > 20) {
+          return Promise.reject('업체명은 최소 2자 최대 20자이내로 입력해주십시오');
         }
       }
 
@@ -652,7 +743,21 @@ export default defineComponent({
           trigger: 'blur',
         },
       ],
-      phone: [
+      phone1: [
+        {
+          required: true,
+          validator: validatePhoneFirst,
+          trigger: 'blur',
+        },
+      ],
+      phone2: [
+        {
+          required: true,
+          validator: validatePhone,
+          trigger: 'blur',
+        },
+      ],
+      phone3: [
         {
           required: true,
           validator: validatePhone,
@@ -673,10 +778,24 @@ export default defineComponent({
           trigger: 'blur',
         },
       ],
-      com_phone: [
+      com_phone1: [
         {
           required: true,
-          validator: validateComphone,
+          validator: validatePhoneFirst,
+          trigger: 'blur'
+        },
+      ],
+      com_phone2: [
+        {
+          required: true,
+          validator: validatePhone,
+          trigger: 'blur'
+        },
+      ],
+      com_phone3: [
+        {
+          required: true,
+          validator: validatePhone,
           trigger: 'blur'
         },
       ],
@@ -715,9 +834,21 @@ export default defineComponent({
           trigger: 'change',
         },
       ],
-      tel: [
+      tel1: [
         {
-          validator: validateTel,
+          validator: validatePhoneFirst,
+          trigger: 'blur',
+        },
+      ],
+      tel2: [
+        {
+          validator: validatePhone,
+          trigger: 'blur',
+        },
+      ],
+      tel3: [
+        {
+          validator: validatePhone,
           trigger: 'blur',
         },
       ],

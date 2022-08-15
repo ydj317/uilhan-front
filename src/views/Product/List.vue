@@ -48,11 +48,9 @@
       <!--top-->
       <div id="content-header" class="pt20 row space-between">
         <!--left button-->
-        <div class="w18 space-between">
+        <div class="w12 space-between">
           <!--상품번역-->
           <a-button type="primary">상품번역</a-button>
-          <!--새로고침-->
-          <a-button type="primary" @click="reload">새로고침</a-button>
           <!--상품삭제-->
           <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
             <a-button type="primary">상품삭제</a-button>
@@ -453,10 +451,6 @@ export default defineComponent({
     MarketListPop() {
       this.relaket.data = this;
       this.MarketListVisible = true;
-    },
-
-    reload() {
-      location.reload();
     },
 
     equal(key1, key2) {

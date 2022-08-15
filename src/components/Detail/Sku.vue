@@ -135,7 +135,7 @@
 
           <!--스펙-->
           <template v-else-if="column.key === 'spec'">
-            <div class="center" :style="text.length > 20 ? 'color: red' : ''">
+            <div class="center" :style="record.spec.length > 20 ? 'color: red' : ''">
               {{ record.spec }}
             </div>
           </template>
@@ -299,9 +299,9 @@ export default {
      */
     setWholesaleMargin() {
       this.product.sku.map((data, i) => {
-        this.product.sku[i].wholesale_price =
-          ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
+        let wholesale_price = ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
           (1 + (Number(this.product["wholesale_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
+        this.product.sku[i].wholesale_price = Math.ceil(Number(wholesale_price) / 100) * 100;
       });
     },
 
@@ -312,9 +312,9 @@ export default {
      */
     setSellingMargin() {
       this.product.sku.map((data, i) => {
-        this.product.sku[i].selling_price =
-          ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
+        let selling_price = ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
             (1 + (Number(this.product["selling_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
+        this.product.sku[i].selling_price = Math.ceil(Number(selling_price) / 100) * 100;
       });
     },
 
@@ -325,11 +325,12 @@ export default {
      */
     setDispMargin() {
       this.product.sku.map((data, i) => {
-        this.product.sku[i].disp_price =
+        let disp_price =
             ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
                 (1 + (Number(this.product["selling_margin_option"]) / 100)) *
                 (1 + (Number(this.product["disp_margin_option"]) / 100)) *
                 Number(this.product.rate_margin_option)).toFixed(0);
+        this.product.sku[i].disp_price = Math.ceil(Number(disp_price) / 100) * 100;
       });
     },
 

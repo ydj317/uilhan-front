@@ -23,7 +23,7 @@
       </div>
       <div id="setting" class="pr50">
         <div class="center pointer" @click="settingVisible">
-          <img src="../../assets/img/avatar.png" width="36" height="36" style="border-radius: 50px;" alt="">
+          <img src="../../assets/img/user.png" width="36" height="36" style="border-radius: 50px;" alt="">
           <h3 class="m10 white">{{ user_name }}</h3>
         </div>
         <a-select
@@ -36,7 +36,7 @@
             @select="seletedSetting"
             @blur="settingVisible"
         >
-          <a-select-option value="userinfo"><UserOutlined /> <span>회원정보</span></a-select-option>
+<!--          <a-select-option value="userinfo"><UserOutlined /> <span>회원정보</span></a-select-option>-->
           <a-select-option value="setting"><SettingOutlined /> 설정</a-select-option>
           <a-select-option value="logout"><LogoutOutlined /> 로그아웃</a-select-option>
         </a-select>

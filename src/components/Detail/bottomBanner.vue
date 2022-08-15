@@ -76,7 +76,7 @@ export default {
         return false;
       }
 
-      let dlvTemp = this.product.formState.delivery_template_val;
+      let dlvTemp = this.product.formState.delivery_template_real_val;
       if (dlvTemp === null || dlvTemp === "선택") {
         alert("배송정책정보를 선택해주십시오");
         return false;

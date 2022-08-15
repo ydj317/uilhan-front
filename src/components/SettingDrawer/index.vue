@@ -1273,6 +1273,15 @@ export default {
     },
 
     deleteMargin(type) {
+      let aSeleted = this[type + "_margin"].filter(
+          (item) => parseInt(this[type + "_margin_option"]) === parseInt(item.value)
+      );
+      if (aSeleted[0].use === 'T') {
+        alert('사용중인 마진은 삭제 할수없습니다.');
+        return false;
+      }
+
+
       let data = this[type + "_margin"].filter(
         (item) => parseInt(this[type + "_margin_option"]) !== parseInt(item.value)
       );
@@ -1300,14 +1309,8 @@ export default {
           return false;
         }
 
-        this[type + "_margin"] = this.setLabel(
-          returnData.data,
-          "margin"
-        );
-        // this[type + "_margin_option"] = this[type + "_margin"][0].value;
-        if (!lib.isEmpty(returnData.data[type + "_margin_option"])) {
-          this[type + "_margin_option"] = returnData.data[type + "_margin_option"];
-        }
+        this.setUserMargin(type, returnData.data);
+
         alert("삭제성공");
         this.indicator = false;
       });
@@ -1361,17 +1364,7 @@ export default {
           return false;
         }
 
-        this[type + "_margin"] = this.setLabel(
-          returnData.data,
-          "margin"
-        );
-        this[type + "_margin_option"] = this[type + "_margin"][0].value;
-        if (!lib.isEmpty(returnData.data[type + "_margin_option"])) {
-          this[type + "_margin_option"] = returnData.data[type + "_margin_option"];
-        }
-
-        this[type + "_margin_name"] = "";
-        this[type + "_margin_value"] = "";
+       this.setUserMargin(type, returnData.data);
 
         alert("등록성공");
         this.indicator = false;
@@ -1385,12 +1378,13 @@ export default {
       }
 
       if (Number(this[type + "_margin_option"]) === 0) {
-        alert("삭제할 옵션을 선택해주세요.");
+        alert("적용할 옵션을 선택해주세요.");
         return false;
       }
 
       let aOptions = this[type + "_margin"];
       aOptions.map((item, i) => {
+        aOptions[i].use = "F";
         if (parseInt(item.value) === parseInt(this[type + "_margin_option"])) {
           aOptions[i].use = "T";
         }
@@ -1412,17 +1406,7 @@ export default {
           return false;
         }
 
-        this[type + "_margin"] = this.setLabel(
-          returnData.data,
-          "margin"
-        );
-        this[type + "_margin_option"] = this[type + "_margin"][0].value;
-        if (!lib.isEmpty(returnData.data[type + "_margin_option"])) {
-          this[type + "_margin_option"] = returnData.data[type + "_margin_option"];
-        }
-
-        this[type + "_margin_name"] = "";
-        this[type + "_margin_value"] = "";
+        this.setUserMargin(type, returnData.data);
 
         alert("등록성공");
         this.indicator = false;
@@ -1437,7 +1421,6 @@ export default {
           symble = "%";
         }
 
-        console.log('type', type + '-'  + symble);
         if (
           items[i].label.indexOf("(") === -1 &&
           items[i].label.indexOf("%") === -1
@@ -1473,6 +1456,34 @@ export default {
       this[field + "_margin_option"] = !lib.isEmpty(this.userData[field + "_margin_option"])
         ? this.userData[field + "_margin_option"]
         : "0";
+    },
+
+    setUserMargin(field, data) {
+      field = field.replace("_margin", "");
+
+      let isRate = false;
+      if (field === 'rate') {
+        isRate = true;
+      }
+
+      let aMargin = lib.isArray(data)
+          ? this.setLabel(data, "margin", isRate)
+          : [];
+
+      this[field + "_margin"] = [{label: "선택해주세요", value: "0"}];
+      if (lib.isArray(aMargin, true)) {
+        aMargin.map((data) => {
+          this[field + "_margin"].push(data)
+        })
+      }
+
+      let aUse = aMargin.filter(margin => margin.use === 'T');
+      this[field + "_margin_option"] = lib.isArray(aUse, true)
+          ? aUse[0].value
+          : "0";
+
+      this[field + "_margin_name"] = "";
+      this[field + "_margin_value"] = "";
     },
 
     getUser() {
