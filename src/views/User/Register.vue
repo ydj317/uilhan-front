@@ -1,5 +1,5 @@
 <template>
-  <div class="_container">
+  <div id="userRegister">
     <div class="header">
       <div class="icon">
         <img src="../../assets/img/logo-light.png" alt="">
@@ -563,9 +563,22 @@ export default defineComponent({
 
     let validatePhone = async (rule, value) => {
       if (value === '') {
-        return Promise.reject('휴대폰번호를 입력해주십시오');
+        return Promise.reject('번호를 입력해주십시오');
       } else {
         let regPhone = /^\d{4}$/;
+        if (regPhone.test(value) !== true) {
+          return Promise.reject('');
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let _validatePhone = async (rule, value) => {
+      if (value === '') {
+        return Promise.reject('번호를 입력해주십시오');
+      } else {
+        let regPhone = /^\d{3,4}$/;
         if (regPhone.test(value) !== true) {
           return Promise.reject('');
         }
@@ -695,8 +708,8 @@ export default defineComponent({
       if (value === '') {
         return Promise.reject('대표자명을 입력해주십시오');
       } else {
-        if (value.length < 3 || value.length > 10) {
-          return Promise.reject('대표자명은 최소 3자 최대 10자이내로 입력해주십시오');
+        if (value.length < 2 || value.length > 10) {
+          return Promise.reject('대표자명은 최소 2자 최대 10자이내로 입력해주십시오');
         }
       }
 
@@ -753,7 +766,7 @@ export default defineComponent({
       phone2: [
         {
           required: true,
-          validator: validatePhone,
+          validator: _validatePhone,
           trigger: 'blur',
         },
       ],
@@ -788,7 +801,7 @@ export default defineComponent({
       com_phone2: [
         {
           required: true,
-          validator: validatePhone,
+          validator: _validatePhone,
           trigger: 'blur'
         },
       ],
@@ -842,7 +855,7 @@ export default defineComponent({
       ],
       tel2: [
         {
-          validator: validatePhone,
+          validator: _validatePhone,
           trigger: 'blur',
         },
       ],
@@ -895,16 +908,16 @@ export default defineComponent({
 /*  width: 0 !important;*/
 /*}*/
 
-.init {
+#userRegister .init {
   margin: 0 !important;
   padding: 0 !important;
 }
 
-._container {
+#userRegister {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 1900px;
+  height: auto;
   width: 100%;
   /*position: fixed;*/
   /*overflow-y: hidden;*/
@@ -948,7 +961,7 @@ export default defineComponent({
   --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
 
-.header {
+#userRegister .header {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -959,16 +972,16 @@ export default defineComponent({
   height: 89px;
 }
 
-.icon img {
+#userRegister .icon img {
   width: 180px;
   height: 40px;
 }
 
-.tip {
+#userRegister .tip {
   margin-top: 9px;
 }
 
-.tip h5 {
+#userRegister .tip h5 {
   font-size: 16px !important;
   color: rgba(255,255,255,.5) !important;
   font-weight: 600;
@@ -979,13 +992,13 @@ export default defineComponent({
 
 <!--item-->
 <style>
-.item {
+#userRegister .item {
   width: 736px;
   margin-top: 80px;
   background-color: white;
   padding: 24px;
 }
-.item h5 {
+#userRegister .item h5 {
   width: 672px;
   height: 22px;
   background-color: white;
@@ -995,27 +1008,27 @@ export default defineComponent({
   font-weight: 600;
   color: #495057;
 }
-.ant-descriptions-item-content input {
+#userRegister .ant-descriptions-item-content input {
   width: 100%;
   height: 45px;
 }
-input,
-.ant-select,
-.ant-select-selector {
+#userRegister input,
+#userRegister .ant-select,
+#userRegister .ant-select-selector {
   width: 100%;
   height: 45px !important;
 }
 
-.ant-select-selection-item {
+#userRegister .ant-select-selection-item {
   padding-top: 7px !important;
   text-align: center;
 }
 
-.foorterSetting {
+#userRegister .foorterSetting {
   margin-bottom: 18px;
 }
 
-.buttons .ant-form-item-control-input-content {
+#userRegister .buttons .ant-form-item-control-input-content {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -1023,52 +1036,18 @@ input,
   height: 90px;
 }
 
-.buttons .ant-form-item-control-input-content button {
+#userRegister .buttons .ant-form-item-control-input-content button {
   height: 39px;
   border-radius: 5px;
 }
 
-.buttons .ant-form-item-control-input-content button:first-child {
+#userRegister .buttons .ant-form-item-control-input-content button:first-child {
   background-color: #3ddc97;
   border: 1px solid #3ddc97;
 }
 
-.buttons .ant-form-item-control-input-content button:last-child {
+#userRegister .buttons .ant-form-item-control-input-content button:last-child {
   margin-top: 20px;
   color: gray;
 }
 </style>
-
-<!--
-<style>
-.login{
-  margin: 0 auto;
-  width: 800px;
-}
-
-.registerForm{
-  margin-left: 0px;
-}
-
-.inputStyle {
-  margin: 0 auto;
-  width: 400px;
-}
-
-.warp {
-  padding-top: 100px;
-  padding-bottom: 100px;
-  width: 100%;
-  text-align: center;
-}
-
-.loginButton{
-  width: 100px;
-}
-
-body {
-  /*background-color: #F0F2F5;*/
-  /*background-color: #F0F2F5;*/
-  height: 100%;
-}
-</style>-->

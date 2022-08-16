@@ -247,7 +247,7 @@ export default {
      */
     // 편집 여부 확인
     mEditCompleted(url) {
-      return url.indexOf('https://test.kuaidiair-yuncongcon.com') !== -1 || url.indexOf('https://sym.s') !== -1;
+      return url.indexOf('https://relaketplus-api.com') !== -1 || url.indexOf('https://sym.s') !== -1;
     },
 
     // 편집기에 이미지 추가

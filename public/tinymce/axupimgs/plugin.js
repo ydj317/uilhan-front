@@ -3,7 +3,7 @@ tinymce.PluginManager.add('axupimgs', function(editor, url) {
 	window.axupimgs={}; //扔外部公共变量，也可以扔一个自定义的位置
 
 	// var baseURL=tinymce.baseURL;
-	var baseURL='https://front.kuaidiair-yuncongcon.com';
+	var baseURL='https://relaketplus.com';
 	var iframe1 = baseURL+'/tinymce/axupimgs/upfiles.html';
     axupimgs.images_upload_handler = editor.getParam('images_upload_handler', undefined, 'function');
     axupimgs.images_upload_base_path = editor.getParam('images_upload_base_path', '', 'string');
@@ -69,7 +69,7 @@ tinymce.PluginManager.add('axupimgs', function(editor, url) {
 		getMetadata: function() {
 			return  {
 				name: pluginName,
-				url: "https://test.kuaidiair-yuncongcon.com/api/image",
+				url: "https://relaketplus-api.com/api/image",
 			};
 		}
 	};
