@@ -113,12 +113,15 @@
 
               <!--연동-->
               <div v-if="record.item_sync_date">
-                <a-button type="primary" :style="buttonStyle(record.item_sync_status)">릴라켓 연동{{
-                    record.item_sync_status
-                        ? '성공'
-                        : '실패'
-                  }}
-                </a-button>
+                <a-tooltip trigger="click">
+                  <template #title v-if="!record.item_sync_status">{{ record.item_sync_result }}</template>
+                  <a-button type="primary" :style="buttonStyle(record.item_sync_status)">릴라켓 연동{{
+                      record.item_sync_status
+                          ? '성공'
+                          : '실패'
+                    }}
+                  </a-button>
+                </a-tooltip>
               </div>
             </template>
 

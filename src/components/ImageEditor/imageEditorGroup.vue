@@ -485,22 +485,23 @@ export default {
           return false;
         }
 
-        let iImageIndex;
+        // let iImageIndex;
         this.aPhotoCollection.map((data, i) => {
           if (data.key === key) {
-            iImageIndex = i;
+            // iImageIndex = i;
             this.aPhotoCollection[i].original_url = response['img_url'];
           }
         })
 
         this.bImageEdited = true;
+        this.bLoading = false;
 
-        setTimeout(() => {
-          _$(`.newImageEditorList img:eq(${iImageIndex})`).css({
-            border: '10px inset red',
-          });
-          this.bLoading = false;
-        })
+        // setTimeout(() => {
+        //   _$(`.newImageEditorList img:eq(${iImageIndex})`).css({
+        //     border: '10px inset red',
+        //   });
+        //   this.bLoading = false;
+        // })
       });
     },
 
@@ -532,22 +533,23 @@ export default {
           return false;
         }
 
-        let iImageIndex;
+        // let iImageIndex;
         this.aPhotoCollection.map((data, i) => {
           if (data.key === key) {
-            iImageIndex = i;
+            // iImageIndex = i;
             this.aPhotoCollection[i].translate_url = response['img_url'];
           }
         })
 
         this.bImageEdited = true;
+        this.bLoading = false;
 
-        setTimeout(() => {
-          _$(`.newImageEditorList img:eq(${iImageIndex})`).css({
-            border: '10px inset red',
-          });
-          this.bLoading = false;
-        })
+        // setTimeout(() => {
+        //   _$(`.newImageEditorList img:eq(${iImageIndex})`).css({
+        //     border: '10px inset red',
+        //   });
+        //   this.bLoading = false;
+        // })
       });
     },
 

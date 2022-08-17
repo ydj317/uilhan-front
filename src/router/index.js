@@ -13,6 +13,7 @@ const routes = [
     meta: { authority: ["ROLE_USER"] },
     component: () =>
       import(/* webpackChunkName: "Main" */ "views/Template/Layout"),
+    redirect: "/product",
     children: [
       {
         path: "/product",
