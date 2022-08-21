@@ -1,10 +1,5 @@
 <template>
     <div class="_container">
-      <loading
-          v-model:active="indicator"
-          :can-cancel="false"
-          :is-full-page="true"
-      />
       <div class="header">
         <div class="icon">
           <img src="../../assets/img/logo-light.png" alt="">
@@ -58,12 +53,10 @@ import { defineComponent, reactive, onBeforeMount, ref } from 'vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import Cookie from "js-cookie";
 import { isLogin, cookieInit } from "util/auth";
-import Loading from "vue-loading-overlay";
 export default defineComponent({
   components: {
     UserOutlined,
     LockOutlined,
-    Loading
   },
 
   setup() {
@@ -82,41 +75,41 @@ export default defineComponent({
       username: '',
       password: '',
     });
-    let indicator = ref(false);
+    // let indicator = ref(false);
     const handleFinish = () => {
       let user = {
         username: formState.username,
         password: formState.password,
       };
-      indicator.value = true;
+      // indicator.value = true;
       LoginRequest.post(
         process.env.VUE_APP_API_URL + '/api/login', user).then((res) => {
         if (res.status === undefined || res.status !== 200) {
           alert('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(status error)');
-          indicator.value = false;
+          // indicator.value = false;
           return false;
         }
 
         if (res.data.member_roles === undefined) {
           alert('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(role error)');
-          indicator.value = false;
+          // indicator.value = false;
           return false;
         }
-
+        // indicator.value = false;
         // 아이디 저장하기
         tempSave();
 
         Cookie.set('member_name', res.data.member_name);
         Cookie.set('member_roles', res.data.member_roles);
         router.push("/product");
-        indicator.value = false;
+
         return false;
       });
     };
 
     const handleFinishFailed = () => {
       alert('입력하신 회원정보는 존재하지 않습니다');
-      indicator.value = false;
+      // indicator.value = false;
     };
 
     const remember = false;
@@ -144,7 +137,7 @@ export default defineComponent({
       handleFinish,
       handleFinishFailed,
       redirectRegister,
-      indicator
+      // indicator
     };
   },
 
