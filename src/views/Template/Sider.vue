@@ -1,4 +1,9 @@
 <template>
+  <loading
+      v-model:active="indicator"
+      :can-cancel="false"
+      :is-full-page="true"
+  />
   <a-affix :offset-top="0">
   <div class="sideBar space-between col">
     <div>
@@ -29,7 +34,7 @@
           <img src="../../assets/img/side/detail.png" >
           <span class="defaultColor defaultStyle">상세페이지 제작</span>
         </a-menu-item>
-        <a-menu-item key="5">
+        <a-menu-item key="5" @click="extensionDown">
           <img src="../../assets/img/side/download.png" >
           <span class="defaultColor defaultStyle">자료 다운로드</span>
         </a-menu-item>
@@ -80,9 +85,12 @@
 import { defineComponent, reactive, toRefs, ref, onMounted } from 'vue';
 import Cookie from "js-cookie";
 import { DollarTwoTone } from '@ant-design/icons-vue';
+import {AuthRequest} from "@/util/request";
+import Loading from "vue-loading-overlay";
 export default defineComponent({
   components: {
-    DollarTwoTone
+    DollarTwoTone,
+    Loading
   },
   setup() {
     const state = reactive({
@@ -92,6 +100,7 @@ export default defineComponent({
     });
 
     const isAdmin = ref(false);
+    const indicator = ref(false);
     onMounted( () => {
       const roles = Cookie.get('member_roles');
       if (roles.indexOf('ROLE_ADMIN') > -1) {
@@ -111,10 +120,37 @@ export default defineComponent({
       }
     };
 
+    const extensionDown = () => {
+      indicator.value = true;
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/downloadext", {responseType: 'blob'}).then((res) => {
+        let response = res.data;
+        if (response === undefined) {
+          alert("확장프로그램 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+          indicator.value = false;
+          return false;
+        }
+
+        let fileName = 'relaket.zip';
+        let blob = new Blob([response], {type: 'charset=utf-8'});
+        let downloadElement = document.createElement('a');
+        let url = window.URL || window.webkitURL || window.moxURL
+        let href = url.createObjectURL(blob); // 创建下载的链接
+        downloadElement.href = href;
+        downloadElement.download = decodeURI(fileName); // 下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        url.revokeObjectURL(href);
+        indicator.value = false;
+      });
+    }
+
     return {
       ...toRefs(state),
       onOpenChange,
       isAdmin,
+      extensionDown,
+      indicator
     };
   },
 

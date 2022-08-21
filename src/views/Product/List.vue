@@ -451,6 +451,7 @@ export default defineComponent({
   },
 
   methods: {
+
     MarketListPop() {
       this.relaket.data = this;
       this.MarketListVisible = true;

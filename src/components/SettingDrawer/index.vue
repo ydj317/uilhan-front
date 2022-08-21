@@ -433,7 +433,7 @@
           ><UploadOutlined />로고 업로드</a-button
         >
       </a-upload>
-      <a-button class="w30 ml10" @click="setLogo" type="primary">
+      <a-button class="w20 ml10" @click="setLogo" type="primary">
         저장</a-button
       >
       <a-button
@@ -444,7 +444,7 @@
       >
         상품상세 적용</a-button
       >
-      <a-button v-else class="w30 ml10" @click="setLogoInDetail" type="primary">
+      <a-button v-else class="w40 ml10" @click="setLogoInDetail" type="primary">
         상품상세 적용 취소</a-button
       >
       <div class="logo" style="width: 100px; height: 100px; margin-top: 10px">
@@ -974,13 +974,31 @@ export default {
       this.indicator = true;
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/deliveryexceldown", {
         filetype: this.excelStyleVal,
-      }).then((res) => {
+      }, {responseType: 'blob'}).then((res) => {
         let response = res.data;
         if (response === undefined) {
-          alert("엑셀양식 다운이 실패하였습니다.");
+          alert("엑셀양식 다운이 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+          this.indicator = false;
           return false;
         }
-        window.open(response.path);
+        let file = this.excelStyleDown.filter(item => item.value === this.excelStyleVal);
+        if (file[0].label.length === undefined || file[0].label.length === 0) {
+          alert("엑셀양식 다운이 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+          this.indicator = false;
+          return false;
+        }
+
+        let fileName = file[0].label + '.xlsx';
+        let blob = new Blob([response], {type: 'charset=utf-8'});
+        let downloadElement = document.createElement('a');
+        let url = window.URL || window.webkitURL || window.moxURL
+        let href = url.createObjectURL(blob); // 创建下载的链接
+        downloadElement.href = href;
+        downloadElement.download = decodeURI(fileName); // 下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        url.revokeObjectURL(href);
         this.indicator = false;
       });
     },
