@@ -128,7 +128,7 @@
             <!--등록&수정시간-->
             <template v-if="column.key === 'item_ins'">
               <div>상품등록：{{ record.item_ins }}</div>
-              <div>상품수정：{{ record.item_upd }}</div>
+              <div v-if="record.item_upd !== null">상품수정：{{ record.item_upd }}</div>
             </template>
 
             <!--제휴사연동-->
@@ -365,7 +365,7 @@ export default defineComponent({
           title: '상품정보',
           key: 'item_name',
           // width: '',
-          align: 'left',
+          align: 'center',
         },
         {
           title: '등록&수정시간',
