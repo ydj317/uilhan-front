@@ -365,7 +365,7 @@ export default defineComponent({
           title: '상품정보',
           key: 'item_name',
           // width: '',
-          align: 'center',
+          align: 'left',
         },
         {
           title: '등록&수정시간',
