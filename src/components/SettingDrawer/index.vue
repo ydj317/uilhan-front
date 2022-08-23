@@ -974,34 +974,49 @@ export default {
       this.indicator = true;
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/deliveryexceldown", {
         filetype: this.excelStyleVal,
-      }, {responseType: 'blob'}).then((res) => {
+      }).then((res) => {
         let response = res.data;
         if (response === undefined) {
-          alert("엑셀양식 다운이 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
-          this.indicator = false;
+          alert("엑셀양식 다운이 실패하였습니다.");
           return false;
         }
-        let file = this.excelStyleDown.filter(item => item.value === this.excelStyleVal);
-        if (file[0].label.length === undefined || file[0].label.length === 0) {
-          alert("엑셀양식 다운이 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
-          this.indicator = false;
-          return false;
-        }
-
-        let fileName = file[0].label + '.xlsx';
-        let blob = new Blob([response], {type: 'charset=utf-8'});
-        let downloadElement = document.createElement('a');
-        let url = window.URL || window.webkitURL || window.moxURL
-        let href = url.createObjectURL(blob); // 创建下载的链接
-        downloadElement.href = href;
-        downloadElement.download = decodeURI(fileName); // 下载后文件名
-        document.body.appendChild(downloadElement);
-        downloadElement.click(); // 点击下载
-        document.body.removeChild(downloadElement); // 下载完成移除元素
-        url.revokeObjectURL(href);
+        window.open(response.path);
         this.indicator = false;
       });
     },
+
+    // excelDown() {
+    //   this.indicator = true;
+    //   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/deliveryexceldown", {
+    //     filetype: this.excelStyleVal,
+    //   }, {responseType: 'blob'}).then((res) => {
+    //     let response = res.data;
+    //     if (response === undefined) {
+    //       alert("엑셀양식 다운이 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+    //       this.indicator = false;
+    //       return false;
+    //     }
+    //     let file = this.excelStyleDown.filter(item => item.value === this.excelStyleVal);
+    //     if (file[0].label.length === undefined || file[0].label.length === 0) {
+    //       alert("엑셀양식 다운이 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+    //       this.indicator = false;
+    //       return false;
+    //     }
+    //
+    //     let fileName = file[0].label + '.xlsx';
+    //     let blob = new Blob([response], {type: 'charset=utf-8'});
+    //     let downloadElement = document.createElement('a');
+    //     let url = window.URL || window.webkitURL || window.moxURL
+    //     let href = url.createObjectURL(blob); // 创建下载的链接
+    //     downloadElement.href = href;
+    //     downloadElement.download = decodeURI(fileName); // 下载后文件名
+    //     document.body.appendChild(downloadElement);
+    //     downloadElement.click(); // 点击下载
+    //     document.body.removeChild(downloadElement); // 下载完成移除元素
+    //     url.revokeObjectURL(href);
+    //     this.indicator = false;
+    //   });
+    // },
 
     addKey() {
       if (this.accessKey.length === undefined || this.accessKey.length === 0) {
