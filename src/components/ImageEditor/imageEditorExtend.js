@@ -8,8 +8,8 @@ export class ImageEditorExtend {
     uploadIcon: (oMockIcons) => {
       this.uploadIcon(oMockIcons);
     },
-    loadImage: (sImageUrl) => {
-      this.loadImage(sImageUrl);
+    loadImage: (sImageUrl, callback) => {
+      this.loadImage(sImageUrl, callback);
     },
     toDataURL: () => {
       return this.imageEditor.toDataURL({
@@ -174,10 +174,9 @@ export class ImageEditorExtend {
     }
   }
 
-  static loadImage(sImageUrl) {
+  static loadImage(sImageUrl, callback) {
     setTimeout(() => {
       this.imageEditor.resetZoom();
-      console.log('sImageUrl', sImageUrl);
       this.imageEditor.loadImageFromURL(sImageUrl, "image").then((e) => {
 //        let oCanvasSize = this.imageEditor.getCanvasSize();
 //        setTimeout(() => {
@@ -188,6 +187,8 @@ export class ImageEditorExtend {
 //        })
 //        console.debug('this.imageEditor', this.imageEditor)
 //        console.debug('oCanvasSize', oCanvasSize)
+
+        callback();
       });
     });
   }

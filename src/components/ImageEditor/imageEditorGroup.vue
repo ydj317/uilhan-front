@@ -252,11 +252,15 @@ export default {
 
     // 편집기에 이미지 추가
     mLoadImage(url, iMax = 0) {
+      this.bLoading = true;
       setTimeout(() => {
         try {
           window._imageEditor.uploadIcon(this.aIcons);
-          window._imageEditor.loadImage(url);
+          window._imageEditor.loadImage(url, () => {
+            this.bLoading = false;
+          });
         } catch (e) {
+          this.bLoading = false;
           alert('이미지 편집기에 추가실패');
         }
       })

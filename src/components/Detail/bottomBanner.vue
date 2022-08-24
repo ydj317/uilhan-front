@@ -112,7 +112,8 @@ export default {
           }
 
           alert("저장 성공");
-          this.product.loading = false;
+          location.reload();
+          //this.product.loading = false;
         }
       );
     },
