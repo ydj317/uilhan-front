@@ -139,6 +139,9 @@ export default {
         });
       }
 
+      console.log('oProduct', oProduct);
+      console.log('this.product', this.product);
+
       oForm = this.setForm(oForm, {
         id: oProduct["item_id"],
         sku: JSON.stringify(oProduct.sku),
@@ -155,10 +158,10 @@ export default {
         cross_border: oProduct.item_cross_border,
 
         // 새로추가한 마진
-        item_disp_margin_option: oProduct.item_disp_margin_option,
-        item_selling_margin_option: oProduct.item_selling_margin_option,
-        item_wholesale_margin_option: oProduct.item_wholesale_margin_option,
-        item_rate_margin_option: oProduct.item_rate_margin_option,
+        item_disp_margin_option: oProduct.disp_margin_option,
+        item_selling_margin_option: oProduct.selling_margin_option,
+        item_wholesale_margin_option: oProduct.wholesale_margin_option,
+        item_rate_margin_option: oProduct.rate_margin_option,
       });
 
       return oForm;
