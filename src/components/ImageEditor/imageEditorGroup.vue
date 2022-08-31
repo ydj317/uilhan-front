@@ -5,7 +5,7 @@
 
     <template title="번역팝업" >
       <a-modal v-if="bImageEditorModule" :visible="bImageEditorModule" @ok="mHandleOkTranslateWindow" @cancel="mCloseTranslateWindow" :title="sModuleTitle" :maskClosable="false" width="60%" >
-        <div class="w100 right center"><h3 class="mr50">남은회수: <span class="red">{{recharge}}</span></h3></div>
+        <div class="w100 right center"><h3 class="mr50">남은회수: <span class="red">{{product.recharge}}</span></h3></div>
         <table style="width: 100%; height: 600px;">
           <tbody>
           <tr>
@@ -163,10 +163,15 @@
 import {AuthRequest} from 'util/request';
 import ImageEditor from "./imageEditor.vue";
 import loading from 'vue-loading-overlay';
+import {mapState} from 'vuex';
 
 export default {
   name: "ImageEditorGroup",
   display: "ImageEditorGroup",
+
+  computed: {
+    ...mapState(["product"]),
+  },
 
   components: {
     ImageEditor,
@@ -185,7 +190,7 @@ export default {
     return {
       oRadioStyle,
 
-      recharge: 0,
+      // recharge: 0,
 
       // Status
       bLoading: false,
@@ -216,26 +221,60 @@ export default {
   },
 
   methods: {
-    getRecharge() {
-      AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/getrecharge').then((res) => {
-        if (res.data === undefined || res.data.status !== '2000') {
-          alert('데이터 받기에 실패하였습니다. 오류가 지속될시 관리자에게 문의하시길 바랍니다.');
-          return false;
-        }
-
-        try {
-          this.recharge = res.data.recharge;
-        } catch (e) {
-          alert('남은회수 호출 실패');
-        }
-
-        this.bLoading = false;
-      });
-    },
+    // getRecharge() {
+    //   AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/getrecharge').then((res) => {
+    //     if (res.data === undefined || res.data.status !== '2000') {
+    //       alert('데이터 받기에 실패하였습니다. 오류가 지속될시 관리자에게 문의하시길 바랍니다.');
+    //       return false;
+    //     }
+    //
+    //     try {
+    //       this.product.recharge = res.data.recharge;
+    //     } catch (e) {
+    //       alert('남은회수 호출 실패');
+    //     }
+    //
+    //     this.bLoading = false;
+    //   });
+    // },
 
     mCopy(obj) {
       return JSON.parse(JSON.stringify(obj));
     },
+
+    /* async mCompressedPicture(url = '', quality = 0.5, maxSize = 1024) {
+       await this._mCompressedPicture(url, quality, maxSize).then(res => {
+         this.url = res;
+       });
+     },
+
+     _mCompressedPicture(url = '', quality = 0.5, maxSize = 1024) {
+       let Blob = this.mBase64Decode(url);
+       // 앞축할 이미지 크기 판단
+       if (Blob.size < maxSize) {
+         return url;
+       }
+
+       // 이미지 앞축 실행
+       let image = new Image();
+       image.src = url;
+       image.setAttribute("crossOrigin",'Anonymous');
+
+       return new Promise(resolve => {
+         image.onload = function() {
+           let canvas = document.createElement('canvas');
+           let ctx = canvas.getContext('2d');
+           let anw = document.createAttribute("width");
+           anw.nodeValue = String(image.width);
+           let anh = document.createAttribute("height");
+           anh.nodeValue = String(image.height);
+           canvas.setAttributeNode(anw);
+           canvas.setAttributeNode(anh);
+           ctx.drawImage(this, 0, 0, image.width, image.height);
+           resolve(canvas.toDataURL('image/jpeg', quality));
+         }
+       })
+     },*/
 
     // 이미지 편집후 변역 불가능 합니다
     mEditorImageError() {
@@ -307,7 +346,7 @@ export default {
         return false;
       }
 
-      if (this.recharge < 1 || param.list.length > this.recharge) {
+      if (this.product.recharge < 1 || param.list.length > this.product.recharge) {
         alert('이미지번역 잔여수가 부족합니다.');
         this.bLoading = false;
         return false;
@@ -321,46 +360,46 @@ export default {
           return false;
         }
 
-      if (res.data['list'] === 0) {
-        alert('번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
-        this.bLoading = false;
-        return false;
-      }
+        if (res.data['list'] === 0) {
+          alert('번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
+          this.bLoading = false;
+          return false;
+        }
 
-      try {
-        this.iSelectedPictureIndex = null;
-        res.data['list'].map((aPhoto) => {
-          if (this.iSelectedPictureIndex === null && aPhoto.translate_status) {
-            this.iSelectedPictureIndex = aPhoto.key;
-            this.sSelectedPictureLink = aPhoto.translate_url;
-          }
-
-          this.aPhotoCollection.map((data, j) => {
-            if (data.key === aPhoto.key) {
-              this.aPhotoCollection[ j] = {
-                "msg" : aPhoto.msg || '',
-                "key" : aPhoto.key, // 필수!!!
-                "name": aPhoto.name || '',
-                "order": aPhoto.order || '',
-                "checked": aPhoto.checked || false,
-                "visible": aPhoto.visible || false,
-                "original_url" : aPhoto.original_url || '', // 필수!!!
-                "translate_url": aPhoto.translate_url || '',
-                "translate_status": aPhoto.translate_status || false, // 필수!!!
-              };
+        try {
+          this.iSelectedPictureIndex = null;
+          res.data['list'].map((aPhoto) => {
+            if (this.iSelectedPictureIndex === null && aPhoto.translate_status) {
+              this.iSelectedPictureIndex = aPhoto.key;
+              this.sSelectedPictureLink = aPhoto.translate_url;
             }
+
+            this.aPhotoCollection.map((data, j) => {
+              if (data.key === aPhoto.key) {
+                this.aPhotoCollection[ j] = {
+                  "msg" : aPhoto.msg || '',
+                  "key" : aPhoto.key, // 필수!!!
+                  "name": aPhoto.name || '',
+                  "order": aPhoto.order || '',
+                  "checked": aPhoto.checked || false,
+                  "visible": aPhoto.visible || false,
+                  "original_url" : aPhoto.original_url || '', // 필수!!!
+                  "translate_url": aPhoto.translate_url || '',
+                  "translate_status": aPhoto.translate_status || false, // 필수!!!
+                };
+              }
+            })
+
           })
+          this.mSetTranslateImage();
+          this.bTranslateStatus = true;
+          this.product.recharge = res.data.recharge;
+        } catch (e) {
+          this.iSelectedPictureIndex = 0;
+          alert('번역 api 호출 실패');
+        }
 
-        })
-        this.mSetTranslateImage();
-        this.bTranslateStatus = true;
-        this.recharge = res.data.recharge;
-      } catch (e) {
-        this.iSelectedPictureIndex = 0;
-        alert('번역 api 호출 실패');
-      }
-
-      this.bLoading = false;
+        this.bLoading = false;
       });
     },
 
@@ -469,6 +508,7 @@ export default {
       }
       this.bLoading = true;
       this.url = window._imageEditor.toDataURL();
+      // this.url = this.mCompressedPicture(this.url);
       let file = this.mBase64Decode(this.url);
       this.mHandleBeforeUpload(file);
       const formData = new FormData();
@@ -722,7 +762,7 @@ export default {
   },
 
   mounted() {
-    this.getRecharge();
+    // this.getRecharge();
   }
 };
 </script>

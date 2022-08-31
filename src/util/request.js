@@ -15,6 +15,7 @@ export const NoAuthAjax = (function () {
     NoAuthAjax.interceptors.request.use(function (config) {
         //config.url += '?XDEBUG_SESSION=PHPSTORM';
         config.headers['Accept'] = 'application/json';
+        config.headers['Content-Type'] = 'application/json';
         return config;
     });
 
@@ -25,6 +26,7 @@ export const LoginRequest = (function () {
     const LoginRequest = axios.create();
     const jsencrypt = new JSEncrypt()
     LoginRequest.interceptors.request.use(function (config) {
+        config.url += '?XDEBUG_SESSION=PHPSTORM';
         config.headers['Accept'] = 'application/json';
         config.headers['Content-Type'] = 'application/json';
         jsencrypt.setPublicKey(pub);
@@ -50,8 +52,9 @@ export const LoginRequest = (function () {
 export const AuthRequest = (function () {
     const AuthRequest = axios.create()
     AuthRequest.interceptors.request.use(function (config) {
-        // config.url += '?XDEBUG_SESSION=PHPSTORM';
+        config.url += '?XDEBUG_SESSION=PHPSTORM';
         config.headers['Accept'] = 'application/json';
+        config.headers['Content-Type'] = 'application/json';
         let token = Cookie.get('token');
         if (token.length > 0) {
             //config.headers['token'] = `Bearer ${token}`;

@@ -1,21 +1,21 @@
 <template>
   <!--  <a-button type="primary" @click="showDrawer">Open</a-button>-->
   <loading
-    v-model:active="indicator"
-    :can-cancel="false"
-    :is-full-page="true"
+      v-model:active="indicator"
+      :can-cancel="false"
+      :is-full-page="true"
   />
   <a-drawer
-    :visible="common.user_visible"
-    width="450"
-    title="계정 설정"
-    placement="right"
-    :closable="false"
-    @close="close"
+      :visible="common.user_visible"
+      width="450"
+      title="계정 설정"
+      placement="right"
+      :closable="false"
+      @close="close"
   >
     <CloseOutlined
-      style="position: absolute; top: 0; right: 17px; padding: 5px"
-      @click="close"
+        style="position: absolute; top: 0; right: 17px; padding: 5px"
+        @click="close"
     />
     <div style="margin-bottom: 20px">
       <UserOutlined style="font-size: 20px; margin-right: 10px" />
@@ -24,21 +24,21 @@
     </div>
 
     <div
-      v-if="this.roles.length > 0 && this.roles.indexOf('ROLE_RELAKET') > -1"
+        v-if="this.roles.length > 0 && this.roles.indexOf('ROLE_RELAKET') > -1"
     >
       <h4>세션키 설정 :</h4>
       <div>
         <a-input class="" v-model:value="accessKey" placeholder="AccessKey" />
         <a-input
-          class="mt5"
-          v-model:value="secretKey"
-          placeholder="SecretKey"
+            class="mt5"
+            v-model:value="secretKey"
+            placeholder="SecretKey"
         />
         <a-button
-          class="mt20 w100 bg-3ddc97 init-pmbo"
-          @click="addKey"
-          type="primary"
-          >등록</a-button
+            class="mt20 w100 bg-3ddc97 init-pmbo"
+            @click="addKey"
+            type="primary"
+        >등록</a-button
         >
       </div>
       <a-divider />
@@ -49,43 +49,43 @@
       <h4>도매마진율 설정 :</h4>
       <div class="space-between">
         <a-select
-          class="w59"
-          ref="select"
-          :options="wholesale_margin"
-          v-model:value="wholesale_margin_option"
+            class="w59"
+            ref="select"
+            :options="wholesale_margin"
+            v-model:value="wholesale_margin_option"
         >
         </a-select>
         <a-button
-          @click="deleteMargin('wholesale')"
-          class="w20 bg-00a7e1"
-          type="primary"
-          >삭제</a-button
+            @click="deleteMargin('wholesale')"
+            class="w20 bg-00a7e1"
+            type="primary"
+        >삭제</a-button
         >
         <a-button
-          @click="updateMargin('wholesale')"
-          class="w20"
-          type="primary"
-          ghost
-          >적용</a-button
+            @click="updateMargin('wholesale')"
+            class="w20"
+            type="primary"
+            ghost
+        >적용</a-button
         >
       </div>
 
       <div class="mt5 space-between">
         <a-input
-          class="w39"
-          v-model:value="wholesale_margin_name"
-          placeholder="명"
+            class="w39"
+            v-model:value="wholesale_margin_name"
+            placeholder="명"
         />
         <a-input
-          class="w39"
-          v-model:value="wholesale_margin_value"
-          placeholder="값"
+            class="w39"
+            v-model:value="wholesale_margin_value"
+            placeholder="값"
         />
         <a-button
-          @click="addMargin('wholesale')"
-          class="w20 bg-3051d3"
-          type="primary"
-          >등록</a-button
+            @click="addMargin('wholesale')"
+            class="w20 bg-3051d3"
+            type="primary"
+        >등록</a-button
         >
       </div>
     </div>
@@ -95,43 +95,43 @@
       <h4>공급마진율 설정 :</h4>
       <div class="space-between">
         <a-select
-          class="w59"
-          ref="select"
-          v-model:value="supply_margin_option"
-          :options="supply_margin"
+            class="w59"
+            ref="select"
+            v-model:value="supply_margin_option"
+            :options="supply_margin"
         >
         </a-select>
         <a-button
-          @click="deleteMargin('supply')"
-          class="w20 bg-00a7e1"
-          type="primary"
-          >삭제</a-button
+            @click="deleteMargin('supply')"
+            class="w20 bg-00a7e1"
+            type="primary"
+        >삭제</a-button
         >
         <a-button
-          @click="updateMargin('supply')"
-          class="w20"
-          type="primary"
-          ghost
-          >적용</a-button
+            @click="updateMargin('supply')"
+            class="w20"
+            type="primary"
+            ghost
+        >적용</a-button
         >
       </div>
 
       <div class="mt5 space-between">
         <a-input
-          class="w39"
-          v-model:value="supply_margin_name"
-          placeholder="명"
+            class="w39"
+            v-model:value="supply_margin_name"
+            placeholder="명"
         />
         <a-input
-          class="w39"
-          v-model:value="supply_margin_value"
-          placeholder="값"
+            class="w39"
+            v-model:value="supply_margin_value"
+            placeholder="값"
         />
         <a-button
-          @click="addMargin('supply')"
-          class="w20 bg-3051d3"
-          type="primary"
-          >등록</a-button
+            @click="addMargin('supply')"
+            class="w20 bg-3051d3"
+            type="primary"
+        >등록</a-button
         >
       </div>
     </div>
@@ -183,43 +183,43 @@
       <h4>판매마진율 설정 :</h4>
       <div class="space-between">
         <a-select
-          class="w59"
-          ref="select"
-          v-model:value="selling_margin_option"
-          :options="selling_margin"
+            class="w59"
+            ref="select"
+            v-model:value="selling_margin_option"
+            :options="selling_margin"
         >
         </a-select>
         <a-button
-          @click="deleteMargin('selling')"
-          class="w20 bg-00a7e1"
-          type="primary"
-          >삭제</a-button
+            @click="deleteMargin('selling')"
+            class="w20 bg-00a7e1"
+            type="primary"
+        >삭제</a-button
         >
         <a-button
-          @click="updateMargin('selling')"
-          class="w20"
-          type="primary"
-          ghost
-          >적용</a-button
+            @click="updateMargin('selling')"
+            class="w20"
+            type="primary"
+            ghost
+        >적용</a-button
         >
       </div>
 
       <div class="mt5 space-between">
         <a-input
-          class="w39"
-          v-model:value="selling_margin_name"
-          placeholder="명"
+            class="w39"
+            v-model:value="selling_margin_name"
+            placeholder="명"
         />
         <a-input
-          class="w39"
-          v-model:value="selling_margin_value"
-          placeholder="값"
+            class="w39"
+            v-model:value="selling_margin_value"
+            placeholder="값"
         />
         <a-button
-          @click="addMargin('selling')"
-          class="w20 bg-3051d3"
-          type="primary"
-          >등록</a-button
+            @click="addMargin('selling')"
+            class="w20 bg-3051d3"
+            type="primary"
+        >등록</a-button
         >
       </div>
     </div>
@@ -231,10 +231,10 @@
       <!--      <h4>한국 KRW <a-input v-model:value="this.rateKor" class="w18" disabled /> - 중국 위안 1 위안</h4>-->
       <!--      <h4>{{ // this.aliexpressCurrent }}</h4>-->
       <a-table
-        :columns="aliexpressTable"
-        :data-source="aliexpressData"
-        bordered
-        :pagination="{ hideOnSinglePage: true }"
+          :columns="aliexpressTable"
+          :data-source="aliexpressData"
+          bordered
+          :pagination="{ hideOnSinglePage: true }"
       >
         <template #headerCell="{ column }">
           <h4 style="text-align: center">{{ column.title }} (원)</h4>
@@ -243,8 +243,8 @@
           <h4 style="text-align: center">
             {{
               record[column.dataIndex] === 0
-                ? "Loading..."
-                : record[column.dataIndex]
+                  ? "Loading..."
+                  : record[column.dataIndex]
             }}
           </h4>
         </template>
@@ -256,17 +256,17 @@
         <!--        <h4>환율 설정 :</h4>-->
         <div class="space-between mt5">
           <a-select
-            class="w59"
-            ref="select"
-            v-model:value="rate_margin_option"
-            :options="rate_margin"
+              class="w59"
+              ref="select"
+              v-model:value="rate_margin_option"
+              :options="rate_margin"
           >
           </a-select>
           <a-button
-            @click="deleteMargin('rate')"
-            class="w20 bg-00a7e1"
-            type="primary"
-            >삭제</a-button
+              @click="deleteMargin('rate')"
+              class="w20 bg-00a7e1"
+              type="primary"
+          >삭제</a-button
           >
           <a-button
               @click="updateMargin('rate')"
@@ -281,9 +281,9 @@
           <a-input class="w39" v-model:value="rate_margin_value" placeholder="값" />
           <a-button
               @click="addMargin('rate')"
-            class="w20 bg-3051d3"
-            type="primary"
-            >등록</a-button
+              class="w20 bg-3051d3"
+              type="primary"
+          >등록</a-button
           >
         </div>
       </div>
@@ -303,14 +303,14 @@
       <div>
         <div class="space-between">
           <a-input
-            class="w49"
-            v-model:value="priceRangeStart"
-            placeholder="기준 시작 ~"
+              class="w49"
+              v-model:value="priceRangeStart"
+              placeholder="기준 시작 ~"
           />
           <a-input
-            class="w49"
-            v-model:value="priceRangeEnd"
-            placeholder="기준 마감"
+              class="w49"
+              v-model:value="priceRangeEnd"
+              placeholder="기준 마감"
           />
         </div>
         <div class="mt5 space-between">
@@ -322,30 +322,30 @@
         </div>
         <div class="mt20 space-between">
           <a-button
-            class="w49 bg-3051d3"
-            @click="addCollectionPrice"
-            type="primary"
-            >등록</a-button
+              class="w49 bg-3051d3"
+              @click="addCollectionPrice"
+              type="primary"
+          >등록</a-button
           >
           <a-button
-            class="w49 bg-00a7e1"
-            @click="delCollectionPrice"
-            type="primary"
-            >삭제</a-button
+              class="w49 bg-00a7e1"
+              @click="delCollectionPrice"
+              type="primary"
+          >삭제</a-button
           >
         </div>
       </div>
       <div style="margin-top: 10px">
         <a-descriptions
-          style="margin-top: 3px"
-          :class="`${item.checked === true ? 'checkedCollectionEl' : ''}`"
-          @click="checkCollectionEl(index)"
-          v-for="(item, index) in collectionPriceList"
-          bordered
+            style="margin-top: 3px"
+            :class="`${item.checked === true ? 'checkedCollectionEl' : ''}`"
+            @click="checkCollectionEl(index)"
+            v-for="(item, index) in collectionPriceList"
+            bordered
         >
           <a-descriptions-item
-            style="width: 290px"
-            :label="`${item.priceRangeStart} ~ ${item.priceRangeEnd}원 범위내 포함될시`"
+              style="width: 290px"
+              :label="`${item.priceRangeStart} ~ ${item.priceRangeEnd}원 범위내 포함될시`"
           >
             {{ item.price }} {{ item.priceType === "number" ? "원" : "%" }}
           </a-descriptions-item>
@@ -360,46 +360,46 @@
     <!--    </template>-->
 
     <div
-      v-if="this.roles.length > 0 && this.roles.indexOf('ROLE_RELAKET') > -1"
+        v-if="this.roles.length > 0 && this.roles.indexOf('ROLE_RELAKET') > -1"
     >
       <a-divider />
       <h4>배송정책 설정 :</h4>
       <div>
         <a-alert
-          v-if="this.dlvError === true"
-          message="릴라켓에 배송적책 얻기에 실패하였습니다.
+            v-if="this.dlvError === true"
+            message="릴라켓에 배송적책 얻기에 실패하였습니다.
             해당 오류는 세션키 입력이 잘못되었거나
             릴라켓에 배송정책을 등록하지 않은경우 발생할수있습니다."
-          type="error"
+            type="error"
         /><br />
       </div>
 
       <div class="space-between">
         <a-select
-          class="w65"
-          :options="excelStyleDown"
-          v-model:value="excelStyleVal"
+            class="w65"
+            :options="excelStyleDown"
+            v-model:value="excelStyleVal"
         >
         </a-select>
         <a-button class="w33" @click="excelDown"
-          ><DownOutlined />양식따운</a-button
+        ><DownOutlined />양식따운</a-button
         >
       </div>
 
       <div class="space-between mt5">
         <a-select
-          class="w65"
-          :options="excelStyleUp"
-          v-model:value="excelStyleUpVal"
+            class="w65"
+            :options="excelStyleUp"
+            v-model:value="excelStyleUpVal"
         >
         </a-select>
         <a-upload
-          :showUploadList="false"
-          name="file"
-          :multiple="true"
-          :customRequest="excelUpload"
-          :beforeUpload="handleExcelBeforeUpload"
-          :headers="headers"
+            :showUploadList="false"
+            name="file"
+            :multiple="true"
+            :customRequest="excelUpload"
+            :beforeUpload="handleExcelBeforeUpload"
+            :headers="headers"
         >
           <a-button><UploadOutlined />엑셀 업로드</a-button>
         </a-upload>
@@ -407,13 +407,13 @@
     </div>
 
     <div
-      v-if="this.roles.length > 0 && this.roles.indexOf('ROLE_RELAKET') > -1"
+        v-if="this.roles.length > 0 && this.roles.indexOf('ROLE_RELAKET') > -1"
     >
       <a-divider />
       <h4>아이콘 설정 :</h4>
       <div>
         <a-button class="w49" @click="openIconModal"
-          ><UploadOutlined />업로드</a-button
+        ><UploadOutlined />업로드</a-button
         >
       </div>
     </div>
@@ -422,80 +422,80 @@
       <a-divider />
       <h4>로고 설정 :</h4>
       <a-upload
-        :showUploadList="false"
-        name="file"
-        :multiple="true"
-        :customRequest="customRequest"
-        :beforeUpload="handleBeforeUpload"
-        :headers="headers"
-      >
-        <a-button @click="setType('logo')"
-          ><UploadOutlined />로고 업로드</a-button
-        >
-      </a-upload>
-      <a-button class="w20 ml10" @click="setLogo" type="primary">
-        저장</a-button
-      >
-      <a-button
-        v-if="isLogInDetail === false"
-        class="w30 ml10"
-        @click="setLogoInDetail"
-        type="primary"
-      >
-        상품상세 적용</a-button
-      >
-      <a-button v-else class="w40 ml10" @click="setLogoInDetail" type="primary">
-        상품상세 적용 취소</a-button
-      >
-      <div class="logo" style="width: 100px; height: 100px; margin-top: 10px">
-        <img
-          v-if="logoImg.length > 0"
-          :src="logoImg"
-          width="328"
-          height="200"
-          alt=""
-        />
-      </div>
-    </div>
-    <a-modal
-      width="600px"
-      :maskClosable="false"
-      v-model:visible="excelUploadVisible"
-      title="엑셀업로드 결과"
-      @ok="excelResultWindow"
-    >
-      <p v-for="message in excelUploadResult">{{ message }}</p>
-    </a-modal>
-
-    <a-modal
-      width="600px"
-      height="300px"
-      :maskClosable="false"
-      v-model:visible="iconUploadVisible"
-      title="아이콘 업로드"
-      @ok="closeIconModal"
-    >
-      <img
-        :class="`${item.checked ? 'checkedEl' : 'checkedNot'}`"
-        v-for="(item, index) in icons"
-        :src="item.src"
-        width="120"
-        height="118"
-        @click="outElChecking(item, index)"
-        :key="index"
-        style="margin-top: 3px"
-      />
-      <div v-if="icons.length === 0" style="text-align: center">
-        추가된 아이콘이 없습니다.
-      </div>
-      <template v-slot:footer>
-        <a-upload
           :showUploadList="false"
           name="file"
           :multiple="true"
           :customRequest="customRequest"
           :beforeUpload="handleBeforeUpload"
           :headers="headers"
+      >
+        <a-button @click="setType('logo')"
+        ><UploadOutlined />로고 업로드</a-button
+        >
+      </a-upload>
+      <a-button class="w30 ml10" @click="setLogo" type="primary">
+        저장</a-button
+      >
+      <a-button
+          v-if="isLogInDetail === false"
+          class="w30 ml10"
+          @click="setLogoInDetail"
+          type="primary"
+      >
+        상품상세 적용</a-button
+      >
+      <a-button v-else class="w30 ml10" @click="setLogoInDetail" type="primary">
+        상품상세 적용 취소</a-button
+      >
+      <div class="logo" style="width: 100px; height: 100px; margin-top: 10px">
+        <img
+            v-if="logoImg.length > 0"
+            :src="logoImg"
+            width="328"
+            height="200"
+            alt=""
+        />
+      </div>
+    </div>
+    <a-modal
+        width="600px"
+        :maskClosable="false"
+        v-model:visible="excelUploadVisible"
+        title="엑셀업로드 결과"
+        @ok="excelResultWindow"
+    >
+      <p v-for="message in excelUploadResult">{{ message }}</p>
+    </a-modal>
+
+    <a-modal
+        width="600px"
+        height="300px"
+        :maskClosable="false"
+        v-model:visible="iconUploadVisible"
+        title="아이콘 업로드"
+        @ok="closeIconModal"
+    >
+      <img
+          :class="`${item.checked ? 'checkedEl' : 'checkedNot'}`"
+          v-for="(item, index) in icons"
+          :src="item.src"
+          width="120"
+          height="118"
+          @click="outElChecking(item, index)"
+          :key="index"
+          style="margin-top: 3px"
+      />
+      <div v-if="icons.length === 0" style="text-align: center">
+        추가된 아이콘이 없습니다.
+      </div>
+      <template v-slot:footer>
+        <a-upload
+            :showUploadList="false"
+            name="file"
+            :multiple="true"
+            :customRequest="customRequest"
+            :beforeUpload="handleBeforeUpload"
+            :headers="headers"
         >
           <a-button @click="setType('icon')"><UploadOutlined />업로드</a-button>
         </a-upload>
@@ -535,7 +535,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["common"]),
+    ...mapState(["common", "product"]),
   },
 
   data() {
@@ -679,18 +679,19 @@ export default {
   methods: {
     getRecharge() {
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
-        (res) => {
-          if (res.data === undefined || res.data.status !== "2000") {
-            alert("남은회수 호출 실패");
-            return false;
-          }
+          (res) => {
+            if (res.data === undefined || res.data.status !== "2000") {
+              alert("남은회수 호출 실패");
+              return false;
+            }
 
-          try {
-            this.recharge = res.data.recharge;
-          } catch (e) {
-            alert("남은회수 호출 실패");
+            try {
+              this.recharge = res.data.recharge;
+              this.product.recharge = res.data.recharge;
+            } catch (e) {
+              alert("남은회수 호출 실패");
+            }
           }
-        }
       );
     },
     close() {
@@ -699,8 +700,8 @@ export default {
 
     addCollectionPrice() {
       if (
-        this.priceRangeStart === undefined ||
-        this.priceRangeStart.length === 0
+          this.priceRangeStart === undefined ||
+          this.priceRangeStart.length === 0
       ) {
         alert("기준가 시작범위는 필수로 입력해주십시오");
         return false;
@@ -718,9 +719,9 @@ export default {
 
       let regPos = /^[0-9]+$/;
       if (
-        !regPos.test(this.price) ||
-        !regPos.test(this.priceRangeStart) ||
-        !regPos.test(this.priceRangeEnd)
+          !regPos.test(this.price) ||
+          !regPos.test(this.priceRangeStart) ||
+          !regPos.test(this.priceRangeEnd)
       ) {
         alert("기준 값과 가격 값은 숫자만 입력가능합니다.");
         return false;
@@ -739,13 +740,13 @@ export default {
       for (let i = 0; i < this.collectionPriceList.length; i++) {
         let item = this.collectionPriceList[i];
         if (
-          (parseInt(this.priceRangeStart) >= parseInt(item.priceRangeStart) &&
-            parseInt(this.priceRangeStart) <= parseInt(item.priceRangeEnd)) ||
-          (parseInt(this.priceRangeEnd) >= parseInt(item.priceRangeStart) &&
-            parseInt(this.priceRangeEnd) <= parseInt(item.priceRangeEnd))
+            (parseInt(this.priceRangeStart) >= parseInt(item.priceRangeStart) &&
+                parseInt(this.priceRangeStart) <= parseInt(item.priceRangeEnd)) ||
+            (parseInt(this.priceRangeEnd) >= parseInt(item.priceRangeStart) &&
+                parseInt(this.priceRangeEnd) <= parseInt(item.priceRangeEnd))
         ) {
           alert(
-            "요청하신 가격범위는 기존에 등록하신 가격범위에 포함되여있습니다."
+              "요청하신 가격범위는 기존에 등록하신 가격범위에 포함되여있습니다."
           );
           return false;
         }
@@ -780,7 +781,7 @@ export default {
       }
 
       let data = this.collectionPriceList.filter(
-        (item, i) => parseInt(index) !== parseInt(i)
+          (item, i) => parseInt(index) !== parseInt(i)
       );
       this.indicator = true;
       this.sendCollectionData(data);
@@ -912,8 +913,8 @@ export default {
 
     rateChange(val, item, key) {
       if (
-        item.label.indexOf("please select") > -1 &&
-        item.value === "please select"
+          item.label.indexOf("please select") > -1 &&
+          item.value === "please select"
       ) {
         return false;
       }
@@ -921,8 +922,8 @@ export default {
       for (let i = 0; i < this.rate.length; i++) {
         let currentItem = this.rate[i];
         if (
-          currentItem.label === item.label &&
-          currentItem.value === item.value
+            currentItem.label === item.label &&
+            currentItem.value === item.value
         ) {
           this.rateSelectedKey = i;
         }
@@ -934,7 +935,7 @@ export default {
 
       if (this.rateSelectedKey === null) {
         alert(
-          "데이터 처리과정에서 오류가 발생했습니다.\n오류가 지속될경우 관리자에게 문의하시길 바랍니다."
+            "데이터 처리과정에서 오류가 발생했습니다.\n오류가 지속될경우 관리자에게 문의하시길 바랍니다."
         );
         return false;
       }
@@ -942,8 +943,8 @@ export default {
 
     marginChange(val, item, key) {
       if (
-        item.label.indexOf("please select") > -1 &&
-        item.value === "please select"
+          item.label.indexOf("please select") > -1 &&
+          item.value === "please select"
       ) {
         return false;
       }
@@ -951,8 +952,8 @@ export default {
       for (let i = 0; i < this.margin.length; i++) {
         let currentItem = this.margin[i];
         if (
-          currentItem.label === item.label &&
-          currentItem.value === item.value
+            currentItem.label === item.label &&
+            currentItem.value === item.value
         ) {
           this.marginSelectedKey = i;
         }
@@ -964,7 +965,7 @@ export default {
 
       if (this.marginSelectedKey === null) {
         alert(
-          "데이터 처리과정에서 오류가 발생했습니다.\n오류가 지속될경우 관리자에게 문의하시길 바랍니다."
+            "데이터 처리과정에서 오류가 발생했습니다.\n오류가 지속될경우 관리자에게 문의하시길 바랍니다."
         );
         return false;
       }
@@ -984,39 +985,6 @@ export default {
         this.indicator = false;
       });
     },
-
-    // excelDown() {
-    //   this.indicator = true;
-    //   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/deliveryexceldown", {
-    //     filetype: this.excelStyleVal,
-    //   }, {responseType: 'blob'}).then((res) => {
-    //     let response = res.data;
-    //     if (response === undefined) {
-    //       alert("엑셀양식 다운이 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
-    //       this.indicator = false;
-    //       return false;
-    //     }
-    //     let file = this.excelStyleDown.filter(item => item.value === this.excelStyleVal);
-    //     if (file[0].label.length === undefined || file[0].label.length === 0) {
-    //       alert("엑셀양식 다운이 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
-    //       this.indicator = false;
-    //       return false;
-    //     }
-    //
-    //     let fileName = file[0].label + '.xlsx';
-    //     let blob = new Blob([response], {type: 'charset=utf-8'});
-    //     let downloadElement = document.createElement('a');
-    //     let url = window.URL || window.webkitURL || window.moxURL
-    //     let href = url.createObjectURL(blob); // 创建下载的链接
-    //     downloadElement.href = href;
-    //     downloadElement.download = decodeURI(fileName); // 下载后文件名
-    //     document.body.appendChild(downloadElement);
-    //     downloadElement.click(); // 点击下载
-    //     document.body.removeChild(downloadElement); // 下载完成移除元素
-    //     url.revokeObjectURL(href);
-    //     this.indicator = false;
-    //   });
-    // },
 
     addKey() {
       if (this.accessKey.length === undefined || this.accessKey.length === 0) {
@@ -1056,8 +1024,8 @@ export default {
       formData.append("filetype", this.excelStyleUpVal);
 
       AuthRequest.post(
-        process.env.VUE_APP_API_URL + "/api/updeliveryexcel",
-        formData
+          process.env.VUE_APP_API_URL + "/api/updeliveryexcel",
+          formData
       ).then((res) => {
         let response = res.data;
         if (response === undefined) {
@@ -1086,8 +1054,8 @@ export default {
 
     handleExcelBeforeUpload(file) {
       const isExcel =
-        file.type ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+          file.type ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
       if (!isExcel) {
         alert("허용되는 이미지 격식이 아닙니다.");
         return false;
@@ -1098,16 +1066,16 @@ export default {
 
     updateFormula(type) {
       if (
-        this[type + "Name"].length === undefined ||
-        this[type + "Name"].length === 0
+          this[type + "Name"].length === undefined ||
+          this[type + "Name"].length === 0
       ) {
         alert(type + "명은 필수로 입력해주십시오.");
         return false;
       }
 
       if (
-        this[type + "Value"].length === undefined ||
-        this[type + "Value"].length === 0
+          this[type + "Value"].length === undefined ||
+          this[type + "Value"].length === 0
       ) {
         alert(type + "값은 필수로 입력해주십시오.");
         return false;
@@ -1171,15 +1139,15 @@ export default {
       formData.append("relation_type", "user");
       if (this.imageUploadType === "") {
         alert(
-          "이미지 저장에 실패하였습니다.\n오류가 지속될경우 관리자에게 문의하시길바랍니다."
+            "이미지 저장에 실패하였습니다.\n오류가 지속될경우 관리자에게 문의하시길바랍니다."
         );
         return false;
       }
       formData.append("image_type", this.imageUploadType);
       this.indicator = true;
       AuthRequest.post(
-        process.env.VUE_APP_API_URL + "/api/image",
-        formData
+          process.env.VUE_APP_API_URL + "/api/image",
+          formData
       ).then((res) => {
         let response = res.data;
         if (response === undefined) {
@@ -1232,7 +1200,7 @@ export default {
 
         this.isLogInDetail = returnData.data;
         alert(
-          "상품상세 " +
+            "상품상세 " +
             type +
             " 성공하였습니다.\n페이지를 갱신하시면 상품상세 편집창에서 효과를 확인하실수있습니다."
         );
@@ -1273,8 +1241,8 @@ export default {
       }
 
       let data = this["original_" + type].filter(
-        (item, index) =>
-          parseInt(this[type + "SelectedKey"]) !== parseInt(index)
+          (item, index) =>
+              parseInt(this[type + "SelectedKey"]) !== parseInt(index)
       );
       this.indicator = true;
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userup", {
@@ -1316,7 +1284,7 @@ export default {
 
 
       let data = this[type + "_margin"].filter(
-        (item) => parseInt(this[type + "_margin_option"]) !== parseInt(item.value)
+          (item) => parseInt(this[type + "_margin_option"]) !== parseInt(item.value)
       );
       this.indicator = true;
 
@@ -1371,7 +1339,7 @@ export default {
         value: this[type + "_margin_value"],
       };
       let aFail = this[type + "_margin"].filter(
-        (item) => parseInt(oData.value) === parseInt(item.value)
+          (item) => parseInt(oData.value) === parseInt(item.value)
       );
       if (lib.isArray(aFail, true)) {
         alert("동일유형에 같은 값을 중복으로 등록할수없습니다.");
@@ -1397,7 +1365,7 @@ export default {
           return false;
         }
 
-       this.setUserMargin(type, returnData.data);
+        this.setUserMargin(type, returnData.data);
 
         alert("등록성공");
         this.indicator = false;
@@ -1455,8 +1423,8 @@ export default {
         }
 
         if (
-          items[i].label.indexOf("(") === -1 &&
-          items[i].label.indexOf("%") === -1
+            items[i].label.indexOf("(") === -1 &&
+            items[i].label.indexOf("%") === -1
         ) {
           labelAddInfo = " ( " + items[i].value + symble + " )";
         }
@@ -1474,10 +1442,10 @@ export default {
       }
 
       let aMargin = lib.isArray(
-        this.userData[field + "_margin"]
+          this.userData[field + "_margin"]
       )
-        ? this.setLabel(this.userData[field + "_margin"], "margin", isRate)
-        : [];
+          ? this.setLabel(this.userData[field + "_margin"], "margin", isRate)
+          : [];
 
       this[field + "_margin"] = [{label: "선택해주세요", value: "0"}];
       if (lib.isArray(aMargin, true)) {
@@ -1487,8 +1455,8 @@ export default {
       }
 
       this[field + "_margin_option"] = !lib.isEmpty(this.userData[field + "_margin_option"])
-        ? this.userData[field + "_margin_option"]
-        : "0";
+          ? this.userData[field + "_margin_option"]
+          : "0";
     },
 
     setUserMargin(field, data) {
@@ -1521,53 +1489,53 @@ export default {
 
     getUser() {
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user", {}).then(
-        (res) => {
-          this.userData = res.data.data;
-          this.memberName = this.userData.member_name;
+          (res) => {
+            this.userData = res.data.data;
+            this.memberName = this.userData.member_name;
 
-          ["wholesale", "supply", "selling", "disp", "rate"].map((field) => {
-            this.initUserMargin(field);
-          });
+            ["wholesale", "supply", "selling", "disp", "rate"].map((field) => {
+              this.initUserMargin(field);
+            });
 
-          // if (
-          //   this.userData.rate !== undefined &&
-          //   this.userData.rate.length > 0
-          // ) {
-          //   this.original_rate = this.userData.rate;
-          //   this.rate = this.setLabel(this.userData.rate, "rate");
-          //   this.rateDefValue = this.userData.rate_option;
-          //   this.rateChange(this.rateDefValue, this.userData.rate[0], 0);
-          // }
+            // if (
+            //   this.userData.rate !== undefined &&
+            //   this.userData.rate.length > 0
+            // ) {
+            //   this.original_rate = this.userData.rate;
+            //   this.rate = this.setLabel(this.userData.rate, "rate");
+            //   this.rateDefValue = this.userData.rate_option;
+            //   this.rateChange(this.rateDefValue, this.userData.rate[0], 0);
+            // }
 
-          if (
-            this.userData.logo !== undefined &&
-            this.userData.logo.length > 0
-          ) {
-            this.logoImg = this.userData.logo;
-          }
+            if (
+                this.userData.logo !== undefined &&
+                this.userData.logo.length > 0
+            ) {
+              this.logoImg = this.userData.logo;
+            }
 
-          if (
-            this.userData.icons !== undefined &&
-            this.userData.icons.length > 0
-          ) {
-            this.icons = this.userData.icons;
-            for (let i = 0; i < this.icons.length; i++) {
-              this.icons[i].checked = false;
+            if (
+                this.userData.icons !== undefined &&
+                this.userData.icons.length > 0
+            ) {
+              this.icons = this.userData.icons;
+              for (let i = 0; i < this.icons.length; i++) {
+                this.icons[i].checked = false;
+              }
+            }
+
+            if (this.userData.error === true) {
+              this.dlvError = this.userData.error;
+            }
+
+            this.accessKey = this.userData.key.access_key;
+            this.secretKey = this.userData.key.secret_key;
+            this.isLogInDetail = this.userData.logoindetail;
+            this.collectionPriceList = this.userData.collection;
+            for (let i = 0; i < this.collectionPriceList.length; i++) {
+              this.collectionPriceList[i].checked = false;
             }
           }
-
-          if (this.userData.error === true) {
-            this.dlvError = this.userData.error;
-          }
-
-          this.accessKey = this.userData.key.access_key;
-          this.secretKey = this.userData.key.secret_key;
-          this.isLogInDetail = this.userData.logoindetail;
-          this.collectionPriceList = this.userData.collection;
-          for (let i = 0; i < this.collectionPriceList.length; i++) {
-            this.collectionPriceList[i].checked = false;
-          }
-        }
       );
     },
 
@@ -1582,25 +1550,25 @@ export default {
 
     getRate() {
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrate").then(
-        (res) => {
-          if (res.data === undefined || res.status !== 200) {
-            alert(
-              "실시간환율 얻기에 실패하였습니다. 오류가 지속될경우 관리자에게 문의주시길 바랍니다."
-            );
-            return false;
-          }
+          (res) => {
+            if (res.data === undefined || res.status !== 200) {
+              alert(
+                  "실시간환율 얻기에 실패하였습니다. 오류가 지속될경우 관리자에게 문의주시길 바랍니다."
+              );
+              return false;
+            }
 
-          if (res.data.status !== "2000") {
-            alert(
-              "실시간환율 얻기에 실패하였습니다. 오류가 지속될경우 관리자에게 문의주시길 바랍니다."
-            );
-            return false;
+            if (res.data.status !== "2000") {
+              alert(
+                  "실시간환율 얻기에 실패하였습니다. 오류가 지속될경우 관리자에게 문의주시길 바랍니다."
+              );
+              return false;
+            }
+            let ReturnData = res.data;
+            // this.rateCn = ReturnData.cn;
+            // this.rateKor = ReturnData.ko;
+            this.aliexpressData = [{ ko: ReturnData.ko, cn: ReturnData.cn }];
           }
-          let ReturnData = res.data;
-          // this.rateCn = ReturnData.cn;
-          // this.rateKor = ReturnData.ko;
-          this.aliexpressData = [{ ko: ReturnData.ko, cn: ReturnData.cn }];
-        }
       );
     },
   },

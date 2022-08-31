@@ -3,7 +3,7 @@
     <a-affix :offset-bottom="10">
       <div>
         <a-button type="primary" @click="textTranslateSwicth"
-          >텍스트 번역</a-button
+        >텍스트 번역</a-button
         >
         <a-button type="primary" @click="submit">저장</a-button>
         <a-button type="primary" @click="backList">목록</a-button>
@@ -69,7 +69,7 @@ export default {
       let cont = this.product.formState.keyword;
       if (cont !== null && cont.length > 255) {
         alert(
-          "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
+            "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
             cont.length +
             ")"
         );
@@ -100,21 +100,28 @@ export default {
         return false;
       }
 
+      // 태그 제거 (사양)
+      let sItemDetail = this.product.item_detail;
+      sItemDetail = sItemDetail.replaceAll('<p style="display: flex; flex-flow: column nowrap; align-items: center;">', '');
+      sItemDetail = sItemDetail.replaceAll('<p>', '');
+      sItemDetail = sItemDetail.replaceAll('</p>', '');
+      this.product.item_detail = sItemDetail;
+
       let oForm = new FormData();
       oForm = this.getForm(oForm, send);
 
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm).then(
-        (res) => {
-          if (res.status === undefined || res.status !== 200) {
-            alert("저장 실패");
-            this.product.loading = false;
-            return false;
-          }
+          (res) => {
+            if (res.status === undefined || res.status !== 200) {
+              alert("저장 실패");
+              this.product.loading = false;
+              return false;
+            }
 
-          alert("저장 성공");
-          location.reload();
-          //this.product.loading = false;
-        }
+            alert("저장 성공");
+            location.reload();
+            //this.product.loading = false;
+          }
       );
     },
 
@@ -148,10 +155,10 @@ export default {
         cross_border: oProduct.item_cross_border,
 
         // 새로추가한 마진
-        item_disp_margin_option: oProduct.disp_margin_option,
-        item_selling_margin_option: oProduct.selling_margin_option,
-        item_wholesale_margin_option: oProduct.wholesale_margin_option,
-        item_rate_margin_option: oProduct.rate_margin_option,
+        item_disp_margin_option: oProduct.item_disp_margin_option,
+        item_selling_margin_option: oProduct.item_selling_margin_option,
+        item_wholesale_margin_option: oProduct.item_wholesale_margin_option,
+        item_rate_margin_option: oProduct.item_rate_margin_option,
       });
 
       return oForm;
