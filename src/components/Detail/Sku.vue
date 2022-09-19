@@ -303,6 +303,7 @@ export default {
           (1 + (Number(this.product["wholesale_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
         this.product.sku[i].wholesale_price = Math.ceil(Number(wholesale_price) / 100) * 100;
       });
+      this.product.item_wholesale_margin_option = this.product.wholesale_margin_option;
     },
 
     /**
@@ -316,6 +317,7 @@ export default {
             (1 + (Number(this.product["selling_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
         this.product.sku[i].selling_price = Math.ceil(Number(selling_price) / 100) * 100;
       });
+      this.product.item_selling_margin_option = this.product.selling_margin_option;
     },
 
     /**
@@ -332,6 +334,7 @@ export default {
                 Number(this.product.rate_margin_option)).toFixed(0);
         this.product.sku[i].disp_price = Math.ceil(Number(disp_price) / 100) * 100;
       });
+      this.product.item_disp_margin_option = this.product.disp_margin_option;
     },
 
     /**
@@ -350,6 +353,7 @@ export default {
       this.setWholesaleMargin();
       this.setSellingMargin();
       this.setDispMargin();
+      this.product.item_rate_margin_option = this.product.rate_margin_option;
     },
 
     // 품목삭제

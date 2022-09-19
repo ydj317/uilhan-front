@@ -3,17 +3,41 @@ import axios from 'axios';
 import Cookie from "js-cookie";
 import { JSEncrypt } from 'jsencrypt';
 import {pub} from './encript';
-// const ajax = {
-//     baseURL: URL.CATAF_API,
-//     timeout: 5000
-// };
+
+// 로그인 등 인증이 필요없는 페이지에서 사용
+function isLocalServer(config) {
+    if (location.origin === 'http://192.168.56.68:8080' || location.origin === 'https://sym.s') {
+        config.url = config.url.replace(process.env.VUE_APP_API_URL, 'https://sym.s');
+    }
+
+    return config;
+}
+function isDebug(config) {
+    if (localStorage.debug === 'T') {
+        config.url += '?XDEBUG_SESSION=PHPSTORM';
+    }
+
+    return config;
+}
+
+function systemErrorSetting(error) {
+    let response = {
+        status: error.response.status,
+        message: "데이터 처리중 서버오류가 발생하습니다.\n관리자에게 문의하시길 바랍니다."
+    };
+    console.log('error', {code: error.response.status, message: error.response.message})
+
+    return response;
+}
 
 // 로그인 등 인증이 필요없는 페이지에서 사용
 export const NoAuthAjax = (function () {
     const NoAuthAjax = axios.create();
 
     NoAuthAjax.interceptors.request.use(function (config) {
-        //config.url += '?XDEBUG_SESSION=PHPSTORM';
+        config = isLocalServer(config);
+        config = isDebug(config);
+
         config.headers['Accept'] = 'application/json';
         config.headers['Content-Type'] = 'application/json';
         return config;
@@ -26,7 +50,9 @@ export const LoginRequest = (function () {
     const LoginRequest = axios.create();
     const jsencrypt = new JSEncrypt()
     LoginRequest.interceptors.request.use(function (config) {
-        // config.url += '?XDEBUG_SESSION=PHPSTORM';
+        config = isLocalServer(config);
+        config = isDebug(config);
+
         config.headers['Accept'] = 'application/json';
         config.headers['Content-Type'] = 'application/json';
         jsencrypt.setPublicKey(pub);
@@ -37,13 +63,14 @@ export const LoginRequest = (function () {
     });
 
     LoginRequest.interceptors.response.use(function (res) {
-        if (res.status === 200) {
-            Cookie.set('token', res.data.token)
+        let response = res.data;
+        if (response.status === '2000') {
+            Cookie.set('token', response.data.token)
         }
 
-        return res;
-    }, function () {
-        return {status: 401};
+        return response;
+    }, function (error) {
+        return Promise.reject(systemErrorSetting(error));
     });
 
     return LoginRequest;
@@ -52,12 +79,13 @@ export const LoginRequest = (function () {
 export const AuthRequest = (function () {
     const AuthRequest = axios.create()
     AuthRequest.interceptors.request.use(function (config) {
-        // config.url += '?XDEBUG_SESSION=PHPSTORM';
+        config = isLocalServer(config);
+        config = isDebug(config);
+
         config.headers['Accept'] = 'application/json';
         config.headers['Content-Type'] = 'application/json';
         let token = Cookie.get('token');
         if (token.length > 0) {
-            //config.headers['token'] = `Bearer ${token}`;
             config.headers['token'] = token;
         }
 
@@ -80,17 +108,9 @@ export const AuthRequest = (function () {
             console.groupEnd();
         }
 
-        return res;
+        return res.data;
     }, function (error) {
-        let status = error.response.status;
-        let msg = '';
-        if (status > 399 && status < 500) {
-            msg = '요청하신 데이터가 옳바르지 않습니다.';
-        } else if (status > 499 && status < 600) {
-            msg = "데이터 처리중 서버오류가 발생하습니다. \n관리자에게 문의하시길 바랍니다.";
-        }
-
-        return Promise.reject({status: error.response.status, message: msg});
+        return Promise.reject(systemErrorSetting(error));
     });
 
     return AuthRequest;

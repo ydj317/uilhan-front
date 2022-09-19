@@ -199,6 +199,9 @@ export default {
 
     const getCate = (param, type) => {
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message)
+        }
 
         if (formState.last_cate !== null && formState.last_cate.length > 0) {
           formState.last_cate = null;
@@ -584,7 +587,7 @@ export default {
             },
         ).then((res) => {
 
-          if (res.status !== 200) {
+          if (res.status !== '2000') {
             _.mAlert('조회 실패', 'error');
             return false;
           }

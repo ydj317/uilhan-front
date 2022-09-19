@@ -121,8 +121,8 @@ export default defineComponent({
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prd", {
         params: { prduct_idx: id },
       }).then((res) => {
-        if (lib.isEmpty(res) || res.status !== 200 || lib.isEmpty(res.data)) {
-          alert("상품정보 얻기 실패");
+        if (lib.isEmpty(res) || res.status !== '2000' || lib.isEmpty(res.data)) {
+          alert(res.message);
           router.push("/product");
           this.product.loading = false;
           return false;
@@ -185,7 +185,7 @@ export default defineComponent({
 
       // 상품 수정여부 판단
       this.product.is_modify = "T";
-      if (lib.isEmpty(this.product["prd_upd"])) {
+      if (lib.isEmpty(this.product["item_upd"])) {
         this.product.is_modify = "F";
       }
 

@@ -242,39 +242,39 @@ export default {
       return JSON.parse(JSON.stringify(obj));
     },
 
-    /* async mCompressedPicture(url = '', quality = 0.5, maxSize = 1024) {
-       await this._mCompressedPicture(url, quality, maxSize).then(res => {
-         this.url = res;
-       });
-     },
+   /* async mCompressedPicture(url = '', quality = 0.5, maxSize = 1024) {
+      await this._mCompressedPicture(url, quality, maxSize).then(res => {
+        this.url = res;
+      });
+    },
 
-     _mCompressedPicture(url = '', quality = 0.5, maxSize = 1024) {
-       let Blob = this.mBase64Decode(url);
-       // 앞축할 이미지 크기 판단
-       if (Blob.size < maxSize) {
-         return url;
-       }
+    _mCompressedPicture(url = '', quality = 0.5, maxSize = 1024) {
+      let Blob = this.mBase64Decode(url);
+      // 앞축할 이미지 크기 판단
+      if (Blob.size < maxSize) {
+        return url;
+      }
 
-       // 이미지 앞축 실행
-       let image = new Image();
-       image.src = url;
-       image.setAttribute("crossOrigin",'Anonymous');
+      // 이미지 앞축 실행
+      let image = new Image();
+      image.src = url;
+      image.setAttribute("crossOrigin",'Anonymous');
 
-       return new Promise(resolve => {
-         image.onload = function() {
-           let canvas = document.createElement('canvas');
-           let ctx = canvas.getContext('2d');
-           let anw = document.createAttribute("width");
-           anw.nodeValue = String(image.width);
-           let anh = document.createAttribute("height");
-           anh.nodeValue = String(image.height);
-           canvas.setAttributeNode(anw);
-           canvas.setAttributeNode(anh);
-           ctx.drawImage(this, 0, 0, image.width, image.height);
-           resolve(canvas.toDataURL('image/jpeg', quality));
-         }
-       })
-     },*/
+      return new Promise(resolve => {
+        image.onload = function() {
+          let canvas = document.createElement('canvas');
+          let ctx = canvas.getContext('2d');
+          let anw = document.createAttribute("width");
+          anw.nodeValue = String(image.width);
+          let anh = document.createAttribute("height");
+          anh.nodeValue = String(image.height);
+          canvas.setAttributeNode(anw);
+          canvas.setAttributeNode(anh);
+          ctx.drawImage(this, 0, 0, image.width, image.height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        }
+      })
+    },*/
 
     // 이미지 편집후 변역 불가능 합니다
     mEditorImageError() {
@@ -354,52 +354,52 @@ export default {
 
       this.bLoading = true;
       AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/transimage', param).then((res) => {
-        if (res.status === undefined || res.status !== 200) {
-          alert('번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
+        if (res.status !== '2000') {
+          alert(res.message);
           this.bLoading = false;
           return false;
         }
 
-        if (res.data['list'] === 0) {
-          alert('번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
-          this.bLoading = false;
-          return false;
-        }
-
-        try {
-          this.iSelectedPictureIndex = null;
-          res.data['list'].map((aPhoto) => {
-            if (this.iSelectedPictureIndex === null && aPhoto.translate_status) {
-              this.iSelectedPictureIndex = aPhoto.key;
-              this.sSelectedPictureLink = aPhoto.translate_url;
-            }
-
-            this.aPhotoCollection.map((data, j) => {
-              if (data.key === aPhoto.key) {
-                this.aPhotoCollection[ j] = {
-                  "msg" : aPhoto.msg || '',
-                  "key" : aPhoto.key, // 필수!!!
-                  "name": aPhoto.name || '',
-                  "order": aPhoto.order || '',
-                  "checked": aPhoto.checked || false,
-                  "visible": aPhoto.visible || false,
-                  "original_url" : aPhoto.original_url || '', // 필수!!!
-                  "translate_url": aPhoto.translate_url || '',
-                  "translate_status": aPhoto.translate_status || false, // 필수!!!
-                };
-              }
-            })
-
-          })
-          this.mSetTranslateImage();
-          this.bTranslateStatus = true;
-          this.product.recharge = res.data.recharge;
-        } catch (e) {
-          this.iSelectedPictureIndex = 0;
-          alert('번역 api 호출 실패');
-        }
-
+      if (res.data['list'] === 0) {
+        alert('번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
         this.bLoading = false;
+        return false;
+      }
+
+      try {
+        this.iSelectedPictureIndex = null;
+        res.data['list'].map((aPhoto) => {
+          if (this.iSelectedPictureIndex === null && aPhoto.translate_status) {
+            this.iSelectedPictureIndex = aPhoto.key;
+            this.sSelectedPictureLink = aPhoto.translate_url;
+          }
+
+          this.aPhotoCollection.map((data, j) => {
+            if (data.key === aPhoto.key) {
+              this.aPhotoCollection[ j] = {
+                "msg" : aPhoto.msg || '',
+                "key" : aPhoto.key, // 필수!!!
+                "name": aPhoto.name || '',
+                "order": aPhoto.order || '',
+                "checked": aPhoto.checked || false,
+                "visible": aPhoto.visible || false,
+                "original_url" : aPhoto.original_url || '', // 필수!!!
+                "translate_url": aPhoto.translate_url || '',
+                "translate_status": aPhoto.translate_status || false, // 필수!!!
+              };
+            }
+          })
+
+        })
+        this.mSetTranslateImage();
+        this.bTranslateStatus = true;
+        this.product.recharge = res.data.recharge;
+      } catch (e) {
+        this.iSelectedPictureIndex = 0;
+        alert('번역 api 호출 실패');
+      }
+
+      this.bLoading = false;
       });
     },
 
@@ -516,6 +516,12 @@ export default {
       formData.append('image_type', 'product');
       formData.append('product_idx', this.iProductId);
       AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/image', formData).then((res) => {
+            if (res.status !== '2000') {
+              alert(res.message);
+              this.bLoading = false;
+              return false;
+            }
+
         let response = res.data;
         if (response === undefined) {
           alert('업로드 실패');
@@ -523,11 +529,11 @@ export default {
           return false;
         }
 
-        if (response.status !== 'success') {
-          alert('업로드 실패');
-          this.bLoading = false;
-          return false;
-        }
+        // if (response.status !== 'success') {
+        //   alert('업로드 실패');
+        //   this.bLoading = false;
+        //   return false;
+        // }
 
         // let iImageIndex;
         this.aPhotoCollection.map((data, i) => {
@@ -564,6 +570,12 @@ export default {
       formData.append('image_type', 'product');
       formData.append('product_idx', this.iProductId);
       AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/image', formData).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message);
+          this.bLoading = false;
+          return false;
+        }
+
         let response = res.data;
         if (response === undefined) {
           alert('업로드 실패');
@@ -571,11 +583,11 @@ export default {
           return false;
         }
 
-        if (response.status !== 'success') {
-          alert('업로드 실패');
-          this.bLoading = false;
-          return false;
-        }
+        // if (response.status !== 'success') {
+        //   alert('업로드 실패');
+        //   this.bLoading = false;
+        //   return false;
+        // }
 
         // let iImageIndex;
         this.aPhotoCollection.map((data, i) => {
@@ -752,6 +764,10 @@ export default {
       this.iProductId = location.pathname.split('/')[3];
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prd', {params: {prduct_idx: this.iProductId}}).then((res) => {
         try {
+          if (res.status !== '2000') {
+            alert(res.message);
+          }
+
           if (res.data.item_icons.length > 0) {
             this.aIcons = res.data.item_icons;
             window._imageEditor.uploadIcon(res.data.item_icons);

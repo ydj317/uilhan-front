@@ -123,6 +123,12 @@ export default defineComponent({
     const extensionDown = () => {
       indicator.value = true;
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/downloadext", {responseType: 'blob'}).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message);
+          indicator.value = false;
+          return false;
+        }
+
         let response = res.data;
         if (response === undefined) {
           alert("확장프로그램 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");

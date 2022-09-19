@@ -153,16 +153,21 @@ export default {
       formData.append('relation_type', 'product');
       formData.append('product_idx', this.product.item_id);
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/image', formData).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message);
+          return false;
+        }
+
         let response = res.data;
         if (lib.isEmpty(response)) {
           alert('upload failed');
           return false;
         }
 
-        if (response.status !== 'success') {
-          alert('upload failed');
-          return false;
-        }
+        // if (response.status !== 'success') {
+        //   alert('upload failed');
+        //   return false;
+        // }
 
         this.fileList.push({
           name: this.fileList.length,

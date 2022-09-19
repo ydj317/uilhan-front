@@ -11,10 +11,9 @@
       <a-input style="width: 500px; margin-left: 10px" v-model:value="search_value" placeholder="유저아이디" />
 
       <a-button @click="getUserList" style="width: 100px; margin-left: 10px" type="primary">검색</a-button>
-      <a-button @click="getrate" style="width: 100px; margin-left: 10px" type="primary">getrate</a-button>
     </div>
     <div id="list" class="p20 bg-white">
-      <a-table :bordered="false" :columns="columns" :data-source="userList" :pagination="{hideOnSinglePage:true}">
+      <a-table :bordered="false" :columns="columns" :data-source="userList" :pagination="pagination">
         <template #headerCell="{ column }">
           <template v-if="column.key === 'all'">
             <div style="text-align: center"><a-button>{{column.title}}</a-button></div>
@@ -88,24 +87,24 @@
       </template>
     </a-modal>
   </div>
-<!--  <div class="search_body">-->
-<!--    <a-button type="primary" @click="register">계정등록</a-button>-->
-<!--  </div>-->
+  <!--  <div class="search_body">-->
+  <!--    <a-button type="primary" @click="register">계정등록</a-button>-->
+  <!--  </div>-->
 
-<!--  <a-list class="search_body" item-layout="horizontal" :data-source="userList">-->
-<!--    <template #renderItem="{ item }">-->
-<!--      <a-list-item>-->
-<!--        <a-list-item-meta>-->
-<!--          <template #title>-->
-<!--            <h4>{{ item.username }}</h4>-->
-<!--          </template>-->
-<!--          <template #avatar>-->
-<!--            <a-avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />-->
-<!--          </template>-->
-<!--        </a-list-item-meta>-->
-<!--      </a-list-item>-->
-<!--    </template>-->
-<!--  </a-list>-->
+  <!--  <a-list class="search_body" item-layout="horizontal" :data-source="userList">-->
+  <!--    <template #renderItem="{ item }">-->
+  <!--      <a-list-item>-->
+  <!--        <a-list-item-meta>-->
+  <!--          <template #title>-->
+  <!--            <h4>{{ item.username }}</h4>-->
+  <!--          </template>-->
+  <!--          <template #avatar>-->
+  <!--            <a-avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />-->
+  <!--          </template>-->
+  <!--        </a-list-item-meta>-->
+  <!--      </a-list-item>-->
+  <!--    </template>-->
+  <!--  </a-list>-->
 </template>
 <script>
 import {defineComponent, onMounted, ref} from 'vue';
@@ -121,12 +120,15 @@ export default defineComponent({
     const roles = ref(Cookie.get('member_roles'));
     const search_key = ref('user_id');
     const search_value = ref('');
-    const choiceUsers = ref([]);
     let rechargePop = ref(false);
     let recharge_value = ref(0);
     let bLoading = ref(false);
     let id = (0);
     let userRemaining = ref([]);
+    let limit = ref(10);
+    let pageNum = ref(1);
+    const userTotal = ref(0);
+    let pagination = ref({});
     onMounted(async () => {
       if (roles.value === null || roles.value.indexOf('ROLE_ADMIN') === -1) {
         return false;
@@ -165,18 +167,44 @@ export default defineComponent({
     // };
 
     const getUserList = () => {
-      return AuthRequest.post(process.env.VUE_APP_API_URL + '/api/userlist', {}).then((res) => {
-        if (res.data.length !== undefined && res.data.length > 0) {
-          // for (res.data === undefined || res.data === null) {
-          //
-          // }
+      let param = initParam();
 
-          for (let i=0; i < res.data.length; i++) {
-            res.data[i].checked = false;
+      return AuthRequest.post(process.env.VUE_APP_API_URL + '/api/userlist', param).then((res) => {
+        if (res.data.list !== undefined && res.data.list.length > 0) {
+          for (let i=0; i < res.data.list.length; i++) {
+            res.data.list[i].checked = false;
           }
 
-          userList.value = res.data;
+          userList.value = res.data.list;
+          pageNum.value = res.data.page;
+          limit.value = res.data.limit;
+          if (search_value.value.length > 0) {
+            userTotal.value = res.data.list.length;
+          } else {
+            userTotal.value = res.data.total;
+          }
+
+          pagination.value = {
+            total: userTotal.value,
+            current: pageNum.value,
+            pageSize: limit.value,
+            position: ['bottomCenter'],
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '50', '100'],
+            onChange: page => {
+              console.log('page', page)
+              pageNum.value = page;
+              pagination.value.current = page;
+              getUserList();
+            },
+            onShowSizeChange: (current, pageSize) => {
+              limit.value = pageSize;
+              getUserList();
+            },
+          };
         }
+
+
 
         if (bLoading.value === true) {
           bLoading.value = false;
@@ -184,11 +212,11 @@ export default defineComponent({
       });
     };
 
-    const getrate = () => {
-      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/getrate').then((res) => {
-        console.log(res)
-      });
-    };
+    // const getrate = () => {
+    //   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/getrate').then((res) => {
+    //     console.log(res)
+    //   });
+    // };
 
     const recharge = () => {
       let intPattern = /^[0-9]*$/;
@@ -243,54 +271,65 @@ export default defineComponent({
     };
 
     const columns = [
-    //     {
-    //   title: '전체',
-    //   dataIndex: 'all',
-    //   key: 'all',
-    //   width: 20,
-    // },
-    {
-      title: '회원아이디',
-      dataIndex: 'username',
-      key: 'username',
-      width: 100,
-    }, {
-      title: '충전회수',
-      dataIndex: 'recharge',
-      key: 'recharge',
-      width: 100,
-    }, {
-      title: '기존 회수',
-      dataIndex: 'remaining',
-      key: 'remaining',
-      width: 100,
-    }, {
+      //     {
+      //   title: '전체',
+      //   dataIndex: 'all',
+      //   key: 'all',
+      //   width: 20,
+      // },
+      {
+        title: '회원아이디',
+        dataIndex: 'username',
+        key: 'username',
+        width: 100,
+      }, {
+        title: '충전회수',
+        dataIndex: 'recharge',
+        key: 'recharge',
+        width: 100,
+      }, {
+        title: '기존 회수',
+        dataIndex: 'remaining',
+        key: 'remaining',
+        width: 100,
+      }, {
         title: '총수량',
         dataIndex: 'total',
         key: 'total',
         width: 100,
-    }, {
+      }, {
         title: '충전유형',
         dataIndex: 'type',
         key: 'type',
         width: 100,
-    }, {
-      title: '충전시간',
-      dataIndex: 'ins_time',
-      key: 'ins_time',
-      width: 100,
-    }, {
-      title: '충전인',
-      dataIndex: 'add_user',
-      key: 'add_user',
-      width: 100,
-    }, {
-      title: '액션',
-      dataIndex: 'action',
-      key: 'action',
-      width: 100,
-    }
+      }, {
+        title: '충전시간',
+        dataIndex: 'ins_time',
+        key: 'ins_time',
+        width: 100,
+      }, {
+        title: '충전인',
+        dataIndex: 'add_user',
+        key: 'add_user',
+        width: 100,
+      }, {
+        title: '액션',
+        dataIndex: 'action',
+        key: 'action',
+        width: 100,
+      }
     ];
+
+    const initParam =  () => {
+      return {
+        user: search_value.value,
+        limit: limit.value,
+        page: pageNum.value
+      }
+    };
+
+    console.log(userTotal.value)
+
 
     return {
       search_key,
@@ -306,7 +345,8 @@ export default defineComponent({
       recharge_value,
       bLoading,
       userRemaining,
-      getrate
+      // getrate,
+      pagination
     };
   },
 });

@@ -124,11 +124,15 @@ export default {
 
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/syncmarket',
           {params: {list: list, market: marketList, options: aOptions}}).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message)
+        }
+
         let returnData = res.data;
 
-        if (returnData.status === undefined || returnData.status !== 2000) {
-          alert(returnData.msg);
-        }
+        // if (returnData.status === undefined || returnData.status !== 2000) {
+        //   alert(returnData.msg);
+        // }
 
         if (type === 'multi') {
           this.relaket.data.setResultPopData(true, [

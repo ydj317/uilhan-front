@@ -49,11 +49,17 @@ export default {
       param.to = this.product.toLang;
 
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/transtext', param).then((res) => {
-        if (lib.isEmpty(res.status, true) || res.status !== 200) {
-          alert('텍스트 번역 실패');
+        if (res.status !== '2000') {
+          alert(res.message);
           this.product.loading = false;
           return false;
         }
+
+        // if (lib.isEmpty(res.status, true) || res.status !== 200) {
+        //   alert('텍스트 번역 실패');
+        //   this.product.loading = false;
+        //   return false;
+        // }
 
         this.product.item_trans_name = res.data.item_trans_name;
         this.product.sku = res.data.item_sku;
@@ -61,6 +67,9 @@ export default {
         this.product.item_info = res.data.item_info;
         this.product.item_cross_border = res.data.item_cross_border;
 
+        /**
+         * todo 로고 이미지가 더 추가됨
+         */
         if (!lib.isEmpty(this.product.item_detail, true)) {
           this.product.item_detail = res.data.detailSpec + this.product.item_detail;
         }

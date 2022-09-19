@@ -1,4 +1,5 @@
 <template>
+  <loading v-model:active="loading" :can-cancel="false" :is-full-page="true" />
     <div class="_container">
       <div class="header">
         <div class="icon">
@@ -47,6 +48,8 @@
     </div>
 </template>
 <script>
+import "vue-loading-overlay/dist/vue-loading.css";
+import Loading from "vue-loading-overlay";
 import router from "router/index.js";
 import { LoginRequest } from 'util/request';
 import { defineComponent, reactive, onBeforeMount, ref } from 'vue';
@@ -57,6 +60,7 @@ export default defineComponent({
   components: {
     UserOutlined,
     LockOutlined,
+    Loading,
   },
 
   setup() {
@@ -75,41 +79,42 @@ export default defineComponent({
       username: '',
       password: '',
     });
-    // let indicator = ref(false);
+    let loading = ref(false);
     const handleFinish = () => {
       let user = {
         username: formState.username,
         password: formState.password,
       };
-      // indicator.value = true;
+      loading.value = true;
       LoginRequest.post(
         process.env.VUE_APP_API_URL + '/api/login', user).then((res) => {
-        if (res.status === undefined || res.status !== 200) {
-          alert('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(status error)');
-          // indicator.value = false;
+        if (res.status !== '2000') {
+          alert(res.message);
+          loading.value = false;
           return false;
         }
 
-        if (res.data.member_roles === undefined) {
-          alert('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(role error)');
-          // indicator.value = false;
+          console.log(res);
+          if (res.data.member_roles === undefined) {
+            alert('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(role error)');
+            loading.value = false;
+            return false;
+          }
+
+          // 아이디 저장하기
+          tempSave();
+
+          Cookie.set('member_name', res.data.member_name);
+          Cookie.set('member_roles', res.data.member_roles);
+          router.push("/product");
+          loading.value = false;
           return false;
-        }
-        // indicator.value = false;
-        // 아이디 저장하기
-        tempSave();
-
-        Cookie.set('member_name', res.data.member_name);
-        Cookie.set('member_roles', res.data.member_roles);
-        router.push("/product");
-
-        return false;
       });
     };
 
     const handleFinishFailed = () => {
       alert('입력하신 회원정보는 존재하지 않습니다');
-      // indicator.value = false;
+      loading.value = false;
     };
 
     const remember = false;
@@ -131,13 +136,13 @@ export default defineComponent({
     }
 
     return {
+      loading,
       checked,
       remember,
       formState,
       handleFinish,
       handleFinishFailed,
-      redirectRegister,
-      // indicator
+      redirectRegister
     };
   },
 

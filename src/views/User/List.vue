@@ -470,6 +470,10 @@ export default defineComponent({
       let param = this.getParam();
       this.indicator = true;
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', {params: param}).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message)
+        }
+
         this.prdlist = res.data.list;
 
         for (let i = 0; i < this.prdlist.length; i++) {
@@ -576,6 +580,12 @@ export default defineComponent({
       }
 
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/sendmarket', {list: list}).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message)
+          this.indicator = false;
+          return false;
+        }
+
         if (res.data !== undefined && res.data.length === 0) {
           alert('해당요청에 오류가 발생하였습니다. \ 재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.');
           this.indicator = false;
@@ -609,10 +619,15 @@ export default defineComponent({
       }
 
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/deleteprd', {params: {list: list}}).then((res) => {
-        if (res.status !== 200) {
-          alert('삭제실패');
+        if (res.status !== '2000') {
+          alert(res.message)
           return false;
         }
+
+        // if (res.status !== 200) {
+        //   alert('삭제실패');
+        //   return false;
+        // }
 
         this.getList();
       });
@@ -631,10 +646,14 @@ export default defineComponent({
 
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/exceldown', {params: param}).then((res) => {
         this.indicator = false;
-        if (res.status !== 200) {
-          alert('파일 다운로드에 실패하였습니다. \n일시적인 현상이오니 잠시후 재 시도하시길 바랍니다.');
+        if (res.status !== '2000') {
+          alert(res.message)
           return false;
         }
+        // if (res.status !== 200) {
+        //   alert('파일 다운로드에 실패하였습니다. \n일시적인 현상이오니 잠시후 재 시도하시길 바랍니다.');
+        //   return false;
+        // }
         window.open(res.data.path);
       });
     },
@@ -680,11 +699,16 @@ export default defineComponent({
 
     getMarketList() {
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/marketlist').then((res) => {
-        let returnData = res.data;
-        if (returnData.status === undefined || returnData.status !== '2000') {
-          alert(returnData.msg);
+        if (res.status !== '2000') {
+          alert(res.message)
           return false;
         }
+
+        let returnData = res.data;
+        // if (returnData.status === undefined || returnData.status !== '2000') {
+        //   alert(returnData.msg);
+        //   return false;
+        // }
 
         this.options = returnData.data;
       });
@@ -720,11 +744,15 @@ export default defineComponent({
 
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/syncmarket',
           {params: {list: list, market: marketList, options: this.options}}).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message)
+        }
+
         let returnData = res.data;
 
-        if (returnData.status === undefined || returnData.status !== 2000) {
-          alert(returnData.msg);
-        }
+        // if (returnData.status === undefined || returnData.status !== 2000) {
+        //   alert(returnData.msg);
+        // }
 
         if (type === 'multi') {
           this.setResultPopData(true, [

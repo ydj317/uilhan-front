@@ -101,6 +101,10 @@ export default {
     getList() {
       let param = this.getParam();
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', {params: param}).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message)
+        }
+
         this.prdlist = res.data.list;
         this.common = param;
 

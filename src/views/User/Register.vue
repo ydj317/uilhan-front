@@ -436,11 +436,16 @@ export default defineComponent({
 
       NoAuthAjax.post(
         process.env.VUE_APP_API_URL + '/api/register', user).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message)
+          return false;
+        }
+
           let returnData = res.data;
-          if (returnData.status === undefined || returnData.status !== 2000) {
-            alert(returnData.msg);
-            return false;
-          }
+          // if (returnData.status === undefined || returnData.status !== 2000) {
+          //   alert(returnData.msg);
+          //   return false;
+          // }
 
           let loginUser = {
             username: formState.username,
@@ -449,7 +454,7 @@ export default defineComponent({
 
           LoginRequest.post(
             process.env.VUE_APP_API_URL + '/api/login', loginUser).then((res) => {
-            if (res.status === undefined || res.status !== 200) {
+            if (res.status === undefined || res.status !== '2000') {
               alert('일시적인 서버장애로 로그인에 실패하였습니다. 잠시 후 시도해주시길 바랍니다.');
               Cookie.remove('token');
               Cookie.remove('member_name');
