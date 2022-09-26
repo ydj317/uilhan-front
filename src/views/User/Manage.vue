@@ -204,6 +204,7 @@ export default defineComponent({
           };
         }
 
+        console.log('bLoading.value', bLoading.value)
         if (bLoading.value === true) {
           bLoading.value = false;
         }
@@ -231,18 +232,17 @@ export default defineComponent({
         user: id
       };
 
-      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/recharge', data).then((res) => {
-        let returnData = res.data;
-        if (returnData.status === undefined || returnData.status !== '2000') {
-          alert(returnData.msg);
+      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/recharge', data).then(async (res) => {
+        if (res.status === undefined || res.status !== '2000') {
+          alert(res.message);
           return false;
         }
 
         rechargePop.value = false;
         recharge_value.value = 0;
 
-        alert(returnData.msg);
-        getUserList();
+        alert(res.message);
+        await getUserList();
         bLoading.value = false;
       });
     };
