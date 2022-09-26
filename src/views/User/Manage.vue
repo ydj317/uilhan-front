@@ -204,8 +204,6 @@ export default defineComponent({
           };
         }
 
-
-
         if (bLoading.value === true) {
           bLoading.value = false;
         }
@@ -264,19 +262,7 @@ export default defineComponent({
       return false;
     };
 
-    const getParam = () => {
-      return {
-        'date_type': this.date_type,
-      };
-    };
-
     const columns = [
-      //     {
-      //   title: '전체',
-      //   dataIndex: 'all',
-      //   key: 'all',
-      //   width: 20,
-      // },
       {
         title: '회원아이디',
         dataIndex: 'username',
@@ -328,9 +314,6 @@ export default defineComponent({
       }
     };
 
-    console.log(userTotal.value)
-
-
     return {
       search_key,
       search_value,
@@ -345,7 +328,6 @@ export default defineComponent({
       recharge_value,
       bLoading,
       userRemaining,
-      // getrate,
       pagination
     };
   },

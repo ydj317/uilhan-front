@@ -71,7 +71,11 @@ export default {
          * todo 로고 이미지가 더 추가됨
          */
         if (!lib.isEmpty(this.product.item_detail, true)) {
-          this.product.item_detail = res.data.detailSpec + this.product.item_detail;
+          let sItemDetaiContents = this.product.item_detail;
+          // 로고가 존재하지 않을경우에만 추가
+          if (sItemDetaiContents.indexOf(res.data.detailSpec) === -1) {
+            this.product.item_detail = res.data.detailSpec + this.product.item_detail;
+          }
         }
 
         this.product.item_trans_name = this.product.item_trans_name.substr(0, 50);

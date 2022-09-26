@@ -432,7 +432,6 @@ export default defineComponent({
       search_value: '',
       searchCount: 0,
       totalCount: 0,
-      msg: [],
       sync_status: 'all',
       options: [],
       marketList: [],
@@ -491,8 +490,6 @@ export default defineComponent({
         this.pagination.current = parseInt(res.data.page);
         this.pagination.pageSize = parseInt(res.data.limit);
         this.date = [moment(res.data.start_time), moment(res.data.end_time)];
-        this.msg = res.data.msg;
-
         this.indicator = false;
         this.checked = false;
       });
@@ -587,21 +584,20 @@ export default defineComponent({
         }
 
         if (res.data !== undefined && res.data.length === 0) {
-          alert('해당요청에 오류가 발생하였습니다. \ 재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.');
+          alert("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
           this.indicator = false;
           return false;
         }
 
-        let data = res.data.data;console.log('data', data)
+        let data = res.data;
         let sMessage = "";
-        if (data.success_code) {
+        if (data.success_code.length) {
           sMessage = '연동성공 상품 : ' + data.success_code;
         }
-        if (data.failed_code) {
-          sMessage = '연동실패 상품 : ' + data.failed_code;
+        if (data.failed_code.length) {
+          sMessage += "\n연동실패 상품 : " + data.failed_code;
         }
         alert(sMessage);
-        this.msg = data.msg;
         this.indicator = false;
         this.getList();
       }).catch((error) => {
@@ -749,18 +745,13 @@ export default defineComponent({
         }
 
         let returnData = res.data;
-
-        // if (returnData.status === undefined || returnData.status !== 2000) {
-        //   alert(returnData.msg);
-        // }
-
         if (type === 'multi') {
           this.setResultPopData(true, [
-            returnData.data.success,
-            returnData.data.failedCode,
-            returnData.data.failed,
-            returnData.data.total,
-            returnData.data.data,
+            returnData.success,
+            returnData.failedCode,
+            returnData.failed,
+            returnData.total,
+            returnData.data,
           ]);
         } else {
           this.singleSyncPop = false;
@@ -768,11 +759,11 @@ export default defineComponent({
           this.checkedList = [];
 
           this.setResultPopData(true, [
-            returnData.data.success,
-            returnData.data.failedCode,
-            returnData.data.failed,
-            returnData.data.total,
-            returnData.data.data,
+            returnData.success,
+            returnData.failedCode,
+            returnData.failed,
+            returnData.total,
+            returnData.data,
           ]);
         }
 
@@ -782,6 +773,7 @@ export default defineComponent({
     },
 
     setResultPopData(isOpen, data) {
+      console.log('lololo', data);
       if (isOpen) {
         this.marketSyncSuccess = data[0];
         this.marketSyncFailedCode = data[1];

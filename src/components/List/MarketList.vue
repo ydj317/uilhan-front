@@ -129,38 +129,17 @@ export default {
         }
 
         let returnData = res.data;
-
-        // if (returnData.status === undefined || returnData.status !== 2000) {
-        //   alert(returnData.msg);
-        // }
-
         if (type === 'multi') {
           this.relaket.data.setResultPopData(true, [
-            returnData.data.success,
-            returnData.data.failedCode,
-            returnData.data.failed,
-            returnData.data.total,
-            returnData.data.data,
+            returnData.success,
+            returnData.failedCode,
+            returnData.failed,
+            returnData.total,
+            returnData.data,
           ])
-          // this.setResultPopData(true, [
-          //   returnData.data.success,
-          //   returnData.data.failedCode,
-          //   returnData.data.failed,
-          //   returnData.data.total,
-          //   returnData.data.data,
-          // ]);
         } else {
           this.relaket.data.MarketListVisible = false;
           this.relaket.data.singleDetail = [];
-          // this.checkedList = [];
-
-          // this.setResultPopData(true, [
-          //   returnData.data.success,
-          //   returnData.data.failedCode,
-          //   returnData.data.failed,
-          //   returnData.data.total,
-          //   returnData.data.data,
-          // ]);
         }
 
         this.relaket.data.MarketListVisible = false;

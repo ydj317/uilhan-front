@@ -16,6 +16,7 @@
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
 import router from "@/router";
+import {lib} from '@/util/lib';
 
 export default {
   computed: {
@@ -118,9 +119,17 @@ export default {
             return false;
           }
 
+          this.product.sku = res.data.sku;
+          this.product.item_thumb = res.data.item_thumb;
+          this.product.item_detail = res.data.item_detail;
+
+          for (let i = 0; i < this.product.sku.length; i++) {
+            this.product.sku[i].checked = false;
+          }
+          this.product.bak_sku = JSON.parse(JSON.stringify(this.product.sku));
+
           alert("저장 성공");
-          location.reload();
-          //this.product.loading = false;
+          this.product.loading = false;
         }
       );
     },

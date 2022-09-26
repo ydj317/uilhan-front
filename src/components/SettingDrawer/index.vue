@@ -7,7 +7,7 @@
   />
   <a-drawer
     :visible="common.user_visible"
-    width="450"
+    width="480"
     title="계정 설정"
     placement="right"
     :closable="false"
@@ -287,8 +287,6 @@
           >
         </div>
       </div>
-      <!--      <a-input class="w49 mt10" v-model:value="this.aliexpressNew" placeholder="알리익스프래스 환율설정" />-->
-      <!--      <a-button class="w49 bg-3051d3 ml6" @click="addAliexpress" type="primary">등록</a-button>-->
     </div>
 
     <div>
@@ -393,16 +391,18 @@
           v-model:value="excelStyleUpVal"
         >
         </a-select>
-        <a-upload
-          :showUploadList="false"
-          name="file"
-          :multiple="true"
-          :customRequest="excelUpload"
-          :beforeUpload="handleExcelBeforeUpload"
-          :headers="headers"
+        <a-button class="w33 p1"
         >
-          <a-button><UploadOutlined />엑셀 업로드</a-button>
-        </a-upload>
+          <a-upload
+            class="w100"
+            :showUploadList="false"
+            name="file"
+            :multiple="true"
+            :customRequest="excelUpload"
+            :beforeUpload="handleExcelBeforeUpload"
+            :headers="headers"
+          ><UploadOutlined /> 엑셀 업로드</a-upload>
+        </a-button>
       </div>
     </div>
 
@@ -444,7 +444,7 @@
       >
         상품상세 적용</a-button
       >
-      <a-button v-else class="w30 ml10" @click="setLogoInDetail" type="primary">
+      <a-button v-else class="w35 ml10" @click="setLogoInDetail" type="primary">
         상품상세 적용 취소</a-button
       >
       <div class="logo" style="width: 100px; height: 100px; margin-top: 10px">
@@ -825,44 +825,6 @@ export default {
       }
     },
 
-    addAliexpress() {
-      if (this.aliexpressNew === undefined || this.aliexpressNew.length === 0) {
-        alert("알리익스프래스 환율값을 입력해 주십시오");
-        return false;
-      }
-
-      let regPos = /^[0-9]+\.?[0-9]*$/;
-      if (!regPos.test(this.aliexpressNew)) {
-        alert("기준 값과 가격 값은 숫자만 입력가능합니다.");
-        return false;
-      }
-
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userup", {
-        aliexpress: this.aliexpressNew,
-        type: "aliexpress",
-      }).then((res) => {
-        if (res.status !== '2000') {
-          alert(res.message);
-          return false;
-        }
-
-        let returnData = res.data;
-        // if (returnData.status === undefined) {
-        //   return false;
-        // }
-        //
-        // if (returnData.status !== 2000) {
-        //   alert(returnData.msg);
-        //   return false;
-        // }
-
-        this.aliexpressCurrent = returnData.data;
-        this.aliexpressNew = returnData.data;
-        alert("처리성공");
-        this.indicator = false;
-      });
-    },
-
     delIcon() {
       if (this.icons.length === 0) {
         alert("삭제할 이미지가 없습니다.");
@@ -914,66 +876,6 @@ export default {
 
     excelResultWindow() {
       this.excelUploadVisible = false;
-    },
-
-    rateChange(val, item, key) {
-      if (
-        item.label.indexOf("please select") > -1 &&
-        item.value === "please select"
-      ) {
-        return false;
-      }
-
-      for (let i = 0; i < this.rate.length; i++) {
-        let currentItem = this.rate[i];
-        if (
-          currentItem.label === item.label &&
-          currentItem.value === item.value
-        ) {
-          this.rateSelectedKey = i;
-        }
-      }
-
-      if (key !== undefined && key !== null) {
-        this.marginSelectedKey = key;
-      }
-
-      if (this.rateSelectedKey === null) {
-        alert(
-          "데이터 처리과정에서 오류가 발생했습니다.\n오류가 지속될경우 관리자에게 문의하시길 바랍니다."
-        );
-        return false;
-      }
-    },
-
-    marginChange(val, item, key) {
-      if (
-        item.label.indexOf("please select") > -1 &&
-        item.value === "please select"
-      ) {
-        return false;
-      }
-
-      for (let i = 0; i < this.margin.length; i++) {
-        let currentItem = this.margin[i];
-        if (
-          currentItem.label === item.label &&
-          currentItem.value === item.value
-        ) {
-          this.marginSelectedKey = i;
-        }
-      }
-
-      if (key !== undefined && key !== null) {
-        this.marginSelectedKey = key;
-      }
-
-      if (this.marginSelectedKey === null) {
-        alert(
-          "데이터 처리과정에서 오류가 발생했습니다.\n오류가 지속될경우 관리자에게 문의하시길 바랍니다."
-        );
-        return false;
-      }
     },
 
     excelDown() {
@@ -1037,24 +939,13 @@ export default {
           return false;
         }
 
-        let response = res.data;
-        // if (response === undefined) {
-        //   alert("엑셀 업로드에 실패하였습니다.");
-        //   return false;
-        // }
-        //
-        // if (response.status !== 200) {
-        //   alert(response.msg);
-        //   return false;
-        // }
-
-        if (response.data.length === 0) {
+        if (res.data.length === 0) {
           alert("배송정책 등록요청에 성공하였습니다.");
         }
 
-        let failedLen = response.data.failed.length;
+        let failedLen = res.data.failed.length;
         if (failedLen > 0) {
-          this.excelUploadResult = response.data.failed;
+          this.excelUploadResult = res.data.failed;
           this.excelUploadVisible = true;
         } else {
           alert("배송정책 등록요청에 성공하였습니다.");
@@ -1074,81 +965,6 @@ export default {
       return true;
     },
 
-    updateFormula(type) {
-      if (
-        this[type + "Name"].length === undefined ||
-        this[type + "Name"].length === 0
-      ) {
-        alert(type + "명은 필수로 입력해주십시오.");
-        return false;
-      }
-
-      if (
-        this[type + "Value"].length === undefined ||
-        this[type + "Value"].length === 0
-      ) {
-        alert(type + "값은 필수로 입력해주십시오.");
-        return false;
-      }
-
-      let regPos = /^[0-9]+/;
-      if (!regPos.test(this[type + "Value"])) {
-        alert(type + "값은 숫자로 입력해주십시오.");
-        return false;
-      }
-
-      let inputData = {
-        label: this[type + "Name"],
-        value: this[type + "Value"],
-      };
-      let key = this["original_" + type].length;
-      let data = this["original_" + type];
-
-      for (let i = 0; i < key; i++) {
-        if (parseInt(data[i].value) === parseInt(this[type + "Value"])) {
-          alert("동일유형에 같은 값을 중복으로 등록할수없습니다.");
-          return false;
-        }
-      }
-
-      data.push(inputData);
-
-      this.indicator = true;
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userup", {
-        type: type,
-        data: data,
-      }).then((res) => {
-        if (res.status !== '2000') {
-          alert(res.message);
-          this.indicator = false;
-          return false;
-        }
-
-        let returnData = res.data;
-        // if (returnData.status !== 2000) {
-        //   alert(returnData.msg);
-        //   this.indicator = false;
-        //   return false;
-        // }
-
-        this[type] = returnData.data;
-
-        let isRate = false;
-        if (field === 'rate') {
-          isRate = true;
-        }
-
-        this[type] = this.setLabel(this[type], type, isRate);
-        this[type + "DefValue"] = this[type + "Value"];
-        key = key.length === 1 ? 0 : key;
-        this[type + "Change"](this[type + "Value"], inputData, key);
-        this["original_" + type] = data;
-        this[type + "Name"] = "";
-        this[type + "Value"] = "";
-        alert("등록성공");
-        this.indicator = false;
-      });
-    },
     customRequest(option) {
       const formData = new FormData();
       formData.append("file", option.file);
@@ -1170,21 +986,10 @@ export default {
           return false;
         }
 
-        let response = res.data;
-        // if (response === undefined) {
-        //   alert("upload failed");
-        //   return false;
-        // }
-        //
-        // if (response.status !== "success") {
-        //   alert("upload failed");
-        //   return false;
-        // }
-
         if (this.imageUploadType === "logo") {
-          this.logoImg = response.img_url;
+          this.logoImg = res.data.img_url;
         } else {
-          this.icons.push({ src: response.img_url, checked: false });
+          this.icons.push({ src: res.data.img_url, checked: false });
         }
 
         this.indicator = false;
@@ -1206,7 +1011,6 @@ export default {
 
     setLogoInDetail() {
       this.isLogInDetail = !this.isLogInDetail;
-
       let type = this.isLogInDetail === true ? "적용" : "취소";
       this.indicator = true;
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userup", {
@@ -1218,13 +1022,7 @@ export default {
           return false;
         }
 
-        let returnData = res.data;
-        // if (returnData.status !== 2000) {
-        //   alert("상품상세 상세 " + type + " 실패");
-        //   return false;
-        // }
-
-        this.isLogInDetail = returnData.data;
+        this.isLogInDetail = res.data;
         alert(
           "상품상세 " +
             type +
@@ -1249,62 +1047,13 @@ export default {
           return false;
         }
 
-        let returnVal = res.data;
-        // if (returnVal.status !== 2000) {
-        //   alert("로고 업로드 실패");
-        //   return false;
-        // }
-
-        if (returnVal.data === undefined || res.data === 0) {
+        if (res.data === undefined || res.data.length === 0) {
           alert("로고 업로드 실패");
           return false;
         }
 
-        this.logoImg = returnVal.data;
+        this.logoImg = res.data;
         alert("로고이미지 저장 성공");
-        this.indicator = false;
-      });
-    },
-    delFormula(type) {
-      if (this[type + "SelectedKey"] === null) {
-        alert("삭제실패 선택된 " + type + " 데이터가 없습니다.");
-        return false;
-      }
-
-      let data = this["original_" + type].filter(
-        (item, index) =>
-          parseInt(this[type + "SelectedKey"]) !== parseInt(index)
-      );
-      this.indicator = true;
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userup", {
-        type: type,
-        data: data,
-      }).then((res) => {
-        if (res.status !== '2000') {
-          alert(res.message)
-          return false;
-        }
-
-        let returnData = res.data;
-        // if (returnData.status !== 2000) {
-        //   alert(returnData.msg);
-        //   return false;
-        // }
-
-        if (returnData.data.length === 0) {
-          this[type] = this.selectEmptyDefault;
-          this[type + "DefValue"] = this.selectEmptyDefault[0].value;
-          alert("삭제성공");
-          this.indicator = false;
-          return false;
-        }
-
-        this[type] = returnData.data;
-        this[type] = this.setLabel(this[type], "margin");
-        this[type + "DefValue"] = this[type][0].value;
-        this[type + "Change"](this[type + "DefValue"], this[type][0], 0);
-        this["original_" + type] = data;
-        alert("삭제성공");
         this.indicator = false;
       });
     },
@@ -1337,13 +1086,7 @@ export default {
           return false;
         }
 
-        let returnData = res.data;
-        // if (returnData.status !== 2000) {
-        //   alert(returnData.msg);
-        //   return false;
-        // }
-
-        if (returnData.data.length === 0) {
+        if (res.data.length === 0) {
           this[type + "_margin"] = [];
           this[type + "_margin_option"] = "";
           alert("삭제성공");
@@ -1351,7 +1094,7 @@ export default {
           return false;
         }
 
-        this.setUserMargin(type, returnData.data);
+        this.setUserMargin(type, res.data);
 
         alert("삭제성공");
         this.indicator = false;
@@ -1405,14 +1148,7 @@ export default {
           return false;
         }
 
-        let returnData = res.data;
-        // if (returnData.status !== 2000) {
-        //   alert(returnData.msg);
-        //   this.indicator = false;
-        //   return false;
-        // }
-
-       this.setUserMargin(type, returnData.data);
+       this.setUserMargin(type, res.data);
 
         alert("등록성공");
         this.indicator = false;
@@ -1453,14 +1189,7 @@ export default {
           return false;
         }
 
-        let returnData = res.data;
-        // if (returnData.status !== 2000) {
-        //   alert(returnData.msg);
-        //   this.indicator = false;
-        //   return false;
-        // }
-
-        this.setUserMargin(type, returnData.data);
+        this.setUserMargin(type,  res.data);
 
         alert("등록성공");
         this.indicator = false;
@@ -1554,16 +1283,6 @@ export default {
             this.initUserMargin(field);
           });
 
-          // if (
-          //   this.userData.rate !== undefined &&
-          //   this.userData.rate.length > 0
-          // ) {
-          //   this.original_rate = this.userData.rate;
-          //   this.rate = this.setLabel(this.userData.rate, "rate");
-          //   this.rateDefValue = this.userData.rate_option;
-          //   this.rateChange(this.rateDefValue, this.userData.rate[0], 0);
-          // }
-
           if (
             this.userData.logo !== undefined &&
             this.userData.logo.length > 0
@@ -1613,23 +1332,7 @@ export default {
             return false;
           }
 
-          // if (res.data === undefined || res.status !== 200) {
-          //   alert(
-          //     "실시간환율 얻기에 실패하였습니다. 오류가 지속될경우 관리자에게 문의주시길 바랍니다."
-          //   );
-          //   return false;
-          // }
-
-          // if (res.data.status !== "2000") {
-          //   alert(
-          //     "실시간환율 얻기에 실패하였습니다. 오류가 지속될경우 관리자에게 문의주시길 바랍니다."
-          //   );
-          //   return false;
-          // }
-          let ReturnData = res.data;
-          // this.rateCn = ReturnData.cn;
-          // this.rateKor = ReturnData.ko;
-          this.aliexpressData = [{ ko: ReturnData.ko, cn: ReturnData.cn }];
+          this.aliexpressData = [{ ko: res.data.ko, cn: res.data.cn }];
         }
       );
     },
