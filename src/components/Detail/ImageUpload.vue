@@ -24,7 +24,7 @@
           class="row left wrap"
           item-key="order"
           v-bind="dragOptions"
-          v-model="fileList"
+          v-model="product.fileList"
           :component-data="dragConfig"
           @dragend="setDraggaImageData"
       >
@@ -100,9 +100,9 @@ export default {
       if (type === 'single') {
         this.modalList = [obj];
       } else {
-        this.modalList = this.fileList.filter(item => item.checked === true);
+        this.modalList = this.product.fileList.filter(item => item.checked === true);
         if (this.modalList.length === 0) {
-          this.modalList = this.fileList;
+          this.modalList = this.product.fileList;
         }
       }
 
@@ -125,25 +125,25 @@ export default {
     },
 
     pushImageData(key, url) {
-      Object.values(this.fileList).map((oImageInfo, i) => {
+      Object.values(this.product.fileList).map((oImageInfo, i) => {
         if (oImageInfo.order === key) {
-          this.product.item_thumbnails[i].url = this.fileList[i].url = url;
+          this.product.item_thumbnails[i].url = this.product.fileList[i].url = url;
         }
       });
     },
 
     // 拖动完毕后保存
     setDraggaImageData() {
-      this.product.item_thumbnails = this.fileList;
+      this.product.item_thumbnails = this.product.fileList;
     },
 
     delElement(element) {
-      this.product.item_thumbnails = this.fileList = this.fileList.filter(
+      this.product.item_thumbnails = this.product.fileList = this.product.fileList.filter(
           item => item.name !== element.name && item.order !== element.order);
     },
 
     outElChecking(element, index) {
-      this.fileList[index].checked = !element.checked;
+      this.product.fileList[index].checked = !element.checked;
     },
 
     customRequest(option) {
@@ -169,10 +169,10 @@ export default {
         //   return false;
         // }
 
-        this.fileList.push({
-          name: this.fileList.length,
+        this.product.fileList.push({
+          name: this.product.fileList.length,
           url: response.img_url,
-          order: this.fileList.length + 1,
+          order: this.product.fileList.length + 1,
           checked: false,
           visible: false,
         });
@@ -195,11 +195,11 @@ export default {
   },
 
   mounted() {
-    this.fileList = this.product.item_thumbnails;
+    this.product.fileList = this.product.item_thumbnails;
     for (let i = 0; i < this.product.item_thumbnails.length; i++) {
-      this.fileList[i].order = i + 1;
-      this.fileList[i].checked = false;
-      this.fileList[i].visible = false;
+      this.product.fileList[i].order = i + 1;
+      this.product.fileList[i].checked = false;
+      this.product.fileList[i].visible = false;
     }
   }
 };

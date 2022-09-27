@@ -592,7 +592,7 @@ export default defineComponent({
           return false;
         }
 
-        let data = res.data.data;console.log('data', data)
+        let data = res.data.data;
         let sMessage = "";
         if (data.success_code) {
           sMessage = '연동성공 상품 : ' + data.success_code;

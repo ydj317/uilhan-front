@@ -94,7 +94,6 @@ export default defineComponent({
           return false;
         }
 
-          console.log(res);
           if (res.data.member_roles === undefined) {
             alert('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(role error)');
             loading.value = false;

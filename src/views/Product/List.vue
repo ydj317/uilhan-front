@@ -773,7 +773,6 @@ export default defineComponent({
     },
 
     setResultPopData(isOpen, data) {
-      console.log('lololo', data);
       if (isOpen) {
         this.marketSyncSuccess = data[0];
         this.marketSyncFailedCode = data[1];

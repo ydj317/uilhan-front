@@ -120,12 +120,22 @@ export default {
           }
 
           this.product.sku = res.data.sku;
-          this.product.item_thumb = res.data.item_thumb;
+          this.product.item_thumbnails = res.data.item_thumb;
           this.product.item_detail = res.data.item_detail;
 
           for (let i = 0; i < this.product.sku.length; i++) {
             this.product.sku[i].checked = false;
           }
+
+          // this.product.fileList = this.product.item_thumbnails;
+
+          for (let i = 0; i < this.product.item_thumbnails.length; i++) {
+            this.product.fileList[i].order = i + 1;
+            this.product.fileList[i].checked = false;
+            this.product.fileList[i].visible = false;
+            this.product.fileList[i].url = this.product.item_thumbnails[i];
+          }
+
           this.product.bak_sku = JSON.parse(JSON.stringify(this.product.sku));
 
           alert("저장 성공");

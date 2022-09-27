@@ -144,8 +144,8 @@ class DescriptionClass {
       try {
         let oImageEditor = document.querySelector('[title="이미지 업로드"]');
         let tinymce = document
-        .querySelector(".tox-edit-area__iframe")
-        .contentDocument.querySelector("#tinymce > p");
+        .querySelector(".tox-edit-area__iframe");
+        // .contentDocument.querySelector("#tinymce > p");
 
         if (oImageEditor && tinymce) {
           clearInterval(itimer);
@@ -163,10 +163,10 @@ class DescriptionClass {
             document.querySelector(".originalDetailTrans").click();
           };
 
-          tinymce.style.display = "flex";
-          tinymce.style.flexDirection = "column";
-          tinymce.style.flexWrap = "nowrap";
-          tinymce.style.alignItems = "center";
+          // tinymce.style.display = "flex";
+          // tinymce.style.flexDirection = "column";
+          // tinymce.style.flexWrap = "nowrap";
+          // tinymce.style.alignItems = "center";
         }
       } catch (e) {}
     }, 500);

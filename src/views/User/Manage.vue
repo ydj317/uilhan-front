@@ -192,7 +192,6 @@ export default defineComponent({
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '50', '100'],
             onChange: page => {
-              console.log('page', page)
               pageNum.value = page;
               pagination.value.current = page;
               getUserList();
@@ -204,7 +203,6 @@ export default defineComponent({
           };
         }
 
-        console.log('bLoading.value', bLoading.value)
         if (bLoading.value === true) {
           bLoading.value = false;
         }
