@@ -11,6 +11,7 @@
       <a-input style="width: 500px; margin-left: 10px" v-model:value="search_value" placeholder="유저아이디" />
 
       <a-button @click="getUserList" style="width: 100px; margin-left: 10px" type="primary">검색</a-button>
+      <a-button @click="apikey" style="width: 100px; margin-left: 10px" type="primary">apikey</a-button>
     </div>
     <div id="list" class="p20 bg-white">
       <a-table :bordered="false" :columns="columns" :data-source="userList" :pagination="pagination">
@@ -312,6 +313,17 @@ export default defineComponent({
       }
     };
 
+    const apikey = () => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/copykey').then(async (res) => {
+        if (res.status === undefined || res.status !== '2000') {
+          alert('실패');
+          return false;
+        }
+
+        alert('성공');
+      });
+    };
+
     return {
       search_key,
       search_value,
@@ -326,7 +338,8 @@ export default defineComponent({
       recharge_value,
       bLoading,
       userRemaining,
-      pagination
+      pagination,
+      apikey
     };
   },
 });
