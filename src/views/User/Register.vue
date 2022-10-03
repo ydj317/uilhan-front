@@ -499,13 +499,13 @@ export default defineComponent({
             process.env.VUE_APP_API_URL + '/api/checkname', value).then((res) => {
           return res.data;
         });
-
+        console.log('returnData', returnData);
         if (returnData === undefined || returnData.status === undefined) {
           alert("서버장애로 인해 회원가입에 실패하였습니다. \n 잠시후 시도해주시길 바랍니다.");
           return false;
         }
 
-        if (returnData.status !== 2000) {
+        if (returnData.status !== '2000') {
           return Promise.reject('이미 존재하는 아이디입니다.');
         }
 
