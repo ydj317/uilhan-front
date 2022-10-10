@@ -436,49 +436,51 @@ export default defineComponent({
 
       NoAuthAjax.post(
         process.env.VUE_APP_API_URL + '/api/register', user).then((res) => {
-        if (res.status !== '2000') {
-          alert(res.message)
+        console.log(res)
+
+        if (res.data === undefined) {
+          alert('데이터처리중 오류가 발생했습니다. 오류가 지속될시 관리자에게 문의하시길 바랍니다.');
           return false;
         }
 
-          let returnData = res.data;
-          // if (returnData.status === undefined || returnData.status !== 2000) {
-          //   alert(returnData.msg);
-          //   return false;
-          // }
+        let returnData = res.data;
+        if (returnData.status === undefined || returnData.status !== '2000') {
+          alert(returnData.message);
+          return false;
+        }
 
-          let loginUser = {
-            username: formState.username,
-            password: formState.password
-          };
+        let loginUser = {
+          username: formState.username,
+          password: formState.password
+        };
 
-          LoginRequest.post(
-            process.env.VUE_APP_API_URL + '/api/login', loginUser).then((res) => {
-            if (res.status === undefined || res.status !== '2000') {
-              alert('일시적인 서버장애로 로그인에 실패하였습니다. 잠시 후 시도해주시길 바랍니다.');
-              Cookie.remove('token');
-              Cookie.remove('member_name');
-              Cookie.remove('member_roles');
-              router.push("/user/login");
-              return false;
-            }
-
-            let returnData = res.data;
-            if (returnData.member_roles === undefined || returnData.member_name === undefined) {
-              alert('일시적인 로그인 권한오류가 발생하였습니다. 로그인페이지에서 재시도 해주시길 바랍니다.');
-              Cookie.remove('token');
-              Cookie.remove('member_name');
-              Cookie.remove('member_roles');
-              router.push("/user/login");
-              return false;
-            }
-
-            Cookie.set('member_name', returnData.member_name);
-            Cookie.set('member_roles', returnData.member_roles);
-            alert('회원가입에 성공하였습니다.');
-            router.push("/product");
+        LoginRequest.post(
+          process.env.VUE_APP_API_URL + '/api/login', loginUser).then((res) => {
+          if (res.status === undefined || res.status !== '2000') {
+            alert('일시적인 서버장애로 로그인에 실패하였습니다. 잠시 후 시도해주시길 바랍니다.');
+            Cookie.remove('token');
+            Cookie.remove('member_name');
+            Cookie.remove('member_roles');
+            router.push("/user/login");
             return false;
-          });
+          }
+
+          let returnData = res.data;
+          if (returnData.member_roles === undefined || returnData.member_name === undefined) {
+            alert('일시적인 로그인 권한오류가 발생하였습니다. 로그인페이지에서 재시도 해주시길 바랍니다.');
+            Cookie.remove('token');
+            Cookie.remove('member_name');
+            Cookie.remove('member_roles');
+            router.push("/user/login");
+            return false;
+          }
+
+          Cookie.set('member_name', returnData.member_name);
+          Cookie.set('member_roles', returnData.member_roles);
+          alert('회원가입에 성공하였습니다.');
+          router.push("/product");
+          return false;
+        });
       });
     };
 
