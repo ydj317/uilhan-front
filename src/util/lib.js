@@ -100,4 +100,23 @@ export class lib {
 
     return !this.isEmpty(res);
   }
+
+  static getOraginalImageUrlToString(sImageUrl = '', aImageExtensionName = ['.jpg', '.jpeg', '.bmp', '.png', '.gif']) {
+    if (!this.isString(sImageUrl, true) || !this.isArray(aImageExtensionName, true)) {
+      return sImageUrl;
+    }
+
+    try {
+      aImageExtensionName.map(sImageExtensionName => {
+        let aFilter = sImageUrl.split(sImageExtensionName).filter(sUrl => sUrl.trim() !== '' && sImageUrl.indexOf(sImageExtensionName) !== -1);
+        if (aFilter.length > 0) {
+          sImageUrl = aFilter[0] + sImageExtensionName;
+        }
+      })
+
+      return sImageUrl;
+    } catch (e) {
+      return sImageUrl;
+    }
+  }
 }

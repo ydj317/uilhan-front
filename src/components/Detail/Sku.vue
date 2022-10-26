@@ -143,6 +143,7 @@
           <!--구매원가-->
           <template v-else-if="['original_price_cn'].includes(column.key)">
             <div
+              v-if="record.original_price_cn > 0 && record.editor !== 'T'"
               class="center"
               :style="
                 record.img
@@ -152,6 +153,16 @@
             >
               <span>{{ record.original_price_ko }}</span
               ><span> (CNY {{ record.original_price_cn }})</span>
+            </div>
+            <div v-if="record.original_price_cn === 0 || record.editor === 'T'">
+              <a-input :style="
+                record.img
+                ? `height: 130px; text-align: center; border: none;`
+                : `height: 30px; text-align: center; border: none;`
+                "
+                @input="setOriginalPrice(record)"
+                v-model:value="record[column.key]"
+              />
             </div>
           </template>
 
@@ -292,6 +303,39 @@ export default {
   },
 
   methods: {
+    /**
+     * 새로운 품목 구매원가 입력 (CN)
+     */
+    setOriginalPrice(record) {
+      this.product.sku.map((data, i) => {
+        if (data.key === record.key) {
+          // 구매원가 (중국화폐) 수정여부
+          this.product.sku[i].editor = 'T';
+
+          // 구매원가 (한국화폐)
+          this.product.sku[i].original_price_ko = Math.ceil(Number(record["original_price_cn"] * Number(this.product.rate_margin_option)) / 100) * 100;
+
+          // 도매가
+          let wholesale_price = ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
+              (1 + (Number(this.product["wholesale_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
+          this.product.sku[i].wholesale_price = Math.ceil(Number(wholesale_price) / 100) * 100;
+
+          // 판매가
+          let selling_price = ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
+              (1 + (Number(this.product["selling_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
+          this.product.sku[i].selling_price = Math.ceil(Number(selling_price) / 100) * 100;
+
+          // 할인가
+          let disp_price =
+              ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
+                  (1 + (Number(this.product["selling_margin_option"]) / 100)) *
+                  (1 + (Number(this.product["disp_margin_option"]) / 100)) *
+                  Number(this.product.rate_margin_option)).toFixed(0);
+          this.product.sku[i].disp_price = Math.ceil(Number(disp_price) / 100) * 100;
+        }
+      });
+    },
+
     /**
      * 도매마진율 설정
      * 도매가 = ( 구매원가 + 중국내 운임 ) * 도매마진율

@@ -23,6 +23,34 @@ export default {
   },
 
   methods: {
+    // 옵션명 순위별로 sku 명을 재구성함
+    initSkuSpecName() {
+      // 옵션 索引
+      let aOptionIndex = [];
+      let aItemOptions = this.product.item_option;
+      aItemOptions.map((aItemOption, i) => {
+        aOptionIndex[i] = [];
+        aItemOption.data.map(data => {
+          aOptionIndex[i].push(data.name)
+        })
+      })
+
+      // SKU 索引
+      this.product.sku.map((sku, t) => {
+        let oSkuName = {};
+        let aSpec = sku.spec.split('::');
+        aSpec.map(sSpec => {
+          aOptionIndex.map((aOptionNames, i) => {
+            if (aOptionNames.includes(sSpec)) {
+              oSkuName[i] = sSpec;
+            }
+          })
+        })
+
+        this.product.sku[t].spec = Object.values(oSkuName).join('::');
+      })
+    },
+
     textTranslate() {
       this.product.loading = true;
 
@@ -79,6 +107,8 @@ export default {
         }
 
         this.product.item_trans_name = this.product.item_trans_name.substr(0, 50);
+
+        this.initSkuSpecName();
 
         this.product.toLang = 'ko';
         this.product.item_is_trans = true;

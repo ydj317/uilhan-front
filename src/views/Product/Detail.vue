@@ -175,8 +175,37 @@ export default defineComponent({
       });
     },
 
+    // 옵션명 순위별로 sku 명을 재구성함
+    initSkuSpecName() {
+      // 옵션 索引
+      let aOptionIndex = [];
+      let aItemOptions = this.product.item_option;
+      aItemOptions.map((aItemOption, i) => {
+        aOptionIndex[i] = [];
+        aItemOption.data.map(data => {
+          aOptionIndex[i].push(data.name)
+        })
+      })
+
+      // SKU 索引
+      this.product.sku.map((sku, t) => {
+        let oSkuName = {};
+        let aSpec = sku.spec.split('::');
+        aSpec.map(sSpec => {
+          aOptionIndex.map((aOptionNames, i) => {
+            if (aOptionNames.includes(sSpec)) {
+              oSkuName[i] = sSpec;
+            }
+          })
+        })
+
+        this.product.sku[t].spec = Object.values(oSkuName).join('::');
+      })
+    },
+
     initSku() {
       this.product.toLang = "ko";
+      this.initSkuSpecName();
       this.skuLongName();
 
       for (let i = 0; i < this.product.sku.length; i++) {
@@ -207,6 +236,8 @@ export default defineComponent({
       // }
     },
 
+    // 최초수정이고 계정별 마진이 있으면 계정별 마진 사용
+    // 최초수정아닐경우 상품별 마진 사용 (default: 0)
     initMargin(field) {
       let isRate = false;
       if (field === 'rate') {

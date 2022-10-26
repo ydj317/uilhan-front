@@ -264,6 +264,9 @@ export default {
             }
           });
 
+          // 축소된 이미지 원복 (원복할 이미지가 아니면 기존이미지)
+          sImageUrl = lib.getOraginalImageUrlToString(sImageUrl, ['.jpg', '.jpeg', '.bmp', '.png', '.gif']);
+
           format_sku.push({
             img: sImageUrl,
             code: "",
