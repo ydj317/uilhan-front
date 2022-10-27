@@ -88,6 +88,13 @@ export default defineComponent({
       loading.value = true;
       LoginRequest.post(
         process.env.VUE_APP_API_URL + '/api/login', user).then((res) => {
+
+        if (res.status === 400 || res.status === 401) {
+          alert('아이디 또는 비밀번호가 잘못 입력 되었습니다.');
+          loading.value = false;
+          return false;
+        }
+
         if (res.status !== '2000') {
           alert(res.message);
           loading.value = false;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 // import { auth } from '@/Store';
 import Cookie from "js-cookie";
-import { JSEncrypt } from 'jsencrypt';
+import {JSEncrypt} from 'jsencrypt';
 import {pub} from './encript';
 
 // 로그인 등 인증이 필요없는 페이지에서 사용
@@ -21,13 +21,12 @@ function isDebug(config) {
 }
 
 function systemErrorSetting(error) {
-    let response = {
+    //console.log('error', {code: error.response.status, message: error.response.message})
+
+    return {
         status: error.response.status,
         message: "데이터 처리중 서버오류가 발생하습니다.\n관리자에게 문의하시길 바랍니다."
     };
-    console.log('error', {code: error.response.status, message: error.response.message})
-
-    return response;
 }
 
 // 로그인 등 인증이 필요없는 페이지에서 사용
@@ -69,7 +68,7 @@ export const LoginRequest = (function () {
 
         return response;
     }, function (error) {
-        return Promise.reject(systemErrorSetting(error));
+        return systemErrorSetting(error);
     });
 
     return LoginRequest;
@@ -109,7 +108,7 @@ export const AuthRequest = (function () {
 
         return res.data;
     }, function (error) {
-        return Promise.reject(systemErrorSetting(error));
+        return systemErrorSetting(error);
     });
 
     return AuthRequest;
