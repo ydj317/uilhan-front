@@ -16,7 +16,7 @@
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
 import router from "@/router";
-import {lib} from '@/util/lib';
+import { lib } from "@/util/lib";
 
 export default {
   computed: {
@@ -103,9 +103,12 @@ export default {
 
       // 태그 제거 (사양)
       let sItemDetail = this.product.item_detail;
-      sItemDetail = sItemDetail.replaceAll('<p style="display: flex; flex-flow: column nowrap; align-items: center;">', '');
-      sItemDetail = sItemDetail.replaceAll('<p>', '');
-      sItemDetail = sItemDetail.replaceAll('</p>', '');
+      sItemDetail = sItemDetail.replaceAll(
+        '<p style="display: flex; flex-flow: column nowrap; align-items: center;">',
+        ""
+      );
+      sItemDetail = sItemDetail.replaceAll("<p>", "");
+      sItemDetail = sItemDetail.replaceAll("</p>", "");
       this.product.item_detail = sItemDetail;
 
       let oForm = new FormData();
@@ -113,30 +116,30 @@ export default {
 
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm).then(
         (res) => {
-          if (res.status === undefined || res.status !== '2000') {
+          if (res.status === undefined || res.status !== "2000") {
             alert(res.message);
             this.product.loading = false;
             return false;
           }
 
           this.product.sku = res.data.sku;
-          this.product.item_thumbnails = res.data.item_thumb;
+          let aTempItemThumbnails = res.data.item_thumb || [];
           this.product.item_detail = res.data.item_detail;
 
           for (let i = 0; i < this.product.sku.length; i++) {
             this.product.sku[i].checked = false;
           }
 
-          // this.product.fileList = this.product.item_thumbnails;
-
-          for (let i = 0; i < this.product.item_thumbnails.length; i++) {
-            this.product.fileList[i].order = i + 1;
-            this.product.fileList[i].checked = false;
-            this.product.fileList[i].visible = false;
-            this.product.fileList[i].url = this.product.item_thumbnails[i];
+          let aItemThumbnails = [];
+          for (let i = 0; i < aTempItemThumbnails.length; i++) {
+            aItemThumbnails.push({
+              url: aTempItemThumbnails[i],
+              order: i + 1,
+              checked: false,
+              visible: false,
+            });
           }
-
-          this.product.bak_sku = JSON.parse(JSON.stringify(this.product.sku));
+          this.product.item_thumbnails = aItemThumbnails;
 
           alert("저장 성공");
           this.product.loading = false;

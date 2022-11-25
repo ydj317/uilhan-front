@@ -5,14 +5,13 @@
 
     <!--상단 버튼-->
     <div id="eModelTitle_1_header" class="w16 mb20 space-between">
-      <a-button @click="showModal('batch')">일괄 번역</a-button>
       <a-upload
-          name="file"
-          :headers="headers"
-          :multiple="true"
-          :showUploadList="false"
-          :beforeUpload="handleBeforeUpload"
-          :customRequest="customRequest"
+        name="file"
+        :headers="HEADER"
+        :multiple="true"
+        :showUploadList="false"
+        :beforeUpload="validateUploadImage"
+        :customRequest="uploadImage"
       >
         <a-button>이미지 업로드</a-button>
       </a-upload>
@@ -21,23 +20,58 @@
     <!--이미지 리스트-->
     <div id="eModelTitle_1_conent">
       <draggable
-          class="row left wrap"
-          item-key="order"
-          v-bind="dragOptions"
-          v-model="product.fileList"
-          :component-data="dragConfig"
-          @dragend="setDraggaImageData"
+        class="row left wrap"
+        item-key="order"
+        v-bind="DRAG_OPTIONS"
+        v-model="product.item_thumbnails"
+        :component-data="DRAG_CONFIG"
       >
-        <template #item="{element, index}">
-          <div id="eModelTitle_1_conent_group" class="w10 p5 m5" :key="index" :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`">
+        <template #item="{ element, index }">
+          <div
+            id="eModelTitle_1_conent_group"
+            class="w10 p5 m5"
+            :key="index"
+            :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
+          >
             <div>
               <!--이미지-->
-              <img class="w100" :src="element.url" @click="outElChecking(element, index)" alt=""/>
+              <img
+                class="w100"
+                :src="element.url"
+                @click="activedImage(element, index)"
+                alt=""
+              />
 
               <!--버튼-->
-              <div id="eModelTitle_1_conent_button_group" class="w100 center space-around h40">
-                <a-button class="w40 h30 center" type="dashed" @click="showModal('single', element)"><span>번역</span></a-button>
-                <a-popconfirm class="w40 h30 center" title="삭제하시겠습니까?" @confirm="delElement(element)">
+              <div
+                id="eModelTitle_1_conent_button_group"
+                class="w100 center space-around h40"
+              >
+                <!--편집-->
+                <a-button
+                  v-if="element.url.indexOf('https://i.tosoiot.com/') !== -1"
+                  class="w40 h30 center"
+                  type="dashed"
+                  @click="requestXiangji([element.url])"
+                  ><span>편집</span></a-button
+                >
+
+                <!--번역-->
+                <a-button
+                  v-else
+                  class="w40 h30 center"
+                  type="dashed"
+                  @click="translateImage(index, element)"
+                  ><span>번역</span></a-button
+                >
+
+                <!--삭제팝업-->
+                <a-popconfirm
+                  class="w40 h30 center"
+                  title="삭제하시겠습니까?"
+                  @confirm="deleteImage(element)"
+                >
+                  <!--삭제-->
                   <a-button type="dashed"><span>삭제</span></a-button>
                 </a-popconfirm>
               </div>
@@ -46,147 +80,167 @@
         </template>
       </draggable>
     </div>
-
-    <!--이미지 편집기 세트-->
-    <ImageEditorGroup ref="imageEditorGroup" @pushImageData="pushImageData"></ImageEditorGroup>
   </div>
 </template>
 
 <script>
-import {lib} from '@/util/lib';
-import Cookie from 'js-cookie';
-import draggable from 'vuedraggable';
-import {AuthRequest} from '@/util/request';
-import ImageEditorGroup from '../ImageEditor/imageEditorGroup';
-import {mapState} from 'vuex';
+import { lib } from "@/util/lib";
+import Cookie from "js-cookie";
+import draggable from "vuedraggable";
+import { AuthRequest } from "@/util/request";
+import { mapState } from "vuex";
 
 export default {
   components: {
     draggable,
-    ImageEditorGroup,
   },
 
   computed: {
-    ...mapState([
-      'product'
-    ])
+    ...mapState(["product"]),
   },
 
   data() {
     return {
-      fileList: [],
-      modalList: [],
+      HEADER: {
+        token: Cookie.get("token"),
+        "Content-Type": "multipart/form-data",
+      },
 
-      headers: {
-        'token': Cookie.get('token'),
-        'Content-Type': 'multipart/form-data',
+      DRAG_CONFIG: {
+        tag: "div",
+        name: "flip-list",
+        type: "transition",
       },
-      dragConfig: {
-        tag: 'div',
-        name: 'flip-list',
-        type: 'transition',
-      },
-      dragOptions: {
-        animation: 0,
-        group: 'description',
+
+      DRAG_OPTIONS: {
+        group: "description",
         disabled: false,
-        ghostClass: 'ghost',
+        animation: 0,
+        ghostClass: "ghost",
       },
     };
   },
 
   methods: {
-    showModal(type, obj = []) {
-      if (type === 'single') {
-        this.modalList = [obj];
-      } else {
-        this.modalList = this.product.fileList.filter(item => item.checked === true);
-        if (this.modalList.length === 0) {
-          this.modalList = this.product.fileList;
-        }
+    // 초기화
+    init() {
+      let aItemThumbnails = this.product.item_thumbnails;
+
+      if (lib.isArray(aItemThumbnails, true) === false) {
+        return false;
       }
 
-      this.$refs.imageEditorGroup.aPhotoCollection = [];
-      Object.values(this.modalList).map((oImageInfo, i) => {
-        this.$refs.imageEditorGroup.aPhotoCollection.push({
-          'msg': '',
-          'key': i,
-          'name': oImageInfo.name,
-          'order': oImageInfo.order,
-          'checked': true,
-          'visible': true,
-          'original_url': oImageInfo.url,
-          'translate_url': '',
-          'translate_status': false,
+      // 拖拽会用到的参数
+      for (let i = 0; i < aItemThumbnails.length; i++) {
+        aItemThumbnails[i].order = i + 1;
+        aItemThumbnails[i].checked = false;
+        aItemThumbnails[i].visible = false;
+      }
+
+      this.product.item_thumbnails = aItemThumbnails;
+    },
+
+    // 이미지 번역
+    translateImage(index, element) {
+      let aImagesInfo = [
+        {
+          msg: "",
+          key: index,
+          name: element.name || "",
+          order: element.order || "",
+          checked: true,
+          visible: true,
+          original_url: element.url || "",
+          translate_url: "",
+          translate_status: false,
+        },
+      ];
+
+      this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
+        let sTranslateUrl = oTranslateInfo[index].translate_url;
+        this.product.item_thumbnails[index].url = sTranslateUrl;
+        this.requestXiangji([sTranslateUrl]);
+      });
+    },
+
+    // 이미지 편집
+    requestXiangji(aImagesUrl) {
+      this.product.requestXiangji(aImagesUrl, (oRequestId) => {
+        Object.keys(oRequestId).map((sRequestId) => {
+          this.product.item_thumbnails.map((data, i) => {
+            if (
+              lib.isString(data.url, true) === true &&
+              data.url.split("/").includes(sRequestId) === true
+            ) {
+              this.product.item_thumbnails[i].url = oRequestId[sRequestId];
+            }
+          });
         });
-      });
 
-      this.$refs.imageEditorGroup.mInitEditorImage(false);
-    },
-
-    pushImageData(key, url) {
-      Object.values(this.product.fileList).map((oImageInfo, i) => {
-        if (oImageInfo.order === key) {
-          this.product.item_thumbnails[i].url = this.product.fileList[i].url = url;
-        }
+        // 이미지 편집기 닫기
+        this.product.xiangjiVisible = false;
       });
     },
 
-    // 拖动完毕后保存
-    setDraggaImageData() {
-      this.product.item_thumbnails = this.product.fileList;
+    // 이미지 삭제
+    deleteImage(element) {
+      this.product.item_thumbnails = this.product.item_thumbnails.filter(
+        (item) => item.name !== element.name && item.order !== element.order
+      );
     },
 
-    delElement(element) {
-      this.product.item_thumbnails = this.product.fileList = this.product.fileList.filter(
-          item => item.name !== element.name && item.order !== element.order);
+    // 图片 选择/取消选择
+    activedImage(element, index) {
+      this.product.item_thumbnails[index].checked = !element.checked;
     },
 
-    outElChecking(element, index) {
-      this.product.fileList[index].checked = !element.checked;
-    },
-
-    customRequest(option) {
+    // 图片上传
+    uploadImage(option) {
       const formData = new FormData();
-      formData.append('file', option.file);
-      formData.append('image_type', 'product');
-      formData.append('relation_type', 'product');
-      formData.append('product_idx', this.product.item_id);
-      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/image', formData).then((res) => {
-        if (res.status !== '2000') {
+      formData.append("file", option.file);
+      formData.append("image_type", "product");
+      formData.append("relation_type", "product");
+      formData.append("product_idx", this.product.item_id);
+      AuthRequest.post(
+        process.env.VUE_APP_API_URL + "/api/image",
+        formData
+      ).then((res) => {
+        if (res.status !== "2000") {
           alert(res.message);
           return false;
         }
 
         let response = res.data;
         if (lib.isEmpty(response)) {
-          alert('upload failed');
+          alert("upload failed");
           return false;
         }
 
-        // if (response.status !== 'success') {
-        //   alert('upload failed');
-        //   return false;
-        // }
+        let aItemThumbnails = this.product.item_thumbnails;
+        let iItemThumbnailsLength = 0;
+        if (lib.isArray(aItemThumbnails, true) === true) {
+          iItemThumbnailsLength = aItemThumbnails.length;
+        }
 
-        this.product.fileList.push({
-          name: this.product.fileList.length,
+        this.product.item_thumbnails.push({
+          name: iItemThumbnailsLength,
           url: response.img_url,
-          order: this.product.fileList.length + 1,
+          order: iItemThumbnailsLength + 1,
           checked: false,
           visible: false,
         });
       });
     },
 
-    handleBeforeUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isJPEG = file.type === 'image/jpeg';
-      const isGIF = file.type === 'image/gif';
-      const isPNG = file.type === 'image/png';
+    // 检查上传的图片
+    validateUploadImage(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isJPEG = file.type === "image/jpeg";
+      const isGIF = file.type === "image/gif";
+      const isPNG = file.type === "image/png";
 
       if (!(isJPG || isJPEG || isPNG || isGIF)) {
-        alert('허용되는 이미지 격식이 아닙니다.');
+        alert("허용되는 이미지 격식이 아닙니다.");
         return false;
       }
 
@@ -195,13 +249,8 @@ export default {
   },
 
   mounted() {
-    this.product.fileList = this.product.item_thumbnails;
-    for (let i = 0; i < this.product.item_thumbnails.length; i++) {
-      this.product.fileList[i].order = i + 1;
-      this.product.fileList[i].checked = false;
-      this.product.fileList[i].visible = false;
-    }
-  }
+    this.init();
+  },
 };
 </script>
 

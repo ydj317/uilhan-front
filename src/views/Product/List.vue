@@ -388,11 +388,13 @@ export default defineComponent({
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '50', '100'],
         onChange: page => {
+          sessionStorage.relaket_page = page;
           this.pageNum = page;
           this.pagination.current = page;
           this.getList();
         },
         onShowSizeChange: (current, pageSize) => {
+          sessionStorage.relaket_limit = pageSize;
           this.limit = pageSize;
           this.getList();
         },
@@ -465,7 +467,7 @@ export default defineComponent({
           'background-color: #f06543; border: none';
     },
 
-    getList() {
+    getList(sType = '') {
       let param = this.getParam();
       this.indicator = true;
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', {params: param}).then((res) => {
@@ -484,11 +486,18 @@ export default defineComponent({
           }
         }
 
+        let iCurrent = parseInt(res.data.page);
+        let iPageSize = parseInt(res.data.limit);
+        if (sType === 'reload') {
+          iCurrent = sessionStorage.relaket_page !== undefined? parseInt(sessionStorage.relaket_page): iCurrent;
+          iPageSize = sessionStorage.relaket_limit !== undefined? parseInt(sessionStorage.relaket_limit): iPageSize;
+        }
+
         this.searchCount = parseInt(res.data.searchCount);
         this.totalCount = parseInt(res.data.totalCount);
         this.pagination.total = parseInt(res.data.searchCount);
-        this.pagination.current = parseInt(res.data.page);
-        this.pagination.pageSize = parseInt(res.data.limit);
+        this.pagination.current = iCurrent;
+        this.pagination.pageSize = iPageSize;
         this.date = [moment(res.data.start_time), moment(res.data.end_time)];
         this.indicator = false;
         this.checked = false;
@@ -853,7 +862,7 @@ export default defineComponent({
   },
 
   mounted() {
-    this.getList();
+    this.getList('reload');
     this.getMarketList();
     this.css();
   },

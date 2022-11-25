@@ -19,6 +19,9 @@
     <!--Relaket-->
     <Relaket></Relaket>
 
+    <!--이미지 편집기 세트-->
+    <XiangJi></XiangJi>
+
     <!--상품 이미지-->
     <ImageUpload></ImageUpload>
 
@@ -51,6 +54,8 @@
 
     <!--하단버튼-->
     <BottomBanner></BottomBanner>
+
+    <ImageEditorGroup></ImageEditorGroup>
   </div>
 </template>
 <script>
@@ -76,11 +81,14 @@ import Description from "@/components/Detail/description";
 import BottomBanner from "@/components/Detail/bottomBanner";
 import TextTranslate from "@/components/Detail/textTranslate";
 import SimpleDescription from "@/components/Detail/simpleDescription";
+import XiangJi from "@/components/Detail/xiangJi";
+import ImageEditorGroup from "@/components/ImageEditor/imageEditorGroup.vue";
 
 export default defineComponent({
   name: "productDetail",
 
   components: {
+    XiangJi,
     Sku,
     Spec,
     Relaket,
@@ -93,6 +101,7 @@ export default defineComponent({
     BottomBanner,
     TextTranslate,
     SimpleDescription,
+    ImageEditorGroup,
   },
 
   computed: {
@@ -121,7 +130,11 @@ export default defineComponent({
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prd", {
         params: { prduct_idx: id },
       }).then((res) => {
-        if (lib.isEmpty(res) || res.status !== '2000' || lib.isEmpty(res.data)) {
+        if (
+          lib.isEmpty(res) ||
+          res.status !== "2000" ||
+          lib.isEmpty(res.data)
+        ) {
           alert(res.message);
           router.push("/product");
           this.product.loading = false;
@@ -131,7 +144,6 @@ export default defineComponent({
         this.$store.state.product = Object.assign(this.product, res.data);
 
         this.initSku();
-        this.product.bak_sku = JSON.parse(JSON.stringify(this.product.sku));
         this.product.onload = true;
         this.product.loading = false;
       });
@@ -182,25 +194,25 @@ export default defineComponent({
       let aItemOptions = this.product.item_option;
       aItemOptions.map((aItemOption, i) => {
         aOptionIndex[i] = [];
-        aItemOption.data.map(data => {
-          aOptionIndex[i].push(data.name)
-        })
-      })
+        aItemOption.data.map((data) => {
+          aOptionIndex[i].push(data.name);
+        });
+      });
 
       // SKU 索引
       this.product.sku.map((sku, t) => {
         let oSkuName = {};
-        let aSpec = sku.spec.split('::');
-        aSpec.map(sSpec => {
+        let aSpec = sku.spec.split("::");
+        aSpec.map((sSpec) => {
           aOptionIndex.map((aOptionNames, i) => {
             if (aOptionNames.includes(sSpec)) {
               oSkuName[i] = sSpec;
             }
-          })
-        })
+          });
+        });
 
-        this.product.sku[t].spec = Object.values(oSkuName).join('::');
-      })
+        this.product.sku[t].spec = Object.values(oSkuName).join("::");
+      });
     },
 
     initSku() {
@@ -240,25 +252,35 @@ export default defineComponent({
     // 최초수정아닐경우 상품별 마진 사용 (default: 0)
     initMargin(field) {
       let isRate = false;
-      if (field === 'rate') {
+      if (field === "rate") {
         isRate = true;
       }
 
       // 마진 옵션
-      this.product[field + "_margin"] = lib.isArray(this.product.user[field + "_margin"])
+      this.product[field + "_margin"] = lib.isArray(
+        this.product.user[field + "_margin"]
+      )
         ? this.setLabel(this.product.user[field + "_margin"], "margin", isRate)
         : [];
 
       this.product[field + "_margin_option"] = 0;
 
       // 최초수정
-      if (this.product.is_modify === "F" && !lib.isEmpty(this.product.user[field + "_margin_option"])) {
-        this.product[field + "_margin_option"] = this.product.user[field + "_margin_option"];
+      if (
+        this.product.is_modify === "F" &&
+        !lib.isEmpty(this.product.user[field + "_margin_option"])
+      ) {
+        this.product[field + "_margin_option"] =
+          this.product.user[field + "_margin_option"];
       }
 
       // 수정
-      if (this.product.is_modify === "T" && !lib.isEmpty(this.product["item_" + field + "_margin_option"])) {
-        this.product[field + "_margin_option"] = this.product["item_" + field + "_margin_option"];
+      if (
+        this.product.is_modify === "T" &&
+        !lib.isEmpty(this.product["item_" + field + "_margin_option"])
+      ) {
+        this.product[field + "_margin_option"] =
+          this.product["item_" + field + "_margin_option"];
       }
     },
   },

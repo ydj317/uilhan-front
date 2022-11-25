@@ -8,7 +8,7 @@
       hidden
       class="button bg-3051d3 originalDetailTrans"
       type="primary"
-      @click="detailTrans"
+      @click="translatePopup"
       >상세 이미지번역</a-button
     >
 
@@ -22,25 +22,17 @@
         @contentUpdate="contentUpdate"
       />
     </div>
-
-    <!-- 이미지 편집기 세트 -->
-    <ImageEditorGroup
-      ref="imageEditorGroup"
-      @pushImageData="pushImageData"
-    ></ImageEditorGroup>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
-import ImageEditorGroup from "../ImageEditor/imageEditorGroup.vue";
 
 export default {
   name: "productDetailDescription",
 
   components: {
-    ImageEditorGroup,
     TEditor,
   },
 
@@ -55,24 +47,12 @@ export default {
   },
 
   methods: {
-    pushImageData(key, url) {
-      if (this.$refs.imageEditorGroup.bProductDetailsEditor === true) {
-        let content = this.$refs.editor.contentValue;
-        if (content === undefined) {
-          return false;
-        }
-
-        this.$refs.editor.contentValue = content.replace(
-          this.aBakDetailImages[key],
-          url
-        );
-        this.product.item_detail = this.$refs.editor.contentValue;
-        return false;
-      }
+    contentUpdate(tinymce) {
+      this.product.item_detail = tinymce.editors[0].getContent();
     },
 
-    detailTrans() {
-      let content = this.$refs.editor.contentValue;
+    getDetailContentsImage() {
+      let content = window.tinymce.editors[0].getContent();
       if (content === undefined || content.length === 0) {
         alert("이미지가 없습니다");
         return false;
@@ -90,46 +70,48 @@ export default {
       let srcArr = [];
       let logoUrl = this.product.user.logo;
 
-      arr = arr.filter(data => {
+      arr = arr.filter((data) => {
         try {
-          return data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl;
+          return (
+            data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
+          );
         } catch (e) {
           return false;
         }
       });
 
+      this.product.aBakDetailImages = [];
       for (let i = 0; i < arr.length; i++) {
         let src = arr[i].match(srcReg);
         if (src !== null) {
           srcArr.push({ url: src[1], key: i });
-          this.aBakDetailImages[i] = src[1];
+          this.product.aBakDetailImages[i] = src[1];
         }
       }
 
-      this.showModalAll(srcArr);
+      return srcArr;
     },
 
-    showModalAll(srcArr) {
-      this.$refs.imageEditorGroup.aPhotoCollection = [];
-      srcArr.map((oImageInfo) => {
-        this.$refs.imageEditorGroup.aPhotoCollection.push({
+    translatePopup() {
+      let aImagesUrl = this.getDetailContentsImage();
+
+      this.product.bProductDetailsEditor = true;
+      this.product.bImageEditorModule = true;
+      this.product.aPhotoCollection = [];
+
+      aImagesUrl.map((oImageInfo) => {
+        this.product.aPhotoCollection.push({
           msg: "",
           key: oImageInfo.key,
           name: "",
           order: "",
-          checked: true,
+          checked: false,
           visible: true,
           original_url: oImageInfo.url,
           translate_url: "",
           translate_status: false,
         });
       });
-
-      this.$refs.imageEditorGroup.mInitEditorImage(true);
-    },
-
-    contentUpdate(tinymce) {
-      this.product.item_detail = tinymce.editors[0].getContent();
     },
   },
 };
@@ -143,8 +125,7 @@ class DescriptionClass {
     let itimer = setInterval(() => {
       try {
         let oImageEditor = document.querySelector('[title="이미지 업로드"]');
-        let tinymce = document
-        .querySelector(".tox-edit-area__iframe");
+        let tinymce = document.querySelector(".tox-edit-area__iframe");
         // .contentDocument.querySelector("#tinymce > p");
 
         if (oImageEditor && tinymce) {
@@ -162,13 +143,10 @@ class DescriptionClass {
           document.querySelector(".copyDetailTrans").onclick = () => {
             document.querySelector(".originalDetailTrans").click();
           };
-
-          // tinymce.style.display = "flex";
-          // tinymce.style.flexDirection = "column";
-          // tinymce.style.flexWrap = "nowrap";
-          // tinymce.style.alignItems = "center";
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     }, 500);
   }
 }

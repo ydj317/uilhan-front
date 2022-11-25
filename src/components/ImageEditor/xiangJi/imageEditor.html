@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>이미지 편집기</title>
+</head>
+<body>
+    <!--편집기-->
+    <div id="app" >
+        <div id="some-dialog">
+            <iframe
+                    id="xiangji-image-editor"
+                    title="象寄图片精修工具"
+                    style="width: 100%; height: 600px;"
+                    src="./imageEditorProxy.html"
+                    onload="iframeOnload()"
+            ></iframe>
+        </div>
+    </div>
+
+    <!--이미지추가-->
+    <script type="text/javascript">
+        // 2.监听 iframe onload 事件，并向其发送需要处理的图片 requestId 数组
+        function iframeOnload() {
+            const iframe = document.querySelector('#xiangji-image-editor');
+            iframe.contentWindow.postMessage(
+                    {
+                        name: "XJ_IMAGE_EDITOR_REQUESTIDS",
+                        requestIds: ["27fa35e6760f0f5a"]
+                    },
+                    '*'
+            );
+        }
+        // 3.监听 iframe 发送的 message 事件，从中获取精修结果
+        window.addEventListener('message', function (e) {
+            const { name, all } = e.data;
+            if (name === 'XJ_IMAGE_EDITOR_URL') {
+                console.log(all);
+            }
+        });
+    </script>
+</body>
+</html>
