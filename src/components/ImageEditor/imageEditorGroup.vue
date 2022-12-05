@@ -85,14 +85,22 @@
                           <div>
                             <img
                               style="width: 100%; height: 100%"
-                              :src="item.original_url"
+                              :src="
+                                item.translate_status
+                                  ? item.translate_url
+                                  : item.original_url
+                              "
                               alt=""
                             />
                           </div>
                         </template>
                         <img
                           style="width: 190px; height: 160px"
-                          :src="item.original_url"
+                          :src="
+                            item.translate_status
+                              ? item.translate_url
+                              : item.original_url
+                          "
                           alt=""
                         />
                       </a-tooltip>
@@ -110,11 +118,7 @@
                     </div>
                     <div class="space-between">
                       <a-button
-                        v-if="
-                          item.original_url.indexOf(
-                            'https://i.tosoiot.com/'
-                          ) === -1
-                        "
+                        v-if="item.translate_status !== true"
                         type="primary"
                         class="w50"
                         @click="detailTranslateImage(item)"
@@ -124,7 +128,7 @@
                         v-else
                         type="primary"
                         class="w50"
-                        @click="detailRequestXiangji([item.original_url])"
+                        @click="detailRequestXiangji(item)"
                         >편집</a-button
                       >
                       <a-button
@@ -234,6 +238,7 @@ export default {
       this.product.translateImage([item], (oTranslateInfo) => {
         let sTranslateUrl = oTranslateInfo[item.key].translate_url;
 
+        // 팝업창 데이터 업데이트
         this.product.aPhotoCollection.map((data, i) => {
           if (item.key === data.key) {
             this.product.aPhotoCollection[i].translate_status = true;
@@ -241,6 +246,7 @@ export default {
           }
         });
 
+        // 상세내용 편집기 contents 업데이트
         this.product.aBakDetailImages.map((url, i) => {
           if (lib.isEmpty(oTranslateInfo[i]) === false) {
             let content = window.tinymce.editors[0].getContent();
@@ -252,14 +258,24 @@ export default {
         });
 
         this.product.item_detail = window.tinymce.editors[0].getContent();
-        this.detailRequestXiangji([sTranslateUrl]);
+        this.detailRequestXiangji(item);
       });
     },
 
-    detailRequestXiangji(aImagesUrl) {
+    detailRequestXiangji(item) {
+      let aImagesUrl = [item.translate_url];
       this.getDetailContentsImage();
       this.product.requestXiangji(aImagesUrl, (oRequestId) => {
         Object.keys(oRequestId).map((sRequestId) => {
+          // 팝업창 데이터 업데이트
+          this.product.aPhotoCollection.map((data, i) => {
+            if (item.key === data.key) {
+              this.product.aPhotoCollection[i].translate_url =
+                oRequestId[sRequestId];
+            }
+          });
+
+          // 상세내용 편집기 contents 업데이트
           this.product.aBakDetailImages.map((url) => {
             if (
               lib.isString(url, true) === true &&
@@ -275,7 +291,7 @@ export default {
         });
 
         // 이미지 편집기 닫기
-        this.product.bImageEditorModule = false;
+        // this.product.bImageEditorModule = false;
         this.product.xiangjiVisible = false;
       });
     },

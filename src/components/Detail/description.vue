@@ -108,8 +108,9 @@ export default {
           checked: false,
           visible: true,
           original_url: oImageInfo.url,
-          translate_url: "",
-          translate_status: false,
+          translate_url: oImageInfo.url,
+          translate_status:
+            oImageInfo.url.indexOf("https://i.tosoiot.com/") !== -1,
         });
       });
     },
