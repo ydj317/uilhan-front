@@ -290,6 +290,7 @@ export default {
           });
         });
 
+        this.product.item_detail = window.tinymce.editors[0].getContent();
         // 이미지 편집기 닫기
         // this.product.bImageEditorModule = false;
         this.product.xiangjiVisible = false;
