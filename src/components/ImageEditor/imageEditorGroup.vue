@@ -370,6 +370,11 @@ export default {
           aNewDetailImages.push(data);
         }
       });
+
+      // 삭제후 key 다시 설정
+      aNewDetailImages.map((data, i) => {
+        aNewDetailImages[i].key = i;
+      });
       this.product.aPhotoCollection = aNewDetailImages;
 
       aDetailHtml.map((sImageTag, i) => {
