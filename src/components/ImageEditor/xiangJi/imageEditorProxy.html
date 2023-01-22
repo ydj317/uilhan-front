@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        body {
+            top: 0 !important;
+        }
+        .skiptranslate {
+            display: none;
+        }
+        .anticon {
+            display: inline-block;
+            color: inherit;
+            font-style: normal;
+            line-height: 0;
+            text-align: center;
+            text-transform: none;
+            vertical-align: -0.125em;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .anticon > * {
+            line-height: 1;
+        }
+
+        .anticon svg {
+            display: inline-block;
+        }
+
+        .anticon::before {
+            display: none;
+        }
+
+        .anticon .anticon-icon {
+            display: block;
+        }
+
+        .anticon[tabindex] {
+            cursor: pointer;
+        }
+
+        .anticon-spin::before,
+        .anticon-spin {
+            display: inline-block;
+            -webkit-animation: loadingCircle 1s infinite linear;
+            animation: loadingCircle 1s infinite linear;
+        }
+
+        @-webkit-keyframes loadingCircle {
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes loadingCircle {
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://i.tosoiot.com/static/images/favicon.ico">
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/harmonyOS/HarmonyOS_Sans_Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/harmonyOS/HarmonyOS_Sans_TC_Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/NanumGothic-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/CookieRun-Regular.otf" as="font"
+            type="font/otf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/EastSeaDokdo-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/GowunBatang-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/SingleDay-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/SongMyung-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/japan/FamiljenGrotesk-Regular.otf" as="font"
+            type="font/otf" crossorigin=""
+    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no, viewport-fit=cover">
+    <title>이미지 편집기</title>
+    <script type="module" crossorigin="" src="https://s.xiangjifanyi.com/image-editor/assets/main.86687a96.js"></script>
+    <link rel="modulepreload" href="https://s.xiangjifanyi.com/image-editor/assets/index.61607923.js">
+    <link rel="stylesheet" href="https://s.xiangjifanyi.com/image-editor/assets/index.f10a05d1.css">
+    <link rel="stylesheet" href="https://s.xiangjifanyi.com/image-editor/assets/main.8aa5e3bc.css">
+    <link rel="stylesheet" href="https://s.xiangjifanyi.com/image-editor/assets/font.8f2349a6.css">
+</head>
+
+<body>
+<div id="app" data-v-app="">
+    <div class="app flex flex-col h-screen" data-v-9a271fd4="">
+        <div class="header items-center flex flex-shrink-0" data-v-067e14c4="" data-v-9a271fd4="">
+            <div class="logo" data-v-067e14c4=""><img
+                    src="https://s.xiangjifanyi.com/image-editor/assets/logo.4e2c9998.png" height="46" alt=""
+                    data-v-067e14c4=""
+            ></div>
+            <div class="flex-grow flex header-main items-center" data-v-067e14c4=""><!---->
+                <svg
+                        class="icon text-5 mr-2 active" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
+                        width="1em" height="1em" fill="currentColor" data-v-045a4dab="" data-v-067e14c4=""
+                >
+                    <path
+                            d="M424.2 230.4c.6.2 1.2.4 1.6.5L160.6 148c-2.9-.6-6-.9-9.2-.9-24.5 0-44.4 19.9-44.4 44.4v634.8c0 24.6 19.9 44.5 44.4 44.5 3.2 0 6.2-.4 9.2-.9L432.4 785c17.9-9.2 30.1-27.9 30.1-49.3V283.2c-.1-24.6-16.1-45.6-38.3-52.8zm-28.4 485.9l-222.1 59.2V242.3l222.1 59.2v414.8zm466.4-569.2c-3.2 0-6.2.4-9.2.9l-262 82c.4-.1.7-.1.9-.2-23.5 6.5-40.8 28-40.8 53.5v452.3c0 21.5 12.2 40.1 30.1 49.4l271.6 84.9c2.9.6 6.1.9 9.3.9 24.5 0 44.4-19.9 44.4-44.5V191.5c.2-24.5-19.7-44.4-44.3-44.4z"
+                            data-v-045a4dab=""
+                    ></path>
+                </svg><!---->
+                <svg
+                        class="icon text-5 ml-2 mr-2" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
+                        width="20" height="20" data-v-67b5ded0="" data-v-067e14c4=""
+                >
+                    <path
+                            d="M469.333 681.387c-36.053-2.432-71.253-8.534-104.96-17.92L294.571 813.14a42.368 42.368 0 01-56.534 20.267 42.667 42.667 0 01-20.821-56.32l66.987-143.659a451.712 451.712 0 01-148.907-112.682 388.693 388.693 0 01-70.57-119.339 42.667 42.667 0 1180.127-29.355 303.445 303.445 0 0055.211 93.099c70.57 82.261 182.955 132.181 305.664 132.181 122.752 0 235.136-49.962 305.707-132.181a303.445 303.445 0 0055.21-93.099 42.667 42.667 0 0180.128 29.355 388.693 388.693 0 01-70.57 119.339 423.68 423.68 0 01-18.774 20.48l104.363 104.362a42.667 42.667 0 01-.299 60.032 42.368 42.368 0 01-60.032.299L791.808 596.267c-20.48 14.08-42.24 26.581-65.024 37.418l66.901 143.36a42.667 42.667 0 01-20.821 56.363 42.368 42.368 0 01-56.533-20.267l-69.718-149.546a520.533 520.533 0 01-91.946 16.81v130.646A42.667 42.667 0 01512 853.333c-23.723 0-42.667-18.944-42.667-42.24V681.387z"
+                            fill="currentColor" data-v-67b5ded0=""
+                    ></path>
+                    <path
+                            d="M176.128 524.373a42.368 42.368 0 0160.032.256 42.667 42.667 0 01.299 60.075L115.243 705.92a42.368 42.368 0 01-60.075-.299 42.667 42.667 0 01-.299-60.032l121.259-121.258z"
+                            fill="currentColor" data-v-67b5ded0=""
+                    ></path>
+                </svg>
+                <div
+                        class="ant-divider ant-divider-vertical" role="separator" data-v-067e14c4=""
+                        style="height: 20px; background-color: rgb(218, 221, 225);"
+                ><!----></div>
+                <div class="flex items-center" data-v-067e14c4=""><span
+                        class="icon-wrap ml-2 flex items-center disabled" data-v-067e14c4=""
+                ><!----><span class="i-bx:bx-undo icon" data-v-067e14c4=""></span></span><span
+                        class="icon-wrap flex items-center disabled" data-v-067e14c4=""
+                ><!----><span class="i-bx:bx-redo icon" data-v-067e14c4=""></span></span><span
+                        class="icon-wrap flex items-center" data-v-067e14c4=""
+                ><!----><span class="i-fluent:history-16-filled icon !text-5" data-v-067e14c4=""></span></span>
+                    <div
+                            class="ant-divider ant-divider-vertical" role="separator" data-v-067e14c4=""
+                            style="height: 20px; background-color: rgb(218, 221, 225);"
+                    ><!----></div>
+                    <div class="scaler flex items-center" data-v-1cdb8c87="" data-v-067e14c4=""><!----><span
+                            role="img" aria-label="minus" tabindex="-1" class="anticon anticon-minus" data-v-1cdb8c87=""
+                    ><svg
+                            focusable="false" class="" data-icon="minus" width="1em" height="1em" fill="currentColor"
+                            aria-hidden="true" viewBox="64 64 896 896"
+                    ><path d="M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"></path></svg></span>
+                        <div class="toggle" data-v-1cdb8c87="">
+                            <div class="icons" data-v-1cdb8c87=""><!----><span
+                                    role="img" aria-label="fullscreen" tabindex="-1" class="anticon anticon-fullscreen"
+                                    data-v-1cdb8c87=""
+                            ><svg
+                                    focusable="false" class="" data-icon="fullscreen" width="1em" height="1em"
+                                    fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"
+                            ><path d="M290 236.4l43.9-43.9a8.01 8.01 0 00-4.7-13.6L169 160c-5.1-.6-9.5 3.7-8.9 8.9L179 329.1c.8 6.6 8.9 9.4 13.6 4.7l43.7-43.7L370 423.7c3.1 3.1 8.2 3.1 11.3 0l42.4-42.3c3.1-3.1 3.1-8.2 0-11.3L290 236.4zm352.7 187.3c3.1 3.1 8.2 3.1 11.3 0l133.7-133.6 43.7 43.7a8.01 8.01 0 0013.6-4.7L863.9 169c.6-5.1-3.7-9.5-8.9-8.9L694.8 179c-6.6.8-9.4 8.9-4.7 13.6l43.9 43.9L600.3 370a8.03 8.03 0 000 11.3l42.4 42.4zM845 694.9c-.8-6.6-8.9-9.4-13.6-4.7l-43.7 43.7L654 600.3a8.03 8.03 0 00-11.3 0l-42.4 42.3a8.03 8.03 0 000 11.3L734 787.6l-43.9 43.9a8.01 8.01 0 004.7 13.6L855 864c5.1.6 9.5-3.7 8.9-8.9L845 694.9zm-463.7-94.6a8.03 8.03 0 00-11.3 0L236.3 733.9l-43.7-43.7a8.01 8.01 0 00-13.6 4.7L160.1 855c-.6 5.1 3.7 9.5 8.9 8.9L329.2 845c6.6-.8 9.4-8.9 4.7-13.6L290 787.6 423.7 654c3.1-3.1 3.1-8.2 0-11.3l-42.4-42.4z"></path></svg></span>
+                            </div>
+                            <div class="num" data-v-1cdb8c87="">63%</div>
+                        </div><!----><span
+                                role="img" aria-label="plus" tabindex="-1" class="anticon anticon-plus"
+                                data-v-1cdb8c87=""
+                        ><svg
+                                focusable="false" class="" data-icon="plus" width="1em" height="1em" fill="currentColor"
+                                aria-hidden="true" viewBox="64 64 896 896"
+                        ><defs><style></style></defs><path
+                                d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+                        ></path><path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path></svg></span>
+                    </div>
+                    <div class="flex items-center" data-v-067e14c4="">
+                        <div
+                                class="ant-divider ant-divider-vertical" role="separator" data-v-067e14c4=""
+                                style="height: 20px; background-color: rgb(218, 221, 225);"
+                        ><!----></div>
+                        <div class="flex-shrink-0" data-v-718b19ba="" data-v-067e14c4=""><!---->
+                            <button
+                                    class="ant-btn ant-btn-primary ant-btn-round btn-main" type="button"
+                                    data-v-718b19ba=""
+                            ><!----><span class="fs14" data-v-718b19ba="">下载</span><span
+                                    role="img" aria-label="caret-down" class="anticon anticon-caret-down fs12"
+                                    data-v-718b19ba=""
+                            ><svg
+                                    focusable="false" class="" data-icon="caret-down" width="1em" height="1em"
+                                    fill="currentColor" aria-hidden="true" viewBox="0 0 1024 1024"
+                            ><path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path></svg></span>
+                            </button>
+                        </div><!----></div>
+                </div>
+            </div>
+            <div
+                    class="flex items-center flex-shrink-0 text-right flex items-center" data-v-6c32bee8=""
+                    data-v-067e14c4=""
+            ><!---->
+                <button class="ant-btn ant-btn-primary ant-btn-round btn-main" type="button" data-v-6c32bee8="">
+                    <!----><span>完成编辑</span></button>
+            </div><!----></div>
+        <div class="main flex flex-row flex-grow" data-v-9a271fd4="">
+            <div class="of-hidden flex-shrink-0 flex flex-col" data-v-9a271fd4="">
+                <div class="sidebar flex-shrink-0" data-v-6188a863="" data-v-9a271fd4="">
+                    <div class="item" data-v-6188a863=""><span
+                            class="i-icon-park-outline:text icon" data-v-6188a863=""
+                    ></span>
+                        <div class="label" data-v-6188a863="">添加文字</div>
+                    </div><!---->
+                    <div class="item" data-v-6188a863=""><span
+                            class="i-ic:sharp-auto-fix-high icon" data-v-6188a863=""
+                    ></span>
+                        <div class="label" data-v-6188a863="">修复工具</div>
+                        <span class="new dot item-new" data-v-99d7f128="" data-v-6188a863=""><span
+                                class="dot" data-v-99d7f128=""
+                        >·</span></span></div>
+                    <div class="item item-crop" data-v-6188a863="">
+                        <svg
+                                viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                class="icon" data-v-6188a863=""
+                        >
+                            <path
+                                    d="M181.413 0h106.815a21.581 21.581 0 0121.538 21.537v86.478a21.581 21.581 0 01-21.538 21.538H181.413a21.581 21.581 0 01-21.537-21.538V21.537A21.581 21.581 0 01181.413 0zm674.034 1014.84H748.632a21.581 21.581 0 01-21.537-21.538v-86.456a21.581 21.581 0 0121.537-21.537h106.815a21.581 21.581 0 0121.537 21.537v86.456a21.581 21.581 0 01-21.537 21.537zM718.485 296.651H53.875a21.581 21.581 0 01-21.536-21.537V168.31a21.581 21.581 0 0121.537-21.537H787.95c85.598 0 89.044-14.71 89.044 74.906v457.762a21.581 21.581 0 01-21.537 21.537H748.643a21.581 21.581 0 01-21.537-21.537V305.273a8.632 8.632 0 00-8.621-8.621zm-400.11 421.546h664.621a21.581 21.581 0 0121.537 21.537v106.816a21.581 21.581 0 01-21.537 21.537H212.111c-52.19 0-52.246 5.979-52.246-48.337V335.41a21.581 21.581 0 0121.537-21.537h106.815a21.581 21.581 0 0121.537 21.537v374.178c.012 4.735 3.876 8.61 8.622 8.61z"
+                                    fill="currentColor"
+                            ></path>
+                        </svg>
+                        <div class="label" data-v-6188a863="">尺寸调整</div>
+                    </div>
+                </div>
+                <div class="relative overflow-auto flex-grow" data-v-3beb9dca="" data-v-9a271fd4="">
+                    <div class="ant-spin abs-center" data-v-3beb9dca=""><span class="ant-spin-dot ant-spin-dot-spin"><i
+                            class="ant-spin-dot-item"
+                    ></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i
+                            class="ant-spin-dot-item"
+                    ></i></span><!----></div>
+                    <div class="item relative selected" data-v-3beb9dca="">
+                        <div class="abs-center" data-v-3beb9dca=""><img
+                                class="placeholder"
+                                src="https://s.xiangjifanyi.com/image-editor/assets/logo.4e2c9998.png"
+                                data-v-3beb9dca=""
+                        ></div>
+                        <img
+                                class="inner" id="j-image-27fa35e6760f0f5a"
+                                src="http://i.tosoiot.com/20220902/1662094417/c1e8a211c0cf48fa/O1CN01Ae0pKD1raphKfsEvs_68975648_fa5e4cea6e7f7d14.jpg?x-image-process=style/mini-168"
+                                alt="" data-v-3beb9dca=""
+                        ><!----><!----></div>
+                </div><!---->
+                <div class="text-4 guide flex-shrink-0" data-v-d0389004=""><span
+                        role="img" aria-label="question-circle"
+                        class="anticon anticon-question-circle abs-center cursor-pointer" data-v-d0389004=""
+                ><svg
+                        focusable="false" class="" data-icon="question-circle" width="1em" height="1em"
+                        fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"
+                ><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path><path
+                        d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                ></path></svg></span></div>
+            </div><!---->
+            <div class="flex-grow relative content compare" data-v-9a271fd4=""><!---->
+                <div class="flex image-group" data-v-9a271fd4="" style="opacity: 1;">
+                    <div class="image image-origin" data-v-9a271fd4="">
+                        <div
+                                class="panzoom" data-v-35d48ed0="" data-v-9a271fd4=""
+                                style="width: 470.13px; height: 724px; margin-top: 0px;"
+                        >
+                            <div
+                                    class="slot" data-v-35d48ed0=""
+                                    style="width: 470.13px; height: 724px; left: 0px; top: 0px;"
+                            ><img
+                                    src="http://i.tosoiot.com/20220902/1662094417/c1e8a211c0cf48fa/O1CN01Ae0pKD1raphKfsEvs_68975648_fa5e4cea6e7f7d14.jpg"
+                                    id="source-img" crossorigin="anonymous" data-v-9a271fd4=""
+                                    style="width: 100%; height: 100%;"
+                            ></div>
+                        </div>
+                    </div>
+                    <div class="image image-result" data-v-9a271fd4="">
+                        <div class="image-editor" id="main-editor" data-v-2c449fea="" data-v-9a271fd4="">
+                            <div
+                                    class="panzoom" data-v-35d48ed0="" data-v-2c449fea=""
+                                    style="width: 470.13px; height: 724px; margin-top: 0px;"
+                            >
+                                <div
+                                        class="slot" data-v-35d48ed0=""
+                                        style="width: 470.13px; height: 724px; left: 0px; top: 0px;"
+                                >
+                                    <div class="ant-spin-nested-loading" data-v-2c449fea=""><!---->
+                                        <div class="ant-spin-container">
+                                            <div
+                                                    class="xj-canvas relative" data-v-2c449fea=""
+                                                    style="transform: scale(0.62684);"
+                                            >
+                                                <div
+                                                        class="canvas-container"
+                                                        style="width: 750px; height: 1155px; position: relative; user-select: none;"
+                                                >
+                                                    <canvas
+                                                            id="xj-canvas" width="750" height="1155" data-v-2c449fea=""
+                                                            class="lower-canvas"
+                                                            style="position: absolute; width: 750px; height: 1155px; left: 0px; top: 0px; touch-action: none; user-select: none;"
+                                                    ></canvas>
+                                                    <canvas
+                                                            class="upper-canvas " width="750" height="1155"
+                                                            style="position: absolute; width: 750px; height: 1155px; left: 0px; top: 0px; touch-action: none; user-select: none; cursor: default;"
+                                                    ></canvas>
+                                                </div>
+                                                <div
+                                                        class="grab-placeholder" data-v-2c449fea=""
+                                                        style="display: none;"
+                                                ></div>
+                                                <canvas
+                                                        id="inpaint-mask" class="inpaint-mask" width="750" height="1155"
+                                                        data-v-2c449fea="" style="display: none;"
+                                                ></canvas>
+                                                <div
+                                                        class="pointer-canvas" data-v-2c449fea=""
+                                                        style="display: none; left: -10px; top: -10px; width: 20px; height: 20px; background-color: rgb(252, 248, 249);"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div
+                                            class="abs-full color-picking-mask" data-v-2c449fea=""
+                                            style="display: none;"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!----></div><!---->
+            <div class="right-side overflow-auto flex-shrink-0" data-v-88bbccb6="" data-v-9a271fd4="">
+                <div class="content" data-v-88bbccb6="">
+                    <div class="props-editor flex flex-col" data-v-6ac70ef2="" data-v-88bbccb6="">
+                        <div class="flex-shrink-0" data-v-6ac70ef2=""><!---->
+                            <div class="ant-tabs-small ant-tabs-line ant-tabs ant-tabs-top" data-v-6ac70ef2="">
+                                <div
+                                        role="tablist" class="ant-tabs-bar ant-tabs-top-bar ant-tabs-small-bar"
+                                        tabindex="0"
+                                >
+                                    <div class="ant-tabs-nav-container"><span
+                                            unselectable="unselectable"
+                                            class="ant-tabs-tab-prev ant-tabs-tab-btn-disabled"
+                                    ><span class="ant-tabs-tab-prev-icon"><span
+                                            role="img" aria-label="left"
+                                            class="anticon anticon-left ant-tabs-tab-prev-icon-target"
+                                    ><svg
+                                            focusable="false" class="" data-icon="left" width="1em" height="1em"
+                                            fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"
+                                    ><path d="M724 218.3V141c0-6.7-7.7-10.4-12.9-6.3L260.3 486.8a31.86 31.86 0 000 50.3l450.8 352.1c5.3 4.1 12.9.4 12.9-6.3v-77.3c0-4.9-2.3-9.6-6.1-12.6l-360-281 360-281.1c3.8-3 6.1-7.7 6.1-12.6z"></path></svg></span></span></span><span
+                                            unselectable="unselectable"
+                                            class="ant-tabs-tab-next ant-tabs-tab-btn-disabled"
+                                    ><span class="ant-tabs-tab-next-icon"><span
+                                            role="img" aria-label="right"
+                                            class="anticon anticon-right ant-tabs-tab-next-icon-target"
+                                    ><svg
+                                            focusable="false" class="" data-icon="right" width="1em" height="1em"
+                                            fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"
+                                    ><path d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"></path></svg></span></span></span>
+                                        <div class="ant-tabs-nav-wrap">
+                                            <div class="ant-tabs-nav-scroll">
+                                                <div class="ant-tabs-nav ant-tabs-nav-animated">
+                                                    <div>
+                                                        <div
+                                                                role="tab" aria-disabled="false" aria-selected="true"
+                                                                class="ant-tabs-tab-active ant-tabs-tab"
+                                                        ><span class="flex items-center" data-v-6ac70ef2=""><span
+                                                                role="img" aria-label="setting"
+                                                                class="anticon anticon-setting" data-v-6ac70ef2=""
+                                                        ><svg
+                                                                focusable="false" class="" data-icon="setting"
+                                                                width="1em" height="1em" fill="currentColor"
+                                                                aria-hidden="true" viewBox="64 64 896 896"
+                                                        ><path
+                                                                d="M924.8 625.7l-65.5-56c3.1-19 4.7-38.4 4.7-57.8s-1.6-38.8-4.7-57.8l65.5-56a32.03 32.03 0 009.3-35.2l-.9-2.6a443.74 443.74 0 00-79.7-137.9l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.3 28.9c-30-24.6-63.5-44-99.7-57.6l-15.7-85a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52.1-9.4-106.9-9.4-159 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.4a351.86 351.86 0 00-99 57.4l-81.9-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a446.02 446.02 0 00-79.7 137.9l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.3 56.6c-3.1 18.8-4.6 38-4.6 57.1 0 19.2 1.5 38.4 4.6 57.1L99 625.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.4 44.9 96.9 79.7 137.9l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.9-29.1c29.8 24.5 63.1 43.9 99 57.4l15.8 85.4a32.05 32.05 0 0025.8 25.7l2.7.5a449.4 449.4 0 00159 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-85a350 350 0 0099.7-57.6l81.3 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.6-87.5 79.7-137.9l.9-2.6c4.5-12.3.8-26.3-9.3-35zM788.3 465.9c2.5 15.1 3.8 30.6 3.8 46.1s-1.3 31-3.8 46.1l-6.6 40.1 74.7 63.9a370.03 370.03 0 01-42.6 73.6L721 702.8l-31.4 25.8c-23.9 19.6-50.5 35-79.3 45.8l-38.1 14.3-17.9 97a377.5 377.5 0 01-85 0l-17.9-97.2-37.8-14.5c-28.5-10.8-55-26.2-78.7-45.7l-31.4-25.9-93.4 33.2c-17-22.9-31.2-47.6-42.6-73.6l75.5-64.5-6.5-40c-2.4-14.9-3.7-30.3-3.7-45.5 0-15.3 1.2-30.6 3.7-45.5l6.5-40-75.5-64.5c11.3-26.1 25.6-50.7 42.6-73.6l93.4 33.2 31.4-25.9c23.7-19.5 50.2-34.9 78.7-45.7l37.9-14.3 17.9-97.2c28.1-3.2 56.8-3.2 85 0l17.9 97 38.1 14.3c28.7 10.8 55.4 26.2 79.3 45.8l31.4 25.8 92.8-32.9c17 22.9 31.2 47.6 42.6 73.6L781.8 426l6.5 39.9zM512 326c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm79.2 255.2A111.6 111.6 0 01512 614c-29.9 0-58-11.7-79.2-32.8A111.6 111.6 0 01400 502c0-29.9 11.7-58 32.8-79.2C454 401.6 482.1 390 512 390c29.9 0 58 11.6 79.2 32.8A111.6 111.6 0 01624 502c0 29.9-11.7 58-32.8 79.2z"
+                                                        ></path></svg></span>设置</span></div>
+                                                        <div
+                                                                role="tab" aria-disabled="false" aria-selected="false"
+                                                                class="ant-tabs-tab"
+                                                        >
+                                                            <div class="flex items-center" data-v-6ac70ef2=""><span
+                                                                    class="i-fluent:layer-24-filled text-4.5 mr-2"
+                                                                    data-v-6ac70ef2=""
+                                                            ></span>图层
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                            class="ant-tabs-ink-bar ant-tabs-ink-bar-animated"
+                                                            style="display: block; transform: translate3d(0px, 0px, 0px); width: 82px;"
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                        tabindex="0" role="presentation"
+                                        style="width: 0px; height: 0px; overflow: hidden; position: absolute;"
+                                ></div>
+                                <div
+                                        class="ant-tabs-top-content ant-tabs-content ant-tabs-content-animated"
+                                        style="margin-left: 0%;"
+                                >
+                                    <div
+                                            class="ant-tabs-tabpane ant-tabs-tabpane-active" role="tabpanel"
+                                            aria-hidden="false" data-v-6ac70ef2=""
+                                    >
+                                        <div
+                                                tabindex="0" role="presentation"
+                                                style="width: 0px; height: 0px; overflow: hidden; position: absolute;"
+                                        ></div>
+                                        <div
+                                                tabindex="0" role="presentation"
+                                                style="width: 0px; height: 0px; overflow: hidden; position: absolute;"
+                                        ></div>
+                                    </div>
+                                    <div
+                                            class="ant-tabs-tabpane ant-tabs-tabpane-inactive" role="tabpanel"
+                                            aria-hidden="true" data-v-6ac70ef2=""
+                                    ><!----><!----></div>
+                                </div>
+                                <div
+                                        tabindex="0" role="presentation"
+                                        style="width: 0px; height: 0px; overflow: hidden; position: absolute;"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="flex-grow overflow-auto" data-v-6ac70ef2="">
+                            <div data-v-6ac70ef2="">
+                                <form novalidate="" data-v-6ac70ef2="">
+                                    <div class="schema-form__layout rel" data-v-07d8789e="">
+                                        <div class="schema-form__item input" data-v-77a28d10="" data-v-07d8789e="">
+                                            <div
+                                                    class="schema-form__label" data-v-77a28d10=""
+                                                    style="width: 100%; display: block;"
+                                            >原文 <span class="schema-form__sublabel" data-v-77a28d10=""></span><!---->
+                                                <!----><span
+                                                        role="img" aria-label="copy" tabindex="-1"
+                                                        class="anticon anticon-copy" data-v-77a28d10=""
+                                                        style="font-size: 13px;"
+                                                ><svg
+                                                        focusable="false" class="" data-icon="copy" width="1em"
+                                                        height="1em" fill="currentColor" aria-hidden="true"
+                                                        viewBox="64 64 896 896"
+                                                ><path d="M832 64H296c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496v688c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V96c0-17.7-14.3-32-32-32zM704 192H192c-17.7 0-32 14.3-32 32v530.7c0 8.5 3.4 16.6 9.4 22.6l173.3 173.3c2.2 2.2 4.7 4 7.4 5.5v1.9h4.2c3.5 1.3 7.2 2 11 2H704c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32zM350 856.2L263.9 770H350v86.2zM664 888H414V746c0-22.1-17.9-40-40-40H232V264h432v624z"></path></svg></span>
+                                            </div>
+                                            <div class="schema-form__component" data-v-77a28d10="" style="width: 100%;">
+                                                <span class="ant-input-affix-wrapper ant-input-affix-wrapper-textarea-with-clear-btn"><textarea
+                                                        placeholder="原文内容" class="ant-input"
+                                                ></textarea><span
+                                                        role="button" aria-label="close-circle" tabindex="-1"
+                                                        class="anticon anticon-close-circle ant-input-textarea-clear-icon ant-input-textarea-clear-icon-hidden"
+                                                ><svg
+                                                        focusable="false" class="" data-icon="close-circle" width="1em"
+                                                        height="1em" fill="currentColor" aria-hidden="true"
+                                                        viewBox="64 64 896 896"
+                                                ><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 01-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z"></path></svg></span></span>
+                                            </div>
+                                            <div class="guide" data-v-77a28d10=""><!----></div><!---->
+                                            <div
+                                                    flex-box="1" class="error full-w" data-v-77a28d10=""
+                                                    style="padding-left: 100%;"
+                                            ><!----></div>
+                                        </div>
+                                    </div>
+                                    <div class="schema-form__layout rel" data-v-07d8789e="">
+                                        <div class="schema-form__item translate" data-v-77a28d10="" data-v-07d8789e="">
+                                            <div
+                                                    class="schema-form__label" data-v-77a28d10=""
+                                                    style="width: 100%; display: block;"
+                                            >译文 <span class="schema-form__sublabel" data-v-77a28d10=""></span><!---->
+                                                <!----><span
+                                                        role="img" aria-label="copy" tabindex="-1"
+                                                        class="anticon anticon-copy" data-v-77a28d10=""
+                                                        style="font-size: 13px;"
+                                                ><svg
+                                                        focusable="false" class="" data-icon="copy" width="1em"
+                                                        height="1em" fill="currentColor" aria-hidden="true"
+                                                        viewBox="64 64 896 896"
+                                                ><path d="M832 64H296c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496v688c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V96c0-17.7-14.3-32-32-32zM704 192H192c-17.7 0-32 14.3-32 32v530.7c0 8.5 3.4 16.6 9.4 22.6l173.3 173.3c2.2 2.2 4.7 4 7.4 5.5v1.9h4.2c3.5 1.3 7.2 2 11 2H704c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32zM350 856.2L263.9 770H350v86.2zM664 888H414V746c0-22.1-17.9-40-40-40H232V264h432v624z"></path></svg></span>
+                                            </div>
+                                            <div
+                                                    class="schema-form__component" data-v-a40683ac="" data-v-77a28d10=""
+                                                    style="width: 100%;"
+                                            ><!----><span
+                                                    class="ant-input-affix-wrapper ant-input-affix-wrapper-textarea-with-clear-btn"
+                                                    data-v-a40683ac=""
+                                            ><textarea placeholder="译文内容" class="ant-input"></textarea><span
+                                                    role="button" aria-label="close-circle" tabindex="-1"
+                                                    class="anticon anticon-close-circle ant-input-textarea-clear-icon"
+                                            ><svg
+                                                    focusable="false" class="" data-icon="close-circle" width="1em"
+                                                    height="1em" fill="currentColor" aria-hidden="true"
+                                                    viewBox="64 64 896 896"
+                                            ><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 01-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z"></path></svg></span></span>
+                                            </div>
+                                            <div class="guide" data-v-77a28d10=""><!----></div><!---->
+                                            <div
+                                                    flex-box="1" class="error full-w" data-v-77a28d10=""
+                                                    style="padding-left: 100%;"
+                                            ><!----></div>
+                                        </div>
+                                    </div>
+                                    <div class="schema-form__layout rel" data-v-07d8789e="">
+                                        <div class="schema-form__group" data-v-07d8789e="">
+                                            <div class="schema-form__group-header" data-v-07d8789e="">
+                                                <div class="schema-form__group-label fs14 flex1" data-v-07d8789e="">文本样式
+                                                    <span class="gray9" data-v-07d8789e=""></span></div>
+                                            </div>
+                                            <div class="schema-form__group-content" data-v-07d8789e="">
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div class="schema-form__inline" data-v-07d8789e=""><!---->
+                                                        <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                            <div
+                                                                    class="schema-form__item font-family"
+                                                                    data-v-77a28d10="" data-v-07d8789e=""
+                                                            >
+                                                                <div class="schema-form__label" data-v-77a28d10="">字体
+                                                                    <span
+                                                                            class="schema-form__sublabel"
+                                                                            data-v-77a28d10=""
+                                                                    ></span><!----><!----></div>
+                                                                <div
+                                                                        class="ant-select font-select schema-form__component ant-select-single ant-select-show-arrow ant-select-show-search"
+                                                                        data-v-0611e8b7="" data-v-77a28d10=""
+                                                                        style="width: 112px;"
+                                                                ><!----><!---->
+                                                                    <div class="ant-select-selector"><span
+                                                                            class="ant-select-selection-search"
+                                                                    ><input
+                                                                            id="rc_select_0" autocomplete="off"
+                                                                            class="ant-select-selection-search-input"
+                                                                            role="combobox" aria-haspopup="listbox"
+                                                                            aria-owns="rc_select_0_list"
+                                                                            aria-autocomplete="list"
+                                                                            aria-controls="rc_select_0_list"
+                                                                            aria-activedescendant="rc_select_0_list_0"
+                                                                            type="search"
+                                                                    ></span><span class="ant-select-selection-item"><div
+                                                                            class="selected-label text-3 gray9 flex justify-between items-center"
+                                                                            data-v-0611e8b7=""
+                                                                    ><span class="mr-2" data-v-0611e8b7="">系统默认</span>
+                                                                        <!----></div></span><!----></div>
+                                                                    <span
+                                                                            class="ant-select-arrow" unselectable="on"
+                                                                            aria-hidden="true"
+                                                                            style="user-select: none;"
+                                                                    ><span
+                                                                            role="img" aria-label="down"
+                                                                            class="anticon anticon-down ant-select-suffix"
+                                                                    ><svg
+                                                                            focusable="false" class="" data-icon="down"
+                                                                            width="1em" height="1em" fill="currentColor"
+                                                                            aria-hidden="true" viewBox="64 64 896 896"
+                                                                    ><path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path></svg></span></span>
+                                                                    <!----></div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10=""
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                            <div
+                                                                    class="schema-form__item number" data-v-77a28d10=""
+                                                                    data-v-07d8789e=""
+                                                            ><!---->
+                                                                <div
+                                                                        class="schema-form__component"
+                                                                        data-v-731908b1="" data-v-77a28d10=""
+                                                                        style="width: 68px;"
+                                                                ><!---->
+                                                                    <div class="ant-input-number" data-v-731908b1="">
+                                                                        <div class="ant-input-number-handler-wrap">
+                                                                            <span><span
+                                                                                    unselectable="unselectable"
+                                                                                    role="button"
+                                                                                    aria-label="Increase Value"
+                                                                                    aria-disabled="false"
+                                                                                    class="ant-input-number-handler ant-input-number-handler-up"
+                                                                            ><span
+                                                                                    role="img" aria-label="up"
+                                                                                    class="anticon anticon-up ant-input-number-handler-up-inner"
+                                                                            ><svg
+                                                                                    focusable="false" class=""
+                                                                                    data-icon="up" width="1em"
+                                                                                    height="1em" fill="currentColor"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="64 64 896 896"
+                                                                            ><path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path></svg></span></span></span><span
+                                                                                unselectable="unselectable"
+                                                                                role="button"
+                                                                                aria-label="Decrease Value"
+                                                                                aria-disabled="false"
+                                                                                class="ant-input-number-handler ant-input-number-handler-down"
+                                                                        ><span
+                                                                                role="img" aria-label="down"
+                                                                                class="anticon anticon-down ant-input-number-handler-down-inner"
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="down" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path></svg></span></span>
+                                                                        </div>
+                                                                        <div class="ant-input-number-input-wrap"><input
+                                                                                role="spinbutton" aria-valuemin="1"
+                                                                                aria-valuemax="999999999"
+                                                                                aria-valuenow="28" placeholder="设置字号"
+                                                                                class="ant-input-number-input"
+                                                                                autocomplete="off" max="999999999"
+                                                                                min="1" step="1"
+                                                                        ></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10=""
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div
+                                                            class="schema-form__item color" data-v-77a28d10=""
+                                                            data-v-07d8789e=""
+                                                    >
+                                                        <div
+                                                                class="schema-form__label" data-v-77a28d10=""
+                                                                style="width: 60px;"
+                                                        >文字颜色 <span
+                                                                class="schema-form__sublabel" data-v-77a28d10=""
+                                                        ></span><!----><!----></div>
+                                                        <div
+                                                                class="schema-form-color flex items-center schema-form__component"
+                                                                data-v-a38d7942="" data-v-77a28d10=""
+                                                        ><!---->
+                                                            <div class="mr-2" data-v-5be071ba="" data-v-a38d7942="">
+                                                                <div class="straw cursor-pointer" data-v-5be071ba="">
+                                                                    <img
+                                                                            class="" width="14"
+                                                                            src="https://s.xiangjifanyi.com/image-editor/assets/straw.d37598b8.svg"
+                                                                            data-v-5be071ba=""
+                                                                    ></div>
+                                                            </div>
+                                                            <div class="pickr">
+
+                                                                <button
+                                                                        type="button" class="pcr-button" role="button"
+                                                                        aria-label="toggle color picker dialog"
+                                                                        style="--pcr-color:rgba(255, 255, 255, 1);"
+                                                                ></button>
+
+
+                                                            </div>
+                                                            <span class="gray-9 ml-1" data-v-a38d7942=""></span></div>
+                                                        <div class="guide" data-v-77a28d10=""><!----></div><!---->
+                                                        <div
+                                                                flex-box="1" class="error full-w" data-v-77a28d10=""
+                                                                style="padding-left: 60px;"
+                                                        ><!----></div>
+                                                    </div>
+                                                </div>
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div
+                                                            class="schema-form__item color" data-v-77a28d10=""
+                                                            data-v-07d8789e=""
+                                                    >
+                                                        <div
+                                                                class="schema-form__label" data-v-77a28d10=""
+                                                                style="width: 60px;"
+                                                        >背景颜色 <span
+                                                                class="schema-form__sublabel" data-v-77a28d10=""
+                                                        ></span><!----><!----></div>
+                                                        <div
+                                                                class="schema-form-color flex items-center schema-form__component"
+                                                                data-v-a38d7942="" data-v-77a28d10=""
+                                                        ><!---->
+                                                            <div class="mr-2" data-v-5be071ba="" data-v-a38d7942="">
+                                                                <div class="straw cursor-pointer" data-v-5be071ba="">
+                                                                    <img
+                                                                            class="" width="14"
+                                                                            src="https://s.xiangjifanyi.com/image-editor/assets/straw.d37598b8.svg"
+                                                                            data-v-5be071ba=""
+                                                                    ></div>
+                                                            </div>
+                                                            <div class="pickr">
+
+                                                                <button
+                                                                        type="button" class="pcr-button" role="button"
+                                                                        aria-label="toggle color picker dialog"
+                                                                        style="--pcr-color:rgba(0, 0, 0, 0);"
+                                                                ></button>
+
+
+                                                            </div>
+                                                            <span class="gray-9 ml-1" data-v-a38d7942=""></span></div>
+                                                        <div class="guide" data-v-77a28d10=""><!----></div><!---->
+                                                        <div
+                                                                flex-box="1" class="error full-w" data-v-77a28d10=""
+                                                                style="padding-left: 60px;"
+                                                        ><!----></div>
+                                                    </div>
+                                                </div>
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div class="schema-form__inline" data-v-07d8789e=""><!---->
+                                                        <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                            <div
+                                                                    class="schema-form__item align" data-v-77a28d10=""
+                                                                    data-v-07d8789e=""
+                                                            ><!---->
+                                                                <div
+                                                                        class="ant-radio-group ant-radio-group-outline ant-radio-group-default align schema-form__component"
+                                                                        data-v-4da1d105="" data-v-77a28d10=""
+                                                                >
+                                                                    <div class="ant-btn-group" data-v-4da1d105="">
+                                                                        <!---->
+                                                                        <button
+                                                                                class="ant-btn" type="button"
+                                                                                data-v-4da1d105=""
+                                                                        ><!----><label
+                                                                                class="ant-radio-wrapper"
+                                                                                data-v-4da1d105=""
+                                                                        ><span class="ant-radio"><input
+                                                                                type="radio" class="ant-radio-input"
+                                                                                value="left"
+                                                                        ><span class="ant-radio-inner"></span></span><span><span
+                                                                                role="img" aria-label="align-left"
+                                                                                class="anticon anticon-align-left"
+                                                                                data-v-4da1d105=""
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="align-left" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M120 230h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm0 424h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm784 140H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-424H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg></span></span></label>
+                                                                        </button><!---->
+                                                                        <button
+                                                                                class="ant-btn" type="button"
+                                                                                data-v-4da1d105=""
+                                                                        ><!----><label
+                                                                                class="ant-radio-wrapper"
+                                                                                data-v-4da1d105=""
+                                                                        ><span class="ant-radio"><input
+                                                                                type="radio" class="ant-radio-input"
+                                                                                value="center"
+                                                                        ><span class="ant-radio-inner"></span></span><span><span
+                                                                                role="img" aria-label="align-center"
+                                                                                class="anticon anticon-align-center"
+                                                                                data-v-4da1d105=""
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="align-center" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M264 230h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm496 424c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H264c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496zm144 140H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-424H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg></span></span></label>
+                                                                        </button><!---->
+                                                                        <button
+                                                                                class="ant-btn" type="button"
+                                                                                data-v-4da1d105=""
+                                                                        ><!----><label
+                                                                                class="ant-radio-wrapper"
+                                                                                data-v-4da1d105=""
+                                                                        ><span class="ant-radio"><input
+                                                                                type="radio" class="ant-radio-input"
+                                                                                value="right"
+                                                                        ><span class="ant-radio-inner"></span></span><span><span
+                                                                                role="img" aria-label="align-right"
+                                                                                class="anticon anticon-align-right"
+                                                                                data-v-4da1d105=""
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="align-right" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M904 158H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 424H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 212H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-424H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg></span></span></label>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10=""
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                            <div
+                                                                    class="schema-form__item font-style"
+                                                                    data-v-77a28d10="" data-v-07d8789e=""
+                                                            ><!---->
+                                                                <div
+                                                                        class="ant-checkbox-group schema-form__component"
+                                                                        button-style="solid" data-v-14f35365=""
+                                                                        data-v-77a28d10=""
+                                                                >
+                                                                    <div class="ant-btn-group" data-v-14f35365="">
+                                                                        <!---->
+                                                                        <button
+                                                                                class="ant-btn" type="button"
+                                                                                data-v-14f35365=""
+                                                                        ><!----><label
+                                                                                class="ant-checkbox-wrapper"
+                                                                                data-v-14f35365=""
+                                                                        ><span class="ant-checkbox"><input
+                                                                                type="checkbox"
+                                                                                class="ant-checkbox-input" value="bold"
+                                                                        ><span class="ant-checkbox-inner"></span></span><span><span
+                                                                                role="img" aria-label="bold"
+                                                                                class="anticon anticon-bold"
+                                                                                data-v-14f35365=""
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="bold" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M697.8 481.4c33.6-35 54.2-82.3 54.2-134.3v-10.2C752 229.3 663.9 142 555.3 142H259.4c-15.1 0-27.4 12.3-27.4 27.4v679.1c0 16.3 13.2 29.5 29.5 29.5h318.7c117 0 211.8-94.2 211.8-210.5v-11c0-73-37.4-137.3-94.2-175.1zM328 238h224.7c57.1 0 103.3 44.4 103.3 99.3v9.5c0 54.8-46.3 99.3-103.3 99.3H328V238zm366.6 429.4c0 62.9-51.7 113.9-115.5 113.9H328V542.7h251.1c63.8 0 115.5 51 115.5 113.9v10.8z"></path></svg></span></span></label>
+                                                                        </button><!---->
+                                                                        <button
+                                                                                class="ant-btn" type="button"
+                                                                                data-v-14f35365=""
+                                                                        ><!----><label
+                                                                                class="ant-checkbox-wrapper"
+                                                                                data-v-14f35365=""
+                                                                        ><span class="ant-checkbox"><input
+                                                                                type="checkbox"
+                                                                                class="ant-checkbox-input"
+                                                                                value="italic"
+                                                                        ><span class="ant-checkbox-inner"></span></span><span><span
+                                                                                role="img" aria-label="italic"
+                                                                                class="anticon anticon-italic"
+                                                                                data-v-14f35365=""
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="italic" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M798 160H366c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h181.2l-156 544H229c-4.4 0-8 3.6-8 8v64c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8H474.4l156-544H798c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8z"></path></svg></span></span></label>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10=""
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                            <div
+                                                                    class="schema-form__item text-case"
+                                                                    data-v-77a28d10="" data-v-07d8789e=""
+                                                            ><!---->
+                                                                <div
+                                                                        class="ant-btn-group schema-form__component"
+                                                                        data-v-77a28d10=""
+                                                                ><!---->
+                                                                    <button class="ant-btn" type="button"><!----><img
+                                                                            src="https://s.xiangjifanyi.com/image-editor/assets/uppercase.e40748ef.svg"
+                                                                            alt=""
+                                                                    ></button><!---->
+                                                                    <button class="ant-btn" type="button"><!----><img
+                                                                            src="https://s.xiangjifanyi.com/image-editor/assets/lowercase.283639aa.svg"
+                                                                            alt=""
+                                                                    ></button>
+                                                                </div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10=""
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="schema-form__layout rel" data-v-07d8789e="">
+                                        <div class="schema-form__group" data-v-07d8789e="">
+                                            <div class="schema-form__group-header" data-v-07d8789e="">
+                                                <div class="schema-form__group-label fs14 flex1" data-v-07d8789e="">描边设置
+                                                    <span class="gray9" data-v-07d8789e=""></span></div>
+                                            </div>
+                                            <div class="schema-form__group-content" data-v-07d8789e="">
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div
+                                                            class="schema-form__item slider" data-v-77a28d10=""
+                                                            data-v-07d8789e=""
+                                                    >
+                                                        <div
+                                                                class="schema-form__label" data-v-77a28d10=""
+                                                                style="width: 60px;"
+                                                        >描边宽度 <span
+                                                                class="schema-form__sublabel" data-v-77a28d10=""
+                                                        ></span><!----><!----></div>
+                                                        <div
+                                                                class="flex schema-form__component" data-v-77a28d10=""
+                                                                style="width: 230px;"
+                                                        >
+                                                            <div tabindex="-1" class="ant-slider flex-grow">
+                                                                <div class="ant-slider-rail"></div>
+                                                                <div
+                                                                        class="ant-slider-track"
+                                                                        style="left: 0%; right: auto; width: 0%;"
+                                                                ></div>
+                                                                <div class="ant-slider-step"></div><!---->
+                                                                <div
+                                                                        class="ant-slider-handle" role="slider"
+                                                                        tabindex="0" aria-valuemin="0"
+                                                                        aria-valuemax="100" aria-valuenow="0"
+                                                                        aria-disabled="false"
+                                                                        style="left: 0%; right: auto; transform: translateX(-50%);"
+                                                                ></div>
+                                                                <div class="ant-slider-mark"></div>
+                                                            </div>
+                                                            <div
+                                                                    class="flex-shrink-0 ml-1 ant-input-number"
+                                                                    style="width: 66px;"
+                                                            >
+                                                                <div class="ant-input-number-handler-wrap"><span><span
+                                                                        unselectable="unselectable" role="button"
+                                                                        aria-label="Increase Value"
+                                                                        aria-disabled="false"
+                                                                        class="ant-input-number-handler ant-input-number-handler-up"
+                                                                ><span
+                                                                        role="img" aria-label="up"
+                                                                        class="anticon anticon-up ant-input-number-handler-up-inner"
+                                                                ><svg
+                                                                        focusable="false" class="" data-icon="up"
+                                                                        width="1em" height="1em" fill="currentColor"
+                                                                        aria-hidden="true" viewBox="64 64 896 896"
+                                                                ><path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path></svg></span></span></span><span
+                                                                        unselectable="unselectable" role="button"
+                                                                        aria-label="Decrease Value" aria-disabled="true"
+                                                                        class="ant-input-number-handler ant-input-number-handler-down ant-input-number-handler-down-disabled"
+                                                                ><span
+                                                                        role="img" aria-label="down"
+                                                                        class="anticon anticon-down ant-input-number-handler-down-inner"
+                                                                ><svg
+                                                                        focusable="false" class="" data-icon="down"
+                                                                        width="1em" height="1em" fill="currentColor"
+                                                                        aria-hidden="true" viewBox="64 64 896 896"
+                                                                ><path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path></svg></span></span>
+                                                                </div>
+                                                                <div class="ant-input-number-input-wrap"><input
+                                                                        role="spinbutton" aria-valuemin="0"
+                                                                        aria-valuemax="100" aria-valuenow="0"
+                                                                        class="ant-input-number-input"
+                                                                        autocomplete="off" max="100" min="0" step="1"
+                                                                ></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="guide" data-v-77a28d10=""><!----></div><!---->
+                                                        <div
+                                                                flex-box="1" class="error full-w" data-v-77a28d10=""
+                                                                style="padding-left: 60px;"
+                                                        ><!----></div>
+                                                    </div>
+                                                </div>
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div
+                                                            class="schema-form__item color" data-v-77a28d10=""
+                                                            data-v-07d8789e=""
+                                                    >
+                                                        <div
+                                                                class="schema-form__label" data-v-77a28d10=""
+                                                                style="width: 60px;"
+                                                        >描边颜色 <span
+                                                                class="schema-form__sublabel" data-v-77a28d10=""
+                                                        ></span><!----><!----></div>
+                                                        <div
+                                                                class="schema-form-color flex items-center schema-form__component"
+                                                                data-v-a38d7942="" data-v-77a28d10=""
+                                                        ><!---->
+                                                            <div class="mr-2" data-v-5be071ba="" data-v-a38d7942="">
+                                                                <div class="straw cursor-pointer" data-v-5be071ba="">
+                                                                    <img
+                                                                            class="" width="14"
+                                                                            src="https://s.xiangjifanyi.com/image-editor/assets/straw.d37598b8.svg"
+                                                                            data-v-5be071ba=""
+                                                                    ></div>
+                                                            </div>
+                                                            <div class="pickr">
+
+                                                                <button
+                                                                        type="button" class="pcr-button" role="button"
+                                                                        aria-label="toggle color picker dialog"
+                                                                        style="--pcr-color:rgba(0, 0, 0, 0);"
+                                                                ></button>
+
+
+                                                            </div>
+                                                            <span class="gray-9 ml-1" data-v-a38d7942=""></span></div>
+                                                        <div class="guide" data-v-77a28d10=""><!----></div><!---->
+                                                        <div
+                                                                flex-box="1" class="error full-w" data-v-77a28d10=""
+                                                                style="padding-left: 60px;"
+                                                        ><!----></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="schema-form__layout rel" data-v-07d8789e="">
+                                        <div class="schema-form__group" data-v-07d8789e="">
+                                            <div class="schema-form__group-header" data-v-07d8789e="">
+                                                <div class="schema-form__group-label fs14 flex1" data-v-07d8789e="">阴影设置
+                                                    <span class="gray9" data-v-07d8789e=""></span></div>
+                                            </div>
+                                            <div class="schema-form__group-content" data-v-07d8789e="">
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div
+                                                            class="schema-form__item slider" data-v-77a28d10=""
+                                                            data-v-07d8789e=""
+                                                    >
+                                                        <div
+                                                                class="schema-form__label" data-v-77a28d10=""
+                                                                style="width: 60px;"
+                                                        >阴影范围 <span
+                                                                class="schema-form__sublabel" data-v-77a28d10=""
+                                                        ></span><!----><!----></div>
+                                                        <div
+                                                                class="flex schema-form__component" data-v-77a28d10=""
+                                                                style="width: 230px;"
+                                                        >
+                                                            <div tabindex="-1" class="ant-slider flex-grow">
+                                                                <div class="ant-slider-rail"></div>
+                                                                <div
+                                                                        class="ant-slider-track"
+                                                                        style="left: 0%; right: auto; width: 0%;"
+                                                                ></div>
+                                                                <div class="ant-slider-step"></div><!---->
+                                                                <div
+                                                                        class="ant-slider-handle" role="slider"
+                                                                        tabindex="0" aria-valuemin="0"
+                                                                        aria-valuemax="100" aria-valuenow="0"
+                                                                        aria-disabled="false"
+                                                                        style="left: 0%; right: auto; transform: translateX(-50%);"
+                                                                ></div>
+                                                                <div class="ant-slider-mark"></div>
+                                                            </div>
+                                                            <div
+                                                                    class="flex-shrink-0 ml-1 ant-input-number"
+                                                                    style="width: 66px;"
+                                                            >
+                                                                <div class="ant-input-number-handler-wrap"><span><span
+                                                                        unselectable="unselectable" role="button"
+                                                                        aria-label="Increase Value"
+                                                                        aria-disabled="false"
+                                                                        class="ant-input-number-handler ant-input-number-handler-up"
+                                                                ><span
+                                                                        role="img" aria-label="up"
+                                                                        class="anticon anticon-up ant-input-number-handler-up-inner"
+                                                                ><svg
+                                                                        focusable="false" class="" data-icon="up"
+                                                                        width="1em" height="1em" fill="currentColor"
+                                                                        aria-hidden="true" viewBox="64 64 896 896"
+                                                                ><path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path></svg></span></span></span><span
+                                                                        unselectable="unselectable" role="button"
+                                                                        aria-label="Decrease Value"
+                                                                        aria-disabled="false"
+                                                                        class="ant-input-number-handler ant-input-number-handler-down"
+                                                                ><span
+                                                                        role="img" aria-label="down"
+                                                                        class="anticon anticon-down ant-input-number-handler-down-inner"
+                                                                ><svg
+                                                                        focusable="false" class="" data-icon="down"
+                                                                        width="1em" height="1em" fill="currentColor"
+                                                                        aria-hidden="true" viewBox="64 64 896 896"
+                                                                ><path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path></svg></span></span>
+                                                                </div>
+                                                                <div class="ant-input-number-input-wrap"><input
+                                                                        role="spinbutton" aria-valuemin="0"
+                                                                        aria-valuemax="100"
+                                                                        class="ant-input-number-input"
+                                                                        autocomplete="off" max="100" min="0" step="1"
+                                                                ></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="guide" data-v-77a28d10=""><!----></div><!---->
+                                                        <div
+                                                                flex-box="1" class="error full-w" data-v-77a28d10=""
+                                                                style="padding-left: 60px;"
+                                                        ><!----></div>
+                                                    </div>
+                                                </div>
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div
+                                                            class="schema-form__item color" data-v-77a28d10=""
+                                                            data-v-07d8789e=""
+                                                    >
+                                                        <div
+                                                                class="schema-form__label" data-v-77a28d10=""
+                                                                style="width: 60px;"
+                                                        >阴影颜色 <span
+                                                                class="schema-form__sublabel" data-v-77a28d10=""
+                                                        ></span><!----><!----></div>
+                                                        <div
+                                                                class="schema-form-color flex items-center schema-form__component"
+                                                                data-v-a38d7942="" data-v-77a28d10=""
+                                                        ><!---->
+                                                            <div class="mr-2" data-v-5be071ba="" data-v-a38d7942="">
+                                                                <div class="straw cursor-pointer" data-v-5be071ba="">
+                                                                    <img
+                                                                            class="" width="14"
+                                                                            src="https://s.xiangjifanyi.com/image-editor/assets/straw.d37598b8.svg"
+                                                                            data-v-5be071ba=""
+                                                                    ></div>
+                                                            </div>
+                                                            <div class="pickr">
+
+                                                                <button
+                                                                        type="button" class="pcr-button" role="button"
+                                                                        aria-label="toggle color picker dialog"
+                                                                        style="--pcr-color:rgba(0, 0, 0, 0);"
+                                                                ></button>
+
+
+                                                            </div>
+                                                            <span class="gray-9 ml-1" data-v-a38d7942=""></span></div>
+                                                        <div class="guide" data-v-77a28d10=""><!----></div><!---->
+                                                        <div
+                                                                flex-box="1" class="error full-w" data-v-77a28d10=""
+                                                                style="padding-left: 60px;"
+                                                        ><!----></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="schema-form__layout rel" data-v-07d8789e="">
+                                        <div class="schema-form__group" data-v-07d8789e="">
+                                            <div class="schema-form__group-header" data-v-07d8789e="">
+                                                <div class="schema-form__group-label fs14 flex1" data-v-07d8789e="">位置信息
+                                                    <span class="gray9" data-v-07d8789e=""></span></div>
+                                            </div>
+                                            <div class="schema-form__group-content" data-v-07d8789e="">
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div class="schema-form__inline" data-v-07d8789e=""><!---->
+                                                        <div
+                                                                class="schema-form__layout rel" data-v-07d8789e=""
+                                                                style="width: 120px;"
+                                                        >
+                                                            <div
+                                                                    class="schema-form__item number" data-v-77a28d10=""
+                                                                    data-v-07d8789e=""
+                                                            >
+                                                                <div
+                                                                        class="schema-form__label" data-v-77a28d10=""
+                                                                        style="width: 30px;"
+                                                                >角度 <span
+                                                                        class="schema-form__sublabel" data-v-77a28d10=""
+                                                                ></span><!----><!----></div>
+                                                                <div
+                                                                        class="schema-form__component"
+                                                                        data-v-731908b1="" data-v-77a28d10=""
+                                                                        style="width: 72px;"
+                                                                ><!---->
+                                                                    <div class="ant-input-number" data-v-731908b1="">
+                                                                        <div class="ant-input-number-handler-wrap">
+                                                                            <span><span
+                                                                                    unselectable="unselectable"
+                                                                                    role="button"
+                                                                                    aria-label="Increase Value"
+                                                                                    aria-disabled="false"
+                                                                                    class="ant-input-number-handler ant-input-number-handler-up"
+                                                                            ><span
+                                                                                    role="img" aria-label="up"
+                                                                                    class="anticon anticon-up ant-input-number-handler-up-inner"
+                                                                            ><svg
+                                                                                    focusable="false" class=""
+                                                                                    data-icon="up" width="1em"
+                                                                                    height="1em" fill="currentColor"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="64 64 896 896"
+                                                                            ><path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path></svg></span></span></span><span
+                                                                                unselectable="unselectable"
+                                                                                role="button"
+                                                                                aria-label="Decrease Value"
+                                                                                aria-disabled="false"
+                                                                                class="ant-input-number-handler ant-input-number-handler-down"
+                                                                        ><span
+                                                                                role="img" aria-label="down"
+                                                                                class="anticon anticon-down ant-input-number-handler-down-inner"
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="down" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path></svg></span></span>
+                                                                        </div>
+                                                                        <div class="ant-input-number-input-wrap"><input
+                                                                                role="spinbutton" aria-valuemin="-360"
+                                                                                aria-valuemax="999999999"
+                                                                                aria-valuenow="0" placeholder="角度"
+                                                                                class="ant-input-number-input"
+                                                                                autocomplete="off" max="999999999"
+                                                                                min="-360" step="1"
+                                                                        ></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10="" style="padding-left: 30px;"
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div class="schema-form__inline" data-v-07d8789e=""><!---->
+                                                        <div
+                                                                class="schema-form__layout rel" data-v-07d8789e=""
+                                                                style="width: 120px;"
+                                                        >
+                                                            <div
+                                                                    class="schema-form__item number" data-v-77a28d10=""
+                                                                    data-v-07d8789e=""
+                                                            >
+                                                                <div
+                                                                        class="schema-form__label" data-v-77a28d10=""
+                                                                        style="width: 30px;"
+                                                                >宽度 <span
+                                                                        class="schema-form__sublabel" data-v-77a28d10=""
+                                                                ></span><!----><!----></div>
+                                                                <div
+                                                                        class="schema-form__component"
+                                                                        data-v-731908b1="" data-v-77a28d10=""
+                                                                        style="width: 72px;"
+                                                                ><!---->
+                                                                    <div class="ant-input-number" data-v-731908b1="">
+                                                                        <div class="ant-input-number-handler-wrap">
+                                                                            <span><span
+                                                                                    unselectable="unselectable"
+                                                                                    role="button"
+                                                                                    aria-label="Increase Value"
+                                                                                    aria-disabled="false"
+                                                                                    class="ant-input-number-handler ant-input-number-handler-up"
+                                                                            ><span
+                                                                                    role="img" aria-label="up"
+                                                                                    class="anticon anticon-up ant-input-number-handler-up-inner"
+                                                                            ><svg
+                                                                                    focusable="false" class=""
+                                                                                    data-icon="up" width="1em"
+                                                                                    height="1em" fill="currentColor"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="64 64 896 896"
+                                                                            ><path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path></svg></span></span></span><span
+                                                                                unselectable="unselectable"
+                                                                                role="button"
+                                                                                aria-label="Decrease Value"
+                                                                                aria-disabled="false"
+                                                                                class="ant-input-number-handler ant-input-number-handler-down"
+                                                                        ><span
+                                                                                role="img" aria-label="down"
+                                                                                class="anticon anticon-down ant-input-number-handler-down-inner"
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="down" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path></svg></span></span>
+                                                                        </div>
+                                                                        <div class="ant-input-number-input-wrap"><input
+                                                                                role="spinbutton" aria-valuemin="0"
+                                                                                aria-valuemax="999999999"
+                                                                                aria-valuenow="169" placeholder="宽度"
+                                                                                class="ant-input-number-input"
+                                                                                autocomplete="off" max="999999999"
+                                                                                min="0" step="1"
+                                                                        ></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10="" style="padding-left: 30px;"
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                                class="schema-form__layout rel" data-v-07d8789e=""
+                                                                style="width: 120px;"
+                                                        >
+                                                            <div
+                                                                    class="schema-form__item number" data-v-77a28d10=""
+                                                                    data-v-07d8789e=""
+                                                            >
+                                                                <div
+                                                                        class="schema-form__label" data-v-77a28d10=""
+                                                                        style="width: 30px;"
+                                                                >高度 <span
+                                                                        class="schema-form__sublabel" data-v-77a28d10=""
+                                                                ></span><!----><!----></div>
+                                                                <div
+                                                                        class="schema-form__component"
+                                                                        data-v-731908b1="" data-v-77a28d10=""
+                                                                        style="width: 72px;"
+                                                                ><!---->
+                                                                    <div
+                                                                            class="ant-input-number ant-input-number-disabled"
+                                                                            data-v-731908b1=""
+                                                                    >
+                                                                        <div class="ant-input-number-handler-wrap">
+                                                                            <span><span
+                                                                                    unselectable="unselectable"
+                                                                                    role="button"
+                                                                                    aria-label="Increase Value"
+                                                                                    aria-disabled="true"
+                                                                                    class="ant-input-number-handler ant-input-number-handler-up"
+                                                                            ><span
+                                                                                    role="img" aria-label="up"
+                                                                                    class="anticon anticon-up ant-input-number-handler-up-inner"
+                                                                            ><svg
+                                                                                    focusable="false" class=""
+                                                                                    data-icon="up" width="1em"
+                                                                                    height="1em" fill="currentColor"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="64 64 896 896"
+                                                                            ><path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path></svg></span></span></span><span
+                                                                                unselectable="unselectable"
+                                                                                role="button"
+                                                                                aria-label="Decrease Value"
+                                                                                aria-disabled="true"
+                                                                                class="ant-input-number-handler ant-input-number-handler-down"
+                                                                        ><span
+                                                                                role="img" aria-label="down"
+                                                                                class="anticon anticon-down ant-input-number-handler-down-inner"
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="down" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path></svg></span></span>
+                                                                        </div>
+                                                                        <div class="ant-input-number-input-wrap"><input
+                                                                                role="spinbutton" aria-valuemin="0"
+                                                                                aria-valuemax="999999999"
+                                                                                aria-valuenow="32" placeholder="高度"
+                                                                                class="ant-input-number-input"
+                                                                                autocomplete="off" disabled=""
+                                                                                max="999999999" min="0" step="1"
+                                                                        ></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10="" style="padding-left: 30px;"
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="schema-form__layout rel" data-v-07d8789e="">
+                                                    <div class="schema-form__inline" data-v-07d8789e=""><!---->
+                                                        <div
+                                                                class="schema-form__layout rel" data-v-07d8789e=""
+                                                                style="width: 120px;"
+                                                        >
+                                                            <div
+                                                                    class="schema-form__item number" data-v-77a28d10=""
+                                                                    data-v-07d8789e=""
+                                                            >
+                                                                <div
+                                                                        class="schema-form__label" data-v-77a28d10=""
+                                                                        style="width: 30px;"
+                                                                >水平 <span
+                                                                        class="schema-form__sublabel" data-v-77a28d10=""
+                                                                ></span><!----><!----></div>
+                                                                <div
+                                                                        class="schema-form__component"
+                                                                        data-v-731908b1="" data-v-77a28d10=""
+                                                                        style="width: 72px;"
+                                                                ><!---->
+                                                                    <div class="ant-input-number" data-v-731908b1="">
+                                                                        <div class="ant-input-number-handler-wrap">
+                                                                            <span><span
+                                                                                    unselectable="unselectable"
+                                                                                    role="button"
+                                                                                    aria-label="Increase Value"
+                                                                                    aria-disabled="false"
+                                                                                    class="ant-input-number-handler ant-input-number-handler-up"
+                                                                            ><span
+                                                                                    role="img" aria-label="up"
+                                                                                    class="anticon anticon-up ant-input-number-handler-up-inner"
+                                                                            ><svg
+                                                                                    focusable="false" class=""
+                                                                                    data-icon="up" width="1em"
+                                                                                    height="1em" fill="currentColor"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="64 64 896 896"
+                                                                            ><path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path></svg></span></span></span><span
+                                                                                unselectable="unselectable"
+                                                                                role="button"
+                                                                                aria-label="Decrease Value"
+                                                                                aria-disabled="false"
+                                                                                class="ant-input-number-handler ant-input-number-handler-down"
+                                                                        ><span
+                                                                                role="img" aria-label="down"
+                                                                                class="anticon anticon-down ant-input-number-handler-down-inner"
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="down" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path></svg></span></span>
+                                                                        </div>
+                                                                        <div class="ant-input-number-input-wrap"><input
+                                                                                role="spinbutton" aria-valuemin="0"
+                                                                                aria-valuemax="999999999"
+                                                                                aria-valuenow="44" placeholder="水平"
+                                                                                class="ant-input-number-input"
+                                                                                autocomplete="off" max="999999999"
+                                                                                min="0" step="1"
+                                                                        ></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10="" style="padding-left: 30px;"
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                                class="schema-form__layout rel" data-v-07d8789e=""
+                                                                style="width: 120px;"
+                                                        >
+                                                            <div
+                                                                    class="schema-form__item number" data-v-77a28d10=""
+                                                                    data-v-07d8789e=""
+                                                            >
+                                                                <div
+                                                                        class="schema-form__label" data-v-77a28d10=""
+                                                                        style="width: 30px;"
+                                                                >垂直 <span
+                                                                        class="schema-form__sublabel" data-v-77a28d10=""
+                                                                ></span><!----><!----></div>
+                                                                <div
+                                                                        class="schema-form__component"
+                                                                        data-v-731908b1="" data-v-77a28d10=""
+                                                                        style="width: 72px;"
+                                                                ><!---->
+                                                                    <div class="ant-input-number" data-v-731908b1="">
+                                                                        <div class="ant-input-number-handler-wrap">
+                                                                            <span><span
+                                                                                    unselectable="unselectable"
+                                                                                    role="button"
+                                                                                    aria-label="Increase Value"
+                                                                                    aria-disabled="false"
+                                                                                    class="ant-input-number-handler ant-input-number-handler-up"
+                                                                            ><span
+                                                                                    role="img" aria-label="up"
+                                                                                    class="anticon anticon-up ant-input-number-handler-up-inner"
+                                                                            ><svg
+                                                                                    focusable="false" class=""
+                                                                                    data-icon="up" width="1em"
+                                                                                    height="1em" fill="currentColor"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="64 64 896 896"
+                                                                            ><path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path></svg></span></span></span><span
+                                                                                unselectable="unselectable"
+                                                                                role="button"
+                                                                                aria-label="Decrease Value"
+                                                                                aria-disabled="false"
+                                                                                class="ant-input-number-handler ant-input-number-handler-down"
+                                                                        ><span
+                                                                                role="img" aria-label="down"
+                                                                                class="anticon anticon-down ant-input-number-handler-down-inner"
+                                                                        ><svg
+                                                                                focusable="false" class=""
+                                                                                data-icon="down" width="1em"
+                                                                                height="1em" fill="currentColor"
+                                                                                aria-hidden="true"
+                                                                                viewBox="64 64 896 896"
+                                                                        ><path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path></svg></span></span>
+                                                                        </div>
+                                                                        <div class="ant-input-number-input-wrap"><input
+                                                                                role="spinbutton" aria-valuemin="0"
+                                                                                aria-valuemax="999999999"
+                                                                                aria-valuenow="17" placeholder="垂直"
+                                                                                class="ant-input-number-input"
+                                                                                autocomplete="off" max="999999999"
+                                                                                min="0" step="1"
+                                                                        ></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="guide" data-v-77a28d10=""><!----></div>
+                                                                <!---->
+                                                                <div
+                                                                        flex-box="1" class="error full-w"
+                                                                        data-v-77a28d10="" style="padding-left: 30px;"
+                                                                ><!----></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!----></form>
+                                <div class="extra-actions" data-v-6ac70ef2="">
+                                    <button class="ant-btn ant-btn-round full-width" type="button" data-v-6ac70ef2="">
+                                        <!----><span
+                                            role="img" aria-label="delete" class="anticon anticon-delete"
+                                            data-v-6ac70ef2=""
+                                    ><svg
+                                            focusable="false" class="" data-icon="delete" width="1em" height="1em"
+                                            fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"
+                                    ><path d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z"></path></svg></span><span>删除</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!---->
+    <div class="hidden" data-v-9a271fd4=""><img
+            src="http://i.tosoiot.com/20220902/1662094417/c1e8a211c0cf48fa/O1CN01Ae0pKD1raphKfsEvs_68975648_fa5e4cea6e7f7d14.jpg"
+            id="J-original-img" crossorigin="" data-v-9a271fd4=""
+    ><img
+            src="https://i.tosoiot.com/27fa35e6760f0f5a/O1CN01Ae0pKD1raphKfsEvs_68975648_fa5e4cea6e7f7d14-i.jpg"
+            id="J-rm-img" crossorigin="" data-v-9a271fd4=""
+    >
+        <canvas id="inpaint-res-canvas" data-v-9a271fd4=""></canvas>
+    </div>
+</div>
+
+
+<!----><!----><!----><!---->
+<div
+        class="pcr-app " data-theme="classic" aria-label="color picker dialog" role="window"
+        style="left: 1465.5px; top: 427px;"
+>
+    <div class="pcr-selection">
+        <div class="pcr-color-preview">
+            <button
+                    type="button" class="pcr-last-color" aria-label="use previous color"
+                    style="--pcr-color:rgba(255, 255, 255, 1);"
+            ></button>
+            <div class="pcr-current-color" style="--pcr-color:rgba(255, 255, 255, 1);"></div>
+        </div>
+
+        <div class="pcr-color-palette">
+            <div
+                    class="pcr-picker"
+                    style="left: calc(0% - 9px); top: calc(0% - 9px); background: rgb(255, 255, 255);"
+            ></div>
+            <div
+                    class="pcr-palette" tabindex="0" aria-label="color selection area" role="listbox"
+                    style="background: linear-gradient(to top, rgb(0, 0, 0), transparent), linear-gradient(to left, rgb(255, 0, 0), rgb(255, 255, 255));"
+            ></div>
+        </div>
+
+        <div class="pcr-color-chooser" style="display:none" hidden="">
+            <div class="pcr-picker"></div>
+            <div class="pcr-hue pcr-slider" tabindex="0" aria-label="hue selection slider" role="slider"></div>
+        </div>
+
+        <div class="pcr-color-opacity">
+            <div class="pcr-picker" style="top: calc(100% - 9px); background: rgb(0, 0, 0);"></div>
+            <div class="pcr-opacity pcr-slider" tabindex="0" aria-label="selection slider" role="slider"></div>
+        </div>
+    </div>
+
+    <div class="pcr-swatches ">
+        <button type="button" style="--pcr-color: rgba(0, 0, 0, 1)" aria-label="color swatch"></button>
+        <button
+                type="button" style="--pcr-color: rgba(255, 255, 255, 1)" aria-label="color swatch" class="pcr-active"
+        ></button>
+        <button type="button" style="--pcr-color: rgba(255, 0, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 255, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 0, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 255, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 255, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 0, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 150, 136, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(76, 175, 80, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(139, 195, 74, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(205, 220, 57, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 235, 59, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 193, 7, 1)" aria-label="color swatch"></button>
+    </div>
+
+    <div class="pcr-interaction">
+        <input class="pcr-result" type="text" spellcheck="false" aria-label="color input field">
+
+        <input class="pcr-type active" data-type="HEXA" value="HEXA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="RGBA" value="RGBA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="HSLA" value="HSLA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="HSVA" value="HSVA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="CMYK" value="CMYK" type="button" style="display:none" hidden="">
+
+        <input class="pcr-save" value="保存" type="button" style="display:none" hidden="" aria-label="save and close">
+        <input class="pcr-cancel" value="取消" type="button" style="display:none" hidden="" aria-label="cancel and close">
+        <input class="pcr-clear" value="清除" type="button" aria-label="clear and close">
+    </div>
+</div>
+<div
+        class="pcr-app " data-theme="classic" aria-label="color picker dialog" role="window"
+        style="left: 1465.5px; top: 465px;"
+>
+    <div class="pcr-selection">
+        <div class="pcr-color-preview">
+            <button
+                    type="button" class="pcr-last-color" aria-label="use previous color"
+                    style="--pcr-color:rgba(0, 0, 0, 0);"
+            ></button>
+            <div class="pcr-current-color" style="--pcr-color:rgba(0, 0, 0, 0);"></div>
+        </div>
+
+        <div class="pcr-color-palette">
+            <div
+                    class="pcr-picker"
+                    style="left: calc(0% - 9px); top: calc(100% - 9px); background: rgba(0, 0, 0, 0);"
+            ></div>
+            <div
+                    class="pcr-palette" tabindex="0" aria-label="color selection area" role="listbox"
+                    style="background: linear-gradient(to top, rgba(0, 0, 0, 0), transparent), linear-gradient(to left, rgba(255, 0, 0, 0), rgba(255, 255, 255, 0));"
+            ></div>
+        </div>
+
+        <div class="pcr-color-chooser" style="display:none" hidden="">
+            <div class="pcr-picker"></div>
+            <div class="pcr-hue pcr-slider" tabindex="0" aria-label="hue selection slider" role="slider"></div>
+        </div>
+
+        <div class="pcr-color-opacity">
+            <div class="pcr-picker" style="top: calc(0% - 9px); background: rgba(0, 0, 0, 0);"></div>
+            <div class="pcr-opacity pcr-slider" tabindex="0" aria-label="selection slider" role="slider"></div>
+        </div>
+    </div>
+
+    <div class="pcr-swatches ">
+        <button type="button" style="--pcr-color: rgba(0, 0, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 255, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 0, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 255, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 0, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 255, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 255, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 0, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 150, 136, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(76, 175, 80, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(139, 195, 74, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(205, 220, 57, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 235, 59, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 193, 7, 1)" aria-label="color swatch"></button>
+    </div>
+
+    <div class="pcr-interaction">
+        <input class="pcr-result" type="text" spellcheck="false" aria-label="color input field">
+
+        <input class="pcr-type" data-type="HEXA" value="HEXA" type="button" style="display:none" hidden="">
+        <input class="pcr-type active" data-type="RGBA" value="RGBA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="HSLA" value="HSLA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="HSVA" value="HSVA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="CMYK" value="CMYK" type="button" style="display:none" hidden="">
+
+        <input class="pcr-save" value="保存" type="button" style="display:none" hidden="" aria-label="save and close">
+        <input class="pcr-cancel" value="取消" type="button" style="display:none" hidden="" aria-label="cancel and close">
+        <input class="pcr-clear" value="清除" type="button" aria-label="clear and close">
+    </div>
+</div>
+<div
+        class="pcr-app " data-theme="classic" aria-label="color picker dialog" role="window"
+        style="left: 1465.5px; top: 390.469px;"
+>
+    <div class="pcr-selection">
+        <div class="pcr-color-preview">
+            <button
+                    type="button" class="pcr-last-color" aria-label="use previous color"
+                    style="--pcr-color:rgba(0, 0, 0, 0);"
+            ></button>
+            <div class="pcr-current-color" style="--pcr-color:rgba(0, 0, 0, 0);"></div>
+        </div>
+
+        <div class="pcr-color-palette">
+            <div
+                    class="pcr-picker"
+                    style="left: calc(0% - 9px); top: calc(100% - 9px); background: rgba(0, 0, 0, 0);"
+            ></div>
+            <div
+                    class="pcr-palette" tabindex="0" aria-label="color selection area" role="listbox"
+                    style="background: linear-gradient(to top, rgba(0, 0, 0, 0), transparent), linear-gradient(to left, rgba(255, 0, 0, 0), rgba(255, 255, 255, 0));"
+            ></div>
+        </div>
+
+        <div class="pcr-color-chooser" style="display:none" hidden="">
+            <div class="pcr-picker"></div>
+            <div class="pcr-hue pcr-slider" tabindex="0" aria-label="hue selection slider" role="slider"></div>
+        </div>
+
+        <div class="pcr-color-opacity">
+            <div class="pcr-picker" style="top: calc(0% - 9px); background: rgba(0, 0, 0, 0);"></div>
+            <div class="pcr-opacity pcr-slider" tabindex="0" aria-label="selection slider" role="slider"></div>
+        </div>
+    </div>
+
+    <div class="pcr-swatches ">
+        <button type="button" style="--pcr-color: rgba(0, 0, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 255, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 0, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 255, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 0, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 255, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 255, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 0, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 150, 136, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(76, 175, 80, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(139, 195, 74, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(205, 220, 57, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 235, 59, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 193, 7, 1)" aria-label="color swatch"></button>
+    </div>
+
+    <div class="pcr-interaction">
+        <input class="pcr-result" type="text" spellcheck="false" aria-label="color input field">
+
+        <input class="pcr-type" data-type="HEXA" value="HEXA" type="button" style="display:none" hidden="">
+        <input class="pcr-type active" data-type="RGBA" value="RGBA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="HSLA" value="HSLA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="HSVA" value="HSVA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="CMYK" value="CMYK" type="button" style="display:none" hidden="">
+
+        <input class="pcr-save" value="保存" type="button" style="display:none" hidden="" aria-label="save and close">
+        <input class="pcr-cancel" value="取消" type="button" style="display:none" hidden="" aria-label="cancel and close">
+        <input class="pcr-clear" value="清除" type="button" aria-label="clear and close">
+    </div>
+</div>
+<div
+        class="pcr-app " data-theme="classic" aria-label="color picker dialog" role="window"
+        style="left: 1465.5px; top: 512.469px;"
+>
+    <div class="pcr-selection">
+        <div class="pcr-color-preview">
+            <button
+                    type="button" class="pcr-last-color" aria-label="use previous color"
+                    style="--pcr-color:rgba(0, 0, 0, 0);"
+            ></button>
+            <div class="pcr-current-color" style="--pcr-color:rgba(0, 0, 0, 0);"></div>
+        </div>
+
+        <div class="pcr-color-palette">
+            <div
+                    class="pcr-picker"
+                    style="left: calc(0% - 9px); top: calc(100% - 9px); background: rgba(0, 0, 0, 0);"
+            ></div>
+            <div
+                    class="pcr-palette" tabindex="0" aria-label="color selection area" role="listbox"
+                    style="background: linear-gradient(to top, rgba(0, 0, 0, 0), transparent), linear-gradient(to left, rgba(255, 0, 0, 0), rgba(255, 255, 255, 0));"
+            ></div>
+        </div>
+
+        <div class="pcr-color-chooser" style="display:none" hidden="">
+            <div class="pcr-picker"></div>
+            <div class="pcr-hue pcr-slider" tabindex="0" aria-label="hue selection slider" role="slider"></div>
+        </div>
+
+        <div class="pcr-color-opacity">
+            <div class="pcr-picker" style="top: calc(0% - 9px); background: rgba(0, 0, 0, 0);"></div>
+            <div class="pcr-opacity pcr-slider" tabindex="0" aria-label="selection slider" role="slider"></div>
+        </div>
+    </div>
+
+    <div class="pcr-swatches ">
+        <button type="button" style="--pcr-color: rgba(0, 0, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 255, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 0, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 255, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 0, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 255, 0, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 255, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 0, 255, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(0, 150, 136, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(76, 175, 80, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(139, 195, 74, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(205, 220, 57, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 235, 59, 1)" aria-label="color swatch"></button>
+        <button type="button" style="--pcr-color: rgba(255, 193, 7, 1)" aria-label="color swatch"></button>
+    </div>
+
+    <div class="pcr-interaction">
+        <input class="pcr-result" type="text" spellcheck="false" aria-label="color input field">
+
+        <input class="pcr-type" data-type="HEXA" value="HEXA" type="button" style="display:none" hidden="">
+        <input class="pcr-type active" data-type="RGBA" value="RGBA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="HSLA" value="HSLA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="HSVA" value="HSVA" type="button" style="display:none" hidden="">
+        <input class="pcr-type" data-type="CMYK" value="CMYK" type="button" style="display:none" hidden="">
+
+        <input class="pcr-save" value="保存" type="button" style="display:none" hidden="" aria-label="save and close">
+        <input class="pcr-cancel" value="取消" type="button" style="display:none" hidden="" aria-label="cancel and close">
+        <input class="pcr-clear" value="清除" type="button" aria-label="clear and close">
+    </div>
+</div>
+
+<!--&lt;!&ndash; core target html 통신 &ndash;&gt;-->
+<!--<script type="text/javascript">-->
+
+<!--    window.addEventListener('message', function(e) {-->
+<!--        // 내 사이-->
+<!--        if (name !== 'XJ_IMAGE_EDITOR_REQUESTIDS') {-->
+<!--            return false;-->
+<!--        }-->
+<!--        // 2.监听 iframe onload 事件，并向其发送需要处理的图片 requestId 数组-->
+<!--        window.onload = function() {-->
+<!--            window.postMessage(-->
+<!--                    {-->
+<!--                        name: 'XJ_IMAGE_EDITOR_REQUESTIDS',-->
+<!--                        requestIds: ['27fa35e6760f0f5a'],-->
+<!--                    },-->
+<!--                    '*',-->
+<!--            );-->
+<!--        };-->
+<!--        // 3.监听 iframe 发送的 message 事件，从中获取精修结果-->
+<!--        window.addEventListener('message', function(e) {-->
+<!--            const {name, all} = e.data;-->
+<!--            if (e.origin === 'https://www.xiangjifanyi.com' && name === 'XJ_IMAGE_EDITOR_URL') {alert(111)-->
+<!--                console.log(all);-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+
+<!-- core 수정금지 -->
+<script>
+    (function() {
+        var ws = new WebSocket('ws://' + window.location.host +
+                '/jb-server-page?reloadMode=RELOAD_ON_SAVE&' +
+                'referrer=' + encodeURIComponent(window.location.pathname));
+        ws.onmessage = function(msg) {
+            if (msg.data === 'reload') {
+                window.location.reload();
+            }
+            if (msg.data.startsWith('update-css ')) {
+                var messageId = msg.data.substring(11);
+                var links = document.getElementsByTagName('link');
+                for (var i = 0; i < links.length; i++) {
+                    var link = links[i];
+                    if (link.rel !== 'stylesheet') continue;
+                    var clonedLink = link.cloneNode(true);
+                    var newHref = link.href.replace(/(&|\?)jbUpdateLinksId=\d+/, '$1jbUpdateLinksId=' + messageId);
+                    if (newHref !== link.href) {
+                        clonedLink.href = newHref;
+                    } else {
+                        var indexOfQuest = newHref.indexOf('?');
+                        if (indexOfQuest >= 0) {
+                            // to support ?foo#hash
+                            clonedLink.href = newHref.substring(0, indexOfQuest + 1) + 'jbUpdateLinksId=' + messageId +
+                                    '&' +
+                                    newHref.substring(indexOfQuest + 1);
+                        } else {
+                            clonedLink.href += '?' + 'jbUpdateLinksId=' + messageId;
+                        }
+                    }
+                    link.replaceWith(clonedLink);
+                }
+            }
+        };
+    })();
+</script>
+
+<!-- 번역 -->
+<script>
+    (function() {
+        var script = document.createElement('script');
+        script.src = '//translate.google.cn/translate_a/element.js?cb=googleTranslateElementInit';
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+        var google_translate_element = document.createElement('div');
+        google_translate_element.id = 'google_translate_element';
+        google_translate_element.style = 'position:fixed; bottom:10px; right:10px; cursor:pointer; display: none;';
+        document.documentElement.appendChild(google_translate_element);
+
+        script = document.createElement('script');
+        script.innerHTML = 'function googleTranslateElementInit() {' +
+                'new google.translate.TranslateElement({' +
+                'layout: google.translate.TranslateElement.InlineLayout.SIMPLE,' +
+                'multilanguagePage: true,' +
+                'pageLanguage: \'ko\',' +
+                'includedLanguages: \'ko,zh-CN,zh-TW,en\'' +
+                '}, \'google_translate_element\');}';
+        document.getElementsByTagName('head')[0].appendChild(script);
+    })();
+</script>
+</body>
+</html>

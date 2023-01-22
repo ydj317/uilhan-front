@@ -16,7 +16,7 @@
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
 import router from "@/router";
-import {lib} from '@/util/lib';
+import { lib } from "@/util/lib";
 
 export default {
   computed: {
@@ -91,6 +91,8 @@ export default {
      * @returns {boolean}
      */
     submit() {
+      if (this.validateFilterProductWords() === false) return false;
+
       this.product.loading = true;
 
       let send = this.checkMarket();
@@ -103,9 +105,12 @@ export default {
 
       // 태그 제거 (사양)
       let sItemDetail = this.product.item_detail;
-      sItemDetail = sItemDetail.replaceAll('<p style="display: flex; flex-flow: column nowrap; align-items: center;">', '');
-      sItemDetail = sItemDetail.replaceAll('<p>', '');
-      sItemDetail = sItemDetail.replaceAll('</p>', '');
+      sItemDetail = sItemDetail.replaceAll(
+        '<p style="display: flex; flex-flow: column nowrap; align-items: center;">',
+        ""
+      );
+      sItemDetail = sItemDetail.replaceAll("<p>", "");
+      sItemDetail = sItemDetail.replaceAll("</p>", "");
       this.product.item_detail = sItemDetail;
 
       let oForm = new FormData();
@@ -113,35 +118,55 @@ export default {
 
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm).then(
         (res) => {
-          if (res.status === undefined || res.status !== '2000') {
+          if (res.status === undefined || res.status !== "2000") {
             alert(res.message);
             this.product.loading = false;
             return false;
           }
 
           this.product.sku = res.data.sku;
-          this.product.item_thumbnails = res.data.item_thumb;
+          let aTempItemThumbnails = res.data.item_thumb || [];
           this.product.item_detail = res.data.item_detail;
 
           for (let i = 0; i < this.product.sku.length; i++) {
             this.product.sku[i].checked = false;
           }
 
-          // this.product.fileList = this.product.item_thumbnails;
-
-          for (let i = 0; i < this.product.item_thumbnails.length; i++) {
-            this.product.fileList[i].order = i + 1;
-            this.product.fileList[i].checked = false;
-            this.product.fileList[i].visible = false;
-            this.product.fileList[i].url = this.product.item_thumbnails[i];
+          let aItemThumbnails = [];
+          for (let i = 0; i < aTempItemThumbnails.length; i++) {
+            aItemThumbnails.push({
+              url: aTempItemThumbnails[i],
+              order: i + 1,
+              checked: false,
+              visible: false,
+            });
           }
-
-          this.product.bak_sku = JSON.parse(JSON.stringify(this.product.sku));
+          this.product.item_thumbnails = aItemThumbnails;
 
           alert("저장 성공");
           this.product.loading = false;
         }
       );
+    },
+
+    validateFilterProductWords() {
+      if (
+        lib.isUndefined(this.product.filter_product_words) ||
+        this.product.check_filter_word === false
+      ) {
+        alert("상품명 금지어 체크중입니다.잠시후 다시 시도해 주세요.");
+
+        return false;
+      }
+      if (lib.isArray(Object.values(this.product.filter_product_words), true)) {
+        alert(
+          "상품명에 금지어가 포함되었습니다.상품명 수정후 다시 시도해 주세요."
+        );
+
+        return false;
+      }
+
+      return true;
     },
 
     getForm(oForm, send) {

@@ -44,6 +44,13 @@ const routes = [
             /* webpackChunkName: 'user_manager' */
             component: () => import("../views/User/Manage"),
           },
+
+          {
+            path: "/user/FilterProductWords",
+            name: "user_filterProductWords",
+            /* webpackChunkName: 'user_manager' */
+            component: () => import("../views/User/FilterProductWords"),
+          },
           // {
           //   path: "/user/register",
           //   name: "user_register",

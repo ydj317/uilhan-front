@@ -6,12 +6,12 @@
       <div class="top_button_left_item">
         <!--일괄적용-->
         <a-button class="top_button_left_item_button" @click="skuBatch"
-          >일괄적용</a-button
-        >
+          >일괄적용
+        </a-button>
         <!--품목삭제-->
         <a-button class="top_button_left_item_button" @click="deleteSku"
-          >품목삭제</a-button
-        >
+          >품목삭제
+        </a-button>
       </div>
 
       <!--sku 상단 right 버튼-->
@@ -25,10 +25,10 @@
           >
           </a-select>
           <a-button
-              class="top_button_right_item_button"
-              @click="setWholesaleMargin"
-          >도매마진</a-button
-          >
+            class="top_button_right_item_button"
+            @click="setWholesaleMargin"
+            >도매마진
+          </a-button>
         </div>
 
         <!--판매마진-->
@@ -40,10 +40,10 @@
           >
           </a-select>
           <a-button
-              class="top_button_right_item_button"
-              @click="setSellingMargin"
-          >판매마진</a-button
-          >
+            class="top_button_right_item_button"
+            @click="setSellingMargin"
+            >판매마진
+          </a-button>
         </div>
 
         <!--할인마진-->
@@ -55,8 +55,8 @@
           >
           </a-select>
           <a-button class="top_button_right_item_button" @click="setDispMargin"
-          >할인전</a-button
-          >
+            >할인전
+          </a-button>
         </div>
 
         <!--환율-->
@@ -68,8 +68,8 @@
           >
           </a-select>
           <a-button class="top_button_right_item_button" @click="setRateMargin"
-          >환율</a-button
-          >
+            >환율
+          </a-button>
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@
         :data-source="this.product.sku"
       >
         <!--bodyCell-->
-        <template v-slot:bodyCell="{ text, record, column }">
+        <template v-slot:bodyCell="{ record, column }">
           <!--선택-->
           <template v-if="column.key === 'checked'">
             <div class="center">
@@ -122,20 +122,23 @@
                   alt=""
                   v-if="record.img"
                   :src="record.img"
-                  @click="imageEditorVisible(record, record.img)"
+                  @click="translatePopup(record, record.img)"
                 />
               </div>
               <a-button
                 class="sku_image_button"
                 @click="skuImageWindowVisible(record.key)"
-                >선택</a-button
-              >
+                >선택
+              </a-button>
             </div>
           </template>
 
           <!--스펙-->
           <template v-else-if="column.key === 'spec'">
-            <div class="center" :style="record.spec.length > 20 ? 'color: red' : ''">
+            <div
+              class="center"
+              :style="record.spec.length > 20 ? 'color: red' : ''"
+            >
               {{ record.spec }}
             </div>
           </template>
@@ -155,10 +158,11 @@
               ><span> (CNY {{ record.original_price_cn }})</span>
             </div>
             <div v-if="record.original_price_cn === 0 || record.editor === 'T'">
-              <a-input :style="
-                record.img
-                ? `height: 130px; text-align: center; border: none;`
-                : `height: 30px; text-align: center; border: none;`
+              <a-input
+                :style="
+                  record.img
+                    ? `height: 130px; text-align: center; border: none;`
+                    : `height: 30px; text-align: center; border: none;`
                 "
                 @input="setOriginalPrice(record)"
                 v-model:value="record[column.key]"
@@ -168,21 +172,16 @@
 
           <!--입력-->
           <template
-              v-else-if="
-              [
-                'stock',
-                'shipping_fee_cn',
-              ].includes(column.key)
-            "
+            v-else-if="['stock', 'shipping_fee_cn'].includes(column.key)"
           >
             <a-input
-                :style="
+              :style="
                 record.img
                   ? `height: 130px; text-align: center; border: none;`
                   : `height: 30px; text-align: center; border: none;`
               "
-                @blur="setRateMargin"
-                v-model:value="record[column.key]"
+              @blur="setRateMargin"
+              v-model:value="record[column.key]"
             />
           </template>
 
@@ -202,26 +201,15 @@
         </template>
       </a-table>
     </div>
-
-    <!-- 편집기 세트 -->
-    <ImageEditorGroup
-      ref="imageEditorGroup"
-      @pushImageData="pushImageData"
-    ></ImageEditorGroup>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import { lib } from "@/util/lib";
-import ImageEditorGroup from "../ImageEditor/imageEditorGroup.vue";
 
 export default {
   name: "productDetailSku",
-
-  components: {
-    ImageEditorGroup,
-  },
 
   computed: {
     ...mapState(["product"]),
@@ -310,28 +298,47 @@ export default {
       this.product.sku.map((data, i) => {
         if (data.key === record.key) {
           // 구매원가 (중국화폐) 수정여부
-          this.product.sku[i].editor = 'T';
+          this.product.sku[i].editor = "T";
 
           // 구매원가 (한국화폐)
-          this.product.sku[i].original_price_ko = Math.ceil(Number(record["original_price_cn"] * Number(this.product.rate_margin_option)) / 100) * 100;
+          this.product.sku[i].original_price_ko =
+            Math.ceil(
+              Number(
+                record["original_price_cn"] *
+                  Number(this.product.rate_margin_option)
+              ) / 100
+            ) * 100;
 
           // 도매가
-          let wholesale_price = ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
-              (1 + (Number(this.product["wholesale_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
-          this.product.sku[i].wholesale_price = Math.ceil(Number(wholesale_price) / 100) * 100;
+          let wholesale_price = (
+            (Number(data["original_price_cn"]) +
+              Number(data["shipping_fee_cn"])) *
+            (1 + Number(this.product["wholesale_margin_option"]) / 100) *
+            Number(this.product.rate_margin_option)
+          ).toFixed(0);
+          this.product.sku[i].wholesale_price =
+            Math.ceil(Number(wholesale_price) / 100) * 100;
 
           // 판매가
-          let selling_price = ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
-              (1 + (Number(this.product["selling_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
-          this.product.sku[i].selling_price = Math.ceil(Number(selling_price) / 100) * 100;
+          let selling_price = (
+            (Number(data["original_price_cn"]) +
+              Number(data["shipping_fee_cn"])) *
+            (1 + Number(this.product["selling_margin_option"]) / 100) *
+            Number(this.product.rate_margin_option)
+          ).toFixed(0);
+          this.product.sku[i].selling_price =
+            Math.ceil(Number(selling_price) / 100) * 100;
 
           // 할인가
-          let disp_price =
-              ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
-                  (1 + (Number(this.product["selling_margin_option"]) / 100)) *
-                  (1 + (Number(this.product["disp_margin_option"]) / 100)) *
-                  Number(this.product.rate_margin_option)).toFixed(0);
-          this.product.sku[i].disp_price = Math.ceil(Number(disp_price) / 100) * 100;
+          let disp_price = (
+            (Number(data["original_price_cn"]) +
+              Number(data["shipping_fee_cn"])) *
+            (1 + Number(this.product["selling_margin_option"]) / 100) *
+            (1 + Number(this.product["disp_margin_option"]) / 100) *
+            Number(this.product.rate_margin_option)
+          ).toFixed(0);
+          this.product.sku[i].disp_price =
+            Math.ceil(Number(disp_price) / 100) * 100;
         }
       });
     },
@@ -343,11 +350,17 @@ export default {
      */
     setWholesaleMargin() {
       this.product.sku.map((data, i) => {
-        let wholesale_price = ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
-          (1 + (Number(this.product["wholesale_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
-        this.product.sku[i].wholesale_price = Math.ceil(Number(wholesale_price) / 100) * 100;
+        let wholesale_price = (
+          (Number(data["original_price_cn"]) +
+            Number(data["shipping_fee_cn"])) *
+          (1 + Number(this.product["wholesale_margin_option"]) / 100) *
+          Number(this.product.rate_margin_option)
+        ).toFixed(0);
+        this.product.sku[i].wholesale_price =
+          Math.ceil(Number(wholesale_price) / 100) * 100;
       });
-      this.product.item_wholesale_margin_option = this.product.wholesale_margin_option;
+      this.product.item_wholesale_margin_option =
+        this.product.wholesale_margin_option;
     },
 
     /**
@@ -357,11 +370,17 @@ export default {
      */
     setSellingMargin() {
       this.product.sku.map((data, i) => {
-        let selling_price = ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
-            (1 + (Number(this.product["selling_margin_option"]) / 100)) * Number(this.product.rate_margin_option)).toFixed(0);
-        this.product.sku[i].selling_price = Math.ceil(Number(selling_price) / 100) * 100;
+        let selling_price = (
+          (Number(data["original_price_cn"]) +
+            Number(data["shipping_fee_cn"])) *
+          (1 + Number(this.product["selling_margin_option"]) / 100) *
+          Number(this.product.rate_margin_option)
+        ).toFixed(0);
+        this.product.sku[i].selling_price =
+          Math.ceil(Number(selling_price) / 100) * 100;
       });
-      this.product.item_selling_margin_option = this.product.selling_margin_option;
+      this.product.item_selling_margin_option =
+        this.product.selling_margin_option;
     },
 
     /**
@@ -371,12 +390,15 @@ export default {
      */
     setDispMargin() {
       this.product.sku.map((data, i) => {
-        let disp_price =
-            ((Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
-                (1 + (Number(this.product["selling_margin_option"]) / 100)) *
-                (1 + (Number(this.product["disp_margin_option"]) / 100)) *
-                Number(this.product.rate_margin_option)).toFixed(0);
-        this.product.sku[i].disp_price = Math.ceil(Number(disp_price) / 100) * 100;
+        let disp_price = (
+          (Number(data["original_price_cn"]) +
+            Number(data["shipping_fee_cn"])) *
+          (1 + Number(this.product["selling_margin_option"]) / 100) *
+          (1 + Number(this.product["disp_margin_option"]) / 100) *
+          Number(this.product.rate_margin_option)
+        ).toFixed(0);
+        this.product.sku[i].disp_price =
+          Math.ceil(Number(disp_price) / 100) * 100;
       });
       this.product.item_disp_margin_option = this.product.disp_margin_option;
     },
@@ -387,13 +409,6 @@ export default {
      * sku[i].wholesale_price = sku[i].wholesale_price * 선택한 환율
      */
     setRateMargin() {
-      // 도매가 = 도매가 * 환율마진율
-      // this.product.bak_sku.map((data, i) => {
-      //   this.product.sku[i].wholesale_price =
-      //     (Number(data["original_price_cn"]) + Number(data["shipping_fee_cn"])) *
-      //       (1 + (Number(this.product["wholesale_margin_option"]) / 100)) * Number(this.product.rate_option);
-      // });
-
       this.setWholesaleMargin();
       this.setSellingMargin();
       this.setDispMargin();
@@ -461,32 +476,57 @@ export default {
       this.sku_image_window_visible = false;
     },
 
-    // 이미지 편집기 노출
-    imageEditorVisible(record, url) {
-      this.$refs.imageEditorGroup.aPhotoCollection = [];
-      Object.values([{ url: url, key: record.key }]).map((oImageInfo) => {
-        this.$refs.imageEditorGroup.aPhotoCollection.push({
+    translatePopup(record, url = "") {
+      // 변역완료된 상품은 편집
+      if (record.img.indexOf("https://i.tosoiot.com/") !== -1) {
+        this.requestXiangji([url]);
+
+        return false;
+      }
+
+      this.product.bProductDetailsEditor = false;
+      this.product.bImageEditorModule = true;
+      this.product.aPhotoCollection = [
+        {
           msg: "",
-          key: oImageInfo.key,
+          key: record.key,
           name: "",
           order: "",
           checked: true,
           visible: true,
-          original_url: oImageInfo.url,
+          original_url: url,
           translate_url: "",
           translate_status: false,
-        });
-      });
-
-      this.$refs.imageEditorGroup.mInitEditorImage(false);
+        },
+      ];
     },
 
-    // 편집완료된 이미지 적용
-    pushImageData(key, url) {
-      Object.values(this.product.sku).map((oDataSource, i) => {
-        if (oDataSource.key === key) {
-          this.product.sku[i].img = url;
-        }
+    // 이미지 편집
+    requestXiangji(aImagesUrl) {
+      this.product.requestXiangji(aImagesUrl, (oRequestId) => {
+        Object.keys(oRequestId).map((sRequestId) => {
+          this.product.sku.map((data, i) => {
+            if (
+              lib.isString(data.img, true) === true &&
+              data.img.split("/").includes(sRequestId) === true
+            ) {
+              this.product.sku[i].img = oRequestId[sRequestId];
+            }
+          });
+          // SKU 使用 SPEC 图片编辑时 同时 更新 SPEC 图片 (图片编辑器 只认ID 不认图片)
+          this.product.item_thumbnails.map((data, i) => {
+            if (
+              lib.isString(data.url, true) === true &&
+              data.url.split("/").includes(sRequestId) === true
+            ) {
+              this.product.item_thumbnails[i].url = oRequestId[sRequestId];
+            }
+          });
+        });
+
+        // 이미지 편집기 닫기
+        this.product.bImageEditorModule = false;
+        this.product.xiangjiVisible = false;
       });
     },
 

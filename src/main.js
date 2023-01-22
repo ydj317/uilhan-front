@@ -36,6 +36,7 @@ import {
     Alert,
     Card,
     Collapse,
+    Pagination,
 } from "ant-design-vue";
 
 import DatePicker from 'ant-design-vue/es/date-picker/moment';
@@ -73,4 +74,5 @@ createApp(App)
     .use(Alert)
     .use(Card)
     .use(Collapse)
+    .use(Pagination)
     .mount("#app");

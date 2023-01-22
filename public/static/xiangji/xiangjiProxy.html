@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        body {
+            top: 0 !important;
+        }
+        .skiptranslate {
+            display: none;
+        }
+        .anticon {
+            display: inline-block;
+            color: inherit;
+            font-style: normal;
+            line-height: 0;
+            text-align: center;
+            text-transform: none;
+            vertical-align: -0.125em;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .anticon > * {
+            line-height: 1;
+        }
+
+        .anticon svg {
+            display: inline-block;
+        }
+
+        .anticon::before {
+            display: none;
+        }
+
+        .anticon .anticon-icon {
+            display: block;
+        }
+
+        .anticon[tabindex] {
+            cursor: pointer;
+        }
+
+        .anticon-spin::before,
+        .anticon-spin {
+            display: inline-block;
+            -webkit-animation: loadingCircle 1s infinite linear;
+            animation: loadingCircle 1s infinite linear;
+        }
+
+        @-webkit-keyframes loadingCircle {
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes loadingCircle {
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://i.tosoiot.com/static/images/favicon.ico">
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/harmonyOS/HarmonyOS_Sans_Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/harmonyOS/HarmonyOS_Sans_TC_Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/NanumGothic-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/CookieRun-Regular.otf" as="font"
+            type="font/otf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/EastSeaDokdo-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/GowunBatang-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/SingleDay-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/korean/SongMyung-Regular.ttf" as="font"
+            type="font/ttf" crossorigin=""
+    >
+    <link
+            rel="preload" href="https://i.tosoiot.com/static/font/japan/FamiljenGrotesk-Regular.otf" as="font"
+            type="font/otf" crossorigin=""
+    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no, viewport-fit=cover">
+    <title>이미지 편집기</title>
+    <script type="module" crossorigin="" src="https://s.xiangjifanyi.com/image-editor/assets/main.86687a96.js"></script>
+    <link rel="modulepreload" href="https://s.xiangjifanyi.com/image-editor/assets/index.61607923.js">
+    <link rel="stylesheet" href="https://s.xiangjifanyi.com/image-editor/assets/index.f10a05d1.css">
+    <link rel="stylesheet" href="https://s.xiangjifanyi.com/image-editor/assets/main.8aa5e3bc.css">
+    <link rel="stylesheet" href="https://s.xiangjifanyi.com/image-editor/assets/font.8f2349a6.css">
+</head>
+
+<body>
+<div id="app"></div>
+</body>
+</html>
