@@ -282,11 +282,11 @@ export default defineComponent({
 
       /* 단어길이 체크 최대 10자 */
       let aFail = aFilterProductWords.filter(
-        (sFilterWord) => sFilterWord.length >= 10
+        (sFilterWord) => sFilterWord.length >= 100
       );
       if (aFail.length > 0) {
         message.warning(
-          "상품명 금지어 최대길이는 10자 이내로 입력해 주세요.\n여러개 등록시 콤마로 구분합니다."
+          "상품명 금지어 최대길이는 100자 이내로 입력해 주세요.\n여러개 등록시 콤마로 구분합니다."
         );
         return false;
       }
