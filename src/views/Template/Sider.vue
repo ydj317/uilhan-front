@@ -69,6 +69,12 @@
             <span class="defaultColor defaultStyle">상품명 금지어</span>
           </router-link>
         </a-menu-item>
+        <a-menu-item key="13">
+          <DollarTwoTone style="font-size: 20px"/>
+          <router-link to="/product/domeggook">
+            <span class="defaultColor defaultStyle">Demoggook</span>
+          </router-link>
+        </a-menu-item>
       </a-menu>
     </div>
 

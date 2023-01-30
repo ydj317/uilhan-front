@@ -418,6 +418,14 @@
       </div>
     </div>
 
+    <div v-if="this.roles.length > 0 && this.roles.indexOf('ROLE_ADMIN') > -1">
+      <a-divider />
+      <h4>카테고리 동기화 :</h4>
+      <div>
+        <a-button class="w49" @click="onClickSyncDomeggookCategory">실행</a-button>
+      </div>
+    </div>
+
     <div>
       <a-divider />
       <h4>로고 설정 :</h4>
@@ -677,6 +685,29 @@ export default {
     };
   },
   methods: {
+    onClickSyncDomeggookCategory() {
+      this.onPostSyncDomeggookCategory().then((res) => {
+        if (res.status !== "2000") {
+          alert(res.message);
+          this.indicator = false;
+          return false;
+        }
+
+        alert("카테고리 동기화 신청완료.");
+        this.indicator = false;
+      });
+    },
+
+    onPostSyncDomeggookCategory() {
+      this.indicator = true;
+      return AuthRequest.post(
+        process.env.VUE_APP_API_URL + "/api/domeggook/sync/category",
+        {
+          market_code: "Domeggook",
+        }
+      );
+    },
+
     getRecharge() {
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
         (res) => {

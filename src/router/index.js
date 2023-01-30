@@ -51,6 +51,18 @@ const routes = [
             /* webpackChunkName: 'user_manager' */
             component: () => import("../views/User/FilterProductWords"),
           },
+          {
+            path: "/product/preview/:id",
+            name: "prd_preview",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("views/Product/Preview"),
+          },
+          {
+            path: "/product/domeggook",
+            name: "prd_domeggook",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("views/Product/Domeggook"),
+          },
           // {
           //   path: "/user/register",
           //   name: "user_register",

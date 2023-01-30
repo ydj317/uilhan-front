@@ -24,15 +24,6 @@
     <div class="mb12" v-else>
       <p>
         <span>상품명칭</span>
-        <span class="ml5">
-          <a-tag
-            @click="deleteFilterWord(filter_words)"
-            color="error"
-            :key="i"
-            v-for="(filter_words, i) in product.filter_product_words"
-            >{{ filter_words }}</a-tag
-          >
-        </span>
       </p>
       <a-spin :spinning="product.check_filter_word === false">
         <a-input
@@ -44,6 +35,21 @@
           :placeholder="`상품명칭을 입력하세요.`"
         />
       </a-spin>
+    </div>
+
+    <div class="mb12">
+      <p>
+        <span>금지어</span>
+      </p>
+      <span>
+          <a-tag
+              @click="deleteFilterWord(filter_words)"
+              color="error"
+              :key="i"
+              v-for="(filter_words, i) in product.filter_product_words"
+          >{{ filter_words }}</a-tag
+          >
+        </span>
     </div>
 
     <div>
