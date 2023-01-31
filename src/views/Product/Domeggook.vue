@@ -247,8 +247,24 @@
             </div>
 
             <div class="mb5">
+              상품 가격 :
+              <span>{{ record.item_price }}</span>
+            </div>
+
+            <div class="mb5">
               상품 바로가기 :
               <a target="_blank" :href="record.product_url">{{ record.key }}</a>
+            </div>
+
+            <div
+              v-for="(sync_product_id, i) in record.sync_product_id"
+              :key="i"
+              class="mb5"
+            >
+              <span v-if="sync_product_id">
+                동기화상품 바로보기 :
+                <a target="_blank" :href="sync_product_id">{{ record.key }}</a>
+              </span>
             </div>
           </div>
         </template>
@@ -294,6 +310,7 @@
       class="w100 center top h50"
       style="background-color: white"
       v-model:current="currentOfProductList"
+      :show-total="onLoadShowTotal"
       :page-size-options="pageSizeOptionsOfProductList"
       :total="totalOfProductList"
       show-size-changer
@@ -316,11 +333,12 @@ export default defineComponent({
   components: { Loading },
   setup() {
     const optionsOfCategory = ref([]);
+    const optionsOfCategoryArray = ref([]);
     const loadDataOfCategory = (selectedOptions) => {
       const targetOption = selectedOptions[selectedOptions.length - 1];
 
+      /* 최하위 카테고리 조회 */
       if (targetOption.isLeaf === false) {
-        targetOption.loading = true;
         onPostSearchMarketCategory(targetOption.value, targetOption);
       }
     };
@@ -333,6 +351,11 @@ export default defineComponent({
       let iCurrent = aCateValues.length - 1;
       let oCurrentInfo = aCateInfo[iCurrent];
       dataOfIsLastCategory.value = oCurrentInfo.isLeaf;
+
+      if (oCurrentInfo.isLeaf === true) {
+        optionsOfCategoryArray.value = dataOfSearchFormValues.ca;
+        message.success("최하위 카테고리 선택완료.");
+      }
     };
 
     const visibleOfLoading = ref(false);
@@ -447,6 +470,12 @@ export default defineComponent({
     };
     const pageSizeOptionsOfProductList = ref(["10", "20", "30", "40", "50"]);
 
+    const onLoadShowTotal = () => {
+      if (totalOfProductList.value === 0) {
+        return "";
+      }
+      return `전체 상품 건수 ${totalOfProductList.value} `;
+    };
     const onClickSyncProduct = (aSyncProduct) => {
       if (lib.isArray(aSyncProduct, true) === false) {
         message.warning("동기화 진행할 상품을 선택해 주세요.");
@@ -481,13 +510,9 @@ export default defineComponent({
       message.success("상품동기화신청완료되었습니다.");
     };
     const onChangeProductPaging = (iCurrent, iPageSize) => {
-      /* 페이지당 상품개수 설정시 페이지수는 1로 초기화 */
-      if (pageSizeOfProductList.value !== iPageSize) {
-        iCurrent = 1;
-      }
       currentOfProductList.value = iCurrent;
       pageSizeOfProductList.value = iPageSize;
-      onPostSearchProductList(toRaw(dataOfSearchFormValues));
+      onClickSearchProductList();
     };
     const onClickSearchProductList = () => {
       /* 필수항목 체크 */
@@ -495,12 +520,13 @@ export default defineComponent({
       dataOfSearchForm
         .validate()
         .then(() => {
-          /* 검색버튼 클릭시 페이지수는 1로 초기화 */
-          currentOfProductList.value = 1;
           onPostSearchProductList(toRaw(dataOfSearchFormValues));
         })
         .catch(() => {
-          if (dataOfIsLastCategory.value === false) {
+          if (
+            lib.isEmpty(dataOfSearchFormValues.ca) === false &&
+            dataOfIsLastCategory.value === false
+          ) {
             message.warning("카테고리를 최하위까지 선택해주세요.");
             return false;
           }
@@ -508,18 +534,21 @@ export default defineComponent({
         });
     };
     const onClickToPreviewProductDetail = (sUrl) => {
-      let oParam = {
-        sz: pageSizeOfProductList.value,
-        pg: currentOfProductList.value,
-        market: "dome",
+      let oHistory = {
+        paging: {
+          sz: pageSizeOfProductList.value,
+          pg: currentOfProductList.value,
+        },
+        form: dataOfSearchFormValues,
+        category: optionsOfCategory.value,
+        category_array: optionsOfCategoryArray.value,
       };
-      oParam = Object.assign(oParam, toRaw(dataOfSearchFormValues));
-      sessionStorage.domeggooke_query = JSON.stringify(oParam);
+      sessionStorage.domeggooke_history = JSON.stringify(oHistory);
       location.href = sUrl;
     };
 
-    const onPostSearchProductList = (oParam) => {
-      oParam = JSON.parse(JSON.stringify(oParam));
+    const onPostSearchProductList = (oParams) => {
+      let oParam = JSON.parse(JSON.stringify(oParams));
 
       /* 최하위 카테고리만 전송 */
       if (lib.isArray(oParam.ca, true) === true) {
@@ -527,26 +556,36 @@ export default defineComponent({
         oParam.ca = oParam.ca[iCurrent];
       }
 
-      let aParamKeys = Object.keys(oParam).filter((r) =>
-        lib.isString(oParam[r], true)
-      );
-
-      let oApiParam = {
-        sz: pageSizeOfProductList.value,
-        pg: currentOfProductList.value,
-        market: "dome",
-      };
-      aParamKeys.map((sKey) => {
-        oApiParam[sKey] = oParam[sKey];
+      /* 파람 빈값제거 */
+      let oRequestParam = {};
+      Object.keys(oParam).map((r) => {
+        if (lib.isString(oParam[r], true) === true) {
+          oRequestParam[r] = oParam[r];
+        }
       });
+
+      /* 기존정보가 없으면 현재 데이터 사용 */
+      oRequestParam.sz =
+        oRequestParam.sz !== undefined
+          ? oRequestParam.sz
+          : pageSizeOfProductList.value;
+
+      oRequestParam.pg =
+        oRequestParam.pg !== undefined
+          ? oRequestParam.pg
+          : currentOfProductList.value;
+
+      oRequestParam.market =
+        oRequestParam.market !== undefined ? oRequestParam.market : "dome";
 
       visibleOfLoading.value = true;
 
-      AuthRequest.post(
+      let oRequest = AuthRequest.post(
         process.env.VUE_APP_API_URL + "/api/domeggook",
-        oApiParam
-      ).then((res) => {
-        /* 실패 로딩제거 */
+        oRequestParam
+      );
+
+      oRequest.then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           visibleOfLoading.value = false;
@@ -567,6 +606,7 @@ export default defineComponent({
             product_info: r.item_name,
             product_url: r.item_url,
             desc_license_usable: "",
+            item_price: r.item_price,
           });
           onPostSearchProductDetail(r.item_code);
         });
@@ -576,10 +616,14 @@ export default defineComponent({
       });
     };
     const onPostSearchProductDetail = (sItemCode = "") => {
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/domeggook/detail", {
-        no: sItemCode,
-      }).then((res) => {
-        /* 실패 로딩제거 */
+      let oRequest = AuthRequest.post(
+        process.env.VUE_APP_API_URL + "/api/domeggook/detail",
+        {
+          no: sItemCode,
+        }
+      );
+
+      oRequest.then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
@@ -590,6 +634,7 @@ export default defineComponent({
           if (String(r.key) === String(res.data.item_code)) {
             r.desc_license_usable = res.data.desc_license_usable;
             r.sync_status = res.data.sync_status;
+            r.sync_product_id = res.data.sync_product_id;
             aTempDataSource[i] = r;
           }
         });
@@ -601,48 +646,49 @@ export default defineComponent({
             delete oTemp.seller_nick;
             delete oTemp.sync_status;
             delete oTemp.desc_license_usable;
+            delete oTemp.sync_product_id;
             dataOfSyncProductList.value[i] = oTemp;
           }
         });
       });
     };
-    const onPostSearchMarketCategory = (sCatePid, targetOption = null) => {
-      AuthRequest.post(
+    const onPostSearchMarketCategory = (sCatePid, targetOption) => {
+      /* targetOption 하위카테고리 선택시 Object */
+
+      if (targetOption) {
+        targetOption.loading = true;
+      }
+
+      let oRequest = AuthRequest.post(
         process.env.VUE_APP_API_URL + "/api/domeggook/category",
         {
           cate_market: "Domeggook",
           cate_pid: sCatePid,
         }
-      ).then((res) => {
-        let aCategory = [];
-        let aOriginalCategory = res.data;
+      );
 
-        if (lib.isArray(aOriginalCategory, true) === false) {
-          targetOption.loading = false;
-          targetOption.isLeaf = true;
-          dataOfIsLastCategory.value = true;
-          message.success("최하위 카테고리 선택완료.");
+      /* 하위카테고리 데이터 */
+      oRequest.then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
           return false;
         }
 
-        aOriginalCategory.map((r) => {
-          aCategory.push({
-            label: r.kor_name,
-            value: r.cate_id,
-            // isLeaf: r.cate_id === "F",
-            isLeaf: false,
-          });
-        });
+        /* 카테고리 데이터 */
+        let aCategory = res.data;
 
-        if (targetOption !== null) {
-          dataOfIsLastCategory.value = false;
-          targetOption.loading = false;
-          targetOption.children = aCategory;
-          optionsOfCategory.value = [...optionsOfCategory.value];
-        } else {
-          dataOfIsLastCategory.value = false;
+        /* 대분류 조회시 처리안함 */
+        if (sCatePid === "0" && !targetOption) {
           optionsOfCategory.value = aCategory;
+          dataOfIsLastCategory.value = false;
+          return;
         }
+
+        /* 하위카테고리 조회시 */
+        targetOption.loading = false;
+        targetOption.children = aCategory;
+        optionsOfCategory.value = [...optionsOfCategory.value];
+        //dataOfIsLastCategory.value = false;
       });
     };
 
@@ -661,33 +707,55 @@ export default defineComponent({
         lib.isString(dataOfSearchFormValues.id, true) === false &&
         lib.isString(dataOfSearchFormValues.kw, true) === false &&
         lib.isString(dataOfSearchFormValues.itemNo, true) === false &&
-        (lib.isArray(dataOfSearchFormValues.ca, true) === false ||
-          dataOfIsLastCategory.value === false);
+        lib.isEmpty(dataOfSearchFormValues.ca) === true;
 
       ["ca", "id", "kw", "itemNo"].map((r) => {
         dataOfSearchFormRules[r][0].required = bRequired;
       });
     };
 
-    onMounted(async () => {
-      let sCatePid = "0";
+    const _initSearch = () => {
+      if (sessionStorage.domeggooke_history !== undefined) {
+        let oHistory = JSON.parse(sessionStorage.domeggooke_history);
+        delete sessionStorage.domeggooke_history;
 
-      if (sessionStorage.domeggooke_query !== undefined) {
-        let oParam = JSON.parse(sessionStorage.domeggooke_query);
-        delete sessionStorage.domeggooke_query;
-        sCatePid = lib.isArray(oParam.ca, true)
-          ? oParam.ca[oParam.ca.length - 1]
-          : "0";
+        let _optionsOfCategory = [];
+        oHistory.category.map((r) => {
+          _optionsOfCategory.push(reactive(r));
+        });
+        optionsOfCategory.value = _optionsOfCategory;
+        optionsOfCategory.value = [...optionsOfCategory.value];
+
+        dataOfSearchFormValues.ca = oHistory.category_array;
+        dataOfSearchFormValues.so = [oHistory.form.so];
+
+        Object.keys(oHistory.form).map((r) => {
+          if (r !== "ca" || r !== "so") {
+            dataOfSearchFormValues[r] = oHistory.form[r];
+          }
+        });
+
+        dataOfIsLastCategory.value = true;
+
+        currentOfProductList.value = oHistory.paging.pg;
+        pageSizeOfProductList.value = oHistory.paging.sz;
+
+        let oParam = JSON.parse(JSON.stringify(dataOfSearchFormValues));
+
         onPostSearchProductList(oParam);
+
+        return;
       }
 
-      onPostSearchMarketCategory(sCatePid);
+      onPostSearchMarketCategory("0");
+    };
+
+    onMounted(async () => {
+      _initSearch();
     });
 
     return {
       optionsOfCategory,
-      loadDataOfCategory,
-      onChangeCategory,
 
       totalOfProductList,
       currentOfProductList,
@@ -708,6 +776,9 @@ export default defineComponent({
       dataOfSearchFormValues,
       dataOfProductListRowSelection,
 
+      onLoadShowTotal,
+      onChangeCategory,
+      loadDataOfCategory,
       onClickSyncProduct,
       onChangeProductPaging,
       onClickSearchProductList,
