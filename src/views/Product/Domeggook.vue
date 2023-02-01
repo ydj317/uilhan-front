@@ -231,7 +231,7 @@
               >
             </div>
 
-            <div class="mb5">
+            <div v-if="record.is_success !== false" class="mb5">
               <span>이미지 사용허용 여부 : </span>
               <a-tag
                 v-if="record.desc_license_usable === 'true'"
@@ -244,6 +244,10 @@
                 >사용 불가함</a-tag
               >
               <a-spin v-else size="small" />
+            </div>
+
+            <div v-if="record.is_success === false" class="mb5">
+              <strong style="color: red">상품상세 불러오기 실패</strong>
             </div>
 
             <div class="mb5">
@@ -271,7 +275,10 @@
 
         <!--동기화상태-->
         <template v-if="column.key === 'sync_status'">
-          <div style="text-align: center">
+          <div v-if="record.is_success === false" style="text-align: center">
+            <strong style="color: red">상품상세 불러오기 실패</strong>
+          </div>
+          <div v-else style="text-align: center">
             <a-tag v-if="record.sync_status === true" color="#87d068"
               >동기화 완료</a-tag
             >
@@ -288,8 +295,11 @@
         <!--동기화버튼-->
         <template v-if="column.key === 'sync_product'">
           <div style="text-align: center">
+            <div v-if="record.is_success === false" class="mb5">
+              <a-button @click="onPostSearchProductDetail(record.key)" ghost danger>상품상세 불러오기</a-button>
+            </div>
             <a-spin
-              v-if="
+              v-else-if="
                 ['true', 'false'].includes(record.desc_license_usable) === false
               "
             />
@@ -465,7 +475,7 @@ export default defineComponent({
         name: record.name,
         /* 상품상세조회시 선택불가 */
         disabled:
-          ["true", "false"].includes(record.desc_license_usable) === false,
+          ["true", "false"].includes(record.desc_license_usable) === false || record.is_success === false,
       }),
     };
     const pageSizeOptionsOfProductList = ref(["10", "20", "30", "40", "50"]);
@@ -616,6 +626,12 @@ export default defineComponent({
       });
     };
     const onPostSearchProductDetail = (sItemCode = "") => {
+      dataSourceOfProductList.value.map((r, i) => {
+        if (String(r.key) === String(sItemCode) && r.is_success === false) {
+          delete dataSourceOfProductList.value[i].is_success;
+        }
+      });
+
       let oRequest = AuthRequest.post(
         process.env.VUE_APP_API_URL + "/api/domeggook/detail",
         {
@@ -624,8 +640,14 @@ export default defineComponent({
       );
 
       oRequest.then((res) => {
+        /* 실패 */
         if (res.status !== "2000") {
-          message.error(res.message);
+          dataSourceOfProductList.value.map((r, i) => {
+            if (String(r.key) === String(sItemCode)) {
+              dataSourceOfProductList.value[i].is_success = false;
+            }
+          });
+
           return false;
         }
 
@@ -635,6 +657,7 @@ export default defineComponent({
             r.desc_license_usable = res.data.desc_license_usable;
             r.sync_status = res.data.sync_status;
             r.sync_product_id = res.data.sync_product_id;
+            r.is_success = true;
             aTempDataSource[i] = r;
           }
         });
@@ -647,6 +670,7 @@ export default defineComponent({
             delete oTemp.sync_status;
             delete oTemp.desc_license_usable;
             delete oTemp.sync_product_id;
+            delete oTemp.is_success;
             dataOfSyncProductList.value[i] = oTemp;
           }
         });
