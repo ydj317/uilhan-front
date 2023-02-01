@@ -163,7 +163,7 @@ export default {
           "상품명에 금지어가 포함되었습니다.상품명 수정후 다시 시도해 주세요."
         );
 
-        return false;
+        // return false;
       }
 
       return true;
