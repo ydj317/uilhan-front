@@ -256,7 +256,7 @@
             </div>
 
             <div class="mb5">
-              상품 바로가기 :
+              도매꾹 상품 바로가기 :
               <a target="_blank" :href="record.product_url">{{ record.key }}</a>
             </div>
 
@@ -266,7 +266,7 @@
               class="mb5"
             >
               <span v-if="sync_product_id">
-                동기화상품 바로보기 :
+                릴라켓플러스 상품 바로가기 :
                 <a target="_blank" :href="sync_product_id">{{ record.key }}</a>
               </span>
             </div>
@@ -588,6 +588,22 @@ export default defineComponent({
       oRequestParam.market =
         oRequestParam.market !== undefined ? oRequestParam.market : "dome";
 
+      if (sessionStorage.domeggooke_search_history !== undefined) {
+        let oDomeggookeSearchHistory = JSON.parse(sessionStorage.domeggooke_search_history);
+        Object.keys(oRequestParam).map(r => {
+          if (oRequestParam[r] !== oDomeggookeSearchHistory[r] && ['pg', 'sz'].includes(r) === false) {
+            oRequestParam.pg = 1;
+          }
+        })
+        Object.keys(oDomeggookeSearchHistory).map(r => {
+          if (oRequestParam[r] !== oDomeggookeSearchHistory[r] && ['pg', 'sz'].includes(r) === false) {
+            oRequestParam.pg = 1;
+          }
+        })
+      }
+
+      sessionStorage.domeggooke_search_history = JSON.stringify(oRequestParam);
+
       visibleOfLoading.value = true;
 
       let oRequest = AuthRequest.post(
@@ -776,6 +792,7 @@ export default defineComponent({
 
     onMounted(async () => {
       _initSearch();
+      delete sessionStorage.domeggooke_search_history;
     });
 
     return {
