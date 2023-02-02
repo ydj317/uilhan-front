@@ -150,6 +150,10 @@ export default {
     },
 
     validateFilterProductWords() {
+      if (this.product.item_is_trans === false) {
+        return true;
+      }
+
       if (
         lib.isUndefined(this.product.filter_product_words) ||
         this.product.check_filter_word === false

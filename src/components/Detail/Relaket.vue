@@ -198,6 +198,7 @@ export default {
     const keyStatus = ref(false);
 
     const getCate = (param, type) => {
+      param.cate_market = recommendCategory.sMarket === "Domeggook"? "Domeggook": "Relaket";
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
         if (res.status !== '2000') {
           alert(res.message)
@@ -496,6 +497,9 @@ export default {
         if (oKoreanRegular.test(sKeyWord) && _.sMarket === 'Aliexpress') {
           sLanguageTypeSearched = 'kor';
         }
+        if (oKoreanRegular.test(sKeyWord) && _.sMarket === 'Domeggook') {
+          sLanguageTypeSearched = 'kor';
+        }
 
         _.requestData(
             {
@@ -561,6 +565,12 @@ export default {
                   formState[`cate_${i + 1}_val`] = oFullCate.value;
                 });
 
+                let iUseCateLength = Object.values(res).length;
+                for (iUseCateLength; iUseCateLength <= 5; iUseCateLength++) {
+                  formState[`cate_${iUseCateLength + 2}`] = [];
+                  formState[`cate_${iUseCateLength + 1}_val`] = '선택';
+                }
+
                 formState.last_cate = recommendCateId;
 
               } catch (e) {
@@ -580,6 +590,7 @@ export default {
       requestData: (oRequestParameters, callback) => {
         let _ = recommendCategory;
 
+        oRequestParameters.cate_market = recommendCategory.sMarket === "Domeggook"? "Domeggook": "Relaket";
         AuthRequest.get(
             process.env.VUE_APP_API_URL + '/api/getcate',
             {

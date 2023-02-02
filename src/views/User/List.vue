@@ -618,7 +618,7 @@ export default defineComponent({
         return false;
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + '/api/deleteprd', {params: {list: list}}).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delete', {params: {list: list}}).then((res) => {
         if (res.status !== '2000') {
           alert(res.message)
           return false;
