@@ -198,7 +198,7 @@ export default {
     const keyStatus = ref(false);
 
     const getCate = (param, type) => {
-      param.cate_market = recommendCategory.sMarket === "Domeggook"? "Domeggook": "Relaket";
+      param.cate_market = "Relaket";
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
         if (res.status !== '2000') {
           alert(res.message)
@@ -590,7 +590,7 @@ export default {
       requestData: (oRequestParameters, callback) => {
         let _ = recommendCategory;
 
-        oRequestParameters.cate_market = recommendCategory.sMarket === "Domeggook"? "Domeggook": "Relaket";
+        oRequestParameters.cate_market = "Relaket";
         AuthRequest.get(
             process.env.VUE_APP_API_URL + '/api/getcate',
             {
