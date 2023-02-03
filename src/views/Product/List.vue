@@ -468,7 +468,7 @@ export default defineComponent({
     },
 
     getList(sType = '') {
-      let param = this.getParam();
+      let param = this.getParam(sType);
       this.indicator = true;
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', {params: param}).then((res) => {
         if (res.status !== '2000') {
@@ -488,10 +488,10 @@ export default defineComponent({
 
         let iCurrent = parseInt(res.data.page);
         let iPageSize = parseInt(res.data.limit);
-        if (sType === 'reload') {
-          iCurrent = sessionStorage.relaket_page !== undefined? parseInt(sessionStorage.relaket_page): iCurrent;
-          iPageSize = sessionStorage.relaket_limit !== undefined? parseInt(sessionStorage.relaket_limit): iPageSize;
-        }
+        // if (sType === 'reload') {
+        //   iCurrent = sessionStorage.relaket_page !== undefined? parseInt(sessionStorage.relaket_page): iCurrent;
+        //   iPageSize = sessionStorage.relaket_limit !== undefined? parseInt(sessionStorage.relaket_limit): iPageSize;
+        // }
 
         this.searchCount = parseInt(res.data.searchCount);
         this.totalCount = parseInt(res.data.totalCount);
@@ -512,7 +512,15 @@ export default defineComponent({
       return sName;
     },
 
-    getParam() {
+    getParam(sType = '') {
+      let iLimit = parseInt(this.limit);
+      let iPage = parseInt(this.pageNum) || 1;
+
+      if (sType === 'reload') {
+        iPage = sessionStorage.relaket_page !== undefined? parseInt(sessionStorage.relaket_page): iPage;
+        iLimit = sessionStorage.relaket_limit !== undefined? parseInt(sessionStorage.relaket_limit): iLimit;
+      }
+
       return {
         'market_code': this.market_code === '' || this.market_code === null ? 'all' : this.market_code,
         'date_type': this.date_type,
@@ -522,8 +530,8 @@ export default defineComponent({
         'search_value': this.search_value,
         'trans_status': this.trans_status === '' || this.trans_status === null ? 'all' : this.trans_status,
         'sync_status': this.sync_status === '' || this.sync_status === null ? 'all' : this.sync_status,
-        'limit': parseInt(this.limit),
-        'page': parseInt(this.pageNum) || 1,
+        'limit': iLimit,
+        'page': iPage,
       };
     },
 
