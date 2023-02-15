@@ -184,6 +184,7 @@ export default {
           keyword: oFormState.keyword,
           mandatory_val: oFormState.mandatory_val,
           delivery_template: oFormState.delivery_template_real_val,
+          is_free_delivery: oFormState.item_is_free_delivery === true? 'T': 'F',
         });
       }
 

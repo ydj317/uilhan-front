@@ -111,6 +111,7 @@
       </div>
       </div>
 
+      <p><a-checkbox v-model:checked="formState.item_is_free_delivery">무료 배송</a-checkbox></p>
       <p>배송 정책</p>
       <a-form-item class="mb15">
         <a-select v-if="formState.delivery_template_sea_list !== undefined && formState.delivery_template_sea_list.length > 0" v-model:value="formState.delivery_template_sea_val" :options="formState.delivery_template_sea_list" style="width: 150px; float: left;" @change="isSelected('sea')">
@@ -188,6 +189,7 @@ export default {
       delivery_template_list: [],
       last_cate: null,
       keyword: null,
+      item_is_free_delivery: false
     });
 
     const isSync = ref(false);
@@ -198,7 +200,7 @@ export default {
     const keyStatus = ref(false);
 
     const getCate = (param, type) => {
-      param.cate_market = "Relaket";
+      param.cate_market = recommendCategory.sMarket === "Domeggook"? "Domeggook": "Relaket";
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
         if (res.status !== '2000') {
           alert(res.message)
@@ -861,6 +863,7 @@ export default {
       if (delvTmp === undefined || delvTmp.error === true) {
         this.delivery_template_list = [];
       } else {
+        this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T';
         let sea = this.product.delivery_template_list.sea;
         this.formState.delivery_template_list = this.product.delivery_template_list;
         if (sea !== undefined && sea !== null) {
