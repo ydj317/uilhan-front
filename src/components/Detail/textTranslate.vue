@@ -14,6 +14,7 @@
 import {lib} from '@/util/lib';
 import {AuthRequest} from '@/util/request';
 import {mapState} from 'vuex';
+import { message } from "ant-design-vue";
 
 export default {
   computed: {
@@ -110,10 +111,52 @@ export default {
 
         this.initSkuSpecName();
 
+        this.validateFilterWord(res.data.item_trans_name);
+
         this.product.toLang = 'ko';
         this.product.item_is_trans = true;
         this.product.text_trans_visible = false;
         this.product.loading = false;
+      });
+    },
+
+    /**
+     * 상품명 금지어 체크
+     * @returns {boolean}
+     */
+    validateFilterWord(sTransProductName = "") {
+      if (sTransProductName === "") return false;
+
+      this.product.filter_word_validate_in_process = true;
+      this.product.filter_word_status = false;
+      this.product.filter_word_list = [];
+
+      /* 등록 호출 */
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/filterword", {
+        method: "check",
+        product_name: sTransProductName,
+      }).then((res) => {
+        /* 등록실패여부 및 로딩제거 */
+        if (res.status !== "2000") {
+          alert(res.message);
+          return false;
+        }
+
+        this.product.filter_word_status = true;
+        this.product.filter_word_list = [];
+
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          let aFilterWords = [];
+          res.data.map((r) => {
+            aFilterWords.push(r.filter_word);
+          });
+
+          this.product.filter_word_status = false;
+          this.product.filter_word_list = aFilterWords;
+        }
+
+        this.product.filter_word_validate_in_process = false;
+        message.success("금지어 체크완료");
       });
     },
   }

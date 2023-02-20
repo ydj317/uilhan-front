@@ -150,23 +150,18 @@ export default {
     },
 
     validateFilterProductWords() {
+      /* 번역안한상품 금지어 체크안함 */
       if (this.product.item_is_trans === false) {
         return true;
       }
 
-      if (
-        lib.isUndefined(this.product.filter_product_words) ||
-        this.product.check_filter_word === false
-      ) {
+      if (this.product.filter_word_validate_in_process === true) {
         alert("상품명 금지어 체크중입니다.잠시후 다시 시도해 주세요.");
-
         return false;
       }
-      if (lib.isArray(Object.values(this.product.filter_product_words), true)) {
-        alert(
-          "상품명에 금지어가 포함되었습니다.상품명 수정후 다시 시도해 주세요."
-        );
 
+      if (this.product.filter_word_status === false) {
+        alert("상품명에 금지어가 포함되었습니다.상품명 수정후 다시 시도해 주세요.");
         // return false;
       }
 

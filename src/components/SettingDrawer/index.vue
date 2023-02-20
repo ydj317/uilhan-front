@@ -465,6 +465,14 @@
         />
       </div>
     </div>
+
+    <div v-if="roles.indexOf('ROLE_ADMIN') > -1">
+      <a-divider />
+      <h4>이미지 백업 :</h4>
+      <a-button class="w35 ml10" @click="backupImages" type="primary">백업</a-button>
+    </div>
+
+
     <a-modal
       width="600px"
       :maskClosable="false"
@@ -1353,6 +1361,7 @@ export default {
     },
     setPrivilege() {
       this.roles = Cookie.get("member_roles");
+      console.log(this.roles);
     },
 
     getRate() {
@@ -1365,6 +1374,17 @@ export default {
 
           this.aliexpressData = [{ ko: res.data.ko, cn: res.data.cn }];
         }
+      );
+    },
+    backupImages() {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/backupimages").then(
+          (res) => {
+            if (res.status !== '2000') {
+              alert(res.message)
+              return false;
+            }
+
+          }
       );
     },
   },

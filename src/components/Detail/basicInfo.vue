@@ -25,9 +25,9 @@
       <p>
         <span>상품명칭</span>
       </p>
-      <a-spin :spinning="product.check_filter_word === false">
+      <a-spin :spinning="product.filter_word_validate_in_process === true">
         <a-input
-          @focus="product.check_filter_word = null"
+          @focus="product.filter_word_status = false"
           @blur="validateFilterWord(product.item_trans_name)"
           v-model:value="product.item_trans_name"
           :maxlength="max_name_length"
@@ -46,7 +46,7 @@
               @click="deleteFilterWord(filter_words)"
               color="error"
               :key="i"
-              v-for="(filter_words, i) in product.filter_product_words"
+              v-for="(filter_words, i) in product.filter_word_list"
           >{{ filter_words }}</a-tag
           >
         </span>
@@ -146,23 +146,29 @@ export default {
         ""
       );
 
-      this.product.filter_product_words =
-        this.product.filter_product_words.filter((r) => r !== sFilterWord);
+      this.product.filter_word_list =
+        this.product.filter_word_list.filter((r) => r !== sFilterWord);
+
+      if (this.product.filter_word_list.length === 0) {
+        this.product.filter_word_status = true;
+      }
     },
 
     /**
      * 상품명 금지어 체크
      * @returns {boolean}
      */
-    validateFilterWord(sProductName = "") {
-      if (sProductName === "") return false;
+    validateFilterWord(sTransProductName = "") {
+      if (sTransProductName === "") return false;
 
-      this.product.check_filter_word = false;
+      this.product.filter_word_validate_in_process = true;
+      this.product.filter_word_status = false;
+      this.product.filter_word_list = [];
 
       /* 등록 호출 */
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/filterword", {
         method: "check",
-        product_name: sProductName,
+        product_name: sTransProductName,
       }).then((res) => {
         /* 등록실패여부 및 로딩제거 */
         if (res.status !== "2000") {
@@ -170,17 +176,20 @@ export default {
           return false;
         }
 
+        this.product.filter_word_status = true;
+        this.product.filter_word_list = [];
+
         if (Array.isArray(res.data) && res.data.length > 0) {
           let aFilterWords = [];
           res.data.map((r) => {
             aFilterWords.push(r.filter_word);
           });
-          this.product.filter_product_words = aFilterWords;
-        } else {
-          this.product.filter_product_words = [];
+
+          this.product.filter_word_status = false;
+          this.product.filter_word_list = aFilterWords;
         }
 
-        this.product.check_filter_word = true;
+        this.product.filter_word_validate_in_process = false;
         message.success("금지어 체크완료");
       });
     },
@@ -196,7 +205,12 @@ export default {
 
     this.item_trans_name = this.product.item_trans_name;
 
-    if (this.product.item_is_trans) {
+
+    this.product.filter_word_validate_in_process = false;
+    this.product.filter_word_status = true;
+    this.product.filter_word_list = [];
+
+    if (this.product.item_is_trans === true) {
       this.validateFilterWord(this.product.item_trans_name);
     }
   },
