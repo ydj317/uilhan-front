@@ -145,23 +145,23 @@
 
           <!--구매원가-->
           <template v-else-if="['original_price_cn'].includes(column.key)">
-            <div
+            <div style="border: 1px solid red"
               v-if="record.original_price_cn > 0 && record.editor !== 'T'"
               class="center"
               :style="
                 record.img
-                  ? `height: 130px; text-align: center; border: none;`
+                  ? `height: 30px; text-align: center; border: none;`
                   : `height: 30px; text-align: center; border: none;`
               "
             >
               <span>{{ record.original_price_ko }}</span
               ><span> (CNY {{ record.original_price_cn }})</span>
             </div>
-            <div v-if="record.original_price_cn === 0 || record.editor === 'T'">
+            <div v-if="record.original_price_cn === 0 || record.editor === 'T'"  style="border: 1px solid red">
               <a-input
                 :style="
                   record.img
-                    ? `height: 130px; text-align: center; border: none;`
+                    ? `height: 30px; text-align: center; border: none;`
                     : `height: 30px; text-align: center; border: none;`
                 "
                 @input="setOriginalPrice(record)"
@@ -177,12 +177,18 @@
             <a-input
               :style="
                 record.img
-                  ? `height: 130px; text-align: center; border: none;`
+                  ? `height: 30px; text-align: center; border: none;`
                   : `height: 30px; text-align: center; border: none;`
               "
               @blur="setRateMargin"
               v-model:value="record[column.key]"
             />
+          </template>
+
+          <!--자체가격입력(custom)-->
+          <template v-else-if="['wholesale_price', 'selling_price', 'disp_price'].includes(column.key)">
+            <div style="height: 30px; text-align: center; border: none;">{{ record[column.key] }}</div>
+            <a-input :style="'height: 30px; text-align: center;'" v-model:value="record['custom_' + column.key]" />
           </template>
 
           <!--보여주기-->
