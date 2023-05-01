@@ -55,7 +55,7 @@ export const LoginRequest = (function () {
         config.headers['Content-Type'] = 'application/json';
         jsencrypt.setPublicKey(pub);
         config.data = JSON.stringify(config.data);
-        config.data = jsencrypt.encrypt(config.data);
+        //config.data = jsencrypt.encrypt(config.data);
 
         return config;
     });

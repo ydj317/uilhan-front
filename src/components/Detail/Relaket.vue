@@ -629,26 +629,26 @@ export default {
               return false;
             }
 
-            this.#mVariableAssignment(oParameter);
-            this.#mFilterCharacters();
-            this.#mImportantKeywords();
+            this.mVariableAssignment(oParameter);
+            this.mFilterCharacters();
+            this.mImportantKeywords();
 
             let aQuery = [];
             let sQuery = '';
             let sQuery1 = '';
             let sQuery2 = '';
             if (this.sImportantKeywords !== '' && this.iMatchRuleOptions !== 2) {
-              this.#mSearchKeywords();
+              this.mSearchKeywords();
               aQuery.push(this.sSearchKeywords);
             }
 
-            aQuery.push(this.#mNoKeywordSearch());
+            aQuery.push(this.mNoKeywordSearch());
 
             return JSON.stringify(aQuery);
           }
 
           // 变量赋值
-          #mVariableAssignment(oParameter) {
+          mVariableAssignment(oParameter) {
             this.sChineseProductName = oParameter.sChineseProductName
                 ? oParameter.sChineseProductName
                 : '';
@@ -675,7 +675,7 @@ export default {
           }
 
           // 过滤字符
-          #mFilterCharacters() {
+          mFilterCharacters() {
             let sStr = this.sChineseProductName;
             let oRegExp;
 
@@ -691,7 +691,7 @@ export default {
           }
 
           // 重要关键字
-          #mImportantKeywords() {
+          mImportantKeywords() {
             let s = this.sChineseProductName.split('');
             let r = new Set(s);
             r = [...r];
@@ -719,7 +719,7 @@ export default {
           }
 
           // 搜索关键字
-          #mSearchKeywords() {
+          mSearchKeywords() {
             let aImportantKeywords = [];
             let sImportantKeywords = this.sImportantKeywords;
             let aChineseProductName = this.sChineseProductName.split(
@@ -748,7 +748,7 @@ export default {
           }
 
           // 无关键字拆分
-          #mNoKeywordSplit(iSplitLength, sChineseProductName) {
+          mNoKeywordSplit(iSplitLength, sChineseProductName) {
             let aChineseProductName = [];
 
             for (let i = 0; i < sChineseProductName.length; i += iSplitLength) {
@@ -764,13 +764,13 @@ export default {
           }
 
           // 无关键字搜索
-          #mNoKeywordSearch() {
+          mNoKeywordSearch() {
             let sChineseProductName = this.sChineseProductName;
 
-            let aChineseProductName2 = this.#mNoKeywordSplit(2, sChineseProductName);
-            let aChineseProductName22 = this.#mNoKeywordSplit(2, sChineseProductName.substr(1));
-            let aChineseProductName3 = this.#mNoKeywordSplit(3, sChineseProductName);
-            let aChineseProductName33 = this.#mNoKeywordSplit(3, sChineseProductName.substr(1));
+            let aChineseProductName2 = this.mNoKeywordSplit(2, sChineseProductName);
+            let aChineseProductName22 = this.mNoKeywordSplit(2, sChineseProductName.substr(1));
+            let aChineseProductName3 = this.mNoKeywordSplit(3, sChineseProductName);
+            let aChineseProductName33 = this.mNoKeywordSplit(3, sChineseProductName.substr(1));
 
             aChineseProductName2 = aChineseProductName2.concat(aChineseProductName22);
             aChineseProductName3 = aChineseProductName3.concat(aChineseProductName33);
