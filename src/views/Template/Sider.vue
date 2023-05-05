@@ -22,6 +22,12 @@
             <span class="defaultColor defaultStyle">상품관리</span>
           </router-link>
         </a-menu-item>
+          <a-menu-item key="111">
+              <img src="../../assets/img/side/other.png" >
+              <router-link to="/marketList">
+                  <span class="defaultColor defaultStyle">마켓 설정</span>
+              </router-link>
+          </a-menu-item>
         <a-menu-item key="2">
           <img src="../../assets/img/side/order.png" >
           <span class="defaultColor defaultStyle">주문관리(준비중)</span>
@@ -43,11 +49,11 @@
             <img src="../../assets/img/side/setting.png" >
             <span class="defaultColor defaultStyle">설정(준비중)</span>
           </template>
-          <a-menu-item key="7"><span class="defaultColor defaultStyle">릴라켓정보</span></a-menu-item>
-          <a-menu-item key="7"><span class="defaultColor defaultStyle">배송정책</span></a-menu-item>
-          <a-menu-item key="7"><span class="defaultColor defaultStyle">출고지</span></a-menu-item>
-          <a-menu-item key="8"><span class="defaultColor defaultStyle">반품지</span></a-menu-item>
-          <a-menu-item key="8"><span class="defaultColor defaultStyle">마진 & 환율</span></a-menu-item>
+          <a-menu-item key="71"><span class="defaultColor defaultStyle">릴라켓정보</span></a-menu-item>
+          <a-menu-item key="72"><span class="defaultColor defaultStyle">배송정책</span></a-menu-item>
+          <a-menu-item key="73"><span class="defaultColor defaultStyle">출고지</span></a-menu-item>
+          <a-menu-item key="81"><span class="defaultColor defaultStyle">반품지</span></a-menu-item>
+          <a-menu-item key="82"><span class="defaultColor defaultStyle">마진 & 환율</span></a-menu-item>
         </a-sub-menu>
         <a-menu-item key="9">
           <img src="../../assets/img/side/market.png" >
@@ -96,12 +102,13 @@
 <script>
 import { defineComponent, reactive, toRefs, ref, onMounted } from 'vue';
 import Cookie from "js-cookie";
-import { DollarTwoTone } from '@ant-design/icons-vue';
+import { DollarTwoTone, AppstoreAddOutlined} from '@ant-design/icons-vue';
 import {AuthRequest} from "@/util/request";
 import Loading from "vue-loading-overlay";
 export default defineComponent({
   components: {
     DollarTwoTone,
+      AppstoreAddOutlined,
     Loading
   },
   setup() {
