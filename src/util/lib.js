@@ -1,26 +1,26 @@
 export class lib {
-  static #typeof(param) {
+  static typeof(param) {
     return Object.prototype.toString.call(param).split(" ")[1].split("]")[0];
   }
 
   static isNull(param) {
-    return this.#typeof(param) === "Null";
+    return this.typeof(param) === "Null";
   }
 
   static isBoolean(param) {
-    return this.#typeof(param) === "Boolean";
+    return this.typeof(param) === "Boolean";
   }
 
   static isFunction(param) {
-    return this.#typeof(param) === "Function";
+    return this.typeof(param) === "Function";
   }
 
   static isUndefined(param) {
-    return this.#typeof(param) === "Undefined";
+    return this.typeof(param) === "Undefined";
   }
 
   static isString(param, bValid = false) {
-    let bReturn = this.#typeof(param) === "String";
+    let bReturn = this.typeof(param) === "String";
     if (bReturn && bValid) {
       return param.length > 0;
     }
@@ -30,7 +30,7 @@ export class lib {
 
   static isNumeric(param, bValid = false) {
     try {
-      let bReturn = this.#typeof(Number(param)) === "Number";
+      let bReturn = this.typeof(Number(param)) === "Number";
       if (bReturn && bValid) {
         return param.length > 0;
       }
@@ -42,7 +42,7 @@ export class lib {
   }
 
   static isNumber(param, bValid = false) {
-    let bReturn = this.#typeof(param) === "Number";
+    let bReturn = this.typeof(param) === "Number";
     if (bReturn && bValid) {
       return param.length > 0;
     }
@@ -51,7 +51,7 @@ export class lib {
   }
 
   static isObject(param, bValid = false) {
-    let bReturn = this.#typeof(param) === "Object";
+    let bReturn = this.typeof(param) === "Object";
     if (bReturn && bValid) {
       return Object.keys(param).length > 0;
     }
@@ -60,7 +60,7 @@ export class lib {
   }
 
   static isArray(param, bValid = false) {
-    let bReturn = this.#typeof(param) === "Array";
+    let bReturn = this.typeof(param) === "Array";
     if (bReturn && bValid) {
       return param.length > 0;
     }
