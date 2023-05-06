@@ -3,17 +3,35 @@
         <loading v-model:active="bLoading"
                  :can-cancel="false"
                  :is-full-page="true"/>
-        <div id="search" class="pl20 pr20 pb20 mb30 bg-white">
-            <span :style="{ marginRight: '8px' }">키원드 : </span>
-            <a-select v-model:value="search_key" style="width: 120px">
-                <a-select-option value="user_id">유저 아이디</a-select-option>
-            </a-select>
-            <a-input style="width: 500px; margin-left: 10px" v-model:value="search_value" placeholder="유저아이디" />
+        <div id="search" class="pl20 pr20 pb30  mb10 bg-white">
+            <ul style="list-style: none; margin: 0; padding: 0;">
+                <li style="display: inline-block;">
+                    <h3>마켓선택</h3>
+                    <a-select :options="searchParam.site_code.options" v-model:value="searchParam.site_code.value" style="width: 250px">
+                    </a-select>
+                </li>
 
-            <a-button @click="getUserList" style="width: 100px; margin-left: 10px" type="primary">검색</a-button>
+                <li class="p20" style="display: inline-block;">
+                    <h3>노출선택</h3>
+                    <a-radio-group :options="searchParam.disp.options" v-model:value="searchParam.disp.value" size="" />
+
+                </li>
+
+                <li style="display: inline-block;" class="p20" >
+                    <h3>연동상품유형</h3>
+                    <a-radio-group :options="searchParam.product_type.options" v-model:value="searchParam.product_type.value"  />
+                </li>
+            </ul>
+
+
+            <div class="mt15" style="text-align: center;">
+                <a-button @click="getUserList" style="width: 100px;" type="">초기화</a-button>
+                <a-button @click="getUserList" style="width: 100px; margin-left: 10px" type="primary">검색</a-button>
+            </div>
+
         </div>
         <div id="list" class="p20 bg-white">
-            <a-table :bordered="false" :columns="columns" :data-source="userList" :pagination="pagination">
+            <a-table :bordered="false" :columns="columns" :data-source="dataList" :pagination="pagination">
                 <template #headerCell="{ column }">
                     <template v-if="column.key === 'all'">
                         <div style="text-align: center"><a-button>{{column.title}}</a-button></div>
@@ -29,8 +47,15 @@
                             <a-checkbox v-model:checked="record.checked"></a-checkbox>
                         </div>
                     </template>
-                    <template v-else-if="column.key === 'action'">
-                        <div style="text-align: center;"><a-button @click="openRechargePop(record.id, record.now_recharge, record.username)">충전</a-button></div>
+                    <template v-else-if="column.key === 'test'">
+                        <div style="text-align: center">
+                            <a-button @click="" style="width: 100px;" type="">API 통신</a-button>
+                        </div>
+                    </template>
+                    <template v-else-if="column.key === 'manage'">
+                        <div style="text-align: center">
+                            <a-button @click="" style="width: 100px;" type="primary">수정</a-button>
+                        </div>
                     </template>
                     <template v-else>
                         <div  style="text-align: center;">{{record[column.key]}}</div>
@@ -38,54 +63,6 @@
                 </template>
             </a-table>
         </div>
-        <a-modal width="600px" :maskClosable="false" v-model:visible="rechargePop" @ok="">
-            <template #title>
-                <h3 style="text-align: center; display: inline-block; width: 90%"><b>이미지 번역 충전</b></h3>
-            </template>
-
-            <div style="text-align: center">
-                <a-table
-                    :bordered="false"
-                    :columns="[{title: '회원명',
-            dataIndex: 'username',
-            key: 'username',
-            width: 100,}, {title: '남은회수(현재)',
-            dataIndex: 'now_recharge',
-            key: 'now_recharge',
-            width: 100,}]"
-                    :data-source="userRemaining"
-                    :pagination="{hideOnSinglePage:true}"
-                >
-                    <template #headerCell="{ column }">
-                        <template v-if="column.key === 'all'">
-                            <div style="text-align: center"><a-button>{{column.title}}</a-button></div>
-                        </template>
-                        <template v-else>
-                            <div style="text-align: center">{{column.title}}</div>
-                        </template>
-                    </template>
-                    <template #bodyCell="{ column, record }">
-                        <template v-if="column.key === 'all'">
-                            <div style="text-align: center">
-                                <a-checkbox v-model:checked="record.checked"></a-checkbox>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <div  style="text-align: center;">{{record[column.key]}}</div>
-                        </template>
-                    </template>
-                </a-table>
-
-                <a-input style="width: 200px; margin-top: 20px" v-model:value="recharge_value" placeholder="청전회수" />
-            </div>
-            <template v-slot:footer>
-                <div style="text-align: center">
-                    <a-button type="primary" @click="recharge()">확인</a-button>
-                    <a-button type="primary" @click="closeRecharge()">취소</a-button>
-                </div>
-
-            </template>
-        </a-modal>
     </div>
 </template>
 <script>
@@ -98,205 +75,152 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 export default defineComponent({
     components: { Loading },
     setup() {
-        const userList = ref([]);
+
         const roles = ref(Cookie.get('member_roles'));
-        const search_key = ref('user_id');
-        const search_value = ref('');
-        let rechargePop = ref(false);
-        let recharge_value = ref(0);
+
         let bLoading = ref(false);
-        let id = (0);
-        let userRemaining = ref([]);
-        let limit = ref(10);
-        let pageNum = ref(1);
-        const userTotal = ref(0);
-        let pagination = ref({});
+        const dataList = ref([]);
+        const pagination = ref({});
+
         onMounted(async () => {
             if (roles.value === null || roles.value.indexOf('ROLE_ADMIN') === -1) {
                 return false;
             }
             bLoading.value = true;
-            await getUserList();
+            setDataList();
         });
 
-        const getUserList = () => {
-            let param = initParam();
 
-            return AuthRequest.post(process.env.VUE_APP_API_URL + '/api/userlist', param).then((res) => {
-                if (res.data.list !== undefined && res.data.list.length > 0) {
-                    for (let i=0; i < res.data.list.length; i++) {
-                        res.data.list[i].checked = false;
-                    }
+        const setDataList = () => {
 
-                    userList.value = res.data.list;
-                    pageNum.value = res.data.page;
-                    limit.value = res.data.limit;
-                    if (search_value.value.length > 0) {
-                        userTotal.value = res.data.list.length;
-                    } else {
-                        userTotal.value = res.data.total;
-                    }
-
-                    pagination.value = {
-                        total: userTotal.value,
-                        current: pageNum.value,
-                        pageSize: limit.value,
-                        position: ['bottomCenter'],
-                        showSizeChanger: true,
-                        pageSizeOptions: ['10', '20', '50', '100'],
-                        onChange: page => {
-                            pageNum.value = page;
-                            pagination.value.current = page;
-                            getUserList();
-                        },
-                        onShowSizeChange: (current, pageSize) => {
-                            limit.value = pageSize;
-                            getUserList();
-                        },
-                    };
+            // sample
+            bLoading.value = false;
+            const res = {
+                data: {
+                    total: 300,
+                    page: 1,
+                    limit: 1,
+                    list: [
+                        {
+                            no: 1
+                        }
+                    ],
                 }
-
-                if (bLoading.value === true) {
-                    bLoading.value = false;
-                }
-            });
-        };
-
-        // const getrate = () => {
-        //   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/getrate').then((res) => {
-        //     console.log(res)
-        //   });
-        // };
-
-        const recharge = () => {
-            let intPattern = /^[0-9]*$/;
-            if (isNaN(parseInt(recharge_value.value)) === true ||
-                intPattern.test(recharge_value.value) !== true) {
-                alert('충전회수는 숫자만 입력가능합니다');
-                return false;
-            }
-
-            bLoading.value = true;
-
-            let data = {
-                recharge: recharge_value.value,
-                user: id
             };
 
-            AuthRequest.post(process.env.VUE_APP_API_URL + '/api/recharge', data).then(async (res) => {
-                if (res.status === undefined || res.status !== '2000') {
-                    alert(res.message);
-                    return false;
-                }
+            dataList.value = res.data.list;
 
-                rechargePop.value = false;
-                recharge_value.value = 0;
-
-                alert(res.message);
-                await getUserList();
-                bLoading.value = false;
-            });
-        };
-        const closeRecharge = () => {
-            id = 0;
-            rechargePop.value = false;
-        };
-
-        const openRechargePop = (no, now_recharge, username) => {
-            id = no;
-            rechargePop.value = true;
-            userRemaining.value = [{now_recharge: now_recharge, username: username}];
-        };
-
-        const register = () => {
-            router.push("/user/register");
-            return false;
+            pagination.value = {
+                total: res.data.list.total,
+                current: res.data.list.page,
+                pageSize: res.data.list.limit,
+                position: ['bottomCenter'],
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100'],
+                onChange: page => {
+                    pagination.value.current = page;
+                    setDataList();
+                },
+                onShowSizeChange: (current, pageSize) => {
+                    pagination.value.pageSize = pageSize;
+                    setDataList();
+                },
+            };
         };
 
         const columns = [
             {
                 title: 'No.',
-                dataIndex: 'username',
-                key: 'username',
+                dataIndex: 'no',
+                key: 'no',
                 width: 50,
             }, {
                 title: '구분',
-                dataIndex: 'recharge',
-                key: 'recharge',
+                dataIndex: 'is_korea',
+                key: 'is_korea',
                 width: 100,
             }, {
                 title: '마켓명(마켓코드)',
-                dataIndex: 'remaining',
-                key: 'remaining',
+                dataIndex: 'site_code',
+                key: 'site_code',
             }, {
                 title: '마켓아이디',
-                dataIndex: 'total',
-                key: 'total',
+                dataIndex: 'siteLoginId',
+                key: 'siteLoginId',
             }, {
                 title: 'MALL ETC',
-                dataIndex: 'type',
-                key: 'type',
+                dataIndex: 'mall_etc',
+                key: 'mall_etc',
                 width: 100,
             }, {
                 title: '마켓 수수료(%)',
+                dataIndex: 'market_sale_commission',
+                key: 'market_sale_commission',
+                width: 100,
+            }, {
+                title: '노출 상태',
+                dataIndex: 'disp',
+                key: 'disp',
+                width: 100,
+            }, {
+                title: '등록일자',
                 dataIndex: 'ins_time',
                 key: 'ins_time',
                 width: 100,
             }, {
-                title: '노출 상태',
-                dataIndex: 'add_user',
-                key: 'add_user',
-                width: 100,
-            }, {
-                title: '등록일자',
-                dataIndex: 'action',
-                key: 'action',
-                width: 100,
-            }, {
                 title: '통신테스트',
-                dataIndex: '',
-                key: '',
+                dataIndex: 'test',
+                key: 'test',
                 width: 100,
             }, {
                 title: '관리',
-                dataIndex: '',
-                key: '',
+                dataIndex: 'manage',
+                key: 'manage',
                 width: 100,
             }
         ];
 
-        const initParam =  () => {
-            return {
-                user: search_value.value,
-                limit: limit.value,
-                page: pageNum.value
+        const searchParam = ref({
+            site_code: {
+                options: [
+                    {label: "쇼핑몰(오픈마켓)", value: ''},
+                    {label: "11번가", value: '1'},
+                    {label: "옥션", value: '2'},
+                    {label: "쿠팡", value: '3'},
+                ],
+                value: ''
+            },
+            disp: {
+                options: [
+                    {label: "전체", value: ''},
+                    {label: "사용함", value: '1'},
+                    {label: "사용안함", value: '0'},
+                ],
+                value: ''
+            },
+            product_type: {
+                options: [
+                    {label: '전체', value: ''},
+                    {label: '일반셀러(국내상품 계정)', value: '1'},
+                    {label: '글로벌셀러(구매대행 계정)', value: '2'},
+                    {label: '일반 & 글로벌셀러', value: '3'}
+                ],
+                value: ''
             }
-        };
+        });
 
         return {
-            search_key,
-            search_value,
-            userList,
-            register,
-            getUserList,
-            columns,
-            recharge,
-            closeRecharge,
-            rechargePop,
-            openRechargePop,
-            recharge_value,
             bLoading,
-            userRemaining,
+            searchParam,
+            columns,
+            dataList,
             pagination
         };
     },
 });
 </script>
+
+
 <style scoped>
-.search_body {
-    padding: 10px 10px;
-    background: #fff;
-    margin: 10px 10px 10px 10px;
-}
 </style>
 
