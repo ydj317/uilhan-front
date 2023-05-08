@@ -5,14 +5,14 @@
                  :is-full-page="true"/>
 
         <div v-if="showPopup" @click="closePopupFn" class="popupMask"></div>
-        <div v-show="showPopup" class="popup_box">
+        <div v-if="showPopup" class="popup_box">
             <div class="popup_title clearfix">
                 <div class="title clearfix">
                     <div class="text">마켓 설정등록</div>
                 </div>
                 <a href="##" @click="closePopupFn" class="cross_btn"><span class="cross"></span></a>
             </div>
-            <div class="popup_cont">
+            <div ref="popupContent" class="popup_cont">
                 <div class="content">
                     <div class="popup_table">
                         <div class="title clearfix">
@@ -34,37 +34,37 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>API Key <span>*</span></th>
+                                <th>API Key <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.apiKey" placeholder="" style="width: 190px;" />
                                 </td>
-                                <th>API Ticket Key <span>*</span></th>
+                                <th>API Ticket Key <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.apiTicketKey" placeholder="" style="width: 190px;" />
                                 </td>
                             </tr>
                             <tr>
-                                <th>마켓 아이디 <span>*</span></th>
+                                <th>마켓 아이디 <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.siteLoginId" placeholder="" style="width: 190px;" />
                                 </td>
-                                <th>마켓 비밀번호 <span>*</span></th>
+                                <th>마켓 비밀번호 <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.siteLoginPw" placeholder="" style="width: 190px;" />
                                 </td>
                             </tr>
                             <tr>
-                                <th>Master LOGIN ID <span>*</span></th>
+                                <th>Master LOGIN ID <span v-show="isEsm">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.masterLoginId" placeholder="" style="width: 190px;" />
                                 </td>
-                                <th>Master LOGIN PASSWORD <span>*</span></th>
+                                <th>Master LOGIN PASSWORD <span v-show="isEsm">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.masterLoginPw" placeholder="" style="width: 190px;" />
                                 </td>
                             </tr>
                             <tr>
-                                <th>마켓 Company Code</th>
+                                <th>마켓 Company Code <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td colspan="3">
                                     <a-input v-model:value="marketItem.apiCompanyCode" placeholder="" style="width: 300px;" />
                                 </td>
@@ -96,9 +96,9 @@
                                 <th>연동상품유형</th>
                                 <td>
                                     <a-radio-group v-model:value="marketItem.product_type">
-                                        <a-radio :style="radioStyle" :value="1">일반셀러(국내상품 계정)</a-radio>
-                                        <a-radio :style="radioStyle" :value="2">글로벌셀러(구매대행 계정)</a-radio>
-                                        <a-radio :style="radioStyle" :value="3">일반&글로벌셀러</a-radio>
+                                        <a-radio :style="radioStyle" value="1">일반셀러(국내상품 계정)</a-radio>
+                                        <a-radio :style="radioStyle" value="2">글로벌셀러(구매대행 계정)</a-radio>
+                                        <a-radio :style="radioStyle" value="3">일반&글로벌셀러</a-radio>
                                     </a-radio-group>
                                 </td>
                             </tr>
@@ -106,16 +106,16 @@
                                 <th>주문 수집 후 자동상태변경</th>
                                 <td>
                                     <a-radio-group v-model:value="marketItem.change_order_status">
-                                        <a-radio :style="radioStyle" :value="1">변경안함</a-radio>
-                                        <a-radio :style="radioStyle" :value="2">변경함(배송준비중)</a-radio>
+                                        <a-radio :style="radioStyle" value="1">변경안함</a-radio>
+                                        <a-radio :style="radioStyle" value="2">변경함(배송준비중)</a-radio>
                                     </a-radio-group>
                                 </td>
                                 <th>자동연동설정</th>
                                 <td>
                                     <a-radio-group v-model:value="marketItem.auto_update">
-                                        <a-radio :style="radioStyle" :value="1">상품정보 전체수정</a-radio>
-                                        <a-radio :style="radioStyle" :value="2">재고만 수정</a-radio>
-                                        <a-radio :style="radioStyle" :value="3">미연동</a-radio>
+                                        <a-radio :style="radioStyle" value="product">상품정보 전체수정</a-radio>
+                                        <a-radio :style="radioStyle" value="stock">재고만 수정</a-radio>
+                                        <a-radio :style="radioStyle" value="none">미연동</a-radio>
                                     </a-radio-group>
                                 </td>
                             </tr>
@@ -127,7 +127,7 @@
                                         <a-select-option value="A">일괄적용</a-select-option>
                                         <a-select-option value="C">카테고리별 판매수수료 적용</a-select-option>
                                     </a-select>
-                                    <a-input v-model:value="marketItem.price_rate" placeholder="" style="margin-left: 5px; width: 100px;" />
+                                    <a-input v-model:value="marketItem.price_rate" placeholder="" style="margin-left: 5px; width: 100px;" /> %
                                 </td>
                             </tr>
                             <tr>
@@ -138,7 +138,7 @@
                                         <a-select-option value="A">일괄적용</a-select-option>
                                         <a-select-option value="C">카테고리별 판매수수료 적용</a-select-option>
                                     </a-select>
-                                    <a-input v-model:value="marketItem.market_sale_commission" placeholder="" style="margin-left: 5px; width: 100px;" />
+                                    <a-input v-model:value="marketItem.market_sale_commission" placeholder="" style="margin-left: 5px; width: 100px;" /> %
                                 </td>
                             </tr>
                             <tr>
@@ -173,7 +173,7 @@
                                     </a-select>
                                 </td>
                             </tr>
-                            <tr v-show="marketItem.esm_dispatch_type == 'B' || marketItem.esm_dispatch_type == 'E'">
+                            <tr v-show="show_esm_dispatch_day">
                                 <th>ESM 상품 준비기간</th>
                                 <td colspan="3">
                                     주문 후
@@ -183,7 +183,7 @@
                                     일
                                 </td>
                             </tr>
-                            <tr>
+                            <tr v-show="show_esm_dispatch_time">
                                 <th>ESM 발송 마감시간</th>
                                 <td colspan="3">
                                     <a-select ref="select" style="width: 60px;">
@@ -194,28 +194,28 @@
                                     </a-select> 분
                                 </td>
                             </tr>
-                            <tr v-show="marketItem.esm_dispatch_type == 'A'">
+                            <tr>
                                 <th>즉시할인</th>
                                 <td colspan="3">
-                                    <a-radio-group name="radioGroup" v-model:value="testValue">
+                                    <a-radio-group name="radioGroup" v-model:value="marketItem.discount_flag">
                                         <a-radio value="1">사용함</a-radio>
-                                        <a-radio value="2">사용안함</a-radio>
+                                        <a-radio value="0">사용안함</a-radio>
                                     </a-radio-group>
                                 </td>
                             </tr>
                             <tr>
                                 <th>몰별 구분</th>
                                 <td colspan="3">
-                                    <a-input placeholder="" style="width: 400px;" />
+                                    <a-input v-model:value="marketItem.mall_etc" placeholder="" style="width: 400px;" />
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                         <div class="mt30" style="text-align: center;">
-                            <a-button @click="setDataList" style="width: 100px;" type="primary">
+                            <a-button @click="savePopupFn" style="width: 100px;" type="primary">
                                 확인
                             </a-button>
-                            <a-button class="ml10" @click="initSearchParam()" style="width: 100px;" type="">초기화</a-button>
+                            <a-button class="ml10" @click="closePopupFn" style="width: 100px;" type="">취소</a-button>
                         </div>
                     </div>
                 </div>
@@ -277,15 +277,13 @@
 
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'is_korea'">
-                        <div style="text-align: center" v-if="record[column.key] === 'T'" >
-                            국내
-                        </div>
-                        <div style="text-align: center" v-else >
-                            국내
-                        </div>
+                        국내
                     </template>
                     <template v-else-if="column.key === 'site_code'">
-                        <div  style="text-align: center;"><span>{{record[column.key]}}</span></div>
+                        <div  style="text-align: center;">
+                            {{record['site_name']}}
+                            <span>({{record[column.key]}})</span>
+                        </div>
                     </template>
                     <template v-else-if="column.key === 'siteLoginId'">
                         <div  style="text-align: center;"><span>{{record[column.key]}}</span></div>
@@ -297,7 +295,7 @@
                     </template>
                     <template v-else-if="column.key === 'manage'">
                         <div style="text-align: center">
-                            <a-button @click="" style="width: 100px;" type="primary">
+                            <a-button @click="showPopupFnByEdit(record['id'])" style="width: 100px;" type="primary">
                                 <template #icon><EditOutlined /></template>
                                 수정
                             </a-button>
@@ -311,212 +309,388 @@
         </div>
     </div>
 </template>
-<script>
-import {defineComponent, onMounted, ref, reactive, toRaw} from 'vue';
+<script setup>
+import {defineComponent, onMounted, ref, reactive, toRaw, computed} from 'vue';
 import Cookie from "js-cookie";
 import {AuthRequest} from "util/request";
 import router from "router";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import { SearchOutlined, FileAddOutlined, EditOutlined } from '@ant-design/icons-vue';
-export default defineComponent({
-    components: { Loading, SearchOutlined, FileAddOutlined, EditOutlined },
-    setup() {
-        const SITE_CODE_LIST = [
-            {label: "쇼핑몰(오픈마켓)", value: ''},
-            {label: "스마트스토어", value: 'storefarm'},
-            {label: "쿠팡", value: 'coupang'},
-            {label: "11번가", value: '11st'},
-            {label: "위메프", value: 'wemakeprice'},
-            {label: "인터파크", value: 'interpark'},
-            {label: "티몬", value: 'tmon'},
-            {label: "ESM2.0 지마켓", value: 'esm_gmarket'},
-            {label: "ESM2.0 옥션", value: 'esm_auction'},
-            {label: "롯데ON", value: 'lotteon'},
-        ];
 
-        const roles = ref(Cookie.get('member_roles'));
-
-        let bLoading = ref(false);
-
-        const searchParam = ref({
-            site_code: '',
-            disp: '',
-            product_type: ''
-        });
-
-        const marketItem = ref({
-            ssi_ix: '',
-            site_code: '',
-            apiKey: '',
-            apiTicketKey: '',
-            siteLoginId: '',
-            siteLoginPw: '',
-            masterLoginId: '',
-            masterLoginPw: '',
-            apiCompanyCode: '',
-            product_type: '',
-            disp: '',
-            mall_etc: '',
-            price_flag: 'N', // 판매가격 증가 연동, N - 사용안함, A - 일괄적용, C - 카테고리별 판매수수료 적용
-            price_rate: '', // 판매가격 증가율 (%)
-            commission_flag: 'N', // 정산용 판매수수료, N - 사용안함, A - 일괄적용, C - 카테고리별 판매수수료 적용
-            market_sale_commission: '', // 판매수수료 (%)
-            change_order_status: '1', // 주문 수집 후 자동상태변경, 1 - 변경안함, 2 - 변경함(배송준비중)
-            auto_update: 'product', // 자동연동 설정, product - 상품정보 전체수정, stock - 재고만 수정, none - 미연동
-            discount_flag: '0', // 즉시할인 , 0 - 사용하지 않음, 1 - 사용함
-            is_pcs_product_flag: '0', // ESM 가격비교 사이트 상품 등록 설정, 0 - 등록안함, 1 - 등록함
-            is_pcs_coupon_flag: '0', // ESM 가격비교 사이트 쿠폰 적용여부, 0 - 적용안함, 1 - 적용함
-            esm_dispatch_type: 'A', // ESM 발송정책 타입, A - 당일 발송, B - 순차 발송, C - 해외 발송
-                                    // D - 요청일 발송, E - 주문제작 발송, F - 발송일 미정
-            esm_dispatch_day: '', // ESM 상품 준비기간, esm_dispatch_type : B, E일 경우 주문일 N일로 필수 연동(2~10까지입력) , esm_dispatch_type : C일 경우 주문일 N주로 필수 연동(1~5까지 입력)
-            esm_dispatch_time: '' // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
-        });
-
-        const dataList = ref([]);
-        const pagination = ref({
-            total: 0,
-            current: 1,
-            pageSize: 10,
-            position: ['bottomCenter'],
-            showSizeChanger: true,
-            pageSizeOptions: ['10', '20', '50', '100'],
-            onChange: page => {
-                pagination.value.current = page;
-                setDataList();
-            },
-            onShowSizeChange: (current, pageSize) => {
-                pagination.value.current = 1;
-                pagination.value.pageSize = pageSize;
-                setDataList();
-            },
-        });
-
-        onMounted(async () => {
-            if (roles.value === null || roles.value.indexOf('ROLE_ADMIN') === -1) {
-                return false;
-            }
-            bLoading.value = true;
-
-            await setDataList();
-        });
-
-        const initSearchParam = () => {
-            searchParam.value.site_code = '';
-            searchParam.value.disp = '';
-            searchParam.value.product_type = '';
-        };
-
-        const setDataList = async () => {
-
-            const res = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market_setting/lists", {
-                params: {
-                    site_code: searchParam.value.site_code, // 마켓코드
-                    disp: searchParam.value.disp, // 노출선택
-                    product_type: searchParam.value.product_type, // 상품연동유형
-                    page: pagination.value.current, // 페이지
-                    limit: pagination.value.pageSize // 리미트
-                },
-            });
-
-            bLoading.value = false;
-
-            dataList.value = res.data.list;
-            pagination.value.total = res.data.total;
-            pagination.value.current = res.data.page;
-            pagination.value.pageSize = res.data.limit;
-        };
-
-        const columns = [
-            {
-                title: 'No.',
-                dataIndex: 'no',
-                key: 'no',
-                width: 50,
-            }, {
-                title: '구분',
-                dataIndex: 'is_korea',
-                key: 'is_korea',
-                width: 100,
-            }, {
-                title: '마켓명(마켓코드)',
-                dataIndex: 'site_code',
-                key: 'site_code',
-            }, {
-                title: '마켓아이디',
-                dataIndex: 'siteLoginId',
-                key: 'siteLoginId',
-            }, {
-                title: 'MALL ETC',
-                dataIndex: 'mall_etc',
-                key: 'mall_etc',
-                width: 100,
-            }, {
-                title: '마켓 수수료(%)',
-                dataIndex: 'market_sale_commission',
-                key: 'market_sale_commission',
-                width: 100,
-            }, {
-                title: '노출 상태',
-                dataIndex: 'disp',
-                key: 'disp',
-                width: 100,
-            }, {
-                title: '등록일자',
-                dataIndex: 'ins_time',
-                key: 'ins_time',
-                width: 100,
-            }, {
-                title: '통신테스트',
-                dataIndex: 'test',
-                key: 'test',
-                width: 100,
-            }, {
-                title: '관리',
-                dataIndex: 'manage',
-                key: 'manage',
-                width: 100,
-            }
-        ];
+// api 결과값
+const _MUST_DATA = [
+    {
+        "site_name": "11번가",
+        "site_code": "11st",
+        "apiKey": "true",
+        "apiTicketKey": "false",
+        "siteLoginId": "true",
+        "siteLoginPw": "true",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "ESM2.0 옥션",
+        "site_code": "esm_auction",
+        "apiKey": "false",
+        "apiTicketKey": "false",
+        "siteLoginId": "true",
+        "siteLoginPw": "false",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "ESM2.0 지마켓",
+        "site_code": "esm_gmarket",
+        "apiKey": "false",
+        "apiTicketKey": "false",
+        "siteLoginId": "true",
+        "siteLoginPw": "false",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "네이버페이",
+        "site_code": "npay",
+        "apiKey": "false",
+        "apiTicketKey": "false",
+        "siteLoginId": "false",
+        "siteLoginPw": "false",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "롯데ON",
+        "site_code": "lotteon",
+        "apiKey": "false",
+        "apiTicketKey": "false",
+        "siteLoginId": "false",
+        "siteLoginPw": "false",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "스마트스토어",
+        "site_code": "storefarm",
+        "apiKey": "true",
+        "apiTicketKey": "false",
+        "siteLoginId": "true",
+        "siteLoginPw": "true",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "신세계_new",
+        "site_code": "ssg_new",
+        "apiKey": "false",
+        "apiTicketKey": "false",
+        "siteLoginId": "false",
+        "siteLoginPw": "false",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "옥션",
+        "site_code": "auction",
+        "apiKey": "false",
+        "apiTicketKey": "true",
+        "siteLoginId": "true",
+        "siteLoginPw": "true",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "위메프",
+        "site_code": "wemakeprice",
+        "apiKey": "true",
+        "apiTicketKey": "false",
+        "siteLoginId": "true",
+        "siteLoginPw": "true",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "인터파크",
+        "site_code": "interpark",
+        "apiKey": "false",
+        "apiTicketKey": "false",
+        "siteLoginId": "true",
+        "siteLoginPw": "true",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "지마켓",
+        "site_code": "gmarket",
+        "apiKey": "false",
+        "apiTicketKey": "false",
+        "siteLoginId": "true",
+        "siteLoginPw": "true",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "카카오스토어",
+        "site_code": "kakao",
+        "apiKey": "true",
+        "apiTicketKey": "false",
+        "siteLoginId": "true",
+        "siteLoginPw": "true",
+        "apiCompanyCode": "false"
+    },
+    {
+        "site_name": "쿠팡",
+        "site_code": "coupang",
+        "apiKey": "true",
+        "apiTicketKey": "true",
+        "siteLoginId": "true",
+        "siteLoginPw": "true",
+        "apiCompanyCode": "true"
+    },
+    {
+        "site_name": "티몬",
+        "site_code": "tmon",
+        "apiKey": "false",
+        "apiTicketKey": "false",
+        "siteLoginId": "false",
+        "siteLoginPw": "false",
+        "apiCompanyCode": "false"
+    }
+];
+const MUST_DATA = {};
+MUST_DATA[''] = {
+    "site_name": "",
+    "site_code": "",
+    "apiKey": "",
+    "apiTicketKey": "",
+    "siteLoginId": "",
+    "siteLoginPw": "",
+    "apiCompanyCode": ""
+};
+for (let i = 0; i < _MUST_DATA.length; i++) {
+    MUST_DATA[_MUST_DATA[i]['site_code']] = _MUST_DATA[i];
+}
 
 
-        const showPopup = ref(true);
-        const closePopupFn = () => {
-            showPopup.value = false;
-        }
-        const showPopupFn = () => {
-            showPopup.value = true;
-        }
+const SITE_CODE_LIST = [
+    {label: "쇼핑몰(오픈마켓)", value: ''},
+    {label: "스마트스토어", value: 'storefarm'},
+    {label: "쿠팡", value: 'coupang'},
+    {label: "11번가", value: '11st'},
+    {label: "위메프", value: 'wemakeprice'},
+    {label: "인터파크", value: 'interpark'},
+    {label: "티몬", value: 'tmon'},
+    {label: "ESM2.0 지마켓", value: 'esm_gmarket'},
+    {label: "ESM2.0 옥션", value: 'esm_auction'},
+    {label: "롯데ON", value: 'lotteon'},
+];
 
-        const radioStyle = reactive({
-            display: 'block',
-            height: '30px',
-            lineHeight: '30px',
-        });
+const roles = ref(Cookie.get('member_roles'));
 
-        const testValue = ref('')
+let bLoading = ref(false);
 
-        return {
-            testValue,
-            SITE_CODE_LIST,
+const searchParam = ref({
+    site_code: '',
+    disp: '',
+    product_type: ''
+});
 
-            bLoading,
-            searchParam,
-            initSearchParam,
-            setDataList,
-            columns,
-            dataList,
-            pagination,
+const _marketItem = {
+    ssi_ix: '',
+    site_code: '',
+    apiKey: '',
+    apiTicketKey: '',
+    siteLoginId: '',
+    siteLoginPw: '',
+    masterLoginId: '',
+    masterLoginPw: '',
+    apiCompanyCode: '',
+    product_type: '1',
+    disp: '1',
+    mall_etc: '',
+    price_flag: 'N', // 판매가격 증가 연동, N - 사용안함, A - 일괄적용, C - 카테고리별 판매수수료 적용
+    price_rate: '', // 판매가격 증가율 (%)
+    commission_flag: 'N', // 정산용 판매수수료, N - 사용안함, A - 일괄적용, C - 카테고리별 판매수수료 적용
+    market_sale_commission: '', // 판매수수료 (%)
+    change_order_status: '1', // 주문 수집 후 자동상태변경, 1 - 변경안함, 2 - 변경함(배송준비중)
+    auto_update: 'product', // 자동연동 설정, product - 상품정보 전체수정, stock - 재고만 수정, none - 미연동
+    discount_flag: '0', // 즉시할인 , 0 - 사용하지 않음, 1 - 사용함
+    is_pcs_product_flag: '0', // ESM 가격비교 사이트 상품 등록 설정, 0 - 등록안함, 1 - 등록함
+    is_pcs_coupon_flag: '0', // ESM 가격비교 사이트 쿠폰 적용여부, 0 - 적용안함, 1 - 적용함
+    esm_dispatch_type: '', // ESM 발송정책 타입, A - 당일 발송, B - 순차 발송, C - 해외 발송, D - 요청일 발송, E - 주문제작 발송, F - 발송일 미정
+    esm_dispatch_day: '', // ESM 상품 준비기간, esm_dispatch_type : B, E일 경우 주문일 N일로 필수 연동(2~10까지입력) , esm_dispatch_type : C일 경우 주문일 N주로 필수 연동(1~5까지 입력)
+    esm_dispatch_time: '' // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
+};
 
-            showPopup,
-            closePopupFn,
-            showPopupFn,
-            radioStyle,
+const marketItem = ref({
+    ssi_ix: '',
+    site_code: '',
+    apiKey: '',
+    apiTicketKey: '',
+    siteLoginId: '',
+    siteLoginPw: '',
+    masterLoginId: '',
+    masterLoginPw: '',
+    apiCompanyCode: '',
+    product_type: '1',
+    disp: '1',
+    mall_etc: '',
+    price_flag: 'N', // 판매가격 증가 연동, N - 사용안함, A - 일괄적용, C - 카테고리별 판매수수료 적용
+    price_rate: '', // 판매가격 증가율 (%)
+    commission_flag: 'N', // 정산용 판매수수료, N - 사용안함, A - 일괄적용, C - 카테고리별 판매수수료 적용
+    market_sale_commission: '', // 판매수수료 (%)
+    change_order_status: '1', // 주문 수집 후 자동상태변경, 1 - 변경안함, 2 - 변경함(배송준비중)
+    auto_update: 'product', // 자동연동 설정, product - 상품정보 전체수정, stock - 재고만 수정, none - 미연동
+    discount_flag: '0', // 즉시할인 , 0 - 사용하지 않음, 1 - 사용함
+    is_pcs_product_flag: '0', // ESM 가격비교 사이트 상품 등록 설정, 0 - 등록안함, 1 - 등록함
+    is_pcs_coupon_flag: '0', // ESM 가격비교 사이트 쿠폰 적용여부, 0 - 적용안함, 1 - 적용함
+    esm_dispatch_type: '', // ESM 발송정책 타입, A - 당일 발송, B - 순차 발송, C - 해외 발송, D - 요청일 발송, E - 주문제작 발송, F - 발송일 미정
+    esm_dispatch_day: '', // ESM 상품 준비기간, esm_dispatch_type : B, E일 경우 주문일 N일로 필수 연동(2~10까지입력) , esm_dispatch_type : C일 경우 주문일 N주로 필수 연동(1~5까지 입력)
+    esm_dispatch_time: '' // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
+});
 
-            marketItem,
-        };
+const isEsm = computed(() => {
+    return marketItem.value.site_code === 'esm_gmarket' || marketItem.value.site_code === 'esm_auction';
+});
+
+const dataList = ref([]);
+const pagination = ref({
+    total: 0,
+    current: 1,
+    pageSize: 10,
+    position: ['bottomCenter'],
+    showSizeChanger: true,
+    pageSizeOptions: ['10', '20', '50', '100'],
+    onChange: page => {
+        pagination.value.current = page;
+        setDataList();
+    },
+    onShowSizeChange: (current, pageSize) => {
+        pagination.value.current = 1;
+        pagination.value.pageSize = pageSize;
+        setDataList();
     },
 });
+
+onMounted(async () => {
+    if (roles.value === null || roles.value.indexOf('ROLE_ADMIN') === -1) {
+        return false;
+    }
+
+    await setDataList();
+});
+
+const initSearchParam = () => {
+    searchParam.value.site_code = '';
+    searchParam.value.disp = '';
+    searchParam.value.product_type = '';
+};
+
+const setDataList = async () => {
+    bLoading.value = true;
+
+    const res = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market/setting", {
+        params: {
+            site_code: searchParam.value.site_code, // 마켓코드
+            disp: searchParam.value.disp, // 노출선택
+            product_type: searchParam.value.product_type, // 상품연동유형
+            page: pagination.value.current, // 페이지
+            limit: pagination.value.pageSize // 리미트
+        },
+    });
+
+    bLoading.value = false;
+
+    dataList.value = res.data.list;
+    pagination.value.total = res.data.total;
+    pagination.value.current = res.data.page;
+    pagination.value.pageSize = res.data.limit;
+};
+
+const columns = [
+    {
+        title: 'No.',
+        dataIndex: 'no',
+        key: 'no',
+        width: 50,
+    }, {
+        title: '구분',
+        dataIndex: 'is_korea',
+        key: 'is_korea',
+        width: 100,
+    }, {
+        title: '마켓명(마켓코드)',
+        dataIndex: 'site_code',
+        key: 'site_code',
+    }, {
+        title: '마켓아이디',
+        dataIndex: 'siteLoginId',
+        key: 'siteLoginId',
+    }, {
+        title: 'MALL ETC',
+        dataIndex: 'mall_etc',
+        key: 'mall_etc',
+        width: 100,
+    }, {
+        title: '마켓 수수료(%)',
+        dataIndex: 'market_sale_commission',
+        key: 'market_sale_commission',
+        width: 100,
+    }, {
+        title: '노출 상태',
+        dataIndex: 'disp',
+        key: 'disp',
+        width: 100,
+    }, {
+        title: '등록일자',
+        dataIndex: 'ins_date',
+        key: 'ins_date',
+        width: 100,
+    }, {
+        title: '통신테스트',
+        dataIndex: 'test',
+        key: 'test',
+        width: 100,
+    }, {
+        title: '관리',
+        dataIndex: 'manage',
+        key: 'manage',
+        width: 100,
+    }
+];
+
+const popupContent = ref(null);
+
+
+const showPopup = ref(false);
+const closePopupFn = () => {
+    showPopup.value = false;
+}
+const showPopupFn = () => {
+    marketItem.value = JSON.parse(JSON.stringify(_marketItem));
+    showPopup.value = true;
+}
+const showPopupFnByEdit = async (id) => {
+    bLoading.value = true;
+    const res = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market/setting/" + id);
+    marketItem.value = res.data;
+    showPopup.value = true;
+    bLoading.value = false;
+}
+
+const radioStyle = reactive({
+    display: 'block',
+    height: '30px',
+    lineHeight: '30px',
+});
+
+const show_esm_dispatch_day = computed(() => {
+    return ['B', 'E'].indexOf(marketItem.value.esm_dispatch_type) > -1;
+});
+
+const show_esm_dispatch_time = computed(() => {
+    return ['A'].indexOf(marketItem.value.esm_dispatch_type) > -1;
+});
+
+const savePopupFn = async () => {
+    bLoading.value = true;
+    const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/market/setting/save", marketItem.value);
+    bLoading.value = false;
+    closePopupFn();
+    setDataList();
+};
+
+
 </script>
 
 
