@@ -5,19 +5,235 @@
                  :is-full-page="true"/>
 
         <div v-if="showPopup" @click="closePopupFn" class="popupMask"></div>
+        <div v-show="showPopup" class="popup_box">
+            <div class="popup_title clearfix">
+                <div class="title clearfix">
+                    <div class="text">마켓 설정등록</div>
+                </div>
+                <a href="##" @click="closePopupFn" class="cross_btn"><span class="cross"></span></a>
+            </div>
+            <div class="popup_cont">
+                <div class="content">
+                    <div class="popup_table">
+                        <div class="title clearfix">
+                            <div class="text">마켓 연동 필수값</div>
+                        </div>
+                        <table class="table">
+                            <colgroup>
+                                <col width="125px" />
+                                <col width="auto" />
+                                <col width="125px" />
+                                <col width="auto" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <th>마켓 선택 <span>*</span></th>
+                                <td colspan="3">
+                                    <a-select :options="SITE_CODE_LIST" v-model:value="marketItem.site_code">
+                                    </a-select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>API Key <span>*</span></th>
+                                <td>
+                                    <a-input v-model:value="marketItem.apiKey" placeholder="" style="width: 190px;" />
+                                </td>
+                                <th>API Ticket Key <span>*</span></th>
+                                <td>
+                                    <a-input v-model:value="marketItem.apiTicketKey" placeholder="" style="width: 190px;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>마켓 아이디 <span>*</span></th>
+                                <td>
+                                    <a-input v-model:value="marketItem.siteLoginId" placeholder="" style="width: 190px;" />
+                                </td>
+                                <th>마켓 비밀번호 <span>*</span></th>
+                                <td>
+                                    <a-input v-model:value="marketItem.siteLoginPw" placeholder="" style="width: 190px;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Master LOGIN ID <span>*</span></th>
+                                <td>
+                                    <a-input v-model:value="marketItem.masterLoginId" placeholder="" style="width: 190px;" />
+                                </td>
+                                <th>Master LOGIN PASSWORD <span>*</span></th>
+                                <td>
+                                    <a-input v-model:value="marketItem.masterLoginPw" placeholder="" style="width: 190px;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>마켓 Company Code</th>
+                                <td colspan="3">
+                                    <a-input v-model:value="marketItem.apiCompanyCode" placeholder="" style="width: 300px;" />
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="popup_text1"><span>*</span> 연동된 마켓의 접근정보(ID변경 포함한 API KEY, API Ticket등)를 변경 저장하면 이후 연동에 오류를 유발합니다.<br>따라서 새로운 계정을 등록하고자 하는 경우, 마켓설정의[수정]이 아닌 신규 설정 추가를 통해 등록해주세요.</div>
+                    </div>
+                    <div class="popup_table">
+                        <div class="title clearfix">
+                            <div class="text">부가정보 설정</div>
+                        </div>
+                        <table class="table">
+                            <colgroup>
+                                <col width="125px" />
+                                <col width="auto" />
+                                <col width="125px" />
+                                <col width="auto" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <th>노출 상태</th>
+                                <td>
+                                    <a-radio-group name="radioGroup" v-model:value="marketItem.disp">
+                                        <a-radio value="1">노출함</a-radio>
+                                        <a-radio value="2">노출안함</a-radio>
+                                    </a-radio-group>
+                                </td>
+                                <th>연동상품유형</th>
+                                <td>
+                                    <a-radio-group v-model:value="marketItem.product_type">
+                                        <a-radio :style="radioStyle" :value="1">일반셀러(국내상품 계정)</a-radio>
+                                        <a-radio :style="radioStyle" :value="2">글로벌셀러(구매대행 계정)</a-radio>
+                                        <a-radio :style="radioStyle" :value="3">일반&글로벌셀러</a-radio>
+                                    </a-radio-group>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>주문 수집 후 자동상태변경</th>
+                                <td>
+                                    <a-radio-group v-model:value="marketItem.change_order_status">
+                                        <a-radio :style="radioStyle" :value="1">변경안함</a-radio>
+                                        <a-radio :style="radioStyle" :value="2">변경함(배송준비중)</a-radio>
+                                    </a-radio-group>
+                                </td>
+                                <th>자동연동설정</th>
+                                <td>
+                                    <a-radio-group v-model:value="marketItem.auto_update">
+                                        <a-radio :style="radioStyle" :value="1">상품정보 전체수정</a-radio>
+                                        <a-radio :style="radioStyle" :value="2">재고만 수정</a-radio>
+                                        <a-radio :style="radioStyle" :value="3">미연동</a-radio>
+                                    </a-radio-group>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>판매 가격 증가 연동</th>
+                                <td colspan="3">
+                                    <a-select ref="select" style="width: 150px;" v-model:value="marketItem.price_flag">
+                                        <a-select-option value="N">사용안함</a-select-option>
+                                        <a-select-option value="A">일괄적용</a-select-option>
+                                        <a-select-option value="C">카테고리별 판매수수료 적용</a-select-option>
+                                    </a-select>
+                                    <a-input v-model:value="marketItem.price_rate" placeholder="" style="margin-left: 5px; width: 100px;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>정산용 판매수수료</th>
+                                <td colspan="3">
+                                    <a-select v-model:value="marketItem.commission_flag" ref="select" style="width: 150px;">
+                                        <a-select-option value="N">사용안함</a-select-option>
+                                        <a-select-option value="A">일괄적용</a-select-option>
+                                        <a-select-option value="C">카테고리별 판매수수료 적용</a-select-option>
+                                    </a-select>
+                                    <a-input v-model:value="marketItem.market_sale_commission" placeholder="" style="margin-left: 5px; width: 100px;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>ESM 가격비교 사이트 상품 등록 설정</th>
+                                <td colspan="3">
+                                    <a-radio-group name="radioGroup" v-model:value="marketItem.is_pcs_product_flag">
+                                        <a-radio value="1">등록함</a-radio>
+                                        <a-radio value="0">등록안함</a-radio>
+                                    </a-radio-group>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>ESM 가격비교 사이트 쿠폰 적용여부</th>
+                                <td colspan="3">
+                                    <a-radio-group name="radioGroup" v-model:value="marketItem.is_pcs_coupon_flag">
+                                        <a-radio value="1">적용함</a-radio>
+                                        <a-radio value="0">적용안함</a-radio>
+                                    </a-radio-group>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>ESM 발송정책 타입</th>
+                                <td colspan="3">
+                                    <a-select v-model:value="marketItem.esm_dispatch_type" ref="select" style="width: 150px;">
+                                        <a-select-option value="">사용안함</a-select-option>
+                                        <a-select-option value="A">당일 발송</a-select-option>
+                                        <a-select-option value="B">순차 발송</a-select-option>
+                                        <a-select-option value="C">해외 발송</a-select-option>
+                                        <a-select-option value="D">요청일 발송</a-select-option>
+                                        <a-select-option value="E">주문제작 발송</a-select-option>
+                                        <a-select-option value="F">발송일 미정</a-select-option>
+                                    </a-select>
+                                </td>
+                            </tr>
+                            <tr v-show="marketItem.esm_dispatch_type == 'B' || marketItem.esm_dispatch_type == 'E'">
+                                <th>ESM 상품 준비기간</th>
+                                <td colspan="3">
+                                    주문 후
+                                    <a-select ref="select" style="width: 60px;">
+                                        <a-select-option value="">1</a-select-option>
+                                    </a-select>
+                                    일
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>ESM 발송 마감시간</th>
+                                <td colspan="3">
+                                    <a-select ref="select" style="width: 60px;">
+                                        <a-select-option value="">24</a-select-option>
+                                    </a-select> 시
+                                    <a-select ref="select" style="width: 60px;">
+                                        <a-select-option value="">30</a-select-option>
+                                    </a-select> 분
+                                </td>
+                            </tr>
+                            <tr v-show="marketItem.esm_dispatch_type == 'A'">
+                                <th>즉시할인</th>
+                                <td colspan="3">
+                                    <a-radio-group name="radioGroup" v-model:value="testValue">
+                                        <a-radio value="1">사용함</a-radio>
+                                        <a-radio value="2">사용안함</a-radio>
+                                    </a-radio-group>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>몰별 구분</th>
+                                <td colspan="3">
+                                    <a-input placeholder="" style="width: 400px;" />
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="mt30" style="text-align: center;">
+                            <a-button @click="setDataList" style="width: 100px;" type="primary">
+                                확인
+                            </a-button>
+                            <a-button class="ml10" @click="initSearchParam()" style="width: 100px;" type="">초기화</a-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="search" class="pl20 pr20 pb20  mb10 bg-white">
             <div style="margin: 0; padding: 0; display: flex; justify-content: space-between;">
 
                 <div>
                     <h3>마켓선택</h3>
-                    <a-select :options="searchParam.site_code.options" v-model:value="searchParam.site_code.value" style="width: 250px">
+                    <a-select :options="SITE_CODE_LIST" v-model:value="searchParam.site_code" style="width: 250px">
                     </a-select>
                 </div>
 
                 <div>
                     <h3>노출선택</h3>
-                    <a-radio-group v-model:value="searchParam.disp.value">
+                    <a-radio-group v-model:value="searchParam.disp">
                         <a-radio-button value="">전체</a-radio-button>
                         <a-radio-button value="1">노출함</a-radio-button>
                         <a-radio-button value="0">노출안함</a-radio-button>
@@ -27,7 +243,7 @@
 
                 <div>
                     <h3>연동상품유형</h3>
-                    <a-radio-group v-model:value="searchParam.product_type.value">
+                    <a-radio-group v-model:value="searchParam.product_type">
                         <a-radio-button value="">전체</a-radio-button>
                         <a-radio-button value="1">일반셀러(국내상품 계정)</a-radio-button>
                         <a-radio-button value="2">글로벌셀러(구매대행 계정)</a-radio-button>
@@ -52,102 +268,7 @@
                     <template #icon><FileAddOutlined /></template>
                     마켓등록
                 </a-button>
-                <div v-if="showPopup" class="popup_box">
-                    <div class="popup_title clearfix">
-                        <div class="title clearfix">
-                            <div class="text">마켓 설정등록</div>
-                        </div>
-                        <a href="##" @click="closePopupFn" class="cross_btn"><span class="cross"></span></a>
-                    </div>
-                    <div class="popup_cont">
-                        <div class="content">
-                            <div class="popup_table">
-                                <div class="title clearfix">
-                                    <div class="text">마켓 연동 필수값</div>
-                                </div>
-                                <table class="table">
-                                    <colgroup>
-                                        <col width="125px" />
-                                        <col width="auto" />
-                                        <col width="125px" />
-                                        <col width="auto" />
-                                    </colgroup>
-                                    <tbody>
-                                    <tr>
-                                        <th>마켓 선택 <span>*</span></th>
-                                        <td colspan="3">
-                                            <a-select :options="searchParam.site_code.options" v-model:value="searchParam.site_code.value">
-                                            </a-select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>API Key <span>*</span></th>
-                                        <td>
-                                            <a-input placeholder="" style="width: 190px;" />
-                                        </td>
-                                        <th>API Ticket Key <span>*</span></th>
-                                        <td>
-                                            <a-input placeholder="" style="width: 190px;" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>마켓 아이디 <span>*</span></th>
-                                        <td>
-                                            <a-input placeholder="" style="width: 190px;" />
-                                        </td>
-                                        <th>마켓 비밀번호 <span>*</span></th>
-                                        <td>
-                                            <a-input placeholder="" style="width: 190px;" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>마켓 Company Code</th>
-                                        <td colspan="3">
-                                            <a-input placeholder="" style="width: 300px;" />
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <div class="popup_text1"><span>*</span> 연동된 마켓의 접근정보(ID변경 포함한 API KEY, API Ticket등)를 변경 저장하면 이후 연동에 오류를 유발합니다.<br>따라서 새로운 계정을 등록하고자 하는 경우, 마켓설정의[수정]이 아닌 신규 설정 추가를 통해 등록해주세요.</div>
-                            </div>
-                            <div class="popup_table">
-                                <div class="title clearfix">
-                                    <div class="text">부가정보 설정</div>
-                                </div>
-                                <table class="table">
-                                    <colgroup>
-                                        <col width="125px" />
-                                        <col width="auto" />
-                                        <col width="125px" />
-                                        <col width="auto" />
-                                    </colgroup>
-                                    <tbody>
-                                    <tr>
-                                        <th>노출 상태</th>
-                                        <td>
-                                            <a-radio-group name="radioGroup" v-model:value="value">
-                                                <a-radio value="1">노출함</a-radio>
-                                                <a-radio value="2">노출안함</a-radio>
-                                            </a-radio-group>
-                                        </td>
-                                        <th>연동상품유형</th>
-                                        <td>
-                                            <a-radio-group v-model:value="value">
-                                                <a-radio :style="radioStyle" :value="1">일반셀러(국내상품 계정)</a-radio>
-                                                <a-radio :style="radioStyle" :value="2">글로벌셀러(구매대행 계정)</a-radio>
-                                                <a-radio :style="radioStyle" :value="3">일반&글로벌셀러</a-radio>
-                                            </a-radio-group>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-
-
 
             <a-table :bordered="false" :columns="columns" :data-source="dataList" :pagination="pagination">
                 <template #headerCell="{ column }">
@@ -201,27 +322,55 @@ import { SearchOutlined, FileAddOutlined, EditOutlined } from '@ant-design/icons
 export default defineComponent({
     components: { Loading, SearchOutlined, FileAddOutlined, EditOutlined },
     setup() {
+        const SITE_CODE_LIST = [
+            {label: "쇼핑몰(오픈마켓)", value: ''},
+            {label: "스마트스토어", value: 'storefarm'},
+            {label: "쿠팡", value: 'coupang'},
+            {label: "11번가", value: '11st'},
+            {label: "위메프", value: 'wemakeprice'},
+            {label: "인터파크", value: 'interpark'},
+            {label: "티몬", value: 'tmon'},
+            {label: "ESM2.0 지마켓", value: 'esm_gmarket'},
+            {label: "ESM2.0 옥션", value: 'esm_auction'},
+            {label: "롯데ON", value: 'lotteon'},
+        ];
 
         const roles = ref(Cookie.get('member_roles'));
 
         let bLoading = ref(false);
 
         const searchParam = ref({
-            site_code: {
-                options: [
-                    {label: "쇼핑몰(오픈마켓)", value: ''},
-                    {label: "11번가", value: '1'},
-                    {label: "옥션", value: '2'},
-                    {label: "쿠팡", value: '3'},
-                ],
-                value: ''
-            },
-            disp: {
-                value: ''
-            },
-            product_type: {
-                value: ''
-            }
+            site_code: '',
+            disp: '',
+            product_type: ''
+        });
+
+        const marketItem = ref({
+            ssi_ix: '',
+            site_code: '',
+            apiKey: '',
+            apiTicketKey: '',
+            siteLoginId: '',
+            siteLoginPw: '',
+            masterLoginId: '',
+            masterLoginPw: '',
+            apiCompanyCode: '',
+            product_type: '',
+            disp: '',
+            mall_etc: '',
+            price_flag: 'N', // 판매가격 증가 연동, N - 사용안함, A - 일괄적용, C - 카테고리별 판매수수료 적용
+            price_rate: '', // 판매가격 증가율 (%)
+            commission_flag: 'N', // 정산용 판매수수료, N - 사용안함, A - 일괄적용, C - 카테고리별 판매수수료 적용
+            market_sale_commission: '', // 판매수수료 (%)
+            change_order_status: '1', // 주문 수집 후 자동상태변경, 1 - 변경안함, 2 - 변경함(배송준비중)
+            auto_update: 'product', // 자동연동 설정, product - 상품정보 전체수정, stock - 재고만 수정, none - 미연동
+            discount_flag: '0', // 즉시할인 , 0 - 사용하지 않음, 1 - 사용함
+            is_pcs_product_flag: '0', // ESM 가격비교 사이트 상품 등록 설정, 0 - 등록안함, 1 - 등록함
+            is_pcs_coupon_flag: '0', // ESM 가격비교 사이트 쿠폰 적용여부, 0 - 적용안함, 1 - 적용함
+            esm_dispatch_type: 'A', // ESM 발송정책 타입, A - 당일 발송, B - 순차 발송, C - 해외 발송
+                                    // D - 요청일 발송, E - 주문제작 발송, F - 발송일 미정
+            esm_dispatch_day: '', // ESM 상품 준비기간, esm_dispatch_type : B, E일 경우 주문일 N일로 필수 연동(2~10까지입력) , esm_dispatch_type : C일 경우 주문일 N주로 필수 연동(1~5까지 입력)
+            esm_dispatch_time: '' // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
         });
 
         const dataList = ref([]);
@@ -248,42 +397,29 @@ export default defineComponent({
                 return false;
             }
             bLoading.value = true;
-            setDataList();
+
+            await setDataList();
         });
 
         const initSearchParam = () => {
-            searchParam.value.site_code.value = '';
-            searchParam.value.disp.value = '';
-            searchParam.value.product_type.value = '';
+            searchParam.value.site_code = '';
+            searchParam.value.disp = '';
+            searchParam.value.product_type = '';
         };
 
-        const setDataList = () => {
+        const setDataList = async () => {
 
-            // 마켓코드 searchParam.value.site_code.value;
-            // 노출선택 searchParam.value.disp.value;
-            // 연동상품유형 searchParam.value.product_type.value;
-            // page pagination.value.current
-            // limit pagination.value.pageSize
+            const res = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market_setting/lists", {
+                params: {
+                    site_code: searchParam.value.site_code, // 마켓코드
+                    disp: searchParam.value.disp, // 노출선택
+                    product_type: searchParam.value.product_type, // 상품연동유형
+                    page: pagination.value.current, // 페이지
+                    limit: pagination.value.pageSize // 리미트
+                },
+            });
 
-            console.log(pagination.value)
-
-            // sample
             bLoading.value = false;
-            const res = {
-                data: {
-                    total: 300,
-                    page: 1,
-                    limit: 10,
-                    list: [
-                        {
-                            no: 1,
-                            is_korea: 'T',
-                            site_code: '11st',
-                            siteLoginId: 'hello!'
-                        }
-                    ],
-                }
-            };
 
             dataList.value = res.data.list;
             pagination.value.total = res.data.total;
@@ -343,95 +479,6 @@ export default defineComponent({
             }
         ];
 
-        const visible = ref(false);
-        const confirmLoading = ref(false);
-        const showModal = () => {
-            visible.value = true;
-        };
-        const handleOk = () => {
-            confirmLoading.value = true;
-            setTimeout(() => {
-                visible.value = false;
-                confirmLoading.value = false;
-            }, 2000);
-        };
-
-
-        const formRef = ref();
-        const formState = reactive({
-            name: '',
-            region: undefined,
-            date1: undefined,
-            delivery: false,
-            type: [],
-            resource: '',
-            desc: '',
-        });
-        const rules = {
-            name: [
-                {
-                    required: true,
-                    message: 'Please input Activity name',
-                    trigger: 'blur',
-                },
-                {
-                    min: 3,
-                    max: 5,
-                    message: 'Length should be 3 to 5',
-                    trigger: 'blur',
-                },
-            ],
-            region: [
-                {
-                    required: true,
-                    message: 'Please select Activity zone',
-                    trigger: 'change',
-                },
-            ],
-            date1: [
-                {
-                    required: true,
-                    message: 'Please pick a date',
-                    trigger: 'change',
-                    type: 'object',
-                },
-            ],
-            type: [
-                {
-                    type: 'array',
-                    required: true,
-                    message: 'Please select at least one activity type',
-                    trigger: 'change',
-                },
-            ],
-            resource: [
-                {
-                    required: true,
-                    message: 'Please select activity resource',
-                    trigger: 'change',
-                },
-            ],
-            desc: [
-                {
-                    required: true,
-                    message: 'Please input activity form',
-                    trigger: 'blur',
-                },
-            ],
-        };
-        const onSubmit = () => {
-            formRef.value
-                .validate()
-                .then(() => {
-                    console.log('values', formState, toRaw(formState));
-                })
-                .catch(error => {
-                    console.log('error', error);
-                });
-        };
-        const resetForm = () => {
-            formRef.value.resetFields();
-        };
 
         const showPopup = ref(true);
         const closePopupFn = () => {
@@ -447,7 +494,12 @@ export default defineComponent({
             lineHeight: '30px',
         });
 
+        const testValue = ref('')
+
         return {
+            testValue,
+            SITE_CODE_LIST,
+
             bLoading,
             searchParam,
             initSearchParam,
@@ -456,28 +508,12 @@ export default defineComponent({
             dataList,
             pagination,
 
-            visible,
-            confirmLoading,
-            showModal,
-            handleOk,
-
-            formRef,
-            labelCol: {
-                span: 4,
-            },
-            wrapperCol: {
-                span: 14,
-            },
-            other: '',
-            formState,
-            rules,
-            onSubmit,
-            resetForm,
-
             showPopup,
             closePopupFn,
             showPopupFn,
             radioStyle,
+
+            marketItem,
         };
     },
 });
@@ -492,7 +528,7 @@ export default defineComponent({
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 10;
     height: 100%;
     background-color: #00000073;
 }
@@ -530,7 +566,7 @@ export default defineComponent({
     border-radius: 8px;
     background: #fff;
     overflow: hidden;
-    z-index: 9999;
+    z-index: 20;
 }
 
 .popup_title {
