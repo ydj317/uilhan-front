@@ -640,7 +640,14 @@ const savePopupFn = async () => {
         return;
     }
 
+    // before save format data
     marketItem.value.esm_dispatch_time = marketItem.value.esm_dispatch_time_h + ':' + marketItem.value.esm_dispatch_time_m;
+    if (marketItem.value.price_flag !== 'A') {
+        marketItem.value.price_rate = '';
+    }
+    if (marketItem.value.commission_flag !== 'A') {
+        marketItem.value.market_sale_commission = '';
+    }
 
     const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/market/seller", marketItem.value);
    //{"status":"2000","message":"요청에 성공하였습니다.","data":[]}
