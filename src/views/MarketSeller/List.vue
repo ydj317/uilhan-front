@@ -122,23 +122,27 @@
                             <tr>
                                 <th>판매 가격 증가 연동</th>
                                 <td colspan="3">
-                                    <a-select ref="select" style="width: 150px;" v-model:value="marketItem.price_flag">
+                                    <a-select ref="select" style="width: 200px;" v-model:value="marketItem.price_flag">
                                         <a-select-option value="N">사용안함</a-select-option>
                                         <a-select-option value="A">일괄적용</a-select-option>
                                         <a-select-option value="C">카테고리별 판매수수료 적용</a-select-option>
                                     </a-select>
-                                    <a-input-number :min="0" :max="100" v-model:value="marketItem.price_rate" placeholder="" style="margin-left: 5px; width: 100px;" /> %
-                                </td>
+                                    <span v-show="marketItem.price_flag == 'A'">
+                                        <a-input-number :min="0" :max="100" v-model:value="marketItem.price_rate" placeholder="" style="margin-left: 5px; width: 100px;" /> %
+                                    </span>
+                                 </td>
                             </tr>
                             <tr>
                                 <th>정산용 판매수수료</th>
                                 <td colspan="3">
-                                    <a-select v-model:value="marketItem.commission_flag" ref="select" style="width: 150px;">
+                                    <a-select v-model:value="marketItem.commission_flag" ref="select" style="width: 200px;">
                                         <a-select-option value="N">사용안함</a-select-option>
                                         <a-select-option value="A">일괄적용</a-select-option>
                                         <a-select-option value="C">카테고리별 판매수수료 적용</a-select-option>
                                     </a-select>
-                                    <a-input :min="0" :max="100" v-model:value="marketItem.market_sale_commission" placeholder="" style="margin-left: 5px; width: 100px;" /> %
+                                    <span v-show="marketItem.commission_flag == 'A'">
+                                        <a-input :min="0" :max="100" v-model:value="marketItem.market_sale_commission" placeholder="" style="margin-left: 5px; width: 100px;" /> %
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -177,15 +181,15 @@
                                 <th>ESM 상품 준비기간</th>
                                 <td colspan="3">
                                     주문 후
-                                    <a-select :options="esmDispatchDayOptions" ref="select" style="width: 60px;">
+                                    <a-select v-model:value="marketItem.esm_dispatch_day" :options="esmDispatchDayOptions" ref="select" style="width: 60px;">
                                     </a-select>
                                     일
                                 </td>
                             </tr>
-                            <tr v-show="show_esm_dispatch_time_h">
+                            <tr v-show="show_esm_dispatch_time">
                                 <th>ESM 발송 마감시간</th>
                                 <td colspan="3">
-                                    <a-select v-model:value="marketItem.esm_dispatch_day" ref="select" style="width: 60px;">
+                                    <a-select v-model:value="marketItem.esm_dispatch_time_h" ref="select" style="width: 60px;">
                                         <a-select-option value="00">00</a-select-option>
                                         <a-select-option value="01">01</a-select-option>
                                         <a-select-option value="02">02</a-select-option>
@@ -212,8 +216,8 @@
                                         <a-select-option value="23">23</a-select-option>
                                     </a-select> 시
                                     <a-select v-model:value="marketItem.esm_dispatch_time_m" ref="select" style="width: 60px;">
-                                        <a-select-option value="">00</a-select-option>
-                                        <a-select-option value="">30</a-select-option>
+                                        <a-select-option value="00">00</a-select-option>
+                                        <a-select-option value="30">30</a-select-option>
                                     </a-select> 분
                                 </td>
                             </tr>
@@ -631,10 +635,12 @@ const savePopupFn = async () => {
     bLoading.value = true;
 
     if (marketItem.value.site_code.length === 0) {
-        alert('마켓을 선택해 주세요!');
+        alert('마켓을 선택해 주세요!')
         bLoading.value = false;
         return;
     }
+
+    marketItem.value.esm_dispatch_time = marketItem.value.esm_dispatch_time_h + ':' + marketItem.value.esm_dispatch_time_m;
 
     const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/market/seller", marketItem.value);
    //{"status":"2000","message":"요청에 성공하였습니다.","data":[]}
