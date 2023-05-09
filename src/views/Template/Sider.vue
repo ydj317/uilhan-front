@@ -24,7 +24,7 @@
         </a-menu-item>
           <a-menu-item key="111">
               <img src="../../assets/img/side/other.png" >
-              <router-link to="/marketList">
+              <router-link to="/market/seller/list">
                   <span class="defaultColor defaultStyle">마켓 설정</span>
               </router-link>
           </a-menu-item>

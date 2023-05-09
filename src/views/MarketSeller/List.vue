@@ -29,7 +29,7 @@
                             <tr>
                                 <th>마켓 선택 <span>*</span></th>
                                 <td colspan="3">
-                                    <a-select :options="SITE_CODE_LIST" v-model:value="marketItem.site_code">
+                                    <a-select :options="SITE_CODE_LIST" v-model:value="marketItem.site_code" :disabled="marketItem.id !== ''">
                                     </a-select>
                                 </td>
                             </tr>
@@ -54,11 +54,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Master LOGIN ID <span v-show="isEsm">*</span></th>
+                                <th>Master LOGIN ID</th>
                                 <td>
                                     <a-input v-model:value="marketItem.masterLoginId" placeholder="" style="width: 190px;" />
                                 </td>
-                                <th>Master LOGIN PASSWORD <span v-show="isEsm">*</span></th>
+                                <th>Master LOGIN PASSWORD</th>
                                 <td>
                                     <a-input v-model:value="marketItem.masterLoginPw" placeholder="" style="width: 190px;" />
                                 </td>
@@ -90,7 +90,7 @@
                                 <td>
                                     <a-radio-group name="radioGroup" v-model:value="marketItem.disp">
                                         <a-radio value="1">노출함</a-radio>
-                                        <a-radio value="2">노출안함</a-radio>
+                                        <a-radio value="0">노출안함</a-radio>
                                     </a-radio-group>
                                 </td>
                                 <th>연동상품유형</th>
@@ -127,7 +127,7 @@
                                         <a-select-option value="A">일괄적용</a-select-option>
                                         <a-select-option value="C">카테고리별 판매수수료 적용</a-select-option>
                                     </a-select>
-                                    <a-input v-model:value="marketItem.price_rate" placeholder="" style="margin-left: 5px; width: 100px;" /> %
+                                    <a-input-number :min="0" :max="100" v-model:value="marketItem.price_rate" placeholder="" style="margin-left: 5px; width: 100px;" /> %
                                 </td>
                             </tr>
                             <tr>
@@ -138,7 +138,7 @@
                                         <a-select-option value="A">일괄적용</a-select-option>
                                         <a-select-option value="C">카테고리별 판매수수료 적용</a-select-option>
                                     </a-select>
-                                    <a-input v-model:value="marketItem.market_sale_commission" placeholder="" style="margin-left: 5px; width: 100px;" /> %
+                                    <a-input :min="0" :max="100" v-model:value="marketItem.market_sale_commission" placeholder="" style="margin-left: 5px; width: 100px;" /> %
                                 </td>
                             </tr>
                             <tr>
@@ -177,19 +177,42 @@
                                 <th>ESM 상품 준비기간</th>
                                 <td colspan="3">
                                     주문 후
-                                    <a-select ref="select" style="width: 60px;">
-                                        <a-select-option value="">1</a-select-option>
+                                    <a-select :options="esmDispatchDayOptions" ref="select" style="width: 60px;">
                                     </a-select>
                                     일
                                 </td>
                             </tr>
-                            <tr v-show="show_esm_dispatch_time">
+                            <tr v-show="show_esm_dispatch_time_h">
                                 <th>ESM 발송 마감시간</th>
                                 <td colspan="3">
-                                    <a-select ref="select" style="width: 60px;">
-                                        <a-select-option value="">24</a-select-option>
+                                    <a-select v-model:value="marketItem.esm_dispatch_day" ref="select" style="width: 60px;">
+                                        <a-select-option value="00">00</a-select-option>
+                                        <a-select-option value="01">01</a-select-option>
+                                        <a-select-option value="02">02</a-select-option>
+                                        <a-select-option value="03">03</a-select-option>
+                                        <a-select-option value="04">04</a-select-option>
+                                        <a-select-option value="05">05</a-select-option>
+                                        <a-select-option value="06">06</a-select-option>
+                                        <a-select-option value="07">07</a-select-option>
+                                        <a-select-option value="08">08</a-select-option>
+                                        <a-select-option value="09">09</a-select-option>
+                                        <a-select-option value="10">10</a-select-option>
+                                        <a-select-option value="11">11</a-select-option>
+                                        <a-select-option value="12">12</a-select-option>
+                                        <a-select-option value="13">13</a-select-option>
+                                        <a-select-option value="14">14</a-select-option>
+                                        <a-select-option value="15">15</a-select-option>
+                                        <a-select-option value="16">16</a-select-option>
+                                        <a-select-option value="17">17</a-select-option>
+                                        <a-select-option value="18">18</a-select-option>
+                                        <a-select-option value="19">19</a-select-option>
+                                        <a-select-option value="20">20</a-select-option>
+                                        <a-select-option value="21">21</a-select-option>
+                                        <a-select-option value="22">22</a-select-option>
+                                        <a-select-option value="23">23</a-select-option>
                                     </a-select> 시
-                                    <a-select ref="select" style="width: 60px;">
+                                    <a-select v-model:value="marketItem.esm_dispatch_time_m" ref="select" style="width: 60px;">
+                                        <a-select-option value="">00</a-select-option>
                                         <a-select-option value="">30</a-select-option>
                                     </a-select> 분
                                 </td>
@@ -276,29 +299,40 @@
                 </template>
 
                 <template #bodyCell="{ column, record }">
-                    <template v-if="column.key === 'is_korea'">
-                        국내
-                    </template>
-                    <template v-else-if="column.key === 'site_code'">
+                    <template v-if="column.key === 'site_code'">
                         <div  style="text-align: center;">
                             {{record['site_name']}}
+                            <br/>
                             <span>({{record[column.key]}})</span>
                         </div>
                     </template>
-                    <template v-else-if="column.key === 'siteLoginId'">
-                        <div  style="text-align: center;"><span>{{record[column.key]}}</span></div>
+                    <template v-else-if="column.key === 'disp'">
+                        <div style="text-align: center;">
+                            <span v-if="record[column.key] == '1'">노출함</span>
+                            <span v-if="record[column.key] != '1'">노출안함</span>
+                        </div>
                     </template>
-                    <template v-else-if="column.key === 'test'">
+                    <template v-else-if="column.key === 'check'">
                         <div style="text-align: center">
-                            <a-button @click="" style="width: 100px;" type="">API 통신</a-button>
+                            <a-button @click="checkApiFn(record['site_code'], record['ssi_ix'])" style="width: 100px;" type="">API 통신</a-button>
                         </div>
                     </template>
                     <template v-else-if="column.key === 'manage'">
                         <div style="text-align: center">
-                            <a-button @click="showPopupFnByEdit(record['id'])" style="width: 100px;" type="primary">
+                            <a-button @click="showPopupFnByEdit(record['id'])" style="width: 80px;" type="primary">
                                 <template #icon><EditOutlined /></template>
                                 수정
                             </a-button>
+                            <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No" @confirm="removeItem(record['id'])">
+                                <template #title>
+                                    <p>삭제 하시겠습니까?</p>
+                                </template>
+                                <a-button class="mt5" style="width: 80px;" type="primary" danger>
+                                    <template #icon><DeleteOutlined /></template>
+                                    삭제
+                                </a-button>
+                            </a-popconfirm>
+
                         </div>
                     </template>
                     <template v-else>
@@ -316,151 +350,23 @@ import {AuthRequest} from "util/request";
 import router from "router";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
-import { SearchOutlined, FileAddOutlined, EditOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, FileAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 
-// api 결과값
-const _MUST_DATA = [
-    {
-        "site_name": "11번가",
-        "site_code": "11st",
-        "apiKey": "true",
-        "apiTicketKey": "false",
-        "siteLoginId": "true",
-        "siteLoginPw": "true",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "ESM2.0 옥션",
-        "site_code": "esm_auction",
-        "apiKey": "false",
-        "apiTicketKey": "false",
-        "siteLoginId": "true",
-        "siteLoginPw": "false",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "ESM2.0 지마켓",
-        "site_code": "esm_gmarket",
-        "apiKey": "false",
-        "apiTicketKey": "false",
-        "siteLoginId": "true",
-        "siteLoginPw": "false",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "네이버페이",
-        "site_code": "npay",
-        "apiKey": "false",
-        "apiTicketKey": "false",
-        "siteLoginId": "false",
-        "siteLoginPw": "false",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "롯데ON",
-        "site_code": "lotteon",
-        "apiKey": "false",
-        "apiTicketKey": "false",
-        "siteLoginId": "false",
-        "siteLoginPw": "false",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "스마트스토어",
-        "site_code": "storefarm",
-        "apiKey": "true",
-        "apiTicketKey": "false",
-        "siteLoginId": "true",
-        "siteLoginPw": "true",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "신세계_new",
-        "site_code": "ssg_new",
-        "apiKey": "false",
-        "apiTicketKey": "false",
-        "siteLoginId": "false",
-        "siteLoginPw": "false",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "옥션",
-        "site_code": "auction",
-        "apiKey": "false",
-        "apiTicketKey": "true",
-        "siteLoginId": "true",
-        "siteLoginPw": "true",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "위메프",
-        "site_code": "wemakeprice",
-        "apiKey": "true",
-        "apiTicketKey": "false",
-        "siteLoginId": "true",
-        "siteLoginPw": "true",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "인터파크",
-        "site_code": "interpark",
-        "apiKey": "false",
-        "apiTicketKey": "false",
-        "siteLoginId": "true",
-        "siteLoginPw": "true",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "지마켓",
-        "site_code": "gmarket",
-        "apiKey": "false",
-        "apiTicketKey": "false",
-        "siteLoginId": "true",
-        "siteLoginPw": "true",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "카카오스토어",
-        "site_code": "kakao",
-        "apiKey": "true",
-        "apiTicketKey": "false",
-        "siteLoginId": "true",
-        "siteLoginPw": "true",
-        "apiCompanyCode": "false"
-    },
-    {
-        "site_name": "쿠팡",
-        "site_code": "coupang",
-        "apiKey": "true",
-        "apiTicketKey": "true",
-        "siteLoginId": "true",
-        "siteLoginPw": "true",
-        "apiCompanyCode": "true"
-    },
-    {
-        "site_name": "티몬",
-        "site_code": "tmon",
-        "apiKey": "false",
-        "apiTicketKey": "false",
-        "siteLoginId": "false",
-        "siteLoginPw": "false",
-        "apiCompanyCode": "false"
+const linkableMarketInfo = require('config/Relaket/linkableMarketInfo.json');
+const MUST_DATA = {
+    '': {
+        "site_name": "",
+        "site_code": "",
+        "apiKey": "",
+        "apiTicketKey": "",
+        "siteLoginId": "",
+        "siteLoginPw": "",
+        "apiCompanyCode": ""
     }
-];
-const MUST_DATA = {};
-MUST_DATA[''] = {
-    "site_name": "",
-    "site_code": "",
-    "apiKey": "",
-    "apiTicketKey": "",
-    "siteLoginId": "",
-    "siteLoginPw": "",
-    "apiCompanyCode": ""
-};
-for (let i = 0; i < _MUST_DATA.length; i++) {
-    MUST_DATA[_MUST_DATA[i]['site_code']] = _MUST_DATA[i];
 }
-
+for (let i = 0; i < linkableMarketInfo.data.length; i++) {
+    MUST_DATA[linkableMarketInfo.data[i]['site_code']] = linkableMarketInfo.data[i];
+}
 
 const SITE_CODE_LIST = [
     {label: "쇼핑몰(오픈마켓)", value: ''},
@@ -486,6 +392,7 @@ const searchParam = ref({
 });
 
 const _marketItem = {
+    id: '',
     ssi_ix: '',
     site_code: '',
     apiKey: '',
@@ -509,10 +416,13 @@ const _marketItem = {
     is_pcs_coupon_flag: '0', // ESM 가격비교 사이트 쿠폰 적용여부, 0 - 적용안함, 1 - 적용함
     esm_dispatch_type: '', // ESM 발송정책 타입, A - 당일 발송, B - 순차 발송, C - 해외 발송, D - 요청일 발송, E - 주문제작 발송, F - 발송일 미정
     esm_dispatch_day: '', // ESM 상품 준비기간, esm_dispatch_type : B, E일 경우 주문일 N일로 필수 연동(2~10까지입력) , esm_dispatch_type : C일 경우 주문일 N주로 필수 연동(1~5까지 입력)
-    esm_dispatch_time: '' // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
+    esm_dispatch_time: '', // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
+    esm_dispatch_time_h: '', // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
+    esm_dispatch_time_m: '', // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
 };
 
 const marketItem = ref({
+    id: '',
     ssi_ix: '',
     site_code: '',
     apiKey: '',
@@ -536,7 +446,9 @@ const marketItem = ref({
     is_pcs_coupon_flag: '0', // ESM 가격비교 사이트 쿠폰 적용여부, 0 - 적용안함, 1 - 적용함
     esm_dispatch_type: '', // ESM 발송정책 타입, A - 당일 발송, B - 순차 발송, C - 해외 발송, D - 요청일 발송, E - 주문제작 발송, F - 발송일 미정
     esm_dispatch_day: '', // ESM 상품 준비기간, esm_dispatch_type : B, E일 경우 주문일 N일로 필수 연동(2~10까지입력) , esm_dispatch_type : C일 경우 주문일 N주로 필수 연동(1~5까지 입력)
-    esm_dispatch_time: '' // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
+    esm_dispatch_time: '', // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
+    esm_dispatch_time_h: '', // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
+    esm_dispatch_time_m: '', // ESM 발송 마감시간, esm_dispatch_type : A일 경우 주문일 필수 연동, 00:00(시:분) 형태로 연동, 30분 단위로 입력 가능
 });
 
 const isEsm = computed(() => {
@@ -579,7 +491,7 @@ const initSearchParam = () => {
 const setDataList = async () => {
     bLoading.value = true;
 
-    const res = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market/setting", {
+    const res = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market/seller", {
         params: {
             site_code: searchParam.value.site_code, // 마켓코드
             disp: searchParam.value.disp, // 노출선택
@@ -600,13 +512,13 @@ const setDataList = async () => {
 const columns = [
     {
         title: 'No.',
-        dataIndex: 'no',
-        key: 'no',
+        dataIndex: 'index',
+        key: 'index',
         width: 50,
     }, {
         title: '구분',
-        dataIndex: 'is_korea',
-        key: 'is_korea',
+        dataIndex: 'country',
+        key: 'country',
         width: 100,
     }, {
         title: '마켓명(마켓코드)',
@@ -635,11 +547,11 @@ const columns = [
         title: '등록일자',
         dataIndex: 'ins_date',
         key: 'ins_date',
-        width: 100,
+        width: 120,
     }, {
         title: '통신테스트',
-        dataIndex: 'test',
-        key: 'test',
+        dataIndex: 'check',
+        key: 'check',
         width: 100,
     }, {
         title: '관리',
@@ -662,10 +574,16 @@ const showPopupFn = () => {
 }
 const showPopupFnByEdit = async (id) => {
     bLoading.value = true;
-    const res = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market/setting/" + id);
-    marketItem.value = res.data;
+    const res = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market/seller/" + id);
+    Object.assign(marketItem.value, _marketItem, res.data);
     showPopup.value = true;
     bLoading.value = false;
+}
+
+const removeItem = async (id) => {
+    bLoading.value = true;
+    const res = await AuthRequest.delete(process.env.VUE_APP_API_URL + "/api/market/seller/" + id);
+    setDataList();
 }
 
 const radioStyle = reactive({
@@ -674,9 +592,36 @@ const radioStyle = reactive({
     lineHeight: '30px',
 });
 
-const show_esm_dispatch_day = computed(() => {
-    return ['B', 'E'].indexOf(marketItem.value.esm_dispatch_type) > -1;
+const esmDispatchDayOptions = computed(() => {
+    if (['B', 'E'].indexOf(marketItem.value.esm_dispatch_type) > -1) {
+        return [
+            {label: '2', value: '2'},
+            {label: '3', value: '3'},
+            {label: '4', value: '4'},
+            {label: '5', value: '5'},
+            {label: '6', value: '6'},
+            {label: '7', value: '7'},
+            {label: '8', value: '8'},
+            {label: '9', value: '9'},
+            {label: '10', value: '10'}
+        ];
+    } else if (['C'].indexOf(marketItem.value.esm_dispatch_type) > -1) {
+        return [
+            {label: '1', value: '1'},
+            {label: '2', value: '2'},
+            {label: '3', value: '3'},
+            {label: '4', value: '4'},
+            {label: '5', value: '5'}
+        ];
+    }
+    return [];
 });
+
+const show_esm_dispatch_day = computed(() => {
+    return ['B', 'E', 'C'].indexOf(marketItem.value.esm_dispatch_type) > -1;
+});
+
+
 
 const show_esm_dispatch_time = computed(() => {
     return ['A'].indexOf(marketItem.value.esm_dispatch_type) > -1;
@@ -684,11 +629,37 @@ const show_esm_dispatch_time = computed(() => {
 
 const savePopupFn = async () => {
     bLoading.value = true;
-    const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/market/setting/save", marketItem.value);
-    bLoading.value = false;
+
+    if (marketItem.value.site_code.length === 0) {
+        alert('마켓을 선택해 주세요!');
+        bLoading.value = false;
+        return;
+    }
+
+    const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/market/seller", marketItem.value);
+   //{"status":"2000","message":"요청에 성공하였습니다.","data":[]}
+    if (res.status !== '2000') {
+        alert(res.message);
+        bLoading.value = false;
+        return false;
+
+    }
     closePopupFn();
     setDataList();
 };
+
+function checkApiFn(site_code, ssi_ix) {
+    bLoading.value = true;
+    AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market/seller-check", {
+        site_code, ssi_ix
+    }).then(res => {
+        bLoading.value = false;
+        alert(res.data.message);
+    }).catch(() => {
+        alert('통신 에러가 발생 했습니다. 관리자에게 문의해 주세요!')
+        bLoading.value = false;
+    })
+}
 
 
 </script>

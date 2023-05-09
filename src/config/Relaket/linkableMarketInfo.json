@@ -1,0 +1,134 @@
+{
+  "response": {
+    "resultcode": "2000",
+    "message": "성공"
+  },
+  "data": [
+    {
+      "site_name": "11번가",
+      "site_code": "11st",
+      "apiKey": "true",
+      "apiTicketKey": "false",
+      "siteLoginId": "true",
+      "siteLoginPw": "true",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "ESM2.0 옥션",
+      "site_code": "esm_auction",
+      "apiKey": "false",
+      "apiTicketKey": "false",
+      "siteLoginId": "true",
+      "siteLoginPw": "false",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "ESM2.0 지마켓",
+      "site_code": "esm_gmarket",
+      "apiKey": "false",
+      "apiTicketKey": "false",
+      "siteLoginId": "true",
+      "siteLoginPw": "false",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "네이버페이",
+      "site_code": "npay",
+      "apiKey": "false",
+      "apiTicketKey": "false",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "롯데ON",
+      "site_code": "lotteon",
+      "apiKey": "false",
+      "apiTicketKey": "false",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "스마트스토어",
+      "site_code": "storefarm",
+      "apiKey": "true",
+      "apiTicketKey": "false",
+      "siteLoginId": "true",
+      "siteLoginPw": "true",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "신세계_new",
+      "site_code": "ssg_new",
+      "apiKey": "false",
+      "apiTicketKey": "false",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "옥션",
+      "site_code": "auction",
+      "apiKey": "false",
+      "apiTicketKey": "true",
+      "siteLoginId": "true",
+      "siteLoginPw": "true",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "위메프",
+      "site_code": "wemakeprice",
+      "apiKey": "true",
+      "apiTicketKey": "false",
+      "siteLoginId": "true",
+      "siteLoginPw": "true",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "인터파크",
+      "site_code": "interpark",
+      "apiKey": "false",
+      "apiTicketKey": "false",
+      "siteLoginId": "true",
+      "siteLoginPw": "true",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "지마켓",
+      "site_code": "gmarket",
+      "apiKey": "false",
+      "apiTicketKey": "false",
+      "siteLoginId": "true",
+      "siteLoginPw": "true",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "카카오스토어",
+      "site_code": "kakao",
+      "apiKey": "true",
+      "apiTicketKey": "false",
+      "siteLoginId": "true",
+      "siteLoginPw": "true",
+      "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "쿠팡",
+      "site_code": "coupang",
+      "apiKey": "true",
+      "apiTicketKey": "true",
+      "siteLoginId": "true",
+      "siteLoginPw": "true",
+      "apiCompanyCode": "true"
+    },
+    {
+      "site_name": "티몬",
+      "site_code": "tmon",
+      "apiKey": "false",
+      "apiTicketKey": "false",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
+      "apiCompanyCode": "false"
+    }
+  ]
+}

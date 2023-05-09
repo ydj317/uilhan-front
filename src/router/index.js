@@ -38,10 +38,10 @@ const routes = [
             component: () => import("views/Product/Detail"),
           },
           {
-            path: "/marketList",
-            name: "market_list",
+            path: "/market/seller/list",
+            name: "market_seller_list",
             /* webpackChunkName: '/prd_list' */
-            component: () => import("views/Market/List"),
+            component: () => import("@/views/MarketSeller/List"),
           },
           {
             path: "/user/Manage",
