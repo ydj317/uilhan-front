@@ -22,12 +22,6 @@
             <span class="defaultColor defaultStyle">상품관리</span>
           </router-link>
         </a-menu-item>
-          <a-menu-item key="111">
-              <img src="../../assets/img/side/other.png" >
-              <router-link to="/market/seller/list">
-                  <span class="defaultColor defaultStyle">마켓 설정</span>
-              </router-link>
-          </a-menu-item>
         <a-menu-item key="2">
           <img src="../../assets/img/side/order.png" >
           <span class="defaultColor defaultStyle">주문관리(준비중)</span>
@@ -57,7 +51,9 @@
         </a-sub-menu>
         <a-menu-item key="9">
           <img src="../../assets/img/side/market.png" >
-          <span class="defaultColor defaultStyle">제휴사연동(준비중)</span>
+            <RouterLink to="/market/seller/list">
+                <span class="defaultColor defaultStyle">제휴사연동</span>
+            </RouterLink>
         </a-menu-item>
         <a-menu-item key="10">
           <img src="../../assets/img/side/other.png" >
@@ -72,13 +68,13 @@
         <a-menu-item key="12">
           <DollarTwoTone style="font-size: 20px"/>
           <router-link to="/user/FilterProductWords">
-            <span class="defaultColor defaultStyle">상품명 금지어</span>
+            <span class="defaultColor defaultStyle">금지어 관리</span>
           </router-link>
         </a-menu-item>
         <a-menu-item key="13">
           <DollarTwoTone style="font-size: 20px"/>
           <router-link to="/product/domeggook">
-            <span class="defaultColor defaultStyle">Demoggook</span>
+            <span class="defaultColor defaultStyle">도매꾹</span>
           </router-link>
         </a-menu-item>
       </a-menu>
@@ -183,9 +179,9 @@ export default defineComponent({
 <style scoped>
 .sideLogo {
   width: 202px;
-  height: 70px;
-  background-image: url("../../assets/img/logo-dark.png");
-  background-size: 180px 40px;
+  height: 200px;
+  background-image: url("../../assets/img/logo-new.png");
+  background-size: 180px auto;
   background-repeat: no-repeat;
   background-position: center;
   margin: 0 auto;

@@ -33,38 +33,38 @@
                                     </a-select>
                                 </td>
                             </tr>
-                            <tr>
-                                <th>API Key <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
+                            <tr v-show="show_key">
+                                <th>{{ API_Key }} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.apiKey" placeholder="" style="width: 190px;" />
                                 </td>
-                                <th>API Ticket Key <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
+                                <th>{{ API_Ticket_Key }} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.apiTicketKey" placeholder="" style="width: 190px;" />
                                 </td>
                             </tr>
                             <tr>
-                                <th>마켓 아이디 <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
+                                <th>{{마켓_아이디}} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.siteLoginId" placeholder="" style="width: 190px;" />
                                 </td>
-                                <th>마켓 비밀번호 <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
+                                <th>{{마켓_비밀번호}} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
                                     <a-input v-model:value="marketItem.siteLoginPw" placeholder="" style="width: 190px;" />
                                 </td>
                             </tr>
-                            <tr>
-                                <th>Master LOGIN ID</th>
+                            <tr v-show="show_esm">
+                                <th>마스터 아이디</th>
                                 <td>
                                     <a-input v-model:value="marketItem.masterLoginId" placeholder="" style="width: 190px;" />
                                 </td>
-                                <th>Master LOGIN PASSWORD</th>
+                                <th>마스터 비밀번호</th>
                                 <td>
                                     <a-input v-model:value="marketItem.masterLoginPw" placeholder="" style="width: 190px;" />
                                 </td>
                             </tr>
-                            <tr>
-                                <th>마켓 Company Code <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
+                            <tr v-show="show_company_code">
+                                <th>{{ 마켓_Company_Code }} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td colspan="3">
                                     <a-input v-model:value="marketItem.apiCompanyCode" placeholder="" style="width: 300px;" />
                                 </td>
@@ -145,7 +145,7 @@
                                     </span>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr v-show="show_esm">
                                 <th>ESM 가격비교 사이트 상품 등록 설정</th>
                                 <td colspan="3">
                                     <a-radio-group name="radioGroup" v-model:value="marketItem.is_pcs_product_flag">
@@ -154,7 +154,7 @@
                                     </a-radio-group>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr v-show="show_esm">
                                 <th>ESM 가격비교 사이트 쿠폰 적용여부</th>
                                 <td colspan="3">
                                     <a-radio-group name="radioGroup" v-model:value="marketItem.is_pcs_coupon_flag">
@@ -163,7 +163,7 @@
                                     </a-radio-group>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr v-show="show_esm">
                                 <th>ESM 발송정책 타입</th>
                                 <td colspan="3">
                                     <a-select v-model:value="marketItem.esm_dispatch_type" ref="select" style="width: 150px;">
@@ -629,6 +629,149 @@ const show_esm_dispatch_day = computed(() => {
 
 const show_esm_dispatch_time = computed(() => {
     return ['A'].indexOf(marketItem.value.esm_dispatch_type) > -1;
+});
+
+const show_esm = computed(() => {
+    return ['esm_gmarket', 'esm_auction'].indexOf(marketItem.value.site_code) > -1;
+});
+
+const API_Key = computed(() => {
+    if (marketItem.value.site_code === 'storefarm') {
+        return 'API ID';
+    } else if (marketItem.value.site_code === 'coupang') {
+        return 'Access Key';
+    } else if (marketItem.value.site_code === '11st') {
+        return 'OPEN API KEY';
+    } else if (marketItem.value.site_code === 'wemakeprice') {
+        return 'API 인증키';
+    } else if (marketItem.value.site_code === 'interpark') {
+        return '';
+    } else if (marketItem.value.site_code === 'tmon') {
+        return 'API Key';
+    } else if (marketItem.value.site_code === 'esm_gmarket') {
+        return '';
+    } else if (marketItem.value.site_code === 'esm_auction') {
+        return '';
+    } else if (marketItem.value.site_code === 'lotteon') {
+        return '인증키';
+    }
+    return 'API Key';
+});
+
+const API_Ticket_Key = computed(() => {
+    if (marketItem.value.site_code === 'storefarm') {
+        return 'API Ticket';
+    } else if (marketItem.value.site_code === 'coupang') {
+        return 'Secret Key';
+    } else if (marketItem.value.site_code === '11st') {
+        return 'API Ticket';
+    } else if (marketItem.value.site_code === 'wemakeprice') {
+        return 'API Ticket';
+    } else if (marketItem.value.site_code === 'interpark') {
+        return '';
+    } else if (marketItem.value.site_code === 'tmon') {
+        return 'API Ticket';
+    } else if (marketItem.value.site_code === 'esm_gmarket') {
+        return '';
+    } else if (marketItem.value.site_code === 'esm_auction') {
+        return '';
+    } else if (marketItem.value.site_code === 'lotteon') {
+        return 'API Ticket';
+    }
+    return 'API Ticket Key';
+});
+
+const 마켓_아이디 = computed(() => {
+    if (marketItem.value.site_code === 'storefarm') {
+        return 'API연동용 판매자 아이디';
+    } else if (marketItem.value.site_code === 'coupang') {
+        return '마켓 아이디';
+    } else if (marketItem.value.site_code === '11st') {
+        return '마켓 아이디';
+    } else if (marketItem.value.site_code === 'wemakeprice') {
+        return '마켓 아이디';
+    } else if (marketItem.value.site_code === 'interpark') {
+        return '마켓 아이디';
+    } else if (marketItem.value.site_code === 'tmon') {
+        return '마켓 아이디';
+    } else if (marketItem.value.site_code === 'esm_gmarket') {
+        return '마켓 아이디';
+    } else if (marketItem.value.site_code === 'esm_auction') {
+        return '마켓 아이디';
+    } else if (marketItem.value.site_code === 'lotteon') {
+        return '마켓 아이디';
+    }
+    return '마켓 아이디';
+});
+
+const 마켓_비밀번호 = computed(() => {
+    if (marketItem.value.site_code === 'storefarm') {
+        return '마켓 비밀번호';
+    } else if (marketItem.value.site_code === 'coupang') {
+        return '마켓 비밀번호';
+    } else if (marketItem.value.site_code === '11st') {
+        return '마켓 비밀번호';
+    } else if (marketItem.value.site_code === 'wemakeprice') {
+        return '마켓 비밀번호';
+    } else if (marketItem.value.site_code === 'interpark') {
+        return '마켓 비밀번호';
+    } else if (marketItem.value.site_code === 'tmon') {
+        return '마켓 비밀번호';
+    } else if (marketItem.value.site_code === 'esm_gmarket') {
+        return '마켓 비밀번호';
+    } else if (marketItem.value.site_code === 'esm_auction') {
+        return '마켓 비밀번호';
+    } else if (marketItem.value.site_code === 'lotteon') {
+        return '마켓 비밀번호';
+    }
+    return '마켓 비밀번호';
+});
+
+const 마켓_Company_Code = computed(() => {
+    if (marketItem.value.site_code === 'storefarm') {
+        return '';
+    } else if (marketItem.value.site_code === 'coupang') {
+        return '업체코드';
+    } else if (marketItem.value.site_code === '11st') {
+        return '';
+    } else if (marketItem.value.site_code === 'wemakeprice') {
+        return '';
+    } else if (marketItem.value.site_code === 'interpark') {
+        return '업체번호';
+    } else if (marketItem.value.site_code === 'tmon') {
+        return '파트너 번호';
+    } else if (marketItem.value.site_code === 'esm_gmarket') {
+        return '';
+    } else if (marketItem.value.site_code === 'esm_auction') {
+        return '';
+    } else if (marketItem.value.site_code === 'lotteon') {
+        return '거래처 번호';
+    }
+    return '마켓 Company Code';
+});
+
+/**
+ * const SITE_CODE_LIST = [
+ *     {label: "쇼핑몰(오픈마켓)", value: ''},
+ *     {label: "스마트스토어", value: 'storefarm'},
+ *     {label: "쿠팡", value: 'coupang'},
+ *     {label: "11번가", value: '11st'},
+ *     {label: "위메프", value: 'wemakeprice'},
+ *     {label: "인터파크", value: 'interpark'},
+ *     {label: "티몬", value: 'tmon'},
+ *     {label: "ESM2.0 지마켓", value: 'esm_gmarket'},
+ *     {label: "ESM2.0 옥션", value: 'esm_auction'},
+ *     {label: "롯데ON", value: 'lotteon'},
+ * ];
+ * @type {ComputedRef<boolean>}
+ */
+const show_company_code = computed(() => {
+    return ['storefarm', '11st', 'wemakeprice', 'esm_gmarket', 'esm_auction'].indexOf(marketItem.value.site_code) < 0;
+});
+
+
+const show_key = computed(() => {
+    return ['interpark', 'esm_gmarket', 'esm_auction'].indexOf(marketItem.value.site_code) < 0;
 });
 
 const savePopupFn = async () => {
