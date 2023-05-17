@@ -180,7 +180,7 @@ export default defineComponent({
 .sideLogo {
   width: 202px;
   height: 200px;
-  background-image: url("../../assets/img/logo-new.png");
+  background-image: url("../../assets/img/logo-new2.png");
   background-size: 180px auto;
   background-repeat: no-repeat;
   background-position: center;
