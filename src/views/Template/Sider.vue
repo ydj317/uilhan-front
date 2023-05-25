@@ -43,15 +43,17 @@
             <img src="../../assets/img/side/setting.png" >
             <span class="defaultColor defaultStyle">설정(준비중)</span>
           </template>
-          <a-menu-item key="7"><span class="defaultColor defaultStyle">릴라켓정보</span></a-menu-item>
-          <a-menu-item key="7"><span class="defaultColor defaultStyle">배송정책</span></a-menu-item>
-          <a-menu-item key="7"><span class="defaultColor defaultStyle">출고지</span></a-menu-item>
-          <a-menu-item key="8"><span class="defaultColor defaultStyle">반품지</span></a-menu-item>
-          <a-menu-item key="8"><span class="defaultColor defaultStyle">마진 & 환율</span></a-menu-item>
+          <a-menu-item key="71"><span class="defaultColor defaultStyle">릴라켓정보</span></a-menu-item>
+          <a-menu-item key="72"><span class="defaultColor defaultStyle">배송정책</span></a-menu-item>
+          <a-menu-item key="73"><span class="defaultColor defaultStyle">출고지</span></a-menu-item>
+          <a-menu-item key="81"><span class="defaultColor defaultStyle">반품지</span></a-menu-item>
+          <a-menu-item key="82"><span class="defaultColor defaultStyle">마진 & 환율</span></a-menu-item>
         </a-sub-menu>
         <a-menu-item key="9">
           <img src="../../assets/img/side/market.png" >
-          <span class="defaultColor defaultStyle">제휴사연동(준비중)</span>
+            <RouterLink to="/market/seller/list">
+                <span class="defaultColor defaultStyle">제휴사연동</span>
+            </RouterLink>
         </a-menu-item>
         <a-menu-item key="10">
           <img src="../../assets/img/side/other.png" >
@@ -66,13 +68,13 @@
         <a-menu-item key="12">
           <DollarTwoTone style="font-size: 20px"/>
           <router-link to="/user/FilterProductWords">
-            <span class="defaultColor defaultStyle">상품명 금지어</span>
+            <span class="defaultColor defaultStyle">금지어 관리</span>
           </router-link>
         </a-menu-item>
         <a-menu-item key="13">
           <DollarTwoTone style="font-size: 20px"/>
           <router-link to="/product/domeggook">
-            <span class="defaultColor defaultStyle">Demoggook</span>
+            <span class="defaultColor defaultStyle">도매꾹</span>
           </router-link>
         </a-menu-item>
       </a-menu>
@@ -96,12 +98,13 @@
 <script>
 import { defineComponent, reactive, toRefs, ref, onMounted } from 'vue';
 import Cookie from "js-cookie";
-import { DollarTwoTone } from '@ant-design/icons-vue';
+import { DollarTwoTone, AppstoreAddOutlined} from '@ant-design/icons-vue';
 import {AuthRequest} from "@/util/request";
 import Loading from "vue-loading-overlay";
 export default defineComponent({
   components: {
     DollarTwoTone,
+      AppstoreAddOutlined,
     Loading
   },
   setup() {
@@ -176,9 +179,9 @@ export default defineComponent({
 <style scoped>
 .sideLogo {
   width: 202px;
-  height: 70px;
-  background-image: url("../../assets/img/logo-dark.png");
-  background-size: 180px 40px;
+  height: 200px;
+  background-image: url("../../assets/img/logo-new2.png");
+  background-size: 180px auto;
   background-repeat: no-repeat;
   background-position: center;
   margin: 0 auto;

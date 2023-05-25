@@ -37,7 +37,12 @@ const routes = [
             /* webpackChunkName: '/prd_detail' */
             component: () => import("views/Product/Detail"),
           },
-
+          {
+            path: "/market/seller/list",
+            name: "market_seller_list",
+            /* webpackChunkName: '/prd_list' */
+            component: () => import("@/views/MarketSeller/List"),
+          },
           {
             path: "/user/Manage",
             name: "user_manager",

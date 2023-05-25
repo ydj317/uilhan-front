@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HTML22</title>
+    <link rel="stylesheet" href="css/popup_style.css">
+</head>
+<body>
+
+<div class="popup_background"></div>
+<div class="popup_box">
+    <div class="popup_title clearfix">
+        <div class="title clearfix">
+            <div class="img"><img src="img/pop_logo.jpg" alt=""></div>
+            <div class="text">마켓 설정등록</div>
+        </div>
+        <a href="##" class="cross_btn"><span class="cross"></span></a>
+    </div>
+    <div class="popup_cont">
+        <div class="content">
+            <div class="popup_table">
+                <div class="title clearfix">
+                    <div class="text">마켓 연동 필수값</div>
+                    <a href="##" class="hidden"><div class="arrow-right"></div></a>
+                </div>
+                <table class="table">
+                    <colgroup>
+                        <col width="125px" />
+                        <col width="auto" />
+                        <col width="125px" />
+                        <col width="auto" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th>마켓 선택 <span>*</span></th>
+                        <td colspan="3">
+                            <select class="select_type1">
+                                <option>11번가(11st)</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>API연동방식</th>
+                        <td colspan="3">
+                            <input type="radio" name="rd0" class="radio_input_type1" id="rd0"checked>
+                            <label for="rd0"></label> 자체API사용
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>OPEN API Key <span>*</span></th>
+                        <td>
+                            <input type="text" class="text_input_type1" value="text" disabled>
+                        </td>
+                        <th>API Ticket <span>*</span></th>
+                        <td>
+                            <input type="text" class="text_input_type2" value="API Ticket" disabled>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>마켓 아이다 <span>*</span></th>
+                        <td>
+                            <input type="text" class="text_input_type1" value="siteLoginId" disabled>
+                        </td>
+                        <th>마켓 비밀번호 <span>*</span></th>
+                        <td>
+                            <input type="password" class="text_input_type1" value="API Ticket" disabled>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="popup_text1"><span>*</span> 연동된 마켓의 접근정보(ID변경 포함한 API KEY, API Ticket등)를 변경 저장하면 이후 연동에 오류를 유발합니다.<br>따라서 새로운 계정을 등록하고자 하는 경우, 마켓설정의[수정]이 아닌 신규 설정 추가를 통해 등록해주세요.</div>
+            </div>
+            <div class="popup_table">
+                <div class="title clearfix">
+                    <div class="text">부가정보 설정</div>
+                    <a href="##" class="hidden"><div class="arrow-right"></div></a>
+                </div>
+                <table class="table">
+                    <colgroup>
+                        <col width="125px" />
+                        <col width="auto" />
+                        <col width="125px" />
+                        <col width="auto" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th>노출 상태</th>
+                        <td>
+                            <input type="radio" name="rd" class="radio_input_type1" id="rd1"checked>
+                            <label for="rd1"></label> 노출함
+                            <input type="radio" name="rd" class="radio_input_type1" id="rd2">
+                            <label for="rd2"></label> 노출안함
+
+                        </td>
+                        <th>연동상품유형</th>
+                        <td>
+                            <input type="radio" name="rd2" class="radio_input_type1" id="rd3"checked>
+                            <label for="rd3"></label> 일반셀러(국내상품 계정)
+                            <br>
+                            <input type="radio" name="rd2" class="radio_input_type1" id="rd4">
+                            <label for="rd4"></label> 글로벌셀러(구매대행 계정)
+                            <br>
+                            <input type="radio" name="rd2" class="radio_input_type1" id="rd5">
+                            <label for="rd5"></label> 일반&글로벌셀러
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>노출 상태</th>
+                        <td>
+                            <input type="radio" name="rd3" class="radio_input_type1" id="rd6"checked>
+                            <label for="rd6"></label> 노출함
+                            <input type="radio" name="rd3" class="radio_input_type1" id="rd7">
+                            <label for="rd7"></label> 노출안함
+                        </td>
+                        <th>연동상품유형</th>
+                        <td>
+                            <input type="radio" name="rd4" class="radio_input_type1" id="rd8"checked>
+                            <label for="rd8"></label> 일반셀러(국내상품 계정)
+                            <br>
+                            <input type="radio" name="rd4" class="radio_input_type1" id="rd9">
+                            <label for="rd9"></label> 글로벌셀러(구매대행 계정)
+                            <br>
+                            <input type="radio" name="rd4" class="radio_input_type1" id="rd10">
+                            <label for="rd10"></label> 일반&글로벌셀러
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>노출 상태</th>
+                        <td>
+                            <input type="radio" name="rd5" class="radio_input_type1" id="rd11"checked>
+                            <label for="rd11"></label> 노출함
+                            <input type="radio" name="rd5" class="radio_input_type1" id="rd12">
+                            <label for="rd12"></label> 노출안함
+
+                        </td>
+                        <th>연동상품유형</th>
+                        <td>
+                            <input type="radio" name="rd6" class="radio_input_type1" id="rd13"checked>
+                            <label for="rd13"></label> 일반셀러(국내상품 계정)
+                            <br>
+                            <input type="radio" name="rd6" class="radio_input_type1" id="rd14">
+                            <label for="rd14"></label> 글로벌셀러(구매대행 계정)
+                            <br>
+                            <input type="radio" name="rd6" class="radio_input_type1" id="rd15">
+                            <label for="rd15"></label> 일반&글로벌셀러
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

@@ -14,6 +14,7 @@ import {
   Menu,
   List,
   Input,
+  InputNumber,
   // DatePicker,
   Select,
   Table,
@@ -52,6 +53,7 @@ createApp(App)
   .use(Menu)
   .use(List)
   .use(Input)
+  .use(InputNumber)
   .use(DatePicker)
   .use(Select)
   .use(moment)
