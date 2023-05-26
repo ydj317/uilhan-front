@@ -86,11 +86,6 @@
 <!--      </router-link>-->
 <!--    </div>-->
 
-    <div class="w100 menuFooter">
-      <a href="https://relaket.com" target="_blank">
-        <img class="menuFooterLogo" src="../../assets/img/side/relaket_logo_link.png" alt="">
-      </a>
-    </div>
   </div>
   </a-affix>
 </template>
@@ -217,15 +212,6 @@ export default defineComponent({
   margin: 0 0 250px 20px;
   text-align: left;
   /*height:40px;*/
-}
-
-.menuFooterLogo {
-  /*width: 113px;*/
-  /*height: 28px;*/
-  margin-left: 30px;
-
-  width: 150px;
-  height: 35px;
 }
 
 .defaultActive {

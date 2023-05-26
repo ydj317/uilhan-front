@@ -4,13 +4,13 @@
       <div class="icon">
         <img src="../../assets/img/logo-light.png" alt="">
       </div>
-      <div class="tip">
-        <h5>저희 릴라켓플러스 이용해주셔서 감사합니다!</h5>
-      </div>
+<!--      <div class="tip">-->
+<!--        <h5>저희 릴라켓플러스 이용해주셔서 감사합니다!</h5>-->
+<!--      </div>-->
     </div>
     <div class="item">
         <div>
-          <h5>릴라켓플러스 회원가입</h5>
+          <h5>회원가입</h5>
         </div>
         <a-form
             :rules="rulesRef"

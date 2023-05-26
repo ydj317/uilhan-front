@@ -5,13 +5,13 @@
         <div class="icon">
           <img src="../../assets/img/logo-light.png" alt="">
         </div>
-        <div class="tip">
-          <h5>저희 릴라켓플러스 이용해주셔서 감사합니다!</h5>
-        </div>
+<!--        <div class="tip">-->
+<!--          <h5>이용해주셔서 감사합니다!</h5>-->
+<!--        </div>-->
       </div>
       <div class="item">
         <div>
-          <h5>릴라켓플러스 로그인하기</h5>
+          <h5>로그인하기</h5>
         </div>
         <a-form class="item_form"
             layout="inline"

@@ -2,7 +2,7 @@
   <div class="center">
     <div class="row w97 space-between">
       <img class="w7" src="../../assets/img/logo-dark.png" alt="">
-      <div class="w15 center">Copyright © 2022.릴라켓플러스</div>
+      <div class="w15 center">Copyright © 2023.WorldLink</div>
     </div>
   </div>
 </template>
