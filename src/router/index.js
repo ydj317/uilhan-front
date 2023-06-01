@@ -68,6 +68,12 @@ const routes = [
             /* webpackChunkName: 'user_register' */
             component: () => import("views/Product/Domeggook"),
           },
+          {
+            path: "/order/list",
+            name: "order_list",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("views/Order/List.vue"),
+          },
           // {
           //   path: "/user/register",
           //   name: "user_register",

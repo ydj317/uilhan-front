@@ -24,7 +24,9 @@
         </a-menu-item>
         <a-menu-item key="2">
           <img src="../../assets/img/side/order.png" >
-          <span class="defaultColor defaultStyle">주문관리(준비중)</span>
+            <router-link to="/order/list">
+          <span class="defaultColor defaultStyle">주문관리</span>
+            </router-link>
         </a-menu-item>
         <a-menu-item key="3">
           <img src="../../assets/img/side/pre.png" >
