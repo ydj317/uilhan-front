@@ -49,8 +49,6 @@
       <div id="content-header" class="pt20 row space-between">
         <!--left button-->
         <div class="w12 space-between">
-          <!--상품번역-->
-          <a-button type="primary">상품번역</a-button>
           <!--상품삭제-->
           <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
             <a-button type="primary">상품삭제</a-button>
@@ -58,11 +56,11 @@
         </div>
 
         <!--right button-->
-        <div class="w16 pl5 space-between">
+        <div class=" pl5 space-between">
           <!--릴라켓연동-->
-          <a-popconfirm title="릴라켓에 연동하시겠습니까?" @confirm="sendMarket">
-            <a-button type="primary">릴라켓연동</a-button>
-          </a-popconfirm>
+<!--          <a-popconfirm title="릴라켓에 연동하시겠습니까?" @confirm="sendMarket">-->
+<!--            <a-button type="primary">릴라켓연동</a-button>-->
+<!--          </a-popconfirm>-->
           <!--제휴사 상품연동-->
           <a-button type="primary" @click="MarketListPop">제휴사 상품연동</a-button>
         </div>
@@ -98,6 +96,20 @@
                 <a-button class="init-pmbo" type="link" :href="`/product/detail/${record.item_id}`">
                   <span>{{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}</span>
                 </a-button>
+                  <!--연동성공-->
+                  <span style="margin-left: 5px;" v-if="record.item_sync_date && record.item_sync_status">
+                      <a-tooltip trigger="click">
+                          <template #title>{{ record.item_sync_result }}</template>
+                          <CheckCircleOutlined style="color: green; font-size: 20px;" />
+                      </a-tooltip>
+                  </span>
+                  <!--연동실패-->
+                  <span style="margin-left: 5px;" v-if="record.item_sync_date && record.item_sync_status == false">
+                      <a-tooltip trigger="click">
+                          <template #title>{{ record.item_sync_result }}</template>
+                          <WarningOutlined style="color: red; font-size: 20px;" />
+                      </a-tooltip>
+                  </span>
               </div>
 
               <!--상품코드-->
@@ -107,22 +119,22 @@
               </div>
 
               <!--미연동-->
-              <div v-if="!record.item_sync_date && !record.item_sync_status">
-                <a-button type="primary" class="not_sync">릴라켓 미연동</a-button>
-              </div>
+<!--              <div v-if="!record.item_sync_date && !record.item_sync_status">-->
+<!--                <a-button type="primary" class="not_sync">릴라켓 미연동</a-button>-->
+<!--              </div>-->
 
               <!--연동-->
-              <div v-if="record.item_sync_date">
-                <a-tooltip trigger="click">
-                  <template #title v-if="!record.item_sync_status">{{ record.item_sync_result }}</template>
-                  <a-button type="primary" :style="buttonStyle(record.item_sync_status)">릴라켓 연동{{
-                      record.item_sync_status
-                          ? '성공'
-                          : '실패'
-                    }}
-                  </a-button>
-                </a-tooltip>
-              </div>
+<!--              <div v-if="record.item_sync_date">-->
+<!--                <a-tooltip trigger="click">-->
+<!--                  <template #title v-if="!record.item_sync_status">{{ record.item_sync_result }}</template>-->
+<!--                  <a-button type="primary" :style="buttonStyle(record.item_sync_status)">릴라켓 연동{{-->
+<!--                      record.item_sync_status-->
+<!--                          ? '성공'-->
+<!--                          : '실패'-->
+<!--                    }}-->
+<!--                  </a-button>-->
+<!--                </a-tooltip>-->
+<!--              </div>-->
             </template>
 
             <!--등록&수정시간-->
@@ -235,9 +247,11 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 import Cookie from 'js-cookie';
 import MarketList from 'components/List/MarketList';
 import {mapState} from 'vuex';
+import { WarningOutlined, CheckCircleOutlined } from '@ant-design/icons-vue';
+import { provide } from 'vue'
 
 export default defineComponent({
-  components: {Loading, Cookie, MarketList},
+  components: {Loading, Cookie, MarketList, WarningOutlined, CheckCircleOutlined},
 
   computed: {
     ...mapState([
@@ -584,7 +598,7 @@ export default defineComponent({
       }
 
       if (notCatePrd.length === items.length) {
-        alert('선택하신 모든든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
+        alert('선택하신 모든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
         this.indicator = false;
         return false;
       }
@@ -731,7 +745,7 @@ export default defineComponent({
       this.marketSyncPop = !this.marketSyncPop;
     },
 
-    testsync(type) {
+    async testsync(type) {
       this.indicator = true;
       let list = '';
       let marketList = [];
@@ -753,6 +767,27 @@ export default defineComponent({
         alert('선택된 제휴사가 없습니다.');
         this.indicator = false;
         return false;
+      }
+
+      try {
+
+          let res = await AuthRequest.post(process.env.VUE_APP_API_URL + '/api/sendmarket', {list: list});
+          if (res.status !== '2000') {
+              alert(res.message)
+              this.indicator = false;
+              return false;
+          }
+
+          if (res.data !== undefined && res.data.length === 0) {
+              alert("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+              this.indicator = false;
+              return false;
+          }
+
+      } catch (e) {
+          alert(e.message);
+          this.indicator = false;
+          return false;
       }
 
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/syncmarket',

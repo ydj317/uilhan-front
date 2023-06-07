@@ -88,8 +88,92 @@ export default {
       this.relaket.data.MarketListVisible = false;
     },
 
-    testsync(type) {
+      async sendMarket() {
+          let list = this.getCheckList();
+          if (list === undefined || list.length === 0) {
+              alert('선택된 상품이 없습니다.');
+              return false;
+          }
+
+          let items = list.split(',');
+          let notCatePrd = '';
+          let hasCatePrd = '';
+
+          for (let i = 0; i < items.length; i++) {
+              let id = items[i];
+              if (id === undefined || id === '' || id === null) {
+                  continue;
+              }
+
+              let item = this.relaket.data.prdlist.filter((item) => parseInt(item.item_id) === parseInt(id))[0];
+
+              if (item.item_cate === null) {
+                  notCatePrd += notCatePrd.length === 0 ? '' : ',';
+                  notCatePrd += item.item_id;
+                  continue;
+              }
+
+              hasCatePrd += hasCatePrd.length === 0 ? '' : ',';
+              hasCatePrd += item.item_id;
+          }
+
+          if (notCatePrd.length === items.length) {
+              alert('선택하신 모든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
+              return false;
+          }
+
+          if (notCatePrd.length > 0) {
+              alert(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
+          }
+
+          try {
+              const res = await AuthRequest.post(process.env.VUE_APP_API_URL + '/api/sendmarket', {list: list});
+
+              if (res.status !== '2000') {
+                  alert(res.message)
+                  this.indicator = false;
+                  return false;
+              }
+
+              if (res.data !== undefined && res.data.length === 0) {
+                  alert("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+                  this.indicator = false;
+                  return false;
+              }
+
+              let data = res.data;
+
+              // let sMessage = "";
+              // if (data.success_code.length) {
+              //     sMessage = '연동성공 상품 : ' + data.success_code;
+              // }
+              // if (data.failed_code.length) {
+              //     sMessage += "\n연동실패 상품 : " + data.failed_code;
+              // }
+              //
+              // alert(sMessage);
+              //
+              // return false;
+
+              return true;
+
+          } catch (e) {
+              alert(e.message);
+              return false;
+          }
+      },
+
+    async testsync(type) {
+
       this.relaket.data.indicator = true;
+
+        // 릴라켓 연동
+        if (await this.sendMarket() === false) {
+            this.relaket.data.indicator = false;
+            return false;
+        }
+
+
       let list = '';
       let marketList = [];
       if (type === 'multi') {
