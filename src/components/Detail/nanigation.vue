@@ -3,10 +3,10 @@
     <div class="w63 bg-white">
       <a-affix>
         <div class="space-between">
-          <a-button danger @click="textTransModal">
-            <FileWordTwoTone twoToneColor="white" />
-            텍스트 번역
-          </a-button>
+<!--          <a-button danger @click="textTransModal">-->
+<!--            <FileWordTwoTone twoToneColor="white" />-->
+<!--            텍스트 번역-->
+<!--          </a-button>-->
           <a-button danger @click="setNavigation('eModelTitle_' + i)" v-for="(name, i) in label">
             <AppstoreTwoTone v-if="name === '기본 정보'" twoToneColor="red" />
             <PictureTwoTone v-if="name === '상품 이미지'" twoToneColor="red" />
@@ -99,10 +99,10 @@ button {
   margin-left: 10px;
   border-radius: 5px;
 }
-button:first-child {
-  color: white;
-  border: 1px solid #3ddc97;
-  margin-left: -4px;
-  background-color: #3ddc97;
-}
+/*button:first-child {*/
+/*  color: white;*/
+/*  border: 1px solid #3ddc97;*/
+/*  margin-left: -4px;*/
+/*  background-color: #3ddc97;*/
+/*}*/
 </style>

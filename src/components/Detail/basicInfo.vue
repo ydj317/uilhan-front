@@ -24,6 +24,7 @@
     <div class="mb12" v-else>
       <p>
         <span>상품명칭</span>
+          (<span style="color: #6d737b;">{{ product.item_name }}</span>)
       </p>
       <a-spin :spinning="product.filter_word_validate_in_process === true">
         <a-input

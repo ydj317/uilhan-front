@@ -2,11 +2,11 @@
   <div class="currentDiv">
     <a-affix :offset-bottom="10">
       <div class="currentDiv">
-        <a-button type="primary" @click="textTranslateSwicth"
-          >텍스트 번역</a-button
-        >
+<!--        <a-button type="primary" @click="textTranslateSwicth"-->
+<!--          >텍스트 번역</a-button-->
+<!--        >-->
         <a-button type="primary" @click="submit">저장</a-button>
-        <a-button type="primary" @click="submitSync">저장 & 연동</a-button>
+        <a-button type="primary" @click="submitSync">연동</a-button>
         <a-button type="primary" @click="backList">목록</a-button>
       </div>
     </a-affix>
