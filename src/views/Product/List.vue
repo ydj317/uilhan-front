@@ -1,7 +1,7 @@
 <template>
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
 
-  <div id="container">
+  <div id="container" class="test">
     <!--검색-->
     <div id="header" class="plr20 bg-white">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
