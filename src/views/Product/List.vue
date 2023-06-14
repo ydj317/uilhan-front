@@ -2,6 +2,7 @@
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
 
   <div id="container">
+
     <!--검색-->
     <div id="header" class="bg-white">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
@@ -235,6 +236,7 @@
 
       <MarketList v-if="MarketListVisible"></MarketList>
     </div>
+
   </div>
 </template>
 
@@ -915,6 +917,11 @@ export default defineComponent({
 
 <!--search-->
 <style scoped>
+#container {
+  padding: 20px;
+  background: #fff;
+}
+
 /* ant vue 버튼 버그 */
 #header .ant-radio-button-wrapper:not(:first-child)::before {
   content: none;

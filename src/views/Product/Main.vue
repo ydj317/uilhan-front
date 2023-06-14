@@ -245,6 +245,7 @@ const option3 = ref({
 </script>
 
 <!----------style start---------->
+
 <!--chart-->
 <style scoped>
 .chart {
@@ -257,7 +258,6 @@ const option3 = ref({
 .hello {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
   padding: 20px;
   background: #fff;
 }

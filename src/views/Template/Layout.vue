@@ -2,7 +2,9 @@
   <a-layout style="min-height: 1080px;">
     <a-layout-sider v-model:collapsed="collapsed" collapsible breakpoint="lg" :trigger="null">
       <div class="logo" style="display: flex;justify-content: center;align-items: center;height: 60px;padding: 0 18px;">
+        <router-link to="/main">
         <img src="@/assets/logo_wight.svg" style="width: 100%;">
+        </router-link>
       </div>
       <Sider />
     </a-layout-sider>
@@ -17,7 +19,7 @@
 
         <Header/>
       </a-layout-header>
-      <a-layout-content :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }">
+      <a-layout-content :style="{ margin: '16px', minHeight: '280px' }">
         <Content />
       </a-layout-content>
     </a-layout>
