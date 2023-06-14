@@ -44,12 +44,6 @@ const routes = [
             component: () => import("@/views/MarketSeller/List"),
           },
           {
-            path: "/setting/relaketInfo",
-            name: "setting_relaketinfo",
-            /* webpackChunkName: '/prd_list' */
-            component: () => import("@/views/Setting/RelaketInfo"),
-          },
-          {
             path: "/user/Manage",
             name: "user_manager",
             /* webpackChunkName: 'user_manager' */
