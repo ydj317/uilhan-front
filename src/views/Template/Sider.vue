@@ -1,14 +1,14 @@
 <template >
-<!--  <loading-->
-<!--      v-model:active="indicator"-->
-<!--      :can-cancel="false"-->
-<!--      :is-full-page="true"-->
-<!--  />-->
+  <!--  <loading-->
+  <!--      v-model:active="indicator"-->
+  <!--      :can-cancel="false"-->
+  <!--      :is-full-page="true"-->
+  <!--  />-->
   <a-affix :offset-top="0">
     <a-menu
-        v-model:selectedKeys="selectedKeys"
-        mode="inline"
-        theme="dark"
+      v-model:selectedKeys="selectedKeys"
+      mode="inline"
+      theme="dark"
     >
       <a-menu-item key="1">
         <template #icon>
@@ -22,9 +22,9 @@
         <template #icon>
           <calendar-outlined />
         </template>
-          <router-link to="/order/list">
-        <span>주문관리</span>
-          </router-link>
+        <router-link to="/order/list">
+          <span>주문관리</span>
+        </router-link>
       </a-menu-item>
       <a-menu-item key="3">
         <template #icon>
@@ -55,9 +55,9 @@
         <template #icon>
           <api-outlined />
         </template>
-          <RouterLink to="/market/seller/list">
-              <span>제휴사연동</span>
-          </RouterLink>
+        <RouterLink to="/market/seller/list">
+          <span>제휴사연동</span>
+        </RouterLink>
       </a-menu-item>
       <a-menu-item key="10">
         <template #icon>

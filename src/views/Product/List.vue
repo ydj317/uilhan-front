@@ -2,6 +2,7 @@
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
 
   <div id="container">
+
     <!--검색-->
     <div id="header" class="bg-white">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
@@ -79,6 +80,7 @@
 
           <!--table body-->
           <template v-slot:bodyCell="{text, record, index, column}">
+
             <!--체크박스-->
             <template v-if="column.key === 'checked'">
               <a-checkbox v-model:checked="record.checked"></a-checkbox>
@@ -234,6 +236,7 @@
 
       <MarketList v-if="MarketListVisible"></MarketList>
     </div>
+
   </div>
 </template>
 
@@ -499,6 +502,7 @@ export default defineComponent({
           }
         }
 
+        2
         let iCurrent = parseInt(res.data.page);
         let iPageSize = parseInt(res.data.limit);
         // if (sType === 'reload') {
@@ -913,6 +917,11 @@ export default defineComponent({
 
 <!--search-->
 <style scoped>
+#container {
+  padding: 20px;
+  background: #fff;
+}
+
 /* ant vue 버튼 버그 */
 #header .ant-radio-button-wrapper:not(:first-child)::before {
   content: none;
