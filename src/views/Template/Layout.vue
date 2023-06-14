@@ -19,7 +19,7 @@
 
         <Header/>
       </a-layout-header>
-      <a-layout-content :style="{ margin: '16px', minHeight: '280px' }">
+      <a-layout-content :style="{ margin: '20px', minHeight: '280px' }">
         <Content />
       </a-layout-content>
     </a-layout>
