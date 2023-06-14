@@ -1,5 +1,5 @@
 <template>
-  <div class="container main">
+  <div class="container main" style="border: 1px solid red;">
     <div>
 
       <div>

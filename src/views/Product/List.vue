@@ -3,11 +3,11 @@
 
   <div id="container">
     <!--검색-->
-    <div id="header" class="plr20 bg-white">
+    <div id="header" class="bg-white">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
       <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
         <h1>{{ CONFIG.label }}</h1>
-        <a-radio-group v-model:value="this[CONFIG.key]" :class="CONFIG.group_class">
+        <a-radio-group v-model:value="this[CONFIG.key]" :class="CONFIG.group_class" button-style="solid" style="display:flex;flex-wrap: nowrap;">
           <a-radio-button v-for="options in CONFIG.options" :class="CONFIG.key" :value="options.value">
             {{ options.label }}
           </a-radio-button>
@@ -44,19 +44,19 @@
     </div>
 
     <!--상품 리스트-->
-    <div id="content" class="mt20 plr20 bg-white">
+    <div id="content" class="bg-white">
       <!--top-->
       <div id="content-header" class="pt20 row space-between">
         <!--left button-->
         <div class="w12 space-between">
           <!--상품삭제-->
           <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
-            <a-button type="primary">상품삭제</a-button>
+            <a-button type="danger">상품삭제</a-button>
           </a-popconfirm>
         </div>
 
         <!--right button-->
-        <div class=" pl5 space-between">
+        <div class="pl5 space-between">
           <!--릴라켓연동-->
 <!--          <a-popconfirm title="릴라켓에 연동하시겠습니까?" @confirm="sendMarket">-->
 <!--            <a-button type="primary">릴라켓연동</a-button>-->
@@ -149,8 +149,7 @@
               <div class="center">
                 <a-button
                     @click="singlePop(record)"
-                    style="width: 80%; height: 40px; border-radius: 25px; font-size: 15px;"
-                    danger ghost
+                    type="primary"
                 >제휴사연동
                 </a-button>
               </div>
@@ -288,8 +287,8 @@ export default defineComponent({
           ],
           label: '상품수집마켓',
           key: 'market_code',
-          class: 'w27',
-          group_class: 'space-between mb10',
+          class: '',
+          group_class: 'mb10',
         },
         {
           options: [
@@ -308,8 +307,8 @@ export default defineComponent({
           ],
           label: '번역',
           key: 'trans_status',
-          class: 'w14 inline-block',
-          group_class: 'space-between',
+          class: 'mb10 mr17 inline-block',
+          group_class: '',
         },
         {
           options: [
@@ -332,8 +331,8 @@ export default defineComponent({
           ],
           label: '릴라켓연동',
           key: 'sync_status',
-          class: 'w19 ml17 inline-block',
-          group_class: 'space-between',
+          class: 'inline-block',
+          group_class: 'start',
         },
       ],
       SEARCH_DATE_CONFIG: [
@@ -380,7 +379,7 @@ export default defineComponent({
           title: '상품정보',
           key: 'item_name',
           // width: '',
-          align: 'left',
+          align: '',
         },
         {
           title: '등록&수정시간',
@@ -927,84 +926,14 @@ export default defineComponent({
   font-weight: 600;
 }
 
-/* mouse leave */
-#header .market_code {
-  border: 1px solid #f06543 !important;
-  border-radius: 5px !important;
-  color: #f06543 !important;
-  background-color: white !important;
-}
-
-/* mouse over */
-#header .market_code:hover {
-  color: white !important;
-  background-color: #f06543 !important;
-}
-
-/* checked */
-#header .market_code.ant-radio-button-wrapper-checked {
-  outline: none !important;
-  border: none !important;
-  color: white !important;
-  background-color: #3ddc97 !important;
-}
-
-/*********************************************************/
-
-/* mouse leave */
-#header .trans_status,
-#header .sync_status {
-  border: 1px solid #eff2f7 !important;
-  border-radius: 5px !important;
-  background-color: #eff2f7 !important;
-  color: black !important;
-}
-
-/* mouse over */
-#header .trans_status:hover,
-#header .sync_status:hover {
-  background-color: #d6ddea !important;
-}
-
-/* checked */
-#header .trans_status.ant-radio-button-wrapper-checked,
-#header .sync_status.ant-radio-button-wrapper-checked {
-  outline: none !important;
-  border: none !important;
-  background-color: #3051d3 !important;
-  color: white !important;
-}
-
-/* 검색버튼 */
-#header button:last-child {
-  color: white;
-  background-color: #2c4cc7;
-}
-</style>
-
-<!--list-->
-<style scoped>
 /* ant vue 버튼 버그 */
 #content .ant-radio-button-wrapper:not(:first-child)::before {
   content: none;
 }
 
-#content-header button {
-  background-color: #f06543;
-  border-radius: 5px;
-  border: none;
-}
-
-#content-content-checkAll {
-  position: absolute;
-  z-index: 9;
-  left: 305px;
-  top: 505px;
-}
-
 #content-content img {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
 }
 
 #content-content .not_sync {
@@ -1013,10 +942,7 @@ export default defineComponent({
   border: none;
   width: 131px;
 }
-</style>
 
-<!--footer-->
-<style scoped>
 /* 모든 title */
 #footer h3 {
   font-size: 15px !important;
