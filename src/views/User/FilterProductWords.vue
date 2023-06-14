@@ -22,7 +22,7 @@
     </div>
 
     <!--검색-->
-    <div id="FilterProductWordsHeader" class="pl20 pr20 pb20 mb30 bg-white">
+    <div id="FilterProductWordsHeader" class="pl20 pr20 pb20 pt20 mb30 bg-white">
       <div class="mb5">
         <a-tag color="#2db7f5" class="w100">검색 유형을 선택해주세요.</a-tag>
       </div>

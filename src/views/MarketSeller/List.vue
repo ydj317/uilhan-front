@@ -249,7 +249,7 @@
             </div>
         </div>
 
-        <div id="search" class="pl20 pr20 pb20  mb10 bg-white">
+        <div id="search" class="pl20 pr20 pb20 pt20  mb10 bg-white">
             <div style="margin: 0; padding: 0; display: flex; justify-content: space-between;">
 
                 <div>

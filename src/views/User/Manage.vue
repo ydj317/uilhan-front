@@ -3,8 +3,8 @@
     <loading v-model:active="bLoading"
              :can-cancel="false"
              :is-full-page="true"/>
-    <div id="search" class="pl20 pr20 pb20 mb30 bg-white">
-      <span :style="{ marginRight: '8px' }">키원드 : </span>
+    <div id="search" class="pl20 pr20 pb20 pt20 mb30 bg-white">
+      <span :style="{ marginRight: '8px' }">키워드 : </span>
       <a-select v-model:value="search_key" style="width: 120px">
         <a-select-option value="user_id">유저 아이디</a-select-option>
       </a-select>
