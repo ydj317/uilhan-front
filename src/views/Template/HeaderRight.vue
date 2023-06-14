@@ -36,6 +36,7 @@
             v-model:value="setting"
             @select="seletedSetting"
             @blur="settingVisible"
+            style="right: 110px;"
         >
 <!--          <a-select-option value="userinfo"><UserOutlined /> <span>회원정보</span></a-select-option>-->
           <a-select-option value="setting"><SettingOutlined /> 설정</a-select-option>
@@ -54,103 +55,119 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import UserSetting from '@/components/SettingDrawer/index.vue';
 import { UserOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons-vue';
+import {AuthRequest} from "@/util/request";
 import Cookie from "js-cookie";
 import {cookieInit} from '@/util/auth';
 import router from '../../router';
 import {mapState} from 'vuex';
-import {AuthRequest} from "@/util/request";
-import {computed, ref} from "vue";
 
-const indicator = ref(false);
+export default {
+  components: {
+    UserOutlined,
+    SettingOutlined,
+    LogoutOutlined,
+    UserSetting,
+  },
 
-computed({
-  ...mapState([
-    'common',
-  ])
-})
+  computed: {
+    ...mapState([
+      'common',
+    ])
+  },
 
-const kor = require('../../assets/img/kor.png');
-const chn = require('../../assets/img/chn.png');
-const language = 'kor';
-const language_src = require('../../assets/img/kor.png');
-const language_visible = false;
-const user_name = Cookie.get('member_name');
-const setting = 'userinfo';
-const setting_visible = false;
+  data() {
+    return {
+      kor: require('../../assets/img/kor.png'),
+      chn: require('../../assets/img/chn.png'),
 
-const showUserPopup = () => {
-  this.common.user_visible = true;
-}
+      language: 'kor',
+      language_src: require('../../assets/img/kor.png'),
+      language_visible: false,
 
-const languageVisible = (event) => {
-  this.language_src = this[this.language];
-  this.language_visible = !this.language_visible;
-  if (event.type === 'click') {
-    setTimeout(() => {
-      this.language_visible = true;
-    });
-  }
-}
+      user_name: Cookie.get('member_name'),
+      setting: 'userinfo',
+      setting_visible: false,
+      indicator: true,
+    };
+  },
 
-const settingVisible = (event) => {
-  this.setting_visible = !this.setting_visible;
-  if (event.type === 'click') {
-    setTimeout(() => {
-      this.setting_visible = true;
-    });
-  }
-}
-
-const seletedSetting = () => {
-  switch (this.setting)
-  {
-    case 'userinfo':
-      break;
-    case 'setting':
+  methods: {
+    showUserPopup() {
       this.common.user_visible = true;
-      setTimeout(() => {
-        this.setting_visible = false;
-      });
-      break;
-    case 'logout':
-      this.logout();
-      break;
-  }
-}
+    },
 
-const logout = () => {
-  cookieInit();
-  router.push("/user/login");
-  return false;
-}
+    languageVisible(event) {
+      this.language_src = this[this.language];
+      this.language_visible = !this.language_visible;
+      if (event.type === 'click') {
+        setTimeout(() => {
+          this.language_visible = true;
+        });
+      }
+    },
 
-const extensionDown = () => {
-  indicator.value = true;
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/downloadext", {responseType: 'blob'}).then((res) => {
-    let response = res;
-    if (response === undefined) {
-      alert("확장프로그램 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
-      indicator.value = false;
+    settingVisible(event) {
+      this.setting_visible = !this.setting_visible;
+      if (event.type === 'click') {
+        setTimeout(() => {
+          this.setting_visible = true;
+        });
+      }
+    },
+
+    seletedSetting() {
+      switch (this.setting)
+      {
+        case 'userinfo':
+          break;
+        case 'setting':
+          this.common.user_visible = true;
+          setTimeout(() => {
+            this.setting_visible = false;
+          });
+          break;
+        case 'logout':
+          this.logout();
+          break;
+      }
+    },
+
+    logout() {
+      cookieInit();
+      router.push("/user/login");
       return false;
-    }
+    },
 
-    let fileName = 'relaket.zip';
-    let blob = new Blob([response], {type: 'charset=utf-8'});
-    let downloadElement = document.createElement('a');
-    let url = window.URL || window.webkitURL || window.moxURL
-    let href = url.createObjectURL(blob); // 创建下载的链接
-    downloadElement.href = href;
-    downloadElement.download = decodeURI(fileName); // 下载后文件名
-    document.body.appendChild(downloadElement);
-    downloadElement.click(); // 点击下载
-    document.body.removeChild(downloadElement); // 下载完成移除元素
-    url.revokeObjectURL(href);
-    indicator.value = false;
-  });
-}
+    extensionDown () {
+      this.indicator = true;
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/downloadext", {responseType: 'blob'}).then((res) => {
+        let response = res;
+        if (response === undefined) {
+          alert("확장프로그램 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+          this.indicator = false;
+          return false;
+        }
+
+        let fileName = 'relaket.zip';
+        let blob = new Blob([response], {type: 'charset=utf-8'});
+        let downloadElement = document.createElement('a');
+        let url = window.URL || window.webkitURL || window.moxURL
+        let href = url.createObjectURL(blob); // 创建下载的链接
+        downloadElement.href = href;
+        downloadElement.download = decodeURI(fileName); // 下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        url.revokeObjectURL(href);
+        this.indicator = false;
+      });
+    }
+  }
+};
+
 </script>
 
 <style>
