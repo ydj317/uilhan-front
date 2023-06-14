@@ -7,7 +7,9 @@
   <a-affix :offset-top="0">
   <div class="sideBar space-between col">
     <div>
+      <router-link to="/main">
       <div class="sideLogo"></div>
+      </router-link>
       <div class="topMenuStyle"><span class="defaultColor">MENU</span></div>
       <a-menu
           v-model:selectedKeys="selectedKeys"

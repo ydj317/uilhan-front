@@ -79,6 +79,7 @@
 
           <!--table body-->
           <template v-slot:bodyCell="{text, record, index, column}">
+
             <!--체크박스-->
             <template v-if="column.key === 'checked'">
               <a-checkbox v-model:checked="record.checked"></a-checkbox>
@@ -500,6 +501,7 @@ export default defineComponent({
           }
         }
 
+        2
         let iCurrent = parseInt(res.data.page);
         let iPageSize = parseInt(res.data.limit);
         // if (sType === 'reload') {

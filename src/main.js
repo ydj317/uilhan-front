@@ -43,6 +43,10 @@ import {
 
 import DatePicker from "ant-design-vue/es/date-picker/moment";
 
+// vue-echarts
+import ECharts from 'vue-echarts';
+import 'echarts';
+
 createApp(App)
   .use(store)
   .use(router)
@@ -79,4 +83,5 @@ createApp(App)
   .use(Collapse)
   .use(Pagination)
   .use(Cascader)
+  .component('ECharts', ECharts)
   .mount("#app");
