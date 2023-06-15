@@ -2,7 +2,7 @@
   <a-layout style="min-height: 1080px;">
     <a-layout-sider v-model:collapsed="collapsed" collapsible breakpoint="lg" :trigger="null">
       <div class="logo" style="display: flex;justify-content: center;align-items: center;height: 60px;padding: 0 18px;">
-        <router-link to="/main">
+        <router-link to="/product">
         <img src="@/assets/logo_wight.svg" style="width: 100%;">
         </router-link>
       </div>
