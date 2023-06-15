@@ -211,8 +211,8 @@
 
         <template v-slot:footer>
           <a-button type="primary" @click="testsync('single')">선택제휴사연동</a-button>
-          <a-button type="primary" @click="closeResultPop('single')">확인</a-button>
-          <a-button type="primary" @click="closeResultPop('single')" class="bg-697783">닫기</a-button>
+<!--          <a-button type="primary" @click="closeResultPop('single')">확인</a-button>-->
+          <a-button @click="closeResultPop('single')">닫기</a-button>
         </template>
       </a-modal>
 
@@ -717,8 +717,6 @@ export default defineComponent({
         this.singleDetail = [];
         this.checkedList = [];
       }
-
-      this.getList();
     },
 
     testmarket() {

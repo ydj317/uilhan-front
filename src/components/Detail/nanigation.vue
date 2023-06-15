@@ -1,21 +1,21 @@
 <template>
-  <div class="pl20 pr20 bg-white">
-    <div class="w63 bg-white">
-      <a-affix>
-        <div class="space-between">
+  <div class="bg-white">
+    <div class="wrap">
+      <a-affix :style="{width: '100%'}">
+        <div class="pt10 pb10" style="width: 100%; background-color: white;z-index: 0;box-shadow: 0 2px 4px rgba(173,173,173,0.2);">
 <!--          <a-button danger @click="textTransModal">-->
 <!--            <FileWordTwoTone twoToneColor="white" />-->
 <!--            텍스트 번역-->
 <!--          </a-button>-->
-          <a-button danger @click="setNavigation('eModelTitle_' + i)" v-for="(name, i) in label">
-            <AppstoreTwoTone v-if="name === '기본 정보'" twoToneColor="red" />
-            <PictureTwoTone v-if="name === '상품 이미지'" twoToneColor="red" />
-            <SettingTwoTone v-if="name === 'Spec'" twoToneColor="red" />
-            <TagsTwoTone v-if="name === 'SKU'" twoToneColor="red" />
-            <BankTwoTone v-if="name === '통관정보'" twoToneColor="red" />
-            <SlidersTwoTone v-if="name === '배송설정'" twoToneColor="red" />
-            <ProjectTwoTone v-if="name === '간략설명'" twoToneColor="red" />
-            <BuildTwoTone v-if="name === '상세설명'" twoToneColor="red" />
+          <a-button @click="setNavigation('eModelTitle_' + i)" v-for="(name, i) in label">
+            <AppstoreTwoTone v-if="name === '기본 정보'"/>
+            <PictureTwoTone v-if="name === '상품 이미지'" />
+            <SettingTwoTone v-if="name === 'Spec'" />
+            <TagsTwoTone v-if="name === 'SKU'" />
+            <BankTwoTone v-if="name === '통관정보'" />
+            <SlidersTwoTone v-if="name === '배송설정'" />
+            <ProjectTwoTone v-if="name === '간략설명'" />
+            <BuildTwoTone v-if="name === '상세설명'" />
             {{ name }}
           </a-button>
         </div>
