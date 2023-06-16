@@ -7,7 +7,7 @@
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
       <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
         <h1>{{ CONFIG.label }}</h1>
-        <a-radio-group v-model:value="this[CONFIG.key]" :class="CONFIG.group_class">
+        <a-radio-group v-model:value="this[CONFIG.key]" :class="CONFIG.group_class" button-style="solid">
           <a-radio-button v-for="options in CONFIG.options" :class="CONFIG.key" :value="options.value">
             {{ options.label }}
           </a-radio-button>
@@ -17,9 +17,10 @@
       <!--검색기간-->
       <div class="mt10">
         <h1>기간</h1>
-        <a-select v-model:value="date_type" class="w10 text-center">
+        <a-select v-model:value="date_type" class="w10">
           <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
         </a-select>
+        <span style="margin-left: 8px;">
         <a-space direction="vertical" class="w25">
           <a-range-picker
               class="w100"
@@ -29,17 +30,22 @@
               @change="onChangeDatePicker"
           />
         </a-space>
+        </span>
       </div>
 
       <!--검색입력창-->
       <div class="mt10 pb20">
         <h1>키워드</h1>
-        <a-select v-model:value="search_key" class="w10 mr1 text-center">
+        <a-select v-model:value="search_key" class="w10 mr1">
           <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">{{ config.label }}
           </a-select-option>
         </a-select>
-        <a-input v-model:value="search_value" placeholder="키워드" class="w25 mr1 text-center"/>
+        <span style="margin-left: 8px;">
+        <a-input v-model:value="search_value" placeholder="키워드" class="w25 mr1"/>
+        </span>
+        <span style="margin-left: 8px;">
         <a-button @click="getList" type="primary" class="w5">검색</a-button>
+        </span>
       </div>
     </div>
 
@@ -73,7 +79,7 @@
           <!--table header-->
           <template v-slot:headerCell="{title, column}">
             <template v-if="column.key === 'checked'">
-              <a-checkbox v-model:checked="checked" @change="checkItem" id="content-content-checkAll"></a-checkbox>
+              <a-checkbox v-model:checked="checked" id="content-content-checkAll"></a-checkbox>
             </template>
           </template>
 
@@ -89,16 +95,40 @@
               <img :src="record.item_thumb[0]" alt="">
             </template>
 
-            <!--상품정보-->
-            <template v-if="column.key === 'item_name'">
-              <!--상품명-->
-              <div class="item-name">
+            <!--상품코드-->
+            <template v-if="column.key === 'item_code'">
+              <a-button type="dashed" :href="record.item_url" :target="'_blank'">
                 <span class="get-market-icon">
                     <img :src="getLogoSrc('get-logo', record.item_market.toLowerCase())" alt="">
                 </span>
-                <a :href="`/product/detail/${record.item_id}`">
-                  {{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}
-                </a>
+                {{ record.item_code }}
+              </a-button>
+            </template>
+
+            <!--상품명-->
+            <template v-if="column.key === 'item_name'">
+              <div class="item-name">
+                <div class="name">
+                  <a :href="`/product/detail/${record.item_id}`">
+                    {{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}
+                  </a>
+                </div>
+                <div class="cantent">
+                  <a-space :size="5" class="item-market">
+                    <template v-for="(market_list, market_code) in record.show_sync_market" :key="market_code">
+                      <template v-for="(market_info, key) in market_list" :key="key">
+                        <a-tooltip placement="bottom">
+                          <template #title>
+                            <span>{{ market_info.market_account.split('::')[1] }}</span>
+                          </template>
+                          <span :class="market_info.status" @click="singlePop(record)">
+                            <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
+                          </span>
+                        </a-tooltip>
+                      </template>
+                    </template>
+                  </a-space>
+                </div>
               </div>
             </template>
 
@@ -107,47 +137,22 @@
               {{ record.show_price }}
             </template>
 
-            <!--상품코드-->
-            <template v-if="column.key === 'item_code'">
-              <a-button type="dashed" :href="record.item_url" :target="'_blank'">{{ record.item_code }}</a-button>
-            </template>
-
             <!--상품등록(수정)일-->
             <template v-if="column.key === 'item_ins'">
-              <div>{{ record.item_ins }}</div>
+              <div>{{ record.item_ins.slice(0, 16) }}</div>
               <div v-if="record.item_upd !== null" class="item-upd">
-                ( {{ record.item_upd }} )
+                ( {{ record.item_upd.slice(0, 16) }} )
               </div>
             </template>
 
             <!--제휴사연동-->
-            <template v-if="column.key === 'item_sync'">
-              <div class="center">
-                <a-button @click="singlePop(record)" type="primary">연동</a-button>
-              </div>
-            </template>
-
-            <!--연동마켓-->
             <template v-if="column.key === 'item_sync_status'">
               <div class="center">
-                <a-space :size="5" class="item-market">
-                <template v-for="(market_list, market_code) in record.show_sync_market" :key="market_code">
-                  <template v-for="(market_info, key) in market_list" :key="key">
-                      <a-tooltip placement="top">
-                        <template #title>
-                          <span>{{ market_info.market_account.split('::')[1] }}</span>
-                        </template>
-                        <span :class="market_info.status" class="sync">
-                          <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
-                        </span>
-                      </a-tooltip>
-                  </template>
-                </template>
-                </a-space>
+                <a-button @click="singlePop(record)" type="primary">연동관리</a-button>
               </div>
             </template>
 
-            <!--연동메세지-->
+            <!--연동상태-->
             <template v-if="column.key === 'item_status'">
               <span v-if="record.item_sync_date">
                 <!--연동성공-->
@@ -301,8 +306,8 @@ export default defineComponent({
           ],
           label: '상품수집마켓',
           key: 'market_code',
-          class: 'w27',
-          group_class: 'space-between mb10',
+          class: '',
+          group_class: 'mb10',
         },
         {
           options: [
@@ -321,8 +326,8 @@ export default defineComponent({
           ],
           label: '번역',
           key: 'trans_status',
-          class: 'w14 inline-block',
-          group_class: 'space-between',
+          class: 'mb10 mr17 inline-block',
+          group_class: '',
         },
         {
           options: [
@@ -345,8 +350,8 @@ export default defineComponent({
           ],
           label: '릴라켓연동',
           key: 'sync_status',
-          class: 'w19 ml17 inline-block',
-          group_class: 'space-between',
+          class: 'inline-block',
+          group_class: 'start',
         },
       ],
       SEARCH_DATE_CONFIG: [
@@ -391,6 +396,12 @@ export default defineComponent({
           align: 'center'
         },
         {
+          title: '상품코드',
+          key: 'item_code',
+          width: '10%',
+          align: 'center'
+        },
+        {
           title: '상품명',
           key: 'item_name',
           align: 'center'
@@ -402,33 +413,21 @@ export default defineComponent({
           align: 'center'
         },
         {
-          title: '상품코드',
-          key: 'item_code',
-          width: '12%',
-          align: 'center'
-        },
-        {
           title: '상품등록(수정)일',
           key: 'item_ins',
-          width: '12%',
+          width: '10%',
           align: 'center'
         },
         {
-          title: '연동마켓',
+          title: '제휴사연동',
           key: 'item_sync_status',
-          width: '12%',
+          width: '8%',
           align: 'center'
         },
         {
           title: '연동상태',
           key: 'item_status',
           width: '8%',
-          align: 'center'
-        },
-        {
-          title: '제휴사연동',
-          key: 'item_sync',
-          width: '6%',
           align: 'center'
         },
       ],
@@ -546,31 +545,25 @@ export default defineComponent({
           }
 
           // 옵션 최저가 - 최대가
-          // let minPrice = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
-          // let maxPrice = Math.max(...this.prdlist[i].item_sku.map(item => item.selling_price));
-          // if (minPrice === 0) {
-          //   minPrice = Math.min(...this.prdlist[i].item_sku.map(item =>
-          //     Number(item.shipping_fee_cn) + Number(item.original_price_cn)
-          //   ));
-          //   maxPrice = Math.max(...this.prdlist[i].item_sku.map(item =>
-          //     Number(item.shipping_fee_cn) + Number(item.original_price_cn)
-          //   ));
-          //   minPrice = Math.ceil(Number(minPrice * (1 + Number(this.user.selling_margin_option) / 100) *
-          //       Number(this.user.rate_margin_option)).toFixed(0) / 100) * 100;
-          //   maxPrice = Math.ceil(Number(maxPrice * (1 + Number(this.user.selling_margin_option) / 100) *
-          //     Number(this.user.rate_margin_option)).toFixed(0) / 100) * 100;
-          //
-          // }
-          // this.prdlist[i]['show_price'] = minPrice.toLocaleString() + '원 ~ ' + maxPrice.toLocaleString() + '원';
-          this.prdlist[i]['show_price'] = 111;
+          let minPrice = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
+          let maxPrice = Math.max(...this.prdlist[i].item_sku.map(item => item.selling_price));
+          if (minPrice === 0) {
+            minPrice = Math.min(...this.prdlist[i].item_sku.map(item =>
+              Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+            ));
+            maxPrice = Math.max(...this.prdlist[i].item_sku.map(item =>
+              Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+            ));
+            minPrice = Math.ceil(Number(minPrice * (1 + Number(this.user.selling_margin_option) / 100) *
+                Number(this.user.rate_margin_option)).toFixed(0) / 100) * 100;
+            maxPrice = Math.ceil(Number(maxPrice * (1 + Number(this.user.selling_margin_option) / 100) *
+              Number(this.user.rate_margin_option)).toFixed(0) / 100) * 100;
+
+          }
+          this.prdlist[i]['show_price'] = minPrice.toLocaleString() + '원 ~ ' + maxPrice.toLocaleString() + '원';
 
           // 제휴사 정보
-          if (i === 0) {
-            console.log('==0==')
-            console.log(this.prdlist[i].item_sync_market)
-          }
           let show_sync_market = {};
-
           this.prdlist[i].item_sync_market.forEach(value => {
             let key = value.market_account.split('::')[0]
 
@@ -579,11 +572,6 @@ export default defineComponent({
             }
             show_sync_market[key].push(value)
           });
-
-          if (i === 0) {
-            console.log('==0==')
-            console.log(show_sync_market)
-          }
           this.prdlist[i]['show_sync_market'] = show_sync_market;
         }
 
@@ -791,14 +779,6 @@ export default defineComponent({
         // }
         window.open(res.data.path);
       });
-    },
-
-    checkItem() {
-      if (this.prdlist !== undefined && this.prdlist.length > 0) {
-        for (let i = 0; i < this.prdlist.length; i++) {
-          this.prdlist[i].checked = !this.prdlist[i].checked;
-        }
-      }
     },
 
     searchFailed() {
@@ -1022,10 +1002,6 @@ export default defineComponent({
 
 <!--search-->
 <style scoped>
-/* ant vue 버튼 버그 */
-#header .ant-radio-button-wrapper:not(:first-child)::before {
-  content: none;
-}
 
 /* 모든 title */
 #header h1 {
@@ -1033,67 +1009,20 @@ export default defineComponent({
   font-weight: 600;
 }
 
-/* mouse leave */
-#header .market_code {
-  border: 1px solid #f06543 !important;
-  border-radius: 5px !important;
-  color: #f06543 !important;
-  background-color: white !important;
+#content-content img {
+  width: 70px;
+  height: 70px;
 }
 
-/* mouse over */
-#header .market_code:hover {
-  color: white !important;
-  background-color: #f06543 !important;
-}
-
-/* checked */
-#header .market_code.ant-radio-button-wrapper-checked {
-  outline: none !important;
-  border: none !important;
-  color: white !important;
-  background-color: #3ddc97 !important;
-}
-
-/*********************************************************/
-
-/* mouse leave */
-#header .trans_status,
-#header .sync_status {
-  border: 1px solid #eff2f7 !important;
-  border-radius: 5px !important;
-  background-color: #eff2f7 !important;
-  color: black !important;
-}
-
-/* mouse over */
-#header .trans_status:hover,
-#header .sync_status:hover {
-  background-color: #d6ddea !important;
-}
-
-/* checked */
-#header .trans_status.ant-radio-button-wrapper-checked,
-#header .sync_status.ant-radio-button-wrapper-checked {
-  outline: none !important;
-  border: none !important;
-  background-color: #3051d3 !important;
-  color: white !important;
-}
-
-/* 검색버튼 */
-#header button:last-child {
-  color: white;
-  background-color: #2c4cc7;
+/* 모든 title */
+#footer h3 {
+  font-size: 15px !important;
+  font-weight: 600;
 }
 </style>
 
 <!--list-->
 <style scoped>
-/* ant vue 버튼 버그 */
-#content .ant-radio-button-wrapper:not(:first-child)::before {
-  content: none;
-}
 
 #content-content-checkAll {
   position: absolute;
@@ -1108,7 +1037,9 @@ export default defineComponent({
 }
 
 #content-content .get-market-icon img {
-  margin-top: -2px;
+  display: inline-block;
+  margin-right: 5px;
+  margin-top: -3px;
 }
 #content-content .get-market-icon img {
   width: 16px;
@@ -1118,33 +1049,45 @@ export default defineComponent({
   text-align: left;
 }
 #content-content .item-name a {
-  padding: 0 15px 0 5px;
   color: #555;
+}
+#content-content .item-name .name {
+  display: inline-block;
+  margin: 0 0 7px 0;
+  padding: 0 0 7px 0;
+  border-bottom: 1px dashed #d9d9d9;
+}
+
+#content-content .cantent .item-market {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+#content-content .cantent .unsync img {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  filter: grayscale(100%);
+  opacity: 0.3;
+}
+
+#content-content .cantent .unsync:hover img {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+#content-content .cantent .sync img {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  filter: grayscale(0%);
+  opacity: 1;
 }
 
 #content-content .item-upd {
   font-size: 12px;
   color: #999;
-}
-
-#content-content .center .item-market {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-#content-content .center .unsync img {
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
-  filter: grayscale(100%);
-}
-
-#content-content .center .sync img {
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
-  filter: grayscale(0%);
 }
 
 </style>
