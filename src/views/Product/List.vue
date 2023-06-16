@@ -51,25 +51,25 @@
         <div class="w12 space-between">
           <!--상품삭제-->
           <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
-            <a-button type="primary">상품삭제</a-button>
+            <a-button type="primary" danger>상품삭제</a-button>
           </a-popconfirm>
         </div>
 
         <!--right button-->
-        <div class=" pl5 space-between">
+        <div class=" pl5 ">
           <!--릴라켓연동-->
 <!--          <a-popconfirm title="릴라켓에 연동하시겠습니까?" @confirm="sendMarket">-->
 <!--            <a-button type="primary">릴라켓연동</a-button>-->
 <!--          </a-popconfirm>-->
           <!--제휴사 상품연동-->
-          <a-button type="primary" @click="MarketListPop">제휴사 상품연동</a-button>
+          <a-button @click="MarketListPop(record)" type="primary">제휴사 상품연동</a-button>
         </div>
       </div>
 
       <!--content-->
       <div id="content-content" class="pt20">
         <!--전체선택-->
-        <a-table :bordered="true" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination">
+        <a-table class="test-custem" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination">
           <!--table header-->
           <template v-slot:headerCell="{title, column}">
             <template v-if="column.key === 'checked'">
@@ -92,68 +92,81 @@
             <!--상품정보-->
             <template v-if="column.key === 'item_name'">
               <!--상품명-->
-              <div>
-                <a-button class="init-pmbo" type="link" :href="`/product/detail/${record.item_id}`">
-                  <span>{{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}</span>
-                </a-button>
-                  <!--연동성공-->
-                  <span style="margin-left: 5px;" v-if="record.item_sync_date && record.item_sync_status">
-                      <a-tooltip trigger="click">
-                          <template #title>{{ record.item_sync_result }}</template>
-                          <CheckCircleOutlined style="color: green; font-size: 20px;" />
-                      </a-tooltip>
-                  </span>
-                  <!--연동실패-->
-                  <span style="margin-left: 5px;" v-if="record.item_sync_date && record.item_sync_status == false">
-                      <a-tooltip trigger="click">
-                          <template #title>{{ record.item_sync_result }}</template>
-                          <WarningOutlined style="color: red; font-size: 20px;" />
-                      </a-tooltip>
-                  </span>
+              <div class="item-name">
+                <span class="get-market-icon">
+                    <img :src="getLogoSrc('get-logo', record.item_market.toLowerCase())" alt="">
+                </span>
+                <a :href="`/product/detail/${record.item_id}`">
+                  {{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}
+                </a>
               </div>
-
-              <!--상품코드-->
-              <div>
-                <span>상품 바로가기 :</span>
-                <a-button type="link" :href="record.item_url" :target="'_blank'">{{ record.item_code }}</a-button>
-              </div>
-
-              <!--미연동-->
-<!--              <div v-if="!record.item_sync_date && !record.item_sync_status">-->
-<!--                <a-button type="primary" class="not_sync">릴라켓 미연동</a-button>-->
-<!--              </div>-->
-
-              <!--연동-->
-<!--              <div v-if="record.item_sync_date">-->
-<!--                <a-tooltip trigger="click">-->
-<!--                  <template #title v-if="!record.item_sync_status">{{ record.item_sync_result }}</template>-->
-<!--                  <a-button type="primary" :style="buttonStyle(record.item_sync_status)">릴라켓 연동{{-->
-<!--                      record.item_sync_status-->
-<!--                          ? '성공'-->
-<!--                          : '실패'-->
-<!--                    }}-->
-<!--                  </a-button>-->
-<!--                </a-tooltip>-->
-<!--              </div>-->
             </template>
 
-            <!--등록&수정시간-->
+            <!--판매가-->
+            <template v-if="column.key === 'item_price'">
+              {{ record.show_price }}
+            </template>
+
+            <!--상품코드-->
+            <template v-if="column.key === 'item_code'">
+              <a-button type="dashed" :href="record.item_url" :target="'_blank'">{{ record.item_code }}</a-button>
+            </template>
+
+            <!--상품등록(수정)일-->
             <template v-if="column.key === 'item_ins'">
-              <div>상품등록：{{ record.item_ins }}</div>
-              <div v-if="record.item_upd !== null">상품수정：{{ record.item_upd }}</div>
+              <div>{{ record.item_ins }}</div>
+              <div v-if="record.item_upd !== null" class="item-upd">
+                ( {{ record.item_upd }} )
+              </div>
             </template>
 
             <!--제휴사연동-->
-            <template v-if="column.key === 'item_sync_status'">
+            <template v-if="column.key === 'item_sync'">
               <div class="center">
-                <a-button
-                    @click="singlePop(record)"
-                    style="width: 80%; height: 40px; border-radius: 25px; font-size: 15px;"
-                    danger ghost
-                >제휴사연동
-                </a-button>
+                <a-button @click="singlePop(record)" type="primary">연동</a-button>
               </div>
             </template>
+
+            <!--연동마켓-->
+            <template v-if="column.key === 'item_sync_status'">
+              <div class="center">
+                <a-space :size="5" class="item-market">
+                <template v-for="(market_list, market_code) in record.show_sync_market" :key="market_code">
+                  <template v-for="(market_info, key) in market_list" :key="key">
+                      <a-tooltip placement="top">
+                        <template #title>
+                          <span>{{ market_info.market_account.split('::')[1] }}</span>
+                        </template>
+                        <span :class="market_info.status" class="sync">
+                          <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
+                        </span>
+                      </a-tooltip>
+                  </template>
+                </template>
+                </a-space>
+              </div>
+            </template>
+
+            <!--연동메세지-->
+            <template v-if="column.key === 'item_status'">
+              <span v-if="record.item_sync_date">
+                <!--연동성공-->
+                <a-tooltip v-if="record.item_sync_status">
+                    <template #title>{{ record.item_sync_result }}</template>
+                    <a-tag color="success">연동중</a-tag>
+                </a-tooltip>
+                <!--연동실패-->
+                <a-tooltip v-if="record.item_sync_status == false">
+                    <template #title>{{ record.item_sync_result }}</template>
+                    <a-tag color="error">연동실패</a-tag>
+                </a-tooltip>
+              </span>
+              <span v-else>
+                <!--연동대기-->
+                <a-tag color="default">연동대기</a-tag>
+              </span>
+            </template>
+
           </template>
         </a-table>
       </div>
@@ -247,16 +260,17 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 import Cookie from 'js-cookie';
 import MarketList from 'components/List/MarketList';
 import {mapState} from 'vuex';
-import { WarningOutlined, CheckCircleOutlined } from '@ant-design/icons-vue';
+import { ClockCircleOutlined, CloseCircleOutlined, CheckCircleOutlined, LinkOutlined, DollarTwoTone } from "@ant-design/icons-vue";
 import { provide } from 'vue'
 
 export default defineComponent({
-  components: {Loading, Cookie, MarketList, WarningOutlined, CheckCircleOutlined},
+  components: { DollarTwoTone, Loading, Cookie, MarketList, ClockCircleOutlined, CloseCircleOutlined, CheckCircleOutlined, LinkOutlined},
 
   computed: {
     ...mapState([
       'relaket',
-    ]),
+      'user'
+    ])
   },
 
   data() {
@@ -368,30 +382,54 @@ export default defineComponent({
           title: '선택',
           key: 'checked',
           width: '3%',
+          align: 'center'
         },
         {
           title: '사진',
           key: 'item_thumb',
           width: '5%',
-          align: 'center',
+          align: 'center'
         },
         {
-          title: '상품정보',
+          title: '상품명',
           key: 'item_name',
-          // width: '',
-          align: 'left',
+          align: 'center'
         },
         {
-          title: '등록&수정시간',
+          title: '판매가',
+          key: 'item_price',
+          width: '12%',
+          align: 'center'
+        },
+        {
+          title: '상품코드',
+          key: 'item_code',
+          width: '12%',
+          align: 'center'
+        },
+        {
+          title: '상품등록(수정)일',
           key: 'item_ins',
-          width: '18%',
-          align: 'center',
+          width: '12%',
+          align: 'center'
+        },
+        {
+          title: '연동마켓',
+          key: 'item_sync_status',
+          width: '12%',
+          align: 'center'
+        },
+        {
+          title: '연동상태',
+          key: 'item_status',
+          width: '8%',
+          align: 'center'
         },
         {
           title: '제휴사연동',
-          key: 'item_sync_status',
-          width: '12%',
-          align: 'center',
+          key: 'item_sync',
+          width: '6%',
+          align: 'center'
         },
       ],
       pagination: {
@@ -466,6 +504,14 @@ export default defineComponent({
   },
 
   methods: {
+    getLogoSrc(fileName, marketCode) {
+      try {
+        return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
+      } catch (error) {
+        return 'data:image/png;base64,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';
+      }
+    },
+
     MarketListPop() {
       this.relaket.data = this;
       this.MarketListVisible = true;
@@ -498,6 +544,47 @@ export default defineComponent({
           if (this.prdlist[i].item_is_trans === true) {
             this.prdlist[i].item_name_type = '번역 상품명';
           }
+
+          // 옵션 최저가 - 최대가
+          // let minPrice = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
+          // let maxPrice = Math.max(...this.prdlist[i].item_sku.map(item => item.selling_price));
+          // if (minPrice === 0) {
+          //   minPrice = Math.min(...this.prdlist[i].item_sku.map(item =>
+          //     Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+          //   ));
+          //   maxPrice = Math.max(...this.prdlist[i].item_sku.map(item =>
+          //     Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+          //   ));
+          //   minPrice = Math.ceil(Number(minPrice * (1 + Number(this.user.selling_margin_option) / 100) *
+          //       Number(this.user.rate_margin_option)).toFixed(0) / 100) * 100;
+          //   maxPrice = Math.ceil(Number(maxPrice * (1 + Number(this.user.selling_margin_option) / 100) *
+          //     Number(this.user.rate_margin_option)).toFixed(0) / 100) * 100;
+          //
+          // }
+          // this.prdlist[i]['show_price'] = minPrice.toLocaleString() + '원 ~ ' + maxPrice.toLocaleString() + '원';
+          this.prdlist[i]['show_price'] = 111;
+
+          // 제휴사 정보
+          if (i === 0) {
+            console.log('==0==')
+            console.log(this.prdlist[i].item_sync_market)
+          }
+          let show_sync_market = {};
+
+          this.prdlist[i].item_sync_market.forEach(value => {
+            let key = value.market_account.split('::')[0]
+
+            if (!show_sync_market[key]) {
+              show_sync_market[key] = []; // 初始化为空数组
+            }
+            show_sync_market[key].push(value)
+          });
+
+          if (i === 0) {
+            console.log('==0==')
+            console.log(show_sync_market)
+          }
+          this.prdlist[i]['show_sync_market'] = show_sync_market;
         }
 
         let iCurrent = parseInt(res.data.page);
@@ -516,6 +603,27 @@ export default defineComponent({
         this.indicator = false;
         this.checked = false;
       });
+    },
+
+    setLabel(items, type, isRate = false) {
+      let labelAddInfo = "";
+      for (let i = 0; i < items.length; i++) {
+        let symble = "";
+        if (type === "margin" && isRate === false) {
+          symble = "%";
+        }
+
+        if (
+          items[i].label.indexOf("(") === -1 &&
+          items[i].label.indexOf("%") === -1
+        ) {
+          labelAddInfo = " ( " + items[i].value + symble + " )";
+        }
+
+        items[i].label += labelAddInfo;
+      }
+
+      return items;
     },
 
     substrName(sName) {
@@ -894,9 +1002,9 @@ export default defineComponent({
       Object.values(document.querySelectorAll('#content-content th')).map(th => {
         th.style.margin = '0';
         th.style.padding = '0';
-        th.style.backgroundColor = '#f7fdff';
+        th.style.backgroundColor = '#fafafa';
         th.style.textAlign = 'center';
-        th.style.height = '40px';
+        th.style.height = '50px';
       });
 
       document.querySelector('[placeholder="Start Time"]').style.textAlign = 'center';
@@ -987,12 +1095,6 @@ export default defineComponent({
   content: none;
 }
 
-#content-header button {
-  background-color: #f06543;
-  border-radius: 5px;
-  border: none;
-}
-
 #content-content-checkAll {
   position: absolute;
   z-index: 9;
@@ -1001,16 +1103,50 @@ export default defineComponent({
 }
 
 #content-content img {
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
 }
 
-#content-content .not_sync {
-  background-color: #eff2f7;
-  color: black;
-  border: none;
-  width: 131px;
+#content-content .get-market-icon img {
+  margin-top: -2px;
 }
+#content-content .get-market-icon img {
+  width: 16px;
+  height: 16px;
+}
+#content-content .item-name {
+  text-align: left;
+}
+#content-content .item-name a {
+  padding: 0 15px 0 5px;
+  color: #555;
+}
+
+#content-content .item-upd {
+  font-size: 12px;
+  color: #999;
+}
+
+#content-content .center .item-market {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#content-content .center .unsync img {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  filter: grayscale(100%);
+}
+
+#content-content .center .sync img {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  filter: grayscale(0%);
+}
+
 </style>
 
 <!--footer-->

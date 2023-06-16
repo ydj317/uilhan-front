@@ -13,8 +13,8 @@ function isLocalServer(config) {
     return config;
 }
 function isDebug(config) {
-    if (localStorage.debug === 'T') {
-        config.url += '?XDEBUG_SESSION=PHPSTORM';
+    if (Cookie.get('XDEBUG_SESSION')) {
+        config.url += '?XDEBUG_SESSION_START=PHPSTORM';
     }
 
     return config;

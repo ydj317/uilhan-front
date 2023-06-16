@@ -1315,6 +1315,9 @@ export default {
             alert(res.message)
           }
 
+          // userData 를 store 에 저장
+          this.$store.state.user = Object.assign({}, res.data);
+
           this.userData = res.data;
           this.memberName = this.userData.member_name;
 
