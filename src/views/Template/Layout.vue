@@ -1,9 +1,14 @@
 <template>
   <a-layout style="min-height: 1080px;">
     <a-layout-sider v-model:collapsed="collapsed" collapsible breakpoint="lg" :trigger="null">
-      <div class="logo">
+      <div class="logo" v-if="collapsed">
         <router-link to="/main">
-          <img src="@/assets/logo_wight.svg" style="width: 100%;">
+          <img src="@/assets/logo.png" style="height:35px;">
+        </router-link>
+      </div>
+      <div class="logo" v-if="!collapsed">
+        <router-link to="/main">
+          <img src="@/assets/logo_width.png">
         </router-link>
       </div>
       <Sider/>
