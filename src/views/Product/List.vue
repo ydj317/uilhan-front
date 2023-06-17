@@ -502,7 +502,6 @@ export default defineComponent({
           }
         }
 
-        2
         let iCurrent = parseInt(res.data.page);
         let iPageSize = parseInt(res.data.limit);
         // if (sType === 'reload') {

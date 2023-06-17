@@ -81,6 +81,7 @@ const routes = [
             /* webpackChunkName: 'user_register' */
             component: () => import("views/Order/List.vue"),
           },
+
           // {
           //   path: "/user/register",
           //   name: "user_register",

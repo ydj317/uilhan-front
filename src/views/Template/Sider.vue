@@ -1,9 +1,4 @@
 <template >
-  <!--  <loading-->
-  <!--      v-model:active="indicator"-->
-  <!--      :can-cancel="false"-->
-  <!--      :is-full-page="true"-->
-  <!--  />-->
   <a-affix :offset-top="0">
     <a-menu
       v-model:selectedKeys="selectedKeys"
@@ -94,7 +89,7 @@
 </template>
 
 <script setup>
-import { defineComponent, reactive, toRefs, ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import Cookie from "js-cookie";
 import {
   GiftOutlined,
@@ -108,11 +103,9 @@ import {
   MoneyCollectOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons-vue';
-import {AuthRequest} from "@/util/request";
-import Loading from "vue-loading-overlay";
 
 const selectedKeys = ref(['1']);
-const openKeys = ref([]);
+const openKeys = ref(['1']);
 const rootSubmenuKeys = ref([]);
 
 const isAdmin = ref(false);
@@ -124,6 +117,9 @@ onMounted( () => {
   }
 });
 
+/**
+ * TODO: 삭제예정
+ */
 const onOpenChange = openKeys => {
   const latestOpenKey = openKeys.find(key => openKeys.indexOf(key) === -1);
 
