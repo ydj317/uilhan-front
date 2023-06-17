@@ -557,9 +557,28 @@ export default defineComponent({
             this.prdlist[i].item_name_type = "번역 상품명";
           }
 
-          // 옵션 최저가 - 최대가
-          let minPrice = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
-          let maxPrice = Math.max(...this.prdlist[i].item_sku.map(item => item.selling_price));
+          // 연동 마켓 아이콘
+          let show_sync_market = {};
+          this.prdlist[i].item_sync_market.forEach(value => {
+            let key = value.market_account.split("::")[0];
+
+            if (!show_sync_market[key]) {
+              show_sync_market[key] = []; // 初始化为空数组
+            }
+            show_sync_market[key].push(value);
+          });
+          this.prdlist[i]["show_sync_market"] = show_sync_market;
+
+          // SKU 최저가~최대가
+          let minPrice = 0;
+          let maxPrice = 0;
+          if (!this.prdlist[i].item_sku || this.prdlist[i].item_sku.length === 0) {
+            this.prdlist[i]["show_price"] = minPrice.toLocaleString() + "원 ~ " + maxPrice.toLocaleString() + "원";
+            continue;
+          }
+
+          minPrice = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
+          maxPrice = Math.max(...this.prdlist[i].item_sku.map(item => item.selling_price));
 
           // 연동대기 상품은 판매가를 계산 해서 가져옴
           if (minPrice === 0) {
@@ -580,18 +599,6 @@ export default defineComponent({
               Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
           }
           this.prdlist[i]["show_price"] = minPrice.toLocaleString() + "원 ~ " + maxPrice.toLocaleString() + "원";
-
-          // 제휴사 정보
-          let show_sync_market = {};
-          this.prdlist[i].item_sync_market.forEach(value => {
-            let key = value.market_account.split("::")[0];
-
-            if (!show_sync_market[key]) {
-              show_sync_market[key] = []; // 初始化为空数组
-            }
-            show_sync_market[key].push(value);
-          });
-          this.prdlist[i]["show_sync_market"] = show_sync_market;
         }
 
         let iCurrent = parseInt(res.data.page);
@@ -1092,7 +1099,7 @@ export default defineComponent({
   opacity: 1;
 }
 
-#content-content .cantent .sync img {
+#content-content .cantent .failed img {
   cursor: pointer;
   width: 16px;
   height: 16px;
