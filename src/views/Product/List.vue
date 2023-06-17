@@ -1020,6 +1020,7 @@ export default defineComponent({
 
 /* 모든 title */
 #header h1 {
+  padding-top: 20px;
   font-size: 15px;
   font-weight: 600;
 }
