@@ -5,14 +5,14 @@
       mode="inline"
       theme="dark"
     >
-      <a-menu-item key="0">
-        <template #icon>
-          <gift-outlined />
-        </template>
-        <router-link to="/main">
-          <span>메인</span>
-        </router-link>
-      </a-menu-item>
+<!--      <a-menu-item key="0">-->
+<!--        <template #icon>-->
+<!--          <gift-outlined />-->
+<!--        </template>-->
+<!--        <router-link to="/main">-->
+<!--          <span>메인</span>-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
       <a-menu-item key="1">
         <template #icon>
           <gift-outlined />

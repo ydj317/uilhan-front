@@ -12,6 +12,7 @@ export default createStore({
       methods: {}
     },
     prdlist: [],
+    user: {},
   },
   mutations: {},
   actions: {},
