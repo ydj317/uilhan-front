@@ -14,11 +14,11 @@
         </div>
         <div>
           <div>상품</div>
-          <div>{{ totalCount }}</div>
+          <div>98</div>
         </div>
         <div>
           <div>주문</div>
-          <div>1000</div>
+          <div>318</div>
         </div>
       </div>
     </div>
@@ -67,7 +67,21 @@
 
       <div class="box">
         <div class="title">공지사항</div>
-        <div class="content"></div>
+        <div class="content">
+          <div class="scroll">
+            <a-list item-layout="horizontal" :data-source="boardData">
+              <template #renderItem="{ item }">
+                <a-list-item>
+                  <a-list-item-meta :description="item.cont">
+                    <template #title>
+                      <a>{{ item.title }}</a>
+                    </template>
+                  </a-list-item-meta>
+                </a-list-item>
+              </template>
+            </a-list>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -84,8 +98,30 @@ import { ref, onMounted } from "vue";
 import { AuthRequest } from "@/util/request";
 
 onMounted(() => {
-  getList();
+  // getList();
 });
+
+const boardData = [
+  {
+  title: '개인정보 처리 방침의 강화',
+  cont: '개인정보 보호를 위해 서비스 이용과 관련된 개인정보 처리 방침이 보다 강화되었습니다. 자세한 내용은 개인정보 처리 방침 페이지를 참고해 주세요.',
+}, {
+  title: '서비스 이용에 대한 책임과 제한',
+  cont: '이용자의 서비스 이용에 대한 책임과 제한에 대한 내용이 명확히 규정되었습니다. 이에 따라 서비스 이용 시 유의사항을 준수해 주시기 바랍니다.',
+}, {
+  title: '약관 동의의 필요성',
+  cont: '변경된 이용약관에 동의하지 않을 경우 일부 서비스의 이용이 제한될 수 있으니 주의해 주세요.',
+}, {
+  title: '서비스 이용약관 개정 안내',
+  cont: '저희 서비스를 이용해 주셔서 감사합니다. 이용약관 개정에 따라 공지사항을 작성하오니, 아래 내용을 주의 깊게 확인해주시기 바랍니다.',
+}, {
+  title: '서비스 이용약관 개정 안내',
+  cont: '저희 서비스를 이용해 주셔서 감사합니다. 이용약관 개정에 따라 공지사항을 작성하오니, 아래 내용을 주의 깊게 확인해주시기 바랍니다.',
+}, {
+  title: '새로운 서비스 출시 안내',
+  cont: '새로운 서비스는 "스마트 홈 관리 시스템"입니다. 이 시스템은 최신 기술을 활용하여 사용자의 스마트 홈을 효율적으로 관리할 수 있는 도구를 제공합니다. ',
+}
+];
 
 let totalCount = ref(0);
 let prdLinkedData = ref([]);
@@ -212,7 +248,15 @@ const option2 = ref({
           width: 3
         },
       },
-      data: prdLinkedData
+      data: [
+        {name: '11번가', value : 20},
+        {name: '쿠팡', value : 30},
+        {name: '옥션', value : 10},
+        {name: '지마켓', value : 40},
+        {name: '롯데온', value : 30},
+        {name: '티몬', value : 30},
+        {name: '위메프', value : 20},
+      ]
     }
   ]
 });
@@ -433,5 +477,35 @@ const option3 = ref({
 }
 .line-3 .box .content {
   height: 400px;
+}
+
+.line-3 .box .scroll {
+  overflow-y: scroll; /* 仅显示垂直滚动条 */
+  height: 390px;
+}
+
+.line-3 .box .scroll h4 {
+  font-weight: bold;
+}
+
+/* 滚动条整体样式 */
+.line-3 .box .scroll::-webkit-scrollbar {
+  width: 8px; /* 设置滚动条的宽度 */
+}
+
+/* 滚动条轨道样式 */
+.line-3 .box .scroll::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* 设置滚动条轨道的背景颜色 */
+}
+
+/* 滚动条滑块样式 */
+.line-3 .box .scroll::-webkit-scrollbar-thumb {
+  background-color: #888; /* 设置滚动条滑块的背景颜色 */
+  border-radius: 4px; /* 设置滚动条滑块的圆角 */
+}
+
+/* 鼠标悬停在滚动条上的样式 */
+.line-3 .box .scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* 设置滚动条滑块在鼠标悬停时的背景颜色 */
 }
 </style>
