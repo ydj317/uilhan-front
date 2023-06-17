@@ -482,6 +482,7 @@ const option3 = ref({
 .line-3 .box .scroll {
   overflow-y: scroll; /* 仅显示垂直滚动条 */
   height: 390px;
+  padding-right: 20px;
 }
 
 .line-3 .box .scroll h4 {
