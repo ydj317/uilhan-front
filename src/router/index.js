@@ -13,10 +13,10 @@ const routes = [
     meta: { authority: ["ROLE_USER"] },
     component: () =>
       import(/* webpackChunkName: "Main" */ "views/Template/Layout"),
-    redirect: "/main",
+    redirect: "/product",
     children: [
       {
-        path: "/main",
+        path: "/product",
         // meta: { authority: ["ROLE_USER"] },
         /* webpackChunkName: 'product' */
         // component: RenderRouterView,
@@ -132,7 +132,7 @@ router.beforeEach((to, form, next) => {
   nProgress.start();
   let status = isLogin();
   if (to.path === '/user/login' && status === true) {
-    next({ path: "/main" });
+    next({ path: "/product" });
     return false;
   }
 

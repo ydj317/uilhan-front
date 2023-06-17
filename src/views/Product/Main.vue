@@ -14,7 +14,7 @@
         </div>
         <div>
           <div>상품</div>
-          <div>100</div>
+          <div>{{ totalCount }}</div>
         </div>
         <div>
           <div>주문</div>
@@ -87,31 +87,57 @@ onMounted(() => {
   getList();
 });
 
-let aPrdInfo = {};
+let totalCount = ref(0);
+let prdLinkedData = ref([]);
 function getList() {
   const param = {
     market_code: 'all',
     date_type: 'insert_date',
-    start_time: '2021-02-28',
+    start_time: '2022-11-28',
     trans_status: 'all',
     sync_status: 'all',
     limit: 100,
     page: 1,
   };
 
+  // 상품정보조회
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', { params: param }).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      alert(res.message);
       return ;
     }
-    console.log('==0==')
-    console.log(res)
-    aPrdInfo = res;
-  });
 
+    // 상품 총 수량
+    totalCount.value = res.data.totalCount;
+
+    // 상품 연동 상태
+    prdLinkedData.value = getLinkedData(res.data);
+  });
 }
 
+// 상품연동상태 데이타
+function getLinkedData(data) {
+  let transformedData = {};
+  data.list.forEach(item => {
+    item.item_sync_market.forEach(syncMarket => {
+      const name = syncMarket.market_account.split("::")[0];
+      if (transformedData.hasOwnProperty(name)) {
+        if (syncMarket.status === "unsync") {
+          transformedData[name] += 1;
+        }
+      } else {
+        transformedData[name] = 0;
+      }
+    });
+  });
 
+  return Object.keys(transformedData).map(name => {
+    return {
+      name: name,
+      value: transformedData[name]
+    };
+  });
+}
 
 //chart
 const option = ref({
@@ -186,17 +212,7 @@ const option2 = ref({
           width: 3
         },
       },
-      data: [
-        { value: 500, name: '11번가' },
-        { value: 210, name: '쿠팡' },
-        { value: 90, name: '옥션' },
-        { value: 300, name: 'G마켓' },
-        { value: 1000, name: '롯데온' },
-        { value: 700, name: '스토어팜' },
-        { value: 130, name: '티몬' },
-        { value: 200, name: '위메프' },
-        { value: 60, name: '미연동' }
-      ]
+      data: prdLinkedData
     }
   ]
 });
@@ -308,7 +324,7 @@ const option3 = ref({
 }
 .line-2 .box {
   padding: 20px;
-  margin-top: 20px;
+  margin-top: 1.2%;
   width: 32.5%;
   height: 180px;
   background: #fff;
@@ -406,7 +422,7 @@ const option3 = ref({
 }
 .line-3 .box {
   padding: 20px;
-  margin-top: 20px;
+  margin-top: 1.2%;
   width: 32.5%;
   height: 450px;
   background: #fff;
