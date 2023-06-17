@@ -41,7 +41,7 @@
     </div>
 
     <div class="key_picker">
-      <span :style="{ marginRight: '8px' }">키원드 : </span>
+      <span :style="{ marginRight: '8px' }">키워드 : </span>
       <a-select @change="limitChange" v-model:value="common.search_key" style="width: 120px">
         <a-select-option value="item_code">상품코드</a-select-option>
         <a-select-option value="item_name">기존 상품명</a-select-option>

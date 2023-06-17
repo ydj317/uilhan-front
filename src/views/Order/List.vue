@@ -3,7 +3,7 @@
              :can-cancel="false"
              :is-full-page="true"/>
 
-    <div id="searchForm">
+    <div id="searchForm" class="pl20 pr20 pt20">
 
         <h2>기본검색</h2>
         <table>

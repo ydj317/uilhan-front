@@ -16,7 +16,6 @@ function isDebug(config) {
     if (Cookie.get('XDEBUG_SESSION')) {
         config.url += '?XDEBUG_SESSION_START=PHPSTORM';
     }
-
     return config;
 }
 
