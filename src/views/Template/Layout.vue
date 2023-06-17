@@ -1,8 +1,11 @@
 <template>
   <a-layout style="min-height: 1080px;">
     <a-layout-sider v-model:collapsed="collapsed" collapsible breakpoint="lg" :trigger="null">
-      <div class="logo">
-        <img src="@/assets/logo_wight.svg" style="width: 100%;">
+      <div class="logo" v-if="collapsed">
+          <img src="@/assets/logo.png" style="height:35px;">
+      </div>
+      <div class="logo" v-if="!collapsed">
+          <img src="@/assets/logo_width.png">
       </div>
       <Sider/>
     </a-layout-sider>
@@ -70,7 +73,4 @@ const collapsed = ref(false)
   color: #1890ff;
 }
 
-.site-layout .site-layout-background {
-  background: #fff;
-}
 </style>
