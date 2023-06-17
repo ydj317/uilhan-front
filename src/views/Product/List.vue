@@ -337,7 +337,7 @@ export default defineComponent({
               value: "0"
             }
           ],
-          label: "번역",
+          label: "번역상태",
           key: "trans_status",
           class: "mb10 mr17 inline-block",
           group_class: ""
@@ -361,7 +361,7 @@ export default defineComponent({
               value: "2"
             }
           ],
-          label: "릴라켓연동",
+          label: "연동상태",
           key: "sync_status",
           class: "inline-block",
           group_class: "start"

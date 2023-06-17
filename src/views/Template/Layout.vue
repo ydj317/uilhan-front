@@ -2,9 +2,7 @@
   <a-layout style="min-height: 1080px;">
     <a-layout-sider v-model:collapsed="collapsed" collapsible breakpoint="lg" :trigger="null">
       <div class="logo">
-        <router-link to="/product">
-          <img src="@/assets/logo_wight.svg" style="width: 100%;">
-        </router-link>
+        <img src="@/assets/logo_wight.svg" style="width: 100%;">
       </div>
       <Sider/>
     </a-layout-sider>

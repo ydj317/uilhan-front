@@ -101,7 +101,7 @@ function getList() {
   };
 
   // 상품정보조회
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', { params: param }).then((res) => {
+  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
     if (res.status !== '2000') {
       alert(res.message);
       return ;
