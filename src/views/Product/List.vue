@@ -57,7 +57,7 @@
         <div class="w12 space-between">
           <!--상품삭제-->
           <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
-            <a-button shape="round">상품삭제</a-button>
+            <a-button>상품삭제</a-button>
           </a-popconfirm>
         </div>
 
@@ -68,7 +68,7 @@
           <!--            <a-button type="primary">릴라켓연동</a-button>-->
           <!--          </a-popconfirm>-->
           <!--제휴사 상품연동-->
-          <a-button @click="MarketListPop(record)" type="primary" shape="round">제휴사 상품연동</a-button>
+          <a-button @click="MarketListPop(record)" type="primary">제휴사 상품연동</a-button>
         </div>
       </div>
 
