@@ -57,7 +57,7 @@
         <div class="w12 space-between">
           <!--상품삭제-->
           <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
-            <a-button type="primary" danger>상품삭제</a-button>
+            <a-button shape="round">상품삭제</a-button>
           </a-popconfirm>
         </div>
 
@@ -68,7 +68,7 @@
           <!--            <a-button type="primary">릴라켓연동</a-button>-->
           <!--          </a-popconfirm>-->
           <!--제휴사 상품연동-->
-          <a-button @click="MarketListPop(record)" type="primary">제휴사 상품연동</a-button>
+          <a-button @click="MarketListPop(record)" type="primary" shape="round">제휴사 상품연동</a-button>
         </div>
       </div>
 
@@ -146,7 +146,7 @@
             <!--제휴사연동-->
             <template v-if="column.key === 'item_sync_status'">
               <div class="center">
-                <a-button @click="singlePop(record)" type="primary">연동관리</a-button>
+                <a-button @click="singlePop(record)" type="primary" shape="round">연동관리</a-button>
               </div>
             </template>
 
@@ -287,7 +287,6 @@ export default defineComponent({
   computed: {
     ...mapState([
       "relaket",
-      "user"
     ])
   },
 
@@ -433,14 +432,14 @@ export default defineComponent({
           align: "center"
         },
         {
-          title: "제휴사연동",
-          key: "item_sync_status",
+          title: "연동상태",
+          key: "item_status",
           width: "8%",
           align: "center"
         },
         {
-          title: "연동상태",
-          key: "item_status",
+          title: "제휴사연동",
+          key: "item_sync_status",
           width: "8%",
           align: "center"
         }
@@ -561,18 +560,24 @@ export default defineComponent({
           // 옵션 최저가 - 최대가
           let minPrice = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
           let maxPrice = Math.max(...this.prdlist[i].item_sku.map(item => item.selling_price));
+
+          // 연동대기 상품은 판매가를 계산 해서 가져옴
           if (minPrice === 0) {
+            const userData = this.prdlist[i].user;
+
             minPrice = Math.min(...this.prdlist[i].item_sku.map(item =>
               Number(item.shipping_fee_cn) + Number(item.original_price_cn)
             ));
+
             maxPrice = Math.max(...this.prdlist[i].item_sku.map(item =>
               Number(item.shipping_fee_cn) + Number(item.original_price_cn)
             ));
-            minPrice = Math.ceil(Number(minPrice * (1 + Number(this.user.selling_margin_option) / 100) *
-              Number(this.user.rate_margin_option)).toFixed(0) / 100) * 100;
-            maxPrice = Math.ceil(Number(maxPrice * (1 + Number(this.user.selling_margin_option) / 100) *
-              Number(this.user.rate_margin_option)).toFixed(0) / 100) * 100;
 
+            minPrice = Math.ceil(Number(minPrice * (1 + Number(userData.selling_margin_option) / 100) *
+              Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
+
+            maxPrice = Math.ceil(Number(maxPrice * (1 + Number(userData.selling_margin_option) / 100) *
+              Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
           }
           this.prdlist[i]["show_price"] = minPrice.toLocaleString() + "원 ~ " + maxPrice.toLocaleString() + "원";
 
