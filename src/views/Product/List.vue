@@ -1107,6 +1107,14 @@ export default defineComponent({
   opacity: 1;
 }
 
+#content-content .cantent .success img {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
 #content-content .item-upd {
   font-size: 12px;
   color: #999;
