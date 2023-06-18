@@ -24,6 +24,7 @@ import {
   Tag,
   Popconfirm,
   Tooltip,
+  Dropdown,
   Divider,
   Modal,
   Space,
@@ -64,6 +65,7 @@ createApp(App)
   .use(Popconfirm)
   .use(Tag)
   .use(Tooltip)
+  .use(Dropdown)
   .use(Divider)
   .use(Modal)
   .use(Space)

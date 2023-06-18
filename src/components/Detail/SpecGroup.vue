@@ -24,12 +24,22 @@
             </div>
             <div class="spec-option-button">
               <a-button @click="deleteOptionName" class="spec-right-button" type="primary">삭제</a-button>
-              <a-button class="spec-right-button" type="primary">빈칸</a-button>
-              <a-button class="spec-right-button" type="primary">특문</a-button>
-              <a-button class="spec-right-button" type="primary">25자</a-button>
-              <a-button class="spec-right-button" type="primary">순번</a-button>
-              <a-button class="spec-right-button" type="primary">A-Z</a-button>
-              <a-button type="primary">Back</a-button>
+              <a-button @click="setTrim" class="spec-right-button" type="primary">빈칸</a-button>
+              <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary">특문</a-button>
+              <a-button @click="strLengthTo25" class="spec-right-button" type="primary">25자</a-button>
+              <a-button @click="setSort" class="spec-right-button" type="primary">A-Z</a-button>
+              <a-dropdown>
+                <template #overlay>
+                  <a-menu>
+                    <a-menu-item @click="handleMenuClick('N')">01.___</a-menu-item>
+                    <a-menu-item @click="handleMenuClick('A')">A.___</a-menu-item>
+                  </a-menu>
+                </template>
+                <a-button class="spec-right-button">
+                  순번
+                </a-button>
+              </a-dropdown>
+              <a-button @click="setBeforeOldOptionData" type="primary">Back</a-button>
             </div>
           </div>
         </th>
@@ -54,7 +64,7 @@
   </div>
 </template>
 <script>
-import { forEach } from "lodash";
+import {cloneDeep, forEach} from "lodash";
 import { mapState } from "vuex";
 
 export default {
@@ -65,6 +75,7 @@ export default {
   props: ['option', 'optionIndex'],
   data() {
     return {
+      oldOptionData: [],
       selectAll: false,
       selectedRows: [],
     };
@@ -90,6 +101,126 @@ export default {
       this.selectAll = this.selectedRows.length === this.option.data.length;
     },
     deleteOptionName() {
+      let newOptionData = [];
+      if (this.option.data.length === this.selectedRows.length) {
+        alert('옵션명 전부 삭제는 불가합니다.');
+        this._setCheckBoxInit();
+        return false;
+      }
+      this._saveOldOptionData();
+      forEach(this.option.data, (item, index) => {
+        if (this.selectedRows.indexOf(item.key) === -1) {
+          newOptionData.push(item);
+        }
+      });
+      this.product.item_option[this.optionIndex].data = newOptionData;
+      this._setCheckBoxInit();
+    },
+    setTrim() {
+      let newOptionData = [];
+      this._saveOldOptionData();
+      forEach(this.option.data, (item, index) => {
+        if (this.selectedRows.indexOf(item.key) !== -1) {
+          item.name = item.name.trim();
+          newOptionData.push(item);
+        } else {
+          newOptionData.push(item);
+        }
+      });
+      this.product.item_option[this.optionIndex].data = newOptionData;
+      this._setCheckBoxInit();
+    },
+    replaceSpecialChars() {
+      let newOptionData = [];
+      this._saveOldOptionData();
+      const specialChars = /[@#$%^&*]/g;
+      forEach(this.option.data, (item, index) => {
+        if (this.selectedRows.indexOf(item.key) !== -1) {
+          item.name = item.name.replace(specialChars, '');
+          newOptionData.push(item);
+        } else {
+          newOptionData.push(item);
+        }
+      });
+      this.product.item_option[this.optionIndex].data = newOptionData;
+      this._setCheckBoxInit();
+    },
+    strLengthTo25() {
+      let newOptionData = [];
+      this._saveOldOptionData();
+      forEach(this.option.data, (item, index) => {
+        if (this.selectedRows.indexOf(item.key) !== -1) {
+          item.name = item.name.substring(0, 25);
+          newOptionData.push(item);
+        } else {
+          newOptionData.push(item);
+        }
+      });
+      this.product.item_option[this.optionIndex].data = newOptionData;
+      this._setCheckBoxInit();
+    },
+    setSort() {
+      this._saveOldOptionData();
+      this.product.item_option[this.optionIndex].data.sort((a, b) => a.name.localeCompare(b.name));
+    },
+    handleMenuClick(type) {
+      this._saveOldOptionData();
+      //type:N 01__, A A.__
+      let prefix;
+      let typeValue;
+      if (type === 'N') {
+        typeValue = 1;
+      } else {
+        typeValue = 'A';
+      }
+      forEach(this.option.data, (item, index) => {
+        prefix = typeValue.toString();
+        if (type === 'N') {
+          if (prefix.length === 1) {
+            prefix = '0' + prefix;
+          }
+          item.name = prefix + '.' + item.name;
+          typeValue++;
+        } else {
+          item.name = prefix + '.' + item.name;
+          typeValue = this._getNextLetter(typeValue);
+        }
+      });
+    },
+    setBeforeOldOptionData() {
+      this.product.item_option[this.optionIndex].data = cloneDeep(this.oldOptionData);
+    },
+    _saveOldOptionData() {
+      this.oldOptionData = cloneDeep(this.option.data);
+    },
+    _getNextLetter(letter) {
+      let nextLetter = '';
+      let carry = true;
+
+      for (let i = letter.length - 1; i >= 0; i--) {
+        if (carry) {
+          if (letter[i] === 'Z') {
+            nextLetter = 'A' + nextLetter;
+            carry = true;
+          } else {
+            const nextCharCode = letter.charCodeAt(i) + 1;
+            nextLetter = String.fromCharCode(nextCharCode) + nextLetter;
+            carry = false;
+          }
+        } else {
+          nextLetter = letter[i] + nextLetter;
+        }
+      }
+
+      if (carry) {
+        nextLetter = 'A' + nextLetter;
+      }
+
+      return nextLetter;
+    },
+    _setCheckBoxInit() {
+      this.selectAll = false;
+      this.selectedRows = [];
     },
     _uniqueKey() {
       return ((1 + Math.random()) * 0x10000) | 0;
