@@ -1,6 +1,6 @@
 <template>
   <div id="eModelTitle_2_1" class="mt20 p20 bg-white" v-if="product.item_option">
-    <h1><strong>New 옵션설정</strong></h1>
+    <h1><strong>옵션설정</strong></h1>
     <!--옵션그룹해더, 옵션 셋팅, 옵션그룹 추가-->
     <div class="header-section">
       <!--세팅버튼-->
@@ -41,6 +41,10 @@ export default {
   },
   methods: {
     setting() {
+      if (!this._checkOptionGroup()) {
+        return false;
+      }
+      this.temp_sku = [];
       this._getSku([], 0, this.product.item_option);
       this._setSku();
     },
@@ -51,6 +55,11 @@ export default {
           {key:this._uniqueKey(), name: ''}
         ]
       });
+      this.$nextTick(() => {
+        const container = document.querySelector("#eModelTitle_2_1 > div.body-section");
+        container.scrollLeft = container.scrollWidth - container.clientWidth;
+      });
+
     },
     deleteSpecGroup(optionIndex) {
       this.product.item_option.splice(optionIndex, 1);
@@ -144,6 +153,47 @@ export default {
 
       return aOptionImages;
     },
+    _checkOptionGroup() {
+      let check = true;
+      let tmpOptionGroupName = [];
+      try {
+        forEach(this.product.item_option, (itemOption, index) => {
+          //입력하지 않은 옵션그룹 존재
+          if (itemOption.name.trim().length === 0) {
+            alert('입력하지 않은 옵션그룹이 존재합니다.');
+            check = false;
+            throw new Error();
+          }
+
+          if (tmpOptionGroupName.indexOf(itemOption.name) !== -1) {
+            alert('동일한 옵션그룹이 존재합니다. [' + itemOption.name + ']' );
+            check = false;
+            throw new Error();
+          } else {
+            tmpOptionGroupName.push(itemOption.name);
+          }
+          let tmpOptionName = [];
+          forEach(itemOption.data, (item, itemIndex) => {
+            if (item.name.trim().length === 0) {
+              alert('입력하지 않은 옵션명이 존재합니다. [' + itemOption.name + ']');
+              check = false;
+              throw new Error();
+            }
+
+            if (tmpOptionName.indexOf(item.name) !== -1) {
+              alert('동일한 옵션명이 존재합니다. [' + itemOption.name + '][' + item.name + ']' );
+              check = false;
+              throw new Error();
+            } else {
+              tmpOptionName.push(item.name);
+            }
+          });
+        });
+      } catch(e) {
+      }
+
+      return check;
+    }
   }
 };
 </script>

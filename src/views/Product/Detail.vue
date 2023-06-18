@@ -73,8 +73,8 @@ import { defineComponent, ref } from "vue";
 import router from "@/router";
 
 import Sku from "@/components/Detail/Sku";
-import NewSpec from "@/components/Detail/NewSpec";
-import Spec from "@/components/Detail/Spec";
+import NewSpec from "@/components/Detail/Spec/NewSpec";
+// import Spec from "@/components/Detail/Spec";
 import Relaket from "@/components/Detail/Relaket";
 import Loading from "vue-loading-overlay";
 import BasicInfo from "@/components/Detail/basicInfo";
@@ -95,7 +95,7 @@ export default defineComponent({
     XiangJi,
     Sku,
     NewSpec,
-    Spec,
+    // Spec,
     Relaket,
     Loading,
     BasicInfo,

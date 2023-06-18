@@ -82,6 +82,10 @@ export default {
   },
   methods: {
     deleteSpecGroup(optionIndex) {
+      if (this.product.item_option.length === 1) {
+        alert('옵션그룹 전부 삭제 불가합니다.');
+        return false;
+      }
       this.product.item_option.splice(optionIndex, 1);
     },
     addSpecOptionName(optionIndex) {
@@ -188,6 +192,9 @@ export default {
       });
     },
     setBeforeOldOptionData() {
+      if (this.oldOptionData.length == 0) {
+        return;
+      }
       this.product.item_option[this.optionIndex].data = cloneDeep(this.oldOptionData);
     },
     _saveOldOptionData() {
@@ -234,7 +241,7 @@ export default {
   margin-right: 5px;
   margin-left: 5px;
   width: 50%;
-  min-width: 589px;
+  min-width: 580px;
 }
 
 .spec-box table {
