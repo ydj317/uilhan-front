@@ -47,7 +47,6 @@ export default {
       }
       //sku 값 씽크 맞춤
       this._syncSku();
-      return;
       this.temp_sku = [];
       this._getSku([], 0, this.product.item_option);
       this._setSku();
@@ -83,9 +82,9 @@ export default {
       let modifyOption = {};
       forEach(that.product.item_option, (option, option_index) => {
         let modifyOptionNames = [];
-        forEach(option.data, (item, item_index) => {
+        forEach(option.data, (item) => {
           let optionName = {};
-          forEach(that.temp_item_option[option_index].data, (temp_item, temp_item_index) => {
+          forEach(that.temp_item_option[option_index].data, (temp_item) => {
             if (item.key === temp_item.key && item.name !== temp_item.name) {
               optionName['new_option_value'] = item.name;
               optionName['old_option_value'] = temp_item.name;
