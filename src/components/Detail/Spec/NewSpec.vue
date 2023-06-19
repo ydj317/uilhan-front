@@ -22,7 +22,7 @@
 </template>
 <script>
 import { lib } from "util/lib";
-import { forEach } from "lodash";
+import { forEach, cloneDeep} from "lodash";
 import { mapState } from "vuex";
 import SpecGroup from "./SpecGroup";
 
@@ -36,7 +36,8 @@ export default {
   },
   data() {
     return {
-      temp_sku: []
+      temp_sku: [],
+      temp_item_option: cloneDeep(this.$store.state.product.item_option),
     };
   },
   methods: {
@@ -44,6 +45,9 @@ export default {
       if (!this._checkOptionGroup()) {
         return false;
       }
+      //sku 값 씽크 맞춤
+      this._syncSku();
+      return;
       this.temp_sku = [];
       this._getSku([], 0, this.product.item_option);
       this._setSku();
@@ -69,6 +73,42 @@ export default {
     },
     _uniqueKey() {
       return ((1 + Math.random()) * 0x10000) | 0;
+    },
+    _syncSku() {
+      const that = this;
+      if (that.product.item_option.length !== that.temp_item_option.length) {
+        return;
+      }
+
+      let modifyOption = {};
+      forEach(that.product.item_option, (option, option_index) => {
+        let modifyOptionNames = [];
+        forEach(option.data, (item, item_index) => {
+          let optionName = {};
+          forEach(that.temp_item_option[option_index].data, (temp_item, temp_item_index) => {
+            if (item.key === temp_item.key && item.name !== temp_item.name) {
+              optionName['new_option_value'] = item.name;
+              optionName['old_option_value'] = temp_item.name;
+              modifyOptionNames.push(optionName);
+            }
+          });
+        });
+        modifyOption[option_index] = modifyOptionNames;
+      });
+
+      that.product.sku.map((sku, i) => {
+        let aSkuName = sku.spec.split("::");
+        forEach(modifyOption, (modifyOptionNames, modify_option_index) => {
+          if (modifyOptionNames.length > 0) {
+            forEach(modifyOptionNames, (modifyOptionName) => {
+              if (aSkuName[modify_option_index] === modifyOptionName.old_option_value) {
+                aSkuName[modify_option_index] = modifyOptionName.new_option_value;
+                that.product.sku[i].spec = aSkuName.join("::");
+              }
+            });
+          }
+        });
+      });
     },
     _getSku(aTempSku, i, aOptions) {
       forEach(aOptions[i].data, (val, key) => {
