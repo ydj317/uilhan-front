@@ -48,11 +48,15 @@
         <template #title>
           <span>설정(준비중)</span>
         </template>
-        <a-menu-item key="71"><span>릴라켓정보</span></a-menu-item>
-        <a-menu-item key="72"><span>배송정책</span></a-menu-item>
-        <a-menu-item key="73"><span>출고지</span></a-menu-item>
-        <a-menu-item key="81"><span>반품지</span></a-menu-item>
-        <a-menu-item key="82"><span>마진 & 환율</span></a-menu-item>
+        <a-menu-item key="061">
+          <router-link to="/setting/margin"><span>릴라켓정보</span></router-link>
+        </a-menu-item>
+        <a-menu-item key="062">
+          <router-link to="/setting/margin"><span>마진 & 환율</span></router-link>
+        </a-menu-item>
+        <a-menu-item key="063">
+          <router-link to="/setting/margin"><span>배송정책</span></router-link>
+        </a-menu-item>
       </a-sub-menu>
       <a-menu-item key="9">
         <template #icon>
