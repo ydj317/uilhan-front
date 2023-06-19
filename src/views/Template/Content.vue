@@ -1,54 +1,50 @@
 <template>
  <div>
-   <router-view></router-view>
+   <router-view v-slot="{ Component }">
+     <template v-if="Component">
+     <Transition name="slide-right" mode="out-in">
+       <keep-alive>
+         <div :key="route.fullPath">
+         <component :is="Component" />
+         </div>
+       </keep-alive>
+     </Transition>
+     </template>
+   </router-view>
  </div>
 </template>
 
 <script>
-
-//import { defineComponent, reactive, toRefs, watch, onMounted, ref } from "vue";
 import { defineComponent } from "vue";
-import { useRouter } from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 export default defineComponent({
 
   setup() {
     const router = useRouter();
+    const route = useRoute();
+    return {
+      route
+    }
   }
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.slide-right-enter-active,
+.slide-right-leave-active,
+.slide-left-enter-active,
+.slide-left-leave-active {
+  will-change: transform;
+  transition: all 0.3s ease;
+}
 
-<!--<style scoped>-->
-<!--.contentBackColor {-->
-<!--  height: 100%;-->
-<!--  background-color: #f4f8f9;-->
-<!--}-->
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
 
-<!--.contentTitleWrap {-->
-<!--  height: 34px;-->
-<!--  background-color: #3051d3!important;-->
-<!--  text-align: center;-->
-<!--  padding-left: 20px;-->
-<!--  padding-right: 20px;-->
-<!--}-->
-
-<!--.contentBodyWrap {-->
-<!--  width: 100%;-->
-<!--  padding-left: 20px;-->
-<!--  padding-right: 20px;-->
-<!--}-->
-
-<!--.contentBody {-->
-<!--  background-color: #fff;-->
-<!--}-->
-
-<!--.contentBody {-->
-<!--  height: 100%;-->
-<!--}-->
-
-<!--.contentTitle {-->
-<!--  background-color: #fff;-->
-<!--  height: 100%;-->
-<!--}-->
-<!--</style>-->
+</style>
