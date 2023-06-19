@@ -69,6 +69,11 @@ const routes = [
             component: () => import("views/Setting/Margin"),
           },
           {
+            path: "/setting/shipping",
+            name: "setting_margin",
+            component: () => import("views/Setting/Shipping"),
+          },
+          {
             path: "/product/preview/:id",
             name: "prd_preview",
             /* webpackChunkName: 'user_register' */

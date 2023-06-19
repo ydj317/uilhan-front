@@ -55,7 +55,7 @@
           <router-link to="/setting/margin"><span>마진 & 환율</span></router-link>
         </a-menu-item>
         <a-menu-item key="063">
-          <router-link to="/setting/margin"><span>배송정책</span></router-link>
+          <router-link to="/setting/shipping"><span>배송정책</span></router-link>
         </a-menu-item>
       </a-sub-menu>
       <a-menu-item key="9">
