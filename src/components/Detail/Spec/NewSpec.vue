@@ -88,6 +88,7 @@ export default {
             if (item.key === temp_item.key && item.name !== temp_item.name) {
               optionName['new_option_value'] = item.name;
               optionName['old_option_value'] = temp_item.name;
+              optionName['key'] = item.key;
               modifyOptionNames.push(optionName);
             }
           });
@@ -97,10 +98,11 @@ export default {
 
       that.product.sku.map((sku, i) => {
         let aSkuName = sku.spec.split("::");
+        let aSkuPvs = sku.pvs.split(";");
         forEach(modifyOption, (modifyOptionNames, modify_option_index) => {
           if (modifyOptionNames.length > 0) {
             forEach(modifyOptionNames, (modifyOptionName) => {
-              if (aSkuName[modify_option_index] === modifyOptionName.old_option_value) {
+              if (aSkuPvs[modify_option_index] === modifyOptionName.key) {
                 aSkuName[modify_option_index] = modifyOptionName.new_option_value;
                 that.product.sku[i].spec = aSkuName.join("::");
               }
