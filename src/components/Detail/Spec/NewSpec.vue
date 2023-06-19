@@ -50,6 +50,8 @@ export default {
       this.temp_sku = [];
       this._getSku([], 0, this.product.item_option);
       this._setSku();
+      //세팅후 초기화
+      this.temp_item_option = cloneDeep(this.product.item_option);
     },
     addSpecGroup() {
       this.product.item_option.push({
