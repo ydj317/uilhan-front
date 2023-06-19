@@ -105,6 +105,10 @@ export default {
       this.selectAll = this.selectedRows.length === this.option.data.length;
     },
     deleteOptionName() {
+      if (this.selectedRows.length === 0) {
+        alert('삭제할 옵션명을 선택하세요.');
+        return false;
+      }
       let newOptionData = [];
       if (this.option.data.length === this.selectedRows.length) {
         alert('옵션명 전부 삭제는 불가합니다.');
@@ -121,6 +125,10 @@ export default {
       this._setCheckBoxInit();
     },
     setTrim() {
+      if (this.selectedRows.length === 0) {
+        alert('빈칸을 제거할 옵션명을 선택하세요.');
+        return false;
+      }
       let newOptionData = [];
       this._saveOldOptionData();
       forEach(this.option.data, (item, index) => {
@@ -135,6 +143,10 @@ export default {
       this._setCheckBoxInit();
     },
     replaceSpecialChars() {
+      if (this.selectedRows.length === 0) {
+        alert('특문을 제거할 옵션명을 선택하세요.');
+        return false;
+      }
       let newOptionData = [];
       this._saveOldOptionData();
       const specialChars = /[@#$%^&*]/g;
@@ -150,6 +162,10 @@ export default {
       this._setCheckBoxInit();
     },
     strLengthTo25() {
+      if (this.selectedRows.length === 0) {
+        alert('25자로 처리할 옵션명을 선택하세요.');
+        return false;
+      }
       let newOptionData = [];
       this._saveOldOptionData();
       forEach(this.option.data, (item, index) => {
