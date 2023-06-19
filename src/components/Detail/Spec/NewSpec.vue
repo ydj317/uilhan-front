@@ -1,5 +1,5 @@
 <template>
-  <div id="eModelTitle_2_1" class="mt20 p20 bg-white" v-if="product.item_option">
+  <div id="eModelTitle_2" class="mt20 p20 bg-white" v-if="product.item_option">
     <h1><strong>옵션설정</strong></h1>
     <!--옵션그룹해더, 옵션 셋팅, 옵션그룹 추가-->
     <div class="header-section">
