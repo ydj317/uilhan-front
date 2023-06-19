@@ -3,7 +3,7 @@
 
   <div id="container">
     <!--검색-->
-    <div id="header" class="plr20 bg-white">
+    <div id="header" class="pl20 pr20 pt20 bg-white">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
       <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
         <h1>{{ CONFIG.label }}</h1>

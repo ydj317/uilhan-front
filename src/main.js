@@ -40,9 +40,18 @@ import {
   Collapse,
   Pagination,
   Cascader,
+  Dropdown,
+  Row,
+  Col,
+  CheckboxGroup,
+  Textarea,
 } from "ant-design-vue";
 
 import DatePicker from "ant-design-vue/es/date-picker/moment";
+
+// vue-echarts
+import ECharts from 'vue-echarts';
+import 'echarts';
 
 createApp(App)
   .use(store)
@@ -81,4 +90,10 @@ createApp(App)
   .use(Collapse)
   .use(Pagination)
   .use(Cascader)
+  .use(Dropdown)
+  .use(Row)
+  .use(Col)
+  .use(CheckboxGroup)
+  .use(Textarea)
+  .component('ECharts', ECharts)
   .mount("#app");

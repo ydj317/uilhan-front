@@ -25,6 +25,13 @@ const routes = [
           //   path: "/product",
           //   redirect: "/product/list",
           // },
+
+          {
+            path: "/main",
+            name: "main_page",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("views/Product/Main"),
+          },
           {
             path: "/product",
             name: "prd_list",
@@ -74,6 +81,7 @@ const routes = [
             /* webpackChunkName: 'user_register' */
             component: () => import("views/Order/List.vue"),
           },
+
           // {
           //   path: "/user/register",
           //   name: "user_register",
