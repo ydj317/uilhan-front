@@ -98,17 +98,19 @@ export default {
 
       that.product.sku.map((sku, i) => {
         let aSkuName = sku.spec.split("::");
-        let aSkuPvs = sku.pvs.split(";");
-        forEach(modifyOption, (modifyOptionNames, modify_option_index) => {
-          if (modifyOptionNames.length > 0) {
-            forEach(modifyOptionNames, (modifyOptionName) => {
-              if (aSkuPvs[modify_option_index] === modifyOptionName.key) {
-                aSkuName[modify_option_index] = modifyOptionName.new_option_value;
-                that.product.sku[i].spec = aSkuName.join("::");
-              }
-            });
-          }
-        });
+        if ('pvs' in sku) {
+          let aSkuPvs = sku.pvs.split(";");
+          forEach(modifyOption, (modifyOptionNames, modify_option_index) => {
+            if (modifyOptionNames.length > 0) {
+              forEach(modifyOptionNames, (modifyOptionName) => {
+                if (aSkuPvs[modify_option_index] === modifyOptionName.key) {
+                  aSkuName[modify_option_index] = modifyOptionName.new_option_value;
+                  that.product.sku[i].spec = aSkuName.join("::");
+                }
+              });
+            }
+          });
+        }
       });
     },
     _getSku(aTempSku, i, aOptions) {
@@ -198,7 +200,7 @@ export default {
       let check = true;
       let tmpOptionGroupName = [];
       try {
-        forEach(this.product.item_option, (itemOption, index) => {
+        forEach(this.product.item_option, (itemOption) => {
           //입력하지 않은 옵션그룹 존재
           if (itemOption.name.trim().length === 0) {
             alert('입력하지 않은 옵션그룹이 존재합니다.');
@@ -207,22 +209,22 @@ export default {
           }
 
           if (tmpOptionGroupName.indexOf(itemOption.name) !== -1) {
-            alert('동일한 옵션그룹이 존재합니다. [' + itemOption.name + ']' );
+            alert(`동일한 옵션그룹이 존재합니다. 옵션그룹:${itemOption.name}`);
             check = false;
             throw new Error();
           } else {
             tmpOptionGroupName.push(itemOption.name);
           }
           let tmpOptionName = [];
-          forEach(itemOption.data, (item, itemIndex) => {
+          forEach(itemOption.data, (item) => {
             if (item.name.trim().length === 0) {
-              alert('입력하지 않은 옵션명이 존재합니다. [' + itemOption.name + ']');
+              alert(`입력하지 않은 옵션명이 존재합니다. 옵션그룹:${itemOption.name}`);
               check = false;
               throw new Error();
             }
 
             if (tmpOptionName.indexOf(item.name) !== -1) {
-              alert('동일한 옵션명이 존재합니다. [' + itemOption.name + '][' + item.name + ']' );
+              alert(`동일한 옵션명이 존재합니다. 옵션그룹:${itemOption.name}, 옵션명:${item.name}`);
               check = false;
               throw new Error();
             } else {
