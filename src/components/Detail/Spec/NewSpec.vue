@@ -61,7 +61,7 @@ export default {
         ]
       });
       this.$nextTick(() => {
-        const container = document.querySelector("#eModelTitle_2_1 > div.body-section");
+        const container = document.querySelector("#eModelTitle_2 > div.body-section");
         container.scrollLeft = container.scrollWidth - container.clientWidth;
       });
 
