@@ -25,8 +25,11 @@
     <!--상품 이미지-->
     <ImageUpload></ImageUpload>
 
+    <!--New Spec-->
+    <NewSpec></NewSpec>
+
     <!--Spec-->
-    <Spec></Spec>
+    <!--<Spec></Spec>-->
 
     <!--Sku-->
     <Sku></Sku>
@@ -70,7 +73,8 @@ import { defineComponent, ref } from "vue";
 import router from "@/router";
 
 import Sku from "@/components/Detail/Sku";
-import Spec from "@/components/Detail/Spec.vue";
+import NewSpec from "@/components/Detail/Spec/NewSpec";
+// import Spec from "@/components/Detail/Spec";
 import Relaket from "@/components/Detail/Relaket";
 import Loading from "vue-loading-overlay";
 import BasicInfo from "@/components/Detail/basicInfo";
@@ -90,7 +94,8 @@ export default defineComponent({
   components: {
     XiangJi,
     Sku,
-    Spec,
+    NewSpec,
+    // Spec,
     Relaket,
     Loading,
     BasicInfo,
