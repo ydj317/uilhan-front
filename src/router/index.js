@@ -69,6 +69,16 @@ const routes = [
             component: () => import("views/Setting/Margin"),
           },
           {
+            path: "/setting/delivery",
+            name: "setting_delivery",
+            component: () => import("@/views/Setting/DeliveryList.vue"),
+          },
+          {
+            path: "/setting/delivery/form/:id?",
+            name: "setting_delivery_form",
+            component: () => import("@/views/Setting/DeliveryForm.vue"),
+          },
+          {
             path: "/product/preview/:id",
             name: "prd_preview",
             /* webpackChunkName: 'user_register' */
