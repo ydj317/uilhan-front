@@ -55,7 +55,10 @@
             </label>
             <a-input class="input-size"  v-model:value="item.name" size="default" placeholder="옵션명" />
             <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">{{ item.name.length }}</span> / 25</span>
-            <a-button @click="addSpecOptionName(optionIndex)" v-if="option.data.length === (index + 1)" class="spec-add-option-name-button" type="primary">추가</a-button>
+            <div class="spec-option-name-button">
+              <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large" class="spec-set-option-name-button"><MinusOutlined /></a-button>
+              <a-button @click="addSpecOptionName(optionIndex)" v-if="option.data.length === (index + 1)" class="spec-set-option-name-button" type="link" size="large"><PlusOutlined /></a-button>
+            </div>
           </div>
         </td>
       </tr>
@@ -66,6 +69,7 @@
 <script>
 import {cloneDeep, forEach} from "lodash";
 import { mapState } from "vuex";
+import { PlusOutlined, MinusOutlined} from '@ant-design/icons-vue';
 
 export default {
   name: "productDetailSpecGroup",
@@ -73,6 +77,7 @@ export default {
     ...mapState(["product"]),
   },
   props: ['option', 'optionIndex'],
+  components: {PlusOutlined, MinusOutlined},
   data() {
     return {
       oldOptionData: cloneDeep(this.option.data),
@@ -90,6 +95,13 @@ export default {
     },
     addSpecOptionName(optionIndex) {
       this.product.item_option[optionIndex].data.push({key:this._uniqueKey(), name: ''});
+    },
+    deleteSpecOptionName(optionIndex, index) {
+      if (this.product.item_option[optionIndex].data.length === 1) {
+        alert('옵션명 전부 삭제는 불가합니다.');
+        return false;
+      }
+      this.product.item_option[optionIndex].data.splice(index, 1);
     },
     onCheckAllChange() {
       if (this.selectAll === true) {
@@ -326,7 +338,11 @@ export default {
   margin-right: 5px;
 }
 
-.spec-add-option-name-button {
-  margin-left: 18px;
+.spec-option-name-button {
+  margin-left: auto;
+  padding-right: 15px;
+}
+.spec-set-option-name-button {
+  padding: 2px;
 }
 </style>
