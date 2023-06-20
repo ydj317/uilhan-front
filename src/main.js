@@ -17,6 +17,7 @@ import {
   InputNumber,
   // DatePicker,
   Select,
+  SelectOption,
   Table,
   Descriptions,
   Upload,
@@ -65,6 +66,7 @@ createApp(App)
   .use(InputNumber)
   .use(DatePicker)
   .use(Select)
+  .use(SelectOption)
   .use(moment)
   .use(Descriptions)
   .use(Upload)

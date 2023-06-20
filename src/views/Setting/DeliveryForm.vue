@@ -4,6 +4,7 @@ import {onMounted, reactive, ref} from "vue";
 import {AuthRequest} from "@/util/request";
 import {useRoute, useRouter} from "vue-router";
 const route = useRoute();
+console.log(route.params);
 const router = useRouter();
 let indicator = ref(false);
 let buttonLoading = ref(false);
@@ -63,6 +64,7 @@ const getDeliveryDetail = (id) => {
     if (res.status !== '2000') {
       alert(res.message)
       indicator.value = false;
+      router.push('/setting/delivery')
       return false;
     }
 
@@ -139,24 +141,24 @@ onMounted(() => {
       </a-form-item>
       <div style="display: flex;">
         <a-form-item label="배송비" name="delivery_price"
-                     :rules="[{ required: true, message: '배송비를 입력해 주세요.',type: 'number' }]" :style="{flex:'1'}">
+                     :rules="[{ required: true, message: '배송비를 입력해 주세요.' }]" :style="{flex:'1'}">
           <a-input v-model:value="formState.delivery_price" allow-clear/>
         </a-form-item>
 
         <a-form-item label="상품 1개단위 배송비" name="delivery_unit_price"
-                     :rules="[{ required: true, message: '상품 1개단위 배송비를 입력해 주세요.',type: 'number'}]" :style="{flex:'1',marginLeft:'-1px'}">
+                     :rules="[{ required: true, message: '상품 1개단위 배송비를 입력해 주세요.'}]" :style="{flex:'1',marginLeft:'-1px'}">
           <a-input v-model:value="formState.delivery_unit_price" allow-clear/>
         </a-form-item>
       </div>
 
       <div style="display: flex;">
       <a-form-item label="반품 배송비" name="return_shipping_price"
-                   :rules="[{ required: true, message: '반품 배송비를 입력해 주세요.', type: 'number' }]" :style="{flex:'1'}">
+                   :rules="[{ required: true, message: '반품 배송비를 입력해 주세요.'}]" :style="{flex:'1'}">
         <a-input v-model:value="formState.return_shipping_price" allow-clear/>
       </a-form-item>
 
       <a-form-item label="교환 배송비" name="exchange_shipping_price"
-                   :rules="[{ required: true, message: '교환 배송비를 입력해 주세요.', type: 'number' }]" :style="{flex:'1',marginLeft:'-1px'}">
+                   :rules="[{ required: true, message: '교환 배송비를 입력해 주세요.' }]" :style="{flex:'1',marginLeft:'-1px'}">
         <a-input v-model:value="formState.exchange_shipping_price" allow-clear/>
       </a-form-item>
       </div>
