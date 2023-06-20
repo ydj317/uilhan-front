@@ -27,7 +27,7 @@
               <a-button @click="setTrim" class="spec-right-button" type="primary">빈칸</a-button>
               <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary">특문</a-button>
               <a-button @click="strLengthTo25" class="spec-right-button" type="primary">25자</a-button>
-              <a-button @click="setSort" class="spec-right-button" type="primary">A-Z</a-button>
+              <a-button @click="setAtoZ" class="spec-right-button" type="primary">A-Z</a-button>
               <a-dropdown>
                 <template #overlay>
                   <a-menu>
@@ -75,7 +75,7 @@ export default {
   props: ['option', 'optionIndex'],
   data() {
     return {
-      oldOptionData: [],
+      oldOptionData: cloneDeep(this.option.data),
       selectAll: false,
       selectedRows: [],
     };
@@ -115,7 +115,6 @@ export default {
         this._setCheckBoxInit();
         return false;
       }
-      this._saveOldOptionData();
       forEach(this.option.data, (item, index) => {
         if (this.selectedRows.indexOf(item.key) === -1) {
           newOptionData.push(item);
@@ -130,7 +129,6 @@ export default {
         return false;
       }
       let newOptionData = [];
-      this._saveOldOptionData();
       forEach(this.option.data, (item, index) => {
         if (this.selectedRows.indexOf(item.key) !== -1) {
           item.name = item.name.trim();
@@ -148,7 +146,6 @@ export default {
         return false;
       }
       let newOptionData = [];
-      this._saveOldOptionData();
       const specialChars = /[@#$%^&*]/g;
       forEach(this.option.data, (item, index) => {
         if (this.selectedRows.indexOf(item.key) !== -1) {
@@ -167,7 +164,6 @@ export default {
         return false;
       }
       let newOptionData = [];
-      this._saveOldOptionData();
       forEach(this.option.data, (item, index) => {
         if (this.selectedRows.indexOf(item.key) !== -1) {
           item.name = item.name.substring(0, 25);
@@ -179,12 +175,14 @@ export default {
       this.product.item_option[this.optionIndex].data = newOptionData;
       this._setCheckBoxInit();
     },
-    setSort() {
-      this._saveOldOptionData();
-      this.product.item_option[this.optionIndex].data.sort((a, b) => a.name.localeCompare(b.name));
+    setAtoZ() {
+      let typeValue = 'A';
+      forEach(this.option.data, (item) => {
+        item.name = typeValue;
+        typeValue = this._getNextLetter(typeValue);
+      });
     },
     handleMenuClick(type) {
-      this._saveOldOptionData();
       //type:N 01__, A A.__
       let prefix;
       let typeValue;
@@ -208,13 +206,7 @@ export default {
       });
     },
     setBeforeOldOptionData() {
-      if (this.oldOptionData.length == 0) {
-        return;
-      }
       this.product.item_option[this.optionIndex].data = cloneDeep(this.oldOptionData);
-    },
-    _saveOldOptionData() {
-      this.oldOptionData = cloneDeep(this.option.data);
     },
     _getNextLetter(letter) {
       let nextLetter = '';
