@@ -49,7 +49,7 @@
           <span>설정</span>
         </template>
         <a-menu-item key="061">
-          <router-link to="/setting/margin"><span>릴라켓정보</span></router-link>
+          <router-link to="/setting/account"><span>릴라켓정보</span></router-link>
         </a-menu-item>
         <a-menu-item key="062">
           <router-link to="/setting/margin"><span>마진 & 환율</span></router-link>
