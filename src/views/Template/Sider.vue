@@ -1,5 +1,5 @@
 <template >
-  <a-affix :offset-top="0">
+  <div style="position: sticky;top: 0;">
     <a-menu
       v-model:selectedKeys="selectedKeys"
       mode="inline"
@@ -97,7 +97,7 @@
         </router-link>
       </a-menu-item>
     </a-menu>
-  </a-affix>
+  </div>
 </template>
 
 <script setup>
