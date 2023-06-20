@@ -13,7 +13,8 @@ const router = useRouter();
 
 
 let datasource  = ref([]);
-let loading = ref(true);
+let loading = ref(false);
+let bloading = ref(false);
 const getDeliveryList = () => {
   loading.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/list').then((res) => {
@@ -34,8 +35,8 @@ const getDeliveryList = () => {
 const table_columns = computed(() => {
   return [
     { title: 'ID', dataIndex: 'id', },
+    { title: 'DtIx', dataIndex: 'dtIx', },
     { title: '배송정책명', dataIndex: 'templateName', },
-    { title: '배송비', dataIndex: 'deliveryPrice', },
     { title: '시간', dataIndex: 'updDate', },
     { title: '조작', key: 'action', },
   ]
@@ -51,17 +52,17 @@ const rowSelection = {
 };
 
 const syncDelivery = () => {
-  loading.value = true;
+  bloading.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/syncDelivery').then((res) => {
     if (res.status !== '2000') {
-      loading.value = false;
+      bloading.value = false;
       alert(res.message)
       return false;
     }
-    loading.value = false;
-    datasource.value = res.data;
+    bloading.value = false;
+    getDeliveryList()
   }).catch((error) => {
-    loading.value = false;
+    bloading.value = false;
     alert(error.message);
     return false;
   });
@@ -84,7 +85,7 @@ onMounted(() => {
     <a-row type="flex" justify="space-between" :wrap="false" :style="{marginBottom:'10px'}">
       <a-col><a-button type="primary" danger><template #icon><delete-outlined /></template>선택삭제</a-button></a-col>
       <a-col>
-        <a-button type="primary" @click="syncDelivery"><template #icon><edit-outlined /></template>수집</a-button>
+        <a-button type="primary" @click="syncDelivery" :loading="bloading"><template #icon><edit-outlined /></template>수집</a-button>
         <a-divider type="vertical"></a-divider>
         <router-link to="/setting/delivery/form"><a-button type="primary" danger><template #icon><plus-outlined /></template>등록</a-button></router-link>
       </a-col>
