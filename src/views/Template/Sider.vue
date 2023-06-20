@@ -46,7 +46,7 @@
           <setting-outlined />
         </template>
         <template #title>
-          <span>설정(준비중)</span>
+          <span>설정</span>
         </template>
         <a-menu-item key="061">
           <router-link to="/setting/margin"><span>릴라켓정보</span></router-link>
@@ -115,6 +115,7 @@ import {
   MoneyCollectOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons-vue';
+import Loading from "vue-loading-overlay";
 
 const selectedKeys = ref(['1']);
 const openKeys = ref(['1']);

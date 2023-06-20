@@ -64,7 +64,7 @@ const routes = [
             component: () => import("../views/User/FilterProductWords"),
           },
           {
-            path: "/setting/Margin",
+            path: "/setting/margin",
             name: "setting_margin",
             component: () => import("views/Setting/Margin"),
           },
