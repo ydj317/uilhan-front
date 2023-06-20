@@ -3,30 +3,20 @@
    <router-view v-slot="{ Component }">
      <template v-if="Component">
      <Transition name="slide-right" mode="out-in">
-       <keep-alive>
          <div :key="route.fullPath">
          <component :is="Component" />
          </div>
-       </keep-alive>
      </Transition>
      </template>
    </router-view>
  </div>
 </template>
 
-<script>
-import { defineComponent } from "vue";
-import {useRoute, useRouter} from "vue-router";
-export default defineComponent({
+<script setup>
+import {useRoute} from "vue-router";
 
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    return {
-      route
-    }
-  }
-});
+const route = useRoute();
+
 </script>
 
 <style scoped>

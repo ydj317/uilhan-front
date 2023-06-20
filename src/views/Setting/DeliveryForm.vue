@@ -1,31 +1,32 @@
 <script setup>
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 
 import {AuthRequest} from "@/util/request";
 import {useRoute, useRouter} from "vue-router";
 const route = useRoute();
 const router = useRouter();
 let indicator = ref(false);
+let buttonLoading = ref(false);
 
 const onFinish = values => {
   values = Object.assign(values,route.params)
-  indicator = true;
+  buttonLoading.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/delivery/save', values).then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
-      indicator = false;
+      buttonLoading.value = false;
       return false;
     }
 
     let data = res.data;
     alert(data.message);
 
-    indicator = false;
-    router.push('/notice/list')
+    buttonLoading.value = false;
+    router.push('/setting/delivery')
 
   }).catch((error) => {
     alert(error.message);
-    indicator = false;
+    buttonLoading.value = false;
     return false;
   });
 };
@@ -34,7 +35,7 @@ const onFinishFailed = errorInfo => {
   console.log('Failed:', errorInfo);
 };
 
-const formState = reactive({
+let formState = reactive({
   market_id: '',
   dt_ix: '',
   template_name: '',
@@ -54,6 +55,46 @@ const formState = reactive({
   out_addr_ix: '1',
   in_addr_ix: '1',
 });
+
+const getDeliveryDetail = (id) => {
+  if(!id) return false;
+  indicator.value = true;
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/detail/' + id).then((res) => {
+    if (res.status !== '2000') {
+      alert(res.message)
+      indicator.value = false;
+      return false;
+    }
+
+    let data = res.data;
+    formState.template_name = data.template_name
+    formState.delivery_company = data.delivery_company
+    formState.delivery_basic_policy = data.delivery_basic_policy
+    formState.delivery_package = data.delivery_package
+    formState.delivery_policy = data.delivery_policy
+    formState.delivery_price = data.delivery_price
+    formState.delivery_unit_price = data.delivery_unit_price
+    formState.return_shipping_price = data.return_shipping_price
+    formState.exchange_shipping_price = data.exchange_shipping_price
+    formState.return_shipping_cnt = data.return_shipping_cnt
+    formState.product_return_text = data.product_return_text
+    formState.delivery_region_use = data.delivery_region_use
+    formState.jeju_delivery_price = data.jeju_delivery_price
+    formState.island_delivery_price = data.island_delivery_price
+    formState.out_addr_ix = data.out_addr_ix
+    formState.in_addr_ix = data.in_addr_ix
+
+    indicator.value = false;
+  }).catch((error) => {
+    alert(error.message);
+    indicator.value = false;
+    return false;
+  });
+}
+
+onMounted(() => {
+  getDeliveryDetail(route.params.id);
+})
 </script>
 
 <template>
@@ -71,7 +112,7 @@ const formState = reactive({
       >
         <a-select v-model:value="formState.delivery_company" >
           <a-select-option value="1">로젠택배</a-select-option>
-          <a-select-option value="2">우정택배</a-select-option>
+          <a-select-option value="06">우정택배</a-select-option>
         </a-select>
       </a-form-item>
 
@@ -91,30 +132,31 @@ const formState = reactive({
 
       <a-form-item label="배송정책타입" name="delivery_policy">
         <a-radio-group  v-model:value="formState.delivery_policy">
-          <a-radio value="1">무료배송</a-radio>
-          <a-radio value="2">고정배송</a-radio>
+          <a-radio value="0">무료배송</a-radio>
+          <a-radio value="1">고정배송</a-radio>
+          <a-radio value="6">기타</a-radio>
         </a-radio-group >
       </a-form-item>
       <div style="display: flex;">
         <a-form-item label="배송비" name="delivery_price"
-                     :rules="[{ required: true, message: '배송비를 입력해 주세요.' }]" :style="{flex:'1'}">
+                     :rules="[{ required: true, message: '배송비를 입력해 주세요.',type: 'number' }]" :style="{flex:'1'}">
           <a-input v-model:value="formState.delivery_price" allow-clear/>
         </a-form-item>
 
         <a-form-item label="상품 1개단위 배송비" name="delivery_unit_price"
-                     :rules="[{ required: true, message: '상품 1개단위 배송비를 입력해 주세요.'}]" :style="{flex:'1',marginLeft:'-1px'}">
+                     :rules="[{ required: true, message: '상품 1개단위 배송비를 입력해 주세요.',type: 'number'}]" :style="{flex:'1',marginLeft:'-1px'}">
           <a-input v-model:value="formState.delivery_unit_price" allow-clear/>
         </a-form-item>
       </div>
 
       <div style="display: flex;">
       <a-form-item label="반품 배송비" name="return_shipping_price"
-                   :rules="[{ required: true, message: '반품 배송비를 입력해 주세요.' }]" :style="{flex:'1'}">
+                   :rules="[{ required: true, message: '반품 배송비를 입력해 주세요.', type: 'number' }]" :style="{flex:'1'}">
         <a-input v-model:value="formState.return_shipping_price" allow-clear/>
       </a-form-item>
 
       <a-form-item label="교환 배송비" name="exchange_shipping_price"
-                   :rules="[{ required: true, message: '교환 배송비를 입력해 주세요.' }]" :style="{flex:'1',marginLeft:'-1px'}">
+                   :rules="[{ required: true, message: '교환 배송비를 입력해 주세요.', type: 'number' }]" :style="{flex:'1',marginLeft:'-1px'}">
         <a-input v-model:value="formState.exchange_shipping_price" allow-clear/>
       </a-form-item>
       </div>
@@ -167,7 +209,7 @@ const formState = reactive({
       </div>
 
       <div style="display: flex;justify-content: center;margin-top: 20px;">
-        <a-button type="primary" html-type="submit">저장</a-button>
+        <a-button type="primary" html-type="submit" :loading="buttonLoading">저장</a-button>
         <a-button style="margin-left: 10px" @click="router.go(-1)">취소</a-button>
       </div>
     </a-form>
