@@ -3,14 +3,15 @@ import {onMounted, reactive, ref} from "vue";
 
 import {AuthRequest} from "@/util/request";
 import {useRoute, useRouter} from "vue-router";
+
 const route = useRoute();
-console.log(route.params);
 const router = useRouter();
 let indicator = ref(false);
 let buttonLoading = ref(false);
 
 const onFinish = values => {
   values = Object.assign(values,route.params)
+  values = Object.assign(values,{dt_ix:formState.dt_ix})
   buttonLoading.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/delivery/save', values).then((res) => {
     if (res.status !== '2000') {
@@ -37,7 +38,6 @@ const onFinishFailed = errorInfo => {
 };
 
 let formState = reactive({
-  market_id: '',
   dt_ix: '',
   template_name: '',
   delivery_company: '1',
@@ -69,6 +69,7 @@ const getDeliveryDetail = (id) => {
     }
 
     let data = res.data;
+    formState.dt_ix = data.dt_ix
     formState.template_name = data.template_name
     formState.delivery_company = data.delivery_company
     formState.delivery_basic_policy = data.delivery_basic_policy
@@ -134,9 +135,9 @@ onMounted(() => {
 
       <a-form-item label="배송정책타입" name="delivery_policy">
         <a-radio-group  v-model:value="formState.delivery_policy">
-          <a-radio value="0">무료배송</a-radio>
-          <a-radio value="1">고정배송</a-radio>
-          <a-radio value="6">기타</a-radio>
+          <a-radio value="1">무료배송</a-radio>
+          <a-radio value="2">고정배송</a-radio>
+          <a-radio value="6">1개당 배송비</a-radio>
         </a-radio-group >
       </a-form-item>
       <div style="display: flex;">
