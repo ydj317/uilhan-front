@@ -6,8 +6,8 @@
     <!--세팅버튼-->
     <div class="setting">
       <a-popconfirm
-        title="현재 스팩설정대로 세팅하시겠습니까?"
-        @confirm="setting"
+          title="현재 스팩설정대로 세팅하시겠습니까?"
+          @confirm="setting"
       >
         <a-button class="floatRight" type="primary" danger>세팅</a-button>
       </a-popconfirm>
@@ -15,23 +15,23 @@
 
     <!--옵션-->
     <div
-      v-for="(option, optionIndex) in product.item_option"
-      :key="optionIndex"
-      style="display: flex; border-bottom: 3px solid #fafafa; padding: 5px"
+        v-for="(option, optionIndex) in product.item_option"
+        :key="optionIndex"
+        style="display: flex; border-bottom: 3px solid #fafafa; padding: 5px"
     >
       <div style="width: 90%; display: flex">
         <!--옵션명-->
         <div style="display: flex; margin-top: 35px; margin-right: 15px">
           <a-input
-            style="width: 165px; height: 40px; outline: 5px solid #f4f8f9"
-            v-model:value="option.name"
-            placeholder="Basic usage"
+              style="width: 165px; height: 40px; outline: 5px solid #f4f8f9"
+              v-model:value="option.name"
+              placeholder="Basic usage"
           />
         </div>
 
         <!--옵션값-->
         <div
-          style="
+            style="
             display: flex;
             margin-top: 25px;
             flex-direction: row;
@@ -42,11 +42,11 @@
             <!--옵션값 편집창-->
             <div>
               <a-modal
-                :mask="false"
-                :title="old_option_value"
-                v-model:visible="modify_option_value_visible"
-                @ok="modifyOptionValueOk"
-                @cancel="modifyOptionValueCancel"
+                  :mask="false"
+                  :title="old_option_value"
+                  v-model:visible="modify_option_value_visible"
+                  @ok="modifyOptionValueOk"
+                  @cancel="modifyOptionValueCancel"
               >
                 <a-input class="dispBlock" v-model:value="new_option_value" />
               </a-modal>
@@ -55,16 +55,16 @@
             <!--옵션값 삭제/수정-->
             <div style="margin-top: 10px">
               <a-tag
-                style="
+                  style="
                   height: 40px;
                   display: flex;
                   font-size: 15px;
                   align-items: center;
                 "
-                :color="skuLongNameStyle(item.name)"
-                :closable="true"
-                @close="deleteOptionValue(optionIndex, item.name)"
-                @click="modifyOptionValue(optionIndex, item.name)"
+                  :color="skuLongNameStyle(item.name)"
+                  :closable="true"
+                  @close="deleteOptionValue(optionIndex, item.name)"
+                  @click="modifyOptionValue(optionIndex, item.name)"
               >
                 <a-tooltip>
                   {{ item.name }}
@@ -77,24 +77,24 @@
           <div style="margin-top: 10px">
             <!--옵션값 추가하기 클릭후-->
             <a-input
-              style="width: 78px; height: 40px; font-size: 15px"
-              v-if="option.inputVisible"
-              id="addSpecNameInput"
-              class="in30"
-              ref="inputRef"
-              type="text"
-              size="15px"
-              v-model:value="option.inputValue"
-              @blur="addOptionValue(optionIndex)"
-              @pressEnter="addOptionValue(optionIndex)"
+                style="width: 78px; height: 40px; font-size: 15px"
+                v-if="option.inputVisible"
+                id="addSpecNameInput"
+                class="in30"
+                ref="inputRef"
+                type="text"
+                size="15px"
+                v-model:value="option.inputValue"
+                @blur="addOptionValue(optionIndex)"
+                @pressEnter="addOptionValue(optionIndex)"
             />
 
             <!--옵션값 추가하기 클릭전-->
             <a-tag
-              v-else
-              @click="showAddOptionValueInput(optionIndex)"
-              class="in30 bgWhite borderDashed"
-              style="
+                v-else
+                @click="showAddOptionValueInput(optionIndex)"
+                class="in30 bgWhite borderDashed"
+                style="
                 width: 100px;
                 height: 40px;
                 font-size: 15px;
@@ -113,7 +113,7 @@
 
       <!--버튼-->
       <div
-        style="
+          style="
           display: flex;
           width: 10%;
           justify-content: space-around;
@@ -121,26 +121,26 @@
         "
       >
         <a-button
-          @click="deleteOptionValues(optionIndex)"
-          style="
+            @click="deleteOptionValues(optionIndex)"
+            style="
             height: 40px;
             background-color: #3ddc97;
             border: 1px solid #3ddc97;
             border-radius: 5px;
           "
-          type="primary"
-          >삭제</a-button
+            type="primary"
+        >삭제</a-button
         >
         <a-button
-          @click="deleteOption(option.name)"
-          style="
+            @click="deleteOption(option.name)"
+            style="
             height: 40px;
             background-color: #f06543;
             border: 1px solid #f06543;
             border-radius: 5px;
           "
-          type="primary"
-          >제거</a-button
+            type="primary"
+        >제거</a-button
         >
       </div>
     </div>
@@ -148,7 +148,7 @@
     <!--추가버튼-->
     <div class="addOption">
       <a-button @click="addSpec" class="floatRight mar-R20" type="primary"
-        >추가</a-button
+      >추가</a-button
       >
     </div>
   </div>
@@ -180,7 +180,7 @@ export default {
     css() {
       setTimeout(() => {
         Object.values(
-          document.querySelectorAll(".ant-table-row-cell-break-word")
+            document.querySelectorAll(".ant-table-row-cell-break-word")
         ).map((el) => {
           if (el.tagName === "TH") {
             el.style.backgroundColor = "#f7fdff";
@@ -291,7 +291,7 @@ export default {
       let aOptionImages = {};
       this.product.item_option.map((item_option) => {
         let aTemp = item_option.data.filter(
-          (option) => !lib.isEmpty(option.img)
+            (option) => !lib.isEmpty(option.img)
         );
 
         if (lib.isArray(aTemp, true)) {
@@ -324,7 +324,7 @@ export default {
       this.product.item_option[this.modify_option_index].data.map((data, i) => {
         if (data.name === this.old_option_value) {
           this.product.item_option[this.modify_option_index].data[i].name =
-            this.new_option_value;
+              this.new_option_value;
         }
 
         this.product.sku.map((sku, i) => {
@@ -354,15 +354,15 @@ export default {
     // 옵션값 단일 삭제
     deleteOptionValue(optionIndex, sItemName) {
       this.product.item_option[optionIndex].data = this.product.item_option[
-        optionIndex
-      ].data.filter((data) => data.name !== sItemName);
+          optionIndex
+          ].data.filter((data) => data.name !== sItemName);
     },
 
     // 옵션값 추가
     addOptionValue(optionIndex) {
       // 유효한 옵션값 판단
       if (
-        !lib.isString(this.product.item_option[optionIndex].inputValue, true)
+          !lib.isString(this.product.item_option[optionIndex].inputValue, true)
       ) {
         this.product.item_option[optionIndex].inputVisible = false;
         return false;
@@ -373,8 +373,8 @@ export default {
       this.product.item_option.map((aOriginalOption) => {
         aOriginalOption.data.map((oOriginalOptionData) => {
           if (
-            this.product.item_option[optionIndex].inputValue.trim() ===
-            oOriginalOptionData.name.trim()
+              this.product.item_option[optionIndex].inputValue.trim() ===
+              oOriginalOptionData.name.trim()
           ) {
             bRepeat = true;
           }
@@ -407,7 +407,7 @@ export default {
     // 제거 (해당 옵션 삭제)
     deleteOption(type) {
       this.product.item_option = this.product.item_option.filter(
-        (option) => option.name !== type
+          (option) => option.name !== type
       );
     },
 

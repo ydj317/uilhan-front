@@ -2,13 +2,42 @@
   <div class="imageEditorGroupContainer">
     <!-- a-modal 渲染时 数据处理 同时使用 if 和 visible 请不要删除 -->
     <template title="번역팝업">
+      <!--상품 이미지-->
+      <a-modal
+          v-if="
+          product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
+        "
+          :visible="
+          product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
+        "
+          :closable="false"
+          :ok-text="'닫기'"
+          :cancel-text="'번역'"
+          @cancel="productTranslateImage(product.aPhotoCollection)"
+          @ok="product.bImageEditorModule = false"
+          :maskClosable="false"
+          :cancel-button-props="{ danger: true, type: 'primary' }"
+          width="auto"
+          centered
+      >
+        <!-- 번역 남은 회수 -->
+        <div class="w100 right center">
+          <h3 class="pr5">
+            남은회수: <span class="red">{{ product.recharge }}</span>
+          </h3>
+        </div>
+        <div class="center">
+          <img :src="product.aPhotoCollection[0].original_url" alt="" />
+        </div>
+      </a-modal>
+
       <!--SKU-->
       <a-modal
         v-if="
-          product.bImageEditorModule && product.bProductDetailsEditor === false
+          product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === false
         "
         :visible="
-          product.bImageEditorModule && product.bProductDetailsEditor === false
+          product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === false
         "
         :closable="false"
         :ok-text="'닫기'"
@@ -223,6 +252,33 @@ export default {
               data.img.split("/").includes(sRequestId) === true
             ) {
               this.product.sku[i].img = oRequestId[sRequestId];
+            }
+          });
+        });
+
+        // 이미지 편집기 닫기
+        this.product.bImageEditorModule = false;
+        this.product.xiangjiVisible = false;
+      });
+    },
+
+    //상품이미지 번역
+    productTranslateImage(aImagesInfo) {
+      this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
+        let sTranslateUrl = oTranslateInfo[aImagesInfo[0].key].translate_url;
+        this.product.item_thumbnails[aImagesInfo[0].key].url = sTranslateUrl;
+        this.productRequestXiangji([sTranslateUrl]);
+      });
+    },
+    productRequestXiangji(aImagesUrl) {
+      this.product.requestXiangji(aImagesUrl, (oRequestId) => {
+        Object.keys(oRequestId).map((sRequestId) => {
+          this.product.item_thumbnails.map((data, i) => {
+            if (
+                lib.isString(data.url, true) === true &&
+                data.url.split("/").includes(sRequestId) === true
+            ) {
+              this.product.item_thumbnails[i].url = oRequestId[sRequestId];
             }
           });
         });

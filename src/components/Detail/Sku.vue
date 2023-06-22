@@ -491,6 +491,7 @@ export default {
       }
 
       this.product.bProductDetailsEditor = false;
+      this.product.bProductImageEditor = false;
       this.product.bImageEditorModule = true;
       this.product.aPhotoCollection = [
         {

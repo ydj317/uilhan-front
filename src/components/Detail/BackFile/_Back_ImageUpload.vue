@@ -4,7 +4,7 @@
     <h1><strong>상품 이미지</strong></h1>
 
     <!--상단 버튼-->
-    <div id="eModelTitle_1_header" class="mb20 space-between">
+    <div id="eModelTitle_1_header" class="w16 mb20 space-between">
       <a-upload
           name="file"
           :headers="HEADER"
@@ -15,8 +15,6 @@
       >
         <a-button>이미지 업로드</a-button>
       </a-upload>
-
-      <a-button style="margin-right: auto; margin-left: 10px;" @click="deleteImages">이미지 삭제</a-button>
     </div>
 
     <!--이미지 리스트-->
@@ -31,7 +29,7 @@
         <template #item="{ element, index }">
           <div
               id="eModelTitle_1_conent_group"
-              class="w10 m5"
+              class="w10 p5 m5"
               :key="index"
               :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
           >
@@ -41,9 +39,42 @@
                   class="w100"
                   :src="element.url"
                   @click="activedImage(element, index)"
-                  @dblclick="translatePopup(index, element)"
                   alt=""
               />
+
+              <!--버튼-->
+              <div
+                  id="eModelTitle_1_conent_button_group"
+                  class="w100 center space-around h40"
+              >
+                <!--편집-->
+                <a-button
+                    v-if="element.url.indexOf('https://i.tosoiot.com/') !== -1"
+                    class="w40 h30 center"
+                    type="dashed"
+                    @click="requestXiangji([element.url])"
+                ><span>편집</span></a-button
+                >
+
+                <!--번역-->
+                <a-button
+                    v-else
+                    class="w40 h30 center"
+                    type="dashed"
+                    @click="translateImage(index, element)"
+                ><span>번역</span></a-button
+                >
+
+                <!--삭제팝업-->
+                <a-popconfirm
+                    class="w40 h30 center"
+                    title="삭제하시겠습니까?"
+                    @confirm="deleteImage(element)"
+                >
+                  <!--삭제-->
+                  <a-button type="dashed"><span>삭제</span></a-button>
+                </a-popconfirm>
+              </div>
             </div>
           </div>
         </template>
@@ -108,18 +139,10 @@ export default {
 
       this.product.item_thumbnails = aItemThumbnails;
     },
-    translatePopup(index, element) {
-      // 변역완료된 상품은 편집
-      if (element.url.indexOf("https://i.tosoiot.com/") !== -1) {
-        this.requestXiangji([element.url]);
 
-        return false;
-      }
-
-      this.product.bProductDetailsEditor = false;
-      this.product.bProductImageEditor = true;
-      this.product.bImageEditorModule = true;
-      this.product.aPhotoCollection = [
+    // 이미지 번역
+    translateImage(index, element) {
+      let aImagesInfo = [
         {
           msg: "",
           key: index,
@@ -127,11 +150,17 @@ export default {
           order: element.order || "",
           checked: true,
           visible: true,
-          original_url: element.url,
+          original_url: element.url || "",
           translate_url: "",
           translate_status: false,
-        }
-      ]
+        },
+      ];
+
+      this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
+        let sTranslateUrl = oTranslateInfo[index].translate_url;
+        this.product.item_thumbnails[index].url = sTranslateUrl;
+        this.requestXiangji([sTranslateUrl]);
+      });
     },
 
     // 이미지 편집
@@ -153,10 +182,10 @@ export default {
       });
     },
 
-    //이미지 일괄 삭제
-    deleteImages() {
+    // 이미지 삭제
+    deleteImage(element) {
       this.product.item_thumbnails = this.product.item_thumbnails.filter(
-          (item) => item.checked === false
+          (item) => item.name !== element.name && item.order !== element.order
       );
     },
 
@@ -227,7 +256,7 @@ export default {
 
 <style scoped>
 #eModelTitle_1 img {
-  width: 100px;
+  width: 120px;
   height: 150px;
 }
 </style>
@@ -248,9 +277,6 @@ export default {
   color: #3051d3;
 }
 #eModelTitle_1_conent_group {
-  height: auto;
-  width: auto;
-  min-width: 150px;
   border: 1px solid #f0f2f5;
 }
 
@@ -317,17 +343,20 @@ export default {
 /*}*/
 
 .checkedEl > div {
-  border: 2px solid #1890ff !important;
-  padding: 0;
+  border: 4px solid #3ddc97 !important;
+  padding: 5px;
 }
 
 .checkedNot > div {
-  border: 2px solid white !important;
-  padding: 0;
+  border: 4px solid white !important;
+  padding: 5px;
 }
 
 .thumnail {
   border: 1px solid #ff5656;
 }
-</style>
 
+#eModelTitle_1_conent #eModelTitle_1_conent_group:first-child {
+  border: 3px solid #f06543;
+}
+</style>
