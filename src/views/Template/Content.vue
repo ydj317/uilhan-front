@@ -3,11 +3,9 @@
    <router-view v-slot="{ Component }">
      <template v-if="Component">
        <Transition name="slide-right" mode="out-in">
-         <keep-alive>
            <div :key="route.fullPath">
              <component :is="Component" />
            </div>
-         </keep-alive>
        </Transition>
      </template>
    </router-view>
