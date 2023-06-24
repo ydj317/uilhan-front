@@ -258,12 +258,12 @@ export default {
           width: "6%",
         },
         {
-          title: "옵션코드",
+          title: "품목코드",
           key: "code",
           width: "14%",
         },
         {
-          title: "옵션명",
+          title: "품목명",
           key: "spec",
           width: "18%",
         },
@@ -278,17 +278,17 @@ export default {
           width: "9%",
         },
         {
-          title: "중국내 운임",
+          title: "해외운임",
           key: "shipping_fee_cn", // 기본 0, 별도 기입
           width: "8%",
         },
+        // {
+        //   title: "도매가",
+        //   key: "wholesale_price", // (구매원가+중국내 운임)*도매마진
+        //   width: "9%",
+        // },
         {
-          title: "도매가",
-          key: "wholesale_price", // (구매원가+중국내 운임)*도매마진
-          width: "9%",
-        },
-        {
-          title: "할인전 가격",
+          title: "권장가",
           key: "disp_price", // 할인가*할인전 가격설정
           width: "9%",
         },
@@ -300,6 +300,11 @@ export default {
         {
           title: "운임",
           key: "shipping_fee_ko",
+          width: "8%",
+        },
+        {
+          title: "예상수익",
+          key: "expected_return",
           width: "8%",
         },
       ],
@@ -590,11 +595,20 @@ export default {
       this.setSellingMargin();
       this.setDispMargin();
     },
+    setExpectedReturn() {
+      this.product.sku.map((data, i) => {
+        let sellingPrice = data.selling_price;
+        let expected_return = (sellingPrice - data.original_price_ko - sellingPrice * 0.12).toFixed(0);
+        this.product.sku[i].expected_return =
+            Math.ceil(Number(expected_return) / 100) * 100;
+      });
+    }
   },
 
   mounted() {
     this.css();
     this.marginInit();
+    this.setExpectedReturn();
   },
   created() {
     forEach(this.product.sku, (item) => {
