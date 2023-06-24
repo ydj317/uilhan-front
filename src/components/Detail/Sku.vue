@@ -133,6 +133,17 @@
             </div>
           </template>
 
+          <template v-else-if="column.key === 'is_option_reference_price'">
+            <div class="center">
+              <label class="ant-radio-wrapper" :class="{'ant-radio-wrapper-checked': option_reference_price_key === record.key}">
+              <span class="ant-radio" :class="{'ant-radio-checked': option_reference_price_key === record.key}">
+                <input @change="setIsOptionReferencePrice" type="radio" v-model="option_reference_price_key" :value="record.key" class="ant-radio-input">
+                <span class="ant-radio-inner"></span>
+              </span>
+              </label>
+            </div>
+          </template>
+
           <!--스펙-->
           <template v-else-if="column.key === 'spec'">
             <div
@@ -213,6 +224,7 @@
 <script>
 import { mapState } from "vuex";
 import { lib } from "@/util/lib";
+import { forEach } from "lodash";
 
 export default {
   name: "productDetailSku",
@@ -227,6 +239,7 @@ export default {
       selected_sku_image_url: "",
       selected_sku_image_index: 0,
       sku_image_window_visible: false,
+      option_reference_price_key: "",
 
       sku_columns: [
         {
@@ -240,14 +253,19 @@ export default {
           width: "1%",
         },
         {
+          title: "옵션가 기준",
+          key: "is_option_reference_price",
+          width: "6%",
+        },
+        {
           title: "옵션코드",
           key: "code",
-          width: "15%",
+          width: "14%",
         },
         {
           title: "옵션명",
           key: "spec",
-          width: "20%",
+          width: "18%",
         },
         {
           title: "재고",
@@ -262,7 +280,7 @@ export default {
         {
           title: "중국내 운임",
           key: "shipping_fee_cn", // 기본 0, 별도 기입
-          width: "9%",
+          width: "8%",
         },
         {
           title: "도매가",
@@ -282,7 +300,7 @@ export default {
         {
           title: "운임",
           key: "shipping_fee_ko",
-          width: "9%",
+          width: "8%",
         },
       ],
       sku_pagination: {
@@ -297,6 +315,15 @@ export default {
   },
 
   methods: {
+    setIsOptionReferencePrice() {
+      forEach(this.product.sku, (item, index) => {
+        if (item.key === this.option_reference_price_key) {
+          this.product.sku[index].is_option_reference_price = "T";
+        } else {
+          this.product.sku[index].is_option_reference_price = "F";
+        }
+      });
+    },
     /**
      * 새로운 품목 구매원가 입력 (CN)
      */
@@ -569,6 +596,13 @@ export default {
     this.css();
     this.marginInit();
   },
+  created() {
+    forEach(this.product.sku, (item) => {
+      if (item?.is_option_reference_price === "T") {
+        this.option_reference_price_key = item.key;
+      }
+    });
+  }
 };
 </script>
 
