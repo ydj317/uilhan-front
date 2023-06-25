@@ -70,7 +70,7 @@
         </span>
 
         <div class="setting-image">
-          <img v-if="logoImg.length > 0" :src="logoImg" />
+          <a-image :width="120" :src="logoImg" :fallback="tempImageUrl" />
           <div v-if="logoImg.length === 0" style="text-align: center">
             등록된 로고가 없습니다.
           </div>
@@ -91,7 +91,7 @@
         <div class="setting-image">
           <span v-for="(item, index) in icons">
             <p class="setting-delete" @click="delIcon(index)"></p>
-            <img :src="item.src" />
+            <a-image :src="item.src" :fallback="tempImageUrl" style="width: 120px; height: 120px;" />
           </span>
           <div v-if="icons.length === 0" style="text-align: center">
             등록된 아이콘이 없습니다.
@@ -139,6 +139,7 @@ const priceRangeEnd = ref("");
 const price = ref("");
 const priceType = ref("number");
 const collectionPriceList = ref([]);
+const tempImageUrl = ref(require('../../assets/img/temp_image.png'));
 const icons = ref([]);
 const logoImg = ref('');
 const isLogInDetail = ref(false);
@@ -553,6 +554,7 @@ onMounted(() => {
   background: #666;
   display: none;
   cursor: pointer;
+  z-index: 1;
 }
 
 .setting-image .setting-delete::before, .setting-image .setting-delete::after {
@@ -577,11 +579,4 @@ onMounted(() => {
 .setting-image span:hover .setting-delete {
   display: block;
 }
-
-.setting-image img {
-  width: 120px;
-  height: 120px;
-}
-
-
 </style>
