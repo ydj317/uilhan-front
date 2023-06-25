@@ -1,6 +1,6 @@
 <script setup>
 import {useRoute, useRouter} from "vue-router";
-import {computed, onBeforeMount, ref} from "vue";
+import {computed, onBeforeMount, reactive, ref} from "vue";
 import { message } from 'ant-design-vue';
 import {AuthRequest} from "@/util/request";
 import {
@@ -14,6 +14,21 @@ const router = useRouter();
 let datasource  = ref([]);
 let loading = ref(true);
 let buttonLoading = ref(false);
+const pagination = ref({
+  total: 0,
+  current: 1,
+  pageSize: 10,
+  showSizeChanger: true,
+  showTotal: (total,range) => `현재 ${range[0]}-${range[1]}건 / 총 ${total}건`,
+  pageSizeOptions: ['10', '20', '50'],
+  onChange: page => {
+    pagination.value.current = page;
+  },
+  onShowSizeChange: (current, pageSize) => {
+    pagination.value.current = 1;
+    pagination.value.pageSize = pageSize;
+  },
+});
 const status = [
   {name:'연동대기',style:''},
   {name:'연동중',style:'green'},
@@ -141,7 +156,7 @@ onBeforeMount(() => {
       </a-col>
     </a-row>
 
-    <a-table :columns="table_columns" :data-source="datasource" :row-selection="rowSelection" >
+    <a-table :columns="table_columns" :data-source="datasource" :row-selection="rowSelection" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
         <template v-if="column.dataIndex === 'status'">
           <a><a-tag :color="status[text]['style']">{{ status[text]['name'] }}</a-tag></a>

@@ -1,14 +1,14 @@
 <script setup name="delivery_address_form">
 
-import {onBeforeMount, onMounted, reactive, ref} from "vue";
+import {reactive, ref, watch, watchEffect} from "vue";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
-import {useRoute, useRouter} from "vue-router";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps(['modal_outvisible'])
 const emit = defineEmits(['refresh']);
-const route = useRoute();
-const router = useRouter();
 
 const deliveryModalFormRef = ref();
 const state = reactive({
@@ -97,6 +97,17 @@ const openDialog = (type, action, id = null, data = {}) => {
     state.form.nation_code = data.nation_code || 'KR'
   }
 };
+
+watchEffect(() => {
+  if(state.form.nation_code !== "KR"){
+    state.form.doro_zip_code = ''
+    state.form.doro_address_1 = ''
+    state.form.doro_address_2 = ''
+  } else {
+    state.form.city = ''
+    state.form.state = ''
+  }
+})
 
 // 关闭弹窗
 const closeModal = () => {

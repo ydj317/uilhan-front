@@ -159,6 +159,10 @@ const getDeliveryOutAddressList = () => {
   });
 }
 
+/**
+ * 출고지 선택후 상세정보 노출
+ * @param value
+ */
 const selectDeliveryOutAddress = (value) => {
   if (!value) {
     deliveryOutAddressDetail.value = false;
@@ -177,6 +181,10 @@ const selectDeliveryOutAddress = (value) => {
   });
 }
 
+/**
+ * 교환/반품지 선택후 상세정보 노출
+ * @param value
+ */
 const selectDeliveryInAddress = (value) => {
   if (!value) {
     deliveryInAddressDetail.value = false;
@@ -219,7 +227,7 @@ const getDeliveryInAddressList = () => {
   });
 }
 
-// 打开新增菜单弹窗
+// 모델창 오픈
 const onOpenAddModel = (type, action) => {
   deliveryModalRef.value.openDialog(type, action);
 };
@@ -234,6 +242,9 @@ onBeforeMount(() => {
   getDeliveryInAddressList();
 })
 
+/**
+ * 출고지,교환/반품지 등록수정 완료후 실행
+ */
 const onDeliveryAddressData = () => {
   indicator.value = true;
   setTimeout(() => {
@@ -244,6 +255,7 @@ const onDeliveryAddressData = () => {
     indicator.value = false;
   }, 500)
 }
+
 </script>
 
 <template>
@@ -252,14 +264,17 @@ const onDeliveryAddressData = () => {
             @finishFailed="onFinishFailed" autocomplete="off" layout="horizontal" class="delivery_form">
       <a-form-item label="배송정책명" name="template_name"
                    :rules="[{ required: true, message: '배송정책명을 입력해 주세요.' }]">
-        <a-input v-model:value="formState.template_name" allow-clear/>
+        <a-input v-model:value="formState.template_name" allow-clear placeholder="배송정책명을 입력해 주세요."/>
       </a-form-item>
       <a-form-item
           name="delivery_company"
           label="택배사코드"
-          :rules="[{ required: true, message: '택배사코드를 선택해 주세요' }]"
+          :rules="[{ required: true, message: '택배사코드를 선택해 주세요.' }]"
       >
-        <a-select v-model:value="formState.delivery_company">
+        <a-select v-model:value="formState.delivery_company" placeholder="택배사코드를 선택해 주세요.">
+          <a-select-option value="">
+            - 선택 -
+          </a-select-option>
           <a-select-option :value="item.code" v-for="(item,index) in deliveryCompany" :key="index">
             {{ item.delivery_com }}
           </a-select-option>
@@ -290,25 +305,28 @@ const onDeliveryAddressData = () => {
       <div style="display: flex;">
         <a-form-item label="배송비" name="delivery_price"
                      :rules="[{ required: true, message: '배송비를 입력해 주세요.' }]" :style="{flex:'1'}">
-          <a-input v-model:value="formState.delivery_price" allow-clear/>
+          <a-input value="0" allow-clear placeholder="배송비를 입력해 주세요." v-if="formState.delivery_policy ==='6'" disabled/>
+          <a-input v-model:value="formState.delivery_price" allow-clear placeholder="배송비를 입력해 주세요." v-else/>
         </a-form-item>
 
         <a-form-item label="상품 1개단위 배송비" name="delivery_unit_price"
                      :rules="[{ required: true, message: '상품 1개단위 배송비를 입력해 주세요.'}]"
                      :style="{flex:'1',marginLeft:'-1px'}">
-          <a-input v-model:value="formState.delivery_unit_price" allow-clear/>
+
+          <a-input v-model:value="formState.delivery_unit_price" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요." v-if="formState.delivery_policy ==='6'"/>
+          <a-input v-model:value="formState.delivery_unit_price" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요." v-else disabled/>
         </a-form-item>
       </div>
 
       <div style="display: flex;">
         <a-form-item label="반품 배송비" name="return_shipping_price"
                      :rules="[{ required: true, message: '반품 배송비를 입력해 주세요.'}]" :style="{flex:'1'}">
-          <a-input v-model:value="formState.return_shipping_price" allow-clear/>
+          <a-input v-model:value="formState.return_shipping_price" allow-clear placeholder="반품 배송비를 입력해 주세요."/>
         </a-form-item>
 
         <a-form-item label="교환 배송비" name="exchange_shipping_price"
                      :rules="[{ required: true, message: '교환 배송비를 입력해 주세요.' }]" :style="{flex:'1',marginLeft:'-1px'}">
-          <a-input v-model:value="formState.exchange_shipping_price" allow-clear/>
+          <a-input v-model:value="formState.exchange_shipping_price" allow-clear placeholder="교환 배송비를 입력해 주세요."/>
         </a-form-item>
       </div>
       <a-form-item label="편도/왕복 여부" name="return_shipping_cnt">
@@ -334,26 +352,27 @@ const onDeliveryAddressData = () => {
       <div style="display: flex;">
         <a-form-item label="제주 추가 배송비" name="jeju_delivery_price"
                      :rules="[{ required: true, message: '제주 추가 배송비를 입력해 주세요.' }]" class="-item-no-flex"
-                     :style="{flex:'1'}">
-          <a-input v-model:value="formState.jeju_delivery_price" allow-clear/>
+                     :style="{flex:'1'}" v-if="formState.delivery_region_use === 'Y'">
+          <a-input v-model:value="formState.jeju_delivery_price" allow-clear placeholder="제주 추가 배송비를 입력해 주세요."/>
         </a-form-item>
 
         <a-form-item label="도서산간 추가 배송비" name="island_delivery_price"
                      :rules="[{ required: true, message: '도서산간 추가 배송비를 입력해 주세요.' }]"
-                     :style="{flex:'1',marginLeft:'-1px'}">
-          <a-input v-model:value="formState.island_delivery_price" allow-clear/>
+                     :style="{flex:'1',marginLeft:'-1px'}" v-if="formState.delivery_region_use === 'Y'">
+          <a-input v-model:value="formState.island_delivery_price" allow-clear placeholder="도서산간 추가 배송비를 입력해 주세요."/>
         </a-form-item>
       </div>
 
 
       <a-form-item label="출고지" name="out_addr_ix"
-                   :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]" :style="{flex:'1'}">
+                   :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]" :style="{flex:'1'}"
+                   extra="* 출고지 등록시 [- 선택 -] 을 선택하고 등록해 주세요.">
         <div style="display: flex;margin-bottom: 10px;">
           <a-select v-model:value="formState.out_addr_ix" @change="selectDeliveryOutAddress">
             <a-select-option value="">- 선택 -</a-select-option>
             <a-select-option :value="outItem.addrIx" v-for="outItem in deliveryOutAddressList" :key="outItem.addrIx">
               {{ outItem.addrName }} -
-              {{ JSON.parse(outItem.jsonData).doro_address_1 || JSON.parse(outItem.jsonData).address_city }}
+              {{ JSON.parse(outItem.jsonData).doro_address_1 || JSON.parse(outItem.jsonData).city }}
             </a-select-option>
           </a-select>
           <a-button v-if="!formState.out_addr_ix" type="primary" @click="onOpenAddModel('out_address','add')">등록
@@ -369,13 +388,14 @@ const onDeliveryAddressData = () => {
       </a-form-item>
 
       <a-form-item label="교환/반품지" name="in_addr_ix"
-                   :rules="[{ required: true, message: '교환/반품지를 선택 주세요.' }]">
+                   :rules="[{ required: true, message: '교환/반품지를 선택 주세요.' }]"
+                   extra="* 교환/반품지 등록시 [- 선택 -] 을 선택하고 등록해 주세요.">
         <div style="display: flex;margin-bottom: 10px;">
           <a-select v-model:value="formState.in_addr_ix" @change="selectDeliveryInAddress">
             <a-select-option value="">- 선택 -</a-select-option>
             <a-select-option :value="item.addrIx" v-for="(item,index) in deliveryInAddress" :key="index">
               {{ item.addrName }} -
-              {{ JSON.parse(item.jsonData).doro_address_1 || JSON.parse(item.jsonData).address_city }}
+              {{ JSON.parse(item.jsonData).doro_address_1 || JSON.parse(item.jsonData).city }}
             </a-select-option>
           </a-select>
           <a-button v-if="!formState.in_addr_ix" type="primary" @click="onOpenAddModel('in_address','add')">등록
@@ -393,7 +413,7 @@ const onDeliveryAddressData = () => {
 
       <div style="display: flex;justify-content: center;margin-top: 20px;">
         <a-button type="primary" html-type="submit" :loading="buttonLoading">저장</a-button>
-        <a-button style="margin-left: 10px" @click="router.go(-1)">취소</a-button>
+        <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>
       </div>
     </a-form>
   </a-card>
