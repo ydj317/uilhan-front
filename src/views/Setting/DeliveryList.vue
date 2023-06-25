@@ -1,6 +1,7 @@
 <script setup>
 import {useRoute, useRouter} from "vue-router";
-import {computed, onBeforeMount, onMounted, reactive, ref} from "vue";
+import {computed, onBeforeMount, ref} from "vue";
+import { message } from 'ant-design-vue';
 import {AuthRequest} from "@/util/request";
 import {
   EditOutlined,
@@ -17,6 +18,7 @@ const status = [
   {name:'연동대기',style:''},
   {name:'연동중',style:'green'},
 ]
+
 /**
  * 배송정책 리스트
  */
@@ -65,6 +67,7 @@ const syncDelivery = () => {
       alert(res.message)
       return false;
     }
+    message.success(res.data.message)
     buttonLoading.value = false;
     getDeliveryList()
   }).catch((error) => {
@@ -82,6 +85,7 @@ const syncDeliveryOutAddress = () => {
       alert(res.message)
       return false;
     }
+    message.success(res.data.message);
     buttonLoading.value = false;
     getDeliveryList()
   }).catch((error) => {
@@ -99,6 +103,7 @@ const syncDeliveryInAddress = () => {
       alert(res.message)
       return false;
     }
+    message.success(res.data.message);
     buttonLoading.value = false;
     getDeliveryList()
   }).catch((error) => {
@@ -136,7 +141,7 @@ onBeforeMount(() => {
       </a-col>
     </a-row>
 
-    <a-table :columns="table_columns" :data-source="datasource" :row-selection="rowSelection" :scroll="{ x: 750 }">
+    <a-table :columns="table_columns" :data-source="datasource" :row-selection="rowSelection" >
       <template #bodyCell="{ column,record, text }">
         <template v-if="column.dataIndex === 'status'">
           <a><a-tag :color="status[text]['style']">{{ status[text]['name'] }}</a-tag></a>
