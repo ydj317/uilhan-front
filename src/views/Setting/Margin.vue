@@ -32,6 +32,9 @@
           <PlusOutlined />
           등록
         </a-tag>
+
+        <!--도움말-->
+        <div class="setting-help">* 상품 수집 시 설정한 마진율로 도매가 가격이 계산됩니다.</div>
       </a-descriptions-item>
 
       <a-descriptions-item label="공급마진율" v-if="isAdmin">
@@ -59,6 +62,9 @@
           <PlusOutlined />
           등록
         </a-tag>
+
+        <!--도움말-->
+        <div class="setting-help">* 상품 수집 시 설정한 마진율로 공급가 가격이 계산됩니다.</div>
       </a-descriptions-item>
 
       <a-descriptions-item label="할인전가격">
@@ -86,6 +92,9 @@
           <PlusOutlined />
           등록
         </a-tag>
+
+        <!--도움말-->
+        <div class="setting-help">* 상품 수집 시 설정한 마진율로 할인전 가격이 계산됩니다.</div>
       </a-descriptions-item>
 
       <a-descriptions-item label="판매마진율">
@@ -113,6 +122,9 @@
           <PlusOutlined />
           등록
         </a-tag>
+
+        <!--도움말-->
+        <div class="setting-help">* 상품 수집 시 설정한 마진율로 판매가 가격이 계산됩니다.</div>
       </a-descriptions-item>
     </a-descriptions>
     <div style="height: 20px;"></div>
@@ -120,12 +132,14 @@
       <a-descriptions-item label="현재 환율">
         <div style="padding: 5px 0;">
           <a-tooltip>
-            <template #title>{{ nowTime }}</template>
             <a-tag color="blue">한국 KRW {{ rateKor }}</a-tag>
             <span style="margin: 0 7px 0 0"><SwapOutlined /></span>
             <a-tag>중국 RMB {{ rateCn }}</a-tag>
           </a-tooltip>
         </div>
+
+        <!--도움말-->
+        <div class="setting-help">* 오늘의 환율 입니다.</div>
       </a-descriptions-item>
 
       <a-descriptions-item label="등록 환률">
@@ -153,6 +167,9 @@
           <PlusOutlined />
           등록
         </a-tag>
+
+        <!--도움말-->
+        <div class="setting-help">* 상품 수집 시 설정한 환율로 가격이 계산됩니다.</div>
       </a-descriptions-item>
     </a-descriptions>
   </a-card>

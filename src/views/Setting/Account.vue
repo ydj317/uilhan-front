@@ -12,18 +12,24 @@
         <br>
         <a-input class="mt5" v-model:value="secretKey" placeholder="SecretKey" style="width: 300px;" />
         <br>
-        <a-button class="mt5" @click="addKey" type="primary" style="width: 100px;">등록</a-button>
+        <a-button class="mt5" @click="addKey" type="primary">등록</a-button>
+
+        <!--도움말-->
+        <div class="setting-help">* 릴라켓 연동용 세션키를 입력하고 등록 부탁합니다.</div>
       </a-descriptions-item>
 
       <a-descriptions-item label="이미지 번역 남은 회수">
         <a-input :value="recharge" disabled style="width: 200px;" />
+
+        <!--도움말-->
+        <div class="setting-help">* 상품 이미지 변역 남은 회수를 표시합니다.</div>
       </a-descriptions-item>
 
       <a-descriptions-item label="수집 가격 설정">
         <!-- 등록된 설정 -->
         <template v-for="(item, index) in collectionPriceList">
           <a-tag @close.prevent="delCollectionPrice(index)" closable class="setting-tag">
-            {{ `${item.priceRangeStart} ~ ${item.priceRangeEnd}원 범위내 포함될시` }}
+            {{ `${item.priceRangeStart} ~ ${item.priceRangeEnd}원 범위 내 포함될 시` }}
             <DoubleRightOutlined :style="{ color: '#1890ff' }" />
             {{ `${item.price} ${item.priceType === "number" ? "원으로 수집" : "%로 수집"}` }}
           </a-tag>
@@ -46,10 +52,35 @@
           등록
         </a-tag>
         <!--도움말-->
-        <div class="setting-help">* 최대 3개까지 등록하실수 있습니다.</div>
+        <div class="setting-help">* 상품 수집시 설정된 가격으로 수집합니다.<br>* 최대 3개까지 등록하실 수 있습니다.</div>
       </a-descriptions-item>
 
-      <a-descriptions-item label="아이콘 설정">
+      <a-descriptions-item label="로고 설정">
+        <a-upload :showUploadList="false" :multiple="true" :headers="headers"
+                  :customRequest="(file) => customRequest(file, 'logo')" :beforeUpload="handleBeforeUpload">
+          <a-button>
+            <UploadOutlined />
+            로고 업로드
+          </a-button>
+        </a-upload>
+
+        <span v-if="logoImg.length > 0" class="ml10">
+        <a-button v-if="isLogInDetail" @click="setLogoInDetail(false)" danger ghost>상품 상세 설명 적용 취소</a-button>
+        <a-button v-else @click="setLogoInDetail(true)" type="primary">상품 상세 설명 적용</a-button>
+        </span>
+
+        <div class="setting-image">
+          <img v-if="logoImg.length > 0" :src="logoImg" />
+          <div v-if="logoImg.length === 0" style="text-align: center">
+            등록된 로고가 없습니다.
+          </div>
+        </div>
+
+        <!--도움말-->
+        <div class="setting-help">* 업로드한 로고 이미지를 상품 상세 설명에 적용합니다.</div>
+      </a-descriptions-item>
+
+      <a-descriptions-item label="아이콘 설정" v-if="isRelaket">
         <a-upload :showUploadList="false" :multiple="true" :headers="headers"
                   :customRequest="(file) => customRequest(file, 'icon')" :beforeUpload="handleBeforeUpload">
           <a-button>
@@ -57,26 +88,23 @@
             업로드
           </a-button>
         </a-upload>
-        <div class="setting-icons">
+        <div class="setting-image">
           <span v-for="(item, index) in icons">
-            <icon class="setting-delete" @click="delIcon(index)"></icon>
+            <p class="setting-delete" @click="delIcon(index)"></p>
             <img :src="item.src" />
           </span>
           <div v-if="icons.length === 0" style="text-align: center">
-            추가된 아이콘이 없습니다.
+            등록된 아이콘이 없습니다.
           </div>
         </div>
       </a-descriptions-item>
 
-      <a-descriptions-item label="로고 설정">
-      </a-descriptions-item>
-
       <a-descriptions-item label="카테고리 동기화" v-if="isAdmin">
-        <a-button style="width: 100px;" @click="onClickSyncDomeggookCategory" type="primary">수집 실행</a-button>
+        <a-button @click="onClickSyncDomeggookCategory" type="primary">동기화 실행</a-button>
       </a-descriptions-item>
 
       <a-descriptions-item label="이미지 백업" v-if="isAdmin">
-        <a-button style="width: 100px;" @click="backupImages" type="primary">백업 실행</a-button>
+        <a-button @click="backupImages" type="primary">백업 실행</a-button>
       </a-descriptions-item>
     </a-descriptions>
   </a-card>
@@ -90,7 +118,7 @@ import Loading from "vue-loading-overlay";
 import {
   DoubleRightOutlined,
   PlusOutlined,
-  UploadOutlined,
+  UploadOutlined
 } from "@ant-design/icons-vue";
 import { onMounted, reactive, ref } from "vue";
 import { useStore } from "vuex";
@@ -112,17 +140,67 @@ const price = ref("");
 const priceType = ref("number");
 const collectionPriceList = ref([]);
 const icons = ref([]);
-const logoImg = ref("");
+const logoImg = ref('');
+const isLogInDetail = ref(false);
 const headers = ref({
   token: Cookie.get("token"),
   "Content-Type": "multipart/form-data"
 });
 
-const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
-
 const input_visible = reactive({
   price_input_visible: false
 });
+
+const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
+const isRelaket = ref(Cookie.get("member_roles").split(",").includes("ROLE_RELAKET"));
+
+function setLogoInDetail(value) {
+  indicator.value = true;
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userup", {
+    value: value,
+    type: "logoindetail",
+  }).then((res) => {
+    if (res.status !== '2000') {
+      alert(res.message)
+      return false;
+    }
+
+    isLogInDetail.value = res.data;
+    if (isLogInDetail.value) {
+      alert('상품 상세 설명에 로고 이미지 적용 성공하였습니다.\n페이지를 갱신하시면 상품 상세 편집 창에서 효과를 확인하실 수 있습니다.')
+    } else {
+      alert('상품 상세 설명에 로고 이미지 적용 취소하였습니다.\n페이지를 갱신하시면 상품 상세 편집 창에서 효과를 확인하실 수 있습니다.')
+    }
+
+    indicator.value = false;
+  });
+}
+
+function setLogo() {
+  if (logoImg.value.length === 0) {
+    alert("업로드한 이미지가 없습니다");
+    return false;
+  }
+  indicator.value = true;
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userup", {
+    value: logoImg.value,
+    type: "logo",
+  }).then((res) => {
+    if (res.status !== '2000') {
+      alert(res.message)
+      return false;
+    }
+
+    if (res.data === undefined || res.data.length === 0) {
+      alert("로고 업로드 실패");
+      return false;
+    }
+
+    logoImg.value = res.data;
+    console.log('로고이미지 저장 성공')
+    indicator.value = false;
+  });
+}
 
 function delIcon(index) {
   let delData = [{ src: icons.value[index].src }];
@@ -145,7 +223,6 @@ function delIcon(index) {
   });
 }
 
-
 function customRequest(option, type) {
   const formData = new FormData();
   formData.append("file", option.file);
@@ -162,6 +239,8 @@ function customRequest(option, type) {
 
     if (type === "logo") {
       logoImg.value = res.data.img_url;
+      setLogo()
+      setLogoInDetail(true)
     } else {
       icons.value.push({ src: res.data.img_url });
     }
@@ -362,7 +441,8 @@ function getUser() {
         res.data.logo !== undefined &&
         res.data.logo.length > 0
       ) {
-        logoImg.value = res.data.logo;
+        logoImg.value = res.data.logo
+        isLogInDetail.value = res.data.logoindetail
       }
 
       if (
@@ -397,6 +477,12 @@ onMounted(() => {
 .setting-input .ant-select-selector {
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
+}
+
+.setting-help {
+  font-size: 12px;
+  padding-top: 10px;
+  color: #999;
 }
 </style>
 
@@ -446,56 +532,53 @@ onMounted(() => {
   margin-right: 5px;
 }
 
-.setting-help {
-  font-size: 12px;
-  padding-top: 10px;
-  color: #999;
-}
-
-.setting-icons {
+.setting-image {
   padding: 10px;
   margin-top: 10px;
   border: 1px solid #eee;
 }
 
-.setting-icons span {
+.setting-image span {
   display: inline-block;
   position: relative;
   margin-right: 10px;
 }
 
-.setting-icons .setting-delete {
+.setting-image .setting-delete {
   position: absolute;
   top: 0;
   right: 0;
   width: 20px;
   height: 20px;
-  background: rgb(0,0,0,0.3);
+  background: #666;
   display: none;
   cursor: pointer;
 }
-.setting-icons .setting-delete::before, .setting-icons .setting-delete::after {
+
+.setting-image .setting-delete::before, .setting-image .setting-delete::after {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   width: 120%;
   height: 1px;
-  background-color: rgb(255,255,255,0.8);
+  background-color: rgb(255, 255, 255, 0.8);
   transform-origin: center;
 }
-.setting-icons .setting-delete::before {
+
+.setting-image .setting-delete::before {
   transform: translate(-50%, -50%) rotate(45deg);
 }
-.setting-icons .setting-delete::after {
+
+.setting-image .setting-delete::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-.setting-icons span:hover .setting-delete {
+.setting-image span:hover .setting-delete {
   display: block;
 }
 
-.setting-icons img {
+.setting-image img {
   width: 120px;
   height: 120px;
 }
