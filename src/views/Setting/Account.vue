@@ -70,7 +70,7 @@
         </span>
 
         <div class="setting-image">
-          <a-image :width="120" :src="logoImg" :fallback="tempImageUrl" />
+          <a-image v-if="logoImg.length > 0" :src="logoImg" :fallback="tempImageUrl" style="width: 120px; height: 120px;" />
           <div v-if="logoImg.length === 0" style="text-align: center">
             등록된 로고가 없습니다.
           </div>
@@ -203,12 +203,32 @@ function setLogo() {
   });
 }
 
+function delLogo(oldLogo) {
+  if (oldLogo === '') {
+    return false;
+  }
+  let delData = [{ src: oldLogo }];
+
+  indicator.value = true;
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/delicon", {
+    data: delData,
+    type: "logo"
+  }).then((res) => {
+    if (res.status !== "2000") {
+      alert(res.message);
+    }
+
+    console.log("oldLogo 삭제 성공");
+    indicator.value = false;
+  });
+}
+
 function delIcon(index) {
   let delData = [{ src: icons.value[index].src }];
 
   indicator.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/delicon", {
-    data: [{ src: icons.value[index].src }],
+    data: delData,
     type: "icon"
   }).then((res) => {
     if (res.status !== "2000") {
@@ -219,12 +239,14 @@ function delIcon(index) {
       icons.value = icons.value.filter((item) => item.src !== delData[i].src);
     }
 
-    console.log("삭제 성공");
+    console.log("icon 삭제 성공");
     indicator.value = false;
   });
 }
 
 function customRequest(option, type) {
+  const oldLogo = logoImg.value;
+
   const formData = new FormData();
   formData.append("file", option.file);
   formData.append("relation_type", "user");
@@ -242,6 +264,7 @@ function customRequest(option, type) {
       logoImg.value = res.data.img_url;
       setLogo()
       setLogoInDetail(true)
+      delLogo(oldLogo)
     } else {
       icons.value.push({ src: res.data.img_url });
     }
