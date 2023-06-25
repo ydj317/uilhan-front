@@ -57,7 +57,6 @@ const getDeliveryList = () => {
 const table_columns = computed(() => {
   return [
     { title: 'ID', dataIndex: 'id', },
-    { title: 'DtIx', dataIndex: 'dtIx', },
     { title: '배송정책명', dataIndex: 'templateName', },
     { title: '시간', dataIndex: 'updDate', },
     { title: '연동상태', dataIndex: 'status', },

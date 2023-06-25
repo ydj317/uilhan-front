@@ -299,14 +299,15 @@ const onDeliveryAddressData = () => {
         <a-radio-group v-model:value="formState.delivery_policy">
           <a-radio value="1">무료배송</a-radio>
           <a-radio value="2">고정배송</a-radio>
-          <a-radio value="6">1개당 배송비</a-radio>
+          <a-radio value="6" v-if="formState.delivery_policy===6" disabled="disabled">1개당 배송비</a-radio>
+          <a-radio value="6" v-else disabled="disabled">1개당 배송비</a-radio>
         </a-radio-group>
       </a-form-item>
       <div style="display: flex;">
         <a-form-item label="배송비" name="delivery_price"
                      :rules="[{ required: true, message: '배송비를 입력해 주세요.' }]" :style="{flex:'1'}">
-          <a-input value="0" allow-clear placeholder="배송비를 입력해 주세요." v-if="formState.delivery_policy ==='6'" disabled/>
-          <a-input v-model:value="formState.delivery_price" allow-clear placeholder="배송비를 입력해 주세요." v-else/>
+
+          <a-input v-model:value="formState.delivery_price" allow-clear placeholder="배송비를 입력해 주세요."/>
         </a-form-item>
 
         <a-form-item label="상품 1개단위 배송비" name="delivery_unit_price"
