@@ -119,7 +119,7 @@
                           <template #title>
                             <span>{{ market_info.market_account.split("::")[1] }}</span>
                           </template>
-                          <span :class="market_info.status" @click="singlePop(record)">
+                          <span class="item-market-icon" :class="market_info.status" @click="singlePop(record)">
                             <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
                           </span>
                         </a-tooltip>
@@ -1071,29 +1071,27 @@ export default defineComponent({
   color: #555;
 }
 
-#content-content .cantent .item-market {
+.item-market {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
 }
 
-.unsync img {
-  cursor: pointer;
+.item-market-icon img {
   width: 16px;
   height: 16px;
+}
+.unsync img {
+  cursor: pointer;
   filter: grayscale(100%);
   opacity: 0.3;
 }
-
 .unsync:hover img {
   filter: grayscale(0%);
   opacity: 1;
 }
-
 .failed img, .success img, .sending img {
   cursor: pointer;
-  width: 16px;
-  height: 16px;
   filter: grayscale(0%);
   opacity: 1;
 }
