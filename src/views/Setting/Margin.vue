@@ -107,8 +107,8 @@
             class="setting-tag"
             :style="item.value === type_margin_option.selling_margin_option ?
                 {backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff'} :
-                {backgroundColor: '#fff'}"
-          >{{ item.label }}
+                {backgroundColor: '#fff'}">
+            {{ item.label }}
           </a-tag>
         </template>
         <!-- 등록버튼 -->
@@ -322,8 +322,12 @@ function deleteMargin(type, value) {
 }
 
 function updateMargin(type, value) {
+  // 이미 선택된 항목은 끝
+  if (type_margin_option[type + '_margin_option'] === value) {
+    return false;
+  }
 
-  let aOptions = type_margin[type + "_margin"];
+  let aOptions = type_margin[type + '_margin'];
   aOptions.map((item, i) => {
     aOptions[i].use = "F";
     if (parseInt(item.value) === parseInt(value)) {
