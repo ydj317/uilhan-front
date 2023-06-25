@@ -1,18 +1,18 @@
-<template >
+<template>
   <div style="position: sticky;top: 0;">
     <a-menu
       v-model:selectedKeys="selectedKeys"
       mode="inline"
       theme="dark"
     >
-<!--      <a-menu-item key="0">-->
-<!--        <template #icon>-->
-<!--          <gift-outlined />-->
-<!--        </template>-->
-<!--        <router-link to="/main">-->
-<!--          <span>메인</span>-->
-<!--        </router-link>-->
-<!--      </a-menu-item>-->
+      <!--      <a-menu-item key="0">-->
+      <!--        <template #icon>-->
+      <!--          <gift-outlined />-->
+      <!--        </template>-->
+      <!--        <router-link to="/main">-->
+      <!--          <span>메인</span>-->
+      <!--        </router-link>-->
+      <!--      </a-menu-item>-->
       <a-menu-item key="1">
         <template #icon>
           <gift-outlined />
@@ -46,10 +46,10 @@
           <setting-outlined />
         </template>
         <template #title>
-          <span>설정(준비중)</span>
+          <span>설정</span>
         </template>
         <a-menu-item key="061">
-          <router-link to="/setting/margin"><span>릴라켓정보</span></router-link>
+          <router-link to="/setting/account"><span>계정정보</span></router-link>
         </a-menu-item>
         <a-menu-item key="062">
           <router-link to="/setting/margin"><span>마진 & 환율</span></router-link>
@@ -70,7 +70,7 @@
         <template #icon>
           <file-text-outlined />
         </template>
-        <span >상품부가정보(준비중)</span>
+        <span>상품부가정보(준비중)</span>
       </a-menu-item>
       <a-menu-item key="11" v-if="isAdmin">
         <template #icon>
@@ -101,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from "vue";
 import Cookie from "js-cookie";
 import {
   GiftOutlined,
@@ -113,18 +113,19 @@ import {
   GroupOutlined,
   AppstoreOutlined,
   MoneyCollectOutlined,
-  CloseCircleOutlined,
-} from '@ant-design/icons-vue';
+  CloseCircleOutlined
+} from "@ant-design/icons-vue";
+import Loading from "vue-loading-overlay";
 
-const selectedKeys = ref(['1']);
-const openKeys = ref(['1']);
+const selectedKeys = ref(["1"]);
+const openKeys = ref(["1"]);
 const rootSubmenuKeys = ref([]);
 
 const isAdmin = ref(false);
 
-onMounted( () => {
-  const roles = Cookie.get('member_roles');
-  if (roles.indexOf('ROLE_ADMIN') > -1) {
+onMounted(() => {
+  const roles = Cookie.get("member_roles");
+  if (roles.indexOf("ROLE_ADMIN") > -1) {
     isAdmin.value = true;
   }
 });
