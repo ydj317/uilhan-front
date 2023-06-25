@@ -478,12 +478,6 @@ onMounted(() => {
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
 }
-
-.setting-help {
-  font-size: 12px;
-  padding-top: 10px;
-  color: #999;
-}
 </style>
 
 <style scoped>
@@ -530,6 +524,12 @@ onMounted(() => {
 .setting-input .setting-select {
   width: 100px;
   margin-right: 5px;
+}
+
+.setting-help {
+  font-size: 12px;
+  padding-top: 10px;
+  color: #999;
 }
 
 .setting-image {

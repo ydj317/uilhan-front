@@ -516,7 +516,9 @@ onMounted(() => {
   border-bottom-left-radius: 0;
 }
 
-.setting-btn {
-  display: inline-block;
+.setting-help {
+  font-size: 12px;
+  padding-top: 10px;
+  color: #999;
 }
 </style>
