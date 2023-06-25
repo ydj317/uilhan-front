@@ -1077,7 +1077,7 @@ export default defineComponent({
   justify-content: flex-start;
 }
 
-#content-content .cantent .unsync img {
+.unsync img {
   cursor: pointer;
   width: 16px;
   height: 16px;
@@ -1085,28 +1085,12 @@ export default defineComponent({
   opacity: 0.3;
 }
 
-#content-content .cantent .unsync:hover img {
+.unsync:hover img {
   filter: grayscale(0%);
   opacity: 1;
 }
 
-#content-content .cantent .failed img {
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
-  filter: grayscale(0%);
-  opacity: 1;
-}
-
-#content-content .cantent .success img {
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
-  filter: grayscale(0%);
-  opacity: 1;
-}
-
-#content-content .cantent .sending img {
+.failed img, .success img, .sending img {
   cursor: pointer;
   width: 16px;
   height: 16px;
