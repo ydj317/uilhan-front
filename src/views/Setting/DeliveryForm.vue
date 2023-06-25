@@ -299,8 +299,7 @@ const onDeliveryAddressData = () => {
         <a-radio-group v-model:value="formState.delivery_policy">
           <a-radio value="1">무료배송</a-radio>
           <a-radio value="2">고정배송</a-radio>
-          <a-radio value="6" v-if="formState.delivery_policy===6" disabled="disabled">1개당 배송비</a-radio>
-          <a-radio value="6" v-else disabled="disabled">1개당 배송비</a-radio>
+          <a-radio value="6">1개당 배송비</a-radio>
         </a-radio-group>
       </a-form-item>
       <div style="display: flex;">

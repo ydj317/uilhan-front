@@ -1,6 +1,6 @@
 <script setup name="delivery_address_form">
 
-import {reactive, ref, watch, watchEffect} from "vue";
+import {reactive, ref, watchEffect} from "vue";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
 import {useRouter} from "vue-router";
@@ -12,7 +12,7 @@ const emit = defineEmits(['refresh']);
 
 const deliveryModalFormRef = ref();
 const state = reactive({
-  form:{
+  form: {
     addr_ix: '',
     addr_product_type: '1',
     addr_name: '',
@@ -46,7 +46,7 @@ const handleOk = () => {
     state.modal.buttonLoading = true;
 
     let url = '';
-    if(state.modal.type === "out_address"){
+    if (state.modal.type === "out_address") {
       url = process.env.VUE_APP_API_URL + '/api/delivery/outAddressSave';
     } else {
       url = process.env.VUE_APP_API_URL + '/api/delivery/inAddressSave';
@@ -80,6 +80,7 @@ const handleOk = () => {
 
 // 打开弹窗
 const openDialog = (type, action, id = null, data = {}) => {
+  console.log(deliveryModalFormRef.value);
   if (type === 'out_address') {
     state.modal.title = '출고지 등록/수정';
     state.modal.addrName = '출고지 명';
@@ -92,14 +93,30 @@ const openDialog = (type, action, id = null, data = {}) => {
   state.modal.action = action;
   state.modal.id = id;
   state.modal.isShow = true;
-  if(action === 'edit'){
+  if (action === 'edit') {
     state.form = data
     state.form.nation_code = data.nation_code || 'KR'
+  } else {
+    state.form.addr_ix = ''
+    state.form.addr_product_type = '1'
+    state.form.addr_name = ''
+    state.form.person_name = ''
+    state.form.addr_phone = ''
+    state.form.addr_mobile = ''
+    state.form.nation_code = 'KR'
+    state.form.zip_code = ''
+    state.form.address_1 = ''
+    state.form.address_2 = ''
+    state.form.doro_zip_code = ''
+    state.form.doro_address_1 = ''
+    state.form.doro_address_2 = ''
+    state.form.city = ''
+    state.form.state = ''
   }
 };
 
 watchEffect(() => {
-  if(state.form.nation_code !== "KR"){
+  if (state.form.nation_code !== "KR") {
     state.form.doro_zip_code = ''
     state.form.doro_address_1 = ''
     state.form.doro_address_2 = ''
