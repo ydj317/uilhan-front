@@ -1,5 +1,5 @@
 <script setup>
-import {defineAsyncComponent, onBeforeMount, reactive, ref} from "vue";
+import {defineAsyncComponent, onBeforeMount, reactive, ref, watchEffect} from "vue";
 
 import {AuthRequest} from "@/util/request";
 import {useRoute, useRouter} from "vue-router";
@@ -11,6 +11,7 @@ const route = useRoute();
 const router = useRouter();
 let indicator = ref(false);
 let buttonLoading = ref(false);
+
 const deliveryModalRef = ref();
 const deliveryOutAddressList = ref([]);
 const deliveryOutAddressDetail = ref(false);
@@ -49,7 +50,6 @@ const deliveryCompany = [
   {'code': '606', 'delivery_com': '일양로지스'},
 ]
 const onFinish = values => {
-  values = Object.assign(values, route.params)
   values = Object.assign(values, {dt_ix: formState.dt_ix})
   buttonLoading.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/delivery/save', values).then((res) => {
@@ -100,7 +100,7 @@ let formState = reactive({
 const getDeliveryDetail = (id) => {
   if (!id) return false;
   indicator.value = true;
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/detail/' + id).then((res) => {
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/list/').then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
       indicator.value = false;
@@ -108,7 +108,7 @@ const getDeliveryDetail = (id) => {
       return false;
     }
 
-    let data = res.data;
+    let data = res.data[id];
     formState.dt_ix = data.dt_ix
     formState.template_name = data.template_name
     formState.delivery_company = data.delivery_company
@@ -126,10 +126,13 @@ const getDeliveryDetail = (id) => {
     formState.island_delivery_price = data.island_delivery_price
     formState.out_addr_ix = data.out_addr_ix
     formState.in_addr_ix = data.in_addr_ix
+    setTimeout(() => {
+      selectDeliveryInAddress(formState.in_addr_ix)
+      selectDeliveryOutAddress(formState.out_addr_ix)
+      indicator.value = false;
+    },500)
 
-    selectDeliveryInAddress(formState.in_addr_ix)
-    selectDeliveryOutAddress(formState.out_addr_ix)
-    indicator.value = false;
+
   }).catch((error) => {
     alert(error.message);
     indicator.value = false;
@@ -168,18 +171,9 @@ const selectDeliveryOutAddress = (value) => {
     deliveryOutAddressDetail.value = false;
     return
   }
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/deliveryOutAddress/detail/' + value).then((res) => {
-    if (res.status !== '2000') {
-      alert(res.message)
-      router.push('/setting/delivery')
-      return false;
-    }
-    deliveryOutAddressDetail.value = JSON.parse(res.data.jsonData);
-  }).catch((error) => {
-    alert(error.message);
-    return false;
-  });
+  deliveryOutAddressDetail.value = deliveryOutAddressList.value[value]
 }
+
 
 /**
  * 교환/반품지 선택후 상세정보 노출
@@ -190,24 +184,19 @@ const selectDeliveryInAddress = (value) => {
     deliveryInAddressDetail.value = false;
     return
   }
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/deliveryInAddress/detail/' + value).then((res) => {
-    if (res.status !== '2000') {
-      alert(res.message)
-      router.push('/setting/delivery')
-      return false;
-    }
-    deliveryInAddressDetail.value = JSON.parse(res.data.jsonData);
-  }).catch((error) => {
-    alert(error.message);
-    return false;
-  });
+
+  deliveryInAddressDetail.value = deliveryInAddress.value[value]
 }
+
+watchEffect(()=>{
+  deliveryInAddressDetail.value = deliveryInAddress.value[formState.in_addr_ix]
+  deliveryOutAddressDetail.value = deliveryOutAddressList.value[formState.out_addr_ix]
+})
 
 /**
  * 교환/반품지 조회
  */
 const getDeliveryInAddressList = () => {
-
   indicator.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/deliveryInAddress/list').then((res) => {
     if (res.status !== '2000') {
@@ -248,10 +237,18 @@ onBeforeMount(() => {
 const onDeliveryAddressData = () => {
   indicator.value = true;
   setTimeout(() => {
-    getDeliveryOutAddressList();
-    getDeliveryInAddressList();
-    selectDeliveryOutAddress(formState.out_addr_ix);
-    selectDeliveryInAddress(formState.in_addr_ix);
+    const promise = new Promise((resolve, reject) => {
+      getDeliveryOutAddressList();
+      getDeliveryInAddressList();
+      resolve('getListOk')
+    })
+
+    promise.then(() => {
+      selectDeliveryOutAddress(formState.out_addr_ix);
+      selectDeliveryInAddress(formState.in_addr_ix);
+    }).catch((error) => {
+      alert('새로고침 해주세요.')
+    })
     indicator.value = false;
   }, 500)
 }
@@ -370,9 +367,9 @@ const onDeliveryAddressData = () => {
         <div style="display: flex;margin-bottom: 10px;">
           <a-select v-model:value="formState.out_addr_ix" @change="selectDeliveryOutAddress">
             <a-select-option value="">- 선택 -</a-select-option>
-            <a-select-option :value="outItem.addrIx" v-for="outItem in deliveryOutAddressList" :key="outItem.addrIx">
-              {{ outItem.addrName }} -
-              {{ JSON.parse(outItem.jsonData).doro_address_1 || JSON.parse(outItem.jsonData).city }}
+            <a-select-option :value="outItem.addr_ix" v-for="outItem in deliveryOutAddressList" :key="outItem.addr_ix">
+              {{ outItem.addr_name }} -
+              {{ outItem.doro_address_1 || outItem.address_1.split('|').filter(Boolean).join('-') }}
             </a-select-option>
           </a-select>
           <a-button v-if="!formState.out_addr_ix" type="primary" @click="onOpenAddModel('out_address','add')">등록
@@ -393,9 +390,9 @@ const onDeliveryAddressData = () => {
         <div style="display: flex;margin-bottom: 10px;">
           <a-select v-model:value="formState.in_addr_ix" @change="selectDeliveryInAddress">
             <a-select-option value="">- 선택 -</a-select-option>
-            <a-select-option :value="item.addrIx" v-for="(item,index) in deliveryInAddress" :key="index">
-              {{ item.addrName }} -
-              {{ JSON.parse(item.jsonData).doro_address_1 || JSON.parse(item.jsonData).city }}
+            <a-select-option :value="item.addr_ix" v-for="(item,index) in deliveryInAddress" :key="index">
+              {{ item.addr_name }} -
+              {{ item.doro_address_1 || item.address_1.split('|').filter(Boolean).join('-') }}
             </a-select-option>
           </a-select>
           <a-button v-if="!formState.in_addr_ix" type="primary" @click="onOpenAddModel('in_address','add')">등록

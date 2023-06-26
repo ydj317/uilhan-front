@@ -6,14 +6,13 @@ import {AuthRequest} from "@/util/request";
 import {
   EditOutlined,
   PlusOutlined,
-  SyncOutlined
 } from '@ant-design/icons-vue';
 
 const router = useRouter();
 
 let datasource  = ref([]);
 let loading = ref(true);
-let buttonLoading = ref(false);
+
 const pagination = ref({
   total: 0,
   current: 1,
@@ -45,7 +44,7 @@ const getDeliveryList = () => {
       return false;
     }
     loading.value = false;
-    datasource.value = res.data;
+    datasource.value = Object.values(res.data)
   }).catch((error) => {
     loading.value = false;
     alert(error.message);
@@ -56,10 +55,9 @@ const getDeliveryList = () => {
 /** 테이블 헤드 */
 const table_columns = computed(() => {
   return [
-    { title: 'ID', dataIndex: 'id', },
-    { title: '배송정책명', dataIndex: 'templateName', },
-    { title: '시간', dataIndex: 'updDate', },
-    { title: '연동상태', dataIndex: 'status', },
+    { title: 'ID', dataIndex: 'dt_ix', },
+    { title: '배송정책명', dataIndex: 'template_name', },
+    { title: '배송비', dataIndex: 'delivery_price', },
     { title: '조작', key: 'action', fixed: 'right', width: 100,align:'center',},
   ]
 })
@@ -73,59 +71,6 @@ const rowSelection = {
   }),
 };
 
-const syncDelivery = () => {
-  buttonLoading.value = true;
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/syncDelivery').then((res) => {
-    if (res.status !== '2000') {
-      buttonLoading.value = false;
-      alert(res.message)
-      return false;
-    }
-    message.success(res.data.message)
-    buttonLoading.value = false;
-    getDeliveryList()
-  }).catch((error) => {
-    buttonLoading.value = false;
-    alert(error.message);
-    return false;
-  });
-}
-
-const syncDeliveryOutAddress = () => {
-  buttonLoading.value = true;
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/syncDeliveryOutAddress').then((res) => {
-    if (res.status !== '2000') {
-      buttonLoading.value = false;
-      alert(res.message)
-      return false;
-    }
-    message.success(res.data.message);
-    buttonLoading.value = false;
-    getDeliveryList()
-  }).catch((error) => {
-    buttonLoading.value = false;
-    alert(error.message);
-    return false;
-  });
-}
-
-const syncDeliveryInAddress = () => {
-  buttonLoading.value = true;
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/syncDeliveryInAddress').then((res) => {
-    if (res.status !== '2000') {
-      buttonLoading.value = false;
-      alert(res.message)
-      return false;
-    }
-    message.success(res.data.message);
-    buttonLoading.value = false;
-    getDeliveryList()
-  }).catch((error) => {
-    buttonLoading.value = false;
-    alert(error.message);
-    return false;
-  });
-}
 onBeforeMount(() => {
   getDeliveryList()
 })
@@ -145,12 +90,6 @@ onBeforeMount(() => {
 <!--        <a-button type="primary" danger><template #icon><delete-outlined /></template>선택삭제</a-button>-->
       </a-col>
       <a-col>
-        <a-button type="primary" @click="syncDelivery" :loading="buttonLoading"><template #icon><sync-outlined/></template>수집</a-button>
-        <a-divider type="vertical"></a-divider>
-        <a-button type="primary" @click="syncDeliveryOutAddress" :loading="buttonLoading"><template #icon><sync-outlined /></template>출고지 수집</a-button>
-        <a-divider type="vertical"></a-divider>
-        <a-button type="primary" @click="syncDeliveryInAddress" :loading="buttonLoading"><template #icon><sync-outlined /></template>교환/반품지 수집</a-button>
-        <a-divider type="vertical"></a-divider>
         <router-link to="/setting/delivery/form"><a-button type="primary" danger><template #icon><plus-outlined /></template>등록</a-button></router-link>
       </a-col>
     </a-row>
@@ -163,7 +102,7 @@ onBeforeMount(() => {
 
         <template v-else-if="column.key === 'action'">
           <span>
-            <router-link :to="`/setting/delivery/form/${record.id}`">
+            <router-link :to="`/setting/delivery/form/${record.dt_ix}`">
               <a-button type="primary" size="small">
                 <template #icon><edit-outlined /></template>
               </a-button>

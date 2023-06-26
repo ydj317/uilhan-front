@@ -52,8 +52,7 @@ const handleOk = () => {
       url = process.env.VUE_APP_API_URL + '/api/delivery/inAddressSave';
     }
 
-    values = Object.assign(state.form, {id: state.modal.id})
-    AuthRequest.post(url, values).then((res) => {
+    AuthRequest.post(url, state.form).then((res) => {
       if (res.status !== '2000') {
         state.modal.buttonLoading = false;
         alert(res.message)
@@ -80,7 +79,6 @@ const handleOk = () => {
 
 // 打开弹窗
 const openDialog = (type, action, id = null, data = {}) => {
-  console.log(deliveryModalFormRef.value);
   if (type === 'out_address') {
     state.modal.title = '출고지 등록/수정';
     state.modal.addrName = '출고지 명';
@@ -91,7 +89,6 @@ const openDialog = (type, action, id = null, data = {}) => {
   }
   state.modal.type = type;
   state.modal.action = action;
-  state.modal.id = id;
   state.modal.isShow = true;
   if (action === 'edit') {
     state.form = data
