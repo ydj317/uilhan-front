@@ -41,7 +41,7 @@
           </a-select>
           <a-button
               class="top_button_right_item_button"
-              @click="setSellingMargin('click')"
+              @click="setSellingMargin"
           >판매마진
           </a-button>
         </div>
@@ -54,7 +54,7 @@
               v-model:value="this.product.disp_margin_option"
           >
           </a-select>
-          <a-button class="top_button_right_item_button" @click="setDispMargin('click')"
+          <a-button class="top_button_right_item_button" @click="setDispMargin"
           >할인전
           </a-button>
         </div>
@@ -105,7 +105,7 @@
           :data-source="this.product.sku"
       >
         <!--bodyCell-->
-        <template v-slot:bodyCell="{ record, column, index }">
+        <template v-slot:bodyCell="{ record, column }">
           <!--선택-->
           <template v-if="column.key === 'checked'">
             <div class="center">
@@ -198,7 +198,8 @@
 
           <!--자체가격입력(custom)-->
           <template v-else-if="['wholesale_price', 'selling_price', 'disp_price'].includes(column.key)">
-            <a-input @blur="setPrice(column.key, index)" :style="'height: 30px; text-align: center;'" v-model:value="record['custom_' + column.key]" />
+            <div style="height: 30px; text-align: center; border: none;">{{ record[column.key] }}</div>
+            <a-input :style="'height: 30px; text-align: center;'" v-model:value="record['custom_' + column.key]" />
           </template>
 
           <!--보여주기-->
@@ -299,12 +300,12 @@ export default {
         {
           title: "운임",
           key: "shipping_fee_ko",
-          width: "7%",
+          width: "8%",
         },
         {
           title: "예상수익",
           key: "expected_return",
-          width: "%",
+          width: "8%",
         },
       ],
       sku_pagination: {
@@ -405,7 +406,7 @@ export default {
      * 판매가 = ( 구매원가 + 중국내 운임 ) * 판매마진율
      * sku[i].selling_price = ( sku[i].original_price + sku[i].shipping_fee_cn ) * user.selling_margin
      */
-    setSellingMargin(type) {
+    setSellingMargin() {
       this.product.sku.map((data, i) => {
         let selling_price = (
             (Number(data["original_price_cn"]) +
@@ -415,13 +416,7 @@ export default {
         ).toFixed(0);
         this.product.sku[i].selling_price =
             Math.ceil(Number(selling_price) / 100) * 100;
-        if (type === "click") {
-          this.product.sku[i].custom_selling_price = this.product.sku[i].selling_price;
-        }
       });
-      if (type === "click") {
-        this.setExpectedReturn();
-      }
       this.product.item_selling_margin_option =
           this.product.selling_margin_option;
     },
@@ -431,7 +426,7 @@ export default {
      * 할인가 = 할인가 * 할인마진율
      * sku[i].disp_price = sku[i].selling_price * user.disp_margin
      */
-    setDispMargin(type) {
+    setDispMargin() {
       this.product.sku.map((data, i) => {
         let disp_price = (
             (Number(data["original_price_cn"]) +
@@ -442,23 +437,8 @@ export default {
         ).toFixed(0);
         this.product.sku[i].disp_price =
             Math.ceil(Number(disp_price) / 100) * 100;
-        if (type === "click") {
-          this.product.sku[i].custom_disp_price = this.product.sku[i].disp_price;
-        }
       });
       this.product.item_disp_margin_option = this.product.disp_margin_option;
-    },
-    setPrice(key, index) {
-      if (["selling_price", "disp_price"].includes(key)) {
-        this.product.sku[index][key] = this.product.sku[index]["custom_" + key];
-        //예상수익 셋팅
-        if (key === "selling_price") {
-          let sellingPrice = this.product.sku[index][key];
-          let expected_return = (sellingPrice - this.product.sku[index].original_price_ko - sellingPrice * 0.12).toFixed(0);
-          this.product.sku[index].expected_return =
-              Math.ceil(Number(expected_return) / 100) * 100;
-        }
-      }
     },
 
     /**
@@ -470,8 +450,6 @@ export default {
       this.setWholesaleMargin();
       this.setSellingMargin();
       this.setDispMargin();
-      this.setCustomPrice(false);
-      this.setExpectedReturn();
       this.product.item_rate_margin_option = this.product.rate_margin_option;
     },
 
@@ -497,10 +475,6 @@ export default {
     skuBatch() {
       this.product.sku.map((sku, i) => {
         this.sku_columns.map((columns) => {
-          //custom price
-          if (["selling_price", "disp_price"].includes(columns.key)) {
-            this.product.sku[i]["custom_" + columns.key] = this.product.sku[0]["custom_" +  columns.key];
-          }
           if (!["code", "spec", "img"].includes(columns.key)) {
             this.product.sku[i][columns.key] = this.product.sku[0][columns.key];
             // this.product.sku[i].price_kor = this.product.sku[0].price_kor;
@@ -614,34 +588,12 @@ export default {
     // 전체 마진자동셋팅
     marginInit() {
       if (this.product.is_modify === "T") {
-        this.setCustomPrice(true);
         return false;
       }
 
       this.setWholesaleMargin();
       this.setSellingMargin();
       this.setDispMargin();
-      this.setCustomPrice(true);
-    },
-    setCustomPrice(bInit) {
-      this.product.sku.map((data, i) => {
-        if (bInit === true) {
-          if (this.product.sku[i].custom_selling_price === null) {
-            this.product.sku[i].custom_selling_price = this.product.sku[i].selling_price;
-          } else {
-            this.product.sku[i].selling_price = this.product.sku[i].custom_selling_price;
-          }
-          if (this.product.sku[i].custom_disp_price === null) {
-            this.product.sku[i].custom_disp_price = this.product.sku[i].disp_price;
-          } else {
-            this.product.sku[i].disp_price = this.product.sku[i].custom_disp_price;
-          }
-        } else {
-          //custom 가격 셋팅
-          this.product.sku[i].custom_selling_price = this.product.sku[i].selling_price;
-          this.product.sku[i].custom_disp_price = this.product.sku[i].disp_price;
-        }
-      });
     },
     setExpectedReturn() {
       this.product.sku.map((data, i) => {
@@ -656,7 +608,6 @@ export default {
   mounted() {
     this.css();
     this.marginInit();
-    //예상수익
     this.setExpectedReturn();
   },
   created() {
