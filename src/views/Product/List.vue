@@ -15,37 +15,33 @@
       </div>
 
       <!--검색기간-->
-      <div class="mt10">
+      <div>
+      <div class="inline-block mr17 mt10">
         <h1>기간</h1>
-        <a-select v-model:value="date_type" class="w10">
-          <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
-        </a-select>
-        <span style="margin-left: 8px;">
-        <a-space direction="vertical" class="w25">
+        <a-input-group compact>
+          <a-select v-model:value="date_type" style="width: 150px;">
+            <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
+          </a-select>
           <a-range-picker
-            class="w100"
             v-model:value="date"
             :placeholder="['Start Time', 'End Time']"
             format="YYYY-MM-DD"
-            @change="onChangeDatePicker"
-          />
-        </a-space>
-      </span>
+            @change="onChangeDatePicker" style="width: 300px;" />
+        </a-input-group>
       </div>
 
       <!--검색입력창-->
-      <div class="mt10">
+      <div class="inline-block mt10">
         <h1>키워드</h1>
-        <a-select v-model:value="search_key" class="w10 mr1">
-          <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">{{ config.label }}
-          </a-select-option>
-        </a-select>
-        <span style="margin-left: 8px;">
-      <a-input v-model:value="search_value" placeholder="키워드" class="w25 mr1" />
-      </span>
-        <span style="margin-left: 8px;">
-      <a-button @click="getList" type="primary" class="w5">검색</a-button>
-      </span>
+        <a-input-group compact>
+          <a-select v-model:value="search_key" style="width: 150px;">
+            <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">{{ config.label }}
+            </a-select-option>
+          </a-select>
+          <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;" />
+          <a-button @click="getList" type="primary">검색</a-button>
+        </a-input-group>
+      </div>
       </div>
     </div>
   </a-card>
@@ -318,7 +314,7 @@ export default defineComponent({
           ],
           label: "상품수집마켓",
           key: "market_code",
-          class: "",
+          class: "mr17 inline-block",
           group_class: "mb10"
         },
         {
@@ -338,8 +334,8 @@ export default defineComponent({
           ],
           label: "번역상태",
           key: "trans_status",
-          class: "mb10 mr17 inline-block",
-          group_class: ""
+          class: "mr17 inline-block",
+          group_class: "mb10"
         },
         {
           options: [

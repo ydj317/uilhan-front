@@ -9,29 +9,35 @@
     <a-descriptions title="마진율 설정" bordered :column="{ xs: 1, sm: 1, md: 1}">
       <a-descriptions-item label="도매마진율">
         <!-- 등록된 마진률 -->
-        <template v-for="item in type_margin.wholesale_margin">
-          <a-tag
-            @close.prevent="deleteMargin('wholesale', item.value)"
-            @click="updateMargin('wholesale', item.value)"
-            :closable="item.value !== type_margin_option.wholesale_margin_option"
-            class="setting-tag"
-            :style="item.value === type_margin_option.wholesale_margin_option ?
+        <a-input-group compact>
+          <template v-for="item in type_margin.wholesale_margin">
+            <a-tag
+              @close.prevent="deleteMargin('wholesale', item.value)"
+              @click="updateMargin('wholesale', item.value)"
+              :closable="item.value !== type_margin_option.wholesale_margin_option"
+              class="setting-tag mr5"
+              :style="item.value === type_margin_option.wholesale_margin_option ?
                 {backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff'} :
                 {backgroundColor: '#fff'}"
-          >{{ item.label }}
+            >{{ item.label }}
+            </a-tag>
+          </template>
+          <!-- 등록버튼 -->
+          <div v-if="input_visible.wholesale_input_visible" class="setting-input">
+            <a-input-group compact>
+              <a-input type="text" placeholder="명" v-model:value="type_margin_name.wholesale_margin_name"
+                       style="width: 120px;" />
+              <a-input type="text" placeholder="값" v-model:value="type_margin_value.wholesale_margin_value"
+                       style="width: 60px;" />
+              <a-button @click="addMargin('wholesale')" type="primary" class="ml5">등록</a-button>
+              <a-button @click="input_visible.wholesale_input_visible = false" class="ml5">취소</a-button>
+            </a-input-group>
+          </div>
+          <a-tag v-else class="setting-add" @click="input_visible.wholesale_input_visible = true">
+            <PlusOutlined />
+            등록
           </a-tag>
-        </template>
-        <!-- 등록버튼 -->
-        <div v-if="input_visible.wholesale_input_visible" class="setting-input">
-          <a-input type="text" placeholder="명" v-model:value="type_margin_name.wholesale_margin_name" />
-          <a-input type="text" placeholder="값" v-model:value="type_margin_value.wholesale_margin_value" />
-          <a-button @click="addMargin('wholesale')" type="primary">등록</a-button>
-          <a-button @click="input_visible.wholesale_input_visible = false" class="ml5">취소</a-button>
-        </div>
-        <a-tag v-else class="setting-add" @click="input_visible.wholesale_input_visible = true">
-          <PlusOutlined />
-          등록
-        </a-tag>
+        </a-input-group>
 
         <!--도움말-->
         <div class="setting-help">* 상품 수집 시 설정한 마진율로 도매가 가격이 계산됩니다.</div>
@@ -39,12 +45,13 @@
 
       <a-descriptions-item label="공급마진율" v-if="isAdmin">
         <!-- 등록된 마진률 -->
+        <a-input-group compact>
         <template v-for="item in type_margin.supply_margin">
           <a-tag
             @close.prevent="deleteMargin('supply', item.value)"
             @click="updateMargin('supply', item.value)"
             :closable="item.value !== type_margin_option.supply_margin_option"
-            class="setting-tag"
+            class="setting-tag mr5"
             :style="item.value === type_margin_option.supply_margin_option ?
                 {backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff'} :
                 {backgroundColor: '#fff'}"
@@ -53,15 +60,18 @@
         </template>
         <!-- 등록버튼 -->
         <div v-if="input_visible.supply_input_visible" class="setting-input">
-          <a-input type="text" placeholder="명" v-model:value="type_margin_name.supply_margin_name" />
-          <a-input type="text" placeholder="값" v-model:value="type_margin_value.supply_margin_value" />
-          <a-button @click="addMargin('supply')" type="primary">등록</a-button>
+          <a-input-group compact>
+          <a-input type="text" placeholder="명" v-model:value="type_margin_name.supply_margin_name" style="width: 120px;" />
+          <a-input type="text" placeholder="값" v-model:value="type_margin_value.supply_margin_value" style="width: 60px;" />
+          <a-button @click="addMargin('supply')" type="primary" class="ml5">등록</a-button>
           <a-button @click="input_visible.supply_input_visible = false" class="ml5">취소</a-button>
+          </a-input-group>
         </div>
         <a-tag v-else class="setting-add" @click="input_visible.supply_input_visible = true">
           <PlusOutlined />
           등록
         </a-tag>
+        </a-input-group>
 
         <!--도움말-->
         <div class="setting-help">* 상품 수집 시 설정한 마진율로 공급가 가격이 계산됩니다.</div>
@@ -69,12 +79,13 @@
 
       <a-descriptions-item label="할인전가격">
         <!-- 등록된 마진률 -->
+        <a-input-group compact>
         <template v-for="item in type_margin.disp_margin">
           <a-tag
             @close.prevent="deleteMargin('disp', item.value)"
             @click="updateMargin('disp', item.value)"
             :closable="item.value !== type_margin_option.disp_margin_option"
-            class="setting-tag"
+            class="setting-tag mr5"
             :style="item.value === type_margin_option.disp_margin_option ?
                 {backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff'} :
                 {backgroundColor: '#fff'}"
@@ -83,15 +94,18 @@
         </template>
         <!-- 등록버튼 -->
         <div v-if="input_visible.disp_input_visible" class="setting-input">
-          <a-input type="text" placeholder="명" v-model:value="type_margin_name.disp_margin_name" />
-          <a-input type="text" placeholder="값" v-model:value="type_margin_value.disp_margin_value" />
-          <a-button @click="addMargin('disp')" type="primary">등록</a-button>
+          <a-input-group compact>
+          <a-input type="text" placeholder="명" v-model:value="type_margin_name.disp_margin_name" style="width: 120px;" />
+          <a-input type="text" placeholder="값" v-model:value="type_margin_value.disp_margin_value" style="width: 120px;" />
+          <a-button @click="addMargin('disp')" type="primary" class="ml5">등록</a-button>
           <a-button @click="input_visible.disp_input_visible = false" class="ml5">취소</a-button>
+        </a-input-group>
         </div>
         <a-tag v-else class="setting-add" @click="input_visible.disp_input_visible = true">
           <PlusOutlined />
           등록
         </a-tag>
+        </a-input-group>
 
         <!--도움말-->
         <div class="setting-help">* 상품 수집 시 설정한 마진율로 할인전 가격이 계산됩니다.</div>
@@ -99,12 +113,13 @@
 
       <a-descriptions-item label="판매마진율">
         <!-- 등록된 마진률 -->
+        <a-input-group compact>
         <template v-for="item in type_margin.selling_margin">
           <a-tag
             @close.prevent="deleteMargin('selling', item.value)"
             @click="updateMargin('selling', item.value)"
             :closable="item.value !== type_margin_option.selling_margin_option"
-            class="setting-tag"
+            class="setting-tag mr5"
             :style="item.value === type_margin_option.selling_margin_option ?
                 {backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff'} :
                 {backgroundColor: '#fff'}">
@@ -113,15 +128,18 @@
         </template>
         <!-- 등록버튼 -->
         <div v-if="input_visible.selling_input_visible" class="setting-input">
-          <a-input type="text" placeholder="명" v-model:value="type_margin_name.selling_margin_name" />
-          <a-input type="text" placeholder="값" v-model:value="type_margin_value.selling_margin_value" />
-          <a-button @click="addMargin('selling')" type="primary">등록</a-button>
+          <a-input-group compact>
+          <a-input type="text" placeholder="명" v-model:value="type_margin_name.selling_margin_name" style="width: 120px;" />
+          <a-input type="text" placeholder="값" v-model:value="type_margin_value.selling_margin_value" style="width: 60px;" />
+          <a-button @click="addMargin('selling')" type="primary" class="ml5">등록</a-button>
           <a-button @click="input_visible.selling_input_visible = false" class="ml5">취소</a-button>
+        </a-input-group>
         </div>
         <a-tag v-else class="setting-add" @click="input_visible.selling_input_visible = true">
           <PlusOutlined />
           등록
         </a-tag>
+        </a-input-group>
 
         <!--도움말-->
         <div class="setting-help">* 상품 수집 시 설정한 마진율로 판매가 가격이 계산됩니다.</div>
@@ -144,12 +162,13 @@
 
       <a-descriptions-item label="등록 환률">
         <!-- 등록된 환률 -->
+        <a-input-group compact>
         <template v-for="item in type_margin.rate_margin">
           <a-tag
             @close.prevent="deleteMargin('rate', item.value)"
             @click="updateMargin('rate', item.value)"
             :closable="item.value !== type_margin_option.rate_margin_option"
-            class="setting-tag"
+            class="setting-tag mr5"
             :style="item.value === type_margin_option.rate_margin_option ?
               {backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff'} :
               {backgroundColor: '#fff'}"
@@ -158,15 +177,18 @@
         </template>
         <!-- 등록버튼 -->
         <div v-if="input_visible.rate_input_visible" class="setting-input">
-          <a-input type="text" placeholder="명" v-model:value="type_margin_name.rate_margin_name" />
-          <a-input type="text" placeholder="값" v-model:value="type_margin_value.rate_margin_value" />
-          <a-button @click="addMargin('rate')" type="primary">등록</a-button>
+          <a-input-group compact>
+          <a-input type="text" placeholder="명" v-model:value="type_margin_name.rate_margin_name" style="width: 120px;" />
+          <a-input type="text" placeholder="값" v-model:value="type_margin_value.rate_margin_value" style="width: 60px;" />
+          <a-button @click="addMargin('rate')" type="primary" class="ml5">등록</a-button>
           <a-button @click="input_visible.rate_input_visible = false" class="ml5">취소</a-button>
+          </a-input-group>
         </div>
         <a-tag v-else class="setting-add" @click="input_visible.rate_input_visible = true">
           <PlusOutlined />
           등록
         </a-tag>
+        </a-input-group>
 
         <!--도움말-->
         <div class="setting-help">* 상품 수집 시 설정한 환율로 가격이 계산됩니다.</div>
@@ -323,11 +345,11 @@ function deleteMargin(type, value) {
 
 function updateMargin(type, value) {
   // 이미 선택된 항목은 끝
-  if (type_margin_option[type + '_margin_option'] === value) {
+  if (type_margin_option[type + "_margin_option"] === value) {
     return false;
   }
 
-  let aOptions = type_margin[type + '_margin'];
+  let aOptions = type_margin[type + "_margin"];
   aOptions.map((item, i) => {
     aOptions[i].use = "F";
     if (parseInt(item.value) === parseInt(value)) {
@@ -500,20 +522,6 @@ onMounted(() => {
 .setting-input {
   display: inline-block;
   margin: 3px 0;
-}
-
-.setting-input input:nth-child(1) {
-  width: 100px;
-  border-right: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.setting-input input:nth-child(2) {
-  width: 50px;
-  margin-right: 5px;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
 }
 
 .setting-help {

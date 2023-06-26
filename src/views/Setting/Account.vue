@@ -27,8 +27,9 @@
 
       <a-descriptions-item label="수집 가격 설정">
         <!-- 등록된 설정 -->
+        <a-input-group compact>
         <template v-for="(item, index) in collectionPriceList">
-          <a-tag @close.prevent="delCollectionPrice(index)" closable class="setting-tag">
+          <a-tag @close.prevent="delCollectionPrice(index)" closable class="setting-tag mr5">
             {{ `${item.priceRangeStart} ~ ${item.priceRangeEnd}원 범위 내 포함될 시` }}
             <DoubleRightOutlined :style="{ color: '#1890ff' }" />
             {{ `${item.price} ${item.priceType === "number" ? "원으로 수집" : "%로 수집"}` }}
@@ -36,21 +37,24 @@
         </template>
         <!-- 등록버튼 -->
         <div v-if="input_visible.price_input_visible" class="setting-input">
-          <a-input type="text" placeholder="기준 시작" v-model:value="priceRangeStart" />
-          <a-input type="text" placeholder="기준 마감" v-model:value="priceRangeEnd" />
-          <a-input type="text" :placeholder="priceType === 'number' ? '설정 가격' : '설정 값'" v-model:value="price" />
-          <a-select class="setting-select" v-model:value="priceType">
+          <a-input-group compact>
+          <a-input type="text" placeholder="기준 시작" v-model:value="priceRangeStart" style="width: 100px;" />
+          <a-input type="text" placeholder="기준 마감" v-model:value="priceRangeEnd" style="width: 100px; margin-right: 5px;" />
+          <a-input type="text" :placeholder="priceType === 'number' ? '설정 가격' : '설정 값'" v-model:value="price" style="width: 100px;" />
+          <a-select class="setting-select" v-model:value="priceType" style="width: 100px;">
             <a-select-option value="number">고정값</a-select-option>
             <a-select-option value="percent">백분율</a-select-option>
           </a-select>
-          <a-button @click="addCollectionPrice" type="primary">등록</a-button>
+          <a-button @click="addCollectionPrice" type="primary" class="ml5">등록</a-button>
           <a-button @click="input_visible.price_input_visible = false" class="ml5">취소</a-button>
+          </a-input-group>
         </div>
         <a-tag v-else v-if="collectionPriceList.length < 3" class="setting-add"
                @click="input_visible.price_input_visible = true">
           <PlusOutlined />
           등록
         </a-tag>
+        </a-input-group>
         <!--도움말-->
         <div class="setting-help">* 상품 수집시 설정된 가격으로 수집합니다.<br>* 최대 3개까지 등록하실 수 있습니다.</div>
       </a-descriptions-item>
@@ -524,31 +528,7 @@ onMounted(() => {
   margin: 3px 0;
 }
 
-.setting-input input:nth-child(1) {
-  width: 100px;
-  border-right: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
 
-.setting-input input:nth-child(2) {
-  width: 100px;
-  margin-right: 5px;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.setting-input input:nth-child(3) {
-  width: 100px;
-  border-right: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.setting-input .setting-select {
-  width: 100px;
-  margin-right: 5px;
-}
 
 .setting-help {
   font-size: 12px;
