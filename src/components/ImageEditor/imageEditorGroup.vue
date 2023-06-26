@@ -203,6 +203,7 @@
 <script>
 import { mapState } from "vuex";
 import { lib } from "@/util/lib";
+import { AuthRequest } from "@/util/request";
 
 export default {
   name: "ImageEditorGroup",
@@ -460,6 +461,29 @@ export default {
         this.product.aPhotoCollection[i].checked = false;
       });
     },
+
+    // 최초 번역 남은 회수 조회
+    getRecharge() {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
+        (res) => {
+          if (res.status !== "2000" || res.data === undefined) {
+            alert(res.message);
+            return false;
+          }
+
+          try {
+            this.product.recharge = res.data.recharge;
+          } catch (e) {
+            alert("남은회수 호출 실패");
+          }
+        }
+      );
+    },
+  },
+
+  mounted() {
+    // 최초 번역 남은 회수 조회
+    this.getRecharge();
   },
 };
 </script>

@@ -610,8 +610,17 @@ export default {
 }
 
 .sku_window_image {
+  margin: 3px;
   width: 100px;
   height: 120px;
+}
+
+.sku_window_image.checkedEl {
+  border: 2px solid #1890ff;
+}
+
+.sku_window_image.checkedNot {
+  border: 2px solid #eee;
 }
 
 .sku_image {
