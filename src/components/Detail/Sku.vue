@@ -5,32 +5,15 @@
       <!--sku 상단 left 버튼-->
       <div class="top_button_left_item">
         <!--일괄적용-->
-        <a-button class="top_button_left_item_button" @click="skuBatch"
-        >일괄적용
-        </a-button>
+        <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 구매원가, 해외운임, 권장가, 판매가)" @confirm="skuBatch">
+          <a-button class="top_button_left_item_button">일괄적용</a-button>
+        </a-popconfirm>
         <!--품목삭제-->
-        <a-button class="top_button_left_item_button" @click="deleteSku"
-        >품목삭제
-        </a-button>
+        <a-button class="top_button_left_item_button" @click="deleteSku">품목삭제</a-button>
       </div>
 
       <!--sku 상단 right 버튼-->
       <div class="w63 row">
-        <!--도매마진-->
-        <div class="w33 row right">
-          <a-select
-              class="top_button_right_item_select mr5"
-              :options="this.product.wholesale_margin"
-              v-model:value="this.product.wholesale_margin_option"
-          >
-          </a-select>
-          <a-button
-              class="top_button_right_item_button"
-              @click="setWholesaleMargin"
-          >도매마진
-          </a-button>
-        </div>
-
         <!--판매마진-->
         <div class="w33 row right">
           <a-select
@@ -39,11 +22,9 @@
               v-model:value="this.product.selling_margin_option"
           >
           </a-select>
-          <a-button
-              class="top_button_right_item_button"
-              @click="setSellingMargin('click')"
-          >판매마진
-          </a-button>
+          <a-popconfirm title="판매마진을 수정하시겠습니까? 입력하신 판매가가 수정됩니다." @confirm="setSellingMargin('click')">
+            <a-button class="top_button_right_item_button">판매마진</a-button>
+          </a-popconfirm>
         </div>
 
         <!--할인마진-->
@@ -54,9 +35,9 @@
               v-model:value="this.product.disp_margin_option"
           >
           </a-select>
-          <a-button class="top_button_right_item_button" @click="setDispMargin('click')"
-          >할인전
-          </a-button>
+          <a-popconfirm title="권장마진을 수정하시겠습니까? 입력하신 권장가가 수정됩니다." @confirm="setDispMargin('click')">
+            <a-button class="top_button_right_item_button">권장마진</a-button>
+          </a-popconfirm>
         </div>
 
         <!--환율-->
@@ -67,9 +48,9 @@
               v-model:value="this.product.rate_margin_option"
           >
           </a-select>
-          <a-button class="top_button_right_item_button" @click="setRateMargin"
-          >환율
-          </a-button>
+          <a-popconfirm title="환율을 수정하시겠습니까? 입력하신 권장가, 판매가가 수정됩니다." @confirm="setRateMargin">
+            <a-button class="top_button_right_item_button">환율</a-button>
+          </a-popconfirm>
         </div>
       </div>
     </div>
@@ -450,6 +431,7 @@ export default {
     },
     setPrice(key, index) {
       if (["selling_price", "disp_price"].includes(key)) {
+        //가격 동기화
         this.product.sku[index][key] = this.product.sku[index]["custom_" + key];
         //예상수익 셋팅
         if (key === "selling_price") {
@@ -501,7 +483,7 @@ export default {
           if (["selling_price", "disp_price"].includes(columns.key)) {
             this.product.sku[i]["custom_" + columns.key] = this.product.sku[0]["custom_" +  columns.key];
           }
-          if (!["code", "spec", "img"].includes(columns.key)) {
+          if (!["checked", "code", "spec", "img", "is_option_reference_price"].includes(columns.key)) {
             this.product.sku[i][columns.key] = this.product.sku[0][columns.key];
             // this.product.sku[i].price_kor = this.product.sku[0].price_kor;
           }
@@ -614,6 +596,7 @@ export default {
     // 전체 마진자동셋팅
     marginInit() {
       if (this.product.is_modify === "T") {
+        //custom price 동기화
         this.setCustomPrice(true);
         return false;
       }
@@ -621,8 +604,15 @@ export default {
       this.setWholesaleMargin();
       this.setSellingMargin();
       this.setDispMargin();
+      //custom price 동기화
       this.setCustomPrice(true);
     },
+    /**
+     * setCustomPrice
+     * bInit true(가격 초기화) false(액션시 가격 동기화)
+     *
+     * @param bInit
+     */
     setCustomPrice(bInit) {
       this.product.sku.map((data, i) => {
         if (bInit === true) {
