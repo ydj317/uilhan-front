@@ -11,12 +11,7 @@
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
         "
           :closable="false"
-          :ok-text="'닫기'"
-          :cancel-text="'번역'"
-          @cancel="productTranslateImage(product.aPhotoCollection)"
-          @ok="product.bImageEditorModule = false"
-          :maskClosable="false"
-          :cancel-button-props="{ danger: true, type: 'primary' }"
+          @cancel="product.bImageEditorModule = false"
           width="auto"
           centered
       >
@@ -29,6 +24,11 @@
         <div class="center">
           <img :src="product.aPhotoCollection[0].original_url" alt="" />
         </div>
+
+        <template v-slot:footer>
+          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection)">번역</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+        </template>
       </a-modal>
 
       <!--SKU-->
@@ -40,17 +40,7 @@
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === false
         "
         :closable="false"
-        :ok-text="'닫기'"
-        :cancel-text="'번역'"
-        @cancel="
-          skuTranslateImage(
-            product.aPhotoCollection[0].key,
-            product.aPhotoCollection[0].original_url
-          )
-        "
-        @ok="product.bImageEditorModule = false"
-        :maskClosable="false"
-        :cancel-button-props="{ danger: true, type: 'primary' }"
+        @cancel="product.bImageEditorModule = false"
         width="auto"
         centered
       >
@@ -64,6 +54,14 @@
         <div class="center">
           <img :src="product.aPhotoCollection[0].original_url" alt="" />
         </div>
+
+        <template v-slot:footer>
+          <a-button type="primary" @click="skuTranslateImage(
+            product.aPhotoCollection[0].key,
+            product.aPhotoCollection[0].original_url
+          )">번역</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+        </template>
       </a-modal>
 
       <!--상세설명-->
@@ -75,10 +73,7 @@
           product.bImageEditorModule && product.bProductDetailsEditor === true
         "
         :closable="false"
-        :ok-text="'닫기'"
-        @ok="product.bImageEditorModule = false"
-        :maskClosable="false"
-        :cancel-button-props="{ ghost: true }"
+        @cancel="product.bImageEditorModule = false"
         width="50%"
         centered
       >
@@ -175,26 +170,13 @@
           </tbody>
         </table>
 
-        <div style="display: flex; justify-content: flex-end">
-          <a-button
-            class="bg-3051d3 mr5"
-            type="primary"
-            @click="checkAllDetailImage"
-            >전체선택</a-button
-          >
-          <a-button
-            class="bg-3051d3 mr5"
-            type="primary"
-            @click="uncheckAllDetailImage"
-            >선택취소</a-button
-          >
-          <a-button
-            class="bg-3051d3 mr5"
-            type="primary"
-            @click="deleteCheckedDetailImage()"
-            >선택삭제</a-button
-          >
-        </div>
+
+        <template v-slot:footer>
+          <a-button type="primary" @click="checkAllDetailImage">전체선택</a-button>
+          <a-button @click="uncheckAllDetailImage">선택취소</a-button>
+          <a-button @click="deleteCheckedDetailImage" danger>선택삭제</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+        </template>
       </a-modal>
     </template>
   </div>
