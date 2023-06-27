@@ -79,6 +79,7 @@ const onFinishFailed = errorInfo => {
 let formState = reactive({
   dt_ix: '',
   template_name: '',
+  delivery_product_type: '1',
   delivery_company: '',
   delivery_basic_policy: '1',
   delivery_package: 'N',
@@ -111,6 +112,7 @@ const getDeliveryDetail = (id) => {
     let data = res.data[id];
     formState.dt_ix = data.dt_ix
     formState.template_name = data.template_name
+    formState.delivery_product_type = data.delivery_product_type
     formState.delivery_company = data.delivery_company
     formState.delivery_basic_policy = data.delivery_basic_policy
     formState.delivery_package = data.delivery_package
@@ -262,6 +264,13 @@ const onDeliveryAddressData = () => {
       <a-form-item label="배송정책명" name="template_name"
                    :rules="[{ required: true, message: '배송정책명을 입력해 주세요.' }]">
         <a-input v-model:value="formState.template_name" allow-clear placeholder="배송정책명을 입력해 주세요."/>
+      </a-form-item>
+      <a-form-item label="배송정책구분" name="delivery_product_type"
+                   :rules="[{ required: true, message: '배송정책구분을 선택해 주세요.' }]">
+        <a-radio-group v-model:value="formState.delivery_product_type">
+          <a-radio value="1">일반상품</a-radio>
+          <a-radio value="2">구매대행</a-radio>
+        </a-radio-group>
       </a-form-item>
       <a-form-item
           name="delivery_company"

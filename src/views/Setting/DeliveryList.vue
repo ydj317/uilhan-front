@@ -1,7 +1,6 @@
 <script setup>
-import {useRoute, useRouter} from "vue-router";
-import {computed, onBeforeMount, reactive, ref} from "vue";
-import { message } from 'ant-design-vue';
+import {useRouter} from "vue-router";
+import {computed, onBeforeMount, ref} from "vue";
 import {AuthRequest} from "@/util/request";
 import {
   EditOutlined,
@@ -28,10 +27,6 @@ const pagination = ref({
     pagination.value.pageSize = pageSize;
   },
 });
-const status = [
-  {name:'연동대기',style:''},
-  {name:'연동중',style:'green'},
-]
 
 /**
  * 배송정책 리스트
@@ -100,21 +95,13 @@ onBeforeMount(() => {
 
     <a-table :columns="table_columns" :data-source="datasource" :row-selection="rowSelection" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
-        <template v-if="column.dataIndex === 'status'">
-          <a><a-tag :color="status[text]['style']">{{ status[text]['name'] }}</a-tag></a>
-        </template>
-
-        <template v-else-if="column.key === 'action'">
+        <template v-if="column.key === 'action'">
           <span>
             <router-link :to="`/setting/delivery/form/${record.dt_ix}`">
               <a-button type="primary" size="small">
                 <template #icon><edit-outlined /></template>
               </a-button>
             </router-link>
-<!--            <a-divider type="vertical" />-->
-<!--            <a-button type="primary" danger>-->
-<!--              <template #icon><delete-outlined /></template>-->
-<!--            </a-button>-->
           </span>
         </template>
       </template>
