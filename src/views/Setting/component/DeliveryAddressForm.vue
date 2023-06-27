@@ -149,7 +149,7 @@ defineExpose({
       @close="onCancel"
       @ok="handleOk"
   >
-    <a-form ref="deliveryModalFormRef" :model="state.form" name="delivery_form" autocomplete="off" layout="horizontal"
+    <a-form ref="deliveryModalFormRef" :model="state.form" name="delivery_form" autocomplete="off" scrollToFirstError="true" layout="horizontal"
             :label-col="{style:{width:'130px'}}">
       <a-form-item label="배송구분" name="addr_product_type">
         <a-radio-group v-model:value="state.form.addr_product_type">

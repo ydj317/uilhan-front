@@ -300,27 +300,21 @@ const onDeliveryAddressData = () => {
         </a-radio-group>
       </a-form-item>
       <div style="display: flex;">
-        <a-form-item label="배송비" name="delivery_price"
-                     :rules="[{ required: true, message: '배송비를 입력해 주세요.' }]" :style="{flex:'1'}">
-
+        <a-form-item label="배송비" name="delivery_price" :style="{flex:'1'}">
           <a-input v-model:value="formState.delivery_price" allow-clear placeholder="배송비를 입력해 주세요."/>
         </a-form-item>
 
-        <a-form-item label="상품 1개단위 배송비" name="delivery_unit_price"
-                     :rules="[{ required: true, message: '상품 1개단위 배송비를 입력해 주세요.'}]"
-                     :style="{flex:'1',marginLeft:'-1px'}">
+        <a-form-item label="상품 1개단위 배송비" name="delivery_unit_price" :style="{flex:'1',marginLeft:'-1px'}">
           <a-input v-model:value="formState.delivery_unit_price" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요." />
         </a-form-item>
       </div>
 
       <div style="display: flex;">
-        <a-form-item label="반품 배송비" name="return_shipping_price"
-                     :rules="[{ required: true, message: '반품 배송비를 입력해 주세요.'}]" :style="{flex:'1'}">
+        <a-form-item label="반품 배송비" name="return_shipping_price" :style="{flex:'1'}">
           <a-input v-model:value="formState.return_shipping_price" allow-clear placeholder="반품 배송비를 입력해 주세요."/>
         </a-form-item>
 
-        <a-form-item label="교환 배송비" name="exchange_shipping_price"
-                     :rules="[{ required: true, message: '교환 배송비를 입력해 주세요.' }]" :style="{flex:'1',marginLeft:'-1px'}">
+        <a-form-item label="교환 배송비" name="exchange_shipping_price" :style="{flex:'1',marginLeft:'-1px'}">
           <a-input v-model:value="formState.exchange_shipping_price" allow-clear placeholder="교환 배송비를 입력해 주세요."/>
         </a-form-item>
       </div>
@@ -331,8 +325,7 @@ const onDeliveryAddressData = () => {
         </a-radio-group>
       </a-form-item>
 
-      <a-form-item label="반품/교환 안내" name="product_return_text"
-                   :rules="[{ required: true, message: '반품/교환 안내를 입력해 주세요.' }]">
+      <a-form-item label="반품/교환 안내" name="product_return_text">
         <a-textarea v-model:value="formState.product_return_text" allow-clear :rows="4"
                     placeholder="반품/교환 안내를 입력해 주세요."/>
       </a-form-item>
@@ -345,15 +338,11 @@ const onDeliveryAddressData = () => {
       </a-form-item>
 
       <div style="display: flex;">
-        <a-form-item label="제주 추가 배송비" name="jeju_delivery_price"
-                     :rules="[{ required: true, message: '제주 추가 배송비를 입력해 주세요.' }]" class="-item-no-flex"
-                     :style="{flex:'1'}" v-if="formState.delivery_region_use === 'Y'">
+        <a-form-item label="제주 추가 배송비" name="jeju_delivery_price" :style="{flex:'1'}" v-if="formState.delivery_region_use === 'Y'">
           <a-input v-model:value="formState.jeju_delivery_price" allow-clear placeholder="제주 추가 배송비를 입력해 주세요."/>
         </a-form-item>
 
-        <a-form-item label="도서산간 추가 배송비" name="island_delivery_price"
-                     :rules="[{ required: true, message: '도서산간 추가 배송비를 입력해 주세요.' }]"
-                     :style="{flex:'1',marginLeft:'-1px'}" v-if="formState.delivery_region_use === 'Y'">
+        <a-form-item label="도서산간 추가 배송비" name="island_delivery_price" :style="{flex:'1',marginLeft:'-1px'}" v-if="formState.delivery_region_use === 'Y'">
           <a-input v-model:value="formState.island_delivery_price" allow-clear placeholder="도서산간 추가 배송비를 입력해 주세요."/>
         </a-form-item>
       </div>
