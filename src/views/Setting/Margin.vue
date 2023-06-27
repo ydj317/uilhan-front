@@ -7,7 +7,7 @@
   <a-card :loading="cartLoading" :bordered="false" title="마진 & 환율" class="setting-page-margin"
           :style="{marginBottom:'20px'}">
     <a-descriptions title="마진율 설정" bordered :column="{ xs: 1, sm: 1, md: 1}">
-      <a-descriptions-item label="도매마진율">
+      <a-descriptions-item label="도매마진율" v-if="false">
         <!-- 등록된 마진률 -->
         <a-input-group compact>
           <template v-for="item in type_margin.wholesale_margin">
@@ -77,7 +77,7 @@
         <div class="setting-help">* 상품 수집 시 설정한 마진율로 공급가 가격이 계산됩니다.</div>
       </a-descriptions-item>
 
-      <a-descriptions-item label="할인전가격">
+      <a-descriptions-item label="권장가">
         <!-- 등록된 마진률 -->
         <a-input-group compact>
         <template v-for="item in type_margin.disp_margin">
@@ -108,10 +108,10 @@
         </a-input-group>
 
         <!--도움말-->
-        <div class="setting-help">* 상품 수집 시 설정한 마진율로 할인전 가격이 계산됩니다.</div>
+        <div class="setting-help">* 상품 수집 시 설정한 마진율로 권장가가 계산됩니다.</div>
       </a-descriptions-item>
 
-      <a-descriptions-item label="판매마진율">
+      <a-descriptions-item label="판매마진">
         <!-- 등록된 마진률 -->
         <a-input-group compact>
         <template v-for="item in type_margin.selling_margin">
@@ -147,17 +147,16 @@
     </a-descriptions>
     <div style="height: 20px;"></div>
     <a-descriptions title="환율 설정" bordered :column="{ xs: 1, sm: 1, md: 1}">
-      <a-descriptions-item label="현재 환율">
+      <a-descriptions-item label="기준 환율">
         <div style="padding: 5px 0;">
-          <a-tooltip>
-            <a-tag color="blue">한국 KRW {{ rateKor }}</a-tag>
-            <span style="margin: 0 7px 0 0"><SwapOutlined /></span>
-            <a-tag>중국 RMB {{ rateCn }}</a-tag>
-          </a-tooltip>
+            <a-tag class="setting-rate" color="blue">
+              <img width="25" :src="korIcon" alt=""> 한국 KRW : <b>{{ rateKor }}</b>
+            </a-tag>
+            <span style="margin: 0 10px 0 5px;"><SwapOutlined /></span>
+            <a-tag class="setting-rate">
+              <img width="25" :src="cnIcon" alt=""> 중국 RMB : <b>{{ rateCn }}</b>
+            </a-tag>
         </div>
-
-        <!--도움말-->
-        <div class="setting-help">* 오늘의 환율 입니다.</div>
       </a-descriptions-item>
 
       <a-descriptions-item label="등록 환률">
@@ -172,7 +171,7 @@
             :style="item.value === type_margin_option.rate_margin_option ?
               {backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff'} :
               {backgroundColor: '#fff'}"
-          >{{ item.label }}
+          ><img width="25" :src="korIcon" alt=""> {{ item.label }}
           </a-tag>
         </template>
         <!-- 등록버튼 -->
@@ -217,10 +216,10 @@ const cartLoading2 = ref(true);
 const userData = ref({});
 const rateCn = ref(0);
 const rateKor = ref(0);
+const korIcon = ref(require("../../assets/img/kor.png"))
+const cnIcon = ref(require("../../assets/img/chn.png"))
 
 const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
-
-const nowTime = ref(new Date().toLocaleDateString());
 
 // margin
 const input_visible = reactive({
@@ -505,10 +504,24 @@ onMounted(() => {
 </style>
 
 <style scoped>
+.setting-rate {
+  text-align: center;
+  padding: 5px 10px;
+  margin: 3px 6px 3px 0;
+}
+.setting-rate img {
+  margin-top: -2px;
+  margin-right: 5px;
+}
+
 .setting-tag {
   cursor: pointer;
   padding: 5px 10px;
   margin: 3px 6px 3px 0;
+}
+.setting-tag img {
+  margin-top: -2px;
+  margin-right: 5px;
 }
 
 .setting-add {

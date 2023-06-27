@@ -7,15 +7,12 @@
   <a-card :loading="cartLoading" :bordered="false" title="계정정보" class="setting-page-margin"
           :style="{marginBottom:'20px'}">
     <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}">
-      <a-descriptions-item label="릴라켓 세션키 설정">
+      <a-descriptions-item label="API키 설정">
+        <a-input-group compact>
         <a-input v-model:value="accessKey" placeholder="AccessKey" style="width: 300px;" />
-        <br>
-        <a-input class="mt5" v-model:value="secretKey" placeholder="SecretKey" style="width: 300px;" />
-        <br>
-        <a-button class="mt5" @click="addKey" type="primary">등록</a-button>
-
-        <!--도움말-->
-        <div class="setting-help">* 릴라켓 연동용 세션키를 입력하고 등록 부탁합니다.</div>
+        <a-input v-if="false" class="mt5" v-model:value="secretKey" placeholder="SecretKey" style="width: 300px;" />
+        <a-button @click="addKey" type="primary">등록</a-button>
+        </a-input-group>
       </a-descriptions-item>
 
       <a-descriptions-item label="이미지 번역 남은 회수">
@@ -59,7 +56,7 @@
         <div class="setting-help">* 상품 수집시 설정된 가격으로 수집합니다.<br>* 최대 3개까지 등록하실 수 있습니다.</div>
       </a-descriptions-item>
 
-      <a-descriptions-item label="로고 설정">
+      <a-descriptions-item label="로고 설정" v-if="false">
         <a-upload :showUploadList="false" :multiple="true" :headers="headers"
                   :customRequest="(file) => customRequest(file, 'logo')" :beforeUpload="handleBeforeUpload">
           <a-button>
@@ -84,7 +81,7 @@
         <div class="setting-help">* 업로드한 로고 이미지를 상품 상세 설명에 적용합니다.</div>
       </a-descriptions-item>
 
-      <a-descriptions-item label="아이콘 설정" v-if="isRelaket">
+      <a-descriptions-item label="아이콘 설정" v-if="false">
         <a-upload :showUploadList="false" :multiple="true" :headers="headers"
                   :customRequest="(file) => customRequest(file, 'icon')" :beforeUpload="handleBeforeUpload">
           <a-button>
@@ -107,7 +104,7 @@
         <a-button @click="onClickSyncDomeggookCategory" type="primary">동기화 실행</a-button>
       </a-descriptions-item>
 
-      <a-descriptions-item label="이미지 백업" v-if="isAdmin">
+      <a-descriptions-item label="이미지 백업" v-if="false">
         <a-button @click="backupImages" type="primary">백업 실행</a-button>
       </a-descriptions-item>
     </a-descriptions>
@@ -157,7 +154,6 @@ const input_visible = reactive({
 });
 
 const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
-const isRelaket = ref(Cookie.get("member_roles").split(",").includes("ROLE_RELAKET"));
 
 function setLogoInDetail(value) {
   indicator.value = true;

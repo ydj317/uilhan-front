@@ -72,13 +72,8 @@
     <!--content-->
     <div id="content-content" class="pt20">
       <!--전체선택-->
-      <a-table class="test-custem" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination">
-        <!--table header-->
-        <template v-slot:headerCell="{title, column}">
-          <template v-if="column.key === 'checked'">
-            <a-checkbox v-model:checked="checked" id="content-content-checkAll"></a-checkbox>
-          </template>
-        </template>
+      <a-table class="test-custem" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination"
+               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
 
         <!--table body-->
         <template v-slot:bodyCell="{text, record, index, column}">
@@ -392,12 +387,6 @@ export default defineComponent({
       ],
       LIST_COLUMNS_CONFIG: [
         {
-          title: "선택",
-          key: "checked",
-          width: "3%",
-          align: "center"
-        },
-        {
           title: "사진",
           key: "item_thumb",
           width: "5%",
@@ -509,11 +498,24 @@ export default defineComponent({
       checkAll: false,
       tempImage: require('../../assets/img/temp_image.png'),
       listLoading: true,
-      MarketListVisible: false
+      MarketListVisible: false,
+      selectedRowKeys: []
     };
   },
 
   methods: {
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
+
+      if (this.prdlist === undefined || this.prdlist.length < 1) {
+        return false;
+      }
+
+      for (let i = 0; i < this.prdlist.length; i++) {
+        this.prdlist[i].checked = this.selectedRowKeys.includes(this.prdlist[i].key);
+      }
+    },
+
     getLogoSrc(fileName, marketCode) {
       try {
         return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
@@ -613,6 +615,9 @@ export default defineComponent({
         this.date = [moment(res.data.start_time), moment(res.data.end_time)];
         this.checked = false;
         this.listLoading = false;
+
+        console.log('==0==')
+        console.log(this.prdlist)
       });
     },
 
