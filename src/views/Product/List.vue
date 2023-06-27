@@ -1,9 +1,9 @@
 <template>
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true" />
 
-  <div id="container">
-    <!--검색-->
-    <div id="header" class="plr20 bg-white">
+  <!--검색-->
+  <a-card :bordered="false" title="상품관리" :style="{marginBottom:'20px'}" :loading="listLoading">
+    <div id="header">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
       <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
         <h1>{{ CONFIG.label }}</h1>
@@ -15,242 +15,226 @@
       </div>
 
       <!--검색기간-->
-      <div class="mt10">
+      <div>
+      <div class="inline-block mr17 mt10">
         <h1>기간</h1>
-        <a-select v-model:value="date_type" class="w10">
-          <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
-        </a-select>
-        <span style="margin-left: 8px;">
-        <a-space direction="vertical" class="w25">
+        <a-input-group compact>
+          <a-select v-model:value="date_type" style="width: 150px;">
+            <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
+          </a-select>
           <a-range-picker
-            class="w100"
             v-model:value="date"
             :placeholder="['Start Time', 'End Time']"
             format="YYYY-MM-DD"
-            @change="onChangeDatePicker"
-          />
-        </a-space>
-        </span>
+            @change="onChangeDatePicker" style="width: 300px;" />
+        </a-input-group>
       </div>
 
       <!--검색입력창-->
-      <div class="mt10 pb20">
+      <div class="inline-block mt10">
         <h1>키워드</h1>
-        <a-select v-model:value="search_key" class="w10 mr1">
-          <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">{{ config.label }}
-          </a-select-option>
-        </a-select>
-        <span style="margin-left: 8px;">
-        <a-input v-model:value="search_value" placeholder="키워드" class="w25 mr1" />
-        </span>
-        <span style="margin-left: 8px;">
-        <a-button @click="getList" type="primary" class="w5">검색</a-button>
-        </span>
+        <a-input-group compact>
+          <a-select v-model:value="search_key" style="width: 150px;">
+            <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">{{ config.label }}
+            </a-select-option>
+          </a-select>
+          <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;" />
+          <a-button @click="getList" type="primary">검색</a-button>
+        </a-input-group>
+      </div>
+      </div>
+    </div>
+  </a-card>
+
+  <!--상품 리스트-->
+  <a-card :bordered="false" :loading="listLoading">
+    <!--top-->
+    <div id="content-header" class="row space-between">
+      <!--left button-->
+      <div class="w12 space-between">
+        <!--상품삭제-->
+        <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
+          <a-button>상품삭제</a-button>
+        </a-popconfirm>
+      </div>
+
+      <!--right button-->
+      <div class=" pl5 ">
+        <!--릴라켓연동-->
+        <!--          <a-popconfirm title="릴라켓에 연동하시겠습니까?" @confirm="sendMarket">-->
+        <!--            <a-button type="primary">릴라켓연동</a-button>-->
+        <!--          </a-popconfirm>-->
+        <!--제휴사 상품연동-->
+        <a-button @click="MarketListPop(record)" type="primary">제휴사 상품연동</a-button>
       </div>
     </div>
 
-    <!--상품 리스트-->
-    <div id="content" class="mt20 plr20 bg-white">
-      <!--top-->
-      <div id="content-header" class="pt20 row space-between">
-        <!--left button-->
-        <div class="w12 space-between">
-          <!--상품삭제-->
-          <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
-            <a-button>상품삭제</a-button>
-          </a-popconfirm>
-        </div>
+    <!--content-->
+    <div id="content-content" class="pt20">
+      <!--전체선택-->
+      <a-table class="test-custem" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination"
+               :row-selection="{ selectedRowKeys: prdSelectedRowKeys, onChange: onPrdSelectChange }">
 
-        <!--right button-->
-        <div class=" pl5 ">
-          <!--릴라켓연동-->
-          <!--          <a-popconfirm title="릴라켓에 연동하시겠습니까?" @confirm="sendMarket">-->
-          <!--            <a-button type="primary">릴라켓연동</a-button>-->
-          <!--          </a-popconfirm>-->
-          <!--제휴사 상품연동-->
-          <a-button @click="MarketListPop(record)" type="primary">제휴사 상품연동</a-button>
-        </div>
-      </div>
-
-      <!--content-->
-      <div id="content-content" class="pt20">
-        <!--전체선택-->
-        <a-table class="test-custem" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination">
-          <!--table header-->
-          <template v-slot:headerCell="{title, column}">
-            <template v-if="column.key === 'checked'">
-              <a-checkbox v-model:checked="checked" id="content-content-checkAll"></a-checkbox>
-            </template>
+        <!--table body-->
+        <template v-slot:bodyCell="{text, record, index, column}">
+          <!--체크박스-->
+          <template v-if="column.key === 'checked'">
+            <a-checkbox v-model:checked="record.checked"></a-checkbox>
           </template>
 
-          <!--table body-->
-          <template v-slot:bodyCell="{text, record, index, column}">
-            <!--체크박스-->
-            <template v-if="column.key === 'checked'">
-              <a-checkbox v-model:checked="record.checked"></a-checkbox>
-            </template>
+          <!--사진-->
+          <template v-if="column.key === 'item_thumb'">
+            <a-image :src="record.item_thumb[0]" :fallback="tempImage" style="width: 50px; height: 50px;" />
+          </template>
 
-            <!--사진-->
-            <template v-if="column.key === 'item_thumb'">
-              <img :src="record.item_thumb[0]" alt="">
-            </template>
+          <!--상품코드-->
+          <template v-if="column.key === 'item_code'">
+            <a-button type="dashed" :href="record.item_url" :target="'_blank'">
+            <span class="get-market-icon">
+                <img :src="getLogoSrc('get-logo', record.item_market.toLowerCase())" alt="">
+            </span>
+              {{ record.item_code }}
+            </a-button>
+          </template>
 
-            <!--상품코드-->
-            <template v-if="column.key === 'item_code'">
-              <a-button type="dashed" :href="record.item_url" :target="'_blank'">
-                <span class="get-market-icon">
-                    <img :src="getLogoSrc('get-logo', record.item_market.toLowerCase())" alt="">
-                </span>
-                {{ record.item_code }}
-              </a-button>
-            </template>
-
-            <!--상품명-->
-            <template v-if="column.key === 'item_name'">
-              <div class="item-name">
-                <a :href="`/product/detail/${record.item_id}`">
-                  {{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}
-                </a>
-                <div class="cantent">
-                  <a-space :size="5" class="item-market">
-                    <template v-for="(market_list, market_code) in record.show_sync_market" :key="market_code">
-                      <template v-for="(market_info, key) in market_list" :key="key">
-                        <a-tooltip placement="bottom">
-                          <template #title>
-                            <span>{{ market_info.market_account.split("::")[1] }}</span>
-                          </template>
-                          <span :class="market_info.status" @click="singlePop(record)">
-                            <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
-                          </span>
-                        </a-tooltip>
-                      </template>
+          <!--상품명-->
+          <template v-if="column.key === 'item_name'">
+            <div class="item-name">
+              <a :href="`/product/detail/${record.item_id}`">
+                {{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}
+              </a>
+              <div class="cantent">
+                <a-space :size="5" class="item-market">
+                  <template v-for="(market_list, market_code) in record.show_sync_market" :key="market_code">
+                    <template v-for="(market_info, key) in market_list" :key="key">
+                      <a-tooltip placement="bottom">
+                        <template #title>
+                          <span>{{ market_info.market_account.split("::")[1] }}</span>
+                        </template>
+                        <span class="item-market-icon" :class="market_info.status" @click="singlePop(record)">
+                        <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
+                        </span>
+                      </a-tooltip>
                     </template>
-                  </a-space>
-                </div>
+                  </template>
+                </a-space>
               </div>
-            </template>
-
-            <!--판매가-->
-            <template v-if="column.key === 'item_price'">
-              {{ record.show_price }}
-            </template>
-
-            <!--상품등록(수정)일-->
-            <template v-if="column.key === 'item_ins'">
-              <div>{{ record.item_ins.slice(0, 16) }}</div>
-              <div v-if="record.item_upd !== null" class="item-upd">
-                ( {{ record.item_upd.slice(0, 16) }} )
-              </div>
-            </template>
-
-            <!--제휴사연동-->
-            <template v-if="column.key === 'item_sync_status'">
-              <div class="center">
-                <a-button @click="singlePop(record)" type="primary" shape="round">연동관리</a-button>
-              </div>
-            </template>
-
-            <!--연동상태-->
-            <template v-if="column.key === 'item_status'">
-              <span v-if="record.item_sync_date">
-                <!--연동성공-->
-                <a-tooltip v-if="record.item_sync_status">
-                    <template #title>{{ record.item_sync_result }}</template>
-                    <a-tag color="success">연동중</a-tag>
-                </a-tooltip>
-                <!--연동실패-->
-                <a-tooltip v-if="record.item_sync_status == false">
-                    <template #title>{{ record.item_sync_result }}</template>
-                    <a-tag color="error">연동실패</a-tag>
-                </a-tooltip>
-              </span>
-              <span v-else>
-                <!--연동대기-->
-                <a-tag color="default">연동대기</a-tag>
-              </span>
-            </template>
-
-          </template>
-        </a-table>
-      </div>
-    </div>
-
-    <!--제휴사연동-->
-    <div id="footer">
-      <!--제휴사 상품연동-->
-      <a-modal :maskClosable="false" v-model:visible="singleSyncPop" class="col w50">
-        <h3><strong>제휴사 상품연동</strong></h3>
-        <a-table
-          class="tableSyncStatus"
-          :dataSource="singleDetail.item_sync_market"
-          :columns="SYNC_COLUMNS_CONFIG"
-        >
-
-          <!--table header-->
-          <template v-slot:headerCell="{ text, record, index, column }">
-            <!--전체선택-->
-            <template v-if="column.key === 'checked'">
-              <a-checkbox v-model:checked="checkAll" @click="checkAllMarket(checkAll)"></a-checkbox>
-            </template>
+            </div>
           </template>
 
-          <!--table body-->
-          <template v-slot:bodyCell="{ text, record, index, column }">
-            <!--단일선택-->
-            <template v-if="column.key === 'checked'">
-              <a-checkbox v-model:checked="record.checked"></a-checkbox>
-            </template>
-
-            <!--연동계정-->
-            <template v-if="column.key === 'market_account'">
-              연동계정 : {{ record.market_account }}
-            </template>
-
-            <!--상태-->
-            <template v-if="column.key === 'status'">
-              <div class="syncStatus" :data-status="record.status">
-                {{ { "sending": "전송중", "success": "성공", "failed": "실패", "unsync": "미연동" }[record.status] }}<span
-                v-if="record.status === 'failed'"> 실패원인: {{ record.result }}</span>
-              </div>
-            </template>
-
-            <!--연동시간-->
-            <template v-if="column.key === 'ins_time'">
-              <div v-if="record.status !== 'unsync'">
-                <div v-if="!record.upd_time">{{ record.ins_time }}</div>
-                <div v-else>{{ record.upd_time }}</div>
-              </div>
-            </template>
+          <!--판매가-->
+          <template v-if="column.key === 'item_price'">
+            {{ record.show_price }}
           </template>
 
-        </a-table>
+          <!--상품등록(수정)일-->
+          <template v-if="column.key === 'item_ins'">
+            <div>{{ record.item_ins.slice(0, 16) }}</div>
+            <div v-if="record.item_upd !== null" class="item-upd">
+              ( {{ record.item_upd.slice(0, 16) }} )
+            </div>
+          </template>
 
-        <template v-slot:footer>
-          <a-button type="primary" @click="testsync('single')">선택제휴사연동</a-button>
-          <a-button type="primary" @click="closeResultPop('single')" class="bg-697783">닫기</a-button>
+          <!--연동상태-->
+          <template v-if="column.key === 'item_status'">
+          <span v-if="record.item_sync_date">
+            <!--연동성공-->
+            <a-tooltip v-if="record.item_sync_status">
+                <template #title>{{ record.item_sync_result }}</template>
+                <a-tag color="success">연동성공</a-tag>
+            </a-tooltip>
+            <!--연동실패-->
+            <a-tooltip v-if="record.item_sync_status == false">
+                <template #title>{{ record.item_sync_result }}</template>
+                <a-tag color="error">연동실패</a-tag>
+            </a-tooltip>
+          </span>
+            <span v-else>
+            <!--연동대기-->
+            <a-tag color="default">연동대기</a-tag>
+          </span>
+          </template>
+
+          <!--제휴사연동-->
+          <template v-if="column.key === 'item_sync_status'">
+            <div class="center">
+              <a-button @click="singlePop(record)" type="primary" shape="round">연동관리</a-button>
+            </div>
+          </template>
+
         </template>
-      </a-modal>
-
-      <!--제휴사 연동결과-->
-      <a-modal width="600px" :maskClosable="false" v-model:visible="marketSyncPop" title="제휴사연동결과" @ok="">
-        <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
-        <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
-          <template #renderItem="{ item }">
-            <a-list-item>
-              <a-card :title="item.market_account" style="width: 100%">
-                <p v-for="( prd ) in item.products">{{ prd.prd_code }} - {{ prd.result }}</p>
-              </a-card>
-            </a-list-item>
-          </template>
-        </a-list>
-        <template v-slot:footer>
-          <a-button type="primary" @click="searchFailed">실패상품검색</a-button>
-          <a-button type="primary" @click="closeResultPop('multi')">확인</a-button>
-        </template>
-      </a-modal>
-
-      <MarketList v-if="MarketListVisible"></MarketList>
+      </a-table>
     </div>
+  </a-card>
+
+  <!--제휴사연동-->
+  <div id="footer">
+    <!--제휴사 상품연동-->
+    <a-modal width="1000px" title="제휴사 상품연동" v-model:visible="singleSyncPop" centered>
+      <a-table
+        class="tableSyncStatus"
+        :dataSource="singleDetail.item_sync_market"
+        :columns="SYNC_COLUMNS_CONFIG"
+        :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
+      >
+
+        <!--table body-->
+        <template v-slot:bodyCell="{ text, record, index, column }">
+          <!--연동계정-->
+          <template v-if="column.key === 'market_account'">
+            <div style="text-align: left">
+            <img :src="getLogoSrc('market-logo', record.market_account.split('::')[0])"
+                 style="width: 16px; height: 16px; margin-right: 5px;" >
+            {{ record.market_account.split('::')[1] }}
+            </div>
+          </template>
+
+          <!--상태-->
+          <template v-if="column.key === 'status'">
+              <div style="text-align: left">
+              <a-tag color="success" v-if="record.status === 'success'">연동성공</a-tag>
+              <a-tag color="processing" v-else-if="record.status === 'sending'">전송중</a-tag>
+              <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
+              <a-tag color="default" v-else>연대기동</a-tag><span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
+            </div>
+          </template>
+
+          <!--연동시간-->
+          <template v-if="column.key === 'ins_time'">
+            <div v-if="record.status !== 'unsync'">
+              <div v-if="!record.upd_time">{{ record.ins_time }}</div>
+              <div v-else>{{ record.upd_time }}</div>
+            </div>
+          </template>
+        </template>
+
+      </a-table>
+
+      <template v-slot:footer>
+        <a-button type="primary" @click="testsync('single')">선택제휴사연동</a-button>
+        <a-button @click="closeResultPop('single')">닫기</a-button>
+      </template>
+    </a-modal>
+
+    <!--제휴사 연동결과-->
+    <a-modal width="600px" v-model:visible="marketSyncPop" centered title="제휴사연동결과" @ok="">
+      <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
+      <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
+        <template #renderItem="{ item }">
+          <a-list-item>
+            <a-card :title="item.market_account" style="width: 100%">
+              <p v-for="( prd ) in item.products">{{ prd.prd_code }} - {{ prd.result }}</p>
+            </a-card>
+          </a-list-item>
+        </template>
+      </a-list>
+      <template v-slot:footer>
+        <a-button type="primary" @click="searchFailed">실패상품검색</a-button>
+        <a-button type="primary" @click="closeResultPop('multi')">확인</a-button>
+      </template>
+    </a-modal>
+
+    <MarketList v-if="MarketListVisible"></MarketList>
   </div>
 </template>
 
@@ -318,7 +302,7 @@ export default defineComponent({
           ],
           label: "상품수집마켓",
           key: "market_code",
-          class: "",
+          class: "mr17 inline-block",
           group_class: "mb10"
         },
         {
@@ -338,8 +322,8 @@ export default defineComponent({
           ],
           label: "번역상태",
           key: "trans_status",
-          class: "mb10 mr17 inline-block",
-          group_class: ""
+          class: "mr17 inline-block",
+          group_class: "mb10"
         },
         {
           options: [
@@ -396,12 +380,6 @@ export default defineComponent({
       ],
       LIST_COLUMNS_CONFIG: [
         {
-          title: "선택",
-          key: "checked",
-          width: "3%",
-          align: "center"
-        },
-        {
           title: "사진",
           key: "item_thumb",
           width: "5%",
@@ -417,7 +395,6 @@ export default defineComponent({
           title: "상품명",
           key: "item_name",
           align: "center",
-          class: "item-name-td"
         },
         {
           title: "판매가",
@@ -465,20 +442,21 @@ export default defineComponent({
       },
       SYNC_COLUMNS_CONFIG: [
         {
-          title: "선택",
-          key: "checked"
-        },
-        {
           title: "쇼핑몰",
-          key: "market_account"
+          key: "market_account",
+          width: "200px",
+          align: "center"
         },
         {
           title: "연동상태",
-          key: "status"
+          key: "status",
+          align: "center"
         },
         {
           title: "연동시간",
-          key: "ins_time"
+          key: "ins_time",
+          width: "170px",
+          align: "center"
         }
       ],
 
@@ -511,16 +489,44 @@ export default defineComponent({
       singleDetail: [],
       checkedList: [],
       checkAll: false,
-      MarketListVisible: false
+      tempImage: require('../../assets/img/temp_image.png'),
+      listLoading: true,
+      MarketListVisible: false,
+      prdSelectedRowKeys: [],
+      syncSelectedRowKeys: []
     };
   },
 
   methods: {
+    onPrdSelectChange(prdSelectedRowKeys) {
+      this.prdSelectedRowKeys = prdSelectedRowKeys;
+
+      if (this.prdlist === undefined || this.prdlist.length < 1) {
+        return false;
+      }
+
+      for (let i = 0; i < this.prdlist.length; i++) {
+        this.prdlist[i].checked = this.prdSelectedRowKeys.includes(this.prdlist[i].key);
+      }
+    },
+
+    onSyncSelectChange(syncSelectedRowKeys) {
+      this.syncSelectedRowKeys = syncSelectedRowKeys;
+
+      if (this.prdlist === undefined || this.prdlist.length < 1) {
+        return false;
+      }
+
+      for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
+        this.singleDetail.item_sync_market[i].checked = this.syncSelectedRowKeys.includes(this.singleDetail.item_sync_market[i].key);
+      }
+    },
+
     getLogoSrc(fileName, marketCode) {
       try {
         return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
       } catch (error) {
-        return "data:image/png;base64,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";
+        return require(this.tempImage);
       }
     },
 
@@ -541,7 +547,6 @@ export default defineComponent({
 
     getList(sType = "") {
       let param = this.getParam(sType);
-      this.indicator = true;
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
         if (res.status !== "2000") {
           alert(res.message);
@@ -614,8 +619,8 @@ export default defineComponent({
         this.pagination.current = iCurrent;
         this.pagination.pageSize = iPageSize;
         this.date = [moment(res.data.start_time), moment(res.data.end_time)];
-        this.indicator = false;
         this.checked = false;
+        this.listLoading = false;
       });
     },
 
@@ -844,10 +849,9 @@ export default defineComponent({
         }
 
         let returnData = res.data;
-        // if (returnData.status === undefined || returnData.status !== '2000') {
-        //   alert(returnData.msg);
-        //   return false;
-        // }
+        for (let i = 0; i < returnData.data.length; i++) {
+          returnData.data[i].key = i;
+        }
 
         this.options = returnData.data;
       });
@@ -957,36 +961,16 @@ export default defineComponent({
     singlePop(item) {
       this.singleSyncPop = !this.singleSyncPop;
       this.singleDetail = item;
+      this.syncSelectedRowKeys = []
       for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
+        this.singleDetail.item_sync_market[i].key = i;
         let isChecked = false;
         if (this.singleDetail.item_sync_market[i].status !== "unsync") {
           isChecked = true;
+          this.syncSelectedRowKeys.push(i)
         }
 
         this.singleDetail.item_sync_market[i].checked = isChecked;
-      }
-
-      setTimeout(() => {
-        Object.values(document.querySelectorAll(".syncStatus")).map(el => {
-          el.parentElement.parentElement.style.backgroundColor = "#f9f9f9";
-          if (el.getAttribute("data-status") === "success") {
-            el.parentElement.parentElement.style.backgroundColor = "#fff7f5";
-          }
-        });
-
-        Object.values(document.querySelectorAll(".tableSyncStatus thead th")).map(el => {
-          el.style.backgroundColor = "#f7fdff";
-        });
-      });
-    },
-
-    checkAllMarket(checkAll) {
-      for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
-        if (checkAll === false) {
-          this.singleDetail.item_sync_market[i].checked = true;
-        } else {
-          this.singleDetail.item_sync_market[i].checked = false;
-        }
       }
     },
 
@@ -1001,42 +985,28 @@ export default defineComponent({
 
       return list;
     },
-
-    css() {
-      Object.values(document.querySelectorAll("#content-content th")).map(th => {
-        th.style.margin = "0";
-        th.style.padding = "0";
-        th.style.backgroundColor = "#fafafa";
-        th.style.textAlign = "center";
-        th.style.height = "50px";
-      });
-
-      document.querySelector("[placeholder=\"Start Time\"]").style.textAlign = "center";
-      document.querySelector("[placeholder=\"End Time\"]").style.textAlign = "center";
-    }
   },
 
   mounted() {
     this.getList("reload");
     this.getMarketList();
-    this.css();
   }
 });
 </script>
+
+<style>
+#header .ant-picker-input input {
+  text-align: center;
+}
+</style>
 
 <!--search-->
 <style scoped>
 
 /* 모든 title */
 #header h1 {
-  padding-top: 20px;
   font-size: 15px;
   font-weight: 600;
-}
-
-#content-content img {
-  width: 70px;
-  height: 70px;
 }
 
 /* 모든 title */
@@ -1054,11 +1024,6 @@ export default defineComponent({
   z-index: 9;
   left: 305px;
   top: 505px;
-}
-
-#content-content img {
-  width: 50px;
-  height: 50px;
 }
 
 #content-content .get-market-icon img {
@@ -1080,37 +1045,27 @@ export default defineComponent({
   color: #555;
 }
 
-#content-content .cantent .item-market {
+.item-market {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
 }
 
-#content-content .cantent .unsync img {
-  cursor: pointer;
+.item-market-icon img {
   width: 16px;
   height: 16px;
+}
+.unsync img {
+  cursor: pointer;
   filter: grayscale(100%);
   opacity: 0.3;
 }
-
-#content-content .cantent .unsync:hover img {
+.unsync:hover img {
   filter: grayscale(0%);
   opacity: 1;
 }
-
-#content-content .cantent .failed img {
+.failed img, .success img, .sending img {
   cursor: pointer;
-  width: 16px;
-  height: 16px;
-  filter: grayscale(0%);
-  opacity: 1;
-}
-
-#content-content .cantent .success img {
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
   filter: grayscale(0%);
   opacity: 1;
 }

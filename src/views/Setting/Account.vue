@@ -7,15 +7,12 @@
   <a-card :loading="cartLoading" :bordered="false" title="계정정보" class="setting-page-margin"
           :style="{marginBottom:'20px'}">
     <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}">
-      <a-descriptions-item label="릴라켓 세션키 설정">
+      <a-descriptions-item label="API키 설정">
+        <a-input-group compact>
         <a-input v-model:value="accessKey" placeholder="AccessKey" style="width: 300px;" />
-        <br>
-        <a-input class="mt5" v-model:value="secretKey" placeholder="SecretKey" style="width: 300px;" />
-        <br>
-        <a-button class="mt5" @click="addKey" type="primary">등록</a-button>
-
-        <!--도움말-->
-        <div class="setting-help">* 릴라켓 연동용 세션키를 입력하고 등록 부탁합니다.</div>
+        <a-input v-if="false" class="mt5" v-model:value="secretKey" placeholder="SecretKey" style="width: 300px;" />
+        <a-button @click="addKey" type="primary">등록</a-button>
+        </a-input-group>
       </a-descriptions-item>
 
       <a-descriptions-item label="이미지 번역 남은 회수">
@@ -27,8 +24,9 @@
 
       <a-descriptions-item label="수집 가격 설정">
         <!-- 등록된 설정 -->
+        <a-input-group compact>
         <template v-for="(item, index) in collectionPriceList">
-          <a-tag @close.prevent="delCollectionPrice(index)" closable class="setting-tag">
+          <a-tag @close.prevent="delCollectionPrice(index)" closable class="setting-tag mr5">
             {{ `${item.priceRangeStart} ~ ${item.priceRangeEnd}원 범위 내 포함될 시` }}
             <DoubleRightOutlined :style="{ color: '#1890ff' }" />
             {{ `${item.price} ${item.priceType === "number" ? "원으로 수집" : "%로 수집"}` }}
@@ -36,26 +34,29 @@
         </template>
         <!-- 등록버튼 -->
         <div v-if="input_visible.price_input_visible" class="setting-input">
-          <a-input type="text" placeholder="기준 시작" v-model:value="priceRangeStart" />
-          <a-input type="text" placeholder="기준 마감" v-model:value="priceRangeEnd" />
-          <a-input type="text" :placeholder="priceType === 'number' ? '설정 가격' : '설정 값'" v-model:value="price" />
-          <a-select class="setting-select" v-model:value="priceType">
+          <a-input-group compact>
+          <a-input type="text" placeholder="기준 시작" v-model:value="priceRangeStart" style="width: 100px;" />
+          <a-input type="text" placeholder="기준 마감" v-model:value="priceRangeEnd" style="width: 100px; margin-right: 5px;" />
+          <a-input type="text" :placeholder="priceType === 'number' ? '설정 가격' : '설정 값'" v-model:value="price" style="width: 100px;" />
+          <a-select class="setting-select" v-model:value="priceType" style="width: 100px;">
             <a-select-option value="number">고정값</a-select-option>
             <a-select-option value="percent">백분율</a-select-option>
           </a-select>
-          <a-button @click="addCollectionPrice" type="primary">등록</a-button>
+          <a-button @click="addCollectionPrice" type="primary" class="ml5">등록</a-button>
           <a-button @click="input_visible.price_input_visible = false" class="ml5">취소</a-button>
+          </a-input-group>
         </div>
         <a-tag v-else v-if="collectionPriceList.length < 3" class="setting-add"
                @click="input_visible.price_input_visible = true">
           <PlusOutlined />
           등록
         </a-tag>
+        </a-input-group>
         <!--도움말-->
         <div class="setting-help">* 상품 수집시 설정된 가격으로 수집합니다.<br>* 최대 3개까지 등록하실 수 있습니다.</div>
       </a-descriptions-item>
 
-      <a-descriptions-item label="로고 설정">
+      <a-descriptions-item label="로고 설정" v-if="false">
         <a-upload :showUploadList="false" :multiple="true" :headers="headers"
                   :customRequest="(file) => customRequest(file, 'logo')" :beforeUpload="handleBeforeUpload">
           <a-button>
@@ -70,7 +71,7 @@
         </span>
 
         <div class="setting-image">
-          <img v-if="logoImg.length > 0" :src="logoImg" />
+          <a-image v-if="logoImg.length > 0" :src="logoImg" :fallback="tempImageUrl" style="width: 120px; height: 120px;" />
           <div v-if="logoImg.length === 0" style="text-align: center">
             등록된 로고가 없습니다.
           </div>
@@ -80,7 +81,7 @@
         <div class="setting-help">* 업로드한 로고 이미지를 상품 상세 설명에 적용합니다.</div>
       </a-descriptions-item>
 
-      <a-descriptions-item label="아이콘 설정" v-if="isRelaket">
+      <a-descriptions-item label="아이콘 설정" v-if="false">
         <a-upload :showUploadList="false" :multiple="true" :headers="headers"
                   :customRequest="(file) => customRequest(file, 'icon')" :beforeUpload="handleBeforeUpload">
           <a-button>
@@ -91,7 +92,7 @@
         <div class="setting-image">
           <span v-for="(item, index) in icons">
             <p class="setting-delete" @click="delIcon(index)"></p>
-            <img :src="item.src" />
+            <a-image :src="item.src" :fallback="tempImageUrl" style="width: 120px; height: 120px;" />
           </span>
           <div v-if="icons.length === 0" style="text-align: center">
             등록된 아이콘이 없습니다.
@@ -103,7 +104,7 @@
         <a-button @click="onClickSyncDomeggookCategory" type="primary">동기화 실행</a-button>
       </a-descriptions-item>
 
-      <a-descriptions-item label="이미지 백업" v-if="isAdmin">
+      <a-descriptions-item label="이미지 백업" v-if="false">
         <a-button @click="backupImages" type="primary">백업 실행</a-button>
       </a-descriptions-item>
     </a-descriptions>
@@ -139,6 +140,7 @@ const priceRangeEnd = ref("");
 const price = ref("");
 const priceType = ref("number");
 const collectionPriceList = ref([]);
+const tempImageUrl = ref(require('../../assets/img/temp_image.png'));
 const icons = ref([]);
 const logoImg = ref('');
 const isLogInDetail = ref(false);
@@ -152,7 +154,6 @@ const input_visible = reactive({
 });
 
 const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
-const isRelaket = ref(Cookie.get("member_roles").split(",").includes("ROLE_RELAKET"));
 
 function setLogoInDetail(value) {
   indicator.value = true;
@@ -202,12 +203,32 @@ function setLogo() {
   });
 }
 
+function delLogo(oldLogo) {
+  if (oldLogo === '') {
+    return false;
+  }
+  let delData = [{ src: oldLogo }];
+
+  indicator.value = true;
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/delicon", {
+    data: delData,
+    type: "logo"
+  }).then((res) => {
+    if (res.status !== "2000") {
+      alert(res.message);
+    }
+
+    console.log("oldLogo 삭제 성공");
+    indicator.value = false;
+  });
+}
+
 function delIcon(index) {
   let delData = [{ src: icons.value[index].src }];
 
   indicator.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/delicon", {
-    data: [{ src: icons.value[index].src }],
+    data: delData,
     type: "icon"
   }).then((res) => {
     if (res.status !== "2000") {
@@ -218,12 +239,14 @@ function delIcon(index) {
       icons.value = icons.value.filter((item) => item.src !== delData[i].src);
     }
 
-    console.log("삭제 성공");
+    console.log("icon 삭제 성공");
     indicator.value = false;
   });
 }
 
 function customRequest(option, type) {
+  const oldLogo = logoImg.value;
+
   const formData = new FormData();
   formData.append("file", option.file);
   formData.append("relation_type", "user");
@@ -241,6 +264,7 @@ function customRequest(option, type) {
       logoImg.value = res.data.img_url;
       setLogo()
       setLogoInDetail(true)
+      delLogo(oldLogo)
     } else {
       icons.value.push({ src: res.data.img_url });
     }
@@ -500,31 +524,7 @@ onMounted(() => {
   margin: 3px 0;
 }
 
-.setting-input input:nth-child(1) {
-  width: 100px;
-  border-right: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
 
-.setting-input input:nth-child(2) {
-  width: 100px;
-  margin-right: 5px;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.setting-input input:nth-child(3) {
-  width: 100px;
-  border-right: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.setting-input .setting-select {
-  width: 100px;
-  margin-right: 5px;
-}
 
 .setting-help {
   font-size: 12px;
@@ -553,6 +553,7 @@ onMounted(() => {
   background: #666;
   display: none;
   cursor: pointer;
+  z-index: 1;
 }
 
 .setting-image .setting-delete::before, .setting-image .setting-delete::after {
@@ -577,11 +578,4 @@ onMounted(() => {
 .setting-image span:hover .setting-delete {
   display: block;
 }
-
-.setting-image img {
-  width: 120px;
-  height: 120px;
-}
-
-
 </style>

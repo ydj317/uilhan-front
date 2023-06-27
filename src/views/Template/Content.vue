@@ -36,5 +36,4 @@ const route = useRoute();
   opacity: 0;
   transform: translateX(20px);
 }
-
 </style>

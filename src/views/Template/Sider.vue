@@ -5,14 +5,14 @@
       mode="inline"
       theme="dark"
     >
-      <!--      <a-menu-item key="0">-->
-      <!--        <template #icon>-->
-      <!--          <gift-outlined />-->
-      <!--        </template>-->
-      <!--        <router-link to="/main">-->
-      <!--          <span>메인</span>-->
-      <!--        </router-link>-->
-      <!--      </a-menu-item>-->
+      <a-menu-item key="0" v-if="false">
+        <template #icon>
+          <gift-outlined />
+        </template>
+        <router-link to="/main">
+          <span>메인</span>
+        </router-link>
+      </a-menu-item>
       <a-menu-item key="1">
         <template #icon>
           <gift-outlined />
@@ -31,15 +31,35 @@
       </a-menu-item>
       <a-menu-item key="3">
         <template #icon>
-          <pay-circle-outlined />
+          <api-outlined />
         </template>
-        <span>예치금관리(준비중)</span>
+        <RouterLink to="/market/seller/list">
+          <span>제휴사연동</span>
+        </RouterLink>
       </a-menu-item>
-      <a-menu-item key="4">
+      <a-menu-item key="4" v-if="isAdmin">
         <template #icon>
-          <group-outlined />
+          <money-collect-outlined />
         </template>
-        <span>상세페이지 제작</span>
+        <router-link to="/user/manage">
+          <span>회원충전</span>
+        </router-link>
+      </a-menu-item>
+      <a-menu-item key="5">
+        <template #icon>
+          <close-circle-outlined />
+        </template>
+        <router-link to="/user/FilterProductWords">
+          <span>금지어 관리</span>
+        </router-link>
+      </a-menu-item>
+      <a-menu-item key="7">
+        <template #icon>
+          <appstore-outlined />
+        </template>
+        <router-link to="/product/domeggook">
+          <span>도매꾹</span>
+        </router-link>
       </a-menu-item>
       <a-sub-menu key="6">
         <template #icon>
@@ -58,43 +78,23 @@
           <router-link to="/setting/delivery"><span>배송정책</span></router-link>
         </a-menu-item>
       </a-sub-menu>
-      <a-menu-item key="9">
+      <a-menu-item key="30" v-if="false">
         <template #icon>
-          <api-outlined />
+          <pay-circle-outlined />
         </template>
-        <RouterLink to="/market/seller/list">
-          <span>제휴사연동</span>
-        </RouterLink>
+        <span>예치금관리(준비중)</span>
       </a-menu-item>
-      <a-menu-item key="10">
+      <a-menu-item key="31" v-if="false">
+        <template #icon>
+          <group-outlined />
+        </template>
+        <span>상세페이지 제작(준비중)</span>
+      </a-menu-item>
+      <a-menu-item key="32" v-if="false">
         <template #icon>
           <file-text-outlined />
         </template>
         <span>상품부가정보(준비중)</span>
-      </a-menu-item>
-      <a-menu-item key="11" v-if="isAdmin">
-        <template #icon>
-          <money-collect-outlined />
-        </template>
-        <router-link to="/user/manage">
-          <span>회원충전</span>
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="12">
-        <template #icon>
-          <close-circle-outlined />
-        </template>
-        <router-link to="/user/FilterProductWords">
-          <span>금지어 관리</span>
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="13">
-        <template #icon>
-          <appstore-outlined />
-        </template>
-        <router-link to="/product/domeggook">
-          <span>도매꾹</span>
-        </router-link>
       </a-menu-item>
     </a-menu>
   </div>

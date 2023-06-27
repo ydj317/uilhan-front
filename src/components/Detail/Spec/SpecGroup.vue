@@ -27,7 +27,7 @@
               <a-button @click="setTrim" class="spec-right-button" type="primary">빈칸</a-button>
               <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary">특문</a-button>
               <a-button @click="strLengthTo25" class="spec-right-button" type="primary">25자</a-button>
-              <a-button @click="setSort" class="spec-right-button" type="primary">A-Z</a-button>
+              <a-button @click="setAtoZ" class="spec-right-button" type="primary">A-Z</a-button>
               <a-dropdown>
                 <template #overlay>
                   <a-menu>
@@ -55,7 +55,10 @@
             </label>
             <a-input class="input-size"  v-model:value="item.name" size="default" placeholder="옵션명" />
             <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">{{ item.name.length }}</span> / 25</span>
-            <a-button @click="addSpecOptionName(optionIndex)" v-if="option.data.length === (index + 1)" class="spec-add-option-name-button" type="primary">추가</a-button>
+            <div class="spec-option-name-button">
+              <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large" class="spec-set-option-name-button"><MinusOutlined /></a-button>
+              <a-button @click="addSpecOptionName(optionIndex)" v-if="option.data.length === (index + 1)" class="spec-set-option-name-button" type="link" size="large"><PlusOutlined /></a-button>
+            </div>
           </div>
         </td>
       </tr>
@@ -66,6 +69,7 @@
 <script>
 import {cloneDeep, forEach} from "lodash";
 import { mapState } from "vuex";
+import { PlusOutlined, MinusOutlined} from '@ant-design/icons-vue';
 
 export default {
   name: "productDetailSpecGroup",
@@ -73,9 +77,10 @@ export default {
     ...mapState(["product"]),
   },
   props: ['option', 'optionIndex'],
+  components: {PlusOutlined, MinusOutlined},
   data() {
     return {
-      oldOptionData: [],
+      oldOptionData: cloneDeep(this.option.data),
       selectAll: false,
       selectedRows: [],
     };
@@ -90,6 +95,13 @@ export default {
     },
     addSpecOptionName(optionIndex) {
       this.product.item_option[optionIndex].data.push({key:this._uniqueKey(), name: ''});
+    },
+    deleteSpecOptionName(optionIndex, index) {
+      if (this.product.item_option[optionIndex].data.length === 1) {
+        alert('옵션명 전부 삭제는 불가합니다.');
+        return false;
+      }
+      this.product.item_option[optionIndex].data.splice(index, 1);
     },
     onCheckAllChange() {
       if (this.selectAll === true) {
@@ -115,7 +127,6 @@ export default {
         this._setCheckBoxInit();
         return false;
       }
-      this._saveOldOptionData();
       forEach(this.option.data, (item, index) => {
         if (this.selectedRows.indexOf(item.key) === -1) {
           newOptionData.push(item);
@@ -130,7 +141,6 @@ export default {
         return false;
       }
       let newOptionData = [];
-      this._saveOldOptionData();
       forEach(this.option.data, (item, index) => {
         if (this.selectedRows.indexOf(item.key) !== -1) {
           item.name = item.name.trim();
@@ -148,7 +158,6 @@ export default {
         return false;
       }
       let newOptionData = [];
-      this._saveOldOptionData();
       const specialChars = /[@#$%^&*]/g;
       forEach(this.option.data, (item, index) => {
         if (this.selectedRows.indexOf(item.key) !== -1) {
@@ -167,7 +176,6 @@ export default {
         return false;
       }
       let newOptionData = [];
-      this._saveOldOptionData();
       forEach(this.option.data, (item, index) => {
         if (this.selectedRows.indexOf(item.key) !== -1) {
           item.name = item.name.substring(0, 25);
@@ -179,12 +187,14 @@ export default {
       this.product.item_option[this.optionIndex].data = newOptionData;
       this._setCheckBoxInit();
     },
-    setSort() {
-      this._saveOldOptionData();
-      this.product.item_option[this.optionIndex].data.sort((a, b) => a.name.localeCompare(b.name));
+    setAtoZ() {
+      let typeValue = 'A';
+      forEach(this.option.data, (item) => {
+        item.name = typeValue;
+        typeValue = this._getNextLetter(typeValue);
+      });
     },
     handleMenuClick(type) {
-      this._saveOldOptionData();
       //type:N 01__, A A.__
       let prefix;
       let typeValue;
@@ -208,13 +218,7 @@ export default {
       });
     },
     setBeforeOldOptionData() {
-      if (this.oldOptionData.length == 0) {
-        return;
-      }
       this.product.item_option[this.optionIndex].data = cloneDeep(this.oldOptionData);
-    },
-    _saveOldOptionData() {
-      this.oldOptionData = cloneDeep(this.option.data);
     },
     _getNextLetter(letter) {
       let nextLetter = '';
@@ -334,7 +338,11 @@ export default {
   margin-right: 5px;
 }
 
-.spec-add-option-name-button {
-  margin-left: 18px;
+.spec-option-name-button {
+  margin-left: auto;
+  padding-right: 15px;
+}
+.spec-set-option-name-button {
+  padding: 2px;
 }
 </style>

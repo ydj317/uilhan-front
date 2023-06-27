@@ -15,9 +15,9 @@
       </div>
 
       <!--sku 상단 right 버튼-->
-      <div class="w63 row">
+      <div class="w50 row">
         <!--도매마진-->
-        <div class="w33 row right">
+        <div class="w33 row right" v-if="false">
           <a-select
             class="top_button_right_item_select mr5"
             :options="this.product.wholesale_margin"
@@ -54,9 +54,7 @@
             v-model:value="this.product.disp_margin_option"
           >
           </a-select>
-          <a-button class="top_button_right_item_button" @click="setDispMargin"
-            >할인전
-          </a-button>
+          <a-button class="top_button_right_item_button" @click="setDispMargin">권장가</a-button>
         </div>
 
         <!--환율-->
@@ -67,9 +65,7 @@
             v-model:value="this.product.rate_margin_option"
           >
           </a-select>
-          <a-button class="top_button_right_item_button" @click="setRateMargin"
-            >환율
-          </a-button>
+          <a-button class="top_button_right_item_button" @click="setRateMargin">환율</a-button>
         </div>
       </div>
     </div>
@@ -270,7 +266,7 @@ export default {
           width: "9%",
         },
         {
-          title: "할인전 가격",
+          title: "권장가",
           key: "disp_price", // 할인가*할인전 가격설정
           width: "9%",
         },
@@ -491,6 +487,7 @@ export default {
       }
 
       this.product.bProductDetailsEditor = false;
+      this.product.bProductImageEditor = false;
       this.product.bImageEditorModule = true;
       this.product.aPhotoCollection = [
         {
@@ -609,8 +606,17 @@ export default {
 }
 
 .sku_window_image {
+  margin: 3px;
   width: 100px;
   height: 120px;
+}
+
+.sku_window_image.checkedEl {
+  border: 2px solid #1890ff;
+}
+
+.sku_window_image.checkedNot {
+  border: 2px solid #eee;
 }
 
 .sku_image {

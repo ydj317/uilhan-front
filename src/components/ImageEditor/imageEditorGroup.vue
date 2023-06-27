@@ -2,26 +2,45 @@
   <div class="imageEditorGroupContainer">
     <!-- a-modal 渲染时 数据处理 同时使用 if 和 visible 请不要删除 -->
     <template title="번역팝업">
+      <!--상품 이미지-->
+      <a-modal
+          v-if="
+          product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
+        "
+          :visible="
+          product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
+        "
+          :closable="false"
+          @cancel="product.bImageEditorModule = false"
+          width="auto"
+          centered
+      >
+        <!-- 번역 남은 회수 -->
+        <div class="w100 right center">
+          <h3 class="pr5">
+            남은회수: <span class="red">{{ product.recharge }}</span>
+          </h3>
+        </div>
+        <div class="center">
+          <img :src="product.aPhotoCollection[0].original_url" alt="" />
+        </div>
+
+        <template v-slot:footer>
+          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection)">번역</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+        </template>
+      </a-modal>
+
       <!--SKU-->
       <a-modal
         v-if="
-          product.bImageEditorModule && product.bProductDetailsEditor === false
+          product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === false
         "
         :visible="
-          product.bImageEditorModule && product.bProductDetailsEditor === false
+          product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === false
         "
         :closable="false"
-        :ok-text="'닫기'"
-        :cancel-text="'번역'"
-        @cancel="
-          skuTranslateImage(
-            product.aPhotoCollection[0].key,
-            product.aPhotoCollection[0].original_url
-          )
-        "
-        @ok="product.bImageEditorModule = false"
-        :maskClosable="false"
-        :cancel-button-props="{ danger: true, type: 'primary' }"
+        @cancel="product.bImageEditorModule = false"
         width="auto"
         centered
       >
@@ -35,6 +54,14 @@
         <div class="center">
           <img :src="product.aPhotoCollection[0].original_url" alt="" />
         </div>
+
+        <template v-slot:footer>
+          <a-button type="primary" @click="skuTranslateImage(
+            product.aPhotoCollection[0].key,
+            product.aPhotoCollection[0].original_url
+          )">번역</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+        </template>
       </a-modal>
 
       <!--상세설명-->
@@ -46,10 +73,7 @@
           product.bImageEditorModule && product.bProductDetailsEditor === true
         "
         :closable="false"
-        :ok-text="'닫기'"
-        @ok="product.bImageEditorModule = false"
-        :maskClosable="false"
-        :cancel-button-props="{ ghost: true }"
+        @cancel="product.bImageEditorModule = false"
         width="50%"
         centered
       >
@@ -146,26 +170,13 @@
           </tbody>
         </table>
 
-        <div style="display: flex; justify-content: flex-end">
-          <a-button
-            class="bg-3051d3 mr5"
-            type="primary"
-            @click="checkAllDetailImage"
-            >전체선택</a-button
-          >
-          <a-button
-            class="bg-3051d3 mr5"
-            type="primary"
-            @click="uncheckAllDetailImage"
-            >선택취소</a-button
-          >
-          <a-button
-            class="bg-3051d3 mr5"
-            type="primary"
-            @click="deleteCheckedDetailImage()"
-            >선택삭제</a-button
-          >
-        </div>
+
+        <template v-slot:footer>
+          <a-button type="primary" @click="checkAllDetailImage">전체선택</a-button>
+          <a-button @click="uncheckAllDetailImage">선택취소</a-button>
+          <a-button @click="deleteCheckedDetailImage" danger>선택삭제</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+        </template>
       </a-modal>
     </template>
   </div>
@@ -174,6 +185,7 @@
 <script>
 import { mapState } from "vuex";
 import { lib } from "@/util/lib";
+import { AuthRequest } from "@/util/request";
 
 export default {
   name: "ImageEditorGroup",
@@ -223,6 +235,33 @@ export default {
               data.img.split("/").includes(sRequestId) === true
             ) {
               this.product.sku[i].img = oRequestId[sRequestId];
+            }
+          });
+        });
+
+        // 이미지 편집기 닫기
+        this.product.bImageEditorModule = false;
+        this.product.xiangjiVisible = false;
+      });
+    },
+
+    //상품이미지 번역
+    productTranslateImage(aImagesInfo) {
+      this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
+        let sTranslateUrl = oTranslateInfo[aImagesInfo[0].key].translate_url;
+        this.product.item_thumbnails[aImagesInfo[0].key].url = sTranslateUrl;
+        this.productRequestXiangji([sTranslateUrl]);
+      });
+    },
+    productRequestXiangji(aImagesUrl) {
+      this.product.requestXiangji(aImagesUrl, (oRequestId) => {
+        Object.keys(oRequestId).map((sRequestId) => {
+          this.product.item_thumbnails.map((data, i) => {
+            if (
+                lib.isString(data.url, true) === true &&
+                data.url.split("/").includes(sRequestId) === true
+            ) {
+              this.product.item_thumbnails[i].url = oRequestId[sRequestId];
             }
           });
         });
@@ -404,6 +443,29 @@ export default {
         this.product.aPhotoCollection[i].checked = false;
       });
     },
+
+    // 최초 번역 남은 회수 조회
+    getRecharge() {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
+        (res) => {
+          if (res.status !== "2000" || res.data === undefined) {
+            alert(res.message);
+            return false;
+          }
+
+          try {
+            this.product.recharge = res.data.recharge;
+          } catch (e) {
+            alert("남은회수 호출 실패");
+          }
+        }
+      );
+    },
+  },
+
+  mounted() {
+    // 최초 번역 남은 회수 조회
+    this.getRecharge();
   },
 };
 </script>
