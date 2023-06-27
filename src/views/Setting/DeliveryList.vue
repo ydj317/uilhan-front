@@ -44,7 +44,7 @@ const table_columns = computed(() => {
     { title: 'DtIx', dataIndex: 'dtIx', },
     { title: '배송정책명', dataIndex: 'templateName', },
     { title: '시간', dataIndex: 'updDate', },
-    { title: '조작', key: 'action', },
+    { title: '수정', key: 'action', },
   ]
 })
 
