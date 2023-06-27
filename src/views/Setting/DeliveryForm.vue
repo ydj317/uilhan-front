@@ -258,7 +258,7 @@ const onDeliveryAddressData = () => {
 <template>
   <a-card :bordered="false" title="배송정책 등록/수정" :loading="indicator">
     <a-form :model="formState" name="delivery_form" @finish="onFinish"
-            @finishFailed="onFinishFailed" autocomplete="off" layout="horizontal" class="delivery_form">
+            @finishFailed="onFinishFailed" autocomplete="off" scrollToFirstError="true" layout="horizontal" class="delivery_form">
       <a-form-item label="배송정책명" name="template_name"
                    :rules="[{ required: true, message: '배송정책명을 입력해 주세요.' }]">
         <a-input v-model:value="formState.template_name" allow-clear placeholder="배송정책명을 입력해 주세요."/>
