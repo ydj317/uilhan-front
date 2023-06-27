@@ -309,9 +309,7 @@ const onDeliveryAddressData = () => {
         <a-form-item label="상품 1개단위 배송비" name="delivery_unit_price"
                      :rules="[{ required: true, message: '상품 1개단위 배송비를 입력해 주세요.'}]"
                      :style="{flex:'1',marginLeft:'-1px'}">
-
-          <a-input v-model:value="formState.delivery_unit_price" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요." v-if="formState.delivery_policy ==='6'"/>
-          <a-input v-model:value="formState.delivery_unit_price" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요." v-else disabled/>
+          <a-input v-model:value="formState.delivery_unit_price" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요." />
         </a-form-item>
       </div>
 
