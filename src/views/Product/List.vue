@@ -35,7 +35,8 @@
         <h1>키워드</h1>
         <a-input-group compact>
           <a-select v-model:value="search_key" style="width: 150px;">
-            <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">{{ config.label }}
+            <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">
+              {{ config.label }}
             </a-select-option>
           </a-select>
           <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;" />
@@ -312,26 +313,6 @@ export default defineComponent({
               value: "all"
             },
             {
-              label: "번역",
-              value: "1"
-            },
-            {
-              label: "미번역",
-              value: "0"
-            }
-          ],
-          label: "번역상태",
-          key: "trans_status",
-          class: "mr17 inline-block",
-          group_class: "mb10"
-        },
-        {
-          options: [
-            {
-              label: "전체",
-              value: "all"
-            },
-            {
               label: "성공",
               value: "1"
             },
@@ -367,11 +348,7 @@ export default defineComponent({
         },
         {
           key: "item_name",
-          label: "기존 상품명"
-        },
-        {
-          key: "item_trans_name",
-          label: "번역 상품명"
+          label: "상품명"
         },
         {
           key: "sku_code",
@@ -669,7 +646,7 @@ export default defineComponent({
         "end_time": this.end_time,
         "search_key": this.search_key,
         "search_value": this.search_value,
-        "trans_status": this.trans_status === "" || this.trans_status === null ? "all" : this.trans_status,
+        "trans_status": this.trans_status,
         "sync_status": this.sync_status === "" || this.sync_status === null ? "all" : this.sync_status,
         "limit": iLimit,
         "page": iPage

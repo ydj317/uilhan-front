@@ -40,11 +40,14 @@ const getDeliveryList = () => {
   loading.value = true
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/list').then((res) => {
     if (res.status !== '2000') {
+      loading.value = false;
       alert(res.message)
       return false;
     }
-    loading.value = false;
+
     datasource.value = Object.values(res.data)
+    loading.value = false;
+
   }).catch((error) => {
     loading.value = false;
     alert(error.message);

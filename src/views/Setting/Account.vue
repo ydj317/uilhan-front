@@ -22,40 +22,6 @@
         <div class="setting-help">* 상품 이미지 변역 남은 회수를 표시합니다.</div>
       </a-descriptions-item>
 
-      <a-descriptions-item label="수집 가격 설정">
-        <!-- 등록된 설정 -->
-        <a-input-group compact>
-        <template v-for="(item, index) in collectionPriceList">
-          <a-tag @close.prevent="delCollectionPrice(index)" closable class="setting-tag mr5">
-            {{ `${item.priceRangeStart} ~ ${item.priceRangeEnd}원 범위 내 포함될 시` }}
-            <DoubleRightOutlined :style="{ color: '#1890ff' }" />
-            {{ `${item.price} ${item.priceType === "number" ? "원으로 수집" : "%로 수집"}` }}
-          </a-tag>
-        </template>
-        <!-- 등록버튼 -->
-        <div v-if="input_visible.price_input_visible" class="setting-input">
-          <a-input-group compact>
-          <a-input type="text" placeholder="기준 시작" v-model:value="priceRangeStart" style="width: 100px;" />
-          <a-input type="text" placeholder="기준 마감" v-model:value="priceRangeEnd" style="width: 100px; margin-right: 5px;" />
-          <a-input type="text" :placeholder="priceType === 'number' ? '설정 가격' : '설정 값'" v-model:value="price" style="width: 100px;" />
-          <a-select class="setting-select" v-model:value="priceType" style="width: 100px;">
-            <a-select-option value="number">고정값</a-select-option>
-            <a-select-option value="percent">백분율</a-select-option>
-          </a-select>
-          <a-button @click="addCollectionPrice" type="primary" class="ml5">등록</a-button>
-          <a-button @click="input_visible.price_input_visible = false" class="ml5">취소</a-button>
-          </a-input-group>
-        </div>
-        <a-tag v-else v-if="collectionPriceList.length < 3" class="setting-add"
-               @click="input_visible.price_input_visible = true">
-          <PlusOutlined />
-          등록
-        </a-tag>
-        </a-input-group>
-        <!--도움말-->
-        <div class="setting-help">* 상품 수집시 설정된 가격으로 수집합니다.<br>* 최대 3개까지 등록하실 수 있습니다.</div>
-      </a-descriptions-item>
-
       <a-descriptions-item label="로고 설정" v-if="false">
         <a-upload :showUploadList="false" :multiple="true" :headers="headers"
                   :customRequest="(file) => customRequest(file, 'logo')" :beforeUpload="handleBeforeUpload">
@@ -135,11 +101,6 @@ const cartLoading = ref(true);
 const accessKey = ref();
 const secretKey = ref();
 const recharge = ref(0);
-const priceRangeStart = ref("");
-const priceRangeEnd = ref("");
-const price = ref("");
-const priceType = ref("number");
-const collectionPriceList = ref([]);
 const tempImageUrl = ref(require('../../assets/img/temp_image.png'));
 const icons = ref([]);
 const logoImg = ref('');
@@ -314,100 +275,8 @@ function onClickSyncDomeggookCategory() {
   );
 }
 
-function addCollectionPrice() {
-  if (priceRangeStart.value === undefined || priceRangeStart.value.length === 0) {
-    alert("기준가 시작범위는 필수로 입력해주십시오");
-    return false;
-  }
 
-  if (priceRangeEnd.value === undefined || priceRangeEnd.value.length === 0) {
-    alert("기준가 마감범위는 필수로 입력해주십시오");
-    return false;
-  }
 
-  if (price.value === undefined || price.value.length === 0) {
-    alert("가격은 필수로 입력해주십시오");
-    return false;
-  }
-
-  let regPos = /^[0-9]+$/;
-  if (
-    !regPos.test(price.value) ||
-    !regPos.test(priceRangeStart.value) ||
-    !regPos.test(priceRangeEnd.value)
-  ) {
-    alert("기준 값과 가격 값은 숫자만 입력가능합니다.");
-    return false;
-  }
-
-  if (parseInt(priceRangeStart.value) > parseInt(priceRangeEnd.value)) {
-    alert("시작 가격은 마감 가격보다 작아야합니다.");
-    return false;
-  }
-
-  if (collectionPriceList.value.length === 3) {
-    alert("상품수집 가격설정은 최대 3개까지 등록하실수 있습니다.");
-    return false;
-  }
-
-  for (let i = 0; i < collectionPriceList.value.length; i++) {
-    let item = collectionPriceList.value[i];
-    if (
-      (parseInt(priceRangeStart.value) >= parseInt(item.priceRangeStart) &&
-        parseInt(priceRangeStart.value) <= parseInt(item.priceRangeEnd)) ||
-      (parseInt(priceRangeEnd.value) >= parseInt(item.priceRangeStart) &&
-        parseInt(priceRangeEnd.value) <= parseInt(item.priceRangeEnd))
-    ) {
-      alert(
-        "요청하신 가격범위는 기존에 등록하신 가격범위에 포함되여있습니다."
-      );
-      return false;
-    }
-  }
-
-  let data = collectionPriceList.value.concat({
-    priceRangeStart: priceRangeStart.value,
-    priceRangeEnd: priceRangeEnd.value,
-    price: price.value,
-    priceType: priceType.value
-  });
-  indicator.value = true;
-  sendCollectionData(data);
-}
-
-function delCollectionPrice(index) {
-  if (collectionPriceList.value.length === 0) {
-    alert("등록된 가격 설정이 없습니다.");
-    return false;
-  }
-
-  let data = collectionPriceList.value.filter(
-    (item, i) => parseInt(index) !== parseInt(i)
-  );
-  indicator.value = true;
-  sendCollectionData(data);
-}
-
-function sendCollectionData(data) {
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userup", {
-    data: data,
-    type: "collection"
-  }).then((res) => {
-    if (res.status !== "2000") {
-      alert(res.message);
-      return false;
-    }
-
-    collectionPriceList.value = data;
-    input_visible.price_input_visible = false;
-    priceRangeStart.value = "";
-    priceRangeEnd.value = "";
-    price.value = "";
-    priceType.value = "number";
-    indicator.value = false;
-    console.log("처리성공");
-  });
-}
 
 function getRecharge() {
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
@@ -478,8 +347,6 @@ function getUser() {
 
       accessKey.value = res.data.key.access_key;
       secretKey.value = res.data.key.secret_key;
-
-      collectionPriceList.value = res.data.collection;
 
       cartLoading.value = false;
     }
