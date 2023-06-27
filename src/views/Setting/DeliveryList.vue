@@ -58,7 +58,7 @@ const table_columns = computed(() => {
     { title: 'ID', dataIndex: 'dt_ix', },
     { title: '배송정책명', dataIndex: 'template_name', },
     { title: '배송비', dataIndex: 'delivery_price', },
-    { title: '조작', key: 'action', fixed: 'right', width: 100,align:'center',},
+    { title: '수정', key: 'action', fixed: 'right', width: 100,align:'center',},
   ]
 })
 
