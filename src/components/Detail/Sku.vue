@@ -14,6 +14,20 @@
 
       <!--sku 상단 right 버튼-->
       <div class="w63 row">
+        <!--도매마진-->
+        <div class="w33 row right">
+          <a-select
+              class="top_button_right_item_select mr5"
+              :options="this.product.wholesale_margin"
+              v-model:value="this.product.wholesale_margin_option"
+          >
+          </a-select>
+          <a-button
+              class="top_button_right_item_button"
+              @click="setWholesaleMargin"
+          >도매마진
+          </a-button>
+        </div>
         <!--판매마진-->
         <div class="w33 row right">
           <a-select
@@ -437,8 +451,7 @@ export default {
         if (key === "selling_price") {
           let sellingPrice = this.product.sku[index][key];
           let expected_return = (sellingPrice - this.product.sku[index].original_price_ko - sellingPrice * 0.12).toFixed(0);
-          this.product.sku[index].expected_return =
-              Math.ceil(Number(expected_return) / 100) * 100;
+          this.product.sku[index].expected_return = expected_return;
         }
       }
     },
@@ -637,8 +650,7 @@ export default {
       this.product.sku.map((data, i) => {
         let sellingPrice = data.selling_price;
         let expected_return = (sellingPrice - data.original_price_ko - sellingPrice * 0.12).toFixed(0);
-        this.product.sku[i].expected_return =
-            Math.ceil(Number(expected_return) / 100) * 100;
+        this.product.sku[i].expected_return = expected_return;
       });
     }
   },
