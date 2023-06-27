@@ -998,10 +998,6 @@ export default defineComponent({
 #header .ant-picker-input input {
   text-align: center;
 }
-
-.tableSyncStatus .ant-table-tbody > tr.ant-table-row-selected > td {
-  background: #fafafa;
-}
 </style>
 
 <!--search-->
