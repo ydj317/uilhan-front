@@ -360,6 +360,11 @@ export default {
           ).toFixed(0);
           this.product.sku[i].selling_price =
               Math.ceil(Number(selling_price) / 100) * 100;
+          //custom_selling_price
+          this.product.sku[i].custom_selling_price = Number(this.product.sku[i].selling_price);
+
+          let expected_return = (Number(this.product.sku[i].selling_price) - Number(this.product.sku[i].original_price_ko) - Number(this.product.sku[i].selling_price) * 0.12).toFixed(0);
+          this.product.sku[i].expected_return = Number(expected_return);
 
           // 할인가
           let disp_price = (
@@ -371,6 +376,8 @@ export default {
           ).toFixed(0);
           this.product.sku[i].disp_price =
               Math.ceil(Number(disp_price) / 100) * 100;
+          //custom_disp_price
+          this.product.sku[i].custom_disp_price = Number(this.product.sku[i].disp_price);
         }
       });
     },
@@ -411,7 +418,7 @@ export default {
         this.product.sku[i].selling_price =
             Math.ceil(Number(selling_price) / 100) * 100;
         if (type === "click") {
-          this.product.sku[i].custom_selling_price = this.product.sku[i].selling_price;
+          this.product.sku[i].custom_selling_price = Number(this.product.sku[i].selling_price);
         }
       });
       if (type === "click") {
@@ -438,7 +445,7 @@ export default {
         this.product.sku[i].disp_price =
             Math.ceil(Number(disp_price) / 100) * 100;
         if (type === "click") {
-          this.product.sku[i].custom_disp_price = this.product.sku[i].disp_price;
+          this.product.sku[i].custom_disp_price = Number(this.product.sku[i].disp_price);
         }
       });
       this.product.item_disp_margin_option = this.product.disp_margin_option;
@@ -446,12 +453,12 @@ export default {
     setPrice(key, index) {
       if (["selling_price", "disp_price"].includes(key)) {
         //가격 동기화
-        this.product.sku[index][key] = this.product.sku[index]["custom_" + key];
+        this.product.sku[index][key] = Number(this.product.sku[index]["custom_" + key]);
         //예상수익 셋팅
         if (key === "selling_price") {
-          let sellingPrice = this.product.sku[index][key];
-          let expected_return = (sellingPrice - this.product.sku[index].original_price_ko - sellingPrice * 0.12).toFixed(0);
-          this.product.sku[index].expected_return = expected_return;
+          let sellingPrice = Number(this.product.sku[index][key]);
+          let expected_return = (Number(sellingPrice) - Number(this.product.sku[index].original_price_ko) - Number(sellingPrice) * 0.12).toFixed(0);
+          this.product.sku[index].expected_return = Number(expected_return);
         }
       }
     },
@@ -494,7 +501,11 @@ export default {
         this.sku_columns.map((columns) => {
           //custom price
           if (["selling_price", "disp_price"].includes(columns.key)) {
-            this.product.sku[i]["custom_" + columns.key] = this.product.sku[0]["custom_" +  columns.key];
+            this.product.sku[i]["custom_" + columns.key] = Number(this.product.sku[0]["custom_" +  columns.key]);
+          }
+          //original_price_ko
+          if (["original_price_cn"].includes(columns.key)) {
+            this.product.sku[i]["original_price_ko"] = Number(this.product.sku[0]["original_price_ko"]);
           }
           if (!["checked", "code", "spec", "img", "is_option_reference_price"].includes(columns.key)) {
             this.product.sku[i][columns.key] = this.product.sku[0][columns.key];
@@ -630,27 +641,26 @@ export default {
       this.product.sku.map((data, i) => {
         if (bInit === true) {
           if (this.product.sku[i].custom_selling_price === null) {
-            this.product.sku[i].custom_selling_price = this.product.sku[i].selling_price;
+            this.product.sku[i].custom_selling_price = Number(this.product.sku[i].selling_price);
           } else {
-            this.product.sku[i].selling_price = this.product.sku[i].custom_selling_price;
+            this.product.sku[i].selling_price = Number(this.product.sku[i].custom_selling_price);
           }
           if (this.product.sku[i].custom_disp_price === null) {
-            this.product.sku[i].custom_disp_price = this.product.sku[i].disp_price;
+            this.product.sku[i].custom_disp_price = Number(this.product.sku[i].disp_price);
           } else {
-            this.product.sku[i].disp_price = this.product.sku[i].custom_disp_price;
+            this.product.sku[i].disp_price = Number(this.product.sku[i].custom_disp_price);
           }
         } else {
           //custom 가격 셋팅
-          this.product.sku[i].custom_selling_price = this.product.sku[i].selling_price;
-          this.product.sku[i].custom_disp_price = this.product.sku[i].disp_price;
+          this.product.sku[i].custom_selling_price = Number(this.product.sku[i].selling_price);
+          this.product.sku[i].custom_disp_price = Number(this.product.sku[i].disp_price);
         }
       });
     },
     setExpectedReturn() {
       this.product.sku.map((data, i) => {
-        let sellingPrice = data.selling_price;
-        let expected_return = (sellingPrice - data.original_price_ko - sellingPrice * 0.12).toFixed(0);
-        this.product.sku[i].expected_return = expected_return;
+        let expected_return = (Number(data.selling_price) - Number(data.original_price_ko) - Number(data.selling_price) * 0.12).toFixed(0);
+        this.product.sku[i].expected_return = Number(expected_return);
       });
     }
   },
