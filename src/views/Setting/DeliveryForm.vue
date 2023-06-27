@@ -100,7 +100,7 @@ let formState = reactive({
 const getDeliveryDetail = (id) => {
   if (!id) return false;
   indicator.value = true;
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/list/').then((res) => {
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/list').then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
       indicator.value = false;
