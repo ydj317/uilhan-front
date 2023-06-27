@@ -37,6 +37,23 @@
           <span>제휴사연동</span>
         </RouterLink>
       </a-menu-item>
+      <a-sub-menu key="3">
+        <template #icon>
+          <setting-outlined />
+        </template>
+        <template #title>
+          <span>설정</span>
+        </template>
+        <a-menu-item key="031">
+          <router-link to="/setting/account"><span>계정정보</span></router-link>
+        </a-menu-item>
+        <a-menu-item key="032">
+          <router-link to="/setting/margin"><span>마진 & 환율</span></router-link>
+        </a-menu-item>
+        <a-menu-item key="033">
+          <router-link to="/setting/delivery"><span>배송정책</span></router-link>
+        </a-menu-item>
+      </a-sub-menu>
       <a-menu-item key="4" v-if="isAdmin">
         <template #icon>
           <money-collect-outlined />
@@ -53,7 +70,7 @@
           <span>금지어 관리</span>
         </router-link>
       </a-menu-item>
-      <a-menu-item key="7">
+      <a-menu-item key="6">
         <template #icon>
           <appstore-outlined />
         </template>
@@ -61,23 +78,7 @@
           <span>도매꾹</span>
         </router-link>
       </a-menu-item>
-      <a-sub-menu key="6">
-        <template #icon>
-          <setting-outlined />
-        </template>
-        <template #title>
-          <span>설정</span>
-        </template>
-        <a-menu-item key="061">
-          <router-link to="/setting/account"><span>계정정보</span></router-link>
-        </a-menu-item>
-        <a-menu-item key="062">
-          <router-link to="/setting/margin"><span>마진 & 환율</span></router-link>
-        </a-menu-item>
-        <a-menu-item key="063">
-          <router-link to="/setting/delivery"><span>배송정책</span></router-link>
-        </a-menu-item>
-      </a-sub-menu>
+
       <a-menu-item key="30" v-if="false">
         <template #icon>
           <pay-circle-outlined />
