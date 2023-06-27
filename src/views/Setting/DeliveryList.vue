@@ -79,9 +79,10 @@ onBeforeMount(() => {
 
 <template>
   <a-card :bordered="false" title="배송정책" :style="{marginBottom:'20px'}">
-    <div>
-        샘플 텍스트
-    </div>
+
+<!--    <div>-->
+<!--        샘플 텍스트-->
+<!--    </div>-->
   </a-card>
 
   <a-card :bordered="false" :loading="loading">
