@@ -15,27 +15,27 @@
       </a-menu-item>
       <a-menu-item key="1">
         <template #icon>
-          <api-outlined />
-        </template>
-        <RouterLink to="/market/seller/list">
-          <span>제휴사연동</span>
-        </RouterLink>
-      </a-menu-item>
-      <a-menu-item key="2">
-        <template #icon>
           <gift-outlined />
         </template>
         <router-link to="/product">
           <span>상품관리</span>
         </router-link>
       </a-menu-item>
-      <a-menu-item key="3">
+      <a-menu-item key="2">
         <template #icon>
           <calendar-outlined />
         </template>
         <router-link to="/order/list">
           <span>주문관리</span>
         </router-link>
+      </a-menu-item>
+      <a-menu-item key="3">
+        <template #icon>
+          <api-outlined />
+        </template>
+        <RouterLink to="/market/seller/list">
+          <span>제휴사연동</span>
+        </RouterLink>
       </a-menu-item>
       <a-menu-item key="4" v-if="isAdmin">
         <template #icon>
