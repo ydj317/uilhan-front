@@ -73,7 +73,7 @@
     <div id="content-content" class="pt20">
       <!--전체선택-->
       <a-table class="test-custem" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination"
-               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
+               :row-selection="{ selectedRowKeys: prdSelectedRowKeys, onChange: onPrdSelectChange }">
 
         <!--table body-->
         <template v-slot:bodyCell="{text, record, index, column}">
@@ -113,7 +113,7 @@
                         </template>
                         <span class="item-market-icon" :class="market_info.status" @click="singlePop(record)">
                         <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
-                      </span>
+                        </span>
                       </a-tooltip>
                     </template>
                   </template>
@@ -135,20 +135,13 @@
             </div>
           </template>
 
-          <!--제휴사연동-->
-          <template v-if="column.key === 'item_sync_status'">
-            <div class="center">
-              <a-button @click="singlePop(record)" type="primary" shape="round">연동관리</a-button>
-            </div>
-          </template>
-
           <!--연동상태-->
           <template v-if="column.key === 'item_status'">
           <span v-if="record.item_sync_date">
             <!--연동성공-->
             <a-tooltip v-if="record.item_sync_status">
                 <template #title>{{ record.item_sync_result }}</template>
-                <a-tag color="success">연동중</a-tag>
+                <a-tag color="success">연동성공</a-tag>
             </a-tooltip>
             <!--연동실패-->
             <a-tooltip v-if="record.item_sync_status == false">
@@ -162,6 +155,13 @@
           </span>
           </template>
 
+          <!--제휴사연동-->
+          <template v-if="column.key === 'item_sync_status'">
+            <div class="center">
+              <a-button @click="singlePop(record)" type="primary" shape="round">연동관리</a-button>
+            </div>
+          </template>
+
         </template>
       </a-table>
     </div>
@@ -170,39 +170,32 @@
   <!--제휴사연동-->
   <div id="footer">
     <!--제휴사 상품연동-->
-    <a-modal :maskClosable="false" v-model:visible="singleSyncPop" class="col w50">
-      <h3><strong>제휴사 상품연동</strong></h3>
+    <a-modal width="1000px" title="제휴사 상품연동" v-model:visible="singleSyncPop" centered>
       <a-table
         class="tableSyncStatus"
         :dataSource="singleDetail.item_sync_market"
         :columns="SYNC_COLUMNS_CONFIG"
+        :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
       >
-
-        <!--table header-->
-        <template v-slot:headerCell="{ text, record, index, column }">
-          <!--전체선택-->
-          <template v-if="column.key === 'checked'">
-            <a-checkbox v-model:checked="checkAll" @click="checkAllMarket(checkAll)"></a-checkbox>
-          </template>
-        </template>
 
         <!--table body-->
         <template v-slot:bodyCell="{ text, record, index, column }">
-          <!--단일선택-->
-          <template v-if="column.key === 'checked'">
-            <a-checkbox v-model:checked="record.checked"></a-checkbox>
-          </template>
-
           <!--연동계정-->
           <template v-if="column.key === 'market_account'">
-            연동계정 : {{ record.market_account }}
+            <div style="text-align: left">
+            <img :src="getLogoSrc('market-logo', record.market_account.split('::')[0])"
+                 style="width: 16px; height: 16px; margin-right: 5px;" >
+            {{ record.market_account.split('::')[1] }}
+            </div>
           </template>
 
           <!--상태-->
           <template v-if="column.key === 'status'">
-            <div class="syncStatus" :data-status="record.status">
-              {{ { "sending": "전송중", "success": "성공", "failed": "실패", "unsync": "미연동" }[record.status] }}<span
-              v-if="record.status === 'failed'"> 실패원인: {{ record.result }}</span>
+              <div style="text-align: left">
+              <a-tag color="success" v-if="record.status === 'success'">연동성공</a-tag>
+              <a-tag color="processing" v-else-if="record.status === 'sending'">전송중</a-tag>
+              <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
+              <a-tag color="default" v-else>연대기동</a-tag><span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
             </div>
           </template>
 
@@ -219,12 +212,12 @@
 
       <template v-slot:footer>
         <a-button type="primary" @click="testsync('single')">선택제휴사연동</a-button>
-        <a-button type="primary" @click="closeResultPop('single')" class="bg-697783">닫기</a-button>
+        <a-button @click="closeResultPop('single')">닫기</a-button>
       </template>
     </a-modal>
 
     <!--제휴사 연동결과-->
-    <a-modal width="600px" :maskClosable="false" v-model:visible="marketSyncPop" title="제휴사연동결과" @ok="">
+    <a-modal width="600px" v-model:visible="marketSyncPop" centered title="제휴사연동결과" @ok="">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">
@@ -402,7 +395,6 @@ export default defineComponent({
           title: "상품명",
           key: "item_name",
           align: "center",
-          class: "item-name-td"
         },
         {
           title: "판매가",
@@ -450,20 +442,21 @@ export default defineComponent({
       },
       SYNC_COLUMNS_CONFIG: [
         {
-          title: "선택",
-          key: "checked"
-        },
-        {
           title: "쇼핑몰",
-          key: "market_account"
+          key: "market_account",
+          width: "200px",
+          align: "center"
         },
         {
           title: "연동상태",
-          key: "status"
+          key: "status",
+          align: "center"
         },
         {
           title: "연동시간",
-          key: "ins_time"
+          key: "ins_time",
+          width: "170px",
+          align: "center"
         }
       ],
 
@@ -499,20 +492,33 @@ export default defineComponent({
       tempImage: require('../../assets/img/temp_image.png'),
       listLoading: true,
       MarketListVisible: false,
-      selectedRowKeys: []
+      prdSelectedRowKeys: [],
+      syncSelectedRowKeys: []
     };
   },
 
   methods: {
-    onSelectChange(selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys;
+    onPrdSelectChange(prdSelectedRowKeys) {
+      this.prdSelectedRowKeys = prdSelectedRowKeys;
 
       if (this.prdlist === undefined || this.prdlist.length < 1) {
         return false;
       }
 
       for (let i = 0; i < this.prdlist.length; i++) {
-        this.prdlist[i].checked = this.selectedRowKeys.includes(this.prdlist[i].key);
+        this.prdlist[i].checked = this.prdSelectedRowKeys.includes(this.prdlist[i].key);
+      }
+    },
+
+    onSyncSelectChange(syncSelectedRowKeys) {
+      this.syncSelectedRowKeys = syncSelectedRowKeys;
+
+      if (this.prdlist === undefined || this.prdlist.length < 1) {
+        return false;
+      }
+
+      for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
+        this.singleDetail.item_sync_market[i].checked = this.syncSelectedRowKeys.includes(this.singleDetail.item_sync_market[i].key);
       }
     },
 
@@ -615,9 +621,6 @@ export default defineComponent({
         this.date = [moment(res.data.start_time), moment(res.data.end_time)];
         this.checked = false;
         this.listLoading = false;
-
-        console.log('==0==')
-        console.log(this.prdlist)
       });
     },
 
@@ -846,10 +849,9 @@ export default defineComponent({
         }
 
         let returnData = res.data;
-        // if (returnData.status === undefined || returnData.status !== '2000') {
-        //   alert(returnData.msg);
-        //   return false;
-        // }
+        for (let i = 0; i < returnData.data.length; i++) {
+          returnData.data[i].key = i;
+        }
 
         this.options = returnData.data;
       });
@@ -959,36 +961,16 @@ export default defineComponent({
     singlePop(item) {
       this.singleSyncPop = !this.singleSyncPop;
       this.singleDetail = item;
+      this.syncSelectedRowKeys = []
       for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
+        this.singleDetail.item_sync_market[i].key = i;
         let isChecked = false;
         if (this.singleDetail.item_sync_market[i].status !== "unsync") {
           isChecked = true;
+          this.syncSelectedRowKeys.push(i)
         }
 
         this.singleDetail.item_sync_market[i].checked = isChecked;
-      }
-
-      setTimeout(() => {
-        Object.values(document.querySelectorAll(".syncStatus")).map(el => {
-          el.parentElement.parentElement.style.backgroundColor = "#f9f9f9";
-          if (el.getAttribute("data-status") === "success") {
-            el.parentElement.parentElement.style.backgroundColor = "#fff7f5";
-          }
-        });
-
-        Object.values(document.querySelectorAll(".tableSyncStatus thead th")).map(el => {
-          el.style.backgroundColor = "#f7fdff";
-        });
-      });
-    },
-
-    checkAllMarket(checkAll) {
-      for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
-        if (checkAll === false) {
-          this.singleDetail.item_sync_market[i].checked = true;
-        } else {
-          this.singleDetail.item_sync_market[i].checked = false;
-        }
       }
     },
 
@@ -1015,6 +997,10 @@ export default defineComponent({
 <style>
 #header .ant-picker-input input {
   text-align: center;
+}
+
+.tableSyncStatus .ant-table-tbody > tr.ant-table-row-selected > td {
+  background: #fafafa;
 }
 </style>
 
