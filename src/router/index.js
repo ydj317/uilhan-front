@@ -58,6 +58,18 @@ const routes = [
           },
 
           {
+            path: "/user/license",
+            name: "user_license",
+            component: () => import("../views/User/License"),
+          },
+
+          {
+            path: "/user/licenseHistory",
+            name: "user_license_history",
+            component: () => import("../views/User/LicenseHistory"),
+          },
+
+          {
             path: "/user/FilterProductWords",
             name: "user_filterProductWords",
             /* webpackChunkName: 'user_manager' */

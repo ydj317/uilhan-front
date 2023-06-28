@@ -4,8 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" title="계정정보" class="setting-page-margin"
-          :style="{marginBottom:'20px'}">
+  <a-card :loading="cartLoading" :bordered="false" title="계정정보" class="setting-page-margin">
     <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}">
       <a-descriptions-item label="API키 설정">
         <a-input-group compact>
@@ -83,8 +82,6 @@ import { AuthRequest } from "@/util/request";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
 import {
-  DoubleRightOutlined,
-  PlusOutlined,
   UploadOutlined
 } from "@ant-design/icons-vue";
 import { onMounted, reactive, ref } from "vue";
