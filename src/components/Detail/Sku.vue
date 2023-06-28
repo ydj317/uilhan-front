@@ -186,14 +186,14 @@
                   ? `height: 30px; text-align: center; border: none;`
                   : `height: 30px; text-align: center; border: none;`
               "
-                @blur="setRateMargin"
+                @blur="handlerShippingFee(column.key, index)"
                 v-model:value="record[column.key]"
             />
           </template>
 
           <!--자체가격입력(custom)-->
           <template v-else-if="['wholesale_price', 'selling_price', 'disp_price'].includes(column.key)">
-            <a-input @blur="setPrice(column.key, index)" :style="'height: 30px; text-align: center;'" v-model:value="record['custom_' + column.key]" />
+            <a-input @blur="handlerCustomPrice(column.key, index)" :style="'height: 30px; text-align: center;'" v-model:value="record['custom_' + column.key]" />
           </template>
 
           <!--보여주기-->
@@ -450,7 +450,50 @@ export default {
       });
       this.product.item_disp_margin_option = this.product.disp_margin_option;
     },
-    setPrice(key, index) {
+    handlerShippingFee(key, index) {
+      if (["shipping_fee_cn"].includes(key)) {
+        let original_price_cn = this.product.sku[index]["original_price_cn"];
+        let shipping_fee_cn = this.product.sku[index]["shipping_fee_cn"];
+        //도매가
+        let wholesale_price = (
+            (Number(original_price_cn) +
+                Number(shipping_fee_cn)) *
+            (1 + Number(this.product["wholesale_margin_option"]) / 100) *
+            Number(this.product.rate_margin_option)
+        ).toFixed(0);
+        this.product.sku[index].wholesale_price =
+            Math.ceil(Number(wholesale_price) / 100) * 100;
+
+        //disp_price
+        let disp_price = (
+            (Number(original_price_cn) +
+                Number(shipping_fee_cn)) *
+            (1 + Number(this.product["selling_margin_option"]) / 100) *
+            (1 + Number(this.product["disp_margin_option"]) / 100) *
+            Number(this.product.rate_margin_option)
+        ).toFixed(0);
+        this.product.sku[index].disp_price =
+            Math.ceil(Number(disp_price) / 100) * 100;
+        this.product.sku[index].custom_disp_price = Number(this.product.sku[index].disp_price);
+
+        //selling_price
+        let selling_price = (
+            (Number(original_price_cn) +
+                Number(shipping_fee_cn)) *
+            (1 + Number(this.product["selling_margin_option"]) / 100) *
+            Number(this.product.rate_margin_option)
+        ).toFixed(0);
+        this.product.sku[index].selling_price =
+            Math.ceil(Number(selling_price) / 100) * 100;
+        this.product.sku[index].custom_selling_price = Number(this.product.sku[index].selling_price);
+
+        //예상수익
+        let expected_return = (Number(selling_price) - Number(this.product.sku[index].original_price_ko) - Number(selling_price) * 0.12).toFixed(0);
+        this.product.sku[index].expected_return = Number(expected_return);
+      }
+    },
+    handlerCustomPrice(key, index) {
+      //자체입력으로 의한 가격 동기화(권장가, 판매가, 예상수익)
       if (["selling_price", "disp_price"].includes(key)) {
         //가격 동기화
         this.product.sku[index][key] = Number(this.product.sku[index]["custom_" + key]);
