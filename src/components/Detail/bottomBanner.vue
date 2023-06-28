@@ -230,6 +230,7 @@ export default {
           }
 
           this.product.sku = res.data.sku;
+          this.setExpectedReturn();
           let aTempItemThumbnails = res.data.item_thumb || [];
           this.product.item_detail = res.data.item_detail;
 
@@ -414,6 +415,7 @@ export default {
               }
 
               this.product.sku = res.data.sku;
+              this.setExpectedReturn();
               let aTempItemThumbnails = res.data.item_thumb || [];
               this.product.item_detail = res.data.item_detail;
 
@@ -454,6 +456,13 @@ export default {
               alert('저장에 실패 하였습니다.')
               return false;
           }
+      },
+
+      setExpectedReturn() {
+        this.product.sku.map((data, i) => {
+          let expected_return = (Number(data.selling_price) - Number(data.original_price_ko) - Number(data.selling_price) * 0.12).toFixed(0);
+          this.product.sku[i].expected_return = Number(expected_return);
+        });
       },
 
     validateFilterProductWords() {
