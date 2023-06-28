@@ -172,6 +172,7 @@
 
 
         <template v-slot:footer>
+          <a-button style="float: left" type="primary" @click="downloadAllDetailImage">전체이미지 다운로드</a-button>
           <a-button type="primary" @click="checkAllDetailImage">전체선택</a-button>
           <a-button @click="uncheckAllDetailImage">선택취소</a-button>
           <a-button @click="deleteCheckedDetailImage" danger>선택삭제</a-button>
@@ -429,6 +430,45 @@ export default {
       this.getDetailContentsImage();
       this.product.item_detail = window.tinymce.editors[0].getContent();
     },
+
+    // 전체이미지 다운로드
+      downloadAllDetailImage() {
+
+        this.product.loading = true;
+
+        let detailImageList = [];
+          this.product.aPhotoCollection.map((data, i) => {
+              detailImageList.push(data.translate_url);
+          });
+
+          AuthRequest.post(
+              process.env.VUE_APP_API_URL + "/api/downloadImageZip",
+              {
+                  "imageList": detailImageList
+              }
+          ).then((res) => {
+
+              this.product.loading = false;
+
+              let response = res;
+
+              if (response === undefined) {
+                  alert("다운로드에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+                  return false;
+              }
+
+              let downloadElement = document.createElement("a");
+              let url = window.URL || window.webkitURL || window.moxURL;
+              let href = response.data['download_url']
+
+              downloadElement.href = href;
+              downloadElement.download = decodeURI('detail_images.zip'); // 下载后文件名
+              document.body.appendChild(downloadElement);
+              downloadElement.click(); // 点击下载
+              document.body.removeChild(downloadElement); // 下载完成移除元素
+              url.revokeObjectURL(href);
+          });
+      },
 
     // 전체선택
     checkAllDetailImage() {
