@@ -1,37 +1,24 @@
 <template>
   <div>
-    <a-modal v-model:visible="relaket.data.MarketListVisible">
-      <!--title-->
-      <template #title>
-        <h3 class="titleStyle"><b>연동할 제휴사</b></h3>
-      </template>
+    <a-modal width="600px" title="연동할 제휴사" v-model:visible="relaket.data.MarketListVisible" centered>
 
-      <a-table :columns="columns" :data-source="relaket.data.options" :pagination="{hideOnSinglePage:true}">
-        <!--headerCell-->
-        <template #headerCell="{ column }">
-          <template v-if="column.key === 'ssi_ix'">
-            <div class="center">
-              <a-checkbox v-model:checked="checkAll" @click="checkAllMarket(checkAll)"></a-checkbox>
-            </div>
-          </template>
-          <template v-else>
-            <div style="text-align: center">{{column.title}}</div>
-          </template>
-        </template>
+      <a-table :columns="columns" :data-source="relaket.data.options" :pagination="{hideOnSinglePage:true}"
+               :row-selection="{ selectedRowKeys: marketSelectedRowKeys, onChange: onMarketSelectChange }">
 
         <!--bodyCell-->
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'ssi_ix'">
-            <div class="center">
-              <a-checkbox v-model:checked="record.checked"></a-checkbox>
+          <template v-if="column.key === 'market_account'">
+            <div style="text-align: left">
+              <img :src="getLogoSrc('market-logo', record.value.split('::')[0])"
+                   style="width: 16px; height: 16px; margin-right: 5px;" >
+              {{ record.value.split('::')[1] }}
             </div>
           </template>
-          <template v-else-if="column.title === '쇼핑몰'">
-            <div style="text-align: center;"> {{record.value.split('::')[1]}} </div>
-          </template>
-          <template v-else-if="column.title === '제휴사'">
+
+          <template v-if="column.key === 'market_name'">
             <div  style="text-align: center;">{{record.value.split('::')[0]}}</div>
           </template>
+
         </template>
       </a-table>
 
@@ -61,34 +48,48 @@ export default {
     return {
       columns: [
         {
-          title: '전체',
-          dataIndex: 'ssi_ix',
-          key: 'ssi_ix',
-          width: 20,
-        },
-        {
           title: '쇼핑몰',
-          dataIndex: 'value',
-          key: 'value',
-          width: 100,
+          key: 'market_account',
+          align: "center",
+          width: '200px'
         },
         {
           title: '제휴사',
-          dataIndex: 'value',
-          key: 'value',
-          width: 100,
+          key: 'market_name',
+          align: "center",
         },
       ],
       checkAll: false,
+      marketSelectedRowKeys: []
     };
   },
 
   methods: {
+    onMarketSelectChange(marketSelectedRowKeys) {
+      this.marketSelectedRowKeys = marketSelectedRowKeys;
+
+      if (this.relaket.data.options === undefined || this.relaket.data.options.length < 1) {
+        return false;
+      }
+
+      for (let i = 0; i < this.relaket.data.options.length; i++) {
+        this.relaket.data.options[i].checked = this.marketSelectedRowKeys.includes(this.relaket.data.options[i].key);
+      }
+    },
+
+    getLogoSrc(fileName, marketCode) {
+      try {
+        return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
+      } catch (error) {
+        return require(this.tempImage);
+      }
+    },
+
     MarketListClose() {
       this.relaket.data.MarketListVisible = false;
     },
 
-      async sendMarket() {
+    async sendMarket() {
           let list = this.getCheckList();
           if (list === undefined || list.length === 0) {
               alert('선택된 상품이 없습니다.');
@@ -140,20 +141,6 @@ export default {
                   this.indicator = false;
                   return false;
               }
-
-              let data = res.data;
-
-              // let sMessage = "";
-              // if (data.success_code.length) {
-              //     sMessage = '연동성공 상품 : ' + data.success_code;
-              // }
-              // if (data.failed_code.length) {
-              //     sMessage += "\n연동실패 상품 : " + data.failed_code;
-              // }
-              //
-              // alert(sMessage);
-              //
-              // return false;
 
               return true;
 
@@ -255,15 +242,10 @@ export default {
 
       return list;
     },
-
-    checkAllMarket(checkAll) {
-      for (let i = 0; i < this.relaket.data.options.length; i++) {
-        this.relaket.data.options[i].checked = !checkAll;
-      }
-    },
   },
 
-  mounted() {},
+  mounted() {
+  },
 };
 
 </script>

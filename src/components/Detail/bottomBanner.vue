@@ -60,7 +60,6 @@
 
           <template v-slot:footer>
               <a-button type="primary" @click="testsync()">선택제휴사연동</a-button>
-              <a-button type="primary" @click="closeResultPop()">확인</a-button>
               <a-button type="primary" @click="closeResultPop()" class="bg-697783">닫기</a-button>
           </template>
       </a-modal>

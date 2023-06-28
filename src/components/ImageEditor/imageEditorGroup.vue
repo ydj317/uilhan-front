@@ -11,12 +11,7 @@
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
         "
           :closable="false"
-          :ok-text="'닫기'"
-          :cancel-text="'번역'"
-          @cancel="productTranslateImage(product.aPhotoCollection)"
-          @ok="product.bImageEditorModule = false"
-          :maskClosable="false"
-          :cancel-button-props="{ danger: true, type: 'primary' }"
+          @cancel="product.bImageEditorModule = false"
           width="auto"
           centered
       >
@@ -29,6 +24,11 @@
         <div class="center">
           <img :src="product.aPhotoCollection[0].original_url" alt="" />
         </div>
+
+        <template v-slot:footer>
+          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection)">번역</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+        </template>
       </a-modal>
 
       <!--SKU-->
@@ -40,17 +40,7 @@
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === false
         "
         :closable="false"
-        :ok-text="'닫기'"
-        :cancel-text="'번역'"
-        @cancel="
-          skuTranslateImage(
-            product.aPhotoCollection[0].key,
-            product.aPhotoCollection[0].original_url
-          )
-        "
-        @ok="product.bImageEditorModule = false"
-        :maskClosable="false"
-        :cancel-button-props="{ danger: true, type: 'primary' }"
+        @cancel="product.bImageEditorModule = false"
         width="auto"
         centered
       >
@@ -64,6 +54,14 @@
         <div class="center">
           <img :src="product.aPhotoCollection[0].original_url" alt="" />
         </div>
+
+        <template v-slot:footer>
+          <a-button type="primary" @click="skuTranslateImage(
+            product.aPhotoCollection[0].key,
+            product.aPhotoCollection[0].original_url
+          )">번역</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+        </template>
       </a-modal>
 
       <!--상세설명-->
@@ -75,10 +73,7 @@
           product.bImageEditorModule && product.bProductDetailsEditor === true
         "
         :closable="false"
-        :ok-text="'닫기'"
-        @ok="product.bImageEditorModule = false"
-        :maskClosable="false"
-        :cancel-button-props="{ ghost: true }"
+        @cancel="product.bImageEditorModule = false"
         width="50%"
         centered
       >
@@ -175,26 +170,14 @@
           </tbody>
         </table>
 
-        <div style="display: flex; justify-content: flex-end">
-          <a-button
-            class="bg-3051d3 mr5"
-            type="primary"
-            @click="checkAllDetailImage"
-            >전체선택</a-button
-          >
-          <a-button
-            class="bg-3051d3 mr5"
-            type="primary"
-            @click="uncheckAllDetailImage"
-            >선택취소</a-button
-          >
-          <a-button
-            class="bg-3051d3 mr5"
-            type="primary"
-            @click="deleteCheckedDetailImage()"
-            >선택삭제</a-button
-          >
-        </div>
+
+        <template v-slot:footer>
+          <a-button style="float: left" type="primary" @click="downloadAllDetailImage">전체이미지 다운로드</a-button>
+          <a-button type="primary" @click="checkAllDetailImage">전체선택</a-button>
+          <a-button @click="uncheckAllDetailImage">선택취소</a-button>
+          <a-button @click="deleteCheckedDetailImage" danger>선택삭제</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+        </template>
       </a-modal>
     </template>
   </div>
@@ -203,6 +186,7 @@
 <script>
 import { mapState } from "vuex";
 import { lib } from "@/util/lib";
+import { AuthRequest } from "@/util/request";
 
 export default {
   name: "ImageEditorGroup",
@@ -447,6 +431,45 @@ export default {
       this.product.item_detail = window.tinymce.editors[0].getContent();
     },
 
+    // 전체이미지 다운로드
+      downloadAllDetailImage() {
+
+        this.product.loading = true;
+
+        let detailImageList = [];
+          this.product.aPhotoCollection.map((data, i) => {
+              detailImageList.push(data.translate_url);
+          });
+
+          AuthRequest.post(
+              process.env.VUE_APP_API_URL + "/api/downloadImageZip",
+              {
+                  "imageList": detailImageList
+              }
+          ).then((res) => {
+
+              this.product.loading = false;
+
+              let response = res;
+
+              if (response === undefined) {
+                  alert("다운로드에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+                  return false;
+              }
+
+              let downloadElement = document.createElement("a");
+              let url = window.URL || window.webkitURL || window.moxURL;
+              let href = response.data['download_url']
+
+              downloadElement.href = href;
+              downloadElement.download = decodeURI('detail_images.zip'); // 下载后文件名
+              document.body.appendChild(downloadElement);
+              downloadElement.click(); // 点击下载
+              document.body.removeChild(downloadElement); // 下载完成移除元素
+              url.revokeObjectURL(href);
+          });
+      },
+
     // 전체선택
     checkAllDetailImage() {
       this.product.aPhotoCollection.map((data, i) => {
@@ -460,6 +483,29 @@ export default {
         this.product.aPhotoCollection[i].checked = false;
       });
     },
+
+    // 최초 번역 남은 회수 조회
+    getRecharge() {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
+        (res) => {
+          if (res.status !== "2000" || res.data === undefined) {
+            alert(res.message);
+            return false;
+          }
+
+          try {
+            this.product.recharge = res.data.recharge;
+          } catch (e) {
+            alert("남은회수 호출 실패");
+          }
+        }
+      );
+    },
+  },
+
+  mounted() {
+    // 최초 번역 남은 회수 조회
+    this.getRecharge();
   },
 };
 </script>

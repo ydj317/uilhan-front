@@ -13,9 +13,9 @@
       </div>
 
       <!--sku 상단 right 버튼-->
-      <div class="w63 row">
+      <div class="w50 row">
         <!--도매마진-->
-        <div class="w33 row right">
+        <div class="w33 row right" v-if="false">
           <a-select
               class="top_button_right_item_select mr5"
               :options="this.product.wholesale_margin"
@@ -28,6 +28,7 @@
           >도매마진
           </a-button>
         </div>
+
         <!--판매마진-->
         <div class="w33 row right">
           <a-select
@@ -762,8 +763,17 @@ export default {
 }
 
 .sku_window_image {
+  margin: 3px;
   width: 100px;
   height: 120px;
+}
+
+.sku_window_image.checkedEl {
+  border: 2px solid #1890ff;
+}
+
+.sku_window_image.checkedNot {
+  border: 2px solid #eee;
 }
 
 .sku_image {
