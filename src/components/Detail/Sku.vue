@@ -488,7 +488,7 @@ export default {
         this.product.sku[index].custom_selling_price = Number(this.product.sku[index].selling_price);
 
         //예상수익
-        let expected_return = (Number(selling_price) - Number(this.product.sku[index].original_price_ko) - Number(selling_price) * 0.12).toFixed(0);
+        let expected_return = (Number(this.product.sku[index].selling_price) - Number(this.product.sku[index].original_price_ko) - Number(this.product.sku[index].selling_price) * 0.12).toFixed(0);
         this.product.sku[index].expected_return = Number(expected_return);
       }
     },
