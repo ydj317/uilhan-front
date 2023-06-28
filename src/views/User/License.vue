@@ -22,8 +22,8 @@ import { onMounted, ref } from "vue";
 const indicator = ref(false);
 const cartLoading = ref(true);
 
-function getRecharge() {
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/list').then((res) => {
+function getLicense() {
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/license/list').then((res) => {
       if (res.status !== "2000") {
         alert(res.message);
       }
@@ -52,8 +52,8 @@ function getUser() {
 }
 
 onMounted(() => {
-  getUser();
-  // getRecharge();
+  // getUser();
+  getLicense();
 });
 </script>
 
