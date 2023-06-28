@@ -50,8 +50,8 @@
               v-model:value="this.product.disp_margin_option"
           >
           </a-select>
-          <a-popconfirm title="권장마진을 수정하시겠습니까? 입력하신 권장가가 수정됩니다." @confirm="setDispMargin('click')">
-            <a-button class="top_button_right_item_button">권장마진</a-button>
+          <a-popconfirm title="권장가를 수정하시겠습니까? 입력하신 권장가가 수정됩니다." @confirm="setDispMargin('click')">
+            <a-button class="top_button_right_item_button">권장가</a-button>
           </a-popconfirm>
         </div>
 
