@@ -132,7 +132,7 @@ const getDeliveryDetail = (id) => {
       selectDeliveryInAddress(formState.in_addr_ix)
       selectDeliveryOutAddress(formState.out_addr_ix)
       indicator.value = false;
-    },500)
+    }, 100)
 
 
   }).catch((error) => {
@@ -155,7 +155,10 @@ const getDeliveryOutAddressList = () => {
       return false;
     }
 
-    deliveryOutAddressList.value = res.data;
+    if (Object.keys(res.data).length > 0) {
+      deliveryOutAddressList.value = res.data;
+    }
+
     indicator.value = false;
   }).catch((error) => {
     alert(error.message);
@@ -190,7 +193,7 @@ const selectDeliveryInAddress = (value) => {
   deliveryInAddressDetail.value = deliveryInAddress.value[value]
 }
 
-watchEffect(()=>{
+watchEffect(() => {
   deliveryInAddressDetail.value = deliveryInAddress.value[formState.in_addr_ix]
   deliveryOutAddressDetail.value = deliveryOutAddressList.value[formState.out_addr_ix]
 })
@@ -208,8 +211,9 @@ const getDeliveryInAddressList = () => {
       return false;
     }
 
-    deliveryInAddress.value = res.data;
-
+    if (Object.keys(res.data).length > 0) {
+      deliveryInAddress.value = res.data;
+    }
     indicator.value = false;
   }).catch((error) => {
     alert(error.message);
@@ -239,20 +243,13 @@ onBeforeMount(() => {
 const onDeliveryAddressData = () => {
   indicator.value = true;
   setTimeout(() => {
-    const promise = new Promise((resolve, reject) => {
-      getDeliveryOutAddressList();
-      getDeliveryInAddressList();
-      resolve('getListOk')
-    })
+    getDeliveryOutAddressList();
+    getDeliveryInAddressList();
+    selectDeliveryOutAddress(formState.out_addr_ix);
+    selectDeliveryInAddress(formState.in_addr_ix);
 
-    promise.then(() => {
-      selectDeliveryOutAddress(formState.out_addr_ix);
-      selectDeliveryInAddress(formState.in_addr_ix);
-    }).catch((error) => {
-      alert('새로고침 해주세요.')
-    })
     indicator.value = false;
-  }, 500)
+  }, 0)
 }
 
 </script>
@@ -260,7 +257,8 @@ const onDeliveryAddressData = () => {
 <template>
   <a-card :bordered="false" title="배송정책 등록/수정" :loading="indicator">
     <a-form :model="formState" name="delivery_form" @finish="onFinish"
-            @finishFailed="onFinishFailed" autocomplete="off" scrollToFirstError="true" layout="horizontal" class="delivery_form">
+            @finishFailed="onFinishFailed" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
+            class="delivery_form">
       <a-form-item label="배송정책명" name="template_name"
                    :rules="[{ required: true, message: '배송정책명을 입력해 주세요.' }]">
         <a-input v-model:value="formState.template_name" allow-clear placeholder="배송정책명을 입력해 주세요."/>
@@ -314,7 +312,7 @@ const onDeliveryAddressData = () => {
         </a-form-item>
 
         <a-form-item label="상품 1개단위 배송비" name="delivery_unit_price" :style="{flex:'1',marginLeft:'-1px'}">
-          <a-input v-model:value="formState.delivery_unit_price" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요." />
+          <a-input v-model:value="formState.delivery_unit_price" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요."/>
         </a-form-item>
       </div>
 
@@ -347,11 +345,13 @@ const onDeliveryAddressData = () => {
       </a-form-item>
 
       <div style="display: flex;">
-        <a-form-item label="제주 추가 배송비" name="jeju_delivery_price" :style="{flex:'1'}" v-if="formState.delivery_region_use === 'Y'">
+        <a-form-item label="제주 추가 배송비" name="jeju_delivery_price" :style="{flex:'1'}"
+                     v-if="formState.delivery_region_use === 'Y'">
           <a-input v-model:value="formState.jeju_delivery_price" allow-clear placeholder="제주 추가 배송비를 입력해 주세요."/>
         </a-form-item>
 
-        <a-form-item label="도서산간 추가 배송비" name="island_delivery_price" :style="{flex:'1',marginLeft:'-1px'}" v-if="formState.delivery_region_use === 'Y'">
+        <a-form-item label="도서산간 추가 배송비" name="island_delivery_price" :style="{flex:'1',marginLeft:'-1px'}"
+                     v-if="formState.delivery_region_use === 'Y'">
           <a-input v-model:value="formState.island_delivery_price" allow-clear placeholder="도서산간 추가 배송비를 입력해 주세요."/>
         </a-form-item>
       </div>
