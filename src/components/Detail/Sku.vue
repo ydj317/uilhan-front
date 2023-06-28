@@ -300,7 +300,7 @@ export default {
         {
           title: "예상수익",
           key: "expected_return",
-          width: "%",
+          width: "6%",
         },
       ],
       sku_pagination: {
