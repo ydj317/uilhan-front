@@ -63,7 +63,7 @@
               v-model:value="this.product.rate_margin_option"
           >
           </a-select>
-          <a-popconfirm title="환율을 수정하시겠습니까? 입력하신 권장가, 판매가가 수정됩니다." @confirm="setRateMargin">
+          <a-popconfirm title="환율을 수정하시겠습니까?" @confirm="setRateMargin">
             <a-button class="top_button_right_item_button">환율</a-button>
           </a-popconfirm>
         </div>
