@@ -10,7 +10,7 @@
       <a-descriptions-item label="API키 설정">
         <a-input-group compact>
         <a-input v-model:value="accessKey" placeholder="AccessKey" style="width: 300px;" />
-        <a-input v-if="false" class="mt5" v-model:value="secretKey" placeholder="SecretKey" style="width: 300px;" />
+        <a-input v-show="false" class="mt5" v-model:value="secretKey" placeholder="SecretKey" style="width: 300px;" />
         <a-button @click="addKey" type="primary">등록</a-button>
         </a-input-group>
       </a-descriptions-item>
@@ -303,8 +303,9 @@ function addKey() {
   }
 
   if (secretKey.value.length === undefined || secretKey.value.length === 0) {
-    alert("secretKey는 필수로 입력해주십시오");
-    return false;
+    // alert("secretKey는 필수로 입력해주십시오");
+    // return false;
+      secretKey.value = 'secretKey';
   }
 
   indicator.value = true;
