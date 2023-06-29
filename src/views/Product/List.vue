@@ -524,8 +524,6 @@ export default defineComponent({
 
     getList(sType = "") {
       let param = this.getParam(sType);
-      console.log('==0==')
-      console.log(param)
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
         if (res.status !== "2000") {
           alert(res.message);

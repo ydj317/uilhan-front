@@ -64,8 +64,20 @@ const routes = [
           },
 
           {
+            path: "/user/licenseForm/:id?",
+            name: "user_licenseForm",
+            component: () => import("../views/User/LicenseForm"),
+          },
+
+          {
+            path: "/user/buyLicense",
+            name: "user_buyLicense",
+            component: () => import("../views/User/BuyLicense"),
+          },
+
+          {
             path: "/user/licenseHistory",
-            name: "user_license_history",
+            name: "user_licenseHistory",
             component: () => import("../views/User/LicenseHistory"),
           },
 

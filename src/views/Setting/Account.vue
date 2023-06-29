@@ -121,6 +121,7 @@ function setLogoInDetail(value) {
   }).then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
+      indicator.value = false;
       return false;
     }
 
@@ -147,6 +148,7 @@ function setLogo() {
   }).then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
+      indicator.value = false;
       return false;
     }
 
@@ -174,6 +176,7 @@ function delLogo(oldLogo) {
   }).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
     }
 
     console.log("oldLogo 삭제 성공");
@@ -191,6 +194,7 @@ function delIcon(index) {
   }).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
     }
 
     for (let i = 0; i < delData.length; i++) {
@@ -215,6 +219,7 @@ function customRequest(option, type) {
   ).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
       return false;
     }
 
@@ -312,6 +317,7 @@ function addKey() {
   }).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
       return false;
     }
 
