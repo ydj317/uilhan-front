@@ -1,5 +1,5 @@
 <template>
-  <a-card :loading="cartLoading" :bordered="false" title="서비스 이용내역">
+  <a-card :loading="cartLoading" :bordered="false" title="서비스 이력">
     <a-table :columns="table_columns" :data-source="licenseHistoryData">
       <template #bodyCell="{ column,record, text }">
         <!--서비스명-->
@@ -57,7 +57,7 @@ function getLicense() {
   const requestParams = {
     orderBy: "desc"
   };
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/license_history/list", { params: requestParams }).then((res) => {
+  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/licenseHistory/list", { params: requestParams }).then((res) => {
       if (res.status !== "2000") {
         alert(res.message);
       }
