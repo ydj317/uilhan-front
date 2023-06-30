@@ -2,7 +2,9 @@
   <a-card :loading="cartLoading" :bordered="false" title="서비스 리스트">
     <a-row type="flex" justify="space-between" :wrap="false" :style="{marginBottom:'10px'}">
       <a-col>
-        <a-button>선택삭제</a-button>
+        <a-popconfirm title="삭제하시겠습니까?" @confirm="selectedDelete">
+          <a-button>상품삭제</a-button>
+        </a-popconfirm>
       </a-col>
       <a-col>
         <router-link to="/user/licenseForm">
@@ -32,18 +34,18 @@
 
         <!--사용여부-->
         <template v-if="column.key === 'is_use'">
-          <a-tag v-if="record.is_use === 1" color="success">사용중</a-tag>
-          <a-tag v-else color="error">사용안함</a-tag>
+          <a-tag v-if="record.is_use === '1'" color="success">사용중</a-tag>
+          <a-tag v-if="record.is_use === '0'" color="error">사용중지</a-tag>
         </template>
 
         <!--수정-->
         <template v-if="column.key === 'edit'">
           <router-link :to="`/user/licenseForm/${record.id}`">
-          <a-button type="primary" size="small">
-            <template #icon>
-              <edit-outlined />
-            </template>
-          </a-button>
+            <a-button type="primary" size="small">
+              <template #icon>
+                <edit-outlined />
+              </template>
+            </a-button>
           </router-link>
         </template>
       </template>
@@ -86,6 +88,31 @@ const table_columns = ref([
   }
 ]);
 const selectedRowKeys = ref([]);
+
+function selectedDelete() {
+  let id = [];
+  let newLicense = [];
+  for (let i = 0; i < licenseList.value.length; i++) {
+    if (licenseList.value[i].checked === true) {
+      id.push(licenseList.value[i].id);
+    } else {
+      newLicense.push(licenseList.value[i]);
+    }
+  }
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/license/delete", { id: id }).then((res) => {
+      if (res.status !== "2000") {
+        alert(res.message);
+        return false;
+      }
+
+      console.log("==0==");
+      console.log(res);
+      licenseList.value = newLicense;
+
+      cartLoading.value = false;
+    }
+  );
+}
 
 function onSelectChange(selectedKeys) {
   selectedRowKeys.value = selectedKeys;

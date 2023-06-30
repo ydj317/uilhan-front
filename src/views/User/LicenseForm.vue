@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" :title="route.params.id ? '서비스 수정' : '서비스 등록'">
+  <a-card :loading="cartLoading" :bordered="false" :title="'서비스 ' + (route.params.id ? '수정' : '등록')">
     <a-form :model="formState" name="license_form" @finish="onFinish"
             @finishFailed="onFinishFailed" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
             class="delivery_form">
@@ -24,6 +24,13 @@
                    :rules="[{ required: true, message: '충전 일수를 입력해 주세요.' },
                      { pattern: /^[0-9]+$/, message: '숫자만 입력해 주세요.' }]">
         <a-input v-model:value="formState.day" allow-clear placeholder="충전 일수를 입력해 주세요." />
+      </a-form-item>
+
+      <a-form-item label="사용 여부" name="is_use">
+        <a-radio-group v-model:value="formState.is_use">
+          <a-radio :value="'1'">사용중</a-radio>
+          <a-radio :value="'0'">사용중지</a-radio>
+        </a-radio-group>
       </a-form-item>
 
       <div style="display: flex;justify-content: center;margin-top: 20px;">
@@ -47,12 +54,12 @@ const indicator = ref(false);
 const cartLoading = ref(true);
 
 const route = useRoute();
-
 const formState = reactive({
   id: route.params.id,
   name: "",
   price: "",
-  day: ""
+  day: "",
+  is_use: '1'
 });
 
 const onFinish = values => {
@@ -65,10 +72,8 @@ const onFinish = values => {
       return false;
     }
 
-    alert(res.data.message);
-
-    router.push("/setting/delivery");
-
+    alert("서비스 등록 성공하였습니다.");
+    router.push("/user/license");
   }).catch((error) => {
     alert(error.message);
     indicator.value = false;
@@ -80,21 +85,6 @@ const onFinishFailed = errorInfo => {
   console.log("Failed:", errorInfo);
 };
 
-function addLicense() {
-  indicator.value = true;
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/license/add", formState).then((res) => {
-      if (res.status !== "2000") {
-        alert(res.message);
-      }
-
-      alert("서비스 등록 성공하였습니다.");
-      router.push("/user/license");
-
-      indicator.value = false;
-    }
-  );
-}
-
 function getLicense() {
   if (!route.params.id) {
     cartLoading.value = false;
@@ -102,8 +92,7 @@ function getLicense() {
   const requestParams = {
     id: route.params.id
   };
-  console.log("==0==");
-  console.log(requestParams);
+
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/license", { params: requestParams }).then((res) => {
       if (res.status !== "2000") {
         alert(res.message);
@@ -112,6 +101,7 @@ function getLicense() {
       formState.name = res.data.name;
       formState.price = res.data.price;
       formState.day = res.data.day;
+      formState.is_use = res.data.is_use;
 
       cartLoading.value = false;
     }
