@@ -45,6 +45,7 @@ import {
   Col,
   CheckboxGroup,
   Textarea,
+  Badge,
 } from "ant-design-vue";
 
 import DatePicker from "ant-design-vue/es/date-picker/moment";
@@ -95,5 +96,6 @@ createApp(App)
   .use(Col)
   .use(CheckboxGroup)
   .use(Textarea)
+  .use(Badge)
   .component('ECharts', ECharts)
   .mount("#app");

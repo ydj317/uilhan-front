@@ -87,21 +87,32 @@ const routes = [
             path: "/product/preview/:id",
             name: "prd_preview",
             /* webpackChunkName: 'user_register' */
-            component: () => import("views/Product/Preview"),
+            component: () => import("@/views/Product/Preview"),
           },
           {
             path: "/product/domeggook",
             name: "prd_domeggook",
             /* webpackChunkName: 'user_register' */
-            component: () => import("views/Product/Domeggook"),
+            component: () => import("@/views/Product/Domeggook"),
           },
           {
             path: "/order/list",
             name: "order_list",
             /* webpackChunkName: 'user_register' */
-            component: () => import("views/Order/List.vue"),
+            component: () => import("@/views/Order/List.vue"),
           },
-
+          {
+            path: "/board/list",
+            name: "board_list",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/List.vue"),
+          },
+          {
+            path: "/board/form/:id?",
+            name: "board_form",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/Form.vue"),
+          },
           // {
           //   path: "/user/register",
           //   name: "user_register",
