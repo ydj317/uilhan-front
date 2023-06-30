@@ -6,7 +6,7 @@
         mode="inline"
         theme="dark"
     >
-      <a-menu-item :key="route.path" v-if="false">
+      <a-menu-item :key="route.path">
         <template #icon>
           <gift-outlined/>
         </template>
@@ -63,14 +63,26 @@
           <router-link to="/setting/delivery"><span>배송정책</span></router-link>
         </a-menu-item>
       </a-sub-menu>
-      <a-menu-item key="20" v-if="isAdmin">
+      <a-sub-menu key="4">
         <template #icon>
-          <money-collect-outlined/>
+          <money-collect-outlined />
         </template>
-        <router-link to="/user/manage">
+        <template #title>
           <span>회원충전</span>
-        </router-link>
-      </a-menu-item>
+        </template>
+        <a-menu-item key="041" v-if="isAdmin">
+          <router-link to="/user/license"><span>서비스 관리</span></router-link>
+        </a-menu-item>
+        <a-menu-item key="042">
+          <router-link to="/user/licensePay"><span>서비스 결제</span></router-link>
+        </a-menu-item>
+        <a-menu-item key="043">
+          <router-link to="/user/licenseHistory"><span>서비스 이력</span></router-link>
+        </a-menu-item>
+        <a-menu-item key="044" v-if="isAdmin">
+          <router-link to="/user/manage"><span>이미지 번역 회수</span></router-link>
+        </a-menu-item>
+      </a-sub-menu>
       <a-menu-item key="21">
         <template #icon>
           <close-circle-outlined/>

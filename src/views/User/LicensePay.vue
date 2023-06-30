@@ -4,46 +4,54 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" title="서비스 결제">
-    <a-descriptions title="남은 서비스 일자">
-      <a-descriptions-item>
-        {{ licenseEndTime }}일<br>서비스 마감일: {{ licenseRemainingDays }}
+  <a-card :loading="cartLoading" :bordered="false" title="서비스 결제" class="license-pay-page">
+    <a-descriptions title="서비스 현황" bordered :column="{ xs: 1, sm: 1, md: 1}" :style="{marginBottom:'20px'}">
+      <a-descriptions-item label="서비스 유효일">
+        {{ licenseEndTime }}일
+      </a-descriptions-item>
+      <a-descriptions-item label="서비스 마감일">
+        {{ licenseRemainingDays }}
       </a-descriptions-item>
     </a-descriptions>
 
-    <a-descriptions title="서비스 설명">
-      <a-descriptions-item label="요금제 안내">
-        모든 이용 요금은 부가세(10%) 별도 입니다.
-      </a-descriptions-item>
-    </a-descriptions>
-
-    <a-descriptions title="서비스 선택">
-      <a-descriptions-item>
-        <a-select v-model:value="licenseSelected" @change="licenseSelectChange" style="width: 400px;">
+    <a-descriptions title="서비스 결제" bordered :column="{ xs: 2, sm: 2, md: 2}" :style="{marginBottom:'20px'}">
+      <a-descriptions-item label="서비스 선택">
+        <a-select v-model:value="licenseSelected" @change="licenseSelectChange" style="width: 100%;">
           <a-select-option value="">선택</a-select-option>
           <a-select-option v-for="license in licenseList" :value="license.id">{{ license.name }}</a-select-option>
         </a-select>
       </a-descriptions-item>
-    </a-descriptions>
 
-    <a-descriptions title="결제자 정보" bordered>
       <a-descriptions-item label="은행">
         <a-input type="text" v-model:value="formState.card_bank" />
       </a-descriptions-item>
+
       <a-descriptions-item label="예금주">
         <a-input type="text" v-model:value="formState.card_name" />
       </a-descriptions-item>
+
       <a-descriptions-item label="카드번호">
         <a-input type="text" v-model:value="formState.card_number" />
       </a-descriptions-item>
     </a-descriptions>
 
-    <a-descriptions title="결제가격">
-      <a-descriptions-item label="정가">{{ formState.price }}</a-descriptions-item>
-      <a-descriptions-item label="부가세">{{ formState.price / 10 }}</a-descriptions-item>
-      <a-descriptions-item label="총 결제금액">{{ formState.final_price }}</a-descriptions-item>
+    <a-descriptions title="결제가격" bordered :column="{ xs: 1, sm: 1, md: 1}" :style="{marginBottom:'20px'}">
+      <a-descriptions-item label="정가">
+        {{ formState.price }}원
+      </a-descriptions-item>
+
+      <a-descriptions-item label="부가세">
+        {{ formState.price / 10 }}원
+      </a-descriptions-item>
+
+      <a-descriptions-item label="총 결제금액">
+        {{ formState.final_price }}원
+      </a-descriptions-item>
     </a-descriptions>
-    <a-button type="primary" @click="putLicense">결제하기</a-button>
+
+    <div class="center">
+      <a-button type="primary" @click="putLicense">결제하기</a-button>
+    </div>
   </a-card>
 </template>
 
@@ -157,3 +165,9 @@ onMounted(() => {
   getUser();
 });
 </script>
+
+<style>
+.license-pay-page .ant-descriptions-item-label {
+  width: 200px;
+}
+</style>
