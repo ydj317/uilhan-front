@@ -62,13 +62,13 @@
           <span>회원충전</span>
         </template>
         <a-menu-item key="041" v-if="isAdmin">
-          <router-link to="/user/license"><span>서비스 리스트</span></router-link>
+          <router-link to="/user/license"><span>서비스 관리</span></router-link>
         </a-menu-item>
         <a-menu-item key="042">
           <router-link to="/user/buyLicense"><span>서비스 결제</span></router-link>
         </a-menu-item>
         <a-menu-item key="043">
-          <router-link to="/user/licenseHistory"><span>서비스 이용 내역</span></router-link>
+          <router-link to="/user/licenseHistory"><span>서비스 이용내역</span></router-link>
         </a-menu-item>
         <a-menu-item key="044" v-if="isAdmin">
           <router-link to="/user/manage"><span>이미지 번역 회수</span></router-link>

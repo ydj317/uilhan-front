@@ -1,5 +1,5 @@
 <template>
-  <a-card :loading="cartLoading" :bordered="false" title="서비스 리스트">
+  <a-card :loading="cartLoading" :bordered="false" title="서비스 관리">
     <a-row type="flex" justify="space-between" :wrap="false" :style="{marginBottom:'10px'}">
       <a-col>
         <a-popconfirm title="삭제하시겠습니까?" @confirm="selectedDelete">
@@ -16,7 +16,7 @@
       </a-col>
     </a-row>
 
-    <a-table :columns="table_columns" :data-source="licenseList"
+    <a-table :columns="table_columns" :data-source="licenseData"
              :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }">
       <template #bodyCell="{ column,record, text }">
         <!--서비스명-->
@@ -61,7 +61,7 @@ import { EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
 // loading
 const cartLoading = ref(true);
 
-const licenseList = ref([]);
+const licenseData = ref([]);
 const table_columns = ref([
   {
     title: "서비스명",
@@ -92,11 +92,11 @@ const selectedRowKeys = ref([]);
 function selectedDelete() {
   let id = [];
   let newLicense = [];
-  for (let i = 0; i < licenseList.value.length; i++) {
-    if (licenseList.value[i].checked === true) {
-      id.push(licenseList.value[i].id);
+  for (let i = 0; i < licenseData.value.length; i++) {
+    if (licenseData.value[i].checked === true) {
+      id.push(licenseData.value[i].id);
     } else {
-      newLicense.push(licenseList.value[i]);
+      newLicense.push(licenseData.value[i]);
     }
   }
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/license/delete", { id: id }).then((res) => {
@@ -107,7 +107,7 @@ function selectedDelete() {
 
       console.log("==0==");
       console.log(res);
-      licenseList.value = newLicense;
+      licenseData.value = newLicense;
 
       cartLoading.value = false;
     }
@@ -117,8 +117,8 @@ function selectedDelete() {
 function onSelectChange(selectedKeys) {
   selectedRowKeys.value = selectedKeys;
 
-  for (let i = 0; i < licenseList.value.length; i++) {
-    licenseList.value[i].checked = selectedRowKeys.value.includes(licenseList.value[i].key);
+  for (let i = 0; i < licenseData.value.length; i++) {
+    licenseData.value[i].checked = selectedRowKeys.value.includes(licenseData.value[i].key);
   }
 }
 
@@ -131,11 +131,11 @@ function getLicense() {
         alert(res.message);
       }
 
-      licenseList.value = res.data;
+      licenseData.value = res.data;
 
-      for (let i = 0; i < licenseList.value.length; i++) {
-        licenseList.value[i].key = i;
-        licenseList.value[i].checked = false;
+      for (let i = 0; i < licenseData.value.length; i++) {
+        licenseData.value[i].key = i;
+        licenseData.value[i].checked = false;
       }
 
       cartLoading.value = false;
