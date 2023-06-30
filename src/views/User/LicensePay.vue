@@ -7,7 +7,7 @@
   <a-card :loading="cartLoading" :bordered="false" title="서비스 결제">
     <a-descriptions title="남은 서비스 일자">
       <a-descriptions-item>
-        30일<br>서비스 마감일: 2023-06-29 10:47:50
+        {{ licenseEndTime }}일<br>서비스 마감일: {{ licenseRemainingDays }}
       </a-descriptions-item>
     </a-descriptions>
 
@@ -28,20 +28,20 @@
 
     <a-descriptions title="결제자 정보" bordered>
       <a-descriptions-item label="은행">
-        <a-input type="text" v-model:value="licenseParam.card_bank" />
+        <a-input type="text" v-model:value="formState.card_bank" />
       </a-descriptions-item>
       <a-descriptions-item label="예금주">
-        <a-input type="text" v-model:value="licenseParam.card_name" />
+        <a-input type="text" v-model:value="formState.card_name" />
       </a-descriptions-item>
       <a-descriptions-item label="카드번호">
-        <a-input type="text" v-model:value="licenseParam.card_number" />
+        <a-input type="text" v-model:value="formState.card_number" />
       </a-descriptions-item>
     </a-descriptions>
 
     <a-descriptions title="결제가격">
-      <a-descriptions-item label="정가">{{ licenseParam.price }}</a-descriptions-item>
-      <a-descriptions-item label="부가세">{{ licenseParam.price / 10 }}</a-descriptions-item>
-      <a-descriptions-item label="총 결제금액">{{ licenseParam.price * 1.1 }}</a-descriptions-item>
+      <a-descriptions-item label="정가">{{ formState.price }}</a-descriptions-item>
+      <a-descriptions-item label="부가세">{{ formState.price / 10 }}</a-descriptions-item>
+      <a-descriptions-item label="총 결제금액">{{ formState.final_price }}</a-descriptions-item>
     </a-descriptions>
     <a-button type="primary" @click="putLicense">결제하기</a-button>
   </a-card>
@@ -55,43 +55,47 @@ import { onMounted, reactive, ref } from "vue";
 import router from "@/router";
 
 // loading
-const indicator = ref(false);
-const cartLoading = ref(true);
+const indicator = ref(false)
+const cartLoading = ref(true)
 
-const licenseList = ref([]);
-const licenseSelected = ref("");
-const licenseParam = reactive({
+const licenseList = ref([])
+const licenseSelected = ref("")
+const licenseEndTime = ref("")
+const licenseRemainingDays = ref("")
+const formState = reactive({
   name: "",
   price: 0,
+  final_price: 0,
   day: 0,
   card_bank: "",
   card_name: "",
-  card_number: ""
-});
+  card_number: "",
+  is_check: "0",
+})
 
 function putLicense() {
-  if (licenseParam.name === "") {
+  if (formState.name === "") {
     alert("서비스를 선택 해 주세요.");
     return false;
   }
 
-  if (licenseParam.card_bank === "") {
+  if (formState.card_bank === "") {
     alert("은행은 필수로 입력 부탁합니다.");
     return false;
   }
 
-  if (licenseParam.card_name === "") {
+  if (formState.card_name === "") {
     alert("예금주는 필수로 입력 부탁합니다.");
     return false;
   }
 
-  if (licenseParam.card_number === "") {
+  if (formState.card_number === "") {
     alert("카드번호는 필수로 입력 부탁합니다.");
     return false;
   }
 
   indicator.value = true;
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/licenseHistory/save", licenseParam).then((res) => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/licenseHistory/buy", formState).then((res) => {
       if (res.status !== "2000") {
         alert(res.message);
         indicator.value = false;
@@ -107,15 +111,17 @@ function putLicense() {
 }
 
 function licenseSelectChange() {
-  licenseParam.name = "";
-  licenseParam.price = 0;
-  licenseParam.day = 0;
+  formState.name = "";
+  formState.price = 0;
+  formState.final_price = 0;
+  formState.day = 0;
 
   const selectedValue = licenseList.value.find(item => item.id === licenseSelected.value);
   if (selectedValue) {
-    licenseParam.name = selectedValue.name;
-    licenseParam.price = selectedValue.price;
-    licenseParam.day = selectedValue.day;
+    formState.name = selectedValue.name;
+    formState.price = selectedValue.price;
+    formState.final_price = Math.round(selectedValue.price * 1.1);
+    formState.day = selectedValue.day;
   }
 }
 
@@ -126,8 +132,6 @@ function getLicense() {
       }
 
       licenseList.value = res.data;
-
-      cartLoading.value = false;
     }
   );
 }
@@ -139,8 +143,9 @@ function getUser() {
         alert(res.message);
       }
 
-      console.log("==0==");
-      console.log(res);
+      const endDate = new Date(res.data.license_end_date);
+      licenseRemainingDays.value = endDate.toLocaleString()
+      licenseEndTime.value = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24))
 
       cartLoading.value = false;
     }
@@ -148,7 +153,7 @@ function getUser() {
 }
 
 onMounted(() => {
-  // getUser();
   getLicense();
+  getUser();
 });
 </script>

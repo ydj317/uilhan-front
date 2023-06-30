@@ -70,9 +70,9 @@ const routes = [
           },
 
           {
-            path: "/user/buyLicense",
-            name: "user_buyLicense",
-            component: () => import("../views/User/BuyLicense"),
+            path: "/user/licensePay",
+            name: "user_licensePay",
+            component: () => import("../views/User/LicensePay.vue"),
           },
 
           {

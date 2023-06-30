@@ -65,7 +65,7 @@
           <router-link to="/user/license"><span>서비스 관리</span></router-link>
         </a-menu-item>
         <a-menu-item key="042">
-          <router-link to="/user/buyLicense"><span>서비스 결제</span></router-link>
+          <router-link to="/user/licensePay"><span>서비스 결제</span></router-link>
         </a-menu-item>
         <a-menu-item key="043">
           <router-link to="/user/licenseHistory"><span>서비스 이력</span></router-link>
