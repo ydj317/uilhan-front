@@ -65,7 +65,7 @@ const formState = reactive({
 const onFinish = values => {
   indicator.value = true;
   values = Object.assign(values, { id: formState.id });
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/license/add", values).then((res) => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/license/save", values).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
       indicator.value = false;

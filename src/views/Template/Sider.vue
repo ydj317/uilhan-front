@@ -68,7 +68,7 @@
           <router-link to="/user/buyLicense"><span>서비스 결제</span></router-link>
         </a-menu-item>
         <a-menu-item key="043">
-          <router-link to="/user/licenseHistory"><span>서비스 이용내역</span></router-link>
+          <router-link to="/user/licenseHistory"><span>서비스 이력</span></router-link>
         </a-menu-item>
         <a-menu-item key="044" v-if="isAdmin">
           <router-link to="/user/manage"><span>이미지 번역 회수</span></router-link>

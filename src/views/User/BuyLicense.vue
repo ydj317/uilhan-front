@@ -91,7 +91,7 @@ function putLicense() {
   }
 
   indicator.value = true;
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/license/add", licenseParam).then((res) => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/licenseHistory/save", licenseParam).then((res) => {
       if (res.status !== "2000") {
         alert(res.message);
         indicator.value = false;
