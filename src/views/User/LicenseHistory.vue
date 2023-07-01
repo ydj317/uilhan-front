@@ -16,10 +16,11 @@
   <a-card :loading="cartLoading" :bordered="false">
     <a-table :columns="table_columns" :data-source="licenseHistoryData" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
+
         <!--사용자-->
-        <template v-if="isAdmin && column.key === 'user_name'">
+        <a-table-column title="사용자" dataIndex="user_name" width="7%" align="center" :show="isAdmin">
           {{ record.user_name }}
-        </template>
+        </a-table-column>
 
         <!--서비스명-->
         <template v-if="column.key === 'name'">
@@ -96,12 +97,6 @@ const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN")
 const search_value = ref('');
 const licenseHistoryData = ref([]);
 const table_columns = ref([
-  {
-    title: "사용자",
-    key: "user_name",
-    width: "7%",
-    align: "center"
-  },
   {
     title: "서비스 명",
     key: "name",

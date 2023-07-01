@@ -69,17 +69,14 @@
         <div class="title">공지사항</div>
         <div class="content">
           <div class="scroll">
-            <a-list item-layout="horizontal" :data-source="boardData">
-              <template #renderItem="{ item }">
-                <a-list-item>
-                  <a-list-item-meta :description="item.cont">
-                    <template #title>
-                      <a>{{ item.title }}</a>
-                    </template>
-                  </a-list-item-meta>
-                </a-list-item>
-              </template>
-            </a-list>
+            <template v-for="item in boardData">
+              <div v-if="item.type === 'notice'" style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                <h4>{{ item.title }}</h4>
+                <router-link :to="`/board/notice/view/${item.id}`">
+                  <span style="color: #999">{{ parseHTML(item.content) }}</span>
+                </router-link>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -97,27 +94,7 @@ import { CaretUpFilled } from '@ant-design/icons-vue';
 import { ref, onMounted } from "vue";
 import { AuthRequest } from "@/util/request";
 
-const boardData = [
-  {
-  title: '개인정보 처리 방침의 강화',
-  cont: '개인정보 보호를 위해 서비스 이용과 관련된 개인정보 처리 방침이 보다 강화되었습니다. 자세한 내용은 개인정보 처리 방침 페이지를 참고해 주세요.',
-}, {
-  title: '서비스 이용에 대한 책임과 제한',
-  cont: '이용자의 서비스 이용에 대한 책임과 제한에 대한 내용이 명확히 규정되었습니다. 이에 따라 서비스 이용 시 유의사항을 준수해 주시기 바랍니다.',
-}, {
-  title: '약관 동의의 필요성',
-  cont: '변경된 이용약관에 동의하지 않을 경우 일부 서비스의 이용이 제한될 수 있으니 주의해 주세요.',
-}, {
-  title: '서비스 이용약관 개정 안내',
-  cont: '저희 서비스를 이용해 주셔서 감사합니다. 이용약관 개정에 따라 공지사항을 작성하오니, 아래 내용을 주의 깊게 확인해주시기 바랍니다.',
-}, {
-  title: '서비스 이용약관 개정 안내',
-  cont: '저희 서비스를 이용해 주셔서 감사합니다. 이용약관 개정에 따라 공지사항을 작성하오니, 아래 내용을 주의 깊게 확인해주시기 바랍니다.',
-}, {
-  title: '새로운 서비스 출시 안내',
-  cont: '새로운 서비스는 "스마트 홈 관리 시스템"입니다. 이 시스템은 최신 기술을 활용하여 사용자의 스마트 홈을 효율적으로 관리할 수 있는 도구를 제공합니다. ',
-}
-];
+const boardData = ref([]);
 
 let totalCount = ref(0);
 let prdLinkedData = ref([]);
@@ -274,31 +251,29 @@ const option3 = ref({
   ]
 });
 
-function getBoard() {
-  const params = ''
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/list', params).then((res) => {
-    if (res.status !== '2000') {
-      alert(res.message)
-      return false;
-    }
+function parseHTML(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
 
+  if (div.innerHTML.length > 100) {
+    div.innerHTML = div.innerHTML.slice(0, 100) + '...';
+  }
+
+  return div.textContent;
+}
+
+function getBoard() {
+  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list", '').then((res) => {
+      if (res.status !== "2000") {
+        alert(res.message);
+        return false;
+      }
     console.log('==0==')
     console.log(res.data)
 
-  }).catch((error) => {
-    alert(error.message);
-    return false;
-  });
-  // AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list").then((res) => {
-  //     if (res.status !== "2000") {
-  //       alert(res.message);
-  //       return false;
-  //     }
-  //
-  //     console.log('==0==')
-  //     console.log(res.data)
-  //   }
-  // );
+      boardData.value = res.data
+    }
+  );
 }
 
 onMounted(() => {

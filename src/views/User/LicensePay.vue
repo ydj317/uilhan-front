@@ -53,7 +53,7 @@
     </a-descriptions>
 
     <div class="center">
-      <a-button type="primary" @click="putLicense">결제하기</a-button>
+      <a-button type="primary" @click="BuyLicense">결제하기</a-button>
     </div>
   </a-card>
 </template>
@@ -79,10 +79,10 @@ const formState = reactive({
   card_bank: "",
   card_name: "",
   card_number: "",
-  is_check: "0"
+  status: "0"
 });
 
-function putLicense() {
+function BuyLicense() {
   if (formState.name === "") {
     alert("서비스를 선택 해 주세요.");
     return false;
