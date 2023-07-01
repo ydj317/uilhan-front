@@ -16,11 +16,10 @@
   <a-card :loading="cartLoading" :bordered="false">
     <a-table :columns="table_columns" :data-source="licenseHistoryData" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
-
         <!--사용자-->
-        <a-table-column title="사용자" dataIndex="user_name" width="7%" align="center" :show="isAdmin">
-          {{ record.user_name }}
-        </a-table-column>
+        <template v-if="column.key === 'user_name'">
+        {{ record.user_name }}
+        </template>
 
         <!--서비스명-->
         <template v-if="column.key === 'name'">
@@ -98,6 +97,12 @@ const search_value = ref('');
 const licenseHistoryData = ref([]);
 const table_columns = ref([
   {
+    title:"사용자",
+    key: "user_name",
+    width: "7%",
+    align: "center"
+  },
+  {
     title: "서비스 명",
     key: "name",
     align: "center"
@@ -145,6 +150,9 @@ const table_columns = ref([
     align: "center"
   }
 ]);
+if (!isAdmin.value) {
+  table_columns.value.shift()
+}
 const pagination = ref({
   total: 0,
   current: 1,

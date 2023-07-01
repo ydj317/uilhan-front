@@ -15,10 +15,13 @@
       </a-descriptions-item>
 
       <a-descriptions-item label="서비스 유효일">
-        {{ licenseEndTime }}일
+        {{ licenseEndTime === "" ? '서비스 종료' : licenseEndTime }}
+        <router-link to="/user/licensePay" v-if="licenseEndTime === ''">
+          <a-button type="primary" style="margin-left: 10px;">신청하기</a-button>
+        </router-link>
       </a-descriptions-item>
       <a-descriptions-item label="서비스 마감일">
-        {{ licenseRemainingDays }}
+        {{ licenseRemainingDays === "" ? '서비스 종료' : licenseRemainingDays }}
       </a-descriptions-item>
 
       <a-descriptions-item label="이미지 번역 남은 회수">
@@ -362,8 +365,10 @@ function getUser() {
       secretKey.value = res.data.key.secret_key;
 
       const endDate = new Date(res.data.license_end_date);
-      licenseRemainingDays.value = endDate.toLocaleString()
-      licenseEndTime.value = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24))
+      if (new Date() < endDate) {
+        licenseRemainingDays.value = endDate.toLocaleString()
+        licenseEndTime.value = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24)) + '일'
+      }
 
       cartLoading.value = false;
     }
