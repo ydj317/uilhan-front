@@ -22,7 +22,7 @@
     </a-row>
 
     <a-table :columns="table_columns" :data-source="licenseData"
-             :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }">
+             :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
         <!--서비스명-->
         <template v-if="column.key === 'name'">
@@ -38,9 +38,9 @@
         </template>
 
         <!--사용여부-->
-        <template v-if="column.key === 'is_use'">
-          <a-tag v-if="record.is_use === '1'" color="success">사용중</a-tag>
-          <a-tag v-if="record.is_use === '0'" color="error">사용중지</a-tag>
+        <template v-if="column.key === 'status'">
+          <a-tag v-if="record.status === '1'" color="success">사용중</a-tag>
+          <a-tag v-if="record.status === '0'" color="error">사용중지</a-tag>
         </template>
 
         <!--수정-->
@@ -84,7 +84,7 @@ const table_columns = ref([
   },
   {
     title: "사용여부",
-    key: "is_use",
+    key: "status",
     width: "15%",
     align: "center"
   },
@@ -96,6 +96,21 @@ const table_columns = ref([
   }
 ]);
 const selectedRowKeys = ref([]);
+const pagination = ref({
+  total: 0,
+  current: 1,
+  pageSize: 10,
+  showSizeChanger: true,
+  showTotal: (total, range) => `현재 ${range[0]}-${range[1]}건 / 총 ${total}건`,
+  pageSizeOptions: ['10', '20', '50'],
+  onChange: page => {
+    pagination.value.current = page;
+  },
+  onShowSizeChange: (current, pageSize) => {
+    pagination.value.current = 1;
+    pagination.value.pageSize = pageSize;
+  },
+});
 
 function selectedDelete() {
   const filteredIds = licenseData.value

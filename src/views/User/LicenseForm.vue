@@ -26,8 +26,8 @@
         <a-input v-model:value="formState.day" allow-clear placeholder="충전 일수를 입력해 주세요." />
       </a-form-item>
 
-      <a-form-item label="사용 여부" name="is_use">
-        <a-radio-group v-model:value="formState.is_use">
+      <a-form-item label="사용 여부" name="status">
+        <a-radio-group v-model:value="formState.status">
           <a-radio :value="'1'">사용중</a-radio>
           <a-radio :value="'0'">사용중지</a-radio>
         </a-radio-group>
@@ -59,7 +59,7 @@ const formState = reactive({
   name: "",
   price: "",
   day: "",
-  is_use: '1'
+  status: '1'
 });
 
 const onFinish = values => {
@@ -101,7 +101,7 @@ function getLicense() {
       formState.name = res.data.name;
       formState.price = res.data.price;
       formState.day = res.data.day;
-      formState.is_use = res.data.is_use;
+      formState.status = res.data.status;
 
       cartLoading.value = false;
     }

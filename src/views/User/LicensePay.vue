@@ -5,16 +5,7 @@
     :is-full-page="true"
   />
   <a-card :loading="cartLoading" :bordered="false" title="서비스 결제" class="license-pay-page">
-    <a-descriptions title="서비스 현황" bordered :column="{ xs: 1, sm: 1, md: 1}" :style="{marginBottom:'20px'}">
-      <a-descriptions-item label="서비스 유효일">
-        {{ licenseEndTime }}일
-      </a-descriptions-item>
-      <a-descriptions-item label="서비스 마감일">
-        {{ licenseRemainingDays }}
-      </a-descriptions-item>
-    </a-descriptions>
-
-    <a-descriptions title="서비스 결제" bordered :column="{ xs: 2, sm: 2, md: 2}" :style="{marginBottom:'20px'}">
+    <a-descriptions title="서비스" bordered :column="{ xs: 2, sm: 2, md: 2}" :style="{marginBottom:'20px'}">
       <a-descriptions-item label="서비스 선택">
         <a-select v-model:value="licenseSelected" @change="licenseSelectChange" style="width: 100%;">
           <a-select-option value="">선택</a-select-option>
@@ -49,6 +40,18 @@
       </a-descriptions-item>
     </a-descriptions>
 
+    <a-descriptions title="결제수단(무통장입금)" bordered :column="{ xs: 1, sm: 1, md: 1}" :style="{marginBottom:'20px'}">
+      <a-descriptions-item label="은행">
+        IBK기업은행
+      </a-descriptions-item>
+      <a-descriptions-item label="예금주">
+        월드링크크로스보더이커머스
+      </a-descriptions-item>
+      <a-descriptions-item label="계좌번호">
+        338-082819-04-011
+      </a-descriptions-item>
+    </a-descriptions>
+
     <div class="center">
       <a-button type="primary" @click="putLicense">결제하기</a-button>
     </div>
@@ -63,13 +66,11 @@ import { onMounted, reactive, ref } from "vue";
 import router from "@/router";
 
 // loading
-const indicator = ref(false)
-const cartLoading = ref(true)
+const indicator = ref(false);
+const cartLoading = ref(true);
 
-const licenseList = ref([])
-const licenseSelected = ref("")
-const licenseEndTime = ref("")
-const licenseRemainingDays = ref("")
+const licenseList = ref([]);
+const licenseSelected = ref("");
 const formState = reactive({
   name: "",
   price: 0,
@@ -78,8 +79,8 @@ const formState = reactive({
   card_bank: "",
   card_name: "",
   card_number: "",
-  is_check: "0",
-})
+  is_check: "0"
+});
 
 function putLicense() {
   if (formState.name === "") {
@@ -110,8 +111,8 @@ function putLicense() {
         return false;
       }
 
-      alert("결제신청 성공하였습니다.")
-      router.push('/user/licenseHistory')
+      alert("결제신청 성공하였습니다.");
+      router.push("/user/licenseHistory");
 
       indicator.value = false;
     }
@@ -140,20 +141,6 @@ function getLicense() {
       }
 
       licenseList.value = res.data;
-    }
-  );
-}
-
-function getUser() {
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user", {}).then(
-    (res) => {
-      if (res.status !== "2000") {
-        alert(res.message);
-      }
-
-      const endDate = new Date(res.data.license_end_date);
-      licenseRemainingDays.value = endDate.toLocaleString()
-      licenseEndTime.value = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24))
 
       cartLoading.value = false;
     }
@@ -162,7 +149,6 @@ function getUser() {
 
 onMounted(() => {
   getLicense();
-  getUser();
 });
 </script>
 

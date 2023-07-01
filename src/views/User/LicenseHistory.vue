@@ -4,8 +4,17 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" title="서비스 이력">
-    <a-table :columns="table_columns" :data-source="licenseHistoryData">
+  <a-card :bordered="false" title="서비스 이력" :style="{marginBottom:'20px'}">
+    <a-input-group compact v-if="isAdmin">
+      <a-select value="1" style="width: 150px;">
+        <a-select-option value="1">사용자</a-select-option>
+      </a-select>
+      <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;" />
+      <a-button @click="getLicense" type="primary">검색</a-button>
+    </a-input-group>
+  </a-card>
+  <a-card :loading="cartLoading" :bordered="false">
+    <a-table :columns="table_columns" :data-source="licenseHistoryData" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
         <!--사용자-->
         <template v-if="isAdmin && column.key === 'user_name'">
@@ -40,25 +49,31 @@
           {{ record.card_number }}
         </template>
 
-        <!--결제일자-->
+        <!--신청일자-->
         <template v-if="column.key === 'ins_date'">
           {{ new Date(record.ins_date).toLocaleString() }}
         </template>
 
         <!--확인여부-->
-        <template v-if="column.key === 'is_check'">
-          <a-tag v-if="record.is_check === '1'" color="success">확인완료</a-tag>
-          <a-tag v-if="record.is_check === '0'">확인대기</a-tag>
+        <template v-if="column.key === 'status'">
+          <a-tag v-if="record.status === '1'" color="success">확인완료</a-tag>
+          <a-tag v-if="record.status === '0'">확인대기</a-tag>
+          <a-tag v-if="record.status === '2'" color="error">입금취소</a-tag>
+          <div v-if="record.check_date" style="font-size: 12px; color: #999; padding-top: 5px;">
+            ( {{ new Date(record.check_date).toLocaleString() }} )
+          </div>
         </template>
 
-        <!--확인일자-->
+        <!--수정-->
         <template v-if="column.key === 'check_date'">
-          <span v-if="record.check_date">{{ new Date(record.check_date).toLocaleString() }}</span>
-          <span v-else>
-            <a-button v-if="isAdmin" type="primary" shape="round" @click="dataCheck(record.id)">
-              결제확인
+          <a-input-group compact>
+            <a-button v-if="isAdmin && record.status === '0'" type="primary" @click="statusChange(record.id, '1')">
+              확인
             </a-button>
-          </span>
+            <a-button v-if="record.status === '0'" @click="statusChange(record.id, '2')">
+              취소
+            </a-button>
+          </a-input-group>
         </template>
       </template>
     </a-table>
@@ -78,6 +93,7 @@ const cartLoading = ref(true);
 
 const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
 
+const search_value = ref('');
 const licenseHistoryData = ref([]);
 const table_columns = ref([
   {
@@ -116,31 +132,46 @@ const table_columns = ref([
     align: "center"
   },
   {
-    title: "결제일자",
+    title: "신청일자",
     key: "ins_date",
     width: "10%",
     align: "center"
   },
   {
     title: "확인여부",
-    key: "is_check",
-    width: "7%",
+    key: "status",
+    width: "10%",
     align: "center"
   },
   {
-    title: "확인일자",
+    title: "수정",
     key: "check_date",
     width: "10%",
     align: "center"
   }
 ]);
+const pagination = ref({
+  total: 0,
+  current: 1,
+  pageSize: 10,
+  showSizeChanger: true,
+  showTotal: (total, range) => `현재 ${range[0]}-${range[1]}건 / 총 ${total}건`,
+  pageSizeOptions: ['10', '20', '50'],
+  onChange: page => {
+    pagination.value.current = page;
+  },
+  onShowSizeChange: (current, pageSize) => {
+    pagination.value.current = 1;
+    pagination.value.pageSize = pageSize;
+  },
+});
 
-function dataCheck(id) {
+function statusChange(id, status) {
   indicator.value = true;
 
   const clonedData = licenseHistoryData.value.map(item => ({ ...item }))
   const params = clonedData.find(item => item.id === id)
-  params.is_check = '1'
+  params.status = status
 
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/licenseHistory/check", params).then((res) => {
       if (res.status !== "2000") {
@@ -151,7 +182,7 @@ function dataCheck(id) {
 
       licenseHistoryData.value.map((item, i) => {
         if (item.id === id) {
-          licenseHistoryData.value[i].is_check = res.data.is_check;
+          licenseHistoryData.value[i].status = res.data.status;
           licenseHistoryData.value[i].check_date = res.data.check_date;
         }
       });
@@ -162,8 +193,10 @@ function dataCheck(id) {
 }
 
 function getLicense() {
+  cartLoading.value = true;
   const requestParams = {
-    orderBy: "desc"
+    orderBy: "desc",
+    search_value: search_value.value
   };
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/licenseHistory/list", { params: requestParams }).then((res) => {
       if (res.status !== "2000") {

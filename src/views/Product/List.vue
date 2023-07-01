@@ -2,7 +2,7 @@
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true" />
 
   <!--검색-->
-  <a-card :bordered="false" title="상품관리" :style="{marginBottom:'20px'}" :loading="listLoading">
+  <a-card :bordered="false" title="상품관리" :style="{marginBottom:'20px'}">
     <div id="header">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
       <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
@@ -523,6 +523,7 @@ export default defineComponent({
     },
 
     getList(sType = "") {
+      this.listLoading = true
       let param = this.getParam(sType);
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
         if (res.status !== "2000") {

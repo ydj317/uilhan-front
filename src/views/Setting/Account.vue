@@ -14,6 +14,13 @@
         </a-input-group>
       </a-descriptions-item>
 
+      <a-descriptions-item label="서비스 유효일">
+        {{ licenseEndTime }}일
+      </a-descriptions-item>
+      <a-descriptions-item label="서비스 마감일">
+        {{ licenseRemainingDays }}
+      </a-descriptions-item>
+
       <a-descriptions-item label="이미지 번역 남은 회수">
         <a-input :value="recharge" disabled style="width: 200px;" />
 
@@ -97,6 +104,8 @@ const cartLoading = ref(true);
 
 const accessKey = ref();
 const secretKey = ref();
+const licenseEndTime = ref("")
+const licenseRemainingDays = ref("")
 const recharge = ref(0);
 const tempImageUrl = ref(require('../../assets/img/temp_image.png'));
 const icons = ref([]);
@@ -351,6 +360,10 @@ function getUser() {
 
       accessKey.value = res.data.key.access_key;
       secretKey.value = res.data.key.secret_key;
+
+      const endDate = new Date(res.data.license_end_date);
+      licenseRemainingDays.value = endDate.toLocaleString()
+      licenseEndTime.value = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24))
 
       cartLoading.value = false;
     }
