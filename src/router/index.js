@@ -137,6 +137,12 @@ const routes = [
             /* webpackChunkName: 'user_register' */
             component: () => import("@/views/Board/QuestionForm.vue"),
           },
+          {
+            path: "/board/question/view/:id?",
+            name: "board_question_view",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/QuestionView.vue"),
+          },
           // {
           //   path: "/user/register",
           //   name: "user_register",

@@ -45,10 +45,9 @@ const table_columns = computed(() => {
 const getBoardList = () => {
   loading.value = true
 
-  //const params = ''
   const params = {params: {type: 'question'}}
 
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/list', params).then((res) => {
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/questionList', params).then((res) => {
     if (res.status !== '2000') {
       loading.value = false;
       alert(res.message)
@@ -65,7 +64,6 @@ const getBoardList = () => {
   });
 }
 
-
 onBeforeMount(() => {
   getBoardList()
 })
@@ -78,15 +76,24 @@ onBeforeMount(() => {
 
       </a-col>
       <a-col>
-
+        <router-link to="/board/question/form">
+          <a-button type="primary">
+            <template #icon>
+              <plus-outlined/>
+            </template>
+            등록
+          </a-button>
+        </router-link>
       </a-col>
     </a-row>
 
     <a-table :columns="table_columns" :data-source="datasource" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
         <template v-if="column.dataIndex === 'title'">
-          <pushpin-two-tone two-tone-color="#eb2f96" v-if="record.isFixtop === true"/>
-          {{ text }}
+          <router-link :to="`/board/question/view/${record.id}`">
+            <pushpin-two-tone two-tone-color="#eb2f96" v-if="record.isFixtop === true"/>
+            {{ text }}
+          </router-link>
         </template>
 
         <template v-if="column.dataIndex === 'type'">

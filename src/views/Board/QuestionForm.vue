@@ -53,7 +53,7 @@ const contentUpdate = (tinymce) => {
 const onFinish = values => {
   values = Object.assign(values, {id: formState.id})
   buttonLoading.value = true;
-  AuthRequest.post(process.env.VUE_APP_API_URL + '/api/board/save', values).then((res) => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + '/api/board/questionSave', values).then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
       buttonLoading.value = false;
@@ -64,7 +64,7 @@ const onFinish = values => {
     alert(data.message);
 
     buttonLoading.value = false;
-    router.push('/board/list')
+    router.push('/board/question')
 
   }).catch((error) => {
     alert(error.message);
@@ -83,7 +83,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <a-card :bordered="false" :title="formState.title" :loading="indicator">
+  <a-card :bordered="false" title="1:1문의 등록/수정" :loading="indicator">
     <a-form :model="formState" name="board_question_form" @finish="onFinish"
             @finishFailed="onFinishFailed" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
             class="board_question_form">
