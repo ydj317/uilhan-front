@@ -8,6 +8,7 @@ import {AuthRequest} from "@/util/request";
 const router = useRouter();
 
 let datasource = ref([]);
+let total = ref(0);
 let loading = ref(false);
 let checked = ref(true);
 let deleteLoading = ref(false);
@@ -61,7 +62,7 @@ const getBoardList = () => {
       alert(res.message)
       return false;
     }
-
+    total.value = res.data.length
     datasource.value = Object.values(res.data)
     loading.value = false;
 
@@ -106,7 +107,8 @@ onBeforeMount(() => {
   <a-card :bordered="false" :loading="loading">
     <a-row type="flex" justify="space-between" :wrap="false" :style="{marginBottom:'10px'}">
       <a-col>
-        <a-button type="primary" danger :loading="deleteLoading" @click="deleteSelectedData" v-if="Array.isArray(selectedRowKeys) && selectedRowKeys.length === 0" disabled>
+        <a-button type="primary" danger :loading="deleteLoading" @click="deleteSelectedData"
+                  v-if="Array.isArray(selectedRowKeys) && selectedRowKeys.length === 0" disabled>
           <template #icon>
             <delete-outlined/>
           </template>
@@ -132,11 +134,14 @@ onBeforeMount(() => {
     </a-row>
 
     <a-table :columns="table_columns" :data-source="datasource" :row-selection="rowSelection" :pagination="pagination">
-      <template #bodyCell="{ column,record, text }">
+      <template #bodyCell="{ column, record, text, index }">
+        <template v-if="column.dataIndex === 'id'">
+          {{ total - index }}
+        </template>
         <template v-if="column.dataIndex === 'title'">
           <router-link :to="`/board/view/${record.id}`">
-          <pushpin-two-tone two-tone-color="#eb2f96" v-if="record.isFixtop === true"/>
-          {{ text }}
+            <pushpin-two-tone two-tone-color="#eb2f96" v-if="record.isFixtop === true"/>
+            {{ text }}
           </router-link>
         </template>
 
