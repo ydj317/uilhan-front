@@ -33,7 +33,6 @@
           ref="select"
           v-model:value="searchType"
           style="width: 146px"
-          @focus="focus"
           @change="searchApi"
         >
           <a-select-option value="search_filter_word">금지어</a-select-option>
