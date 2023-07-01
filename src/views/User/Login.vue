@@ -66,7 +66,7 @@ export default defineComponent({
   setup() {
     onBeforeMount(() => {
       if (isLogin() === true) {
-        router.push("/product");
+        router.push("/main");
         return false;
       } else {
         cookieInit();
@@ -112,7 +112,7 @@ export default defineComponent({
 
           Cookie.set('member_name', res.data.member_name);
           Cookie.set('member_roles', res.data.member_roles);
-          router.push("/product");
+          router.push("/main");
           loading.value = false;
           return false;
       });
