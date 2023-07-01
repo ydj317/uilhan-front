@@ -15,7 +15,6 @@ let formState = reactive({
   content: '',
   user_name: '',
   hits: 0,
-  views: 0,
   is_fixtop: false,
   type: 'notice',
   status: '0',
@@ -42,7 +41,6 @@ const getBoardDetail = (id) => {
     formState.insDate = res.data.insDate
     formState.user_name = res.data.userName
     formState.hits = res.data.hits
-    formState.views = res.data.views
     indicator.value = false;
   }).catch((error) => {
     alert(error.message);
@@ -63,8 +61,6 @@ onBeforeMount(() => {
       <div style="font-weight: bold">{{ formState.user_name }}</div>
       <a-divider type="vertical" />
       <div>클릭수: {{ formState.hits }}</div>
-      <a-divider type="vertical" />
-      <div>views: {{ formState.views }}</div>
       <a-divider type="vertical" />
       <div>{{formState.insDate}}</div>
     </div>
