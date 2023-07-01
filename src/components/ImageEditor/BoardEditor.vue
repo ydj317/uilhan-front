@@ -74,20 +74,20 @@ export default {
     },
     plugins: {
       type: [String, Array],
-      default: 'preview code searchreplace autolink directionality fullscreen image link media template table hr advlist lists wordcount textpattern axupimgs'
+      default: 'code autolink directionality image link template advlist lists wordcount textpattern axupimgs'
     },
     toolbar: {
       type: [String, Array],
-      default: 'code fullscreen undo redo  | forecolor backcolor bold italic underline strikethrough link | \
+      default: 'undo redo  | forecolor backcolor bold italic underline strikethrough link | \
                 alignleft aligncenter alignright alignjustify outdent indent | bullist numlist | \
-                table media hr preview | code selectall searchreplace axupimgs'
+                axupimgs'
     },
   },
   data(){
     return {
       init: {
-        language_url: '/tinymce/langs/zh_CN.js',  //引入语言包文件
-        language: 'zh_CN',  //语言类型
+        language_url: '',  //引入语言包文件
+        language: 'ko_KR',  //语言类型
 
         skin_url: '/tinymce/skins/ui/oxide',  //皮肤：浅色
         // skin_url: '/tinymce/skins/ui/oxide-dark',//皮肤：暗色

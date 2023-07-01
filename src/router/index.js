@@ -137,6 +137,36 @@ const routes = [
             /* webpackChunkName: 'user_register' */
             component: () => import("@/views/Board/Form.vue"),
           },
+          {
+            path: "/board/notice",
+            name: "board_notice",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/NoticeList.vue"),
+          },
+          {
+            path: "/board/notice/view/:id?",
+            name: "board_notice_view",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/NoticeView.vue"),
+          },
+          {
+            path: "/board/question",
+            name: "board_question",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/QuestionList.vue"),
+          },
+          {
+            path: "/board/question/form/:id?",
+            name: "board_question_form",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/QuestionForm.vue"),
+          },
+          {
+            path: "/board/question/view/:id?",
+            name: "board_question_view",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/QuestionView.vue"),
+          },
           // {
           //   path: "/user/register",
           //   name: "user_register",

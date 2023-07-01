@@ -6,7 +6,7 @@
         mode="inline"
         theme="dark"
     >
-      <a-menu-item :key="route.path">
+      <a-menu-item :key="r0" v-if="false">
         <template #icon>
           <gift-outlined/>
         </template>
@@ -38,14 +38,32 @@
           <span>제휴사연동</span>
         </RouterLink>
       </a-menu-item>
-      <a-menu-item key="/board/list">
+      <a-sub-menu key="4">
         <template #icon>
           <profile-outlined/>
         </template>
-        <RouterLink to="/board/list">
-          <span>게시판관리</span>
-        </RouterLink>
-      </a-menu-item>
+        <template #title>
+          <span>게시판</span>
+        </template>
+        <a-menu-item key="041">
+          <RouterLink to="/board/list">
+            <span>게시글관리</span>
+          </RouterLink>
+        </a-menu-item>
+
+        <a-menu-item key="042">
+          <RouterLink to="/board/notice">
+            <span>공지사항</span>
+          </RouterLink>
+        </a-menu-item>
+
+        <a-menu-item key="043">
+          <RouterLink to="/board/question">
+            <span>1:1 문의</span>
+          </RouterLink>
+        </a-menu-item>
+      </a-sub-menu>
+
       <a-sub-menu key="5">
         <template #icon>
           <setting-outlined/>
@@ -63,26 +81,14 @@
           <router-link to="/setting/delivery"><span>배송정책</span></router-link>
         </a-menu-item>
       </a-sub-menu>
-      <a-sub-menu key="4">
+      <a-menu-item key="20" v-if="isAdmin">
         <template #icon>
-          <money-collect-outlined />
+          <money-collect-outlined/>
         </template>
-        <template #title>
+        <router-link to="/user/manage">
           <span>회원충전</span>
-        </template>
-        <a-menu-item key="041" v-if="isAdmin">
-          <router-link to="/user/license"><span>서비스 관리</span></router-link>
-        </a-menu-item>
-        <a-menu-item key="042">
-          <router-link to="/user/licensePay"><span>서비스 결제</span></router-link>
-        </a-menu-item>
-        <a-menu-item key="043">
-          <router-link to="/user/licenseHistory"><span>서비스 이력</span></router-link>
-        </a-menu-item>
-        <a-menu-item key="044" v-if="isAdmin">
-          <router-link to="/user/manage"><span>이미지 번역 회수</span></router-link>
-        </a-menu-item>
-      </a-sub-menu>
+        </router-link>
+      </a-menu-item>
       <a-menu-item key="21">
         <template #icon>
           <close-circle-outlined/>
