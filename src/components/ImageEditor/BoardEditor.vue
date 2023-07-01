@@ -86,7 +86,7 @@ export default {
   data(){
     return {
       init: {
-        language_url: '',  //引入语言包文件
+        language_url: '/tinymce/langs/ko_KR.js',  //引入语言包文件
         language: 'ko_KR',  //语言类型
 
         skin_url: '/tinymce/skins/ui/oxide',  //皮肤：浅色
@@ -100,7 +100,7 @@ export default {
         //font_formats: '微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;苹果苹方=PingFang SC,Microsoft YaHei,sans-serif;宋体=simsun,serif;仿宋体=FangSong,serif;黑体=SimHei,sans-serif;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;',  //字体样式
         lineheight_formats: "0.5 0.8 1 1.2 1.5 1.75 2 2.5 3 4 5",  //行高配置，也可配置成"12px 14px 16px 20px"这种形式
 
-        height: 750,  //注：引入autoresize插件时，此属性失效
+        height: 550,  //注：引入autoresize插件时，此属性失效
         placeholder: '내용',
         branding: false,  //tiny技术支持信息是否显示
         resize: false,  //编辑器宽高是否可变，false-否,true-高可变，'both'-宽高均可，注意引号

@@ -1,8 +1,8 @@
 <script setup>
 import {useRoute, useRouter} from "vue-router";
-import {onBeforeMount, reactive, ref} from "vue";
+import {defineAsyncComponent, nextTick, onBeforeMount, reactive, ref} from "vue";
 import {AuthRequest} from "@/util/request";
-
+const Comments = defineAsyncComponent(() => import("@/views/Board/Comments.vue"));
 const route = useRoute();
 const router = useRouter();
 let board = ref([]);
@@ -26,14 +26,14 @@ let formState = reactive({
 const getBoardDetail = (id) => {
   if (!id) return false;
   indicator.value = true;
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/detail',{params:{id:id}}).then((res) => {
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/detail', {params: {id: id}}).then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
       indicator.value = false;
       router.push('/board/notice')
       return false;
     }
-    console.log(res.data);
+
     formState.id = res.data.id
     formState.title = res.data.title
     formState.content = res.data.content
@@ -60,7 +60,7 @@ onBeforeMount(() => {
 <template>
   <a-card :bordered="false" :title="formState.title" :loading="indicator">
     <div style="display: flex;align-items: center">
-      <div>{{ formState.user_name }}</div>
+      <div style="font-weight: bold">{{ formState.user_name }}</div>
       <a-divider type="vertical" />
       <div>클릭수: {{ formState.hits }}</div>
       <a-divider type="vertical" />
@@ -70,12 +70,13 @@ onBeforeMount(() => {
     </div>
     <a-divider></a-divider>
     <div v-html="formState.content"></div>
-
-      <div style="display: flex;justify-content: center;margin-top: 20px;">
-        <a-button @click="router.back()">목록</a-button>
-      </div>
-
+    <a-divider></a-divider>
+    <div style="display: flex;justify-content: center;margin-top: 20px;">
+      <a-button @click="router.back()">목록</a-button>
+    </div>
   </a-card>
+
+  <Comments :ids="route.params.id" style="margin-top: 10px;"/>
 </template>
 
 <style>

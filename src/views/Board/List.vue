@@ -134,8 +134,10 @@ onBeforeMount(() => {
     <a-table :columns="table_columns" :data-source="datasource" :row-selection="rowSelection" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
         <template v-if="column.dataIndex === 'title'">
+          <router-link :to="`/board/view/${record.id}`">
           <pushpin-two-tone two-tone-color="#eb2f96" v-if="record.isFixtop === true"/>
           {{ text }}
+          </router-link>
         </template>
 
         <template v-if="column.dataIndex === 'type'">

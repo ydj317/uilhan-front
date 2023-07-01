@@ -104,14 +104,23 @@ const routes = [
           {
             path: "/board/list",
             name: "board_list",
+            meta: { authority: ["ROLE_ADMIN"] },
             /* webpackChunkName: 'user_register' */
             component: () => import("@/views/Board/List.vue"),
           },
           {
             path: "/board/form/:id?",
             name: "board_form",
+            meta: { authority: ["ROLE_ADMIN"] },
             /* webpackChunkName: 'user_register' */
             component: () => import("@/views/Board/Form.vue"),
+          },
+          {
+            path: "/board/view/:id?",
+            name: "board_view",
+            meta: { authority: ["ROLE_ADMIN"] },
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/View.vue"),
           },
           {
             path: "/board/notice",

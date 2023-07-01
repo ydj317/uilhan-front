@@ -85,8 +85,10 @@ onBeforeMount(() => {
     <a-table :columns="table_columns" :data-source="datasource" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
         <template v-if="column.dataIndex === 'title'">
-          <pushpin-two-tone two-tone-color="#eb2f96" v-if="record.isFixtop === true"/>
-          {{ text }}
+          <router-link :to="`/board/notice/view/${record.id}`">
+            <pushpin-two-tone two-tone-color="#eb2f96" v-if="record.isFixtop === true"/>
+            {{ text }}
+          </router-link>
         </template>
 
         <template v-if="column.dataIndex === 'type'">
@@ -98,7 +100,7 @@ onBeforeMount(() => {
           <span>
             <router-link :to="`/board/notice/view/${record.id}`">
               <a-button type="primary" size="small">
-                <template #icon><eye-outlined /></template>
+                <template #icon><eye-outlined/></template>
               </a-button>
             </router-link>
           </span>

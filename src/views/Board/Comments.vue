@@ -4,11 +4,12 @@ import {AuthRequest} from "@/util/request";
 import {useRoute, useRouter} from "vue-router";
 const route = useRoute()
 const router = useRouter()
-console.log(route.path);
+
 const props = defineProps(['ids'])
 
 const initLoading = ref(true);
 const buttonLoading = ref(false);
+const data_show = ref(false);
 const data = ref([]);
 const list = ref([]);
 
@@ -56,6 +57,7 @@ const getComments = (id) => {
     }
 
     initLoading.value = false;
+
     data.value = res.data;
     list.value = res.data;
   }).catch((error) => {
@@ -78,13 +80,14 @@ onBeforeMount(() => {
         :loading="initLoading"
         item-layout="horizontal"
         :data-source="list"
+        v-if="data.length>0"
     >
-      <template #renderItem="{ item }">
+      <template #renderItem="{ item }" >
         <a-list-item>
 
           <a-list-item-meta :description="item.title">
             <template #title>
-              Admin
+              {{ item.userName }}
             </template>
             <template #avatar>
               <a-avatar :src="item.img"/>
@@ -94,7 +97,7 @@ onBeforeMount(() => {
         </a-list-item>
       </template>
     </a-list>
-    <a-divider></a-divider>
+    <a-divider v-if="data.length>0"></a-divider>
     <a-form
         :model="formState"
         name="nest-messages"

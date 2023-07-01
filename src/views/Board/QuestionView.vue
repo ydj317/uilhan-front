@@ -13,6 +13,9 @@ let formState = reactive({
   id: '',
   title: '',
   content: '',
+  user_name: '',
+  hits: 0,
+  views: 0,
   is_fixtop: false,
   type: 'notice',
   status: '0',
@@ -27,7 +30,7 @@ const getBoardDetail = (id) => {
     if (res.status !== '2000') {
       alert(res.message)
       indicator.value = false;
-      router.push('/board/notice')
+      router.push('/board/question')
       return false;
     }
 
@@ -37,6 +40,9 @@ const getBoardDetail = (id) => {
     formState.is_fixtop = res.data.isFixtop
     formState.type = res.data.type
     formState.insDate = res.data.insDate
+    formState.user_name = res.data.userName
+    formState.hits = res.data.hits
+    formState.views = res.data.views
     indicator.value = false;
   }).catch((error) => {
     alert(error.message);
@@ -54,13 +60,13 @@ onBeforeMount(() => {
 <template>
   <a-card :bordered="false" :title="formState.title" :loading="indicator">
     <div style="display: flex;align-items: center">
-      <div>user id</div>
-      <a-divider type="vertical"/>
-      <div>hits: 150</div>
-      <a-divider type="vertical"/>
-      <div>views: 150</div>
-      <a-divider type="vertical"/>
-      <div>{{ formState.insDate }}</div>
+      <div style="font-weight: bold">{{ formState.user_name }}</div>
+      <a-divider type="vertical" />
+      <div>클릭수: {{ formState.hits }}</div>
+      <a-divider type="vertical" />
+      <div>views: {{ formState.views }}</div>
+      <a-divider type="vertical" />
+      <div>{{formState.insDate}}</div>
     </div>
     <a-divider></a-divider>
     <div v-html="formState.content"></div>

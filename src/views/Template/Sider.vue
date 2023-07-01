@@ -45,7 +45,7 @@
         <template #title>
           <span>게시판</span>
         </template>
-        <a-menu-item key="041">
+        <a-menu-item key="041" v-if="isAdmin">
           <RouterLink to="/board/list">
             <span>게시글관리</span>
           </RouterLink>
