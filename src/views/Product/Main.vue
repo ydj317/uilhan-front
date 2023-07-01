@@ -274,48 +274,34 @@ const option3 = ref({
   ]
 });
 
-function getList() {
-  const param = {
-    market_code: 'all',
-    date_type: 'insert_date',
-    start_time: '2022-11-28',
-    trans_status: 'all',
-    sync_status: 'all',
-    limit: 100,
-    page: 1,
-  };
-
-  // 상품정보조회
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
-    if (res.status !== '2000') {
-      alert(res.message);
-      return ;
-    }
-
-    // 상품 총 수량
-    totalCount.value = res.data.totalCount;
-
-    // 상품 연동 상태
-    prdLinkedData.value = getLinkedData(res.data);
-  });
-}
-
 function getBoard() {
-
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list").then((res) => {
-      if (res.status !== "2000") {
-        alert(res.message);
-        return false;
-      }
-
-      console.log('==0==')
-      console.log(res.data)
+  const params = ''
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/list', params).then((res) => {
+    if (res.status !== '2000') {
+      alert(res.message)
+      return false;
     }
-  );
+
+    console.log('==0==')
+    console.log(res.data)
+
+  }).catch((error) => {
+    alert(error.message);
+    return false;
+  });
+  // AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list").then((res) => {
+  //     if (res.status !== "2000") {
+  //       alert(res.message);
+  //       return false;
+  //     }
+  //
+  //     console.log('==0==')
+  //     console.log(res.data)
+  //   }
+  // );
 }
 
 onMounted(() => {
-  // getList();
   getBoard();
 });
 </script>

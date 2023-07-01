@@ -560,6 +560,10 @@ export default defineComponent({
             continue;
           }
 
+          // console.log('==0==')
+          // console.log(this.prdlist[i].item_sku)
+          // minPrice = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
+
           minPrice = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
           maxPrice = Math.max(...this.prdlist[i].item_sku.map(item => item.selling_price));
 

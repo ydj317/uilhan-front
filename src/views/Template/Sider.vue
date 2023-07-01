@@ -6,7 +6,7 @@
         mode="inline"
         theme="dark"
     >
-      <a-menu-item :key="0">
+      <a-menu-item key="0">
         <template #icon>
           <gift-outlined/>
         </template>
@@ -161,8 +161,8 @@ import {useRoute, useRouter} from "vue-router";
 const router = useRouter()
 const route = useRoute()
 
-const selectedKeys = ref(["1"]);
-const openKeys = ref(["1"]);
+const selectedKeys = ref(["0"]);
+const openKeys = ref(["0"]);
 const rootSubmenuKeys = ref([]);
 
 const isAdmin = ref(false);
