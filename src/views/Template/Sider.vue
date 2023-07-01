@@ -6,7 +6,7 @@
         mode="inline"
         theme="dark"
     >
-      <a-menu-item :key="route.path" v-if="false">
+      <a-menu-item :key="r0" v-if="false">
         <template #icon>
           <gift-outlined/>
         </template>
@@ -38,14 +38,32 @@
           <span>제휴사연동</span>
         </RouterLink>
       </a-menu-item>
-      <a-menu-item key="/board/list">
+      <a-sub-menu key="4">
         <template #icon>
           <profile-outlined/>
         </template>
-        <RouterLink to="/board/list">
-          <span>게시판관리</span>
-        </RouterLink>
-      </a-menu-item>
+        <template #title>
+          <span>게시판</span>
+        </template>
+        <a-menu-item key="041">
+          <RouterLink to="/board/list">
+            <span>게시글관리</span>
+          </RouterLink>
+        </a-menu-item>
+
+        <a-menu-item key="042">
+          <RouterLink to="/board/notice">
+            <span>공지사항</span>
+          </RouterLink>
+        </a-menu-item>
+
+        <a-menu-item key="043">
+          <RouterLink to="/board/question">
+            <span>1:1 문의</span>
+          </RouterLink>
+        </a-menu-item>
+      </a-sub-menu>
+
       <a-sub-menu key="5">
         <template #icon>
           <setting-outlined/>

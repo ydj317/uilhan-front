@@ -18,11 +18,8 @@ let formState = reactive({
   type: 'notice',
   status: '0',
   sort: '0',
+  insDate: '',
 });
-
-const contentUpdate = (tinymce) => {
-  formState.content = tinymce.editors[0].getContent();
-}
 
 const getBoardDetail = (id) => {
   if (!id) return false;
@@ -40,12 +37,17 @@ const getBoardDetail = (id) => {
     formState.content = res.data.content
     formState.is_fixtop = res.data.isFixtop
     formState.type = res.data.type
+    formState.insDate = res.data.insDate
     indicator.value = false;
   }).catch((error) => {
     alert(error.message);
     indicator.value = false;
     return false;
   });
+}
+
+const contentUpdate = (tinymce) => {
+  formState.content = tinymce.editors[0].getContent();
 }
 
 const onFinish = values => {
@@ -81,20 +83,10 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <a-card :bordered="false" title="게시글 등록/수정" :loading="indicator">
-    <a-form :model="formState" name="board_form" @finish="onFinish"
+  <a-card :bordered="false" :title="formState.title" :loading="indicator">
+    <a-form :model="formState" name="board_question_form" @finish="onFinish"
             @finishFailed="onFinishFailed" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
-            class="board_form">
-      <a-form-item label="상단고정" name="is_fixtop">
-        <a-switch v-model:checked="formState.is_fixtop"/>
-      </a-form-item>
-
-      <a-form-item label="타입" name="type">
-        <a-radio-group v-model:value="formState.type" button-style="solid">
-          <a-radio-button value="notice">공지사항</a-radio-button>
-          <a-radio-button value="question">1:1 문의</a-radio-button>
-        </a-radio-group>
-      </a-form-item>
+            class="board_question_form">
 
       <a-form-item label="제목" name="title"
                    :rules="[{ required: true, message: '제목을 입력해 주세요.' }]">
@@ -119,11 +111,11 @@ onBeforeMount(() => {
 </template>
 
 <style>
-.board_form .ant-form-item {
+.board_question_form .ant-form-item {
   margin-bottom: 0;
 }
 
-.board_form .ant-form-item-label {
+.board_question_form .ant-form-item-label {
   border: 1px solid #eeeeee;
   background-color: #fafafa;
   width: 170px;
@@ -131,15 +123,14 @@ onBeforeMount(() => {
   margin-bottom: -1px;
 }
 
-.board_form .ant-form-item-control {
+.board_question_form .ant-form-item-control {
   border: 1px solid #eeeeee;
   padding: 10px;
   margin-left: -1px;
   margin-bottom: -1px;
 }
 
-.board_form .ant-form-item-control:nth-last-child {
+.board_question_form .ant-form-item-control:nth-last-child {
   border-bottom: 1px solid #eeeeee;
 }
-
 </style>
