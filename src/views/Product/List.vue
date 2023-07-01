@@ -2,7 +2,7 @@
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true" />
 
   <!--검색-->
-  <a-card :bordered="false" title="상품관리" :style="{marginBottom:'20px'}" :loading="listLoading">
+  <a-card :bordered="false" title="상품관리" :style="{marginBottom:'20px'}">
     <div id="header">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
       <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
@@ -523,6 +523,7 @@ export default defineComponent({
     },
 
     getList(sType = "") {
+      this.listLoading = true
       let param = this.getParam(sType);
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
         if (res.status !== "2000") {
@@ -552,43 +553,45 @@ export default defineComponent({
           this.prdlist[i]["show_sync_market"] = show_sync_market;
 
           // SKU 최저가~최대가
-          let minPrice = 0;
-          let maxPrice = 0;
+          let selectedPrice = 0;
+          let show_price = 0;
           if (!this.prdlist[i].item_sku || this.prdlist[i].item_sku.length === 0) {
-            this.prdlist[i]["show_price"] = minPrice.toLocaleString() + "원 ~ " + maxPrice.toLocaleString() + "원";
+            this.prdlist[i]["show_price"] = "0원";
             continue;
           }
 
-          minPrice = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
-          maxPrice = Math.max(...this.prdlist[i].item_sku.map(item => item.selling_price));
+          selectedPrice = this.prdlist[i].item_sku.filter(item => item.is_option_reference_price === 'T')
+            .map(item => item.selling_price);
+
+          show_price = selectedPrice[0]
+          if (show_price === undefined) {
+            show_price = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
+          }
 
           // 연동대기 상품은 판매가를 계산 해서 가져옴
-          if (minPrice === 0) {
+          if (show_price === 0) {
             const userData = this.prdlist[i].user;
 
-            minPrice = Math.min(...this.prdlist[i].item_sku.map(item =>
-              Number(item.shipping_fee_cn) + Number(item.original_price_cn)
-            ));
+            selectedPrice = this.prdlist[i].item_sku.filter(item => item.is_option_reference_price === 'T')
+              .map(item =>
+                Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+            );
 
-            maxPrice = Math.max(...this.prdlist[i].item_sku.map(item =>
-              Number(item.shipping_fee_cn) + Number(item.original_price_cn)
-            ));
+            show_price = selectedPrice[0]
+            if (show_price === undefined) {
+              show_price = Math.min(...this.prdlist[i].item_sku.map(item =>
+                Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+              ))
+            }
 
-            minPrice = Math.ceil(Number(minPrice * (1 + Number(userData.selling_margin_option) / 100) *
-              Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
-
-            maxPrice = Math.ceil(Number(maxPrice * (1 + Number(userData.selling_margin_option) / 100) *
+            show_price = Math.ceil(Number(show_price * (1 + Number(userData.selling_margin_option) / 100) *
               Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
           }
-          this.prdlist[i]["show_price"] = minPrice.toLocaleString() + "원 ~ " + maxPrice.toLocaleString() + "원";
+          this.prdlist[i]["show_price"] = show_price.toLocaleString() + "원";
         }
 
         let iCurrent = parseInt(res.data.page);
         let iPageSize = parseInt(res.data.limit);
-        // if (sType === 'reload') {
-        //   iCurrent = sessionStorage.relaket_page !== undefined? parseInt(sessionStorage.relaket_page): iCurrent;
-        //   iPageSize = sessionStorage.relaket_limit !== undefined? parseInt(sessionStorage.relaket_limit): iPageSize;
-        // }
 
         this.searchCount = parseInt(res.data.searchCount);
         this.totalCount = parseInt(res.data.totalCount);

@@ -13,10 +13,10 @@ const routes = [
     meta: { authority: ["ROLE_USER"] },
     component: () =>
       import(/* webpackChunkName: "Main" */ "views/Template/Layout"),
-    redirect: "/product",
+    redirect: "/main",
     children: [
       {
-        path: "/product",
+        path: "/main",
         // meta: { authority: ["ROLE_USER"] },
         /* webpackChunkName: 'product' */
         // component: RenderRouterView,
@@ -55,6 +55,30 @@ const routes = [
             name: "user_manager",
             /* webpackChunkName: 'user_manager' */
             component: () => import("../views/User/Manage"),
+          },
+
+          {
+            path: "/user/license",
+            name: "user_license",
+            component: () => import("../views/User/License"),
+          },
+
+          {
+            path: "/user/licenseForm/:id?",
+            name: "user_licenseForm",
+            component: () => import("../views/User/LicenseForm"),
+          },
+
+          {
+            path: "/user/licensePay",
+            name: "user_licensePay",
+            component: () => import("../views/User/LicensePay.vue"),
+          },
+
+          {
+            path: "/user/licenseHistory",
+            name: "user_licenseHistory",
+            component: () => import("../views/User/LicenseHistory"),
           },
 
           {
@@ -202,7 +226,7 @@ router.beforeEach((to, form, next) => {
   nProgress.start();
   let status = isLogin();
   if (to.path === '/user/login' && status === true) {
-    next({ path: "/product" });
+    next({ path: "/main" });
     return false;
   }
 

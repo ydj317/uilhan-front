@@ -10,7 +10,6 @@
             <span class="spec-font">옵션그룹{{optionIndex + 1}}</span>
             <a-input class="spec-option-input-size"  v-model:value="option.name" size="default" placeholder="옵션그룹" />
             <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{ option.name.length }}</span> / 25</span>
-            <a-button @click="deleteSpecGroup(optionIndex)" class="spec-grop-delete" type="primary" danger>삭제</a-button>
           </div>
         </th>
       </tr>

@@ -12,7 +12,6 @@
           <a-button class="floatRight" type="primary" danger>세팅</a-button>
         </a-popconfirm>
       </div>
-      <a-button @click="addSpecGroup" class="header-button" type="primary">추가</a-button>
     </div>
     <!--옵션그룹 영역-->
     <div class="body-section">
@@ -254,7 +253,8 @@ export default {
 }
 
 .header-button {
-  margin-right: 10px;
+  margin-right: auto;
+  margin-left: 15px;
 }
 
 .body-section {
