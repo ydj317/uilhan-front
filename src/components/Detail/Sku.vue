@@ -194,7 +194,11 @@
 
           <!--자체가격입력(custom)-->
           <template v-else-if="['wholesale_price', 'selling_price', 'disp_price'].includes(column.key)">
-            <a-input @blur="handlerCustomPrice(column.key, index)" :style="'height: 30px; text-align: center;'" v-model:value="record['custom_' + column.key]" />
+            <a-input @blur="handlerCustomPrice(column.key, index)" :style="
+                record.img
+                  ? `height: 30px; text-align: center; border: none;`
+                  : `height: 30px; text-align: center; border: none;`
+              " v-model:value="record['custom_' + column.key]" />
           </template>
 
           <!--보여주기-->
