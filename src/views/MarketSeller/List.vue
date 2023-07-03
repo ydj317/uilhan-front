@@ -807,7 +807,10 @@ const savePopupFn = async () => {
 function checkApiFn(site_code, ssi_ix) {
     bLoading.value = true;
     AuthRequest.get(process.env.VUE_APP_API_URL + "/api/market/seller-check", {
-        site_code, ssi_ix
+      params: {
+        site_code: site_code,
+        ssi_ix: ssi_ix
+      }
     }).then(res => {
         bLoading.value = false;
         alert(res.data.message);
