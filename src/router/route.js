@@ -6,6 +6,7 @@ export const routes = [
         component: () =>
             import(/* webpackChunkName: "Main" */ "views/Template/Layout"),
         redirect: "/main",
+
         children: [
             {
                 path: "/main",

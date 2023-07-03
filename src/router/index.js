@@ -5,11 +5,12 @@ import findLast from "lodash/findLast";
 import { isLogin, cookieInit } from "util/auth";
 import Cookie from "js-cookie";
 import { routes } from "@/router/route";
+import {menus, notFoundAndNoPower, staticRoutes} from "@/router/menu";
 
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes,
+  routes:[...menus, ...notFoundAndNoPower, ...staticRoutes],
 });
 
 router.beforeEach((to, form, next) => {
@@ -20,7 +21,9 @@ router.beforeEach((to, form, next) => {
     return false;
   }
 
-  const record = findLast(to.matched, (record) => record.meta.authority);
+  const record = findLast(to.matched, (record) => {
+    return record.meta.authority
+  });
 
   if (record) {
     if (status === false) {

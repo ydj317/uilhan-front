@@ -6,8 +6,8 @@
             theme="dark"
             @openChange="onOpenChange"
     >
-      <template v-for="(menu, index) in menus.data" :key="index">
-        <template v-if="!menu.children">
+      <template v-for="(menu, index) in menus[0].children" :key="index">
+        <template v-if="!menu.children && !menu.meta.isHide">
           <a-menu-item :key="menu.path">
             <template #icon>
               <component :is="menu.meta.icon" />
@@ -18,7 +18,7 @@
           </a-menu-item>
         </template>
 
-        <template v-else>
+        <template v-else-if="!menu.meta.isHide">
           <sub-menu :key="menu.path" :menuInfo="menu" />
         </template>
 
@@ -36,7 +36,6 @@ import { menus } from "@/router/menu";
 import SubMenu from "@/views/Template/SubMenu.vue";
 
 const router = useRouter()
-
 const route = useRoute()
 
 const isAdmin = ref(false);
