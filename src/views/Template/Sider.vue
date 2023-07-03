@@ -35,7 +35,7 @@
           <api-outlined/>
         </template>
         <RouterLink to="/market/seller/list">
-          <span>제휴사연동</span>
+          <span>마켓연동</span>
         </RouterLink>
       </a-menu-item>
       <a-sub-menu key="4">
@@ -86,7 +86,7 @@
           <money-collect-outlined />
         </template>
         <template #title>
-          <span>회원충전</span>
+          <span>서비스 관리</span>
         </template>
         <a-menu-item key="061" v-if="isAdmin">
           <router-link to="/user/license"><span>서비스 관리</span></router-link>
@@ -177,5 +177,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
+.ant-menu .ant-menu-submenu {
+  font-weight: bold;
+  color: #e3e3e3;
+}
+.ant-menu-item .ant-menu-title-content a {
+  font-weight: bold;
+  color: #e3e3e3;
+}
 </style>
+<style>
+.ant-menu .ant-menu-submenu {
+  font-weight: bold;
+  color: #e3e3e3;
+}
+</style>
+
