@@ -68,5 +68,18 @@ onBeforeMount(() => {
 </script>
 
 <style scoped>
-
+.ant-menu .ant-menu-submenu {
+  font-weight: bold;
+  color: #e3e3e3;
+}
+.ant-menu-item .ant-menu-title-content a {
+  font-weight: bold;
+  color: #e3e3e3;
+}
+</style>
+<style>
+.ant-menu .ant-menu-submenu {
+  font-weight: bold;
+  color: #e3e3e3;
+}
 </style>
