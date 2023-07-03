@@ -69,7 +69,7 @@ export const menus = [{
             name: "market_seller_list",
             component: () => import("@/views/MarketSeller/List"),
             meta: {
-                title: "제휴사연동",
+                title: "마켓연동",
                 isHide: false,
                 roles: ["ROLE_ADMIN"],
                 icon: PayCircleOutlined
@@ -170,7 +170,7 @@ export const menus = [{
             path: "/user",
             name: "user",
             meta: {
-                title: "회원충전",
+                title: "서비스 관리",
                 isHide: false,
                 roles: ["ROLE_ADMIN"],
                 icon: MoneyCollectOutlined
