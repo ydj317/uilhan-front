@@ -503,7 +503,7 @@ export default defineComponent({
       try {
         return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
       } catch (error) {
-        return require(this.tempImage);
+        return this.tempImage;
       }
     },
 
