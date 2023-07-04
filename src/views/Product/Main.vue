@@ -1,7 +1,7 @@
 <template>
   <div id="container">
 
-    <a-card :bordered="false" style="margin-top: 20px;">
+    <a-card :bordered="false">
     <div class="hello">
       <div class="left">
         <div class="text-1">안녕하십니까!</div>
@@ -30,25 +30,25 @@
 
         <a href="https://www.taobao.com/" target="_blank">
         <a-tag class="logo-tag">
-          <img :src="getLogoSrc('get-logo', 'taobao')" alt=""> <span>淘宝</span>
+          <img :src="getLogoSrc('get-logo', 'taobao')" alt=""> <span>타오바오</span>
         </a-tag>
         </a>
 
         <a href="https://www.tmall.com/" target="_blank">
         <a-tag class="logo-tag">
-          <img :src="getLogoSrc('get-logo', 'tmall')" alt=""> <span>天猫</span>
+          <img :src="getLogoSrc('get-logo', 'tmall')" alt=""> <span>티몰</span>
         </a-tag>
         </a>
 
         <a href="https://p4psearch.1688.com/" target="_blank">
         <a-tag class="logo-tag">
-          <img :src="getLogoSrc('get-logo', 'alibaba')" alt=""> <span>阿里巴巴</span>
+          <img :src="getLogoSrc('get-logo', 'alibaba')" alt=""> <span>알리바바</span>
         </a-tag>
         </a>
 
         <a href="https://www.aliexpress.com/" target="_blank">
         <a-tag class="logo-tag">
-          <img :src="getLogoSrc('get-logo', 'aliexpress')" alt=""> <span>速卖通</span>
+          <img :src="getLogoSrc('get-logo', 'aliexpress')" alt=""> <span>알리익스프레스</span>
         </a-tag>
         </a>
 
@@ -63,7 +63,7 @@
     <a-row type="flex" justify="space-between" align="bottom" style="margin-top: 20px;"  :gutter="20">
       <a-col :span="8">
         <a-card :bordered="false" title="총 판매액">
-            <div class="data">₩ 1,026,560</div>
+            <div class="data">1,026,560원</div>
             <div class="content content-1">
             <div>어제 보다 12%
               <caret-up-filled :rotate="0" style="color:red;" />
@@ -77,7 +77,7 @@
       </a-col>
       <a-col :span="8">
         <a-card :bordered="false" title="10일 판매액">
-          <div class="data">₩ 600,000</div>
+          <div class="data">600,000원</div>
           <div class="content content-2">
             <e-charts class="chart" :option="option" />
           </div>

@@ -72,12 +72,15 @@
           <span>설정</span>
         </template>
         <a-menu-item key="051">
-          <router-link to="/setting/account"><span>계정정보</span></router-link>
+          <router-link to="/user/detail"><span>연동정보 수정</span></router-link>
         </a-menu-item>
         <a-menu-item key="052">
-          <router-link to="/setting/margin"><span>마진 & 환율</span></router-link>
+          <router-link to="/setting/account"><span>계정정보</span></router-link>
         </a-menu-item>
         <a-menu-item key="053">
+          <router-link to="/setting/margin"><span>마진 & 환율</span></router-link>
+        </a-menu-item>
+        <a-menu-item key="054">
           <router-link to="/setting/delivery"><span>배송정책</span></router-link>
         </a-menu-item>
       </a-sub-menu>

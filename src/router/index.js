@@ -51,6 +51,12 @@ const routes = [
             component: () => import("@/views/MarketSeller/List"),
           },
           {
+            path: "/user/detail",
+            name: "user_detail",
+            /* webpackChunkName: 'user_manager' */
+            component: () => import("../views/User/Detail"),
+          },
+          {
             path: "/user/Manage",
             name: "user_manager",
             /* webpackChunkName: 'user_manager' */

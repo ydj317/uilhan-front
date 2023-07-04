@@ -38,25 +38,25 @@
           <a-descriptions-item label="비밀번호 [필수]" :labelStyle="{color: 'red'}">
             <span><strong>비밀번호 [필수]</strong></span>
           <a-form-item name="password" has-feedback>
-            <a-input
+            <a-input-password
                 class="inputStyle"
                 v-model:value="formState.password"
                 type="password"
-                placeholder="비밀번호 [필수]"
+                placeholder="비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오"
             >
-            </a-input>
+            </a-input-password>
           </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="비밀번호 확인 [필수]" :labelStyle="{color: 'red'}">
             <span><strong>비밀번호 확인 [필수]</strong></span>
           <a-form-item name="password_confirm" has-feedback>
-            <a-input
+            <a-input-password
                 class="inputStyle"
                 v-model:value="formState.password_confirm"
                 type="password"
-                placeholder="비밀번호 확인 [필수]">
-            </a-input>
+                placeholder="비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오">
+            </a-input-password>
           </a-form-item>
           </a-descriptions-item>
 
@@ -91,7 +91,8 @@
                 <a-input
                     v-model:value="formState.phone1"
                     placeholder="휴대전화 [필수]"
-                    :maxlength="4"
+                    :maxlength="3"
+                    @input="(event) => changeToInput(event, 3, phone2Input)"
                 >
                 </a-input>
               </a-form-item>
@@ -100,6 +101,8 @@
                     v-model:value="formState.phone2"
                     placeholder="휴대전화 [필수]"
                     :maxlength="4"
+                    @input="(event) => changeToInput(event, 4, phone3Input)"
+                    ref="phone2Input"
                 >
                 </a-input>
               </a-form-item>
@@ -108,6 +111,7 @@
                     v-model:value="formState.phone3"
                     placeholder="휴대전화 [필수]"
                     :maxlength="4"
+                    ref="phone3Input"
                 >
                 </a-input>
               </a-form-item>
@@ -126,7 +130,7 @@
             </a-form-item>
           </a-descriptions-item>
 
-            <a-descriptions-item label="사업자번호 [필수]" :labelStyle="{color: 'red'}">
+          <a-descriptions-item label="사업자번호 [필수]" :labelStyle="{color: 'red'}">
               <span><strong>사업자번호 [필수]</strong></span>
           <a-form-item name="com_number" has-feedback>
             <a-input
@@ -144,7 +148,8 @@
                 <a-input
                     v-model:value="formState.com_phone1"
                     placeholder="사업장 전화번호 [필수]"
-                    :maxlength="4"
+                    :maxlength="3"
+                    @input="(event) => changeToInput(event, 3, comPhone2Input)"
                 >
                 </a-input>
               </a-form-item>
@@ -153,6 +158,8 @@
                     v-model:value="formState.com_phone2"
                     placeholder="사업장 전화번호 [필수]"
                     :maxlength="4"
+                    @input="(event) => changeToInput(event, 4, comPhone3Input)"
+                    ref="comPhone2Input"
                 >
                 </a-input>
               </a-form-item>
@@ -161,6 +168,7 @@
                     v-model:value="formState.com_phone3"
                     placeholder="사업장 전화번호 [필수]"
                     :maxlength="4"
+                    ref="comPhone3Input"
                 >
                 </a-input>
               </a-form-item>
@@ -179,32 +187,15 @@
           </a-form-item>
           </a-descriptions-item>
 
-          <a-descriptions-item label="수수료율 [필수]" :labelStyle="{color: 'red'}">
-            <span><strong>수수료율 [필수]</strong></span>
-          <a-form-item name="commission" has-feedback>
-            <a-input class="inputStyle" v-model:value="formState.commission" placeholder="수수료율 [필수]">
-              <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
-            </a-input>
-          </a-form-item>
-          </a-descriptions-item>
-
-          <a-descriptions-item label="도매 수수료 [필수]" :labelStyle="{color: 'red'}">
-            <span><strong>도매 수수료 [필수]</strong></span>
-          <a-form-item name="wholesale_commission" has-feedback>
-            <a-input class="inputStyle" v-model:value="formState.wholesale_commission" placeholder="도매 수수료 [필수]">
-              <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
-            </a-input>
-          </a-form-item>
-          </a-descriptions-item>
-
-            <a-descriptions-item label="유선전화">
+          <a-descriptions-item label="유선전화">
               <span><strong>유선전화</strong></span>
               <div class="center init-pmbo">
                 <a-form-item name="tel1" class="w32 mr12" has-feedback>
                   <a-input
                       v-model:value="formState.tel1"
                       placeholder="유선전화"
-                      :maxlength="4"
+                      :maxlength="2"
+                      @input="(event) => changeToInput(event, 2, tell2Input)"
                   >
                   </a-input>
                 </a-form-item>
@@ -213,6 +204,8 @@
                       v-model:value="formState.tel2"
                       placeholder="유선전화"
                       :maxlength="4"
+                      @input="(event) => changeToInput(event, 4, tell3Input)"
+                      ref="tell2Input"
                   >
                   </a-input>
                 </a-form-item>
@@ -221,92 +214,114 @@
                       v-model:value="formState.tel3"
                       placeholder="유선전화"
                       :maxlength="4"
+                      ref="tell3Input"
                   >
                   </a-input>
                 </a-form-item>
               </div>
             </a-descriptions-item>
 
-            <a-descriptions-item label="정산상품 기간설정">
-              <span><strong>정산상품 기간설정</strong></span>
-          <a-form-item name="ac_expect_date" has-feedback>
-            <a-tooltip color="white"  placement="left">
-              <template #title>
-                <span style="color: #848a8a" v-html="tooltip.ac_expect_date" />
-              </template>
-              <a-input
-                  class="inputStyle"
-                  v-model:value="formState.ac_expect_date"
-                  placeholder="정산상품 기간설정"
-              >
-              </a-input>
-            </a-tooltip>
-          </a-form-item>
+          <!-- 가입시 입력 안해되는 항목 -->
+          <div v-if="false">
+            <a-descriptions-item label="수수료율 [필수]" :labelStyle="{color: 'red'}">
+              <span><strong>수수료율 [필수]</strong></span>
+              <a-form-item name="commission" has-feedback>
+                <a-input class="inputStyle" v-model:value="formState.commission" placeholder="수수료율 [필수]">
+                  <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+                </a-input>
+              </a-form-item>
             </a-descriptions-item>
 
-          <a-descriptions-item label="정산방식 [필수]" :labelStyle="{color: 'red'}">
-            <span><strong>정산방식 [필수]</strong></span>
-            <a-form-item name="account_type" v-bind="validateInfos.account_type">
-              <a-tooltip color="white"  placement="left">
-                <template #title>
-                  <span style="color: #848a8a" v-html="tooltip.account_type" />
-                </template>
-                <a-select
+            <a-descriptions-item label="도매 수수료 [필수]" :labelStyle="{color: 'red'}">
+              <span><strong>도매 수수료 [필수]</strong></span>
+              <a-form-item name="wholesale_commission" has-feedback>
+                <a-input class="inputStyle" v-model:value="formState.wholesale_commission" placeholder="도매 수수료 [필수]">
+                  <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+                </a-input>
+              </a-form-item>
+            </a-descriptions-item>
+
+            <a-descriptions-item label="정산상품 기간설정">
+              <span><strong>정산상품 기간설정</strong></span>
+              <a-form-item name="ac_expect_date" has-feedback>
+                <a-tooltip color="white"  placement="left">
+                  <template #title>
+                    <span style="color: #848a8a" v-html="tooltip.ac_expect_date" />
+                  </template>
+                  <a-input
+                    class="inputStyle"
+                    v-model:value="formState.ac_expect_date"
+                    placeholder="정산상품 기간설정"
+                  >
+                  </a-input>
+                </a-tooltip>
+              </a-form-item>
+            </a-descriptions-item>
+
+            <a-descriptions-item label="정산방식 [필수]" :labelStyle="{color: 'red'}">
+              <span><strong>정산방식 [필수]</strong></span>
+              <a-form-item name="account_type" v-bind="validateInfos.account_type">
+                <a-tooltip color="white"  placement="left">
+                  <template #title>
+                    <span style="color: #848a8a" v-html="tooltip.account_type" />
+                  </template>
+                  <a-select
                     class="inputStyle"
                     v-model:value="formState.account_type"
-                >
-                  <a-select-option value="0">정산방식 [필수]</a-select-option>
-                  <a-select-option value="1">판매가</a-select-option>
-                  <a-select-option value="2">매입가</a-select-option>
-                  <a-select-option value="4">선불</a-select-option>
-                </a-select>
-              </a-tooltip>
-            </a-form-item>
-          </a-descriptions-item>
+                  >
+                    <a-select-option value="0">정산방식 [필수]</a-select-option>
+                    <a-select-option value="1">판매가</a-select-option>
+                    <a-select-option value="2">매입가</a-select-option>
+                    <a-select-option value="4">선불</a-select-option>
+                  </a-select>
+                </a-tooltip>
+              </a-form-item>
+            </a-descriptions-item>
 
-          <a-descriptions-item label="정산유형 [필수]" :labelStyle="{color: 'red'}">
-            <span><strong>정산유형 [필수]</strong></span>
-            <a-form-item name="account_div" v-bind="validateInfos.account_div">
-              <a-select
+            <a-descriptions-item label="정산유형 [필수]" :labelStyle="{color: 'red'}">
+              <span><strong>정산유형 [필수]</strong></span>
+              <a-form-item name="account_div" v-bind="validateInfos.account_div">
+                <a-select
                   class="inputStyle"
                   v-model:value="formState.account_div"
-              >
-                <a-select-option value="0">정산유형 [필수]</a-select-option>
-                <a-select-option value="c">카테고리별 설정</a-select-option>
-                <a-select-option value="s">셀러별 설정</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-descriptions-item>
+                >
+                  <a-select-option value="0">정산유형 [필수]</a-select-option>
+                  <a-select-option value="c">카테고리별 설정</a-select-option>
+                  <a-select-option value="s">셀러별 설정</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-descriptions-item>
 
-            <a-descriptions-item label="정산일자유형" >
+            <a-descriptions-item label="정산일자유형">
               <span><strong>정산일자유형</strong></span>
-          <a-form-item name="ac_delivery_type">
-            <a-select
-                class="inputStyle"
-                v-model:value="formState.ac_delivery_type"
-            >
-              <a-select-option value="0">처리상태를 선택해주세요</a-select-option>
-              <a-select-option value="IC">입금확인</a-select-option>
-              <a-select-option value="DI">배송중</a-select-option>
-              <a-select-option value="DC">배송완료</a-select-option>
-              <a-select-option value="BF">구매확정</a-select-option>
-            </a-select>
-          </a-form-item>
+              <a-form-item name="ac_delivery_type">
+                <a-select
+                  class="inputStyle"
+                  v-model:value="formState.ac_delivery_type"
+                >
+                  <a-select-option value="0">처리상태를 선택해주세요</a-select-option>
+                  <a-select-option value="IC">입금확인</a-select-option>
+                  <a-select-option value="DI">배송중</a-select-option>
+                  <a-select-option value="DC">배송완료</a-select-option>
+                  <a-select-option value="BF">구매확정</a-select-option>
+                </a-select>
+              </a-form-item>
             </a-descriptions-item>
 
             <a-descriptions-item label="결제유형">
               <span><strong>결제유형</strong></span>
-          <a-form-item name="account_method">
-            <a-select
-                class="inputStyle"
-                v-model:value="formState.account_method"
-            >
-              <a-select-option value="0">결제유형을 선택해주세요</a-select-option>
-              <a-select-option value="10">현금</a-select-option>
-              <a-select-option value="12">예치금</a-select-option>
-            </a-select>
-          </a-form-item>
+              <a-form-item name="account_method">
+                <a-select
+                  class="inputStyle"
+                  v-model:value="formState.account_method"
+                >
+                  <a-select-option value="0">결제유형을 선택해주세요</a-select-option>
+                  <a-select-option value="10">현금</a-select-option>
+                  <a-select-option value="12">예치금</a-select-option>
+                </a-select>
+              </a-form-item>
             </a-descriptions-item>
+          </div>
 
           <div class="foorterSetting">
             <a-checkbox v-model:checked="checked">회원약관 동의. <a-button class="init" type="link">[관리자페이지]</a-button></a-checkbox>
@@ -385,22 +400,21 @@ export default defineComponent({
       //업태
       //com_business_status: formState.com_business_status,
       //[필수] 정산방식 : 기본값( 미입력시 ) - 1
-      account_type: '0',
+      account_type: '1',
       //정산 상품 기간설정 : 기본값( 미입력시 ) - 1
       account_info: '',
       //정산일자 IC - 입금확인
-      ac_delivery_type: '0',
+      ac_delivery_type: 'IC',
       //정산 상품 기간설정 : 1 ~ 30 일
-      ac_expect_date: '',
+      ac_expect_date: '10',
       //정산 유형 : 기본값( 미입력시 ) - 10
-      account_method: '0',
+      account_method: '10',
       //[필수] 정산방식 : 기본값( 미입력시 ) - s
-      account_div: '0',
+      account_div: 'c',
       //[필수]수수료율
-      commission: '',
+      commission: '0',
       //[필수]도매 수수료
-
-      wholesale_commission: '',
+      wholesale_commission: '0',
     });
 
     const tooltip = {
@@ -545,7 +559,7 @@ export default defineComponent({
 
     let validateName = async (rule, value) => {
       if (value === '') {
-        return Promise.reject('사업자명을 입력해주십시오');
+        return Promise.reject('사용자 또는 사업자명을 입력해주십시오');
       } else {
         if (value.length < 2 || value.length > 20) {
           return Promise.reject('사업자명은 최소 2자 최대 20자이내로 입력해주십시오');
@@ -574,7 +588,7 @@ export default defineComponent({
       } else {
         let regPhone = /^\d{4}$/;
         if (regPhone.test(value) !== true) {
-          return Promise.reject('');
+          return Promise.reject('숫자를 입력해주십시오');
         }
       }
 
@@ -585,9 +599,9 @@ export default defineComponent({
       if (value === '') {
         return Promise.reject('번호를 입력해주십시오');
       } else {
-        let regPhone = /^\d{3,4}$/;
+        let regPhone = /^\d{4}$/;
         if (regPhone.test(value) !== true) {
-          return Promise.reject('');
+          return Promise.reject('숫자를 입력해주십시오');
         }
       }
 
@@ -596,11 +610,11 @@ export default defineComponent({
 
     let validatePhoneFirst = async (rule, value) => {
       if (value === '') {
-        return Promise.reject('휴대폰번호를 입력해주십시오');
+        return Promise.reject('번호를 입력해주십시오');
       } else {
-        let regPhone = /^\d{2,4}$/;
+        let regPhone = /^\d{2,3}$/;
         if (regPhone.test(value) !== true) {
-          return Promise.reject('');
+          return Promise.reject('숫자를 입력해주십시오');
         }
       }
 
@@ -609,7 +623,7 @@ export default defineComponent({
 
     let validateComname = async (rule, value) => {
       if (value === '') {
-        return Promise.reject('업체명을 입력해주십시오');
+        return Promise.reject('업체 또는 사업자명을 입력해주십시오');
       } else {
         if (value.length < 2 || value.length > 20) {
           return Promise.reject('업체명은 최소 2자 최대 20자이내로 입력해주십시오');
@@ -725,6 +739,18 @@ export default defineComponent({
 
     const handleFinishFailed = () => {
       //alert('Login Error')
+    };
+
+    const phone2Input = ref(null);
+    const phone3Input = ref(null);
+    const comPhone2Input = ref(null);
+    const comPhone3Input = ref(null);
+    const tell2Input = ref(null);
+    const tell3Input = ref(null);
+    const changeToInput = (event, maxLength, targetInput) => {
+      if (event.target.value.length === maxLength) {
+        targetInput.focus();
+      }
     };
 
     const remember = false;
@@ -904,6 +930,13 @@ export default defineComponent({
       formState,
       handleFinish,
       handleFinishFailed,
+      phone2Input,
+      phone3Input,
+      comPhone2Input,
+      comPhone3Input,
+      tell2Input,
+      tell3Input,
+      changeToInput
     };
   },
 });

@@ -30,7 +30,7 @@
           </a-form-item>
           <a-form-item class="setting">
             <a-checkbox v-model:checked="checked">저장하기</a-checkbox>
-  <!--          <a-button type="link"><LockOutlined />비밀번호 잊으셨나요?</a-button>-->
+            <a-button type="link" @click="info"><LockOutlined />비밀번호 잊으셨나요?</a-button>
           </a-form-item>
           <a-form-item class="footer">
             <a-button
@@ -56,6 +56,8 @@ import { defineComponent, reactive, onBeforeMount, ref } from 'vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import Cookie from "js-cookie";
 import { isLogin, cookieInit } from "util/auth";
+import { message } from 'ant-design-vue';
+
 export default defineComponent({
   components: {
     UserOutlined,
@@ -140,7 +142,9 @@ export default defineComponent({
         localStorage.user_name = formState.username;
       }
     }
-
+    const info = () => {
+      message.info('비밀번호 찾기는 고객선터로 연결하시오');
+    };
     return {
       loading,
       checked,
@@ -148,7 +152,8 @@ export default defineComponent({
       formState,
       handleFinish,
       handleFinishFailed,
-      redirectRegister
+      redirectRegister,
+      info
     };
   },
 
