@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
 import findLast from "lodash/findLast";
@@ -10,14 +10,46 @@ import {menus, notFoundAndNoPower, staticRoutes} from "@/router/menu";
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes:[...menus, ...notFoundAndNoPower, ...staticRoutes],
+  routes:[...notFoundAndNoPower, ...staticRoutes],
 });
 
-router.beforeEach((to, form, next) => {
+export function setFilterRoute(chil) {
+  let userInfosRoles = Cookie.get('member_roles').split(',');
+  let filterRoute = [];
+  chil.forEach((route) => {
+    if (route.meta.roles) {
+      route.meta.roles.forEach((metaRoles) => {
+        userInfosRoles.forEach((roles) => {
+          if (metaRoles === roles) filterRoute.push({ ...route });
+        });
+      });
+    }
+  });
+  let defaultRoute = {
+    path: "/",
+    name: "/",
+    meta: {authority: ["ROLE_USER"]},
+    component: () => import("@/views/Template/Layout"),
+    redirect: "/main",
+    children:[]
+  }
+  defaultRoute.children.push(filterRoute)
+  return defaultRoute;
+}
+
+function setAddRoute() {
+
+  setFilterRoute(menus[0].children).forEach((route) => {
+    console.log(route);
+    router.addRoute(route);
+  });
+}
+setAddRoute()
+router.beforeEach(async (to, form, next) => {
   nProgress.start();
   let status = isLogin();
   if (to.path === '/user/login' && status === true) {
-    next({ path: "/main" });
+    next({path: "/main"});
     return false;
   }
 
@@ -28,7 +60,7 @@ router.beforeEach((to, form, next) => {
   if (record) {
     if (status === false) {
       cookieInit();
-      next({ path: "/user/login" });
+      next({path: "/user/login"});
       return false;
     }
 
@@ -36,15 +68,7 @@ router.beforeEach((to, form, next) => {
     if (Array.isArray(roles) === false || roles.length === 0) {
       alert('사용자 권한부여에 실패하였습니다. 시스템 관리자와 문의하시길 바랍니다.');
       cookieInit();
-      next({ path: "/user/login" });
-      return false;
-    }
-
-    let authority = roles.filter(role => record.meta.authority[0] === role);
-    if (authority.length === 0) {
-      alert('해당페이지에 접근하실 권한이 없습니다.');
-      cookieInit();
-      next({ path: "/user/login" });
+      next({path: "/user/login"});
       return false;
     }
 
