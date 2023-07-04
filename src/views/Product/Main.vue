@@ -1,6 +1,7 @@
 <template>
   <div id="container">
 
+    <a-card :bordered="false" style="margin-top: 20px;">
     <div class="hello">
       <div class="left">
         <div class="text-1">안녕하십니까!</div>
@@ -22,9 +23,9 @@
         </div>
       </div>
     </div>
+    </a-card>
 
-    <a-card :loading="cartLoading" :bordered="false" title="수집가능 마켓" class="setting-page-margin"
-            style="margin-top: 20px;">
+    <a-card :bordered="false" title="수집가능 마켓" class="setting-page-margin" style="margin-top: 20px;">
       <div class="getMarketLogo">
 
         <a href="https://www.taobao.com/" target="_blank">
@@ -59,76 +60,79 @@
       </div>
     </a-card>
 
-    <div class="line-2">
-      <div class="box">
-        <div class="title">총 판매액</div>
-        <div class="data">₩ 1,026,560</div>
-        <div class="content content-1">
-          <div>어제 보다 12%
-            <caret-up-filled :rotate="0" style="color:red;" />
+    <a-row type="flex" justify="space-between" align="bottom" style="margin-top: 20px;"  :gutter="20">
+      <a-col :span="8">
+        <a-card :bordered="false" title="총 판매액">
+            <div class="data">₩ 1,026,560</div>
+            <div class="content content-1">
+            <div>어제 보다 12%
+              <caret-up-filled :rotate="0" style="color:red;" />
+            </div>
+            <div>편균 보다 11%
+              <caret-up-filled :rotate="180" style="color:green;" />
+            </div>
           </div>
-          <div>편균 보다 11%
-            <caret-up-filled :rotate="180" style="color:green;" />
+            <div class="sub">일일 판매액 ₩ 100,000</div>
+        </a-card>
+      </a-col>
+      <a-col :span="8">
+        <a-card :bordered="false" title="10일 판매액">
+          <div class="data">₩ 600,000</div>
+          <div class="content content-2">
+            <e-charts class="chart" :option="option" />
           </div>
-        </div>
-        <div class="sub">일일 판매액 ₩ 100,000</div>
-      </div>
-
-      <div class="box">
-        <div class="title">10일 판매액</div>
-        <div class="data">₩ 600,000</div>
-        <div class="content content-2">
-          <e-charts class="chart" :option="option" />
-        </div>
-        <div class="sub">10일 평균 판매액 ₩ 100,000</div>
-      </div>
-
-      <div class="box">
-        <div class="title">제휴사 연동 상황</div>
-        <div class="data">80%</div>
-        <div class="content content-3">
-          <div>
-            <div style="width: 80%;"></div>
+          <div class="sub">10일 평균 판매액 ₩ 100,000</div>
+        </a-card>
+      </a-col>
+      <a-col :span="8">
+        <a-card :bordered="false" title="제휴사 연동 상황">
+          <div class="data">80%</div>
+          <div class="content content-3">
+            <div>
+              <div style="width: 80%;"></div>
+            </div>
           </div>
-        </div>
-        <div class="sub-2">
-          <div class="linked">연동중</div>
-          <div class="no-linked">미연동</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="line-3">
-      <div class="box">
-        <div class="title">상품 연동 상태</div>
-        <div class="content">
-          <e-charts class="chart-2" :option="option2" />
-        </div>
-      </div>
-
-      <div class="box">
-        <div class="title">주문 상태</div>
-        <div class="content">
-          <e-charts class="chart-3" :option="option3" />
-        </div>
-      </div>
-
-      <div class="box">
-        <div class="title">공지사항</div>
-        <div class="content">
-          <div class="scroll">
-            <template v-for="item in boardData">
-              <div v-if="item.type === 'notice'" style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                <h4>{{ item.title }}</h4>
-                <router-link :to="`/board/notice/view/${item.id}`">
-                  <span style="color: #999">{{ parseHTML(item.content) }}</span>
-                </router-link>
-              </div>
-            </template>
+          <div class="sub-2">
+            <div class="linked">연동중</div>
+            <div class="no-linked">미연동</div>
           </div>
-        </div>
-      </div>
-    </div>
+        </a-card>
+      </a-col>
+    </a-row>
+
+    <a-row type="flex" justify="space-between" align="bottom" style="margin-top: 20px;"  :gutter="20">
+      <a-col :span="8">
+        <a-card :bordered="false" title="상품 연동 상태">
+          <div class="content2">
+            <e-charts class="chart-2" :option="option2" />
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :span="8">
+        <a-card :bordered="false" title="주문 상태">
+          <div class="content2">
+            <e-charts class="chart-3" :option="option3" />
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :span="8">
+        <a-card :bordered="false" title="공지사항">
+          <div class="content2">
+            <div class="scroll">
+              <template v-for="item in boardData">
+                <div v-if="item.type === 'notice'" style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                  <router-link :to="`/board/notice/view/${item.id}`">
+                    <h4>{{ item.title }}</h4>
+                    <span style="color: #999">{{ parseHTML(item.content) }}</span>
+                  </router-link>
+                </div>
+              </template>
+            </div>
+          </div>
+        </a-card>
+      </a-col>
+    </a-row>
+
   </div>
 
 </template>
@@ -388,8 +392,6 @@ onMounted(() => {
 .hello {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
-  background: #fff;
 }
 
 .hello .left {
@@ -440,69 +442,51 @@ onMounted(() => {
 
 <!--line-2-->
 <style scoped>
-.line-2 {
-  display: flex;
-  justify-content: space-between;
-}
-
-.line-2 .box {
-  padding: 20px;
-  margin-top: 1.2%;
-  width: 32.5%;
-  height: 180px;
-  background: #fff;
-}
-
-.line-2 .box .title {
-  font-size: 14px;
-  color: #999;
-}
-
-.line-2 .box .data {
+.data {
   font-size: 24px;
   color: #333;
 }
 
-.line-2 .box .content {
+.content {
   height: 60px;
 }
 
-.line-2 .box .content-1 {
+.content-1 {
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
 
-.line-2 .box .content-1 div {
+.content-1 div {
   margin-right: 10px;
   font-size: 14px;
   color: #999
 }
 
-.line-2 .box .content-2 .chart {
+.content-2 .chart {
   width: 100%;
   height: 100%;
 }
 
-.line-2 .box .content-3 {
+.content-3 {
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
 
-.line-2 .box .content-3 > div {
+.content-3 > div {
   width: 100%;
   height: 10px;
   background: #ccc;
 }
 
-.line-2 .box .content-3 > div > div {
+.content-3 > div > div {
   position: relative;
   height: 10px;
   background: #1890ff;
 }
 
-.line-2 .box .content-3 > div > div:before {
+.content-3 > div > div:before {
   position: absolute;
   top: -4px;
   right: 0;
@@ -513,14 +497,14 @@ onMounted(() => {
   background: #1890ff;
 }
 
-.line-2 .box .sub {
+.sub {
   font-size: 12px;
   color: #999;
   border-top: 1px solid #eee;
   padding-top: 10px;
 }
 
-.line-2 .box .sub-2 {
+.sub-2 {
   display: flex;
   justify-content: flex-start;
   font-size: 12px;
@@ -529,82 +513,63 @@ onMounted(() => {
   padding-top: 10px;
 }
 
-.line-2 .box .sub-2 > div {
+.sub-2 > div {
   position: relative;
   padding: 0 10px 0 20px;
 }
 
-.line-2 .box .sub-2 > div:before {
+.sub-2 > div:before {
   position: absolute;
   top: 5px;
   left: 0;
   content: '';
   width: 15px;
   height: 10px;
-  background: #000;
 }
 
-.line-2 .box .sub-2 .linked:before {
+.sub-2 .linked:before {
   background: #1890ff;
 }
 
-.line-2 .box .sub-2 .no-linked:before {
+.no-linked:before {
   background: #ccc;
 }
 </style>
 
 <!--line-3-->
 <style scoped>
-.line-3 {
-  display: flex;
-  justify-content: space-between;
-}
-
-.line-3 .box {
-  padding: 20px;
-  margin-top: 1.2%;
-  width: 32.5%;
-  height: 450px;
-  background: #fff;
-}
-
-.line-3 .box .title {
-  font-size: 14px;
-  color: #999;
-}
-
-.line-3 .box .content {
+.content2 {
   height: 400px;
 }
 
-.line-3 .box .scroll {
+.scroll {
   overflow-y: scroll; /* 仅显示垂直滚动条 */
   height: 390px;
   padding-right: 20px;
 }
 
-.line-3 .box .scroll h4 {
+.scroll h4 {
   font-weight: bold;
 }
 
 /* 滚动条整体样式 */
-.line-3 .box .scroll::-webkit-scrollbar {
+.scroll::-webkit-scrollbar {
   width: 8px; /* 设置滚动条的宽度 */
 }
 
 /* 滚动条轨道样式 */
-.line-3 .box .scroll::-webkit-scrollbar-track {
+.scroll::-webkit-scrollbar-track {
   background-color: #f1f1f1; /* 设置滚动条轨道的背景颜色 */
 }
 
 /* 滚动条滑块样式 */
-.line-3 .box .scroll::-webkit-scrollbar-thumb {
+.scroll::-webkit-scrollbar-thumb {
   background-color: #888; /* 设置滚动条滑块的背景颜色 */
   border-radius: 4px; /* 设置滚动条滑块的圆角 */
 }
 
 /* 鼠标悬停在滚动条上的样式 */
-.line-3 .box .scroll::-webkit-scrollbar-thumb:hover {
+.scroll::-webkit-scrollbar-thumb:hover {
   background-color: #555; /* 设置滚动条滑块在鼠标悬停时的背景颜色 */
 }
 </style>
