@@ -12,17 +12,21 @@
             type="primary"
             @click="translatePopup"
         >상세 이미지번역</a-button>
-        <a-dropdown>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item @click="addSkuInfo">품목정보 추가</a-menu-item>
-              <a-menu-item @click="">품목정보 제거</a-menu-item>
-            </a-menu>
-          </template>
-          <a-button class="spec-right-button">
-            품목정보 액션
-          </a-button>
-        </a-dropdown>
+        <a-space>
+          <a-select v-model:value="selectOptionValue" style="width: 120px">
+            <a-select-opt-group>
+              <template #label>
+                <span>옵션 테이블</span>
+              </template>
+              <a-select-option value="table_two_column">두줄로 보기</a-select-option>
+              <a-select-option value="table_four_column">네줄로 보기</a-select-option>
+              <a-select-option value="table_cancel">제거</a-select-option>
+            </a-select-opt-group>
+          </a-select>
+        </a-space>
+        <a-button style="margin-left: 5px;" type="primary" @click="setEditorContent">
+          적용
+        </a-button>
       </div>
       <TEditor
         ref="editor"
@@ -39,12 +43,15 @@ import { forEach } from "lodash";
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
 import { watchEffect } from "vue";
+import { ASelectOptGroup, ASelectOption } from "ant-design-vue";
 
 export default {
   name: "productDetailDescription",
 
   components: {
     TEditor,
+    ASelectOptGroup,
+    ASelectOption,
   },
 
   computed: {
@@ -54,57 +61,72 @@ export default {
   data() {
     return {
       aBakDetailImages: {},
+      selectOptionValue: "table_two_column",
     };
   },
   mounted() {
     this.fetchData();
   },
   methods: {
+    setEditorContent() {
+      let doc = window.tinymce.editors[0].dom.doc;
+      let optionTableDoc = doc.querySelector("div#editor_optin_table");
+      if (this.selectOptionValue === "table_cancel") {
+        if (optionTableDoc) {
+          optionTableDoc.innerHTML = "";
+          this.product.item_detail = doc.documentElement.innerHTML;
+        }
+        return;
+      }
+      let columnCount = this.selectOptionValue === "table_two_column" ? 2 : 4;
+      let optionHtml = this.getOptionTable(columnCount);
+      if (optionTableDoc) {
+        optionTableDoc.innerHTML = optionHtml;
+        this.product.item_detail = doc.documentElement.innerHTML;
+      } else {
+        this.product.item_detail = `<div id="editor_optin_table">${optionHtml}</div>${this.product.item_detail}`;
+      }
+    },
     fetchData() {
       //품목 이미지, 품목명 변경에 따라 액션
       watchEffect(() => {
         this.product.sku.map(item => item.img);
       });
     },
-    getOptionTable() {
-      let skuHtml = '<div><table>'
+    getOptionTable(columnCount) {
+      let tableId = "editor_option_table_" + columnCount;
+      //columnCount은 2줄로 보기 혹은 4줄로 보기
+      let optionHtml = `<table id="${tableId}" border="1" style="border-collapse: collapse; margin-left: auto; margin-right: auto;">`;
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
       forEach(this.product.sku, (item) => {
         if (i === 1 || i === trStartTag) {
-          trStartTag = i + 4;
-          skuHtml += '<tr>';
+          //다음번 tr 시작 태그
+          trStartTag = i + columnCount;
+          optionHtml += '<tr>';
         }
-        skuHtml += `<td><img style="height:100px;width:100px;" src="${item.img}"></td>`;
-        skuHtml += `<td>${item.spec}</td>`;
-        //td 추가
+        optionHtml += `<td><img style="height:100px;width:100px;" src="${item.img}"></td>`;
+        optionHtml += `<td>${item.spec}</td>`;
+        //1줄 이상의 데이타일 경우 부족한 td 추가해줌
         if (i === skuLength) {
-          if (skuLength > 4) {
-            for (let j = 0; j < (4 - skuLength % 4); j++) {
-              skuHtml += `<td><img style="height:100px;width:100px;" src=""></td>`;
-              skuHtml += `<td></td>`;
+          if (skuLength > columnCount && skuLength % columnCount !== 0) {
+            for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
+              optionHtml += `<td><img style="height:100px;width:100px;" src=""></td>`;
+              optionHtml += `<td></td>`;
             }
           }
         }
 
-        if (i % 4 === 0) {
-          skuHtml += '</tr>';
+        //tr태그 닫음
+        if (i % columnCount === 0) {
+          optionHtml += '</tr>';
         }
         i++;
       });
-      skuHtml += '</table></div>'
+      optionHtml += '</table>'
 
-      return skuHtml;
-    },
-    addSkuInfo() {
-      if (this.product.sku.length === 0) {
-        return;
-      }
-
-      let skuHtml = this.getOptionTable();
-
-      this.product.item_detail = skuHtml + this.product.item_detail;
+      return optionHtml;
     },
     contentUpdate(tinymce) {
       this.product.item_detail = tinymce.editors[0].getContent();
