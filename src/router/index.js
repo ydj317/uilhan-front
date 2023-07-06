@@ -13,10 +13,10 @@ const routes = [
     meta: { authority: ["ROLE_USER"] },
     component: () =>
       import(/* webpackChunkName: "Main" */ "views/Template/Layout"),
-    redirect: "/product",
+    redirect: "/main",
     children: [
       {
-        path: "/product",
+        path: "/main",
         // meta: { authority: ["ROLE_USER"] },
         /* webpackChunkName: 'product' */
         // component: RenderRouterView,
@@ -58,6 +58,30 @@ const routes = [
           },
 
           {
+            path: "/user/license",
+            name: "user_license",
+            component: () => import("../views/User/License"),
+          },
+
+          {
+            path: "/user/licenseForm/:id?",
+            name: "user_licenseForm",
+            component: () => import("../views/User/LicenseForm"),
+          },
+
+          {
+            path: "/user/licensePay",
+            name: "user_licensePay",
+            component: () => import("../views/User/LicensePay.vue"),
+          },
+
+          {
+            path: "/user/licenseHistory",
+            name: "user_licenseHistory",
+            component: () => import("../views/User/LicenseHistory"),
+          },
+
+          {
             path: "/user/FilterProductWords",
             name: "user_filterProductWords",
             /* webpackChunkName: 'user_manager' */
@@ -87,21 +111,71 @@ const routes = [
             path: "/product/preview/:id",
             name: "prd_preview",
             /* webpackChunkName: 'user_register' */
-            component: () => import("views/Product/Preview"),
+            component: () => import("@/views/Product/Preview"),
           },
           {
             path: "/product/domeggook",
             name: "prd_domeggook",
             /* webpackChunkName: 'user_register' */
-            component: () => import("views/Product/Domeggook"),
+            component: () => import("@/views/Product/Domeggook"),
           },
           {
             path: "/order/list",
             name: "order_list",
             /* webpackChunkName: 'user_register' */
-            component: () => import("views/Order/List.vue"),
+            component: () => import("@/views/Order/List.vue"),
           },
-
+          {
+            path: "/board/list",
+            name: "board_list",
+            meta: { authority: ["ROLE_ADMIN"] },
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/List.vue"),
+          },
+          {
+            path: "/board/form/:id?",
+            name: "board_form",
+            meta: { authority: ["ROLE_ADMIN"] },
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/Form.vue"),
+          },
+          {
+            path: "/board/view/:id?",
+            name: "board_view",
+            meta: { authority: ["ROLE_ADMIN"] },
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/View.vue"),
+          },
+          {
+            path: "/board/notice",
+            name: "board_notice",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/NoticeList.vue"),
+          },
+          {
+            path: "/board/notice/view/:id?",
+            name: "board_notice_view",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/NoticeView.vue"),
+          },
+          {
+            path: "/board/question",
+            name: "board_question",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/QuestionList.vue"),
+          },
+          {
+            path: "/board/question/form/:id?",
+            name: "board_question_form",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/QuestionForm.vue"),
+          },
+          {
+            path: "/board/question/view/:id?",
+            name: "board_question_view",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/views/Board/QuestionView.vue"),
+          },
           // {
           //   path: "/user/register",
           //   name: "user_register",
@@ -152,7 +226,7 @@ router.beforeEach((to, form, next) => {
   nProgress.start();
   let status = isLogin();
   if (to.path === '/user/login' && status === true) {
-    next({ path: "/product" });
+    next({ path: "/main" });
     return false;
   }
 

@@ -367,6 +367,7 @@ function sendCollectionData(data) {
   }).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
       return false;
     }
 
@@ -460,6 +461,7 @@ function deleteMargin(type, value) {
   }).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
       return false;
     }
 

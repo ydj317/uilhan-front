@@ -4,8 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" title="계정정보" class="setting-page-margin"
-          :style="{marginBottom:'20px'}">
+  <a-card :loading="cartLoading" :bordered="false" title="계정정보" class="setting-page-margin">
     <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}">
       <a-descriptions-item label="API키 설정">
         <a-input-group compact>
@@ -13,6 +12,16 @@
         <a-input v-show="false" class="mt5" v-model:value="secretKey" placeholder="SecretKey" style="width: 300px;" />
         <a-button @click="addKey" type="primary">등록</a-button>
         </a-input-group>
+      </a-descriptions-item>
+
+      <a-descriptions-item label="서비스 유효일">
+        {{ licenseEndTime === "" ? '서비스 종료' : licenseEndTime }}
+        <router-link to="/user/licensePay" v-if="licenseEndTime === ''">
+          <a-button type="primary" style="margin-left: 10px;">신청하기</a-button>
+        </router-link>
+      </a-descriptions-item>
+      <a-descriptions-item label="서비스 마감일">
+        {{ licenseRemainingDays === "" ? '서비스 종료' : licenseRemainingDays }}
       </a-descriptions-item>
 
       <a-descriptions-item label="이미지 번역 남은 회수">
@@ -83,8 +92,6 @@ import { AuthRequest } from "@/util/request";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
 import {
-  DoubleRightOutlined,
-  PlusOutlined,
   UploadOutlined
 } from "@ant-design/icons-vue";
 import { onMounted, reactive, ref } from "vue";
@@ -100,6 +107,8 @@ const cartLoading = ref(true);
 
 const accessKey = ref();
 const secretKey = ref();
+const licenseEndTime = ref("")
+const licenseRemainingDays = ref("")
 const recharge = ref(0);
 const tempImageUrl = ref(require('../../assets/img/temp_image.png'));
 const icons = ref([]);
@@ -124,6 +133,7 @@ function setLogoInDetail(value) {
   }).then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
+      indicator.value = false;
       return false;
     }
 
@@ -150,6 +160,7 @@ function setLogo() {
   }).then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
+      indicator.value = false;
       return false;
     }
 
@@ -177,6 +188,7 @@ function delLogo(oldLogo) {
   }).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
     }
 
     console.log("oldLogo 삭제 성공");
@@ -194,6 +206,7 @@ function delIcon(index) {
   }).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
     }
 
     for (let i = 0; i < delData.length; i++) {
@@ -218,6 +231,7 @@ function customRequest(option, type) {
   ).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
       return false;
     }
 
@@ -316,6 +330,7 @@ function addKey() {
   }).then((res) => {
     if (res.status !== "2000") {
       alert(res.message);
+      indicator.value = false;
       return false;
     }
 
@@ -348,6 +363,12 @@ function getUser() {
 
       accessKey.value = res.data.key.access_key;
       secretKey.value = res.data.key.secret_key;
+
+      const endDate = new Date(res.data.license_end_date);
+      if (new Date() < endDate) {
+        licenseRemainingDays.value = endDate.toLocaleString()
+        licenseEndTime.value = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24)) + '일'
+      }
 
       cartLoading.value = false;
     }
