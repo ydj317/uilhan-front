@@ -7,26 +7,20 @@
     <div class="editorDiv">
       <div class="editorToolbar">
         <!--button-->
+        <a-space>
+          <span>옵션 테이블</span>
+          <a-select v-model:value="selectOptionValue" style="width: 120px">
+            <a-select-option v-for="selectOption in optionTableSelectOption" :key="selectOption.value" :value="selectOption.value" >{{selectOption.label}}</a-select-option>
+          </a-select>
+        </a-space>
+        <a-button style="margin-left: 5px; margin-right: 10px;" type="primary" @click="setEditorContent">
+          적용
+        </a-button>
         <a-button
             class="button originalDetailTrans"
             type="primary"
             @click="translatePopup"
         >상세 이미지번역</a-button>
-        <a-space>
-          <a-select v-model:value="selectOptionValue" style="width: 120px">
-            <a-select-opt-group>
-              <template #label>
-                <span>옵션 테이블</span>
-              </template>
-              <a-select-option value="table_two_column">두줄로 보기</a-select-option>
-              <a-select-option value="table_four_column">네줄로 보기</a-select-option>
-              <a-select-option value="table_cancel">제거</a-select-option>
-            </a-select-opt-group>
-          </a-select>
-        </a-space>
-        <a-button style="margin-left: 5px;" type="primary" @click="setEditorContent">
-          적용
-        </a-button>
       </div>
       <TEditor
         ref="editor"
@@ -43,15 +37,12 @@ import { forEach } from "lodash";
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
 import { watchEffect } from "vue";
-import { ASelectOptGroup, ASelectOption } from "ant-design-vue";
 
 export default {
   name: "productDetailDescription",
 
   components: {
     TEditor,
-    ASelectOptGroup,
-    ASelectOption,
   },
 
   computed: {
@@ -62,6 +53,20 @@ export default {
     return {
       aBakDetailImages: {},
       selectOptionValue: "table_two_column",
+      optionTableSelectOption: [
+        {
+          label: "두줄로 추가",
+          value: "table_two_column",
+        },
+        {
+          label: "네줄로 추가",
+          value: "table_four_column",
+        },
+        {
+          label: "제거",
+          value: "table_cancel",
+        }
+      ]
     };
   },
   mounted() {
@@ -91,7 +96,33 @@ export default {
       //품목 이미지, 품목명 변경에 따라 액션
       watchEffect(() => {
         this.product.sku.map(item => item.img);
+        //변경될 경우 테이블 업데이트
+        this.setOptionTable();
       });
+    },
+    setOptionTable() {
+      let dom = window.tinymce.editors[0].dom;
+      if (dom === undefined) {
+        return;
+      }
+      //테이블 추가 여부 확인
+      let optionTableDoc = dom.doc.querySelector("div#editor_optin_table");
+      if (!optionTableDoc) {
+        return;
+      }
+      let optionHtml;
+      //테이블 2줄로 추가
+      if (optionTableDoc.querySelector("table#editor_option_table_2")) {
+        optionHtml = this.getOptionTable(2);
+      }
+      //테이블 4줄로 추가
+      if (optionTableDoc.querySelector("table#editor_option_table_4")) {
+        optionHtml = this.getOptionTable(4);
+      }
+      if (optionHtml) {
+        optionTableDoc.innerHTML = optionHtml;
+        this.product.item_detail = dom.doc.documentElement.innerHTML;
+      }
     },
     getOptionTable(columnCount) {
       let tableId = "editor_option_table_" + columnCount;
@@ -106,13 +137,14 @@ export default {
           trStartTag = i + columnCount;
           optionHtml += '<tr>';
         }
-        optionHtml += `<td><img style="height:100px;width:100px;" src="${item.img}"></td>`;
+        let imgHtml = item.img === null || item.img === "" ? `<div style="height:100px;width:100px;"></div>` : `<img style="height:100px;width:100px;" src="${item.img}">`;
+        optionHtml += `<td>${imgHtml}</td>`;
         optionHtml += `<td>${item.spec}</td>`;
         //1줄 이상의 데이타일 경우 부족한 td 추가해줌
         if (i === skuLength) {
           if (skuLength > columnCount && skuLength % columnCount !== 0) {
             for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
-              optionHtml += `<td><img style="height:100px;width:100px;" src=""></td>`;
+              optionHtml += `<td><div style="height:100px;width:100px;"></div></td>`;
               optionHtml += `<td></td>`;
             }
           }
@@ -134,6 +166,8 @@ export default {
 
     getDetailContentsImage() {
       let content = window.tinymce.editors[0].getContent();
+      const regex = /<div id="editor_optin_table">[\s\S]*?<\/div>/g;
+      content = content.replace(regex, "");
       if (content === undefined || content.length === 0) {
         alert("이미지가 없습니다");
         return false;
