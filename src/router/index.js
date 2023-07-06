@@ -53,8 +53,12 @@ const routes = [
           {
             path: "/user/detail",
             name: "user_detail",
-            /* webpackChunkName: 'user_manager' */
             component: () => import("../views/User/Detail"),
+          },
+          {
+            path: "/user/password",
+            name: "user_password",
+            component: () => import("../views/User/Password"),
           },
           {
             path: "/user/Manage",

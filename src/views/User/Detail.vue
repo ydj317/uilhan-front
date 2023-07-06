@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" :title="'연동정보 수정'">
+  <a-card :loading="cartLoading" :bordered="false" :title="'연동정보'">
 
     <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">
@@ -113,7 +113,6 @@ import router from "@/router";
 const indicator = ref(false);
 const cartLoading = ref(true);
 
-
 const formState = reactive({
   username: "",
   //[필수] 사용자명/사업자명
@@ -137,23 +136,7 @@ const formState = reactive({
   com_phone2: "",
   com_phone3: "",
   //대표자명
-  com_ceo: "",
-  //[필수] 정산방식 : 기본값( 미입력시 ) - 1
-  account_type: "1",
-  //정산 상품 기간설정 : 기본값( 미입력시 ) - 1
-  account_info: "",
-  //정산일자 IC - 입금확인
-  ac_delivery_type: "IC",
-  //정산 상품 기간설정 : 1 ~ 30 일
-  ac_expect_date: "10",
-  //정산 유형 : 기본값( 미입력시 ) - 10
-  account_method: "10",
-  //[필수] 정산방식 : 기본값( 미입력시 ) - s
-  account_div: "c",
-  //[필수]수수료율
-  commission: "0",
-  //[필수]도매 수수료
-  wholesale_commission: "0"
+  com_ceo: ""
 });
 
 let validateName = async (rule, value) => {
@@ -246,58 +229,6 @@ let validateComnumber = async (rule, value) => {
   return Promise.resolve();
 };
 
-let validateCommission = async (rule, value) => {
-  if (value === "") {
-    return Promise.reject("수수료율을 입력해주십시오");
-  } else {
-    let commission = /^[0-9]*$/;
-    if (commission.test(value) !== true) {
-      return Promise.reject("수수료율 격식이 옳바르지 않습니다.");
-    }
-  }
-
-  return Promise.resolve();
-};
-
-let validateWholesale = async (rule, value) => {
-  if (value === "") {
-    return Promise.reject("도매수수료를 입력해주십시오");
-  } else {
-    let wholesale = /^[0-9]*$/;
-    if (wholesale.test(value) !== true) {
-      return Promise.reject("도매수수료 격식이 옳바르지 않습니다.");
-    }
-  }
-
-  return Promise.resolve();
-};
-
-let validateAcctype = async (rule, value) => {
-  if (value === "0") {
-    return Promise.reject("정선방식을 선택해주십시오");
-  }
-
-  return Promise.resolve();
-};
-
-let validateAccdiv = async (rule, value) => {
-  if (value === "0") {
-    return Promise.reject("정선유형을 선택해주십시오");
-  }
-
-  return Promise.resolve();
-};
-
-let validateExdate = async (rule, value) => {
-  if (value.length > 0) {
-    if (value < 1 || value > 30) {
-      return Promise.reject("최소 1일 최대 30일까지 가능합니다.");
-    }
-
-    return Promise.resolve();
-  }
-};
-
 let validateComCeo = async (rule, value) => {
   if (value === "") {
     return Promise.reject("대표자명을 입력해주십시오");
@@ -388,34 +319,6 @@ const rulesRef = reactive({
       trigger: "blur"
     }
   ],
-  commission: [
-    {
-      required: true,
-      validator: validateCommission,
-      trigger: "blur"
-    }
-  ],
-  wholesale_commission: [
-    {
-      required: true,
-      validator: validateWholesale,
-      trigger: "blur"
-    }
-  ],
-  account_type: [
-    {
-      required: true,
-      validator: validateAcctype,
-      trigger: "change"
-    }
-  ],
-  account_div: [
-    {
-      required: true,
-      validator: validateAccdiv,
-      trigger: "change"
-    }
-  ],
   tel1: [
     {
       validator: validatePhoneFirst,
@@ -433,31 +336,34 @@ const rulesRef = reactive({
       validator: validatePhone,
       trigger: "blur"
     }
-  ],
-  ac_expect_date: [
-    {
-      validator: validateExdate,
-      trigger: "blur"
-    }
   ]
 });
 
-const onFinish = values => {
+const onFinish = () => {
+  let user = {
+    username: formState.username,
+    name: formState.name,
+    email: formState.email,
+    phone: formState.phone1 + "-" + formState.phone2 + "-" + formState.phone3,
+    tel: formState.tel1 + "-" + formState.tel2 + "-" + formState.tel3,
+    com_name: formState.com_name,
+    com_number: formState.com_number,
+    com_phone: formState.com_phone1 + "-" + formState.com_phone2 + "-" + formState.com_phone3,
+    com_ceo: formState.com_ceo,
+  };
+
   indicator.value = true;
-  values = Object.assign(values, { id: formState.id });
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/license/save", values).then((res) => {
-    if (res.status !== "2000") {
-      alert(res.message);
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userDetail", user).then((res) => {
+    if (res.status !== '2000') {
+      alert(res.message)
       indicator.value = false;
       return false;
     }
+    console.log(res)
 
-    alert("서비스 등록 성공하였습니다.");
-    router.push("/user/license");
-  }).catch((error) => {
-    alert(error.message);
+    alert(res.message);
+
     indicator.value = false;
-    return false;
   });
 };
 

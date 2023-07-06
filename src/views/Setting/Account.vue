@@ -83,6 +83,99 @@
         <a-button @click="backupImages" type="primary">백업 실행</a-button>
       </a-descriptions-item>
     </a-descriptions>
+
+    <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
+            @finish="onFinish" @finishFailed="onFinishFailed">
+
+      <a-form-item label="아이디">
+        {{ formState.username }}
+      </a-form-item>
+
+      <a-form-item label="사용자명/사업자명" name="name" has-feedback>
+        <a-input v-model:value="formState.name" placeholder="사용자명/사업자명을 입력해주시오" />
+      </a-form-item>
+
+      <a-form-item label="Email" name="email" has-feedback>
+        <a-input v-model:value="formState.email" placeholder="Email을 입력해주시오" />
+      </a-form-item>
+
+      <a-form-item label="휴대전화" name="phone1">
+        <a-row :gutter="10">
+          <a-col style="width: 160px;">
+            <a-form-item name="phone1" class="phone" has-feedback>
+              <a-input v-model:value="formState.phone1" placeholder="휴대전화" />
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="phone2" class="phone" has-feedback>
+              <a-input v-model:value="formState.phone2" placeholder="휴대전화" />
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="phone3" class="phone" has-feedback>
+              <a-input v-model:value="formState.phone3" placeholder="휴대전화" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <a-form-item label="업체명/사업자명" name="com_name" has-feedback>
+        <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명을 입력해주시오" />
+      </a-form-item>
+
+      <a-form-item label="사업자번호" name="com_number" has-feedback>
+        <a-input v-model:value="formState.com_number" placeholder="사업자번호를 입력해주시오" />
+      </a-form-item>
+
+      <a-form-item label="사업장 전화번호" name="com_phone1">
+        <a-row :gutter="10">
+          <a-col style="width: 160px;">
+            <a-form-item name="com_phone1" class="phone" has-feedback>
+              <a-input v-model:value="formState.com_phone1" placeholder="전화번호" />
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="com_phone2" class="phone" has-feedback>
+              <a-input v-model:value="formState.com_phone2" placeholder="전화번호" />
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="com_phone3" class="phone" has-feedback>
+              <a-input v-model:value="formState.com_phone3" placeholder="전화번호" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <a-form-item label="대표자명" name="com_ceo" has-feedback>
+        <a-input v-model:value="formState.com_ceo" placeholder="대표자명을 입력해주시오" />
+      </a-form-item>
+
+      <a-form-item label="유선전화" name="tel1">
+        <a-row :gutter="10">
+          <a-col style="width: 160px;">
+            <a-form-item name="tel1" class="phone" has-feedback>
+              <a-input v-model:value="formState.tel1" placeholder="유선전화" />
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="tel2" class="phone" has-feedback>
+              <a-input v-model:value="formState.tel2" placeholder="유선전화" />
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="tel3" class="phone" has-feedback>
+              <a-input v-model:value="formState.tel3" placeholder="유선전화" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <div style="display: flex;justify-content: center;margin-top: 20px;">
+        <a-button type="primary" html-type="submit">저장</a-button>
+        <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>
+      </div>
+    </a-form>
   </a-card>
 
 </template>
@@ -97,6 +190,7 @@ import {
 import { onMounted, reactive, ref } from "vue";
 import { useStore } from "vuex";
 import Cookie from "js-cookie";
+import router from "@/router";
 
 const store = useStore();
 const { product } = store.state;
@@ -117,10 +211,6 @@ const isLogInDetail = ref(false);
 const headers = ref({
   token: Cookie.get("token"),
   "Content-Type": "multipart/form-data"
-});
-
-const input_visible = reactive({
-  price_input_visible: false
 });
 
 const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
@@ -288,9 +378,6 @@ function onClickSyncDomeggookCategory() {
     }
   );
 }
-
-
-
 
 function getRecharge() {
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
