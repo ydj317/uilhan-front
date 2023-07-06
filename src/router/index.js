@@ -205,6 +205,12 @@ const routes = [
     /* webpackChunkName: 'form' */
     component: () => import("views/Template/404"),
   },
+  {
+    path: "/product/marketPopup/:query",
+    name: "prd_market_popup",
+    /* webpackChunkName: 'user_register' */
+    component: () => import("@/components/List/MarketPopup.vue"),
+  },
   // {
   //   path: "/product",
   //   name: "product",
