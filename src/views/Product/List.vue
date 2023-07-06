@@ -255,7 +255,6 @@ import {
   LinkOutlined,
   DollarTwoTone
 } from "@ant-design/icons-vue";
-import { provide } from "vue";
 
 export default defineComponent({
   components: {
@@ -522,7 +521,7 @@ export default defineComponent({
         "background-color: #f06543; border: none";
     },
 
-    getList(sType = "") {
+     getList(sType = "") {
       this.listLoading = true
       let param = this.getParam(sType);
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
@@ -816,7 +815,7 @@ export default defineComponent({
     },
 
     testmarket() {
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/getcategorylist").then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/category/sync",{params:{market_code:'relaket',cid:'019002001001000'}}).then((res) => {
 
       });
     },
@@ -967,7 +966,7 @@ export default defineComponent({
     },
   },
 
-  mounted() {
+  beforeMount() {
     this.getList("reload");
     this.getMarketList();
   }

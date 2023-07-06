@@ -29,25 +29,25 @@
 
         <a href="https://www.taobao.com/" target="_blank">
         <a-tag class="logo-tag">
-          <img :src="getLogoSrc('get-logo', 'taobao')" alt=""> <span>淘宝</span>
+          <img :src="getLogoSrc('get-logo', 'taobao')" alt=""> <span>타오바오</span>
         </a-tag>
         </a>
 
         <a href="https://www.tmall.com/" target="_blank">
         <a-tag class="logo-tag">
-          <img :src="getLogoSrc('get-logo', 'tmall')" alt=""> <span>天猫</span>
+          <img :src="getLogoSrc('get-logo', 'tmall')" alt=""> <span>티몰</span>
         </a-tag>
         </a>
 
         <a href="https://p4psearch.1688.com/" target="_blank">
         <a-tag class="logo-tag">
-          <img :src="getLogoSrc('get-logo', 'alibaba')" alt=""> <span>阿里巴巴</span>
+          <img :src="getLogoSrc('get-logo', 'alibaba')" alt=""> <span>알리바바</span>
         </a-tag>
         </a>
 
         <a href="https://www.aliexpress.com/" target="_blank">
         <a-tag class="logo-tag">
-          <img :src="getLogoSrc('get-logo', 'aliexpress')" alt=""> <span>速卖通</span>
+          <img :src="getLogoSrc('get-logo', 'aliexpress')" alt=""> <span>알리익스프레스</span>
         </a-tag>
         </a>
 
@@ -119,7 +119,11 @@
           <div class="scroll">
             <template v-for="item in boardData">
               <div v-if="item.type === 'notice'" style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                <h4>{{ item.title }}</h4>
+                <h4>
+                  <router-link :to="`/board/notice/view/${item.id}`">
+                  {{ item.title }}
+                  </router-link>
+                </h4>
                 <router-link :to="`/board/notice/view/${item.id}`">
                   <span style="color: #999">{{ parseHTML(item.content) }}</span>
                 </router-link>

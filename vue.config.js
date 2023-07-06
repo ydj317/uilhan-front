@@ -21,6 +21,11 @@ if (process.env.VUE_APP_HOST !== 'F') {
 }
 
 module.exports = defineConfig({
+  devServer: {
+    client: {
+      overlay: false,
+    },
+  },
   transpileDependencies: true,
   configureWebpack,
   // chainWebpack: (config) => {

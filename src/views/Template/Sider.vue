@@ -2,13 +2,13 @@
   <div style="position: sticky;top: 0;">
     <a-menu
         v-model:selectedKeys="selectedKeys"
-        v-model:openKeys = "openKeys"
+        v-model:openKeys="openKeys"
         mode="inline"
         theme="dark"
     >
       <a-menu-item key="0">
         <template #icon>
-          <gift-outlined/>
+          <dashboard-outlined/>
         </template>
         <router-link to="/main">
           <span>메인</span>
@@ -83,7 +83,7 @@
       </a-sub-menu>
       <a-sub-menu key="6">
         <template #icon>
-          <money-collect-outlined />
+          <money-collect-outlined/>
         </template>
         <template #title>
           <span>서비스 관리</span>
@@ -154,7 +154,8 @@ import {
   AppstoreOutlined,
   MoneyCollectOutlined,
   CloseCircleOutlined,
-  ProfileOutlined
+  ProfileOutlined,
+  DashboardOutlined
 } from "@ant-design/icons-vue";
 import {useRoute, useRouter} from "vue-router";
 
@@ -177,18 +178,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.ant-menu .ant-menu-submenu {
-  font-weight: bold;
+.ant-menu-item span {
   color: #e3e3e3;
 }
+
 .ant-menu-item .ant-menu-title-content a {
-  font-weight: bold;
+  font-weight: 500;
   color: #e3e3e3;
 }
 </style>
 <style>
 .ant-menu .ant-menu-submenu {
-  font-weight: bold;
+  font-weight: 500;
   color: #e3e3e3;
 }
 </style>

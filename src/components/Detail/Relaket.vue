@@ -2,54 +2,22 @@
   <div v-if="product.relaket_visivle" class="plrb20 bg-white">
     <!--title-->
     <div>
-        <span hidden><strong>릴라켓 연동</strong></span>
-        <a-switch hidden @change="syncSwitchChange" v-model:checked="isSync"/>
+      <span hidden><strong>릴라켓 연동</strong></span>
+      <a-switch hidden @change="syncSwitchChange" v-model:checked="isSync"/>
     </div>
     <div v-if="isSync === true">
       <p>카테고리</p>
       <a-form-item class="mb15">
-        <a-select
-            class="w10 mr5"
-            v-model:value="formState.cate_1_val"
-            :options="formState.cate_1"
-            @change="changeCateA"
-        ></a-select>
-        <a-select
-            class="w10 mr5"
-            v-model:value="formState.cate_2_val"
-            :options="formState.cate_2"
-            :loading="loadingB"
-            :disabled="loadingB"
-            @change="changeCateB"
-        >
-        </a-select>
-        <a-select
-            class="w10 mr5"
-            v-model:value="formState.cate_3_val"
-            :options="formState.cate_3"
-            :loading="loadingC"
-            :disabled="loadingC"
-            @change="changeCateC"
-        >
-        </a-select>
-        <a-select
-            class="w10 mr5"
-            v-model:value="formState.cate_4_val"
-            :options="formState.cate_4"
-            :loading="loadingD"
-            :disabled="loadingD"
-            @change="changeCateD"
-        >
-        </a-select>
-        <a-select
-            class="w10 mr5"
-            v-model:value="formState.cate_5_val"
-            :options="formState.cate_5"
-            :loading="loadingE"
-            :disabled="loadingE"
-            @change="changeCateE"
-        >
-        </a-select>
+        <a-cascader
+            v-model:value="formState.category"
+            :options="formState.options"
+            :load-data="loadData"
+            placeholder="카테고리를 선택해 주세요."
+            change-on-select
+            dropdownClassName="categorySelect"
+            @change="onCategoryChange"
+
+        />
       </a-form-item>
 
       <p>카테고리 검색</p>
@@ -82,18 +50,18 @@
             :onInputKeyDown="recommendCategory.enterKeywords"
         >
           <template v-if="cateLoading" #notFoundContent>
-            <a-spin size="small" />
+            <a-spin size="small"/>
           </template>
         </a-select>
       </a-form-item>
 
-<!--      <p>면세제품</p>-->
-<!--      <a-form-item class="mb15">-->
-<!--        <a-select v-model:value="formState.surtax" placeholder="please select your zone" class="w20">-->
-<!--          <a-select-option value="Y">면세</a-select-option>-->
-<!--          <a-select-option value="N">과세</a-select-option>-->
-<!--        </a-select>-->
-<!--      </a-form-item>-->
+      <!--      <p>면세제품</p>-->
+      <!--      <a-form-item class="mb15">-->
+      <!--        <a-select v-model:value="formState.surtax" placeholder="please select your zone" class="w20">-->
+      <!--          <a-select-option value="Y">면세</a-select-option>-->
+      <!--          <a-select-option value="N">과세</a-select-option>-->
+      <!--        </a-select>-->
+      <!--      </a-form-item>-->
 
       <div>
         <p>상품고시 / 통관유형</p>
@@ -108,33 +76,51 @@
               <a-select-option value="N">과세</a-select-option>
             </a-select>
           </a-form-item>
-      </div>
+        </div>
       </div>
 
-      <p><a-checkbox v-model:checked="formState.item_is_free_delivery">무료 배송</a-checkbox></p>
+      <p>
+        <a-checkbox v-model:checked="formState.item_is_free_delivery">무료 배송</a-checkbox>
+      </p>
       <p>배송 정책</p>
       <a-form-item class="mb15">
-        <a-select v-if="formState.delivery_template_sea_list !== undefined && formState.delivery_template_sea_list.length > 0" v-model:value="formState.delivery_template_sea_val" :options="formState.delivery_template_sea_list" style="width: 150px; float: left;" @change="isSelected('sea')">
+        <a-select
+            v-if="formState.delivery_template_sea_list !== undefined && formState.delivery_template_sea_list.length > 0"
+            v-model:value="formState.delivery_template_sea_val" :options="formState.delivery_template_sea_list"
+            style="width: 150px; float: left;" @change="isSelected('sea')">
         </a-select>
-        <a-select v-if="formState.delivery_template_sky_list !== undefined && formState.delivery_template_sky_list.length > 0" v-model:value="formState.delivery_template_sky_val" :options="formState.delivery_template_sky_list" style="width: 150px; float: left; margin-left: 10px" @change="isSelected('sky')">
+        <a-select
+            v-if="formState.delivery_template_sky_list !== undefined && formState.delivery_template_sky_list.length > 0"
+            v-model:value="formState.delivery_template_sky_val" :options="formState.delivery_template_sky_list"
+            style="width: 150px; float: left; margin-left: 10px" @change="isSelected('sky')">
         </a-select>
-        <a-select v-if="formState.delivery_template_furniture_list !== undefined && formState.delivery_template_furniture_list.length > 0" v-model:value="formState.delivery_template_furniture_val" :options="formState.delivery_template_furniture_list" style="width: 150px; float: left; margin-left: 10px" @change="isSelected('furniture')">
+        <a-select
+            v-if="formState.delivery_template_furniture_list !== undefined && formState.delivery_template_furniture_list.length > 0"
+            v-model:value="formState.delivery_template_furniture_val"
+            :options="formState.delivery_template_furniture_list" style="width: 150px; float: left; margin-left: 10px"
+            @change="isSelected('furniture')">
         </a-select>
-        <a-select v-if="formState.delivery_template_high_list !== undefined && formState.delivery_template_high_list.length > 0" v-model:value="formState.delivery_template_high_val" :options="formState.delivery_template_high_list" style="width: 150px; float: left; margin-left: 10px" @change="isSelected('high')">
+        <a-select
+            v-if="formState.delivery_template_high_list !== undefined && formState.delivery_template_high_list.length > 0"
+            v-model:value="formState.delivery_template_high_val" :options="formState.delivery_template_high_list"
+            style="width: 150px; float: left; margin-left: 10px" @change="isSelected('high')">
         </a-select>
-        <a-select v-if="formState.delivery_template_other_list !== undefined && formState.delivery_template_other_list.length > 0" v-model:value="formState.delivery_template_other_val" :options="formState.delivery_template_other_list" style="width: 150px; float: left; margin-left: 10px" @change="isSelected('other')">
+        <a-select
+            v-if="formState.delivery_template_other_list !== undefined && formState.delivery_template_other_list.length > 0"
+            v-model:value="formState.delivery_template_other_val" :options="formState.delivery_template_other_list"
+            style="width: 150px; float: left; margin-left: 10px" @change="isSelected('other')">
         </a-select>
       </a-form-item>
 
-<!--      <a-form-item label="판매가" style="margin-left: 77px">-->
-<!--        <a-input style="width: 400px" v-model:value="formState.listprice" placeholder="숫자만가능합니다"/>-->
-<!--      </a-form-item>-->
+      <!--      <a-form-item label="판매가" style="margin-left: 77px">-->
+      <!--        <a-input style="width: 400px" v-model:value="formState.listprice" placeholder="숫자만가능합니다"/>-->
+      <!--      </a-form-item>-->
 
-<!--      <a-form-item label="할인가" style="margin-left: 77px">-->
-<!--        <a-input style="width: 400px" v-model:value="formState.sellprice" placeholder="숫자만가능합니다"/>-->
-<!--      </a-form-item>-->
+      <!--      <a-form-item label="할인가" style="margin-left: 77px">-->
+      <!--        <a-input style="width: 400px" v-model:value="formState.sellprice" placeholder="숫자만가능합니다"/>-->
+      <!--      </a-form-item>-->
       <p>키워드</p>
-      <a-form-item  class="mb15">
+      <a-form-item class="mb15">
         <a-input v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요"/>
       </a-form-item>
     </div>
@@ -143,12 +129,13 @@
 
 <script>
 import {AuthRequest} from '@/util/request';
-import { mandatoryList } from 'config/Relaket/mandatory'
-import { ref, reactive, computed } from 'vue';
+import {mandatoryList} from 'config/Relaket/mandatory'
+import {ref, reactive, computed, onBeforeUnmount} from 'vue';
 import {mapState, useStore} from 'vuex';
 import {lib} from '@/util/lib';
+
 export default {
-  components: {mandatoryList},
+  components: { mandatoryList},
 
   computed: {
     ...mapState([
@@ -162,16 +149,8 @@ export default {
     const formState = reactive({
       pid: '',
       co_pid: '',
-      cate_1: [],
-      cate_1_val: '선택',
-      cate_2: [],
-      cate_2_val: '선택',
-      cate_3: [],
-      cate_3_val: '선택',
-      cate_4: [],
-      cate_4_val: '선택',
-      cate_5: [],
-      cate_5_val: '선택',
+      category: '',
+      options: [],
       surtax: 'Y',
       mandatory: mandatoryList(),
       mandatory_val: '선택',
@@ -188,122 +167,16 @@ export default {
       delivery_template_real_val: null,
       delivery_template_list: [],
       last_cate: null,
+      category_check_last: false,
       keyword: null,
-      item_is_free_delivery: false
+      item_is_free_delivery: false,
     });
 
     const isSync = ref(false);
-    const loadingB = ref(false);
-    const loadingC = ref(false);
-    const loadingD = ref(false);
-    const loadingE = ref(false);
     const keyStatus = ref(false);
-
-    const getCate = (param, type) => {
-      param.cate_market = recommendCategory.sMarket === "Domeggook"? "Domeggook": "Relaket";
-      AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
-        if (res.status !== '2000') {
-          alert(res.message)
-        }
-
-        if (formState.last_cate !== null && formState.last_cate.length > 0) {
-          formState.last_cate = null;
-        }
-
-        switch (type) {
-          case 'A':
-            formState.cate_1 = res.data;
-            formState.cate_1_val = res.data[0].value;
-            if (res.data[0].status !== undefined && res.data[0].status === 'final') {
-              formState.last_cate = res.data[0].value;
-            }
-            break;
-          case 'B':
-            formState.cate_2 = res.data;
-            formState.cate_2_val = res.data[0].value;
-            if (res.data[0].status !== undefined && res.data[0].status === 'final') {
-              formState.last_cate = formState.cate_1_val;
-            }
-            loadingB.value = false;
-            break;
-          case 'C':
-            formState.cate_3 = res.data;
-            formState.cate_3_val = res.data[0].value;
-            loadingC.value = false;
-            if (res.data[0].status !== undefined && res.data[0].status === 'final') {
-              formState.last_cate = formState.cate_2_val;
-            }
-            break;
-          case 'D':
-            formState.cate_4 = res.data;
-            formState.cate_4_val = res.data[0].value;
-            loadingD.value = false;
-            if (res.data[0].status !== undefined && res.data[0].status === 'final') {
-              formState.last_cate = formState.cate_3_val;
-            }
-            break;
-          case 'E':
-            formState.cate_5 = res.data;
-            formState.cate_5_val = res.data[0].value;
-            loadingE.value = false;
-            if (res.data[0].status !== undefined && res.data[0].status === 'final') {
-              formState.last_cate = formState.cate_4_val;
-            }
-            break;
-        }
-      });
-    };
-
-    const changeCateA = (val) => {
-      if (formState.cate_1_val === '선택') {
-        formState.last_cate = null;
-      }
-      getCate({pid:val}, 'B');
-      loadingB.value = true;
-      changeCateInit(3);
-    };
-
-    const changeCateB = (val) => {
-      if (formState.cate_2_val === '선택') {
-        formState.last_cate = null;
-      }
-
-      getCate({pid:val}, 'C');
-      loadingC.value = true;
-      changeCateInit(4);
-    };
-
-    const changeCateC = (val) => {
-      if (formState.cate_3_val === '선택') {
-        formState.last_cate = null;
-      }
-      getCate({pid:val}, 'D');
-      loadingD.value = true;
-      changeCateInit(5);
-    };
-
-    const changeCateD = (val) => {
-      if (formState.cate_4_val === '선택') {
-        formState.last_cate = null;
-      }
-      getCate({pid:val}, 'E');
-      loadingE.value = true;
-    };
-
-    const changeCateE = (val) => {
-      formState.last_cate = val;
-    };
-
-    const changeCateInit = (iChildDepth) => {
-      for (let i = iChildDepth; i < 6; i++) {
-        formState[`cate_${i}`] = [];
-        formState[`cate_${i}_val`] = '선택';
-      }
-    };
-
     const syncSwitchChange = () => {
       if (isSync.value === true && !formState.last_cate) {
-        getCate({pid:0}, 'A');
+        //getCategory({pid: 0}, 0);
       }
 
       let template = formState.delivery_template_list;
@@ -326,7 +199,7 @@ export default {
     const isSelected = (type) => {
       let typeList = ['sea', 'sky', 'furniture', 'high', 'other'];
       let isOtherSelected = false;
-      for (let i=0; i < typeList.length; i++) {
+      for (let i = 0; i < typeList.length; i++) {
         if (type === typeList[i]) {
           continue;
         }
@@ -341,7 +214,7 @@ export default {
       if (isOtherSelected === true) {
         alert("배송정책류형은 하개만 선택가능합니다.");
 
-        for (let i=0; i < typeList.length; i++) {
+        for (let i = 0; i < typeList.length; i++) {
           if (type !== typeList[i]) {
             formState['delivery_template_' + typeList[i] + '_val'] = '선택';
           }
@@ -538,11 +411,6 @@ export default {
       automaticallySetAllCategories: (recommendCateId) => {
         let _ = recommendCategory;
 
-        loadingB.value = true;
-        loadingC.value = true;
-        loadingD.value = true;
-        loadingE.value = true;
-
         _.requestData(
             {
               recommend_cate_id: recommendCateId,
@@ -550,6 +418,7 @@ export default {
             res => {
               try {
                 let aFullCate = res.full_cate;
+                let aSelectCate = [];
                 delete res.full_cate;
 
                 Object.values(res).map((oFullCate, i) => {
@@ -560,19 +429,13 @@ export default {
                         label: oCate.kor_name,
                         value: oCate.cate_id,
                       });
+
                     }
                   });
-
-                  formState[`cate_${i + 2}`] = aTempOptions;
-                  formState[`cate_${i + 1}_val`] = oFullCate.value;
+                  aSelectCate.push(oFullCate.label)
                 });
 
-                let iUseCateLength = Object.values(res).length;
-                for (iUseCateLength; iUseCateLength <= 5; iUseCateLength++) {
-                  formState[`cate_${iUseCateLength + 2}`] = [];
-                  formState[`cate_${iUseCateLength + 1}_val`] = '선택';
-                }
-
+                formState.category = aSelectCate.join('/')
                 formState.last_cate = recommendCateId;
 
               } catch (e) {
@@ -580,10 +443,6 @@ export default {
               }
 
               _.initData();
-              loadingB.value = false;
-              loadingC.value = false;
-              loadingD.value = false;
-              loadingE.value = false;
             },
         );
       },
@@ -621,7 +480,8 @@ export default {
           sSearchKeywords; // 搜索关键字
           iQueryMaximum; // 查询最大值
 
-          constructor() {}
+          constructor() {
+          }
 
           // 执行
           execute(oParameter) {
@@ -788,26 +648,88 @@ export default {
     })
 
     let cateLoading = false;
+
+    const getCategory = (param, type) => {
+      param.cate_market = recommendCategory.sMarket === "Domeggook" ? "Domeggook" : "Relaket";
+      AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
+        if (res.status !== '2000') {
+          alert(res.message)
+        }
+
+        formState.options = JSON.parse(JSON.stringify(res.data))
+      });
+    };
+
+    const onCategoryChange = (targetOption,aCateInfo) => {
+      let iCurrent = targetOption.length - 1;
+      let oCurrentInfo = aCateInfo[iCurrent];
+      if(oCurrentInfo.isLeaf){
+        formState.last_cate = oCurrentInfo.value;
+      } else {
+        formState.last_cate = null;
+      }
+    }
+    const loadData = selectedOptions => {
+      const targetOption = selectedOptions[selectedOptions.length - 1];
+      let param = {
+        pid: targetOption.value,
+        cate_market: "Relaket"
+      }
+
+      if (targetOption.isLeaf === false) {
+        setTimeout(() => {
+          AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
+            if (res.status !== '2000') {
+              alert(res.message)
+            }
+            targetOption.loading = false;
+            targetOption.children = JSON.parse(JSON.stringify(res.data))
+
+            formState.options = [...formState.options];
+          });
+        }, 100)
+      }
+
+    };
+
+    /**
+     * 카테고리에 노출할 카테고리명배열
+     * @param cateIds
+     */
+    let cateNames = ref([])
+    const getCategoryNames = (cateIds) => {
+      if (Array.isArray(cateIds) && cateIds.length === 0) return;
+      setTimeout(() => {
+        let param = {
+          cid: cateIds.filter(Boolean),
+          cate_market: "Relaket"
+        }
+        AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getCateNames', {params: param}).then((res) => {
+          if (res.status !== '2000') {
+            alert(res.message)
+          }
+          cateNames.value.push(res.data || [])
+        });
+      }, 100)
+    }
+
     return {
       aProduct,
       recommendCategory,
       formState,
       isSync,
       syncSwitchChange,
-      changeCateA,
-      changeCateB,
-      changeCateC,
-      changeCateD,
-      changeCateE,
-      loadingB,
-      loadingC,
-      loadingD,
-      loadingE,
       isSelected,
       keyStatus,
-      cateLoading
+      cateLoading,
+      loadData,
+      getCategory,
+      getCategoryNames,
+      cateNames,
+      onCategoryChange
     }
-  },
+  }
+  ,
 
   mounted() {
     // 사양대로 무조건 노출
@@ -815,40 +737,18 @@ export default {
     this.product.relaket_visivle = true;
     this.isSync = true;
 
+    this.getCategory({pid: 0}, 0)
+
     if (this.product.relaket_visivle) {
       this.keyStatus = this.product.key_status;
       if (this.product.cates !== undefined && this.product.cates !== null) {
         this.isSync = true;
-        this.formState.cate_1_val = this.product.cates.val[0];
-        this.formState.cate_1 = this.product.cates.list[0];
 
-        this.formState.cate_2_val = this.product.cates.val[1];
-        this.formState.cate_2 = this.product.cates.list[1];
-        //
-        this.formState.cate_3_val = this.product.cates.val[2];
-        this.formState.cate_3 = this.product.cates.list[2];
-
-        this.formState.cate_4_val = this.product.cates.val[3];
-        this.formState.cate_4 = this.product.cates.list[3];
-
-        this.formState.cate_5_val = this.product.cates.val[4];
-        this.formState.cate_5 = this.product.cates.list[4];
-
-        if (this.product.cates.overkey == 3) {
-          this.formState.last_cate = this.product.cates.val[2];
-        }
-
-        if (this.product.cates.overkey == 4) {
-          this.formState.last_cate = this.product.cates.val[3];
-        }
-
-        if (this.product.cates.overkey == 5) {
-          this.formState.last_cate = this.product.cates.val[4];
-        }
+        this.getCategoryNames(this.product.cates.val)
+        this.formState.category = this.cateNames
+        this.formState.last_cate = this.product.cates.val.filter(Boolean)[this.product.cates.val.filter(Boolean).length - 1]
 
         this.formState.mandatory_val = this.product.item_mandatory;
-        // this.$refs.relaket.formState.listprice = this.product.item_market_selling_price;
-        // this.$refs.relaket.formState.sellprice = this.product.item_market_sale_price;
 
         if (this.product.item_sync_keyword === 'null') {
           this.product.item_sync_keyword = '';
@@ -923,11 +823,15 @@ export default {
 
       this.syncSwitchChange();
     }
-  }
-};
 
+  }
+}
 
 </script>
 
-<style scoped>
+<style>
+.categorySelect .ant-cascader-menus .ant-cascader-menu {
+  height: 350px;
+}
+
 </style>
