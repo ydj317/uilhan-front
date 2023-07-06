@@ -5,12 +5,7 @@
     <div class="header-section">
       <!--세팅버튼-->
       <div class="setting header-button">
-        <a-popconfirm
-            title="현재 스팩설정대로 세팅하시겠습니까?"
-            @confirm="setting"
-        >
-          <a-button class="floatRight" type="primary" danger>세팅</a-button>
-        </a-popconfirm>
+        <a-button class="floatRight" type="primary" @click="setting">세팅</a-button>
       </div>
     </div>
     <!--옵션그룹 영역-->
