@@ -160,7 +160,7 @@ export default {
 
       let cate = this.product.formState.last_cate;
       if (cate === undefined || cate === null || cate.length === 0) {
-        alert("카테고리 혹은 최하위 카테고리까지 선택해주세요");
+        alert("최하위 카테고리까지 선택해주세요");
         return false;
       }
 

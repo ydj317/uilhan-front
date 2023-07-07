@@ -211,6 +211,12 @@ const routes = [
     /* webpackChunkName: 'user_register' */
     component: () => import("@/components/List/MarketPopup.vue"),
   },
+  {
+    path: "/category",
+    name: "prd_market_sync_category",
+    /* webpackChunkName: 'user_register' */
+    component: () => import("@/components/List/SyncCategory.vue"),
+  },
   // {
   //   path: "/product",
   //   name: "product",
