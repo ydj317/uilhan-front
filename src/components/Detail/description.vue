@@ -51,6 +51,7 @@ export default {
 
   data() {
     return {
+      optionTableId: "editor_option_table",
       aBakDetailImages: {},
       selectOptionValue: "table_two_column",
       optionTableSelectOption: [
@@ -75,7 +76,7 @@ export default {
   methods: {
     setEditorContent() {
       let doc = window.tinymce.editors[0].dom.doc;
-      let optionTableDoc = doc.querySelector("div#editor_optin_table");
+      let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
       if (this.selectOptionValue === "table_cancel") {
         if (optionTableDoc) {
           optionTableDoc.innerHTML = "";
@@ -89,7 +90,7 @@ export default {
         optionTableDoc.innerHTML = optionHtml;
         this.product.item_detail = doc.documentElement.innerHTML;
       } else {
-        this.product.item_detail = `<div id="editor_optin_table">${optionHtml}</div>${this.product.item_detail}`;
+        this.product.item_detail = `<div id="${this.optionTableId}">${optionHtml}</div>${this.product.item_detail}`;
       }
     },
     fetchData() {
@@ -106,17 +107,17 @@ export default {
         return;
       }
       //테이블 추가 여부 확인
-      let optionTableDoc = dom.doc.querySelector("div#editor_optin_table");
+      let optionTableDoc = dom.doc.querySelector(`div#${this.optionTableId}`);
       if (!optionTableDoc) {
         return;
       }
       let optionHtml;
       //테이블 2줄로 추가
-      if (optionTableDoc.querySelector("table#editor_option_table_2")) {
+      if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
         optionHtml = this.getOptionTable(2);
       }
       //테이블 4줄로 추가
-      if (optionTableDoc.querySelector("table#editor_option_table_4")) {
+      if (optionTableDoc.querySelector(`table#${this.optionTableId}_4`)) {
         optionHtml = this.getOptionTable(4);
       }
       if (optionHtml) {
@@ -125,7 +126,7 @@ export default {
       }
     },
     getOptionTable(columnCount) {
-      let tableId = "editor_option_table_" + columnCount;
+      let tableId = `${this.optionTableId}_${columnCount}`;
       //columnCount은 2줄로 보기 혹은 4줄로 보기
       let optionHtml = `<table id="${tableId}" border="1" style="border-collapse: collapse; margin-left: auto; margin-right: auto;">`;
       let i = 1;
@@ -166,7 +167,7 @@ export default {
 
     getDetailContentsImage() {
       let content = window.tinymce.editors[0].getContent();
-      const regex = /<div id="editor_optin_table">[\s\S]*?<\/div>/g;
+      const regex = /<div id="editor_option_table">[\s\S]*?<\/div>/g;
       content = content.replace(regex, "");
       if (content === undefined || content.length === 0) {
         alert("이미지가 없습니다");
