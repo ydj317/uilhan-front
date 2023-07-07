@@ -1,128 +1,122 @@
 <template>
-  <div v-if="product.relaket_visivle" class="plrb20 bg-white">
+  <div v-if="product.relaket_visivle" class="plrb20 bg-white" style="margin-top: -1px;">
     <!--title-->
     <div>
       <span hidden><strong>릴라켓 연동</strong></span>
       <a-switch hidden @change="syncSwitchChange" v-model:checked="isSync"/>
     </div>
     <div v-if="isSync === true">
-      <p>카테고리</p>
-      <a-form-item class="mb15">
-        <a-cascader
-            v-model:value="formState.category"
-            :options="formState.options"
-            :load-data="loadData"
-            placeholder="카테고리를 선택해 주세요."
-            change-on-select
-            dropdownClassName="categorySelect"
-            @change="onCategoryChange"
 
-        />
-      </a-form-item>
+      <div class="detail-basic">
+        <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}" >
+          <a-descriptions-item label="카테고리">
+            <a-form-item>
+              <a-cascader
+                v-model:value="formState.category"
+                :options="formState.options"
+                :load-data="loadData"
+                placeholder="카테고리를 선택해 주세요."
+                change-on-select
+                dropdownClassName="categorySelect"
+                @change="onCategoryChange"
 
-      <p>카테고리 검색</p>
-      <a-form-item class="mb15">
-        <a-alert
-            show-icon
-            v-if="recommendCategory.bAlertShow"
-            :type="recommendCategory.sAlertType"
-            :message="recommendCategory.sAlertMessage"
-            :closable="recommendCategory.bAlertClosable"
-            :afterClose="recommendCategory.mAlertAfterClose"
-        />
-        <a-select
-            v-if="!recommendCategory.bAlertShow"
-            v-model:value="recommendCategory.aSearchValue"
-            mode="tags"
+              />
+            </a-form-item>
+          </a-descriptions-item>
 
-            :maxTagCount="1"
-            :showArrow="true"
-            :allowClear="true"
-            :defaultOpen="recommendCategory.bDefaultOpen"
-            :autoClearSearchValue="true"
-            :options="recommendCategory.aOptions"
-            :notFoundContent="'추천 카테고리가 존재하지 않습니다. 수동으로 입력해 주세요.'"
+          <a-descriptions-item label="카테고리 검색">
+            <a-form-item>
+              <a-alert
+                show-icon
+                v-if="recommendCategory.bAlertShow"
+                :type="recommendCategory.sAlertType"
+                :message="recommendCategory.sAlertMessage"
+                :closable="recommendCategory.bAlertClosable"
+                :afterClose="recommendCategory.mAlertAfterClose"
+              />
+              <a-select
+                v-if="!recommendCategory.bAlertShow"
+                v-model:value="recommendCategory.aSearchValue"
+                mode="tags"
 
-            :onFocus="recommendCategory.clickTheInputBox"
-            :onSearch="recommendCategory.clickTheInputBox"
-            :onChange="recommendCategory.selectListOptions"
-            :onSelect="recommendCategory.selectListOptions"
-            :onInputKeyDown="recommendCategory.enterKeywords"
-        >
-          <template v-if="cateLoading" #notFoundContent>
-            <a-spin size="small"/>
-          </template>
-        </a-select>
-      </a-form-item>
+                :maxTagCount="1"
+                :showArrow="true"
+                :allowClear="true"
+                :defaultOpen="recommendCategory.bDefaultOpen"
+                :autoClearSearchValue="true"
+                :options="recommendCategory.aOptions"
+                :notFoundContent="'추천 카테고리가 존재하지 않습니다. 수동으로 입력해 주세요.'"
 
-      <!--      <p>면세제품</p>-->
-      <!--      <a-form-item class="mb15">-->
-      <!--        <a-select v-model:value="formState.surtax" placeholder="please select your zone" class="w20">-->
-      <!--          <a-select-option value="Y">면세</a-select-option>-->
-      <!--          <a-select-option value="N">과세</a-select-option>-->
-      <!--        </a-select>-->
-      <!--      </a-form-item>-->
+                :onFocus="recommendCategory.clickTheInputBox"
+                :onSearch="recommendCategory.clickTheInputBox"
+                :onChange="recommendCategory.selectListOptions"
+                :onSelect="recommendCategory.selectListOptions"
+                :onInputKeyDown="recommendCategory.enterKeywords"
+              >
+                <template v-if="cateLoading" #notFoundContent>
+                  <a-spin size="small"/>
+                </template>
+              </a-select>
+            </a-form-item>
+          </a-descriptions-item>
 
-      <div>
-        <p>상품고시 / 통관유형</p>
-        <div class="row w40">
-          <a-form-item class="w100">
-            <a-select v-model:value="formState.mandatory_val" :options="formState.mandatory" placeholder="상품고시 선택해주세요.">
-            </a-select>
-          </a-form-item>
-          <a-form-item class="ml20 w100">
-            <a-select v-model:value="formState.surtax" placeholder="통관유형 선택해주세요.">
-              <a-select-option value="Y">면세</a-select-option>
-              <a-select-option value="N">과세</a-select-option>
-            </a-select>
-          </a-form-item>
-        </div>
+          <a-descriptions-item label="상품고시 / 통관유형">
+            <div class="row w40">
+              <a-form-item class="w100">
+                <a-select v-model:value="formState.mandatory_val" :options="formState.mandatory" placeholder="상품고시 선택해주세요.">
+                </a-select>
+              </a-form-item>
+              <a-form-item class="ml20 w100">
+                <a-select v-model:value="formState.surtax" placeholder="통관유형 선택해주세요.">
+                  <a-select-option value="Y">면세</a-select-option>
+                  <a-select-option value="N">과세</a-select-option>
+                </a-select>
+              </a-form-item>
+            </div>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="배송 정책">
+            <p>
+              <a-checkbox v-model:checked="formState.item_is_free_delivery">무료 배송</a-checkbox>
+            </p>
+            <a-form-item>
+              <a-select
+                v-if="formState.delivery_template_sea_list !== undefined && formState.delivery_template_sea_list.length > 0"
+                v-model:value="formState.delivery_template_sea_val" :options="formState.delivery_template_sea_list"
+                style="width: 150px; float: left;" @change="isSelected('sea')">
+              </a-select>
+              <a-select
+                v-if="formState.delivery_template_sky_list !== undefined && formState.delivery_template_sky_list.length > 0"
+                v-model:value="formState.delivery_template_sky_val" :options="formState.delivery_template_sky_list"
+                style="width: 150px; float: left; margin-left: 10px" @change="isSelected('sky')">
+              </a-select>
+              <a-select
+                v-if="formState.delivery_template_furniture_list !== undefined && formState.delivery_template_furniture_list.length > 0"
+                v-model:value="formState.delivery_template_furniture_val"
+                :options="formState.delivery_template_furniture_list" style="width: 150px; float: left; margin-left: 10px"
+                @change="isSelected('furniture')">
+              </a-select>
+              <a-select
+                v-if="formState.delivery_template_high_list !== undefined && formState.delivery_template_high_list.length > 0"
+                v-model:value="formState.delivery_template_high_val" :options="formState.delivery_template_high_list"
+                style="width: 150px; float: left; margin-left: 10px" @change="isSelected('high')">
+              </a-select>
+              <a-select
+                v-if="formState.delivery_template_other_list !== undefined && formState.delivery_template_other_list.length > 0"
+                v-model:value="formState.delivery_template_other_val" :options="formState.delivery_template_other_list"
+                style="width: 150px; float: left; margin-left: 10px" @change="isSelected('other')">
+              </a-select>
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item label="키워드">
+            <a-form-item>
+              <a-input v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요"/>
+            </a-form-item>
+          </a-descriptions-item>
+        </a-descriptions>
       </div>
 
-      <p>
-        <a-checkbox v-model:checked="formState.item_is_free_delivery">무료 배송</a-checkbox>
-      </p>
-      <p>배송 정책</p>
-      <a-form-item class="mb15">
-        <a-select
-            v-if="formState.delivery_template_sea_list !== undefined && formState.delivery_template_sea_list.length > 0"
-            v-model:value="formState.delivery_template_sea_val" :options="formState.delivery_template_sea_list"
-            style="width: 150px; float: left;" @change="isSelected('sea')">
-        </a-select>
-        <a-select
-            v-if="formState.delivery_template_sky_list !== undefined && formState.delivery_template_sky_list.length > 0"
-            v-model:value="formState.delivery_template_sky_val" :options="formState.delivery_template_sky_list"
-            style="width: 150px; float: left; margin-left: 10px" @change="isSelected('sky')">
-        </a-select>
-        <a-select
-            v-if="formState.delivery_template_furniture_list !== undefined && formState.delivery_template_furniture_list.length > 0"
-            v-model:value="formState.delivery_template_furniture_val"
-            :options="formState.delivery_template_furniture_list" style="width: 150px; float: left; margin-left: 10px"
-            @change="isSelected('furniture')">
-        </a-select>
-        <a-select
-            v-if="formState.delivery_template_high_list !== undefined && formState.delivery_template_high_list.length > 0"
-            v-model:value="formState.delivery_template_high_val" :options="formState.delivery_template_high_list"
-            style="width: 150px; float: left; margin-left: 10px" @change="isSelected('high')">
-        </a-select>
-        <a-select
-            v-if="formState.delivery_template_other_list !== undefined && formState.delivery_template_other_list.length > 0"
-            v-model:value="formState.delivery_template_other_val" :options="formState.delivery_template_other_list"
-            style="width: 150px; float: left; margin-left: 10px" @change="isSelected('other')">
-        </a-select>
-      </a-form-item>
-
-      <!--      <a-form-item label="판매가" style="margin-left: 77px">-->
-      <!--        <a-input style="width: 400px" v-model:value="formState.listprice" placeholder="숫자만가능합니다"/>-->
-      <!--      </a-form-item>-->
-
-      <!--      <a-form-item label="할인가" style="margin-left: 77px">-->
-      <!--        <a-input style="width: 400px" v-model:value="formState.sellprice" placeholder="숫자만가능합니다"/>-->
-      <!--      </a-form-item>-->
-      <p>키워드</p>
-      <a-form-item class="mb15">
-        <a-input v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요"/>
-      </a-form-item>
     </div>
   </div>
 </template>
@@ -830,6 +824,14 @@ export default {
 </script>
 
 <style>
+.detail-basic .ant-descriptions-item-label {
+  width: 200px;
+}
+
+.detail-basic .ant-form-item {
+  margin-bottom: 0;
+}
+
 .categorySelect .ant-cascader-menus .ant-cascader-menu {
   height: 350px;
 }
