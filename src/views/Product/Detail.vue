@@ -69,24 +69,24 @@ import { lib } from "@/util/lib";
 import { mapState } from "vuex";
 import { useRoute } from "vue-router";
 import { AuthRequest } from "@/util/request";
-import { defineComponent, ref } from "vue";
+import {defineAsyncComponent, defineComponent, ref} from "vue";
 import router from "@/router";
 
-import Sku from "@/components/Detail/Sku";
-import NewSpec from "@/components/Detail/Spec/NewSpec";
 // import Spec from "@/components/Detail/Spec";
-import Relaket from "@/components/Detail/Relaket";
 import Loading from "vue-loading-overlay";
-import BasicInfo from "@/components/Detail/basicInfo";
-import Navigation from "@/components/Detail/nanigation";
-import CustomsInfo from "@/components/Detail/customsInfo";
-import ImageUpload from "@/components/Detail/ImageUpload";
-import Description from "@/components/Detail/description";
-import BottomBanner from "@/components/Detail/bottomBanner";
-import TextTranslate from "@/components/Detail/textTranslate";
-import SimpleDescription from "@/components/Detail/simpleDescription";
-import XiangJi from "@/components/Detail/xiangJi";
-import ImageEditorGroup from "@/components/ImageEditor/imageEditorGroup.vue";
+const Sku = defineAsyncComponent(() => import('@/components/Detail/Sku'))
+const NewSpec = defineAsyncComponent(() => import('@/components/Detail/Spec/NewSpec'))
+const Relaket = defineAsyncComponent(() => import('@/components/Detail/Relaket'))
+const BasicInfo = defineAsyncComponent(() => import('@/components/Detail/basicInfo'))
+const Navigation = defineAsyncComponent(() => import('@/components/Detail/nanigation'))
+const CustomsInfo = defineAsyncComponent(() => import('@/components/Detail/customsInfo'))
+const ImageUpload = defineAsyncComponent(() => import('@/components/Detail/ImageUpload'))
+const Description = defineAsyncComponent(() => import('@/components/Detail/description'))
+const BottomBanner = defineAsyncComponent(() => import('@/components/Detail/bottomBanner'))
+const TextTranslate = defineAsyncComponent(() => import('@/components/Detail/textTranslate'))
+const SimpleDescription = defineAsyncComponent(() => import('@/components/Detail/simpleDescription'))
+const XiangJi = defineAsyncComponent(() => import('@/components/Detail/xiangJi'))
+const ImageEditorGroup = defineAsyncComponent(() => import('@/components/ImageEditor/imageEditorGroup.vue'))
 
 export default defineComponent({
   name: "productDetail",

@@ -1,5 +1,5 @@
 <template>
-  <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true" />
+  <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
 
   <!--검색-->
   <a-card :bordered="false" title="상품관리" :style="{marginBottom:'20px'}">
@@ -16,33 +16,33 @@
 
       <!--검색기간-->
       <div>
-      <div class="inline-block mr17 mt10">
-        <h1>기간</h1>
-        <a-input-group compact>
-          <a-select v-model:value="date_type" style="width: 150px;">
-            <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
-          </a-select>
-          <a-range-picker
-            v-model:value="date"
-            :placeholder="['Start Time', 'End Time']"
-            format="YYYY-MM-DD"
-            @change="onChangeDatePicker" style="width: 300px;" />
-        </a-input-group>
-      </div>
+        <div class="inline-block mr17 mt10">
+          <h1>기간</h1>
+          <a-input-group compact>
+            <a-select v-model:value="date_type" style="width: 150px;">
+              <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
+            </a-select>
+            <a-range-picker
+                v-model:value="date"
+                :placeholder="['Start Time', 'End Time']"
+                format="YYYY-MM-DD"
+                @change="onChangeDatePicker" style="width: 300px;"/>
+          </a-input-group>
+        </div>
 
-      <!--검색입력창-->
-      <div class="inline-block mt10">
-        <h1>키워드</h1>
-        <a-input-group compact>
-          <a-select v-model:value="search_key" style="width: 150px;">
-            <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">
-              {{ config.label }}
-            </a-select-option>
-          </a-select>
-          <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;" />
-          <a-button @click="getList" type="primary">검색</a-button>
-        </a-input-group>
-      </div>
+        <!--검색입력창-->
+        <div class="inline-block mt10">
+          <h1>키워드</h1>
+          <a-input-group compact>
+            <a-select v-model:value="search_key" style="width: 150px;">
+              <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">
+                {{ config.label }}
+              </a-select-option>
+            </a-select>
+            <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;"/>
+            <a-button @click="getList" type="primary">검색</a-button>
+          </a-input-group>
+        </div>
       </div>
     </div>
   </a-card>
@@ -85,7 +85,7 @@
 
           <!--사진-->
           <template v-if="column.key === 'item_thumb'">
-            <a-image :src="record.item_thumb[0]" :fallback="tempImage" style="width: 50px; height: 50px;" />
+            <a-image :src="record.item_thumb[0]" :fallback="tempImage" style="width: 50px; height: 50px;"/>
           </template>
 
           <!--상품코드-->
@@ -112,7 +112,7 @@
                         <template #title>
                           <span>{{ market_info.market_account.split("::")[1] }}</span>
                         </template>
-                        <span class="item-market-icon" :class="market_info.status" @click="singlePop(record)">
+                        <span class="item-market-icon" :class="market_info.status" @click="openMarketPopup(market_info,record.item_code)">
                         <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
                         </span>
                       </a-tooltip>
@@ -173,10 +173,10 @@
     <!--제휴사 상품연동-->
     <a-modal width="1000px" title="제휴사 상품연동" v-model:visible="singleSyncPop" centered>
       <a-table
-        class="tableSyncStatus"
-        :dataSource="singleDetail.item_sync_market"
-        :columns="SYNC_COLUMNS_CONFIG"
-        :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
+          class="tableSyncStatus"
+          :dataSource="singleDetail.item_sync_market"
+          :columns="SYNC_COLUMNS_CONFIG"
+          :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
       >
 
         <!--table body-->
@@ -184,19 +184,20 @@
           <!--연동계정-->
           <template v-if="column.key === 'market_account'">
             <div style="text-align: left">
-            <img :src="getLogoSrc('market-logo', record.market_account.split('::')[0])"
-                 style="width: 16px; height: 16px; margin-right: 5px;" >
-            {{ record.market_account.split('::')[1] }}
+              <img :src="getLogoSrc('market-logo', record.market_account.split('::')[0])"
+                   style="width: 16px; height: 16px; margin-right: 5px;">
+              {{ record.market_account.split('::')[1] }}
             </div>
           </template>
 
           <!--상태-->
           <template v-if="column.key === 'status'">
-              <div style="text-align: left">
+            <div style="text-align: left">
               <a-tag color="success" v-if="record.status === 'success'">연동성공</a-tag>
               <a-tag color="processing" v-else-if="record.status === 'sending'">전송중</a-tag>
               <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
-              <a-tag color="default" v-else>연대기동</a-tag><span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
+              <a-tag color="default" v-else>연대기동</a-tag>
+              <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
             </div>
           </template>
 
@@ -240,14 +241,14 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
-import { AuthRequest } from "@/util/request";
+import {defineComponent, ref} from "vue";
+import {AuthRequest} from "@/util/request";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Cookie from "js-cookie";
 import MarketList from "components/List/MarketList";
-import { mapState } from "vuex";
+import {mapState} from "vuex";
 import {
   ClockCircleOutlined,
   CloseCircleOutlined,
@@ -255,7 +256,6 @@ import {
   LinkOutlined,
   DollarTwoTone
 } from "@ant-design/icons-vue";
-import { provide } from "vue";
 
 export default defineComponent({
   components: {
@@ -518,14 +518,14 @@ export default defineComponent({
 
     buttonStyle(item_sync_status) {
       return item_sync_status ?
-        "background-color: #3ddc97; border: none" :
-        "background-color: #f06543; border: none";
+          "background-color: #3ddc97; border: none" :
+          "background-color: #f06543; border: none";
     },
 
     getList(sType = "") {
       this.listLoading = true
       let param = this.getParam(sType);
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", {params: param}).then((res) => {
         if (res.status !== "2000") {
           alert(res.message);
         }
@@ -561,7 +561,7 @@ export default defineComponent({
           }
 
           selectedPrice = this.prdlist[i].item_sku.filter(item => item.is_option_reference_price === 'T')
-            .map(item => item.selling_price);
+              .map(item => item.selling_price);
 
           show_price = selectedPrice[0]
           if (show_price === undefined) {
@@ -573,19 +573,19 @@ export default defineComponent({
             const userData = this.prdlist[i].user;
 
             selectedPrice = this.prdlist[i].item_sku.filter(item => item.is_option_reference_price === 'T')
-              .map(item =>
-                Number(item.shipping_fee_cn) + Number(item.original_price_cn)
-            );
+                .map(item =>
+                    Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+                );
 
             show_price = selectedPrice[0]
             if (show_price === undefined) {
               show_price = Math.min(...this.prdlist[i].item_sku.map(item =>
-                Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+                  Number(item.shipping_fee_cn) + Number(item.original_price_cn)
               ))
             }
 
             show_price = Math.ceil(Number(show_price * (1 + Number(userData.selling_margin_option) / 100) *
-              Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
+                Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
           }
           this.prdlist[i]["show_price"] = show_price.toLocaleString() + "원";
         }
@@ -613,8 +613,8 @@ export default defineComponent({
         }
 
         if (
-          items[i].label.indexOf("(") === -1 &&
-          items[i].label.indexOf("%") === -1
+            items[i].label.indexOf("(") === -1 &&
+            items[i].label.indexOf("%") === -1
         ) {
           labelAddInfo = " ( " + items[i].value + symble + " )";
         }
@@ -714,7 +714,7 @@ export default defineComponent({
         alert(notCatePrd + " 등 상품의 카테고리 정보가 없습니다.");
       }
 
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/sendmarket", { list: list }).then((res) => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/sendmarket", {list: list}).then((res) => {
         if (res.status !== "2000") {
           alert(res.message);
           this.indicator = false;
@@ -752,7 +752,7 @@ export default defineComponent({
         return false;
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", { params: { list: list } }).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", {params: {list: list}}).then((res) => {
         // if (res.status !== 200) {
         //   alert('삭제실패');
         //   return false;
@@ -775,10 +775,10 @@ export default defineComponent({
         this.indicator = true;
         param = this.getParam();
       } else {
-        param = { list: list };
+        param = {list: list};
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/exceldown", { params: param }).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/exceldown", {params: param}).then((res) => {
         this.indicator = false;
         if (res.status !== "2000") {
           alert(res.message);
@@ -816,7 +816,12 @@ export default defineComponent({
     },
 
     testmarket() {
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/getcategorylist").then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/category/sync", {
+        params: {
+          market_code: 'relaket',
+          cid: '019002001001000'
+        }
+      }).then((res) => {
 
       });
     },
@@ -867,7 +872,7 @@ export default defineComponent({
 
       try {
 
-        let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/sendmarket", { list: list });
+        let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/sendmarket", {list: list});
         if (res.status !== "2000") {
           alert(res.message);
           this.indicator = false;
@@ -887,7 +892,7 @@ export default defineComponent({
       }
 
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/syncmarket",
-        { params: { list: list, market: marketList, options: this.options } }).then((res) => {
+          {params: {list: list, market: marketList, options: this.options}}).then((res) => {
         if (res.status !== "2000") {
           alert(res.message);
         }
@@ -965,12 +970,45 @@ export default defineComponent({
 
       return list;
     },
+
+    openMarketPopup(marketInfo,pid) {
+      if(marketInfo.status !== "success"){
+        if(marketInfo.status === "unsync"){
+          return;
+        }
+        alert('연동준비중이거나 연동실패된 상품입니다.연동 완료후 시도해 주세요.');
+        return;
+      }
+
+      const ssiIx = this.getMarketSsiIx(marketInfo.market_account)
+
+      if(!ssiIx) return;
+
+      const request = {
+        ssi_ix: ssiIx,
+        site_id: marketInfo.market_account.split('::')[1],
+        pid: pid
+      }
+
+      const queryString = encodeURIComponent(new URLSearchParams(request).toString());
+      window.open('/product/marketPopup/'+ queryString, '_blank');
+    },
+    getMarketSsiIx(siteId){
+      let ssiIx = '';
+      this.options.forEach((item) => {
+        if(item.value === siteId) {
+          ssiIx = item.ssi_ix
+        }
+      })
+      return ssiIx
+    }
   },
 
-  mounted() {
+  beforeMount() {
     this.getList("reload");
     this.getMarketList();
-  }
+  },
+
 });
 </script>
 
@@ -1035,15 +1073,18 @@ export default defineComponent({
   width: 16px;
   height: 16px;
 }
+
 .unsync img {
   cursor: pointer;
   filter: grayscale(100%);
   opacity: 0.3;
 }
+
 .unsync:hover img {
   filter: grayscale(0%);
   opacity: 1;
 }
+
 .failed img, .success img, .sending img {
   cursor: pointer;
   filter: grayscale(0%);
