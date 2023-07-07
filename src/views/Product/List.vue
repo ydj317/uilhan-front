@@ -17,7 +17,7 @@
       <!--검색기간-->
       <div>
         <div class="inline-block mr17 mt10">
-          <h1>기간</h1>
+          <h1>검색기간</h1>
           <a-input-group compact>
             <a-select v-model:value="date_type" style="width: 150px;">
               <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
@@ -40,9 +40,17 @@
               </a-select-option>
             </a-select>
             <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;"/>
-            <a-button @click="getList" type="primary">검색</a-button>
           </a-input-group>
         </div>
+
+        <div class="mt25" style="text-align: center;">
+          <a-button @click="getList" style="width: 100px;" type="primary">
+            <SearchOutlined />
+            검색
+          </a-button>
+          <a-button class="ml10" @click="initSearchParam()" style="width: 100px;" type="">초기화</a-button>
+        </div>
+
       </div>
     </div>
   </a-card>
@@ -254,11 +262,12 @@ import {
   CloseCircleOutlined,
   CheckCircleOutlined,
   LinkOutlined,
-  DollarTwoTone
+  DollarTwoTone, SearchOutlined
 } from "@ant-design/icons-vue";
 
 export default defineComponent({
   components: {
+    SearchOutlined,
     DollarTwoTone,
     Loading,
     Cookie,
@@ -475,6 +484,15 @@ export default defineComponent({
   },
 
   methods: {
+    initSearchParam() {
+      this.market_code = "all"
+      this.sync_status = "all"
+      this.date_type = "insert_date"
+      this.date = []
+      this.search_key = "item_code"
+      this.search_value = ""
+    },
+
     onPrdSelectChange(prdSelectedRowKeys) {
       this.prdSelectedRowKeys = prdSelectedRowKeys;
 
