@@ -56,7 +56,6 @@
             <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">{{ item.name.length }}</span> / 25</span>
             <div class="spec-option-name-button">
               <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large" class="spec-set-option-name-button"><MinusOutlined /></a-button>
-              <a-button @click="addSpecOptionName(optionIndex)" v-if="option.data.length === (index + 1)" class="spec-set-option-name-button" type="link" size="large"><PlusOutlined /></a-button>
             </div>
           </div>
         </td>

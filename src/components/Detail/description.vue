@@ -138,14 +138,14 @@ export default {
           optionHtml += '<tr>';
         }
         let imgHtml = item.img === null || item.img === "" ? `<div style="height:100px;width:100px;"></div>` : `<img style="height:100px;width:100px;" src="${item.img}">`;
-        optionHtml += `<td style="height:100px;width:100px;">${imgHtml}</td>`;
-        optionHtml += `<td>${item.spec}</td>`;
+        optionHtml += `<td style="min-height:100px;min-width:100px;">${imgHtml}</td>`;
+        optionHtml += `<td style="min-height:100px;min-width:150px; text-align: center;">${item.spec}</td>`;
         //1줄 이상의 데이타일 경우 부족한 td 추가해줌
         if (i === skuLength) {
           if (skuLength > columnCount && skuLength % columnCount !== 0) {
             for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
-              optionHtml += `<td><div style="height:100px;width:100px;"></div></td>`;
-              optionHtml += `<td></td>`;
+              optionHtml += `<td style="min-height:100px;min-width:100px;"></td>`;
+              optionHtml += `<td style="min-height:100px;min-width:150px;"></td>`;
             }
           }
         }

@@ -168,7 +168,10 @@ export default {
             shipping_fee_ko: 0,
             wholesale_price: 0,
             disp_price: 0,
+            custom_disp_price: 0,
             selling_price: 0,
+            custom_selling_price: 0,
+            expected_return: 0,
             key: ((1 + Math.random()) * 0x10000) | 0,
           });
         }
