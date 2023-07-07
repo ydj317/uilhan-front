@@ -4,13 +4,17 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" :title="'연동정보'">
+  <a-card :loading="cartLoading" :bordered="false" :title="'사용자 정보 수정'">
 
     <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">
 
       <a-form-item label="아이디">
         {{ formState.username }}
+      </a-form-item>
+
+      <a-form-item label="비밀번호" name="password" has-feedback>
+        <a-input-password v-model:value="formState.password" type="password" placeholder="비밀번호 입력해주시오" />
       </a-form-item>
 
       <a-form-item label="사용자명/사업자명" name="name" has-feedback>
@@ -115,6 +119,7 @@ const cartLoading = ref(true);
 
 const formState = reactive({
   username: "",
+  password: "",
   //[필수] 사용자명/사업자명
   name: "",
   //[필수] 이메일
@@ -341,7 +346,7 @@ const rulesRef = reactive({
 
 const onFinish = () => {
   let user = {
-    username: formState.username,
+    password: formState.password,
     name: formState.name,
     email: formState.email,
     phone: formState.phone1 + "-" + formState.phone2 + "-" + formState.phone3,
@@ -353,7 +358,7 @@ const onFinish = () => {
   };
 
   indicator.value = true;
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userDetail", user).then((res) => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
     if (res.status !== '2000') {
       alert(res.message)
       indicator.value = false;

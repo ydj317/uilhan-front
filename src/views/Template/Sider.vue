@@ -72,7 +72,7 @@
           <span>설정</span>
         </template>
         <a-menu-item key="054">
-          <router-link to="/user/detail"><span>연동정보</span></router-link>
+          <router-link to="/user/updateDetail"><span>사용자 정보 수정</span></router-link>
         </a-menu-item>
         <a-menu-item key="055">
           <router-link to="/user/password"><span>비밀번호 변경</span></router-link>
