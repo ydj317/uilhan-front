@@ -37,9 +37,10 @@ export function isLogin() {
 }
 
 export function cookieInit() {
-  Cookie.remove('token');
-  Cookie.remove('member_name');
-  Cookie.remove('member_roles');
+  // Cookie.remove('token');
+  // Cookie.remove('member_name');
+  // Cookie.remove('member_roles');
+  Cookie.removeAll();
 }
 
 export function getUserInfo() {
