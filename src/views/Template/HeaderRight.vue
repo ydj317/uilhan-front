@@ -141,7 +141,7 @@ export default {
           return false;
         }
 
-        let fileName = "relaket.zip";
+        let fileName = "WorldLinkExtension.zip";
         let blob = new Blob([response], { type: "charset=utf-8" });
         let downloadElement = document.createElement("a");
         let url = window.URL || window.webkitURL || window.moxURL;
