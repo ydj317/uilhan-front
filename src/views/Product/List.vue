@@ -1048,9 +1048,6 @@ export default defineComponent({
   display: inline-block;
   margin-right: 5px;
   margin-top: -3px;
-}
-
-#content-content .get-market-icon img {
   width: 16px;
   height: 16px;
 }

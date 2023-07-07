@@ -23,9 +23,15 @@
 
     <div class="mb12" v-else>
       <p>
-        <span>상품명칭</span>
-          (<span style="color: #6d737b;">{{ product.item_name }}</span>)
+        <span style="">상품명칭 </span>
+        <a-button type="dashed" :href="product.item_url" :target="'_blank'" style="margin-bottom">
+            <span class="get-market-icon">
+                <img :src="getLogoSrc('get-logo', product.item_market.toLowerCase())" alt="">
+            </span>
+          <span> {{ product.item_name }} ({{ product.item_code }})</span>
+        </a-button>
       </p>
+
       <a-spin :spinning="product.filter_word_validate_in_process === true">
         <a-input
           @focus="product.filter_word_status = false"
@@ -53,21 +59,21 @@
         </span>
     </div>
 
-    <div>
-      <p>수집마켓</p>
-      <div class="row w15">
-        <a-button type="primary" ghost
-          ><strong>코드: {{ product.item_code }}</strong></a-button
-        >
-        <a-button
-          class="ml5"
-          type="primary"
-          ghost
-          @click="openWindow(product.item_url)"
-          ><strong>상세페이지</strong></a-button
-        >
-      </div>
-    </div>
+<!--    <div>-->
+<!--      <p>수집마켓</p>-->
+<!--      <div class="row w15">-->
+<!--        <a-button type="primary" ghost-->
+<!--          ><strong>코드: {{ product.item_code }}</strong></a-button-->
+<!--        >-->
+<!--        <a-button-->
+<!--          class="ml5"-->
+<!--          type="primary"-->
+<!--          ghost-->
+<!--          @click="openWindow(product.item_url)"-->
+<!--          ><strong>상세페이지</strong></a-button-->
+<!--        >-->
+<!--      </div>-->
+<!--    </div>-->
 
     <!--    &lt;!&ndash;마켓 상품상세 바로가기 버튼&ndash;&gt;-->
     <!--    <div class="mt20">-->
@@ -126,10 +132,20 @@ export default {
           editor: false,
         },
       ],
+      tempImage: require('../../assets/img/temp_image.png'),
     };
   },
 
   methods: {
+
+    getLogoSrc(fileName, marketCode) {
+      try {
+        return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
+      } catch (error) {
+        return this.tempImage;
+      }
+    },
+
     openWindow: (sUrl) => open(sUrl),
 
     /**
@@ -218,4 +234,14 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+
+#eModelTitle_0 .get-market-icon img {
+  display: inline-block;
+  margin-right: 10px;
+  margin-top: -3px;
+  width: 16px;
+  height: 16px;
+}
+
+</style>
