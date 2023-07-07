@@ -176,7 +176,7 @@ export default {
       let imgReg = /<img.*?(?:>|\/>)/gi;
       let arr = content.match(imgReg);
 
-      if (arr === undefined || arr.length === 0) {
+      if (arr === undefined || arr === null || arr.length === 0) {
         alert("번역하실 이미지가 없습니다");
         return false;
       }
