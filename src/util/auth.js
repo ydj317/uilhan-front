@@ -40,7 +40,17 @@ export function cookieInit() {
   // Cookie.remove('token');
   // Cookie.remove('member_name');
   // Cookie.remove('member_roles');
-  Cookie.removeAll();
+
+  // 현재 도메인에 대한 모든 쿠키 가져오기
+  const cookies = document.cookie.split(";");
+
+// 각 쿠키를 순회하며 만료 날짜를 이전으로 설정하여 삭제
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+  }
 }
 
 export function getUserInfo() {
