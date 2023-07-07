@@ -107,6 +107,15 @@ export default defineComponent({
             return false;
           }
 
+
+        ChannelIO('boot', {
+          "pluginKey": "9af85962-c843-4429-8d99-8436956baa33",
+          "memberId": res.data.member_name,
+          "profile": {
+            "name": res.data.member_name
+          }
+        });
+
           // 아이디 저장하기
           tempSave();
 
