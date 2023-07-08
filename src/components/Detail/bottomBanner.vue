@@ -1,7 +1,7 @@
 <template>
   <div class="currentDiv">
-    <a-affix :offset-bottom="10">
-      <div class="currentDiv">
+    <a-affix :offset-bottom="0">
+      <div class="currentDiv" style="background-color: white;padding: 10px;border-top: 1px solid #eeeeee;">
 <!--        <a-button type="primary" @click="textTranslateSwicth"-->
 <!--          >텍스트 번역</a-button-->
 <!--        >-->
