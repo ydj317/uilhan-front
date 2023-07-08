@@ -990,16 +990,16 @@ export default defineComponent({
     },
 
     openMarketPopup(marketInfo,pid) {
-      if(marketInfo.status !== "success"){
-        if(marketInfo.status === "unsync"){
-          return;
-        }
-        alert('연동준비중이거나 연동실패된 상품입니다.연동 완료후 시도해 주세요.');
-        return;
-      }
+      // if(marketInfo.status !== "success"){
+      //   if(marketInfo.status === "unsync"){
+      //     return;
+      //   }
+      //   alert('연동준비중이거나 연동실패된 상품입니다.연동 완료후 시도해 주세요.');
+      //   return;
+      // }
 
       const ssiIx = this.getMarketSsiIx(marketInfo.market_account)
-
+      pid = '124124'
       if(!ssiIx) return;
       if(!pid) return;
 

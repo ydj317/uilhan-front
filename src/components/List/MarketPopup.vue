@@ -10,8 +10,8 @@ const route = useRoute();
 const indicator = ref(true);
 const queryString = decodeURIComponent(route.params.query);
 const params = new URLSearchParams(queryString);
-const queryJson = Object.fromEntries(params);
-
+//const queryJson = Object.fromEntries(params);
+const queryJson = {'ssi_ix': 4599,'pid':'0011231851','site_id':'ncp_1nn2zx_01'}
 const marketUrls = {
   '11st': "https://www.11st.co.kr/products/",
   'storefarm': "https://smartstore.naver.com/",
@@ -54,13 +54,16 @@ const syncProduct = (queryJson) => {
     }
 
     const resData = res.data.data
+
     if(resData.total <= 0) alert('마켓상품이 존재하지 않습니다. 다시시도해 주세요.')
-    const prdDetail = resData.ProductInfo[0];
+    const prdDetail = resData.ProductInfo['item'];
     let url = '';
     if(prdDetail.site_code !== 'storefarm') {
       url = marketUrls[prdDetail.site_code] + queryJson.pid
     } else {
-      url = marketUrls[prdDetail.site_code] + prdDetail.site_id + '/products/' + queryJson.pid
+      alert('스마트스토어는 잠시 지원하지 않습니다.');
+      window.close();
+      //url = marketUrls[prdDetail.site_code] + prdDetail.site_id + '/products/' + queryJson.pid
     }
     window.location.href = url
 
