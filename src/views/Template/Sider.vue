@@ -28,8 +28,7 @@
 </template>
 
 <script setup>
-import {ref, reactive, onBeforeMount} from "vue";
-import Cookie from "js-cookie";
+import {ref, reactive, onBeforeMount, computed} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
 import { setFilterRouteList } from "@/router/index"
@@ -38,7 +37,6 @@ import SubMenu from "@/views/Template/SubMenu.vue";
 const router = useRouter()
 const route = useRoute()
 
-const isAdmin = ref(false);
 const state = reactive({
   menuList: [],
   rootSubmenuKeys: ['/board', '/setting', '/user'],
@@ -55,16 +53,17 @@ const onOpenChange = (openKeys) => {
     state.openKeys = latestOpenKey ? [latestOpenKey] : [];
   }
 };
-
-onBeforeMount(() => {
-  state.menuList = setFilterRouteList()
-  const roles = Cookie.get("member_roles");
-  if (roles.indexOf("ROLE_ADMIN") > -1) {
-    isAdmin.value = true;
+const tmp = computed(() => {
+  const {meta,path} = route
+  if (meta.active) {
+    return meta.active
   }
-
+  return path
+})
+state.selectedKeys = [tmp.value];
+onBeforeMount(() => {
+  state.menuList = setFilterRouteList()[0].children
   state.openKeys = ['/'+route.path.split('/').filter(Boolean)[0]]
-  state.selectedKeys = [route.path]
 });
 
 </script>

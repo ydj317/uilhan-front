@@ -4,17 +4,28 @@ import "nprogress/nprogress.css";
 import findLast from "lodash/findLast";
 import {cookieInit, isLogin} from "util/auth";
 import Cookie from "js-cookie";
-import {menus, notFoundAndNoPower, staticRoutes} from "@/router/menu";
+import {menus, notFoundAndNoPower, staticRoutes} from "@/router/route";
 
-
+const menuList = setFilterRouteList();
+console.log(menuList);
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes:[...menus,...notFoundAndNoPower,...staticRoutes]
+    history: createWebHistory(process.env.BASE_URL),
+    routes: [...menuList,...notFoundAndNoPower,...staticRoutes]
 });
 
 export function setFilterRouteList() {
-  let userInfosRoles = Cookie.get('member_roles').split(',');
-  return setFilterHasRolesMenu(menus[0].children, userInfosRoles);
+    let userInfosRoles = Cookie.get('member_roles').split(',');
+    const FilterRoutes = setFilterHasRolesMenu(menus[0].children, userInfosRoles);
+    const defaultRoutes = [{
+        path: "/",
+        name: "main",
+        meta: {roles: ["ROLE_USER"],},
+        component: () => import("@/views/Template/Layout"),
+        redirect: "/main",
+        children: []
+    }]
+    defaultRoutes[0].children = [...FilterRoutes]
+    return defaultRoutes
 }
 
 /**
@@ -24,8 +35,8 @@ export function setFilterRouteList() {
  * @returns boolean
  */
 export function hasRoles(roles, route) {
-  if (route.meta && route.meta.roles) return roles.some((role) => route.meta.roles.includes(role));
-  else return true;
+    if (route.meta && route.meta.roles) return roles.some((role) => route.meta.roles.includes(role));
+    else return true;
 }
 
 /**
@@ -35,60 +46,44 @@ export function hasRoles(roles, route) {
  * @returns 返回有权限的路由数组 `meta.roles` 中控制
  */
 export function setFilterHasRolesMenu(routes, roles) {
-  const menu = [];
-  routes.forEach((route) => {
-    const item = { ...route };
-    if (hasRoles(roles, item)) {
-      if (item.children) item.children = setFilterHasRolesMenu(item.children, roles);
-      menu.push(item);
-    }
-  });
-  return menu;
+    const menu = [];
+    routes.forEach((route) => {
+        const item = {...route};
+        if (hasRoles(roles, item)) {
+            if (item.children) item.children = setFilterHasRolesMenu(item.children, roles);
+            menu.push(item);
+        }
+    });
+    return menu;
 }
 
 router.beforeEach((to, form, next) => {
-  nProgress.start();
-  let status = isLogin();
-  if (to.path === '/user/login' && status === true) {
-    next({ path: "/main" });
-    return false;
-  }
-
-  const record = findLast(to.matched, (record) => record.meta.roles);
-
-  if (record) {
-    if (status === false) {
-      cookieInit();
-      next({ path: "/user/login" });
-      return false;
+    nProgress.start();
+    let status = isLogin();
+    if (to.path === '/user/login' && status === true) {
+        next({path: "/main"});
+        return false;
     }
 
-    let roles = Cookie.get('member_roles').split(',');
-    if (Array.isArray(roles) === false || roles.length === 0) {
-      alert('사용자 권한부여에 실패하였습니다. 시스템 관리자와 문의하시길 바랍니다.');
-      cookieInit();
-      next({ path: "/user/login" });
-      return false;
+    const record = findLast(to.matched, (record) => record.meta.roles);
+
+    if (record) {
+        if (status === false) {
+            cookieInit();
+            next({ path: "/user/login" });
+            return false;
+        }
+
+        nProgress.done();
     }
 
-    let authority = roles.filter(role => record.meta.roles[0] === role);
-    if (authority.length === 0) {
-      alert('해당페이지에 접근하실 권한이 없습니다.');
-      cookieInit();
-      next({ path: "/user/login" });
-      return false;
-    }
+    next()
 
-    nProgress.done();
-  }
-
-  //initFrontEndControlRoutes();
-  next();
 });
 
 
 router.afterEach(() => {
-  nProgress.done();
+    nProgress.done();
 });
 
 export default router;
