@@ -3,36 +3,36 @@
     <h1><strong>기본정보</strong></h1>
 
     <div class="detail-basic">
-    <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}" >
-      <a-descriptions-item label="상품명칭" v-if="product.item_is_trans === false">
-        <a-input v-model:value="product.item_name" :placeholder="`상품명칭을 입력하세요.`" />
-      </a-descriptions-item>
-      <a-descriptions-item label="상품명칭" v-else>
-        <a-button type="dashed" :href="product.item_url" :target="'_blank'" style="margin-bottom: 10px;">
+      <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}" >
+        <a-descriptions-item label="상품명칭" v-if="product.item_is_trans === false">
+          <a-input v-model:value="product.item_name" :placeholder="`상품명칭을 입력하세요.`" />
+        </a-descriptions-item>
+        <a-descriptions-item label="상품명칭" v-else>
+          <a-button type="dashed" :href="product.item_url" :target="'_blank'" style="margin-bottom: 10px;">
           <span class="get-market-icon">
               <img :src="getLogoSrc('get-logo', product.item_market.toLowerCase())" alt="">
           </span>
-          {{ product.item_name }}
-        </a-button>
-        <a-spin :spinning="product.filter_word_validate_in_process === true">
-          <a-input
-            @focus="product.filter_word_status = false"
-            @blur="validateFilterWord(product.item_trans_name)"
-            v-model:value="product.item_trans_name"
-            :maxlength="max_name_length"
-            :showCount="true"
-            :placeholder="`상품명칭을 입력하세요.`"
-          />
-        </a-spin>
-      </a-descriptions-item>
-      <a-descriptions-item label="금지어">
-        <a-tag color="warning" v-if="is_filter_word_list === false">금지어 없음</a-tag >
-        <a-tag v-else v-for="(filter_words, i) in product.filter_word_list"
-               @click="deleteFilterWord(filter_words)" color="error" :key="i">
-          {{ filter_words }}
-        </a-tag >
-      </a-descriptions-item>
-    </a-descriptions>
+            {{ product.item_name }}
+          </a-button>
+          <a-spin :spinning="product.filter_word_validate_in_process === true">
+            <a-input
+              @focus="product.filter_word_status = false"
+              @blur="validateFilterWord(product.item_trans_name)"
+              v-model:value="product.item_trans_name"
+              :maxlength="max_name_length"
+              :showCount="true"
+              :placeholder="`상품명칭을 입력하세요.`"
+            />
+          </a-spin>
+        </a-descriptions-item>
+        <a-descriptions-item label="금지어">
+          <a-tag color="warning" v-if="is_filter_word_list === false">금지어 없음</a-tag >
+          <a-tag v-else v-for="(filter_words, i) in product.filter_word_list"
+                 @click="deleteFilterWord(filter_words)" color="error" :key="i">
+            {{ filter_words }}
+          </a-tag >
+        </a-descriptions-item>
+      </a-descriptions>
 
     </div>
   </div>
