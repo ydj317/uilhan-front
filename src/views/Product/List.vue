@@ -112,7 +112,7 @@
                         <template #title>
                           <span>{{ market_info.market_account.split("::")[1] }}</span>
                         </template>
-                        <span class="item-market-icon" :class="market_info.status" @click="openMarketPopup(market_info,record.item_code)">
+                        <span class="item-market-icon" :class="market_info.status" @click="openMarketPopup(market_info,record.item_sync_code)">
                         <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
                         </span>
                       </a-tooltip>
@@ -983,6 +983,7 @@ export default defineComponent({
       const ssiIx = this.getMarketSsiIx(marketInfo.market_account)
 
       if(!ssiIx) return;
+      if(!pid) return;
 
       const request = {
         ssi_ix: ssiIx,
