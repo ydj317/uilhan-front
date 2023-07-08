@@ -399,8 +399,9 @@ export default {
       aCheckedImage.map((data) => {
         aCheckedImageUrl.push(data.original_url);
       });
-
-      let sDetailContents = window.tinymce.editors[0].getContent();
+      let content = window.tinymce.editors[0].getContent();
+      const regex = /<div id="editor_optin_table">[\s\S]*?<\/div>/g;
+      let sDetailContents = content.replace(regex, "");
       let imgReg = /<img.*?(?:>|\/>)/gi;
       let aDetailHtml = sDetailContents.match(imgReg);
 

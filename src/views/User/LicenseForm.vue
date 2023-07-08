@@ -7,7 +7,7 @@
   <a-card :loading="cartLoading" :bordered="false" :title="'서비스 ' + (route.params.id ? '수정' : '등록')">
     <a-form :model="formState" name="license_form" @finish="onFinish"
             @finishFailed="onFinishFailed" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
-            class="delivery_form">
+            class="license_form">
 
       <a-form-item label="서비스명" name="name"
                    :rules="[{ required: true, message: '서비스명을 입력해 주세요.' }]">
@@ -114,11 +114,11 @@ onMounted(() => {
 </script>
 
 <style>
-.delivery_form .ant-form-item {
+.license_form .ant-form-item {
   margin-bottom: 0;
 }
 
-.delivery_form .ant-form-item-label {
+.license_form .ant-form-item-label {
   border: 1px solid #eeeeee;
   background-color: #fafafa;
   width: 170px;
@@ -126,14 +126,14 @@ onMounted(() => {
   margin-bottom: -1px;
 }
 
-.delivery_form .ant-form-item-control {
+.license_form .ant-form-item-control {
   border: 1px solid #eeeeee;
   padding: 10px;
   margin-left: -1px;
   margin-bottom: -1px;
 }
 
-.delivery_form .ant-form-item-control:nth-last-child {
+.license_form .ant-form-item-control:nth-last-child {
   border-bottom: 1px solid #eeeeee;
 }
 </style>

@@ -62,10 +62,6 @@ const table_columns = computed(() => {
       dataIndex: "template_name"
     },
     {
-      title: "타입",
-      key: "type"
-    },
-    {
       title: "배송비",
       key: "price"
     },
@@ -119,19 +115,9 @@ onBeforeMount(() => {
 
     <a-table :columns="table_columns" :data-source="datasource" :row-selection="rowSelection" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
-        <!-- 유형 -->
-        <template v-if="column.key === 'type'">
-          <template v-if="record.delivery_policy === '1'">뮤료배송</template>
-          <template v-if="record.delivery_policy === '2'">고정배송</template>
-          <template v-if="record.delivery_policy === '6'">1개당 배송비</template>
-        </template>
-
         <!-- 가격 -->
         <template v-if="column.key === 'price'">
-          <template v-if="record.delivery_policy === '1'">0</template>
-          <template v-if="record.delivery_policy === '2'">{{ record.delivery_price }}</template>
-          <template v-if="record.delivery_policy === '6'">{{ record.delivery_unit_price }}</template>
-          원
+          {{ record.delivery_price }} 원
         </template>
 
         <!-- 수정 -->

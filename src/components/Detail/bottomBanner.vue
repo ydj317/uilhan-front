@@ -1,7 +1,7 @@
 <template>
   <div class="currentDiv">
-    <a-affix :offset-bottom="10">
-      <div class="currentDiv">
+    <a-affix :offset-bottom="0">
+      <div class="currentDiv" style="background-color: white;padding: 10px;border-top: 1px solid #eeeeee;">
 <!--        <a-button type="primary" @click="textTranslateSwicth"-->
 <!--          >텍스트 번역</a-button-->
 <!--        >-->
@@ -159,9 +159,8 @@ export default {
       }
 
       let cate = this.product.formState.last_cate;
-
       if (cate === undefined || cate === null || cate.length === 0) {
-        alert("카테고리를 선택해주세요");
+        alert("최하위 카테고리까지 선택해주세요");
         return false;
       }
 
