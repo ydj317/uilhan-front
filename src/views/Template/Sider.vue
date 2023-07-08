@@ -6,7 +6,7 @@
             theme="dark"
             @openChange="onOpenChange"
     >
-      <template v-for="(menu, index) in menus[0].children" :key="index">
+      <template v-for="(menu, index) in state.menuList" :key="index">
         <template v-if="!menu.children && !menu.meta.isHide">
           <a-menu-item :key="menu.path">
             <template #icon>
@@ -28,11 +28,11 @@
 </template>
 
 <script setup>
-import {ref, reactive, onBeforeMount, computed} from "vue";
+import {ref, reactive, onBeforeMount} from "vue";
 import Cookie from "js-cookie";
 import {useRoute, useRouter} from "vue-router";
 
-import { menus } from "@/router/menu";
+import { setFilterRouteList } from "@/router/index"
 import SubMenu from "@/views/Template/SubMenu.vue";
 
 const router = useRouter()
@@ -40,6 +40,7 @@ const route = useRoute()
 
 const isAdmin = ref(false);
 const state = reactive({
+  menuList: [],
   rootSubmenuKeys: ['/board', '/setting', '/user'],
   selectedKeys: ['/main'],
   openKeys: [],
@@ -56,6 +57,7 @@ const onOpenChange = (openKeys) => {
 };
 
 onBeforeMount(() => {
+  state.menuList = setFilterRouteList()
   const roles = Cookie.get("member_roles");
   if (roles.indexOf("ROLE_ADMIN") > -1) {
     isAdmin.value = true;

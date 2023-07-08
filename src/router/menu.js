@@ -15,8 +15,8 @@ import {
 
 export const menus = [{
     path: "/",
-    name: "/",
-    meta: {authority: ["ROLE_USER"]},
+    name: "main",
+    meta: {roles: ["ROLE_USER"],},
     component: () => import("@/views/Template/Layout"),
     redirect: "/main",
     children: [
@@ -27,7 +27,7 @@ export const menus = [{
             meta: {
                 title: "메인",
                 isHide: false,
-                roles: ["ROLE_ADMIN"],
+                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
                 icon: DashboardOutlined
             }
         },
@@ -38,7 +38,7 @@ export const menus = [{
             meta: {
                 title: "상품관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN"],
+                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
                 icon: GiftOutlined
             },
         },
@@ -49,8 +49,19 @@ export const menus = [{
             meta: {
                 title: "상품상세",
                 isHide: true,
-                roles: ["ROLE_ADMIN"],
+                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
                 icon: PayCircleOutlined
+            },
+        },
+        {
+            path: "/product/preview/:id",
+            name: "prd_preview",
+            component: () => import("@/views/Product/Preview"),
+            meta: {
+                title: "상품이미지",
+                isHide: true,
+                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                icon: ''
             },
         },
         {
@@ -82,7 +93,7 @@ export const menus = [{
             meta: {
                 title: "게시판관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN"],
+                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
                 icon: ProfileOutlined
             },
             "children": [
@@ -95,7 +106,29 @@ export const menus = [{
                         isHide: false,
                         roles: ["ROLE_ADMIN"],
                         icon: '',
-                    }
+                    },
+                },
+                {
+                    path: "/board/form/:id?",
+                    name: "board_form",
+                    component: () => import("@/views/Board/Form.vue"),
+                    meta: {
+                        title: "게시글 추가/수정",
+                        isHide: true,
+                        roles: ["ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+                {
+                    path: "/board/view/:id?",
+                    name: "board_view",
+                    component: () => import("@/views/Board/View.vue"),
+                    meta: {
+                        title: "게시글 보기",
+                        isHide: true,
+                        roles: ["ROLE_ADMIN"],
+                        icon: '',
+                    },
                 },
                 {
                     path: "/board/notice",
@@ -104,9 +137,20 @@ export const menus = [{
                     meta: {
                         title: "공지사항",
                         isHide: false,
-                        roles: ["ROLE_ADMIN"],
+                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
                         icon: '',
-                    }
+                    },
+                },
+                {
+                    path: "/board/notice/view/:id?",
+                    name: "board_notice_view",
+                    component: () => import("@/views/Board/NoticeView.vue"),
+                    meta: {
+                        title: "공지사항 - 보기",
+                        isHide: true,
+                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        icon: '',
+                    },
                 },
                 {
                     path: "/board/question",
@@ -115,9 +159,31 @@ export const menus = [{
                     meta: {
                         title: "1:1 문의",
                         isHide: false,
-                        roles: ["ROLE_ADMIN"],
+                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
                         icon: '',
-                    }
+                    },
+                },
+                {
+                    path: "/board/question/form/:id?",
+                    name: "board_question_form",
+                    component: () => import("@/views/Board/QuestionForm.vue"),
+                    meta: {
+                        title: "1:1 문의 수정/삭제",
+                        isHide: true,
+                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        icon: '',
+                    },
+                },
+                {
+                    path: "/board/question/view/:id?",
+                    name: "board_question_view",
+                    component: () => import("@/views/Board/QuestionView.vue"),
+                    meta: {
+                        title: "1:1 문의 보기",
+                        isHide: true,
+                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        icon: '',
+                    },
                 },
             ]
         },
@@ -160,7 +226,18 @@ export const menus = [{
                     meta: {
                         title: "배송정책",
                         isHide: false,
-                        roles: ["ROLE_ADMIN"],
+                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        icon: '',
+                    }
+                },
+                {
+                    path: "/setting/delivery/form/:id?",
+                    name: "setting_delivery_form",
+                    component: () => import("@/views/Setting/DeliveryForm.vue"),
+                    meta: {
+                        title: "배송정책 추가/수정",
+                        isHide: true,
+                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -183,7 +260,18 @@ export const menus = [{
                     meta: {
                         title: "서비스 관리",
                         isHide: false,
-                        roles: ["ROLE_ADMIN"],
+                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        icon: '',
+                    }
+                },
+                {
+                    path: "/user/licenseForm/:id?",
+                    name: "user_licenseForm",
+                    component: () => import("../views/User/LicenseForm"),
+                    meta: {
+                        title: "서비스 추가/수정",
+                        isHide: true,
+                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -194,7 +282,7 @@ export const menus = [{
                     meta: {
                         title: "서비스 결제",
                         isHide: false,
-                        roles: ["ROLE_ADMIN"],
+                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -205,7 +293,7 @@ export const menus = [{
                     meta: {
                         title: "서비스 이력",
                         isHide: false,
-                        roles: ["ROLE_ADMIN"],
+                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -216,7 +304,7 @@ export const menus = [{
                     meta: {
                         title: "이미지 번역 회수",
                         isHide: false,
-                        roles: ["ROLE_ADMIN"],
+                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -231,6 +319,17 @@ export const menus = [{
                 isHide: false,
                 roles: ["ROLE_ADMIN"],
                 icon: CloseCircleOutlined,
+            },
+        },
+        {
+            path: "/category",
+            name: "prd_market_sync_category",
+            component: () => import("@/components/List/SyncCategory.vue"),
+            meta: {
+                title: "카테고리 수집",
+                isHide: true,
+                roles: ["ROLE_ADMIN"],
+                icon: ''
             },
         },
         {
@@ -285,14 +384,12 @@ export const staticRoutes = [
     {
         path: "/user/login",
         name: "user_login",
-        /* webpackChunkName: 'user_register' */
-        component: () => import("views/User/Login"),
+        component: () => import("@/views/User/Login.vue"),
     },
     {
         path: "/user/register",
         name: "user_register",
-        /* webpackChunkName: 'user_register' */
-        component: () => import("views/User/Register"),
+        component: () => import("@/views/User/Register.vue"),
     },
 ];
 
@@ -306,8 +403,8 @@ export const notFoundAndNoPower = [
         name: 'notFound',
         component: () => import("views/Template/404"),
         meta: {
-            title: 'message.staticRoutes.notFound',
+            title: "404",
             isHide: true,
-        },
+        }
     }
 ];
