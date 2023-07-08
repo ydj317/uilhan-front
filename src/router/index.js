@@ -176,6 +176,13 @@ const routes = [
             /* webpackChunkName: 'user_register' */
             component: () => import("@/views/Board/QuestionView.vue"),
           },
+
+          {
+            path: "/category",
+            name: "prd_market_sync_category",
+            /* webpackChunkName: 'user_register' */
+            component: () => import("@/components/List/SyncCategory.vue"),
+          },
           // {
           //   path: "/user/register",
           //   name: "user_register",
@@ -210,12 +217,6 @@ const routes = [
     name: "prd_market_popup",
     /* webpackChunkName: 'user_register' */
     component: () => import("@/components/List/MarketPopup.vue"),
-  },
-  {
-    path: "/category",
-    name: "prd_market_sync_category",
-    /* webpackChunkName: 'user_register' */
-    component: () => import("@/components/List/SyncCategory.vue"),
   },
   // {
   //   path: "/product",

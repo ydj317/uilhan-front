@@ -1,6 +1,6 @@
 <template>
   <a-layout style="min-height: 1080px;">
-    <a-layout-sider v-model:collapsed="collapsed" collapsible breakpoint="lg" :trigger="null">
+    <a-layout-sider v-model:collapsed="collapsed" collapsible :trigger="null">
       <div class="logo" v-if="collapsed">
           <img src="@/assets/logo.png" style="height:35px;">
       </div>
