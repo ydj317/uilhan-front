@@ -26,8 +26,7 @@
         </a-spin>
       </a-descriptions-item>
       <a-descriptions-item label="금지어">
-        <a-tag color="warning" v-if="is_filter_word_list === false">금지어 없음</a-tag >
-        <a-tag v-else v-for="(filter_words, i) in product.filter_word_list"
+        <a-tag v-for="(filter_words, i) in product.filter_word_list"
                @click="deleteFilterWord(filter_words)" color="error" :key="i">
           {{ filter_words }}
         </a-tag >
@@ -87,7 +86,6 @@ export default {
         },
       ],
       tempImage: require('../../assets/img/temp_image.png'),
-      is_filter_word_list: false
     };
   },
 
@@ -159,7 +157,6 @@ export default {
 
           this.product.filter_word_status = false;
           this.product.filter_word_list = aFilterWords;
-          this.is_filter_word_list = true
         }
 
         this.product.filter_word_validate_in_process = false;
