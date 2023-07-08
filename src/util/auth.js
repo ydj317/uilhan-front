@@ -40,6 +40,7 @@ export function cookieInit() {
   Cookie.remove('token');
   Cookie.remove('member_name');
   Cookie.remove('member_roles');
+  Cookie.remove('ch-session');
 }
 
 export function getUserInfo() {
