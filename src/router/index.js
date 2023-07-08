@@ -51,6 +51,16 @@ const routes = [
             component: () => import("@/views/MarketSeller/List"),
           },
           {
+            path: "/user/updateDetail",
+            name: "user_updateDetail",
+            component: () => import("../views/User/UpdateDetail"),
+          },
+          {
+            path: "/user/password",
+            name: "user_password",
+            component: () => import("../views/User/Password"),
+          },
+          {
             path: "/user/Manage",
             name: "user_manager",
             /* webpackChunkName: 'user_manager' */
@@ -203,7 +213,7 @@ const routes = [
     path: "/user/login",
     name: "user_login",
     /* webpackChunkName: 'user_register' */
-    component: () => import("views/User/Login"),
+    component: () => import("@/views/User/Login.vue"),
   },
 
   {

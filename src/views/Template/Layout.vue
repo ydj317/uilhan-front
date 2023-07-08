@@ -1,12 +1,14 @@
 <template>
   <a-layout style="min-height: 1080px;">
     <a-layout-sider v-model:collapsed="collapsed" collapsible :trigger="null">
+      <router-link to="/main">
       <div class="logo" v-if="collapsed">
           <img src="@/assets/logo.png" style="height:35px;">
       </div>
       <div class="logo" v-if="!collapsed">
           <img src="@/assets/logo_width.png">
       </div>
+      </router-link>
       <Sider/>
     </a-layout-sider>
     <a-layout>

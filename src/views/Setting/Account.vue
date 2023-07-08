@@ -97,6 +97,7 @@ import {
 import { onMounted, reactive, ref } from "vue";
 import { useStore } from "vuex";
 import Cookie from "js-cookie";
+import router from "@/router";
 
 const store = useStore();
 const { product } = store.state;
@@ -117,10 +118,6 @@ const isLogInDetail = ref(false);
 const headers = ref({
   token: Cookie.get("token"),
   "Content-Type": "multipart/form-data"
-});
-
-const input_visible = reactive({
-  price_input_visible: false
 });
 
 const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
@@ -288,9 +285,6 @@ function onClickSyncDomeggookCategory() {
     }
   );
 }
-
-
-
 
 function getRecharge() {
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(

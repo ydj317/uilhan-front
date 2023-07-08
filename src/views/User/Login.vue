@@ -1,52 +1,54 @@
 <template>
   <loading v-model:active="loading" :can-cancel="false" :is-full-page="true" />
-    <div class="_container">
-      <div class="header">
-        <div class="icon">
-          <img src="../../assets/img/logo-light.png" alt="">
-        </div>
-<!--        <div class="tip">-->
-<!--          <h5>이용해주셔서 감사합니다!</h5>-->
-<!--        </div>-->
+  <div class="login-bg"></div>
+
+  <div class="_container">
+    <div class="header">
+      <div class="icon">
+        <img src="../../assets/img/logo-light.png" alt="">
       </div>
-      <div class="item">
-        <div>
-          <h5>로그인하기</h5>
-        </div>
-        <a-form class="item_form"
-            layout="inline"
-            :model="formState"
-            @finish="handleFinish"
-            @finishFailed="handleFinishFailed"
-        >
-          <a-form-item class="item_input">
-            <a-input v-model:value="formState.username" placeholder="User Name">
-  <!--            <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>-->
-            </a-input>
-          </a-form-item>
-          <a-form-item  class="item_input">
-            <a-input v-model:value="formState.password" type="password" placeholder="Password">
-            </a-input>
-          </a-form-item>
-          <a-form-item class="setting">
-            <a-checkbox v-model:checked="checked">저장하기</a-checkbox>
-  <!--          <a-button type="link"><LockOutlined />비밀번호 잊으셨나요?</a-button>-->
-          </a-form-item>
-          <a-form-item class="footer">
-            <a-button
-                type="primary"
-                html-type="submit"
-                :disabled="formState.user === '' || formState.password === ''"
-                class="loginButton"
-            >
-              로그인
-            </a-button>
-            <a href="/user/register"><UserOutlined /> 회원가입</a>
-          </a-form-item>
-        </a-form>
-      </div>
+      <!--        <div class="tip">-->
+      <!--          <h5>이용해주셔서 감사합니다!</h5>-->
+      <!--        </div>-->
     </div>
+    <div class="item">
+      <div class="item-text">
+        <h5>전세계를 하나로!</h5>
+        <h6>클릭 몇번으로 상품을 등록할 수 있는 플랫폼을 만들어가고 있습니다.</h6>
+      </div>
+      <a-form class="item_form"
+              layout="inline"
+              :model="formState"
+              @finish="handleFinish"
+              @finishFailed="handleFinishFailed"
+      >
+        <a-form-item class="item_input">
+          <a-input v-model:value="formState.username" placeholder="User Name">
+            <!--            <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>-->
+          </a-input>
+        </a-form-item>
+        <a-form-item  class="item_input">
+          <a-input v-model:value="formState.password" type="password" placeholder="Password">
+          </a-input>
+        </a-form-item>
+        <a-form-item class="setting">
+          <a-checkbox v-model:checked="checked">저장하기</a-checkbox>
+          <a-button type="link" @click="info"><LockOutlined />비밀번호 잊으셨나요?</a-button>
+        </a-form-item>
+        <a-form-item class="footer">
+          <a-button type="primary" html-type="submit" class="loginButton">
+            로그인
+          </a-button>
+        </a-form-item>
+        <a-form-item class="setting join">
+          <div><img width="22" height="14" src="../../assets/img/kor.png" alt=""> <img width="22" height="14" src="../../assets/img/chn.png" alt=""></div>
+          <a-button type="link"><a href="/user/register"><UserOutlined /> 회원가입</a></a-button>
+        </a-form-item>
+      </a-form>
+    </div>
+  </div>
 </template>
+
 <script>
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
@@ -56,6 +58,8 @@ import { defineComponent, reactive, onBeforeMount, ref } from 'vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import Cookie from "js-cookie";
 import { isLogin, cookieInit } from "util/auth";
+import { message } from 'ant-design-vue';
+
 export default defineComponent({
   components: {
     UserOutlined,
@@ -81,6 +85,11 @@ export default defineComponent({
     });
     let loading = ref(false);
     const handleFinish = () => {
+      if (formState.user === '' || formState.password === '') {
+        alert('아이디 또는 비밀번호을  입력해주시오');
+        return true
+      }
+
       let user = {
         username: formState.username,
         password: formState.password,
@@ -101,20 +110,29 @@ export default defineComponent({
           return false;
         }
 
-          if (res.data.member_roles === undefined) {
-            alert('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(role error)');
-            loading.value = false;
-            return false;
-          }
-
-          // 아이디 저장하기
-          tempSave();
-
-          Cookie.set('member_name', res.data.member_name);
-          Cookie.set('member_roles', res.data.member_roles);
-          router.push("/main");
+        if (res.data.member_roles === undefined) {
+          alert('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(role error)');
           loading.value = false;
           return false;
+        }
+
+
+        ChannelIO('boot', {
+          "pluginKey": "9af85962-c843-4429-8d99-8436956baa33",
+          "memberId": res.data.member_name,
+          "profile": {
+            "name": res.data.member_name
+          }
+        });
+
+        // 아이디 저장하기
+        tempSave();
+
+        Cookie.set('member_name', res.data.member_name);
+        Cookie.set('member_roles', res.data.member_roles);
+        router.push("/main");
+        loading.value = false;
+        return false;
       });
     };
 
@@ -140,7 +158,9 @@ export default defineComponent({
         localStorage.user_name = formState.username;
       }
     }
-
+    const info = () => {
+      message.info('비밀번호 찾기는 고객선터로 연결하시오');
+    };
     return {
       loading,
       checked,
@@ -148,7 +168,8 @@ export default defineComponent({
       formState,
       handleFinish,
       handleFinishFailed,
-      redirectRegister
+      redirectRegister,
+      info
     };
   },
 
@@ -167,6 +188,30 @@ export default defineComponent({
 ::-webkit-scrollbar {
   width: 0 !important;
 }
+.join .ant-form-item-control-input-content {
+  margin-top: 0 !important;
+}
+
+.login-bg {
+  position: fixed;
+  width: 100%;
+  height: 1500px;
+  overflow-y: hidden;
+  background: url(../../assets/img/bg8.jpg) no-repeat top center;
+  background-size: 100%;
+  filter: blur(0px);
+}
+
+.login-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+  z-index: -1;
+}
 
 ._container {
   display: flex;
@@ -177,8 +222,8 @@ export default defineComponent({
   position: fixed;
   overflow-y: hidden;
 
-  background-image: url(../../assets/img/bg-pattern.png);
-  background-color: #3051d3;
+  //background-image: url(../../assets/img/bg1.jpg);
+  //background-color: #3051d3;
 
   --uim-primary-opacity: 1;
   --uim-secondary-opacity: 0.70;
@@ -228,8 +273,7 @@ export default defineComponent({
 }
 
 .icon img {
-  width: 180px;
-  height: 40px;
+  width: 300px;
 }
 
 .tip {
@@ -248,19 +292,26 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: 5px;
+  border-radius: 30px;
 
   margin-top: 80px;
-  width: 451px;
-  height: 404px;
-  padding: 24px;
-  background-color: white;
+  width: 560px;
+  padding: 50px 0;
+  background-color: rgb(255,255,255,0.9);
 }
 
-.item h5 {
+.item .item-text {
+  text-align: center;
+}
+.item .item-text h5 {
   color: #495057;
   font-weight: 600;
-  font-size: 1.1375rem;
+  font-size: 1.4rem;
+  margin-top: 3px;
+}
+.item .item-text h6 {
+  color: #495057;
+  font-size: 1rem;
   margin-top: 3px;
 }
 
@@ -319,7 +370,6 @@ export default defineComponent({
 }
 .footer .ant-form-item-control-input-content button:first-child {
   height: 39px;
-  background-color: #33d690;
   border-radius: 5px;
   color: white;
   margin-bottom: 20px;
