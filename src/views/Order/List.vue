@@ -14,7 +14,7 @@
     <div class="inline-block mr17">
       <h1>주문번호</h1>
       <a-input-group compact>
-        <a-select v-model:value="searchParam.numberType">
+        <a-select v-model:value="searchParam.numberType" style="width: 180px;">
           <a-select-option value="oid">주문번호</a-select-option>
           <a-select-option value="od_ix">주문상세번호(상품별)</a-select-option>
           <a-select-option value="co_oid">마켓 주문번호</a-select-option>
@@ -27,7 +27,7 @@
     <div class="inline-block">
       <h1>주문자/수취인</h1>
       <a-input-group compact>
-        <a-select v-model:value="searchParam.nameType">
+        <a-select v-model:value="searchParam.nameType" style="width: 180px;">
           <a-select-option value="bname">주문자</a-select-option>
           <a-select-option value="rname">수취인</a-select-option>
         </a-select>
@@ -39,16 +39,16 @@
 
     <div class="inline-block mt20 mr17">
       <h1>주문상태</h1>
-      <a-select v-model:value="searchParam.status" mode="tags" placeholder="주문상태를 선택해주시오"
-                @change="handleStatusChange" style="width: 748px;">
+      <a-select ref="statusRef" v-model:value="searchParam.status" mode="tags" placeholder="주문상태를 선택해주시오"
+                @change="handleStatusChange" style="width: 657px;">
         <a-select-option v-for="option in statusOptions" :value="option.value">{{ option.label }}</a-select-option>
       </a-select>
     </div>
 
     <div class="inline-block mt20">
       <h1>판매채널</h1>
-      <a-select v-model:value="searchParam.orderFrom" mode="tags" placeholder="주문상태를 선택해주시오"
-                @change="handleOrderFromChange" style="width: 748px;">
+      <a-select  ref="orderFromRef" v-model:value="searchParam.orderFrom" mode="tags" placeholder="주문상태를 선택해주시오"
+                @change="handleOrderFromChange" style="width: 657px;">
         <a-select-option v-for="option in siteOptions" :value="option.value">
           <div v-if="option.value === 'all' || option.value === 'no-all'">
             {{ option.label }}
@@ -137,11 +137,14 @@ import { AuthRequest } from "@/util/request";
 import Cookie from "js-cookie";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
-import { FileAddOutlined, SearchOutlined, InsertRowAboveOutlined, DownloadOutlined } from "@ant-design/icons-vue";
+import { SearchOutlined, InsertRowAboveOutlined, DownloadOutlined } from "@ant-design/icons-vue";
 import _ from "lodash";
 import moment from "moment";
 
 let bLoading = ref(false);
+
+const statusRef = ref(null)
+const orderFromRef = ref(null)
 
 function handleStatusChange(value) {
   if (value.includes("all")) {
@@ -149,9 +152,11 @@ function handleStatusChange(value) {
       .filter(option => option.value !== "all")
       .map(option => option.value);
     statusOptions[0] = { label: "전체선택해제", value: "no-all" };
+    statusRef.value.blur();
   } else if (value.includes("no-all")) {
     searchParam.value.status = [];
     statusOptions[0] = { label: "전체선택", value: "all" };
+    statusRef.value.blur();
   } else {
     searchParam.value.status = value;
   }
@@ -163,9 +168,11 @@ function handleOrderFromChange(value) {
       .filter(option => option.value !== "all")
       .map(option => option.value);
     siteOptions[0] = { label: "전체선택해제", value: "no-all" };
+    orderFromRef.value.blur();
   } else if (value.includes("no-all")) {
     searchParam.value.orderFrom = [];
     siteOptions[0] = { label: "전체선택", value: "all" };
+    orderFromRef.value.blur();
   } else {
     searchParam.value.orderFrom = value;
   }
