@@ -59,7 +59,7 @@ const syncProduct = (queryJson) => {
     const prdDetail = resData.ProductInfo['item'];
 
     let url = '';
-    if(prdDetail.site_code === 'storefarm') {
+    if(prdDetail.site_code === 'storefarm' || prdDetail.site_code === 'tmon') {
       alert('스마트스토어는 잠시 지원하지 않습니다.');
       window.close();
       //url = marketUrls[prdDetail.site_code] + prdDetail.site_id + '/products/' + queryJson.pid

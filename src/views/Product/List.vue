@@ -999,7 +999,7 @@ export default defineComponent({
       }
 
       const ssiIx = this.getMarketSsiIx(marketInfo.market_account)
-      pid = '124124'
+
       if(!ssiIx) return;
       if(!pid) return;
 
