@@ -339,6 +339,11 @@ export default defineComponent({
     };
 
     const handleFinish = () => {
+      if (!checked.value) {
+        alert('회원가입 하시러면 회원약관 내용을 읽어보시고 약관 동의가 필요합니다.');
+        return false;
+      }
+
       let user = {
         username: formState.username,
         password: formState.password,
