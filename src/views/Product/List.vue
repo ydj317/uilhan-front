@@ -204,7 +204,7 @@
               <a-tag color="success" v-if="record.status === 'success'">연동성공</a-tag>
               <a-tag color="processing" v-else-if="record.status === 'sending'">전송중</a-tag>
               <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
-              <a-tag color="default" v-else>연대기동</a-tag>
+              <a-tag color="default" v-else>연동대기</a-tag>
               <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
             </div>
           </template>
@@ -990,13 +990,13 @@ export default defineComponent({
     },
 
     openMarketPopup(marketInfo,pid) {
-      // if(marketInfo.status !== "success"){
-      //   if(marketInfo.status === "unsync"){
-      //     return;
-      //   }
-      //   alert('연동준비중이거나 연동실패된 상품입니다.연동 완료후 시도해 주세요.');
-      //   return;
-      // }
+      if(marketInfo.status !== "success"){
+        if(marketInfo.status === "unsync"){
+          return;
+        }
+        alert('연동준비중이거나 연동실패된 상품입니다.연동 완료후 시도해 주세요.');
+        return;
+      }
 
       const ssiIx = this.getMarketSsiIx(marketInfo.market_account)
       pid = '124124'
