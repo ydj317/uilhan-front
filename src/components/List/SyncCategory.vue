@@ -5,6 +5,8 @@ import {onBeforeMount, ref} from "vue";
 const categorys = ref('');
 const options = ref([]);
 const loding = ref(false);
+const categoryID = ref('');
+
 const loadData = selectedOptions => {
   const targetOption = selectedOptions[selectedOptions.length - 1];
   let param = {
@@ -39,6 +41,11 @@ const getCategory = (param, type) => {
 };
 
 const getParentAll = (cid) => {
+  if (!cid) {
+    alert('카테고리ID를 입력해주세요.')
+    return;
+  }
+
   loding.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/category/sync", {
     params: {
@@ -49,6 +56,7 @@ const getParentAll = (cid) => {
     if (res.status !== '2000') {
       alert(res.message)
     }
+    alert(`[${cid}] 수집완료`)
     loding.value = false;
   });
 }
@@ -82,37 +90,42 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div style="padding: 20px;">
-    <a-card>
-      <a-cascader
-          v-model:value="categorys"
-          :options="options"
-          :load-data="loadData"
-          placeholder="카테고리를 선택해 주세요."
-          change-on-select
-          dropdownClassName="categorySelect"
-      />
-    </a-card>
-    <a-divider></a-divider>
-    <a-card>
-      <a-list item-layout="horizontal" :data-source="parentCateIds">
-        <template #renderItem="{ item }">
-          <a-list-item>
-            <a-list-item-meta
-                :description="item.cn_name"
-            >
-              <template #title>
-                {{ item.kor_name }}
-              </template>
-            </a-list-item-meta>
-            <template #actions>
-              <a-button @click="getParentAll(item.cid)" :loading="loding">수집</a-button>
+  <a-card title="카테고리 확인" :bordered="true" hoverable>
+    <div>{{ categorys }}</div>
+    <a-cascader
+        v-model:value="categorys"
+        :options="options"
+        :load-data="loadData"
+        placeholder="카테고리를 선택해 주세요."
+        change-on-select
+        dropdownClassName="categorySelect"
+        style="width: 100%"
+    />
+  </a-card>
+  <a-divider></a-divider>
+  <a-card title="카테고리 개별수집" :bordered="true" hoverable>
+    <a-input v-model:value="categoryID" placeholder="수집할 카테고리 입력" style="width: 200px;margin-right: 5px;"/>
+    <a-button @click="getParentAll(categoryID)" :loading="loding">수집</a-button>
+  </a-card>
+  <a-divider></a-divider>
+  <a-card title="카테고리 대분류수집" :bordered="true" hoverable>
+    <a-list item-layout="horizontal" :data-source="parentCateIds">
+      <template #renderItem="{ item }">
+        <a-list-item>
+          <a-list-item-meta
+              :description="item.cn_name"
+          >
+            <template #title>
+              {{ item.kor_name }}
             </template>
-          </a-list-item>
-        </template>
-      </a-list>
-    </a-card>
-  </div>
+          </a-list-item-meta>
+          <template #actions>
+            <a-button @click="getParentAll(item.cid)" :loading="loding">수집</a-button>
+          </template>
+        </a-list-item>
+      </template>
+    </a-list>
+  </a-card>
 </template>
 
 <style scoped>
