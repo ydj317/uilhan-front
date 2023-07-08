@@ -135,7 +135,7 @@
           <div class="center init-pmbo" style="align-items: flex-start !important;">
             <a-form-item name="tel1" class="w32 mr12" has-feedback>
               <a-input v-model:value="formState.tel1" placeholder="유선전화" :maxlength="3"
-                       @input="(event) => changeToInput(event, 2, tell2Input)" />
+                       @input="(event) => changeToInput(event, 3, tell2Input)" />
             </a-form-item>
             <a-form-item name="tel2" class="w32 mr12" has-feedback>
               <a-input v-model:value="formState.tel2" placeholder="유선전화" :maxlength="4"
