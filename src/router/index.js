@@ -7,7 +7,7 @@ import Cookie from "js-cookie";
 import {menus, notFoundAndNoPower, staticRoutes} from "@/router/route";
 
 const menuList = setFilterRouteList();
-console.log(menuList);
+
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes: [...menuList,...notFoundAndNoPower,...staticRoutes]
@@ -19,7 +19,7 @@ export function setFilterRouteList() {
     const defaultRoutes = [{
         path: "/",
         name: "main",
-        meta: {roles: ["ROLE_USER"],},
+        meta: {roles: ["ROLE_USER", "ROLE_ADMIN","ROLE_RELAKET"],},
         component: () => import("@/views/Template/Layout"),
         redirect: "/main",
         children: []
@@ -73,12 +73,10 @@ router.beforeEach((to, form, next) => {
             next({ path: "/user/login" });
             return false;
         }
-
         nProgress.done();
     }
 
     next()
-
 });
 
 
