@@ -118,7 +118,7 @@ export default {
         case "userinfo":
           break;
         case "setting":
-          router.push("/setting/account");
+          location.href = "/setting/account";
           break;
         case "logout":
           this.logout();

@@ -16,7 +16,7 @@ import {
 export const menus = [{
     path: "/",
     name: "main",
-    meta: {roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],},
+    meta: {roles: ["ROLE_USER"]},
     component: () => import("@/views/Template/Layout"),
     redirect: "/main",
     children: [
@@ -27,7 +27,7 @@ export const menus = [{
             meta: {
                 title: "메인",
                 isHide: false,
-                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                roles: ["ROLE_USER"],
                 icon: DashboardOutlined
             }
         },

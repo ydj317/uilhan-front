@@ -52,7 +52,7 @@
 <script>
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
-import router from "router/index.js";
+import router, {setFilterRouteList} from "router/index.js";
 import { LoginRequest } from 'util/request';
 import { defineComponent, reactive, onBeforeMount, ref } from 'vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
@@ -130,6 +130,8 @@ export default defineComponent({
 
         Cookie.set('member_name', res.data.member_name);
         Cookie.set('member_roles', res.data.member_roles);
+        const menuList = setFilterRouteList();
+        router.addRoute(menuList[0])
         router.push("/main");
         loading.value = false;
         return false;

@@ -10,24 +10,25 @@ const menuList = setFilterRouteList();
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
-    routes: [...menuList,...notFoundAndNoPower,...staticRoutes],
+    routes: [...menuList,notFoundAndNoPower,...staticRoutes],
     scrollBehavior (to, from, savedPosition) {
         return { top: 0}
     }
 });
 
 export function setFilterRouteList() {
-    let userInfosRoles = Cookie.get('member_roles').split(',');
+
+    let userInfosRoles = Cookie.get('member_roles') ? Cookie.get('member_roles').split(',') : [];
     const FilterRoutes = setFilterHasRolesMenu(menus[0].children, userInfosRoles);
     const defaultRoutes = [{
         path: "/",
         name: "main",
-        meta: {roles: ["ROLE_USER", "ROLE_ADMIN","ROLE_RELAKET"],},
+        meta: {roles: ["ROLE_USER"],},
         component: () => import("@/views/Template/Layout"),
         redirect: "/main",
         children: []
     }]
-    defaultRoutes[0].children = [...FilterRoutes]
+    defaultRoutes[0].children = [...FilterRoutes,...notFoundAndNoPower]
     return defaultRoutes
 }
 

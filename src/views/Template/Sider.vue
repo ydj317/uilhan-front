@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import {ref, reactive, onBeforeMount, computed} from "vue";
+import {ref, reactive, onBeforeMount, computed, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
 import { setFilterRouteList } from "@/router"
@@ -60,6 +60,7 @@ const selectActive = computed(() => {
   }
   return path
 })
+
 state.selectedKeys = [selectActive.value];
 onBeforeMount(() => {
   state.menuList = setFilterRouteList()[0].children
