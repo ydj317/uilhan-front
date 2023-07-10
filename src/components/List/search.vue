@@ -58,6 +58,7 @@
 import {mapState} from 'vuex';
 import {AuthRequest} from '../../util/request';
 import moment from 'moment';
+import { message } from "ant-design-vue";
 
 export default {
   computed: {
@@ -102,7 +103,7 @@ export default {
       let param = this.getParam();
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', {params: param}).then((res) => {
         if (res.status !== '2000') {
-          alert(res.message)
+          message.error(res.message);
         }
 
         this.prdlist = res.data.list;

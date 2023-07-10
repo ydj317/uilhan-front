@@ -3,6 +3,7 @@ import {defineAsyncComponent, onBeforeMount, reactive, ref, watchEffect} from "v
 
 import {AuthRequest} from "@/util/request";
 import {useRoute, useRouter} from "vue-router";
+import { message } from "ant-design-vue";
 
 const DeliveryAddress = defineAsyncComponent(() => import('@/views/Setting/component/DeliveryAddress.vue'))
 const DeliveryAddressForm = defineAsyncComponent(() => import('@/views/Setting/component/DeliveryAddressForm.vue'))
@@ -54,19 +55,19 @@ const onFinish = values => {
   buttonLoading.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/delivery/save', values).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       buttonLoading.value = false;
       return false;
     }
 
     let data = res.data;
-    alert(data.message);
+    message.success(data.message);
 
     buttonLoading.value = false;
     router.push('/setting/delivery')
 
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     buttonLoading.value = false;
     return false;
   });
@@ -103,7 +104,7 @@ const getDeliveryDetail = (id) => {
   indicator.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delivery/list').then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       indicator.value = false;
       router.push('/setting/delivery')
       return false;
@@ -136,7 +137,7 @@ const getDeliveryDetail = (id) => {
 
 
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     indicator.value = false;
     return false;
   });
@@ -149,7 +150,7 @@ const getDeliveryOutAddressList = () => {
   indicator.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/deliveryOutAddress/list').then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       indicator.value = false;
       router.push('/setting/delivery')
       return false;
@@ -161,7 +162,7 @@ const getDeliveryOutAddressList = () => {
 
     indicator.value = false;
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     indicator.value = false;
     return false;
   });
@@ -205,7 +206,7 @@ const getDeliveryInAddressList = () => {
   indicator.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/deliveryInAddress/list').then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       indicator.value = false;
       router.push('/setting/delivery')
       return false;
@@ -216,7 +217,7 @@ const getDeliveryInAddressList = () => {
     }
     indicator.value = false;
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     indicator.value = false;
     return false;
   });

@@ -4,6 +4,7 @@ import {PushpinTwoTone, EyeOutlined} from "@ant-design/icons-vue";
 import {computed, onBeforeMount, ref} from "vue";
 import {useRouter} from "vue-router";
 import {AuthRequest} from "@/util/request";
+import { message } from "ant-design-vue";
 
 const router = useRouter();
 
@@ -52,7 +53,7 @@ const getBoardList = () => {
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/list', params).then((res) => {
     if (res.status !== '2000') {
       loading.value = false;
-      alert(res.message)
+      message.error(res.message)
       return false;
     }
 
@@ -62,7 +63,7 @@ const getBoardList = () => {
 
   }).catch((error) => {
     loading.value = false;
-    alert(error.message);
+    message.error(error.message);
     return false;
   });
 }

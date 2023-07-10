@@ -64,6 +64,7 @@ import { onMounted, ref } from "vue";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
+import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
@@ -122,7 +123,7 @@ function selectedDelete() {
   indicator.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/license/delete", { ids: filteredIds }).then((res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
         indicator.value = false;
         return false;
       }
@@ -148,7 +149,7 @@ function getLicense() {
   };
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/license/list", { params: requestParams }).then((res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
       }
 
       licenseData.value = res.data;

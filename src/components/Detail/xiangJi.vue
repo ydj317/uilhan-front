@@ -31,6 +31,7 @@ import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
 import { lib } from "@/util/lib";
 import oTranslatRule from "../../../public/static/xiangji/xiangjiUi.json";
+import { message } from "ant-design-vue";
 
 export default {
   name: "xiangJi",
@@ -187,7 +188,7 @@ export default {
           this.product.recharge < 1 ||
           oParam.list.length > this.product.recharge
         ) {
-          alert("이미지번역 잔여수가 부족합니다.");
+          message.warning("이미지번역 잔여수가 부족합니다.");
           this.product.loading = false;
           return false;
         }
@@ -198,13 +199,13 @@ export default {
           oParam
         ).then((res) => {
           if (res.status !== "2000") {
-            alert(res.message);
+            message.error(res.message);
             this.product.loading = false;
             return false;
           }
 
           if (lib.isArray(res.data["list"], true) === false) {
-            alert(
+            message.error(
               "번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다."
             );
             this.product.loading = false;
@@ -246,8 +247,7 @@ export default {
 
           this.product.xiangjiCallback = xiangjiCallback;
         } catch (e) {
-          console.log(e);
-          alert("편집기 호출 실패.");
+          message.error("편집기 호출 실패.");
           this.product.loading = false;
           this.product.xiangjiVisible = false;
         }

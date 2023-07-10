@@ -48,6 +48,7 @@ import Loading from "vue-loading-overlay";
 import { onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import router from "@/router";
+import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
@@ -67,15 +68,15 @@ const onFinish = values => {
   values = Object.assign(values, { id: formState.id });
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/license/save", values).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
       return false;
     }
 
-    alert("서비스 등록 성공하였습니다.");
+    message.success("서비스 등록 성공하였습니다.");
     router.push("/user/license");
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     indicator.value = false;
     return false;
   });
@@ -95,7 +96,7 @@ function getLicense() {
 
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/license", { params: requestParams }).then((res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
       }
 
       formState.name = res.data.name;

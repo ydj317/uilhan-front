@@ -205,9 +205,9 @@ export const menus = [{
             },
             "children": [
                 {
-                    path: "/user/updateDetail",
-                    name: "user_updateDetail",
-                    component: () => import("../views/User/UpdateDetail"),
+                    path: "/setting/updateDetail",
+                    name: "setting_updateDetail",
+                    component: () => import("@/views/Setting/UpdateDetail"),
                     meta: {
                         title: "사용자 정보 수정",
                         isHide: false,
@@ -216,9 +216,9 @@ export const menus = [{
                     }
                 },
                 {
-                    path: "/user/password",
-                    name: "user_password",
-                    component: () => import("../views/User/Password"),
+                    path: "/setting/password",
+                    name: "setting_password",
+                    component: () => import("@/views/Setting/Password"),
                     meta: {
                         title: "비밀번호 변경",
                         isHide: false,

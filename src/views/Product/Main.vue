@@ -145,6 +145,7 @@ import { ref, onMounted } from "vue";
 import { AuthRequest } from "@/util/request";
 import moment from "moment/moment";
 import Loading from "vue-loading-overlay";
+import { message } from "ant-design-vue";
 
 const boardData = ref([]);
 
@@ -325,7 +326,7 @@ function parseHTML(html) {
 function getBoard() {
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list", "").then((res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
         return false;
       }
 
@@ -349,7 +350,7 @@ function getList() {
   };
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
     }
 
     console.log("==0==");

@@ -36,6 +36,7 @@
 <script>
 import {mapState} from 'vuex';
 import {AuthRequest} from '@/util/request';
+import { message } from "ant-design-vue";
 
 export default {
   computed: {
@@ -92,7 +93,7 @@ export default {
     async sendMarket() {
           let list = this.getCheckList();
           if (list === undefined || list.length === 0) {
-              alert('선택된 상품이 없습니다.');
+              message.warning('선택된 상품이 없습니다.');
               return false;
           }
 
@@ -119,25 +120,25 @@ export default {
           }
 
           if (notCatePrd.length === items.length) {
-              alert('선택하신 모든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
+              message.warning('선택하신 모든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
               return false;
           }
 
           if (notCatePrd.length > 0) {
-              alert(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
+              message.warning(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
           }
 
           try {
               const res = await AuthRequest.post(process.env.VUE_APP_API_URL + '/api/sendmarket', {list: list});
 
               if (res.status !== '2000') {
-                  alert(res.message)
+                  message.error(res.message)
                   this.indicator = false;
                   return false;
               }
 
               if (res.data !== undefined && res.data.length === 0) {
-                  alert("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+                  message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
                   this.indicator = false;
                   return false;
               }
@@ -145,7 +146,7 @@ export default {
               return true;
 
           } catch (e) {
-              alert(e.message);
+              message.error(e.message);
               return false;
           }
       },
@@ -172,7 +173,7 @@ export default {
       }
 
       if (list === ',' || list.length === 0) {
-        alert('상품을 선택해주세요');
+        message.warning('상품을 선택해주세요');
         this.relaket.data.indicator = false;
         return false;
       }
@@ -188,7 +189,7 @@ export default {
       })
 
       if (marketList.length === undefined) {
-        alert('선택된 제휴사가 없습니다.');
+        message.warning('선택된 제휴사가 없습니다.');
         this.relaket.data.indicator = false;
         return false;
       }
@@ -196,7 +197,7 @@ export default {
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/syncmarket',
           {params: {list: list, market: marketList, options: aOptions}}).then((res) => {
         if (res.status !== '2000') {
-          alert(res.message)
+          message.error(res.message)
         }
 
         let returnData = res.data;

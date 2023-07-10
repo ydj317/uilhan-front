@@ -86,6 +86,7 @@ import { onMounted, ref } from "vue";
 import Cookie from "js-cookie";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
+import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
@@ -178,7 +179,7 @@ function statusChange(id, status) {
 
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/licenseHistory/check", params).then((res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
         indicator.value = false;
         return false;
       }
@@ -203,7 +204,7 @@ function getLicense() {
   };
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/licenseHistory/list", { params: requestParams }).then((res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
       }
 
       licenseHistoryData.value = res.data;

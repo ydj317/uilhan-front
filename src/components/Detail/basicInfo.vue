@@ -144,7 +144,7 @@ export default {
       }).then((res) => {
         /* 등록실패여부 및 로딩제거 */
         if (res.status !== "2000") {
-          alert(res.message);
+          message.error(res.message);
           return false;
         }
 

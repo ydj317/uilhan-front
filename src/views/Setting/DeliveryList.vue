@@ -6,6 +6,7 @@ import {
   EditOutlined,
   PlusOutlined
 } from "@ant-design/icons-vue";
+import { message } from "ant-design-vue";
 
 const router = useRouter();
 
@@ -36,7 +37,7 @@ const getDeliveryList = () => {
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delivery/list").then((res) => {
     if (res.status !== "2000") {
       loading.value = false;
-      alert(res.message);
+      message.error(res.message);
       return false;
     }
 
@@ -45,7 +46,7 @@ const getDeliveryList = () => {
 
   }).catch((error) => {
     loading.value = false;
-    alert(error.message);
+    message.error(error.message);
     return false;
   });
 };

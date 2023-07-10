@@ -55,7 +55,7 @@ const handleOk = () => {
     AuthRequest.post(url, state.form).then((res) => {
       if (res.status !== '2000') {
         state.modal.buttonLoading = false;
-        alert(res.message)
+        message.error(res.message)
         return false;
       }
       message.success(res.data.message);
@@ -63,7 +63,7 @@ const handleOk = () => {
 
     }).catch((error) => {
       state.modal.buttonLoading = false;
-      alert(error.message);
+      message.error(error.message);
       return false;
     });
 

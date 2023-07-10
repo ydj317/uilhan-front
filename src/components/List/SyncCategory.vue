@@ -1,6 +1,7 @@
 <script setup>
 import {AuthRequest} from "@/util/request";
 import {onBeforeMount, ref} from "vue";
+import { message } from "ant-design-vue";
 
 const categorys = ref('');
 const options = ref([]);
@@ -16,7 +17,7 @@ const loadData = selectedOptions => {
   setTimeout(() => {
     AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
       if (res.status !== '2000') {
-        alert(res.message)
+        message.error(res.message)
       }
       targetOption.loading = false;
       targetOption.children = JSON.parse(JSON.stringify(res.data))
@@ -33,7 +34,7 @@ const getCategory = (param, type) => {
   param.cate_market = "Relaket";
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
     }
 
     options.value = JSON.parse(JSON.stringify(res.data))
@@ -42,7 +43,7 @@ const getCategory = (param, type) => {
 
 const getParentAll = (cid) => {
   if (!cid) {
-    alert('카테고리ID를 입력해주세요.')
+    message.warning('카테고리ID를 입력해주세요.')
     return;
   }
 
@@ -54,9 +55,9 @@ const getParentAll = (cid) => {
     }
   }).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
     }
-    alert(`[${cid}] 수집완료`)
+    message.success(`[${cid}] 수집완료`)
     loding.value = false;
   });
 }

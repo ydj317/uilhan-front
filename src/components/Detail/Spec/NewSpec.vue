@@ -19,6 +19,7 @@ import { lib } from "util/lib";
 import { forEach, cloneDeep} from "lodash";
 import { mapState } from "vuex";
 import SpecGroup from "./SpecGroup";
+import { message } from "ant-design-vue";
 
 export default {
   name: "productDetailNewSpec",
@@ -202,13 +203,13 @@ export default {
         forEach(this.product.item_option, (itemOption) => {
           //입력하지 않은 옵션그룹 존재
           if (itemOption.name.trim().length === 0) {
-            alert('입력하지 않은 옵션그룹이 존재합니다.');
+            message.warning('입력하지 않은 옵션그룹이 존재합니다.');
             check = false;
             throw new Error();
           }
 
           if (tmpOptionGroupName.indexOf(itemOption.name) !== -1) {
-            alert(`동일한 옵션그룹이 존재합니다. 옵션그룹:${itemOption.name}`);
+            message.warning(`동일한 옵션그룹이 존재합니다. 옵션그룹:${itemOption.name}`);
             check = false;
             throw new Error();
           } else {
@@ -217,13 +218,13 @@ export default {
           let tmpOptionName = [];
           forEach(itemOption.data, (item) => {
             if (item.name.trim().length === 0) {
-              alert(`입력하지 않은 옵션명이 존재합니다. 옵션그룹:${itemOption.name}`);
+              message.warning(`입력하지 않은 옵션명이 존재합니다. 옵션그룹:${itemOption.name}`);
               check = false;
               throw new Error();
             }
 
             if (tmpOptionName.indexOf(item.name) !== -1) {
-              alert(`동일한 옵션명이 존재합니다. 옵션그룹:${itemOption.name}, 옵션명:${item.name}`);
+              message.warning(`동일한 옵션명이 존재합니다. 옵션그룹:${itemOption.name}, 옵션명:${item.name}`);
               check = false;
               throw new Error();
             } else {

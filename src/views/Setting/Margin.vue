@@ -242,6 +242,7 @@ import {
   SwapOutlined
 } from "@ant-design/icons-vue";
 import { onMounted, reactive, ref } from "vue";
+import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
@@ -301,17 +302,17 @@ const priceType = ref("number");
 
 function addCollectionPrice() {
   if (priceRangeStart.value === undefined || priceRangeStart.value.length === 0) {
-    alert("기준가 시작범위는 필수로 입력해주십시오");
+    message.warning("기준가 시작범위는 필수로 입력해주십시오");
     return false;
   }
 
   if (priceRangeEnd.value === undefined || priceRangeEnd.value.length === 0) {
-    alert("기준가 마감범위는 필수로 입력해주십시오");
+    message.warning("기준가 마감범위는 필수로 입력해주십시오");
     return false;
   }
 
   if (price.value === undefined || price.value.length === 0) {
-    alert("가격은 필수로 입력해주십시오");
+    message.warning("가격은 필수로 입력해주십시오");
     return false;
   }
 
@@ -321,17 +322,17 @@ function addCollectionPrice() {
     !regPos.test(priceRangeStart.value) ||
     !regPos.test(priceRangeEnd.value)
   ) {
-    alert("기준 값과 가격 값은 숫자만 입력가능합니다.");
+    message.warning("기준 값과 가격 값은 숫자만 입력가능합니다.");
     return false;
   }
 
   if (parseInt(priceRangeStart.value) > parseInt(priceRangeEnd.value)) {
-    alert("시작 가격은 마감 가격보다 작아야합니다.");
+    message.warning("시작 가격은 마감 가격보다 작아야합니다.");
     return false;
   }
 
   if (collectionPriceList.value.length === 3) {
-    alert("상품수집 가격설정은 최대 3개까지 등록하실수 있습니다.");
+    message.warning("상품수집 가격설정은 최대 3개까지 등록하실수 있습니다.");
     return false;
   }
 
@@ -343,7 +344,7 @@ function addCollectionPrice() {
       (parseInt(priceRangeEnd.value) >= parseInt(item.priceRangeStart) &&
         parseInt(priceRangeEnd.value) <= parseInt(item.priceRangeEnd))
     ) {
-      alert(
+      message.warning(
         "요청하신 가격범위는 기존에 등록하신 가격범위에 포함되여있습니다."
       );
       return false;
@@ -366,7 +367,7 @@ function sendCollectionData(data) {
     type: "collection"
   }).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
       return false;
     }
@@ -384,7 +385,7 @@ function sendCollectionData(data) {
 
 function delCollectionPrice(index) {
   if (collectionPriceList.value.length === 0) {
-    alert("등록된 가격 설정이 없습니다.");
+    message.warning("등록된 가격 설정이 없습니다.");
     return false;
   }
 
@@ -460,7 +461,7 @@ function deleteMargin(type, value) {
     data: data
   }).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
       return false;
     }
@@ -504,7 +505,7 @@ function updateMargin(type, value) {
     data: aOptions
   }).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
       return false;
     }
@@ -518,18 +519,18 @@ function updateMargin(type, value) {
 
 function addMargin(type) {
   if (lib.isEmpty(type_margin_name[type + "_margin_name"])) {
-    alert("마진명은 필수로 입력해주십시오.");
+    message.warning("마진명은 필수로 입력해주십시오.");
     return false;
   }
 
   if (lib.isEmpty(type_margin_value[type + "_margin_value"])) {
-    alert("마진값은 필수로 입력해주십시오.");
+    message.warning("마진값은 필수로 입력해주십시오.");
     return false;
   }
 
   let regPos = /^[0-9]+$/;
   if (!regPos.test(type_margin_value[type + "_margin_value"])) {
-    alert("마진값은 숫자로 입력해주십시오.");
+    message.warning("마진값은 숫자로 입력해주십시오.");
     return false;
   }
 
@@ -541,7 +542,7 @@ function addMargin(type) {
     (item) => parseInt(oData.value) === parseInt(item.value)
   );
   if (lib.isArray(aFail, true)) {
-    alert("동일유형에 같은 값을 중복으로 등록할수없습니다.");
+    message.warning("동일유형에 같은 값을 중복으로 등록할수없습니다.");
     return false;
   }
 
@@ -558,7 +559,7 @@ function addMargin(type) {
     data: aOptions
   }).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
       return false;
     }
@@ -599,7 +600,7 @@ function getUser() {
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user", {}).then(
     (res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
       }
 
       userData.value = res.data;
@@ -618,7 +619,7 @@ function getRate() {
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrate").then(
     (res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
         return false;
       }
 

@@ -2,6 +2,7 @@
 import {useRoute, useRouter} from "vue-router";
 import {defineAsyncComponent, nextTick, onBeforeMount, reactive, ref} from "vue";
 import {AuthRequest} from "@/util/request";
+import { message } from "ant-design-vue";
 const Comments = defineAsyncComponent(() => import("@/views/Board/Comments.vue"));
 const route = useRoute();
 const router = useRouter();
@@ -27,7 +28,7 @@ const getBoardDetail = (id) => {
   indicator.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/detail', {params: {id: id}}).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       indicator.value = false;
       router.push('/board/question')
       return false;
@@ -43,7 +44,7 @@ const getBoardDetail = (id) => {
     formState.hits = res.data.hits
     indicator.value = false;
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     indicator.value = false;
     return false;
   });

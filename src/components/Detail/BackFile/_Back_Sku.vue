@@ -225,6 +225,7 @@
 import { mapState } from "vuex";
 import { lib } from "@/util/lib";
 import { forEach } from "lodash";
+import { message } from "ant-design-vue";
 
 export default {
   name: "productDetailSku",
@@ -461,7 +462,7 @@ export default {
               true
           )
       ) {
-        alert("선택된 품목이 없습니다.");
+        message.warning("선택된 품목이 없습니다.");
         return false;
       }
 

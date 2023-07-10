@@ -68,6 +68,7 @@
 import {cloneDeep, forEach} from "lodash";
 import { mapState } from "vuex";
 import { PlusOutlined, MinusOutlined} from '@ant-design/icons-vue';
+import { message } from "ant-design-vue";
 
 export default {
   name: "productDetailSpecGroup",
@@ -86,7 +87,7 @@ export default {
   methods: {
     deleteSpecGroup(optionIndex) {
       if (this.product.item_option.length === 1) {
-        alert('옵션그룹 전부 삭제 불가합니다.');
+        message.warning('옵션그룹 전부 삭제 불가합니다.');
         return false;
       }
       this.product.item_option.splice(optionIndex, 1);
@@ -96,7 +97,7 @@ export default {
     },
     deleteSpecOptionName(optionIndex, index) {
       if (this.product.item_option[optionIndex].data.length === 1) {
-        alert('옵션명 전부 삭제는 불가합니다.');
+        message.warning('옵션명 전부 삭제는 불가합니다.');
         return false;
       }
       this.product.item_option[optionIndex].data.splice(index, 1);
@@ -116,12 +117,12 @@ export default {
     },
     deleteOptionName() {
       if (this.selectedRows.length === 0) {
-        alert('삭제할 옵션명을 선택하세요.');
+        message.warning('삭제할 옵션명을 선택하세요.');
         return false;
       }
       let newOptionData = [];
       if (this.option.data.length === this.selectedRows.length) {
-        alert('옵션명 전부 삭제는 불가합니다.');
+        message.warning('옵션명 전부 삭제는 불가합니다.');
         this._setCheckBoxInit();
         return false;
       }
@@ -135,7 +136,7 @@ export default {
     },
     setTrim() {
       if (this.selectedRows.length === 0) {
-        alert('빈칸을 제거할 옵션명을 선택하세요.');
+        message.warning('빈칸을 제거할 옵션명을 선택하세요.');
         return false;
       }
       let newOptionData = [];
@@ -152,7 +153,7 @@ export default {
     },
     replaceSpecialChars() {
       if (this.selectedRows.length === 0) {
-        alert('특문을 제거할 옵션명을 선택하세요.');
+        message.warning('특문을 제거할 옵션명을 선택하세요.');
         return false;
       }
       let newOptionData = [];
@@ -170,7 +171,7 @@ export default {
     },
     strLengthTo25() {
       if (this.selectedRows.length === 0) {
-        alert('25자로 처리할 옵션명을 선택하세요.');
+        message.warning('25자로 처리할 옵션명을 선택하세요.');
         return false;
       }
       let newOptionData = [];

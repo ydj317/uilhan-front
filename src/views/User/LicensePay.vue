@@ -64,6 +64,7 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
 import { onMounted, reactive, ref } from "vue";
 import router from "@/router";
+import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
@@ -84,34 +85,34 @@ const formState = reactive({
 
 function BuyLicense() {
   if (formState.name === "") {
-    alert("서비스를 선택 해 주세요.");
+    message.warning("서비스를 선택 해 주세요.");
     return false;
   }
 
   if (formState.card_bank === "") {
-    alert("은행은 필수로 입력 부탁합니다.");
+    message.warning("은행은 필수로 입력 부탁합니다.");
     return false;
   }
 
   if (formState.card_name === "") {
-    alert("예금주는 필수로 입력 부탁합니다.");
+    message.warning("예금주는 필수로 입력 부탁합니다.");
     return false;
   }
 
   if (formState.card_number === "") {
-    alert("카드번호는 필수로 입력 부탁합니다.");
+    message.warning("카드번호는 필수로 입력 부탁합니다.");
     return false;
   }
 
   indicator.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/licenseHistory/buy", formState).then((res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
         indicator.value = false;
         return false;
       }
 
-      alert("결제신청 성공하였습니다.");
+      message.success("결제신청 성공하였습니다.");
       router.push("/user/licenseHistory");
 
       indicator.value = false;
@@ -137,7 +138,7 @@ function licenseSelectChange() {
 function getLicense() {
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/license/list").then((res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
       }
 
       licenseList.value = res.data;

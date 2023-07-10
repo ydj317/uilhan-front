@@ -3,6 +3,7 @@ import {useRoute, useRouter} from "vue-router";
 import {onBeforeMount, reactive, ref} from "vue";
 import {AuthRequest} from "@/util/request";
 import BoardEditor from "@/components/ImageEditor/BoardEditor.vue";
+import { message } from "ant-design-vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -26,7 +27,7 @@ const getBoardDetail = (id) => {
   indicator.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/detail',{params:{id:id}}).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       indicator.value = false;
       router.push('/board/list')
       return false;
@@ -40,7 +41,7 @@ const getBoardDetail = (id) => {
     formState.insDate = res.data.insDate
     indicator.value = false;
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     indicator.value = false;
     return false;
   });
@@ -55,19 +56,19 @@ const onFinish = values => {
   buttonLoading.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/board/questionSave', values).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       buttonLoading.value = false;
       return false;
     }
 
     let data = res.data;
-    alert(data.message);
+    message.success(data.message);
 
     buttonLoading.value = false;
     router.push('/board/question')
 
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     buttonLoading.value = false;
     return false;
   });

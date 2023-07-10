@@ -232,6 +232,7 @@ import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import Cookie from "js-cookie";
 import router from "../../router";
+import { message } from "ant-design-vue";
 export default defineComponent({
   components: {Spec, Loading, Cookie},
   data() {
@@ -375,7 +376,7 @@ export default defineComponent({
       this.indicator = true;
       let list = this.getCheckList();
       if (list === undefined || list.length === 0) {
-        alert('선택된 상품이 없습니다.');
+        message.warning('선택된 상품이 없습니다.');
         this.indicator = false;
         return false;
       }
@@ -403,29 +404,29 @@ export default defineComponent({
       }
 
       if (notCatePrd.length === items.length) {
-        alert('선택하신 모든든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
+        message.warning('선택하신 모든든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
         this.indicator = false;
         return false;
       }
 
       if (notCatePrd.length > 0) {
-        alert(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
+        message.warning(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
       }
 
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/sendmarket', {list: list}).then((res) => {
         if (res.data !== undefined && res.data.length === 0) {
-          alert("해당요청에 오류가 발생하였습니다. \ 재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+          message.error("해당요청에 오류가 발생하였습니다. \ 재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
           this.indicator = false;
           return false;
         }
 
         let data = res.data.data;
-        alert('연동성공 상품 : ' + data.success_code + "\n" + '연동실패 상품 : ' + data.failed_code);
+        message.error('연동성공 상품 : ' + data.success_code + "\n" + '연동실패 상품 : ' + data.failed_code);
         this.msg = data.msg;
         this.indicator = false;
         this.getList();
       }).catch((error) => {
-        alert(error.message);
+        message.error(error.message);
         this.indicator = false;
         return false;
       });
@@ -434,13 +435,13 @@ export default defineComponent({
     deletePrd() {
       let list = this.getCheckList();
       if (list === undefined || list.length === 0) {
-        alert('선택된 상품이 없습니다.');
+        message.warning('선택된 상품이 없습니다.');
         return false;
       }
 
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/deleteprd', {params: {list: list}}).then((res) => {
         if (res.status !== 200) {
-          alert('삭제실패');
+          message.error('삭제실패');
           return false;
         }
 
@@ -462,7 +463,7 @@ export default defineComponent({
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/exceldown', {params: param}).then((res) => {
         this.indicator = false;
         if (res.status !== 200) {
-          alert("파일 다운로드에 실패하였습니다. \n일시적인 현상이오니 잠시후 재 시도하시길 바랍니다.");
+          message.error("파일 다운로드에 실패하였습니다. \n일시적인 현상이오니 잠시후 재 시도하시길 바랍니다.");
           return false;
         }
         window.open(res.data.path);
@@ -482,7 +483,7 @@ export default defineComponent({
 
     searchFailed() {
       if (this.marketSyncFailedCode.length === 0) {
-        alert('연동실패한 상품이 없습니다.');
+        message.warning('연동실패한 상품이 없습니다.');
         return false;
       }
 
@@ -518,7 +519,7 @@ export default defineComponent({
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/marketlist').then((res) => {
         let returnData = res.data;
         if (returnData.status === undefined || returnData.status !== '2000') {
-          alert(returnData.msg);
+          message.error(returnData.msg);
           return false;
         }
 
@@ -542,13 +543,13 @@ export default defineComponent({
       }
 
       if (list === ',' || list.length === 0) {
-        alert('상품을 선택해주세요');
+        message.warning('상품을 선택해주세요');
         this.indicator = false;
         return false;
       }
 
       if (this.marketList.length === undefined) {
-        alert('선택된 제휴사가 없습니다.');
+        message.warning('선택된 제휴사가 없습니다.');
         this.indicator = false;
         return false;
       }
@@ -558,7 +559,7 @@ export default defineComponent({
         let returnData = res.data;
 
         if (returnData.status === undefined || returnData.status !== '2000') {
-          alert(returnData.msg);
+          message.error(returnData.msg);
         }
 
         if (type === 'multi') {
