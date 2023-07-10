@@ -1,101 +1,18 @@
 import { createApp } from "vue";
-import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import antDV from "ant-design-vue";
 import moment from "moment";
+import App from "./App.vue";
 import "moment/dist/locale/zh-cn";
 import "ant-design-vue/dist/antd.css";
 import "./assets/css/global.css";
-import {
-  Button,
-  Layout,
-  Drawer,
-  Radio,
-  Menu,
-  List,
-  Input,
-  InputNumber,
-  // DatePicker,
-  Select,
-  SelectOption,
-  Table,
-  Descriptions,
-  Upload,
-  Image,
-  Tag,
-  Popconfirm,
-  Tooltip,
-  Divider,
-  Modal,
-  Space,
-  Avatar,
-  Checkbox,
-  Form,
-  Typography,
-  Spin,
-  Affix,
-  Switch,
-  Alert,
-  Card,
-  Collapse,
-  Pagination,
-  Cascader,
-  Dropdown,
-  Row,
-  Col,
-  CheckboxGroup,
-  Textarea,
-  Badge,
-} from "ant-design-vue";
-
-import DatePicker from "ant-design-vue/es/date-picker/moment";
-
-// vue-echarts
-import ECharts from 'vue-echarts';
 import 'echarts';
 
-createApp(App)
-  .use(store)
-  .use(router)
-  .use(Button)
-  .use(Layout)
-  .use(Drawer)
-  .use(Radio)
-  .use(Menu)
-  .use(List)
-  .use(Input)
-  .use(InputNumber)
-  .use(DatePicker)
-  .use(Select)
-  .use(SelectOption)
-  .use(moment)
-  .use(Descriptions)
-  .use(Upload)
-  .use(Image)
-  .use(Table)
-  .use(Popconfirm)
-  .use(Tag)
-  .use(Tooltip)
-  .use(Divider)
-  .use(Modal)
-  .use(Space)
-  .use(Avatar)
-  .use(Checkbox)
-  .use(Form)
-  .use(Typography)
-  .use(Spin)
-  .use(Affix)
-  .use(Switch)
-  .use(Alert)
-  .use(Card)
-  .use(Collapse)
-  .use(Pagination)
-  .use(Cascader)
-  .use(Dropdown)
-  .use(Row)
-  .use(Col)
-  .use(CheckboxGroup)
-  .use(Textarea)
-  .use(Badge)
-  .component('ECharts', ECharts)
-  .mount("#app");
+const app = createApp(App);
+app.use(router);
+app.use(store);
+app.use(antDV);
+app.use(moment);
+
+app.mount("#app");
