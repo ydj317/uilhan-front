@@ -91,7 +91,7 @@ export const menus = [{
         {
             path: "/board",
             name: "board",
-            "redirect": "/board/list",
+            redirect: "/board/list",
             meta: {
                 title: "게시판관리",
                 isHide: false,
@@ -205,6 +205,28 @@ export const menus = [{
             },
             "children": [
                 {
+                    path: "/user/updateDetail",
+                    name: "user_updateDetail",
+                    component: () => import("../views/User/UpdateDetail"),
+                    meta: {
+                        title: "사용자 정보 수정",
+                        isHide: false,
+                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        icon: '',
+                    }
+                },
+                {
+                    path: "/user/password",
+                    name: "user_password",
+                    component: () => import("../views/User/Password"),
+                    meta: {
+                        title: "비밀번호 변경",
+                        isHide: false,
+                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        icon: '',
+                    }
+                },
+                {
                     path: "/setting/account",
                     name: "setting_account",
                     component: () => import("@/views/Setting/Account"),
@@ -268,7 +290,7 @@ export const menus = [{
                     meta: {
                         title: "서비스 관리",
                         isHide: false,
-                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN"],
                         icon: '',
                     }
                 },
@@ -278,7 +300,7 @@ export const menus = [{
                     component: () => import("../views/User/LicenseForm"),
                     meta: {
                         title: "서비스 추가/수정",
-                        isHide: false,
+                        isHide: true,
                         roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
                         icon: '',
                         active:"/user/license"
@@ -313,7 +335,7 @@ export const menus = [{
                     meta: {
                         title: "이미지 번역 회수",
                         isHide: false,
-                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN"],
                         icon: '',
                     }
                 },

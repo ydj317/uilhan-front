@@ -31,7 +31,7 @@
 import {ref, reactive, onBeforeMount, computed} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
-import { setFilterRouteList } from "@/router/index"
+import { setFilterRouteList } from "@/router"
 import SubMenu from "@/views/Template/SubMenu.vue";
 
 const router = useRouter()
@@ -53,14 +53,14 @@ const onOpenChange = (openKeys) => {
     state.openKeys = latestOpenKey ? [latestOpenKey] : [];
   }
 };
-const tmp = computed(() => {
+const selectActive = computed(() => {
   const {meta,path} = route
   if (meta.active) {
     return meta.active
   }
   return path
 })
-state.selectedKeys = [tmp.value];
+state.selectedKeys = [selectActive.value];
 onBeforeMount(() => {
   state.menuList = setFilterRouteList()[0].children
   state.openKeys = ['/'+route.path.split('/').filter(Boolean)[0]]
@@ -70,17 +70,17 @@ onBeforeMount(() => {
 
 <style scoped>
 .ant-menu .ant-menu-submenu {
-  font-weight: bold;
+  font-weight: 600;
   color: #e3e3e3;
 }
 .ant-menu-item .ant-menu-title-content a {
-  font-weight: bold;
+  font-weight: 600;
   color: #e3e3e3;
 }
 </style>
 <style>
 .ant-menu .ant-menu-submenu {
-  font-weight: bold;
+  font-weight: 600;
   color: #e3e3e3;
 }
 </style>

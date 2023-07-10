@@ -10,7 +10,10 @@ const menuList = setFilterRouteList();
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
-    routes: [...menuList,...notFoundAndNoPower,...staticRoutes]
+    routes: [...menuList,...notFoundAndNoPower,...staticRoutes],
+    scrollBehavior (to, from, savedPosition) {
+        return { top: 0}
+    }
 });
 
 export function setFilterRouteList() {

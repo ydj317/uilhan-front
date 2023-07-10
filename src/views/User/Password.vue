@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :bordered="false" :title="'배송정보 변경'">
+  <a-card :bordered="false" :title="'비밀번호 변경'">
 
     <a-form ref="formRef" :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">
