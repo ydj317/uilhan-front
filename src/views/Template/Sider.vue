@@ -142,6 +142,13 @@
         </template>
         <span>상품부가정보(준비중)</span>
       </a-menu-item>
+
+      <a-menu-item key="33" v-if="memberCheck">
+        <template #icon>
+          <file-text-outlined/>
+        </template>
+        <span>엑셀 컨버터 툴</span>
+      </a-menu-item>
     </a-menu>
   </div>
 </template>
@@ -173,11 +180,18 @@ const openKeys = ref(["0"]);
 const rootSubmenuKeys = ref([]);
 
 const isAdmin = ref(false);
+const memberCheck = ref(false);
 
 onMounted(() => {
   const roles = Cookie.get("member_roles");
+  const memberName = Cookie.get("member_name");
+
   if (roles.indexOf("ROLE_ADMIN") > -1) {
     isAdmin.value = true;
+  }
+
+  if(memberName === 'jwli'){
+    memberCheck.value = true;
   }
 });
 

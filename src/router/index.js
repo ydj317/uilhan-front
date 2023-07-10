@@ -193,6 +193,12 @@ const routes = [
             /* webpackChunkName: 'user_register' */
             component: () => import("@/components/List/SyncCategory.vue"),
           },
+            {
+                path: "/excel",
+                name: "excel_convert_tools",
+                /* webpackChunkName: 'user_register' */
+                component: () => import("@/components/Tools/excelConvertTools.vue"),
+            },
           // {
           //   path: "/user/register",
           //   name: "user_register",
