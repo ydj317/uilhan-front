@@ -129,6 +129,15 @@
       "siteLoginId": "false",
       "siteLoginPw": "false",
       "apiCompanyCode": "false"
+    },
+    {
+      "site_name": "큐텐 싱가폴",
+      "site_code": "qoo10_sg",
+      "apiKey": "true",
+      "apiTicketKey": "false",
+      "siteLoginId": "true",
+      "siteLoginPw": "true",
+      "apiCompanyCode": "false"
     }
   ]
 }
