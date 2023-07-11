@@ -283,21 +283,43 @@ function parseHTML(html) {
   return div.textContent;
 }
 
-function getDashboard() {
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard").then((res) => {
+function getBoard() {
+  const params = {params: {type: 'notice'}}
+  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list", params).then((res) => {
+      if (res.status !== "2000") {
+        message.error(res.message);
+        return false;
+      }
+
+      boardData.value = res.data;
+    }
+  );
+}
+
+function getList() {
+  let param = {
+    "market_code": "all",
+    "date_type": "insert_date",
+    "start_time": "2022-07-11",
+    "end_time": "",
+    "search_key": "item_code",
+    "search_value": "",
+    "trans_status": "",
+    "sync_status": "all"
+  };
+  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
-      return false;
     }
-    console.log("==0==");
-    console.log(res);
 
-    boardData.value = res.data.boardList;
+    console.log("==0==");
+    console.log(res.data);
   });
 }
 
 onMounted(() => {
-  getDashboard();
+  getList();
+  getBoard();
 });
 </script>
 
