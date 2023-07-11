@@ -116,48 +116,54 @@ const removeHandler = function () {
 <!--  <loading v-model:active="bLoading" :can-cancel="false" :is-full-page="true" />-->
 
   <a-card bordered hoverable title="엑셀 컨버터 툴">
-    <div>
-      <a-upload-dragger
-          v-model:fileList="fileList"
-          name="file"
-          :multiple="false"
-          :headers="headers"
-          :action="uploadApiUrl"
-          @change="handleChange"
-          @drop="handleDrop"
-          @remove="removeHandler"
-      >
-        <p class="ant-upload-drag-icon">
-          <inbox-outlined></inbox-outlined>
-        </p>
-        <p class="ant-upload-text">Click or drag file to this area to upload</p>
-        <p class="ant-upload-hint">
-          Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-          band files
-        </p>
-      </a-upload-dragger>
-    </div>
-    <a-divider></a-divider>
-    <div>
-      <a-list :data-source="formStat.list" :loading="false">
-        <template #renderItem="{ item }">
-          <a-list-item>
-            <a-list-item-meta>
-              <template #title>
-                {{ item.name }}
-              </template>
-            </a-list-item-meta>
-            <template #actions>
-              <a-input-number v-model:value="item.percent" />%
+    <div style="display: flex; margin-top: 20px;">
+      <div style="width: 50%;">
+        <div style="padding: 0 20px 0 20px;">
+          <a-list :data-source="formStat.list" :loading="false">
+            <template #renderItem="{ item }">
+              <a-list-item>
+                <a-list-item-meta>
+                  <template #title>
+                    {{ item.name }}
+                  </template>
+                </a-list-item-meta>
+                <template #actions>
+                  <a-input-number v-model:value="item.percent" />%
+                </template>
+              </a-list-item>
             </template>
-          </a-list-item>
-        </template>
-        <template #footer >
-          <div style="display: flex;justify-content: right;">
-            <a-button type="primary" style="width: 120px;" @click="submitForm">저장</a-button>
-          </div>
-        </template>
-      </a-list>
+            <template #footer >
+              <div style="display: flex;justify-content: center;">
+                <a-button type="primary" style="width: 120px;" @click="submitForm">저장</a-button>
+              </div>
+            </template>
+          </a-list>
+        </div>
+
+      </div>
+      <div style="width: 50%;">
+        <div style="padding: 0 20px 0 20px;">
+          <a-upload-dragger
+              v-model:fileList="fileList"
+              name="file"
+              :multiple="false"
+              :headers="headers"
+              :action="uploadApiUrl"
+              @change="handleChange"
+              @drop="handleDrop"
+              @remove="removeHandler"
+          >
+            <p class="ant-upload-drag-icon">
+              <inbox-outlined></inbox-outlined>
+            </p>
+            <p class="ant-upload-text">Click or drag file to this area to upload</p>
+            <p class="ant-upload-hint">
+              Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+              band files
+            </p>
+          </a-upload-dragger>
+        </div>
+      </div>
     </div>
   </a-card>
 
