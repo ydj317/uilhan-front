@@ -8,11 +8,13 @@ import "moment/dist/locale/zh-cn";
 import "ant-design-vue/dist/antd.css";
 import "./assets/css/global.css";
 import 'echarts';
+import DatePicker from "ant-design-vue/es/date-picker/moment";
 
 const app = createApp(App);
 app.use(router);
 app.use(store);
 app.use(antDV);
 app.use(moment);
+app.use(DatePicker);
 
 app.mount("#app");
