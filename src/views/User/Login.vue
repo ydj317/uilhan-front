@@ -86,7 +86,7 @@ export default defineComponent({
     let loading = ref(false);
     const handleFinish = () => {
       if (formState.user === '' || formState.password === '') {
-        alert('아이디 또는 비밀번호을  입력해주시오');
+        message.warning('아이디 또는 비밀번호을  입력해주시오');
         return true
       }
 
@@ -99,19 +99,19 @@ export default defineComponent({
         process.env.VUE_APP_API_URL + '/api/login', user).then((res) => {
 
         if (res.status === 400 || res.status === 401) {
-          alert('아이디 또는 비밀번호가 잘못 입력 되었습니다.');
+          message.warning('아이디 또는 비밀번호가 잘못 입력 되었습니다.');
           loading.value = false;
           return false;
         }
 
         if (res.status !== '2000') {
-          alert(res.message);
+          message.error(res.message);
           loading.value = false;
           return false;
         }
 
         if (res.data.member_roles === undefined) {
-          alert('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(role error)');
+          message.error('처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.(role error)');
           loading.value = false;
           return false;
         }
@@ -139,7 +139,7 @@ export default defineComponent({
     };
 
     const handleFinishFailed = () => {
-      alert('입력하신 회원정보는 존재하지 않습니다');
+      message.error('입력하신 회원정보는 존재하지 않습니다');
       loading.value = false;
     };
 

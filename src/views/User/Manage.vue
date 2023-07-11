@@ -114,6 +114,7 @@ import {AuthRequest} from "util/request";
 import router from "router";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
+import { message } from "ant-design-vue";
 export default defineComponent({
   components: { Loading },
   setup() {
@@ -155,7 +156,7 @@ export default defineComponent({
     //     });
     //
     //     if (returnData === undefined || returnData.status === undefined) {
-    //       alert("서버장애로 인해 회원가입에 실패하였습니다. \n 잠시후 시도해주시길 바랍니다.");
+    //       message.warning("서버장애로 인해 회원가입에 실패하였습니다. \n 잠시후 시도해주시길 바랍니다.");
     //       return false;
     //     }
     //
@@ -220,7 +221,7 @@ export default defineComponent({
       let intPattern = /^[0-9]*$/;
       if (isNaN(parseInt(recharge_value.value)) === true ||
           intPattern.test(recharge_value.value) !== true) {
-        alert('충전회수는 숫자만 입력가능합니다');
+        message.warning('충전회수는 숫자만 입력가능합니다');
         return false;
       }
 
@@ -233,14 +234,14 @@ export default defineComponent({
 
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/recharge', data).then(async (res) => {
         if (res.status === undefined || res.status !== '2000') {
-          alert(res.message);
+          message.error(res.message);
           return false;
         }
 
         rechargePop.value = false;
         recharge_value.value = 0;
 
-        alert(res.message);
+        message.success(res.message);
         await getUserList();
         bLoading.value = false;
       });
@@ -316,11 +317,11 @@ export default defineComponent({
     const apikey = () => {
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/copykey').then(async (res) => {
         if (res.status === undefined || res.status !== '2000') {
-          alert('실패');
+          message.error('실패');
           return false;
         }
 
-        alert('성공');
+        message.success('성공');
       });
     };
 

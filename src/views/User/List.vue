@@ -235,6 +235,7 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 import Cookie from 'js-cookie';
 import MarketList from 'components/List/MarketList';
 import {mapState} from 'vuex';
+import { message } from "ant-design-vue";
 
 export default defineComponent({
   components: {Loading, Cookie, MarketList},
@@ -471,7 +472,7 @@ export default defineComponent({
       this.indicator = true;
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/prdlist', {params: param}).then((res) => {
         if (res.status !== '2000') {
-          alert(res.message)
+          message.error(res.message)
         }
 
         this.prdlist = res.data.list;
@@ -542,7 +543,7 @@ export default defineComponent({
       this.indicator = true;
       let list = this.getCheckList();
       if (list === undefined || list.length === 0) {
-        alert('선택된 상품이 없습니다.');
+        message.warning('선택된 상품이 없습니다.');
         this.indicator = false;
         return false;
       }
@@ -570,24 +571,24 @@ export default defineComponent({
       }
 
       if (notCatePrd.length === items.length) {
-        alert('선택하신 모든든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
+        message.warning('선택하신 모든든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
         this.indicator = false;
         return false;
       }
 
       if (notCatePrd.length > 0) {
-        alert(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
+        message.warning(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
       }
 
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/sendmarket', {list: list}).then((res) => {
         if (res.status !== '2000') {
-          alert(res.message)
+          message.error(res.message)
           this.indicator = false;
           return false;
         }
 
         if (res.data !== undefined && res.data.length === 0) {
-          alert('해당요청에 오류가 발생하였습니다. \ 재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.');
+          message.error('해당요청에 오류가 발생하였습니다. \ 재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.');
           this.indicator = false;
           return false;
         }
@@ -600,12 +601,12 @@ export default defineComponent({
         if (data.failed_code) {
           sMessage = '연동실패 상품 : ' + data.failed_code;
         }
-        alert(sMessage);
+        message.success(sMessage);
         this.msg = data.msg;
         this.indicator = false;
         this.getList();
       }).catch((error) => {
-        alert(error.message);
+        message.error(error.message);
         this.indicator = false;
         return false;
       });
@@ -614,18 +615,18 @@ export default defineComponent({
     deletePrd() {
       let list = this.getCheckList();
       if (list === undefined || list.length === 0) {
-        alert('선택된 상품이 없습니다.');
+        message.warning('선택된 상품이 없습니다.');
         return false;
       }
 
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/delete', {params: {list: list}}).then((res) => {
         if (res.status !== '2000') {
-          alert(res.message)
+          message.error(res.message)
           return false;
         }
 
         // if (res.status !== 200) {
-        //   alert('삭제실패');
+        //   message.warning('삭제실패');
         //   return false;
         // }
 
@@ -647,11 +648,11 @@ export default defineComponent({
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/exceldown', {params: param}).then((res) => {
         this.indicator = false;
         if (res.status !== '2000') {
-          alert(res.message)
+          message.error(res.message)
           return false;
         }
         // if (res.status !== 200) {
-        //   alert('파일 다운로드에 실패하였습니다. \n일시적인 현상이오니 잠시후 재 시도하시길 바랍니다.');
+        //   message.warning('파일 다운로드에 실패하였습니다. \n일시적인 현상이오니 잠시후 재 시도하시길 바랍니다.');
         //   return false;
         // }
         window.open(res.data.path);
@@ -668,7 +669,7 @@ export default defineComponent({
 
     searchFailed() {
       if (this.marketSyncFailedCode.length === 0) {
-        alert('연동실패한 상품이 없습니다.');
+        message.warning('연동실패한 상품이 없습니다.');
         return false;
       }
 
@@ -700,13 +701,13 @@ export default defineComponent({
     getMarketList() {
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/marketlist').then((res) => {
         if (res.status !== '2000') {
-          alert(res.message)
+          message.error(res.message)
           return false;
         }
 
         let returnData = res.data;
         // if (returnData.status === undefined || returnData.status !== '2000') {
-        //   alert(returnData.msg);
+        //   message.warning(returnData.msg);
         //   return false;
         // }
 
@@ -731,13 +732,13 @@ export default defineComponent({
       }
 
       if (list === ',' || list.length === 0) {
-        alert('상품을 선택해주세요');
+        message.warning('상품을 선택해주세요');
         this.indicator = false;
         return false;
       }
 
       if (this.marketList.length === undefined) {
-        alert('선택된 제휴사가 없습니다.');
+        message.warning('선택된 제휴사가 없습니다.');
         this.indicator = false;
         return false;
       }
@@ -745,13 +746,13 @@ export default defineComponent({
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/syncmarket',
           {params: {list: list, market: marketList, options: this.options}}).then((res) => {
         if (res.status !== '2000') {
-          alert(res.message)
+          message.error(res.message)
         }
 
         let returnData = res.data;
 
         // if (returnData.status === undefined || returnData.status !== 2000) {
-        //   alert(returnData.msg);
+        //   message.warning(returnData.msg);
         // }
 
         if (type === 'multi') {

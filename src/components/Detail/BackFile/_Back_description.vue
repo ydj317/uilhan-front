@@ -28,6 +28,7 @@
 <script>
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
+import { message } from "ant-design-vue";
 
 export default {
   name: "productDetailDescription",
@@ -54,7 +55,7 @@ export default {
     getDetailContentsImage() {
       let content = window.tinymce.editors[0].getContent();
       if (content === undefined || content.length === 0) {
-        alert("이미지가 없습니다");
+        message.warning("이미지가 없습니다");
         return false;
       }
 
@@ -62,7 +63,7 @@ export default {
       let arr = content.match(imgReg);
 
       if (arr === undefined || arr.length === 0) {
-        alert("번역하실 이미지가 없습니다");
+        message.warning("번역하실 이미지가 없습니다");
         return false;
       }
 

@@ -139,6 +139,7 @@
 import {mapState} from 'vuex';
 import {AuthRequest} from '../../util/request';
 import moment from 'moment';
+import { message } from "ant-design-vue";
 
 export default {
   computed: {
@@ -218,7 +219,7 @@ export default {
   methods: {
     searchFailed() {
       if (this.marketSyncFailedCode.length === 0) {
-        alert('연동실패한 상품이 없습니다.');
+        message.warning('연동실패한 상품이 없습니다.');
         return false;
       }
 
@@ -245,7 +246,7 @@ export default {
       this.common.loading = true;
       let list = this.getCheckList();
       if (list === undefined || list.length === 0) {
-        alert('선택된 상품이 없습니다.');
+        message.warning('선택된 상품이 없습니다.');
         this.common.loading = false;
         return false;
       }
@@ -273,29 +274,29 @@ export default {
       }
 
       if (notCatePrd.length === items.length) {
-        alert('선택하신 모든든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
+        message.warning('선택하신 모든든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
         this.common.loading = false;
         return false;
       }
 
       if (notCatePrd.length > 0) {
-        alert(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
+        message.warning(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
       }
 
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/sendmarket', {list: list}).then((res) => {
         if (res.data !== undefined && res.data.length === 0) {
-          alert("해당요청에 오류가 발생하였습니다. \ 재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+          message.warning("해당요청에 오류가 발생하였습니다. \ 재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
           this.common.loading = false;
           return false;
         }
 
         let data = res.data.data;
-        alert('연동성공 상품 : ' + data.success_code + "\n" + '연동실패 상품 : ' + data.failed_code);
+        message.warning('연동성공 상품 : ' + data.success_code + "\n" + '연동실패 상품 : ' + data.failed_code);
         this.common.msg = data.msg;
         this.common.loading = false;
         this.getList();
       }).catch((error) => {
-        alert(error.message);
+        message.warning(error.message);
         this.common.loading = false;
         return false;
       });
@@ -304,13 +305,13 @@ export default {
     deletePrd() {
       let list = this.getCheckList();
       if (list === undefined || list.length === 0) {
-        alert('선택된 상품이 없습니다.');
+        message.warning('선택된 상품이 없습니다.');
         return false;
       }
 
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/deleteprd', {params: {list: list}}).then((res) => {
         if (res.status !== 200) {
-          alert('삭제실패');
+          message.warning('삭제실패');
           return false;
         }
 
@@ -361,13 +362,13 @@ export default {
       }
 
       if (list === ',' || list.length === 0) {
-        alert('상품을 선택해주세요');
+        message.warning('상품을 선택해주세요');
         this.common.loading = false;
         return false;
       }
 
       if (this.common.marketList.length === undefined) {
-        alert('선택된 제휴사가 없습니다.');
+        message.warning('선택된 제휴사가 없습니다.');
         this.common.loading = false;
         return false;
       }
@@ -377,7 +378,7 @@ export default {
         let returnData = res.data;
 
         if (returnData.status === undefined || returnData.status !== '2000') {
-          alert(returnData.msg);
+          message.warning(returnData.msg);
         }
 
         if (type === 'multi') {

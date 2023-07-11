@@ -43,6 +43,7 @@ import 'tinymce/plugins/textpattern'  //快速排版
 import 'tinymce/plugins/wordcount'
 import {AuthRequest} from "util/request";  //字数统计
 import '../../../public/tinymce/axupimgs';
+import { message } from "ant-design-vue";
 
 
 export default {
@@ -113,7 +114,7 @@ export default {
           const isPNG = file.type === 'image/png';
 
           if (!(isJPG || isJPEG || isPNG || isGIF)) {
-            alert('허용되는 이미지 격식이 아닙니다.');
+            message.warning('허용되는 이미지 격식이 아닙니다.');
             return false;
           }
 

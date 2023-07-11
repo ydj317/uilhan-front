@@ -187,6 +187,7 @@
 import { mapState } from "vuex";
 import { lib } from "@/util/lib";
 import { AuthRequest } from "@/util/request";
+import { message } from "ant-design-vue";
 
 export default {
   name: "ImageEditorGroup",
@@ -340,7 +341,7 @@ export default {
     getDetailContentsImage() {
       let content = window.tinymce.editors[0].getContent();
       if (content === undefined || content.length === 0) {
-        alert("이미지가 없습니다");
+        message.warning("이미지가 없습니다");
         return false;
       }
 
@@ -348,7 +349,7 @@ export default {
       let arr = content.match(imgReg);
 
       if (arr === undefined || arr.length === 0) {
-        alert("번역하실 이미지가 없습니다");
+        message.warning("번역하실 이미지가 없습니다");
         return false;
       }
 
@@ -392,7 +393,7 @@ export default {
       }
 
       if (lib.isArray(aCheckedImage, true) === false) {
-        alert("삭제할 이미지를 선택해 주세요.");
+        message.warning("삭제할 이미지를 선택해 주세요.");
       }
 
       let aCheckedImageUrl = [];
@@ -454,7 +455,7 @@ export default {
               let response = res;
 
               if (response === undefined) {
-                  alert("다운로드에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+                  message.error("다운로드에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
                   return false;
               }
 
@@ -490,14 +491,14 @@ export default {
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
         (res) => {
           if (res.status !== "2000" || res.data === undefined) {
-            alert(res.message);
+            message.error(res.message);
             return false;
           }
 
           try {
             this.product.recharge = res.data.recharge;
           } catch (e) {
-            alert("남은회수 호출 실패");
+            message.error("남은회수 호출 실패");
           }
         }
       );

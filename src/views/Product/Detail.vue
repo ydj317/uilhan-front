@@ -74,6 +74,7 @@ import router from "@/router";
 
 // import Spec from "@/components/Detail/Spec";
 import Loading from "vue-loading-overlay";
+import { message } from "ant-design-vue";
 const Sku = defineAsyncComponent(() => import('@/components/Detail/Sku'))
 const NewSpec = defineAsyncComponent(() => import('@/components/Detail/Spec/NewSpec'))
 const Relaket = defineAsyncComponent(() => import('@/components/Detail/Relaket'))
@@ -127,7 +128,7 @@ export default defineComponent({
       let id = parseInt(path[3]);
 
       if (!lib.isNumeric(id)) {
-        alert("상품번호가 잘못되었습니다.");
+        message.warning("상품번호가 잘못되었습니다.");
         router.push("/product");
         return false;
       }
@@ -140,7 +141,7 @@ export default defineComponent({
           res.status !== "2000" ||
           lib.isEmpty(res.data)
         ) {
-          alert(res.message);
+          message.success(res.message);
           router.push("/product");
           this.product.loading = false;
           return false;

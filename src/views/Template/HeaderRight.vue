@@ -61,6 +61,7 @@ import { cookieInit } from "@/util/auth";
 import router from "../../router";
 import { mapState } from "vuex";
 import Loading from "vue-loading-overlay";
+import { message } from "ant-design-vue";
 
 export default {
   components: {
@@ -136,7 +137,7 @@ export default {
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/downloadext", { responseType: "blob" }).then((res) => {
         let response = res;
         if (response === undefined) {
-          alert("확장프로그램 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+          message.error("확장프로그램 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
           this.indicator = false;
           return false;
         }

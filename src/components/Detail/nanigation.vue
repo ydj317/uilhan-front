@@ -37,6 +37,7 @@ import {
   BuildTwoTone,
 } from '@ant-design/icons-vue';
 import {mapState} from 'vuex';
+import { message } from "ant-design-vue";
 
 export default {
   components: {
@@ -76,7 +77,7 @@ export default {
   methods: {
     textTransModal() {
       if (this.product.item_is_trans === true) {
-        alert('이미 번역한 상품입니다.');
+        message.warning('이미 번역한 상품입니다.');
         return false;
       }
 

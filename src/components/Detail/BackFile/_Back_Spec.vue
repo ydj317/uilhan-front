@@ -158,6 +158,7 @@
 import { lib } from "util/lib";
 import { forEach } from "lodash";
 import { mapState } from "vuex";
+import { message } from "ant-design-vue";
 
 export default {
   name: "productDetailSpec",
@@ -381,7 +382,7 @@ export default {
         });
       });
       if (bRepeat === true) {
-        alert("동일한 옵션값이 존재합니다.");
+        message.warning("동일한 옵션값이 존재합니다.");
         return false;
       }
 

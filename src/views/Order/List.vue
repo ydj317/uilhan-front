@@ -140,6 +140,7 @@ import Loading from "vue-loading-overlay";
 import { SearchOutlined, InsertRowAboveOutlined, DownloadOutlined } from "@ant-design/icons-vue";
 import _ from "lodash";
 import moment from "moment";
+import { message } from "ant-design-vue";
 
 let bLoading = ref(false);
 
@@ -229,11 +230,11 @@ const initSearchParam = () => {
 const requestCollect = () => {
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/order/requestCollect").then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       return false;
     }
 
-    alert("수동 주문수집이 요청 되었습니다." + "\n" + "수집이 완료되기까지 대략 5분정도 소요 됩니다.");
+    message.info("수동 주문수집이 요청 되었습니다." + "\n" + "수집이 완료되기까지 대략 5분정도 소요 됩니다.");
   });
 };
 
@@ -316,7 +317,7 @@ const setMarketList = async () => {
     const res = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist");
 
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       return false;
     }
 
@@ -407,7 +408,7 @@ const excelDownload = () => {
   ).then((res) => {
     let response = res;
     if (response === undefined) {
-      alert("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
       bLoading = false;
       return false;
     }

@@ -4,6 +4,7 @@ import {EditOutlined, PlusOutlined, DeleteOutlined, PushpinTwoTone} from "@ant-d
 import {computed, onBeforeMount, ref} from "vue";
 import {useRouter} from "vue-router";
 import {AuthRequest} from "@/util/request";
+import { message } from "ant-design-vue";
 
 const router = useRouter();
 
@@ -59,7 +60,7 @@ const getBoardList = () => {
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/list', params).then((res) => {
     if (res.status !== '2000') {
       loading.value = false;
-      alert(res.message)
+      message.error(res.message)
       return false;
     }
     total.value = res.data.length
@@ -68,7 +69,7 @@ const getBoardList = () => {
 
   }).catch((error) => {
     loading.value = false;
-    alert(error.message);
+    message.error(error.message);
     return false;
   });
 }
@@ -80,19 +81,19 @@ const deleteSelectedData = () => {
   deleteLoading.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/board/remove', {ids: selectedRowKeys.value}).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       deleteLoading.value = false;
       return false;
     }
 
     let data = res.data;
-    alert(data.message);
+    message.success(data.message);
 
     deleteLoading.value = false;
     selectedRowKeys.value = [];
     getBoardList()
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     deleteLoading.value = false;
     return false;
   });

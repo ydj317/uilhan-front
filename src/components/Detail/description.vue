@@ -37,6 +37,7 @@ import { forEach } from "lodash";
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
 import { watchEffect } from "vue";
+import { message } from "ant-design-vue";
 
 export default {
   name: "productDetailDescription",
@@ -170,7 +171,7 @@ export default {
       const regex = /<div id="editor_option_table">[\s\S]*?<\/div>/g;
       content = content.replace(regex, "");
       if (content === undefined || content.length === 0) {
-        alert("이미지가 없습니다");
+        message.warning("이미지가 없습니다");
         return false;
       }
 
@@ -178,7 +179,7 @@ export default {
       let arr = content.match(imgReg);
 
       if (arr === undefined || arr === null || arr.length === 0) {
-        alert("번역하실 이미지가 없습니다");
+        message.warning("번역하실 이미지가 없습니다");
         return false;
       }
 

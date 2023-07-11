@@ -355,6 +355,7 @@ import router from "router";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import { SearchOutlined, FileAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import { message } from "ant-design-vue";
 
 const linkableMarketInfo = require('config/Relaket/linkableMarketInfo.json');
 const MUST_DATA = {
@@ -783,7 +784,7 @@ const savePopupFn = async () => {
     bLoading.value = true;
 
     if (marketItem.value.site_code.length === 0) {
-        alert('마켓을 선택해 주세요!')
+        message.warning('마켓을 선택해 주세요!')
         bLoading.value = false;
         return;
     }
@@ -800,7 +801,7 @@ const savePopupFn = async () => {
     const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/market/seller", marketItem.value);
    //{"status":"2000","message":"요청에 성공하였습니다.","data":[]}
     if (res.status !== '2000') {
-        alert(res.message);
+        message.error(res.message);
         bLoading.value = false;
         return false;
 
@@ -818,9 +819,9 @@ function checkApiFn(site_code, ssi_ix) {
       }
     }).then(res => {
         bLoading.value = false;
-        alert(res.data.message);
+        message.success(res.data.message);
     }).catch(() => {
-        alert('통신 에러가 발생 했습니다. 관리자에게 문의해 주세요!')
+        message.error('통신 에러가 발생 했습니다. 관리자에게 문의해 주세요!')
         bLoading.value = false;
     })
 }

@@ -5,6 +5,7 @@ import router from "@/router";
 import {AuthRequest} from "@/util/request";
 import {onBeforeMount, ref} from "vue";
 import Loading from "vue-loading-overlay";
+import { message } from "ant-design-vue";
 
 const route = useRoute();
 const indicator = ref(true);
@@ -25,17 +26,17 @@ const marketUrls = {
 const syncProduct = (queryJson) => {
 
   if (!lib.isNumeric(queryJson.ssi_ix)) {
-    alert("마켓 업체별 고유번호가 잘못되었습니다.");
+    message.warning("마켓 업체별 고유번호가 잘못되었습니다.");
     router.push("/product");
     return false;
   }
   if (!lib.isNumeric(queryJson.pid)) {
-    alert("상품코드가 잘못되었습니다.");
+    message.warning("상품코드가 잘못되었습니다.");
     router.push("/product");
     return false;
   }
   if (!lib.isNumeric(queryJson.site_id)) {
-    alert("마켓 LOGIN ID가 잘못되었습니다.");
+    message.warning("마켓 LOGIN ID가 잘못되었습니다.");
     router.push("/product");
     return false;
   }
@@ -48,19 +49,19 @@ const syncProduct = (queryJson) => {
         res.status !== "2000" ||
         lib.isEmpty(res.data)
     ) {
-      alert(res.message);
+      message.success(res.message);
       router.push("/product");
       return false;
     }
 
     const resData = res.data.data
 
-    if(resData.total <= 0) alert('마켓상품이 존재하지 않습니다. 다시시도해 주세요.')
+    if(resData.total <= 0) message.warning('마켓상품이 존재하지 않습니다. 다시시도해 주세요.')
     const prdDetail = resData.ProductInfo['item'];
 
     let url = '';
     if(prdDetail.site_code === 'storefarm' || prdDetail.site_code === 'tmon') {
-      alert('스마트스토어는 잠시 지원하지 않습니다.');
+      message.warning('스마트스토어는 잠시 지원하지 않습니다.');
       window.close();
       //url = marketUrls[prdDetail.site_code] + prdDetail.site_id + '/products/' + queryJson.pid
     } else {

@@ -61,6 +61,7 @@ import {mapState} from 'vuex'
 import {AuthRequest} from '../../util/request';
 import moment from 'moment';
 import Cookie from 'js-cookie';
+import { message } from "ant-design-vue";
 // import {lib} from 'util/lib';
 
 export default {
@@ -196,7 +197,7 @@ export default {
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/marketlist').then((res) => {
         let returnData = res.data;
         if (returnData.status === undefined || returnData.status !== '2000') {
-          alert(returnData.msg);
+          message.warning(returnData.msg);
           return false;
         }
 

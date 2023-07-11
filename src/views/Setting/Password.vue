@@ -39,6 +39,7 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
 import { reactive, ref } from "vue";
 import router from "@/router";
+import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
@@ -118,13 +119,13 @@ const onFinish = () => {
   indicator.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userDetail", user).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
       return false;
     }
     console.log(res);
 
-    alert(res.message);
+    message.success(res.message);
 
     indicator.value = false;
   });

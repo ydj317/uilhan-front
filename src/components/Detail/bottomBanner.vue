@@ -90,6 +90,7 @@ import { AuthRequest } from "@/util/request";
 import router from "@/router";
 import { lib } from "@/util/lib";
 import moment from "moment/moment";
+import { message } from "ant-design-vue";
 
 export default {
   computed: {
@@ -135,7 +136,7 @@ export default {
      */
     textTranslateSwicth() {
       if (this.product.item_is_trans === true) {
-        alert("이미 번역한 상품입니다.");
+        message.warning("이미 번역한 상품입니다.");
         return false;
       }
 
@@ -160,20 +161,20 @@ export default {
 
       let cate = this.product.formState.last_cate;
       if (cate === undefined || cate === null || cate.length === 0) {
-        alert("최하위 카테고리까지 선택해주세요");
+        message.warning("최하위 카테고리까지 선택해주세요");
         return false;
       }
 
       let mandatoryVal = this.product.formState.mandatory_val;
 
       if (mandatoryVal === "선택") {
-        alert("상품고시정보를 선택해주세요");
+        message.warning("상품고시정보를 선택해주세요");
         return false;
       }
 
       let cont = this.product.formState.keyword;
       if (cont !== null && cont.length > 255) {
-        alert(
+        message.warning(
           "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
             cont.length +
             ")"
@@ -183,7 +184,7 @@ export default {
 
       let dlvTemp = this.product.formState.delivery_template_real_val;
       if (dlvTemp === null || dlvTemp === "선택") {
-        alert("배송정책정보를 선택해주십시오");
+        message.warning("배송정책정보를 선택해주십시오");
         return false;
       }
 
@@ -223,7 +224,7 @@ export default {
       try {
           const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm);
           if (res.status === undefined || res.status !== "2000") {
-              alert(res.message);
+              message.error(res.message);
               this.product.loading = false;
               return false;
           }
@@ -248,11 +249,11 @@ export default {
           }
           this.product.item_thumbnails = aItemThumbnails;
 
-          alert("저장 성공");
+          message.success("저장 성공");
           this.product.loading = false;
 
       } catch (e) {
-          alert('저장에 실패 하였습니다.')
+          message.error('저장에 실패 하였습니다.')
           return false;
       }
     },
@@ -296,7 +297,7 @@ export default {
             list = this.product.item_id + '';
 
             if (marketList.length === 0) {
-                alert('선택된 제휴사가 없습니다.');
+                message.warning('선택된 제휴사가 없습니다.');
                 this.product.loading = false;
                 return false;
             }
@@ -305,19 +306,19 @@ export default {
 
                 let res = await AuthRequest.post(process.env.VUE_APP_API_URL + '/api/sendmarket', {list: list});
                 if (res.status !== '2000') {
-                    alert(res.message)
+                    message.error(res.message)
                     this.indicator = false;
                     return false;
                 }
 
                 if (res.data !== undefined && res.data.length === 0) {
-                    alert("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+                    message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
                     this.indicator = false;
                     return false;
                 }
 
             } catch (e) {
-                alert(e.message);
+                message.error(e.message);
                 this.product.loading = false;
                 return false;
             }
@@ -325,7 +326,7 @@ export default {
             const res3 = await AuthRequest.get(process.env.VUE_APP_API_URL + '/api/marketlist');
 
             if (res3.status !== '2000') {
-                alert(res3.message)
+                message.error(res3.message)
                 return false;
             }
 
@@ -334,7 +335,7 @@ export default {
             AuthRequest.get(process.env.VUE_APP_API_URL + '/api/syncmarket',
                 {params: {list: list, market: marketList, options: options}}).then((res) => {
                 if (res.status !== '2000') {
-                    alert(res.message)
+                    message.error(res.message)
                 }
 
                 let returnData = res.data;
@@ -408,7 +409,7 @@ export default {
           try {
               const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm);
               if (res.status === undefined || res.status !== "2000") {
-                  alert(res.message);
+                  message.error(res.message);
                   this.product.loading = false;
                   return false;
               }
@@ -452,7 +453,7 @@ export default {
               })
 
           } catch (e) {
-              alert('저장에 실패 하였습니다.')
+              message.error('저장에 실패 하였습니다.')
               return false;
           }
       },
@@ -471,12 +472,12 @@ export default {
       }
 
       if (this.product.filter_word_validate_in_process === true) {
-        alert("상품명 금지어 체크중입니다.잠시후 다시 시도해 주세요.");
+        message.warning("상품명 금지어 체크중입니다.잠시후 다시 시도해 주세요.");
         return false;
       }
 
       if (this.product.filter_word_status === false) {
-        alert("상품명에 금지어가 포함되었습니다.상품명 수정후 다시 시도해 주세요.");
+        message.warning("상품명에 금지어가 포함되었습니다.상품명 수정후 다시 시도해 주세요.");
         // return false;
       }
 

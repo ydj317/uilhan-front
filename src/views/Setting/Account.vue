@@ -98,6 +98,7 @@ import { onMounted, reactive, ref } from "vue";
 import { useStore } from "vuex";
 import Cookie from "js-cookie";
 import router from "@/router";
+import { message } from "ant-design-vue";
 
 const store = useStore();
 const { product } = store.state;
@@ -129,16 +130,16 @@ function setLogoInDetail(value) {
     type: "logoindetail",
   }).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       indicator.value = false;
       return false;
     }
 
     isLogInDetail.value = res.data;
     if (isLogInDetail.value) {
-      alert('상품 상세 설명에 로고 이미지 적용 성공하였습니다.\n페이지를 갱신하시면 상품 상세 편집 창에서 효과를 확인하실 수 있습니다.')
+      message.success('상품 상세 설명에 로고 이미지 적용 성공하였습니다.\n페이지를 갱신하시면 상품 상세 편집 창에서 효과를 확인하실 수 있습니다.')
     } else {
-      alert('상품 상세 설명에 로고 이미지 적용 취소하였습니다.\n페이지를 갱신하시면 상품 상세 편집 창에서 효과를 확인하실 수 있습니다.')
+      message.success('상품 상세 설명에 로고 이미지 적용 취소하였습니다.\n페이지를 갱신하시면 상품 상세 편집 창에서 효과를 확인하실 수 있습니다.')
     }
 
     indicator.value = false;
@@ -147,7 +148,7 @@ function setLogoInDetail(value) {
 
 function setLogo() {
   if (logoImg.value.length === 0) {
-    alert("업로드한 이미지가 없습니다");
+    message.warning("업로드한 이미지가 없습니다");
     return false;
   }
   indicator.value = true;
@@ -156,13 +157,13 @@ function setLogo() {
     type: "logo",
   }).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       indicator.value = false;
       return false;
     }
 
     if (res.data === undefined || res.data.length === 0) {
-      alert("로고 업로드 실패");
+      message.error("로고 업로드 실패");
       return false;
     }
 
@@ -184,7 +185,7 @@ function delLogo(oldLogo) {
     type: "logo"
   }).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
     }
 
@@ -202,7 +203,7 @@ function delIcon(index) {
     type: "icon"
   }).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
     }
 
@@ -227,7 +228,7 @@ function customRequest(option, type) {
     formData
   ).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
       return false;
     }
@@ -252,7 +253,7 @@ function handleBeforeUpload(file) {
   const isPNG = file.type === "image/png";
 
   if (!(isJPG || isJPEG || isPNG || isGIF)) {
-    alert("허용되는 이미지 격식이 아닙니다.");
+    message.warning("허용되는 이미지 격식이 아닙니다.");
     return false;
   }
 
@@ -263,7 +264,7 @@ function backupImages() {
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/backupimages").then(
     (res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
         return false;
       }
     }
@@ -275,12 +276,12 @@ function onClickSyncDomeggookCategory() {
     market_code: "Domeggook"
   }).then((res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
         indicator.value = false;
         return false;
       }
 
-      alert("카테고리 동기화 신청완료.");
+      message.warning("카테고리 동기화 신청완료.");
       indicator.value = false;
     }
   );
@@ -290,7 +291,7 @@ function getRecharge() {
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
     (res) => {
       if (res.status !== "2000" || res.data === undefined) {
-        alert(res.message);
+        message.error(res.message);
         return false;
       }
 
@@ -298,7 +299,7 @@ function getRecharge() {
         recharge.value = res.data.recharge;
         product.recharge = res.data.recharge;
       } catch (e) {
-        alert("남은회수 호출 실패");
+        message.error("남은회수 호출 실패");
       }
     }
   );
@@ -306,12 +307,12 @@ function getRecharge() {
 
 function addKey() {
   if (accessKey.value.length === undefined || accessKey.value.length === 0) {
-    alert("accessKey는 필수로 입력해주십시오");
+    message.warning("accessKey는 필수로 입력해주십시오");
     return false;
   }
 
   if (secretKey.value.length === undefined || secretKey.value.length === 0) {
-    // alert("secretKey는 필수로 입력해주십시오");
+    // message.warning("secretKey는 필수로 입력해주십시오");
     // return false;
       secretKey.value = 'secretKey';
   }
@@ -323,12 +324,12 @@ function addKey() {
     type: "key"
   }).then((res) => {
     if (res.status !== "2000") {
-      alert(res.message);
+      message.error(res.message);
       indicator.value = false;
       return false;
     }
 
-    alert("등록성공");
+    message.success("등록성공");
     indicator.value = false;
   });
 }
@@ -337,7 +338,7 @@ function getUser() {
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user", {}).then(
     (res) => {
       if (res.status !== "2000") {
-        alert(res.message);
+        message.error(res.message);
       }
 
       if (

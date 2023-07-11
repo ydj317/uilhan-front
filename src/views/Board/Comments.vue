@@ -2,6 +2,7 @@
 import {onBeforeMount, reactive, ref} from "vue";
 import {AuthRequest} from "@/util/request";
 import {useRoute, useRouter} from "vue-router";
+import { message } from "ant-design-vue";
 const route = useRoute()
 const router = useRouter()
 
@@ -28,18 +29,18 @@ const onFinish = values => {
   buttonLoading.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/board/commentsSave', values).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       buttonLoading.value = false;
       return false;
     }
 
     let data = res.data;
-    alert(data.message);
+    message.success(data.message);
     formState.content = '';
     buttonLoading.value = false;
     getComments(props.ids)
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     buttonLoading.value = false;
     return false;
   });
@@ -50,7 +51,7 @@ const getComments = (id) => {
   initLoading.value = true;
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/commentsList', {params: {id: id}}).then((res) => {
     if (res.status !== '2000') {
-      alert(res.message)
+      message.error(res.message)
       initLoading.value = false;
       router.push('/board/question')
       return false;
@@ -61,7 +62,7 @@ const getComments = (id) => {
     data.value = res.data;
     list.value = res.data;
   }).catch((error) => {
-    alert(error.message);
+    message.error(error.message);
     initLoading.value = false;
     return false;
   });

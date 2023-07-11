@@ -127,6 +127,7 @@ import {mandatoryList} from 'config/Relaket/mandatory'
 import {ref, reactive, computed, onBeforeUnmount} from 'vue';
 import {mapState, useStore} from 'vuex';
 import {lib} from '@/util/lib';
+import { message } from "ant-design-vue";
 
 export default {
   components: { mandatoryList},
@@ -176,13 +177,13 @@ export default {
       let template = formState.delivery_template_list;
 
       if (template.length !== undefined && template.length === 0) {
-        alert("릴라켓 배송정책정보 얻기에 실패하였습니다. \n1, 세션키가 유효한지 확인하시길바랍니다. \n2, 릴라켓 어드민에서 배송정책을 추가하였는지 확인하시길 바랍니다. \n3, 릴라켓측 IP허용설정이 되여있는지 관리자와 확인하시길 바랍니다.");
+        message.warning("릴라켓 배송정책정보 얻기에 실패하였습니다. \n1, 세션키가 유효한지 확인하시길바랍니다. \n2, 릴라켓 어드민에서 배송정책을 추가하였는지 확인하시길 바랍니다. \n3, 릴라켓측 IP허용설정이 되여있는지 관리자와 확인하시길 바랍니다.");
         isSync.value = false;
         return false;
       }
 
       if (keyStatus.value === false) {
-        alert("릴라켓 연동에 필요한 API KEY가 없습니다.\n API KEY는 릴라켓어드민 > 나의 오피스 > 기본정보 > API 사용관리에서 확인하실수 있습니다.");
+        message.warning("릴라켓 연동에 필요한 API KEY가 없습니다.\n API KEY는 릴라켓어드민 > 나의 오피스 > 기본정보 > API 사용관리에서 확인하실수 있습니다.");
         isSync.value = false;
         return false;
       }
@@ -206,7 +207,7 @@ export default {
       }
 
       if (isOtherSelected === true) {
-        alert("배송정책류형은 하개만 선택가능합니다.");
+        message.warning("배송정책류형은 하개만 선택가능합니다.");
 
         for (let i = 0; i < typeList.length; i++) {
           if (type !== typeList[i]) {
@@ -647,7 +648,7 @@ export default {
       param.cate_market = recommendCategory.sMarket === "Domeggook" ? "Domeggook" : "Relaket";
       AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
         if (res.status !== '2000') {
-          alert(res.message)
+          message.warning(res.message)
         }
 
         formState.options = JSON.parse(JSON.stringify(res.data))
@@ -674,7 +675,7 @@ export default {
         setTimeout(() => {
           AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getcate', {params: param}).then((res) => {
             if (res.status !== '2000') {
-              alert(res.message)
+              message.warning(res.message)
             }
             targetOption.loading = false;
             targetOption.children = JSON.parse(JSON.stringify(res.data))
@@ -700,7 +701,7 @@ export default {
         }
         AuthRequest.get(process.env.VUE_APP_API_URL + '/api/getCateNames', {params: param}).then((res) => {
           if (res.status !== '2000') {
-            alert(res.message)
+            message.warning(res.message)
           }
           cateNames.value.push(res.data || [])
         });

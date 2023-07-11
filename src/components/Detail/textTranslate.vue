@@ -79,13 +79,13 @@ export default {
 
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/transtext', param).then((res) => {
         if (res.status !== '2000') {
-          alert(res.message);
+          message.error(res.message);
           this.product.loading = false;
           return false;
         }
 
         // if (lib.isEmpty(res.status, true) || res.status !== 200) {
-        //   alert('텍스트 번역 실패');
+        //   message.warning('텍스트 번역 실패');
         //   this.product.loading = false;
         //   return false;
         // }
@@ -138,7 +138,7 @@ export default {
       }).then((res) => {
         /* 등록실패여부 및 로딩제거 */
         if (res.status !== "2000") {
-          alert(res.message);
+          message.warning(res.message);
           return false;
         }
 
