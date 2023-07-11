@@ -10,7 +10,7 @@
         </div>
         <div class="right">
           <div>
-            <div>제휴사</div>
+            <div>연동마켓</div>
             <div>9</div>
           </div>
           <div>
@@ -25,51 +25,51 @@
       </div>
     </a-card>
 
-    <a-card :bordered="false" title="수집가능 마켓" class="setting-page-margin" style="margin-top: 20px;">
-      <div class="getMarketLogo">
-
-        <a href="https://www.taobao.com/" target="_blank">
-          <a-tag class="logo-tag">
-            <img :src="getLogoSrc('get-logo', 'taobao')" alt=""> <span>타오바오</span>
-          </a-tag>
-        </a>
-
-        <a href="https://www.tmall.com/" target="_blank">
-          <a-tag class="logo-tag">
-            <img :src="getLogoSrc('get-logo', 'tmall')" alt=""> <span>티몰</span>
-          </a-tag>
-        </a>
-
-        <a href="https://p4psearch.1688.com/" target="_blank">
-          <a-tag class="logo-tag">
-            <img :src="getLogoSrc('get-logo', 'alibaba')" alt=""> <span>알리바바</span>
-          </a-tag>
-        </a>
-
-        <a href="https://www.aliexpress.com/" target="_blank">
-          <a-tag class="logo-tag">
-            <img :src="getLogoSrc('get-logo', 'aliexpress')" alt=""> <span>알리익스프레스</span>
-          </a-tag>
-        </a>
-
-        <a href="https://domeggook.com/" target="_blank">
-          <a-tag class="logo-tag">
-            <img :src="getLogoSrc('get-logo', 'domeggook')" alt=""> <span>도매꾹</span>
-          </a-tag>
-        </a>
-      </div>
-    </a-card>
-
     <a-row type="flex" justify="space-between" align="bottom" style="margin-top: 20px;" :gutter="20">
+      <a-col :span="8">
+        <a-card :bordered="false" title="수집가능 마켓">
+          <div class="getMarketLogo">
+            <a href="https://www.taobao.com/" target="_blank">
+              <a-tag class="logo-tag">
+                <img :src="getLogoSrc('get-logo', 'taobao')" alt=""> <span>타오바오</span>
+              </a-tag>
+            </a>
+
+            <a href="https://www.tmall.com/" target="_blank">
+              <a-tag class="logo-tag">
+                <img :src="getLogoSrc('get-logo', 'tmall')" alt=""> <span>티몰</span>
+              </a-tag>
+            </a>
+
+            <a href="https://p4psearch.1688.com/" target="_blank">
+              <a-tag class="logo-tag">
+                <img :src="getLogoSrc('get-logo', 'alibaba')" alt=""> <span>알리바바</span>
+              </a-tag>
+            </a>
+
+            <a href="https://www.aliexpress.com/" target="_blank">
+              <a-tag class="logo-tag">
+                <img :src="getLogoSrc('get-logo', 'aliexpress')" alt=""> <span>알리익스프레스</span>
+              </a-tag>
+            </a>
+
+            <a href="https://domeggook.com/" target="_blank">
+              <a-tag class="logo-tag">
+                <img :src="getLogoSrc('get-logo', 'domeggook')" alt=""> <span>도매꾹</span>
+              </a-tag>
+            </a>
+          </div>
+        </a-card>
+      </a-col>
       <a-col :span="8">
         <a-card :bordered="false" title="총 판매액">
           <div class="data">1,026,560원</div>
           <div class="content content-1">
             <div>어제 보다 12%
-              <caret-up-filled :rotate="0" style="color:red;" />
+              <CaretUpFilled :rotate="0" style="color:red;" />
             </div>
             <div>편균 보다 11%
-              <caret-up-filled :rotate="180" style="color:green;" />
+              <CaretUpFilled :rotate="180" style="color:green;" />
             </div>
           </div>
           <div class="sub">일일 판매액 ₩ 100,000</div>
@@ -82,20 +82,6 @@
             <e-charts class="chart" :option="option" />
           </div>
           <div class="sub">10일 평균 판매액 ₩ 100,000</div>
-        </a-card>
-      </a-col>
-      <a-col :span="8">
-        <a-card :bordered="false" title="제휴사 연동 상황">
-          <div class="data">80%</div>
-          <div class="content content-3">
-            <div>
-              <div style="width: 80%;"></div>
-            </div>
-          </div>
-          <div class="sub-2">
-            <div class="linked">연동중</div>
-            <div class="no-linked">미연동</div>
-          </div>
         </a-card>
       </a-col>
     </a-row>
@@ -140,12 +126,14 @@
 <script setup>
 //icon
 import { CaretUpFilled } from "@ant-design/icons-vue";
-
 import { ref, onMounted } from "vue";
 import { AuthRequest } from "@/util/request";
 import { message } from "ant-design-vue";
 import ECharts from 'vue-echarts';
+
 const boardData = ref([]);
+const productData = ref([]);
+const orderData = ref([]);
 
 
 function getLogoSrc(fileName, marketCode) {
@@ -154,30 +142,6 @@ function getLogoSrc(fileName, marketCode) {
   } catch (error) {
     return require("../../assets/img/temp_image.png");
   }
-}
-
-// 상품연동상태 데이타
-function getLinkedData(data) {
-  let transformedData = {};
-  data.list.forEach(item => {
-    item.item_sync_market.forEach(syncMarket => {
-      const name = syncMarket.market_account.split("::")[0];
-      if (transformedData.hasOwnProperty(name)) {
-        if (syncMarket.status === "unsync") {
-          transformedData[name] += 1;
-        }
-      } else {
-        transformedData[name] = 0;
-      }
-    });
-  });
-
-  return Object.keys(transformedData).map(name => {
-    return {
-      name: name,
-      value: transformedData[name]
-    };
-  });
 }
 
 //chart
@@ -319,9 +283,8 @@ function parseHTML(html) {
   return div.textContent;
 }
 
-function getBoard() {
-  const params = {params: {type: 'notice'}}
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list", params).then((res) => {
+function getDashboard() {
+  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard").then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
@@ -329,36 +292,12 @@ function getBoard() {
     console.log("==0==");
     console.log(res);
 
-    boardData.value = res.data;
-  });
-}
-
-function getList() {
-  let param = {
-    "market_code": "all",
-    "date_type": "insert_date",
-    "start_time": "",
-    "end_time": "",
-    "search_key": "item_code",
-    "search_value": "",
-    "trans_status": "",
-    "sync_status": "all",
-    "limit": 10,
-    "page": 1
-  };
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-    }
-
-    console.log("==0==");
-    console.log(res.data);
+    boardData.value = res.data.boardList;
   });
 }
 
 onMounted(() => {
-  // getList();
-  getBoard();
+  getDashboard();
 });
 </script>
 
@@ -370,9 +309,14 @@ onMounted(() => {
   height: 400px;
 }
 
+.getMarketLogo {
+
+}
+
 .getMarketLogo .logo-tag {
   padding: 5px 10px 8px;
   margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 .getMarketLogo img {
