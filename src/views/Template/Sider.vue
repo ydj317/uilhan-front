@@ -147,7 +147,7 @@
         <template #icon>
           <file-text-outlined/>
         </template>
-        <span>엑셀 컨버터 툴</span>
+        <router-link to="/excel"><span>엑셀 컨버터 툴</span></router-link>
       </a-menu-item>
     </a-menu>
   </div>
