@@ -16,15 +16,15 @@ import {
 
 export const menus = [{
     path: "/",
-    name: "main",
+    name: "dashboard",
     meta: {roles: ["ROLE_USER"]},
     component: () => import("@/views/Template/Layout"),
-    redirect: "/main",
+    redirect: "/dashboard",
     children: [
         {
-            path: "/main",
-            name: "main_page",
-            component: () => import("@/views/Product/Main"),
+            path: "/dashboard",
+            name: "dashboard",
+            component: () => import("@/views/Product/Dashboard"),
             meta: {
                 title: "메인",
                 isHide: false,

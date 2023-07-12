@@ -70,7 +70,7 @@ export default defineComponent({
   setup() {
     onBeforeMount(() => {
       if (isLogin() === true) {
-        router.push("/main");
+        router.push("/dashboard");
         return false;
       } else {
         cookieInit();
@@ -132,7 +132,7 @@ export default defineComponent({
         Cookie.set('member_roles', res.data.member_roles);
         const menuList = setFilterRouteList();
         router.addRoute(menuList[0])
-        router.push("/main");
+        router.push("/dashboard");
         loading.value = false;
         return false;
       });
