@@ -370,7 +370,8 @@ export const menus = [{
             meta: {
                 title: "도매꾹",
                 isHide: false,
-                roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                roles: ["ROLE_ADMIN"],
+                ids:["1sjsj21s"],
                 icon: AppstoreOutlined,
             },
         },
