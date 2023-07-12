@@ -383,7 +383,7 @@ export const menus = [{
                 title: "엑셀 컨버터 툴",
                 isHide: false,
                 roles: [],
-                ids: ["irunkorea"],
+                ids: ["irunkorea", "jwli"],
                 icon: FileExcelOutlined,
             },
         },
