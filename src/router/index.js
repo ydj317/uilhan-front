@@ -26,10 +26,10 @@ export function setFilterRouteList() {
   const FilterRoutes = setFilterHasRolesMenu(menus[0].children, userInfosRoles, userInfosIds);
   const defaultRoutes = [{
     path: "/",
-    name: "main",
+    name: "dashboard",
     meta: {roles: ["ROLE_USER"],},
     component: () => import("@/views/Template/Layout"),
-    redirect: "/main",
+    redirect: "/dashboard",
     children: []
   }]
   defaultRoutes[0].children = [...FilterRoutes,...notFoundAndNoPower]
@@ -81,7 +81,7 @@ router.beforeEach((to, form, next) => {
   nProgress.start();
   let status = isLogin();
   if (to.path === '/user/login' && status === true) {
-    next({path: "/main"});
+    next({path: "/dashboard"});
     return false;
   }
 
