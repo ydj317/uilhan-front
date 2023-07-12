@@ -10,7 +10,8 @@ import {
     MoneyCollectOutlined,
     CloseCircleOutlined,
     ProfileOutlined,
-    DashboardOutlined
+    DashboardOutlined,
+    FileExcelOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -38,7 +39,7 @@ export const menus = [{
             meta: {
                 title: "상품관리",
                 isHide: false,
-                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                 icon: GiftOutlined
             },
         },
@@ -49,9 +50,9 @@ export const menus = [{
             meta: {
                 title: "상품상세",
                 isHide: true,
-                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                 icon: PayCircleOutlined,
-                active:"/product"
+                active: "/product"
             },
         },
         {
@@ -61,9 +62,9 @@ export const menus = [{
             meta: {
                 title: "상품이미지",
                 isHide: true,
-                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                 icon: '',
-                active:"/product"
+                active: "/product"
             },
         },
         {
@@ -73,7 +74,7 @@ export const menus = [{
             meta: {
                 title: "주문관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                 icon: CalendarOutlined
             },
         },
@@ -84,7 +85,7 @@ export const menus = [{
             meta: {
                 title: "마켓연동",
                 isHide: false,
-                roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                 icon: PayCircleOutlined
             },
         },
@@ -95,7 +96,7 @@ export const menus = [{
             meta: {
                 title: "게시판관리",
                 isHide: false,
-                roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                 icon: ProfileOutlined
             },
             "children": [
@@ -119,7 +120,7 @@ export const menus = [{
                         isHide: true,
                         roles: ["ROLE_ADMIN"],
                         icon: '',
-                        active:"/board/list"
+                        active: "/board/list"
                     },
                 },
                 {
@@ -131,7 +132,7 @@ export const menus = [{
                         isHide: true,
                         roles: ["ROLE_ADMIN"],
                         icon: '',
-                        active:"/board/list"
+                        active: "/board/list"
                     },
                 },
                 {
@@ -141,7 +142,7 @@ export const menus = [{
                     meta: {
                         title: "공지사항",
                         isHide: false,
-                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                         icon: '',
                     },
                 },
@@ -152,9 +153,9 @@ export const menus = [{
                     meta: {
                         title: "공지사항 - 보기",
                         isHide: true,
-                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                         icon: '',
-                        active:"/board/notice"
+                        active: "/board/notice"
                     },
                 },
                 {
@@ -164,7 +165,7 @@ export const menus = [{
                     meta: {
                         title: "1:1 문의",
                         isHide: false,
-                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                         icon: '',
                     },
                 },
@@ -175,9 +176,9 @@ export const menus = [{
                     meta: {
                         title: "1:1 문의 수정/삭제",
                         isHide: true,
-                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                         icon: '',
-                        active:"/board/question"
+                        active: "/board/question"
                     },
                 },
                 {
@@ -187,9 +188,9 @@ export const menus = [{
                     meta: {
                         title: "1:1 문의 보기",
                         isHide: true,
-                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                         icon: '',
-                        active:"/board/question"
+                        active: "/board/question"
                     },
                 },
             ]
@@ -200,7 +201,7 @@ export const menus = [{
             meta: {
                 title: "설정",
                 isHide: false,
-                roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                 icon: SettingOutlined
             },
             "children": [
@@ -211,7 +212,7 @@ export const menus = [{
                     meta: {
                         title: "사용자 정보 수정",
                         isHide: false,
-                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -222,7 +223,7 @@ export const menus = [{
                     meta: {
                         title: "비밀번호 변경",
                         isHide: false,
-                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -233,7 +234,7 @@ export const menus = [{
                     meta: {
                         title: "계정정보",
                         isHide: false,
-                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -244,7 +245,7 @@ export const menus = [{
                     meta: {
                         title: "마진 & 환율",
                         isHide: false,
-                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -255,7 +256,7 @@ export const menus = [{
                     meta: {
                         title: "배송정책",
                         isHide: false,
-                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -266,9 +267,9 @@ export const menus = [{
                     meta: {
                         title: "배송정책 추가/수정",
                         isHide: true,
-                        roles: ["ROLE_USER","ROLE_ADMIN","ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                         icon: '',
-                        active:"/setting/delivery"
+                        active: "/setting/delivery"
                     }
                 },
             ]
@@ -279,7 +280,7 @@ export const menus = [{
             meta: {
                 title: "서비스 관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                 icon: MoneyCollectOutlined
             },
             "children": [
@@ -301,9 +302,9 @@ export const menus = [{
                     meta: {
                         title: "서비스 추가/수정",
                         isHide: true,
-                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                         icon: '',
-                        active:"/user/license"
+                        active: "/user/license"
                     }
                 },
                 {
@@ -313,7 +314,7 @@ export const menus = [{
                     meta: {
                         title: "서비스 결제",
                         isHide: false,
-                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -324,7 +325,7 @@ export const menus = [{
                     meta: {
                         title: "서비스 이력",
                         isHide: false,
-                        roles: ["ROLE_ADMIN","ROLE_USER","ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
                         icon: '',
                     }
                 },
@@ -371,8 +372,19 @@ export const menus = [{
                 title: "도매꾹",
                 isHide: false,
                 roles: ["ROLE_ADMIN"],
-                ids:["1sjsj21s"],
                 icon: AppstoreOutlined,
+            },
+        },
+        {
+            path: "/excel",
+            name: "excel",
+            component: () => import("@/components/Tools/excelConvertTools.vue"),
+            meta: {
+                title: "엑셀 컨버터 툴",
+                isHide: false,
+                roles: [],
+                ids: ["irunkorea"],
+                icon: FileExcelOutlined,
             },
         },
         {

@@ -6,6 +6,9 @@ import {cookieInit, isLogin} from "util/auth";
 import Cookie from "js-cookie";
 import {menus, notFoundAndNoPower, staticRoutes} from "@/router/route";
 
+/**
+ * @TODO vuex로 처리해야함
+ */
 const menuList = setFilterRouteList();
 
 const router = createRouter({
