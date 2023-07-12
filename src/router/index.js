@@ -9,28 +9,28 @@ import {menus, notFoundAndNoPower, staticRoutes} from "@/router/route";
 const menuList = setFilterRouteList();
 
 const router = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
-    routes: [...menuList,notFoundAndNoPower,...staticRoutes],
-    scrollBehavior (to, from, savedPosition) {
-        return { top: 0}
-    }
+  history: createWebHistory(process.env.BASE_URL),
+  routes: [...menuList,notFoundAndNoPower,...staticRoutes],
+  scrollBehavior (to, from, savedPosition) {
+    return { top: 0}
+  }
 });
 
 export function setFilterRouteList() {
-    const userInfosRoles = Cookie.get('member_roles') ? Cookie.get('member_roles').split(',') : [];
-    const userInfosIds = Cookie.get('member_name') ? [Cookie.get('member_name')] : [];
+  const userInfosRoles = Cookie.get('member_roles') ? Cookie.get('member_roles').split(',') : [];
+  const userInfosIds = Cookie.get('member_name') ? [Cookie.get('member_name')] : [];
 
-    const FilterRoutes = setFilterHasRolesMenu(menus[0].children, userInfosRoles, userInfosIds);
-    const defaultRoutes = [{
-        path: "/",
-        name: "main",
-        meta: {roles: ["ROLE_USER"],},
-        component: () => import("@/views/Template/Layout"),
-        redirect: "/main",
-        children: []
-    }]
-    defaultRoutes[0].children = [...FilterRoutes,...notFoundAndNoPower]
-    return defaultRoutes
+  const FilterRoutes = setFilterHasRolesMenu(menus[0].children, userInfosRoles, userInfosIds);
+  const defaultRoutes = [{
+    path: "/",
+    name: "main",
+    meta: {roles: ["ROLE_USER"],},
+    component: () => import("@/views/Template/Layout"),
+    redirect: "/main",
+    children: []
+  }]
+  defaultRoutes[0].children = [...FilterRoutes,...notFoundAndNoPower]
+  return defaultRoutes
 }
 
 /**
@@ -40,8 +40,8 @@ export function setFilterRouteList() {
  * @returns boolean
  */
 export function hasRoles(roles, route) {
-    if (route.meta && route.meta.roles) return roles.some((role) => route.meta.roles.includes(role));
-    else return true;
+  if (route.meta && route.meta.roles) return roles.some((role) => route.meta.roles.includes(role));
+  else return true;
 }
 
 /**
@@ -51,8 +51,8 @@ export function hasRoles(roles, route) {
  * @returns boolean
  */
 export function hasIds(ids, route) {
-    if (route.meta && route.meta.ids) return ids.some((role) => route.meta.ids.includes(role));
-    else return true;
+  if (route.meta && route.meta.ids) return ids.some((role) => route.meta.ids.includes(role));
+  else return true;
 }
 
 /**
@@ -63,42 +63,42 @@ export function hasIds(ids, route) {
  * @returns 返回有权限的路由数组 `meta.roles` 中控制
  */
 export function setFilterHasRolesMenu(routes, roles, ids = []) {
-    const menu = [];
-    routes.forEach((route) => {
-        const item = {...route};
-        if (hasRoles(roles, item) || ((item.meta && item.meta.ids) && hasIds(ids, item))) {
-            if (item.children) item.children = setFilterHasRolesMenu(item.children, roles, ids);
-            menu.push(item);
-        }
-    });
-    return menu;
+  const menu = [];
+  routes.forEach((route) => {
+    const item = {...route};
+    if (hasRoles(roles, item) || ((item.meta && item.meta.ids) && hasIds(ids, item))) {
+      if (item.children) item.children = setFilterHasRolesMenu(item.children, roles, ids);
+      menu.push(item);
+    }
+  });
+  return menu;
 }
 
 router.beforeEach((to, form, next) => {
-    nProgress.start();
-    let status = isLogin();
-    if (to.path === '/user/login' && status === true) {
-        next({path: "/main"});
-        return false;
+  nProgress.start();
+  let status = isLogin();
+  if (to.path === '/user/login' && status === true) {
+    next({path: "/main"});
+    return false;
+  }
+
+  const record = findLast(to.matched, (record) => record.meta.roles);
+
+  if (record) {
+    if (status === false) {
+      cookieInit();
+      next({ path: "/user/login" });
+      return false;
     }
+    nProgress.done();
+  }
 
-    const record = findLast(to.matched, (record) => record.meta.roles);
-
-    if (record) {
-        if (status === false) {
-            cookieInit();
-            next({ path: "/user/login" });
-            return false;
-        }
-        nProgress.done();
-    }
-
-    next()
+  next()
 });
 
 
 router.afterEach(() => {
-    nProgress.done();
+  nProgress.done();
 });
 
 export default router;
