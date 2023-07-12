@@ -1,7 +1,7 @@
 <script setup>
 import { InboxOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
-import {onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref, watch} from "vue";
 import {AuthRequest} from "@/util/request";
 import {lib} from "@/util/lib";
 import Loading from "vue-loading-overlay";
@@ -108,6 +108,14 @@ const removeHandler = function () {
   return true;
 }
 
+let sumValue = computed(() => {
+  let sum = 0;
+  formStat.list.forEach((v) => {
+    sum += v.percent;
+  });
+  return sum;
+})
+
 </script>
 
 
@@ -134,7 +142,9 @@ const removeHandler = function () {
             </template>
             <template #footer >
               <div style="display: flex;justify-content: center;">
+                <a-tag :color="sumValue == 100 ? 'green' : 'red'" style="line-height: 32px;">총 <pan>{{ sumValue }}</pan>%</a-tag>
                 <a-button type="primary" style="width: 120px;" @click="submitForm">저장</a-button>
+
               </div>
             </template>
           </a-list>
