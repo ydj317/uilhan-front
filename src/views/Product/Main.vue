@@ -11,15 +11,15 @@
         <div class="right">
           <div>
             <div>연동마켓</div>
-            <div>9</div>
+            <div>{{ marketTotal }}</div>
           </div>
           <div>
             <div>상품</div>
-            <div>98</div>
+            <div>{{ productTotal }}</div>
           </div>
           <div>
             <div>주문</div>
-            <div>318</div>
+            <div>{{ orderTotal }}</div>
           </div>
         </div>
       </div>
@@ -27,8 +27,26 @@
 
     <a-row type="flex" justify="space-between" align="bottom" style="margin-top: 20px;" :gutter="20">
       <a-col :span="8">
-        <a-card :bordered="false" title="수집가능 마켓">
-          <div class="getMarketLogo">
+        <a-card :loading="orderLoading" :bordered="false" title="판매액">
+          <div class="row1-content">
+            <div style="font-size: 22px; color: #000; padding-bottom: 10px;">총 {{ allSales }}원</div>
+            <div class="content content-1" style="display: flex; justify-content: flex-start; align-items: center;">
+              <div style="margin-right: 10px; font-size: 14px; color: #999">전주 보다 {{ comparedToYesterday }}%
+                <CaretUpFilled :rotate="comparedToYesterday >= 0 ? 0 : 180" :style="comparedToYesterday >= 0 ? 'color:red' : 'color:green'" />
+              </div>
+              <div style="margin-right: 10px; font-size: 14px; color: #999">어제 보다 {{ comparedToLastWeek }}%
+                <CaretUpFilled :rotate="comparedToLastWeek >= 0 ? 0 : 180" :style="comparedToLastWeek >= 0 ? 'color:red' : 'color:green'" />
+              </div>
+            </div>
+            <div style="font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
+              오늘 판매액 {{ todaySales }}원
+            </div>
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :span="8">
+        <a-card :loading="productLoading" :bordered="false" title="수집가능 마켓">
+          <div class="row1-content getMarketLogo">
             <a href="https://www.taobao.com/" target="_blank">
               <a-tag class="logo-tag">
                 <img :src="getLogoSrc('get-logo', 'taobao')" alt=""> <span>타오바오</span>
@@ -62,47 +80,33 @@
         </a-card>
       </a-col>
       <a-col :span="8">
-        <a-card :bordered="false" title="총 판매액">
-          <div class="data">1,026,560원</div>
-          <div class="content content-1">
-            <div>어제 보다 12%
-              <CaretUpFilled :rotate="0" style="color:red;" />
-            </div>
-            <div>편균 보다 11%
-              <CaretUpFilled :rotate="180" style="color:green;" />
-            </div>
+        <a-card :loading="productLoading" :bordered="false" title="연동마켓">
+          <div class="row1-content sendMarketLogo">
+            <a-tag class="logo-tag" v-for="market in accountMarket">
+              <img :src="getLogoSrc('market-logo', market.split('::')[0])" alt=""> <span>{{ market.split('::')[1] }}</span>
+            </a-tag>
           </div>
-          <div class="sub">일일 판매액 ₩ 100,000</div>
-        </a-card>
-      </a-col>
-      <a-col :span="8">
-        <a-card :bordered="false" title="10일 판매액">
-          <div class="data">600,000원</div>
-          <div class="content content-2">
-            <e-charts class="chart" :option="option" />
-          </div>
-          <div class="sub">10일 평균 판매액 ₩ 100,000</div>
         </a-card>
       </a-col>
     </a-row>
 
     <a-row type="flex" justify="space-between" align="bottom" style="margin-top: 20px;" :gutter="20">
       <a-col :span="8">
-        <a-card :bordered="false" title="상품 연동 상태">
+        <a-card :loading="productLoading" :bordered="false" title="상품 연동 상태">
           <div class="content2">
-            <e-charts class="chart-2" :option="option2" />
+            <e-charts class="chart-2" :option="productChart" />
           </div>
         </a-card>
       </a-col>
       <a-col :span="8">
-        <a-card :bordered="false" title="주문 상태">
+        <a-card :loading="orderLoading" :bordered="false" title="주문 상태">
           <div class="content2">
-            <e-charts class="chart-3" :option="option3" />
+            <e-charts class="chart-3" :option="orderChart" />
           </div>
         </a-card>
       </a-col>
       <a-col :span="8">
-        <a-card :bordered="false" title="공지사항">
+        <a-card :loading="boardLoading" :bordered="false" title="공지사항">
           <div class="content2">
             <div class="scroll">
               <template v-for="item in boardData">
@@ -124,17 +128,99 @@
 </template>
 
 <script setup>
-//icon
 import { CaretUpFilled } from "@ant-design/icons-vue";
 import { ref, onMounted } from "vue";
 import { AuthRequest } from "@/util/request";
 import { message } from "ant-design-vue";
 import ECharts from 'vue-echarts';
 
-const boardData = ref([]);
-const productData = ref([]);
-const orderData = ref([]);
+const productLoading = ref(true);
+const orderLoading = ref(true);
+const boardLoading = ref(true);
 
+const marketTotal = ref('-');
+const productTotal = ref('-');
+const orderTotal = ref('-');
+
+const allSales = ref('-');
+const todaySales = ref('-');
+const comparedToYesterday = ref('-');
+const comparedToLastWeek = ref('-');
+
+const accountMarket = ref([]);
+const boardData = ref([]);
+
+const productChartData = ref([]);
+const productChart = ref({
+  tooltip: {
+    trigger: "item"
+  },
+  series: [
+    {
+      type: "pie",
+      radius: ["40%", "70%"],
+      avoidLabelOverlap: false,
+      itemStyle: {
+        borderRadius: 10,
+        borderColor: "#fff",
+        borderWidth: 2
+      },
+      label: {
+        fontSize: 15
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: 17,
+          fontWeight: "bold"
+        }
+      },
+      labelLine: {
+        show: true,
+        lineStyle: {
+          width: 3
+        }
+      },
+      data: productChartData
+    }
+  ]
+});
+
+const orderChartData = ref([]);
+const orderChart = ref({
+  tooltip: {
+    trigger: "item"
+  },
+  series: [
+    {
+      type: "pie",
+      radius: ["40%", "70%"],
+      avoidLabelOverlap: false,
+      itemStyle: {
+        borderRadius: 10,
+        borderColor: "#fff",
+        borderWidth: 2
+      },
+      label: {
+        fontSize: 15
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: 17,
+          fontWeight: "bold"
+        }
+      },
+      labelLine: {
+        show: true,
+        lineStyle: {
+          width: 3
+        }
+      },
+      data: orderChartData
+    }
+  ]
+});
 
 function getLogoSrc(fileName, marketCode) {
   try {
@@ -143,134 +229,6 @@ function getLogoSrc(fileName, marketCode) {
     return require("../../assets/img/temp_image.png");
   }
 }
-
-//chart
-const option = ref({
-  grid: {
-    top: "0",
-    bottom: "0",
-    left: "0",
-    right: "0"
-  },
-  tooltip: {
-    trigger: "axis",
-    position: function(pt) {
-      return [pt[0], "10%"];
-    },
-    valueFormatter: (value) => value.toFixed(2) + "만"
-  },
-  xAxis: {
-    show: false,
-    type: "category",
-    boundaryGap: false,
-    data: ["2023.06.04", "2023.06.05", "2023.06.06", "2023.06.07", "2023.06.08", "2023.06.09", "2023.06.10", "2023.06.11", "2023.06.12", "2023.06.13"]
-  },
-  yAxis: {
-    show: false,
-    type: "value"
-  },
-  series: [
-    {
-      type: "line",
-      smooth: 0.3,
-      symbol: "none",
-      lineStyle: {
-        width: 0
-      },
-      areaStyle: {
-        color: "#1890ff",
-        opacity: 0.7
-      },
-      data: [20, 100, 20, 10, 20, 80, 30, 10, 50, 60]
-    }
-  ]
-});
-
-//chart2
-const option2 = ref({
-  tooltip: {
-    trigger: "item"
-  },
-  series: [
-    {
-      type: "pie",
-      radius: ["40%", "70%"],
-      avoidLabelOverlap: false,
-      itemStyle: {
-        borderRadius: 10,
-        borderColor: "#fff",
-        borderWidth: 2
-      },
-      label: {
-        fontSize: 15
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 17,
-          fontWeight: "bold"
-        }
-      },
-      labelLine: {
-        show: true,
-        lineStyle: {
-          width: 3
-        }
-      },
-      data: [
-        { name: "11번가", value: 20 },
-        { name: "쿠팡", value: 30 },
-        { name: "옥션", value: 10 },
-        { name: "지마켓", value: 40 },
-        { name: "롯데온", value: 30 },
-        { name: "티몬", value: 30 },
-        { name: "위메프", value: 20 }
-      ]
-    }
-  ]
-});
-
-//chart3
-const option3 = ref({
-  tooltip: {
-    trigger: "item"
-  },
-  series: [
-    {
-      type: "pie",
-      radius: ["40%", "70%"],
-      avoidLabelOverlap: false,
-      itemStyle: {
-        borderRadius: 10,
-        borderColor: "#fff",
-        borderWidth: 2
-      },
-      label: {
-        fontSize: 15
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 17,
-          fontWeight: "bold"
-        }
-      },
-      labelLine: {
-        show: true,
-        lineStyle: {
-          width: 3
-        }
-      },
-      data: [
-        { value: 1048, name: "발주확인" },
-        { value: 735, name: "배송중" },
-        { value: 580, name: "배송완료" },
-        { value: 484, name: "취소주문" },
-        { value: 300, name: "반품주문" }
-      ]
-    }
-  ]
-});
 
 function parseHTML(html) {
   const div = document.createElement("div");
@@ -292,65 +250,50 @@ function getBoard() {
       }
 
       boardData.value = res.data;
+
+      boardLoading.value = false
     }
   );
 }
 
-function getList() {
-  let param = {
-    "market_code": "all",
-    "date_type": "insert_date",
-    "start_time": "2022-07-11",
-    "end_time": "",
-    "search_key": "item_code",
-    "search_value": "",
-    "trans_status": "",
-    "sync_status": "all"
-  };
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
+function getProduct() {
+  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/product").then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
     }
 
-    console.log("==0==");
-    console.log(res.data);
+    productChartData.value = res.data.marketSyncList
+    accountMarket.value = res.data.accountMarket
+    marketTotal.value = res.data.accountMarket.length
+    productTotal.value = res.data.productTotal
+
+    productLoading.value = false
+  });
+}
+
+function getOrder() {
+  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/order").then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+    }
+
+    orderChartData.value = res.data.orderStatusList
+    orderTotal.value = res.data.orderTotal
+    allSales.value = res.data.allSales
+    todaySales.value = res.data.todaySales
+    comparedToYesterday.value = res.data.comparedToYesterday
+    comparedToLastWeek.value = res.data.comparedToLastWeek
+
+    orderLoading.value = false
   });
 }
 
 onMounted(() => {
-  getList();
+  getOrder();
+  getProduct();
   getBoard();
 });
 </script>
-
-<!----------style start---------->
-
-<!--chart-->
-<style scoped>
-.chart {
-  height: 400px;
-}
-
-.getMarketLogo {
-
-}
-
-.getMarketLogo .logo-tag {
-  padding: 5px 10px 8px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
-
-.getMarketLogo img {
-  width: 16px;
-  height: 16px;
-}
-
-.getMarketLogo span {
-  padding-left: 5px;
-}
-
-</style>
 
 <!--hello-->
 <style scoped>
@@ -405,103 +348,47 @@ onMounted(() => {
 }
 </style>
 
-<!--line-2-->
+<!--row 2-->
 <style scoped>
-.data {
-  font-size: 24px;
-  color: #333;
+.row1-content {
+  position: relative;
+  height: 110px;
+  overflow: hidden;
 }
 
-.content {
-  height: 60px;
-}
-
-.content-1 {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.content-1 div {
+.getMarketLogo .logo-tag {
+  padding: 5px 10px 8px;
   margin-right: 10px;
-  font-size: 14px;
-  color: #999
+  margin-bottom: 10px;
 }
 
-.content-2 .chart {
-  width: 100%;
-  height: 100%;
+.getMarketLogo img {
+  width: 16px;
+  height: 16px;
 }
 
-.content-3 {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+.getMarketLogo span {
+  padding-left: 5px;
 }
 
-.content-3 > div {
-  width: 100%;
-  height: 10px;
-  background: #ccc;
+.sendMarketLogo .logo-tag {
+  padding: 2px 10px 5px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  background: #fff;
 }
 
-.content-3 > div > div {
-  position: relative;
-  height: 10px;
-  background: #1890ff;
+.sendMarketLogo img {
+  width: 16px;
+  height: 16px;
 }
 
-.content-3 > div > div:before {
-  position: absolute;
-  top: -4px;
-  right: 0;
-  display: block;
-  content: '';
-  width: 2px;
-  height: 18px;
-  background: #1890ff;
-}
-
-.sub {
-  font-size: 12px;
-  color: #999;
-  border-top: 1px solid #eee;
-  padding-top: 10px;
-}
-
-.sub-2 {
-  display: flex;
-  justify-content: flex-start;
-  font-size: 12px;
-  color: #999;
-  border-top: 1px solid #eee;
-  padding-top: 10px;
-}
-
-.sub-2 > div {
-  position: relative;
-  padding: 0 10px 0 20px;
-}
-
-.sub-2 > div:before {
-  position: absolute;
-  top: 5px;
-  left: 0;
-  content: '';
-  width: 15px;
-  height: 10px;
-}
-
-.sub-2 .linked:before {
-  background: #1890ff;
-}
-
-.no-linked:before {
-  background: #ccc;
+.sendMarketLogo span {
+  padding-left: 5px;
 }
 </style>
 
-<!--line-3-->
+<!--row 3-->
 <style scoped>
 .content2 {
   height: 400px;
