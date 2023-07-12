@@ -29,17 +29,17 @@
       <a-col :span="8">
         <a-card :loading="orderLoading" :bordered="false" title="판매액">
           <div class="row1-content">
-            <div style="font-size: 22px; color: #000; padding-bottom: 10px;">총 {{ allSales }}원</div>
+            <div style="font-size: 22px; color: #000; padding-bottom: 10px;">총 {{ allSales.toLocaleString() }}원</div>
             <div class="content content-1" style="display: flex; justify-content: flex-start; align-items: center;">
-              <div style="margin-right: 10px; font-size: 14px; color: #999">전주 보다 {{ comparedToYesterday }}%
-                <CaretUpFilled :rotate="comparedToYesterday >= 0 ? 0 : 180" :style="comparedToYesterday >= 0 ? 'color:red' : 'color:green'" />
-              </div>
-              <div style="margin-right: 10px; font-size: 14px; color: #999">어제 보다 {{ comparedToLastWeek }}%
+              <div style="margin-right: 10px; font-size: 14px; color: #999">전주 보다 {{ comparedToLastWeek }}%
                 <CaretUpFilled :rotate="comparedToLastWeek >= 0 ? 0 : 180" :style="comparedToLastWeek >= 0 ? 'color:red' : 'color:green'" />
+              </div>
+              <div style="margin-right: 10px; font-size: 14px; color: #999">어제 보다 {{ comparedToYesterday }}%
+                <CaretUpFilled :rotate="comparedToYesterday >= 0 ? 0 : 180" :style="comparedToYesterday >= 0 ? 'color:red' : 'color:green'" />
               </div>
             </div>
             <div style="font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
-              오늘 판매액 {{ todaySales }}원
+              오늘 판매액 {{ todaySales.toLocaleString() }}원
             </div>
           </div>
         </a-card>
@@ -281,8 +281,8 @@ function getOrder() {
     orderTotal.value = res.data.orderTotal
     allSales.value = res.data.allSales
     todaySales.value = res.data.todaySales
-    comparedToYesterday.value = res.data.comparedToYesterday
-    comparedToLastWeek.value = res.data.comparedToLastWeek
+    comparedToYesterday.value = res.data.comparedToYesterday.toFixed(2)
+    comparedToLastWeek.value = res.data.comparedToLastWeek.toFixed(2)
 
     orderLoading.value = false
   });
