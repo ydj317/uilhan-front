@@ -10,7 +10,7 @@
                 <div class="title clearfix">
                     <div class="text">마켓 설정등록</div>
                 </div>
-                <a href="##" @click="closePopupFn" class="cross_btn"><span class="cross"></span></a>
+                <a href="#" @click="closePopupFn" class="cross_btn"><span class="cross"></span></a>
             </div>
             <div ref="popupContent" class="popup_cont">
                 <div class="content">
@@ -384,6 +384,7 @@ const SITE_CODE_LIST = [
     {label: "ESM2.0 지마켓", value: 'esm_gmarket'},
     {label: "ESM2.0 옥션", value: 'esm_auction'},
     {label: "롯데ON", value: 'lotteon'},
+    {label: "큐텐 싱가폴", value: 'qoo10_sg'},
 ];
 
 const roles = ref(Cookie.get('member_roles'));
@@ -480,10 +481,6 @@ const pagination = ref({
 });
 
 onMounted(async () => {
-    if (roles.value === null || roles.value.indexOf('ROLE_ADMIN') === -1) {
-        return false;
-    }
-
     await setDataList();
 });
 
@@ -678,6 +675,8 @@ const API_Ticket_Key = computed(() => {
         return '';
     } else if (marketItem.value.site_code === 'lotteon') {
         return 'API Ticket';
+    } else if (marketItem.value.site_code === 'qoo10_sg') {
+      return 'API Ticket';
     }
     return 'API Ticket Key';
 });
@@ -701,6 +700,8 @@ const 마켓_아이디 = computed(() => {
         return '마켓 아이디';
     } else if (marketItem.value.site_code === 'lotteon') {
         return '마켓 아이디';
+    } else if (marketItem.value.site_code === 'qoo10_sg') {
+      return '마켓 아이디';
     }
     return '마켓 아이디';
 });
@@ -724,6 +725,8 @@ const 마켓_비밀번호 = computed(() => {
         return '마켓 비밀번호';
     } else if (marketItem.value.site_code === 'lotteon') {
         return '마켓 비밀번호';
+    } else if (marketItem.value.site_code === 'qoo10_sg') {
+      return '마켓 비밀번호';
     }
     return '마켓 비밀번호';
 });
@@ -747,6 +750,8 @@ const 마켓_Company_Code = computed(() => {
         return '';
     } else if (marketItem.value.site_code === 'lotteon') {
         return '거래처 번호';
+    } else if (marketItem.value.site_code === 'qoo10_sg') {
+      return '업체코드';
     }
     return '마켓 Company Code';
 });
