@@ -59,7 +59,7 @@ export function hasIds(ids, route) {
  * 获取当前用户权限标识去比对路由表，设置递归过滤有权限的路由
  * @param routes 当前路由 children
  * @param roles 用户权限标识，在 userInfos（用户信息）的 roles（登录页登录时缓存到浏览器）数组
- * @param ids
+ * @param ids ['admin'] 可以根据 用户ID 判断权限
  * @returns 返回有权限的路由数组 `meta.roles` 中控制
  */
 export function setFilterHasRolesMenu(routes, roles, ids = []) {
