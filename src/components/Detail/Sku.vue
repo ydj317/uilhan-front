@@ -73,7 +73,7 @@
     <!--이미지 선택 팝업-->
     <div>
       <a-modal
-          title="Sku 이미지선택"
+          title="품목 이미지선택"
           @ok="skuImageWindowOk"
           @cancel="skuImageWindowCancel"
           v-model:visible="sku_image_window_visible"
@@ -152,17 +152,17 @@
 
           <!--구매원가-->
           <template v-else-if="['original_price_cn'].includes(column.key)">
-            <div style="border: 1px solid red"
-                 v-if="record.original_price_cn > 0 && record.editor !== 'T'"
+            <div v-if="record.original_price_cn > 0 && record.editor !== 'T'"
                  class="center"
                  :style="
                 record.img
                   ? `height: 30px; text-align: center; border: none;`
                   : `height: 30px; text-align: center; border: none;`
               "
+                 style="display: flex;flex-direction: column;"
             >
-              <span>{{ record.original_price_ko }}</span
-              ><span> (CNY {{ record.original_price_cn }})</span>
+              <span><span style="color: #1a1a1a;">{{ record.original_price_ko.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>원</span>
+              <span style="color: #999999">{{ record.original_price_cn }}위엔</span>
             </div>
             <div v-if="record.original_price_cn === 0 || record.editor === 'T'"  style="border: 1px solid red">
               <a-input
@@ -248,12 +248,12 @@ export default {
           width: "1%",
         },
         {
-          title: "옵션이미지",
+          title: "품목이미지",
           key: "img",
           width: "1%",
         },
         {
-          title: "옵션가 기준",
+          title: "품목가 기준",
           key: "is_option_reference_price",
           width: "6%",
         },
