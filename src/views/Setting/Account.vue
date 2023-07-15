@@ -97,7 +97,6 @@ import {
 import { onMounted, reactive, ref } from "vue";
 import { useStore } from "vuex";
 import Cookie from "js-cookie";
-import router from "@/router";
 import { message } from "ant-design-vue";
 
 const store = useStore();
@@ -335,8 +334,7 @@ function addKey() {
 }
 
 function getUser() {
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user", {}).then(
-    (res) => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user", {}).then((res) => {
       if (res.status !== "2000") {
         message.error(res.message);
       }

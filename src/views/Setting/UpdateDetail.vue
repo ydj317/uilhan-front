@@ -236,7 +236,7 @@ let validateComnumber = async (rule, value) => {
 };
 
 let validateComCeo = async (rule, value) => {
-  if (value === "") {
+  if (value === "" || value === null) {
     return Promise.reject("대표자명을 입력해주십시오");
   } else {
     if (value.length < 2 || value.length > 10) {

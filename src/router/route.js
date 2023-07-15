@@ -261,6 +261,29 @@ export const menus = [{
                     }
                 },
                 {
+                    path: "/setting/guide",
+                    name: "setting_guide",
+                    component: () => import("@/views/Setting/Guide"),
+                    meta: {
+                        title: "안내정보",
+                        isHide: false,
+                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        icon: '',
+                    }
+                },
+                {
+                    path: "/setting/guideForm/:id?",
+                    name: "setting_guideForm",
+                    component: () => import("../views/Setting/GuideForm"),
+                    meta: {
+                        title: "안내정보 추가/수정",
+                        isHide: true,
+                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        icon: '',
+                        active: "/setting/template"
+                    }
+                },
+                {
                     path: "/setting/delivery/form/:id?",
                     name: "setting_delivery_form",
                     component: () => import("@/views/Setting/DeliveryForm.vue"),
