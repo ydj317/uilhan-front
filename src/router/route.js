@@ -349,7 +349,7 @@ export const menus = [{
             meta: {
                 title: "금지어 관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN"],
+                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                 icon: CloseCircleOutlined,
             },
         },
@@ -371,7 +371,7 @@ export const menus = [{
             meta: {
                 title: "도매꾹",
                 isHide: false,
-                roles: ["ROLE_ADMIN"],
+                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
                 icon: AppstoreOutlined,
             },
         },
