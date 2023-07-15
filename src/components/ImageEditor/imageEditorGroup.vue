@@ -42,6 +42,7 @@
         :closable="false"
         @cancel="product.bImageEditorModule = false"
         width="auto"
+        wrap-class-name="full-modal"
         centered
       >
         <!-- 번역 남은 회수 -->
@@ -52,7 +53,7 @@
         </div>
 
         <div class="center">
-          <img :src="product.aPhotoCollection[0].original_url" alt=""/>
+          <img :src="product.aPhotoCollection[0].original_url" alt="" style="width: 500px;"/>
         </div>
 
         <template v-slot:footer>
@@ -514,15 +515,14 @@ export default {
 
 <style>
 .full-modal .ant-modal {
-  max-width: 100%;
-  top: 0;
+  width: 100%;
+  top: 10px;
   padding-bottom: 0;
   margin: 0;
 }
 .full-modal .ant-modal-content {
   display: flex;
   flex-direction: column;
-  height: calc(100vh);
 }
 .full-modal .ant-modal-body {
   flex: 1;

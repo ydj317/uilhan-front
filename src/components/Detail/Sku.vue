@@ -88,8 +88,12 @@
             selected_sku_image_index === i ? 'checkedEl' : 'checkedNot'
           }`"
             @click="selectSkuImage(i, item_thumbnails.url)"
+            @dblclick="openPreview(item_thumbnails.url)"
         />
       </a-modal>
+      <div v-if="showPreview" class="preview-overlay" @click="closePreview">
+        <img :src="previewSrc" alt="Preview Image" />
+      </div>
     </div>
 
     <!--sku table-->
@@ -240,7 +244,8 @@ export default {
       selected_sku_image_index: 0,
       sku_image_window_visible: false,
       option_reference_price_key: "",
-
+      showPreview: false,
+      previewSrc: '',
       sku_columns: [
         {
           title: "선택",
@@ -575,7 +580,14 @@ export default {
       this.selected_sku_image_index = i;
       this.selected_sku_image_url = url;
     },
-
+    openPreview(url) {
+      this.previewSrc = url;
+      this.showPreview = true;
+    },
+    closePreview() {
+      this.showPreview = false;
+      this.previewSrc = '';
+    },
     // 이미지 선택 팝업 확인
     skuImageWindowOk() {
       this.product.sku.map((data, i) => {
@@ -789,5 +801,23 @@ export default {
 .sku_image_button {
   width: 100px;
   height: 30px;
+}
+
+.preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.preview-overlay img {
+  max-width: 80%;
+  max-height: 80%;
 }
 </style>
