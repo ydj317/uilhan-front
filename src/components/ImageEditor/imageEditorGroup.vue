@@ -52,7 +52,7 @@
         </div>
 
         <div class="center">
-          <img :src="product.aPhotoCollection[0].original_url" alt="" />
+          <img :src="product.aPhotoCollection[0].original_url" alt=""/>
         </div>
 
         <template v-slot:footer>
