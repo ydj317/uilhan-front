@@ -13,15 +13,29 @@
             <a-select-option v-for="selectOption in optionTableSelectOption" :key="selectOption.value" :value="selectOption.value" >{{selectOption.label}}</a-select-option>
           </a-select>
         </a-space>
-        <a-button style="margin-left: 5px; margin-right: 10px;" type="primary" @click="setEditorContent">
+        <a-button style="margin-left: 5px;" type="primary" @click="setEditorContent">
           적용
         </a-button>
+
+        <a-divider type="vertical" style="border-color: #999" />
+
         <a-button
-            class="button originalDetailTrans"
+            class="originalDetailTrans"
             type="primary"
             @click="translatePopup"
         >상세 이미지번역</a-button>
+
+        <a-divider type="vertical" style="border-color: #999" />
+
+        <a-space>
+          <span>안내정보</span>
+          <a-select v-model:value="guideValue" @change="handleSelectChange" style="width: 120px">
+            <a-select-option value="">선택</a-select-option>
+            <a-select-option v-for="data in guideData" :value="data.id" >{{data.name}}</a-select-option>
+          </a-select>
+        </a-space>
       </div>
+      <a-divider />
       <TEditor
         ref="editor"
         v-model:value="product.item_detail"
@@ -38,6 +52,7 @@ import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
 import { watchEffect } from "vue";
 import { message } from "ant-design-vue";
+import { AuthRequest } from "@/util/request";
 
 export default {
   name: "productDetailDescription",
@@ -68,13 +83,59 @@ export default {
           label: "제거",
           value: "table_cancel",
         }
-      ]
+      ],
+      guideBeforeId: "editor_before_guide",
+      guideAfterId: "editor_after_guide",
+      guideValue: '',
+      guideData: [],
     };
   },
   mounted() {
     this.fetchData();
+    this.getGuide();
   },
   methods: {
+    handleSelectChange(value) {
+      const selectData = this.guideData.find(item => item.id === value)
+      console.log('==0==')
+      console.log(selectData)
+      this.product.item_detail = selectData.beforeCont + this.product.item_detail + selectData.afterCont
+
+      const beforeCont = `<div id="${this.guideBeforeId}">${selectData.beforeCont}</div>`;
+      const afterCont = `<div id="${this.guideAfterId}">${selectData.afterCont}</div>`;
+      this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
+    },
+    getGuide() {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/guide/list").then((res) => {
+          if (res.status !== "2000") {
+            message.error(res.message);
+          }
+
+          console.log('==0==')
+          console.log(res.data)
+          this.guideData = res.data
+
+          const regex = /<div\s+id="(editor_before_guide|editor_after_guide)"\s+data-tid="(\d+)"[^>]*>/g;
+
+          let match;
+          while ((match = regex.exec(this.product.item_detail)) !== null) {
+            const id = match[1];
+            const dataTid = match[2];
+            console.log(`Found div with id ${id} and data-tid ${dataTid}`);
+          }
+
+          console.log('==0==')
+          console.log(match)
+          if (match === null) {
+            this.guideValue = res.data.find(item => item.name === '33').id
+          } else {
+
+          }
+
+
+        }
+      )
+    },
     setEditorContent() {
       let doc = window.tinymce.editors[0].dom.doc;
       let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
