@@ -22,7 +22,7 @@
           </h3>
         </div>
         <div class="center">
-          <img :src="product.aPhotoCollection[0].original_url" alt="" />
+          <img :src="product.aPhotoCollection[0].original_url" alt="" width="500"/>
         </div>
 
         <template v-slot:footer>
@@ -42,6 +42,7 @@
         :closable="false"
         @cancel="product.bImageEditorModule = false"
         width="auto"
+        wrap-class-name="full-modal"
         centered
       >
         <!-- 번역 남은 회수 -->
@@ -52,7 +53,7 @@
         </div>
 
         <div class="center">
-          <img :src="product.aPhotoCollection[0].original_url" alt="" />
+          <img :src="product.aPhotoCollection[0].original_url" alt="" style="width: 500px;"/>
         </div>
 
         <template v-slot:footer>
@@ -85,6 +86,7 @@
         </div>
 
         <!-- 상세설명 이미지 리스트 -->
+        <div style="height: 620px; overflow: scroll;overflow-x: hidden;">
         <table>
           <tbody>
             <tr>
@@ -94,32 +96,20 @@
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: center;
+                    gap: 10px;
                     padding: 0;
                   "
                 >
                   <li
                     class="mb10"
-                    style="border: 2px solid white; list-style: none"
+                    style="list-style: none"
                     v-for="(item, key) in product.aPhotoCollection"
                     :key="key"
                   >
-                    <div style="border: 2px solid #d9d9d9; position: relative">
-                      <a-tooltip placement="right" :trigger="'click'">
-                        <template #title>
-                          <div>
-                            <img
-                              style="width: 100%; height: 100%"
-                              :src="
-                                item.translate_status
-                                  ? item.translate_url
-                                  : item.original_url
-                              "
-                              alt=""
-                            />
-                          </div>
-                        </template>
-                        <img
-                          style="width: 190px; height: 160px"
+                    <div style="border: 3px solid #dcdcdc;border-bottom: none; position: relative">
+
+                        <a-image
+                          style="width: 190px; height: 190px"
                           :src="
                             item.translate_status
                               ? item.translate_url
@@ -127,7 +117,7 @@
                           "
                           alt=""
                         />
-                      </a-tooltip>
+
                       <a-checkbox
                         class="detailImageCheckbox"
                         v-model:checked="item.checked"
@@ -169,13 +159,13 @@
             </tr>
           </tbody>
         </table>
-
+        </div>
 
         <template v-slot:footer>
           <a-button style="float: left" type="primary" @click="downloadAllDetailImage">전체이미지 다운로드</a-button>
           <a-button type="primary" @click="checkAllDetailImage">전체선택</a-button>
           <a-button @click="uncheckAllDetailImage">선택취소</a-button>
-          <a-button @click="deleteCheckedDetailImage" danger>선택삭제</a-button>
+          <a-button @click="deleteCheckedDetailImage(false)" danger>선택삭제</a-button>
           <a-button @click="product.bImageEditorModule = false">닫기</a-button>
         </template>
       </a-modal>
@@ -374,21 +364,20 @@ export default {
           this.product.aBakDetailImages[i] = src[1];
         }
       }
-
       return srcArr;
     },
 
     // 상세 이미지 삭제 (필터링 실제삭제가 아님)
-    deleteCheckedDetailImage(key = false) {
+    deleteCheckedDetailImage(keys = false) {
       // 일괄삭제
       let aCheckedImage = this.product.aPhotoCollection.filter(
-        (data) => data.checked === true
+        (data) => {return data.checked === true}
       );
 
       // 단일삭제
-      if (key !== false) {
+      if (keys !== false) {
         aCheckedImage = this.product.aPhotoCollection.filter(
-          (data) => data.key === key
+          (data) => data.key === keys
         );
       }
 
@@ -427,14 +416,15 @@ export default {
           delete aDetailHtml[i];
         }
       });
-      window.tinymce.editors[0].setContent(aDetailHtml.join());
+
+      window.tinymce.editors[0].setContent(aDetailHtml.join(''));
 
       this.getDetailContentsImage();
       this.product.item_detail = window.tinymce.editors[0].getContent();
     },
 
     // 전체이미지 다운로드
-      downloadAllDetailImage() {
+    downloadAllDetailImage() {
 
         this.product.loading = true;
 
@@ -514,15 +504,14 @@ export default {
 
 <style>
 .full-modal .ant-modal {
-  max-width: 100%;
-  top: 0;
+  width: 100%;
+  top: 10px;
   padding-bottom: 0;
   margin: 0;
 }
 .full-modal .ant-modal-content {
   display: flex;
   flex-direction: column;
-  height: calc(100vh);
 }
 .full-modal .ant-modal-body {
   flex: 1;

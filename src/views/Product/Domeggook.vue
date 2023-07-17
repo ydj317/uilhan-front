@@ -21,11 +21,12 @@
     </a-modal>
 
     <!--검색-->
-    <div class="mb30 bg-white" style="padding: 20px 20% 20px 20%">
+    <a-card :bordered="false" title="도매꾹" class="mb10">
+    <div>
       <a-form
-        :label-col="{ span: 10 }"
+        :label-col="{ style: { width: '120px' } }"
         :wrapper-col="{ span: 100 }"
-        :layout="'vertical'"
+        :layout="'horizontal'"
       >
         <!--검색어-->
         <a-form-item label="검색어" v-bind="dataOfSearchForm.validateInfos.kw">
@@ -101,8 +102,9 @@
                 .catch(() => {})
             "
             placeholder="최저가격대를 입력해주세요."
-            style="width: 50%"
+            style="width: 200px;"
           />
+          &nbsp;-&nbsp;
           <a-input
             v-model:value="dataOfSearchFormValues.mxp"
             @blur="
@@ -111,7 +113,7 @@
                 .catch(() => {})
             "
             placeholder="최대가격대를 입력해주세요."
-            style="width: 50%"
+            style="width: 200px;"
           />
         </a-form-item>
 
@@ -158,7 +160,7 @@
         </a-form-item>
       </a-form>
     </div>
-
+    </a-card>
     <!--리스트-->
     <a-table
       class="p20 bg-white"

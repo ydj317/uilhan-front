@@ -115,7 +115,7 @@ export default defineComponent({
   },
 
   setup() {
-    const activeKey = ref([]);
+    const activeKey = ref(['']);
     return {
       activeKey,
     };

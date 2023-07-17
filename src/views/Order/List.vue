@@ -24,7 +24,7 @@
       </a-input-group>
     </div>
 
-    <div class="inline-block">
+    <div class="inline-block mt20">
       <h1>주문자/수취인</h1>
       <a-input-group compact>
         <a-select v-model:value="searchParam.nameType" style="width: 180px;">

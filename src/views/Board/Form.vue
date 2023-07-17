@@ -15,6 +15,7 @@ let formState = reactive({
   id: '',
   title: '',
   content: '',
+  is_popup: false,
   is_fixtop: false,
   type: 'notice',
   status: '0',
@@ -39,6 +40,7 @@ const getBoardDetail = (id) => {
     formState.id = res.data.id
     formState.title = res.data.title
     formState.content = res.data.content
+    formState.is_popup = res.data.isPopup
     formState.is_fixtop = res.data.isFixtop
     formState.type = res.data.type
     indicator.value = false;
@@ -95,6 +97,10 @@ onBeforeMount(() => {
           <a-radio-button value="notice">공지사항</a-radio-button>
           <a-radio-button value="question">1:1 문의</a-radio-button>
         </a-radio-group>
+      </a-form-item>
+
+      <a-form-item label="팝업설정" name="is_popup" v-if="formState.type === 'notice'">
+        <a-switch v-model:checked="formState.is_popup" checked-children="On" un-checked-children="Off"/>
       </a-form-item>
 
       <a-form-item label="제목" name="title"
