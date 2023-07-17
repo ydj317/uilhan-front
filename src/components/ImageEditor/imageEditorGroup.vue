@@ -4,16 +4,16 @@
     <template title="번역팝업">
       <!--상품 이미지-->
       <a-modal
-          v-if="
+        v-if="
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
         "
-          :visible="
+        :visible="
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
         "
-          :closable="false"
-          @cancel="product.bImageEditorModule = false"
-          width="auto"
-          centered
+        :closable="false"
+        @cancel="product.bImageEditorModule = false"
+        width="auto"
+        centered
       >
         <!-- 번역 남은 회수 -->
         <div class="w100 right center">
@@ -22,7 +22,7 @@
           </h3>
         </div>
         <div class="center">
-          <img :src="product.aPhotoCollection[0].original_url" alt="" width="500"/>
+          <img :src="product.aPhotoCollection[0].original_url" alt="" width="500" />
         </div>
 
         <template v-slot:footer>
@@ -53,14 +53,15 @@
         </div>
 
         <div class="center">
-          <img :src="product.aPhotoCollection[0].original_url" alt="" style="width: 500px;"/>
+          <img :src="product.aPhotoCollection[0].original_url" alt="" style="width: 500px;" />
         </div>
 
         <template v-slot:footer>
           <a-button type="primary" @click="skuTranslateImage(
             product.aPhotoCollection[0].key,
             product.aPhotoCollection[0].original_url
-          )">번역</a-button>
+          )">번역
+          </a-button>
           <a-button @click="product.bImageEditorModule = false">닫기</a-button>
         </template>
       </a-modal>
@@ -87,8 +88,8 @@
 
         <!-- 상세설명 이미지 리스트 -->
         <div style="height: 620px; overflow: scroll;overflow-x: hidden;">
-        <table>
-          <tbody>
+          <table>
+            <tbody>
             <tr>
               <td>
                 <ul
@@ -108,15 +109,15 @@
                   >
                     <div style="border: 3px solid #dcdcdc;border-bottom: none; position: relative">
 
-                        <a-image
-                          style="width: 190px; height: 190px"
-                          :src="
+                      <a-image
+                        style="width: 190px; height: 190px"
+                        :src="
                             item.translate_status
                               ? item.translate_url
                               : item.original_url
                           "
-                          alt=""
-                        />
+                        alt=""
+                      />
 
                       <a-checkbox
                         class="detailImageCheckbox"
@@ -136,29 +137,32 @@
                         type="primary"
                         class="w50"
                         @click="detailTranslateImage(item)"
-                        >번역</a-button
+                      >번역
+                      </a-button
                       >
                       <a-button
                         v-else
                         type="primary"
                         class="w50"
                         @click="detailRequestXiangji(item)"
-                        >편집</a-button
+                      >편집
+                      </a-button
                       >
                       <a-button
                         type="primary"
                         class="w50"
                         @click="deleteCheckedDetailImage(item.key)"
                         danger
-                        >삭제</a-button
+                      >삭제
+                      </a-button
                       >
                     </div>
                   </li>
                 </ul>
               </td>
             </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
         </div>
 
         <template v-slot:footer>
@@ -184,7 +188,7 @@ export default {
   display: "ImageEditorGroup",
 
   computed: {
-    ...mapState(["product"]),
+    ...mapState(["product"])
   },
 
   methods: {
@@ -200,8 +204,8 @@ export default {
           visible: true,
           original_url: url || "",
           translate_url: "",
-          translate_status: false,
-        },
+          translate_status: false
+        }
       ];
 
       this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
@@ -250,8 +254,8 @@ export default {
         Object.keys(oRequestId).map((sRequestId) => {
           this.product.item_thumbnails.map((data, i) => {
             if (
-                lib.isString(data.url, true) === true &&
-                data.url.split("/").includes(sRequestId) === true
+              lib.isString(data.url, true) === true &&
+              data.url.split("/").includes(sRequestId) === true
             ) {
               this.product.item_thumbnails[i].url = oRequestId[sRequestId];
             }
@@ -371,7 +375,9 @@ export default {
     deleteCheckedDetailImage(keys = false) {
       // 일괄삭제
       let aCheckedImage = this.product.aPhotoCollection.filter(
-        (data) => {return data.checked === true}
+        (data) => {
+          return data.checked === true;
+        }
       );
 
       // 단일삭제
@@ -390,10 +396,36 @@ export default {
         aCheckedImageUrl.push(data.original_url);
       });
       let content = window.tinymce.editors[0].getContent();
-      const regex = /<div id="editor_optin_table">[\s\S]*?<\/div>/g;
-      let sDetailContents = content.replace(regex, "");
+
+      // 옵션테이블 백업 및 삭제
+      let regex = /<div id="editor_option_table">[\s\S]*?<\/div>/g;
+      const optionTableMatch = regex.exec(content);
+      let optionTable = "";
+      if (optionTableMatch !== null) {
+        content = content.replace(regex, "");
+        optionTable = optionTableMatch[0]
+      }
+
+      // 안내정보 앞내용 백업 및 삭제
+      regex = new RegExp(`<div id="editor_before_guide"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
+      const beforeGuideMatch = regex.exec(content);
+      let beforeGuide = "";
+      if (beforeGuideMatch !== null) {
+        content = content.replace(regex, "");
+        beforeGuide = beforeGuideMatch[0]
+      }
+
+      // 안내정보 뒤내용 백업 및 삭제
+      regex = new RegExp(`<div id="editor_after_guide"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
+      const afterGuideMatch = regex.exec(content);
+      let afterGuide = "";
+      if (afterGuideMatch !== null) {
+        content = content.replace(regex, "");
+        afterGuide = afterGuideMatch[0]
+      }
+
       let imgReg = /<img.*?(?:>|\/>)/gi;
-      let aDetailHtml = sDetailContents.match(imgReg);
+      let aDetailHtml = content.match(imgReg);
 
       let aNewDetailImages = [];
       this.product.aPhotoCollection.map((data) => {
@@ -417,7 +449,9 @@ export default {
         }
       });
 
-      window.tinymce.editors[0].setContent(aDetailHtml.join(''));
+      let newHtml = aDetailHtml.join("");
+      newHtml = beforeGuide + optionTable + newHtml + afterGuide;
+      window.tinymce.editors[0].setContent(newHtml);
 
       this.getDetailContentsImage();
       this.product.item_detail = window.tinymce.editors[0].getContent();
@@ -426,41 +460,41 @@ export default {
     // 전체이미지 다운로드
     downloadAllDetailImage() {
 
-        this.product.loading = true;
+      this.product.loading = true;
 
-        let detailImageList = [];
-          this.product.aPhotoCollection.map((data, i) => {
-              detailImageList.push(data.translate_url);
-          });
+      let detailImageList = [];
+      this.product.aPhotoCollection.map((data, i) => {
+        detailImageList.push(data.translate_url);
+      });
 
-          AuthRequest.post(
-              process.env.VUE_APP_API_URL + "/api/downloadImageZip",
-              {
-                  "imageList": detailImageList
-              }
-          ).then((res) => {
+      AuthRequest.post(
+        process.env.VUE_APP_API_URL + "/api/downloadImageZip",
+        {
+          "imageList": detailImageList
+        }
+      ).then((res) => {
 
-              this.product.loading = false;
+        this.product.loading = false;
 
-              let response = res;
+        let response = res;
 
-              if (response === undefined) {
-                  message.error("다운로드에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
-                  return false;
-              }
+        if (response === undefined) {
+          message.error("다운로드에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+          return false;
+        }
 
-              let downloadElement = document.createElement("a");
-              let url = window.URL || window.webkitURL || window.moxURL;
-              let href = response.data['download_url']
+        let downloadElement = document.createElement("a");
+        let url = window.URL || window.webkitURL || window.moxURL;
+        let href = response.data["download_url"];
 
-              downloadElement.href = href;
-              downloadElement.download = decodeURI('detail_images.zip'); // 下载后文件名
-              document.body.appendChild(downloadElement);
-              downloadElement.click(); // 点击下载
-              document.body.removeChild(downloadElement); // 下载完成移除元素
-              url.revokeObjectURL(href);
-          });
-      },
+        downloadElement.href = href;
+        downloadElement.download = decodeURI("detail_images.zip"); // 下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        url.revokeObjectURL(href);
+      });
+    },
 
     // 전체선택
     checkAllDetailImage() {
@@ -492,13 +526,13 @@ export default {
           }
         }
       );
-    },
+    }
   },
 
   mounted() {
     // 최초 번역 남은 회수 조회
     this.getRecharge();
-  },
+  }
 };
 </script>
 
@@ -509,10 +543,12 @@ export default {
   padding-bottom: 0;
   margin: 0;
 }
+
 .full-modal .ant-modal-content {
   display: flex;
   flex-direction: column;
 }
+
 .full-modal .ant-modal-body {
   flex: 1;
 }
@@ -563,6 +599,7 @@ export default {
 .checkedEl {
   border: 3px solid #7093db;
 }
+
 .checkedNot {
   border: 3px solid white;
 }
