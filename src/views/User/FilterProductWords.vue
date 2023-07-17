@@ -22,7 +22,7 @@
     </div>
 
     <!--검색-->
-    <a-card :bordered="false" hoverable title="검색 유형을 선택해주세요.">
+    <a-card :bordered="false" hoverable title="금지어 관리">
       <div class="mt5">
         <!--셀렉박스-->
         <a-select
@@ -38,7 +38,7 @@
           >
         </a-select>
         <!--입력-->
-        <a-input style="width: 200px" v-model:value="searchValue" />
+        <a-input style="width: 200px" v-model:value="searchValue" placeholder="검색어를 입력해주세요."/>
         <!--검색버튼-->
         <a-button
           @click="searchApi"

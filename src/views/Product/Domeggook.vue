@@ -21,7 +21,7 @@
     </a-modal>
 
     <!--검색-->
-    <a-card :bordered="false">
+    <a-card :bordered="false" title="도매꾹" class="mb10">
     <div>
       <a-form
         :label-col="{ style: { width: '120px' } }"
