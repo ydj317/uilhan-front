@@ -248,8 +248,8 @@
                 </div>
             </div>
         </div>
-
-        <div id="search" class="pl20 pr20 pb20 pt20  mb10 bg-white">
+        <a-card :bordered="false" title="마켓 연동">
+        <div id="search">
             <div style="margin: 0; padding: 0; display: flex; justify-content: space-between;">
 
                 <div>
@@ -288,7 +288,9 @@
             </div>
 
         </div>
-        <div id="list" class="p20 bg-white">
+        </a-card>
+        <a-card :bordered="false" :style="{marginTop:'20px'}">
+        <div id="list">
 
             <div class="mb10" style="display: flex; justify-content: flex-end;">
                 <a-button @click="showPopupFn" style="width: 100px; margin-left: 10px" type="primary">
@@ -345,6 +347,7 @@
                 </template>
             </a-table>
         </div>
+      </a-card>
     </div>
 </template>
 <script setup>

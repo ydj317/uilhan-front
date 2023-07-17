@@ -22,10 +22,7 @@
     </div>
 
     <!--검색-->
-    <div id="FilterProductWordsHeader" class="pl20 pr20 pb20 pt20 mb30 bg-white">
-      <div class="mb5">
-        <a-tag color="#2db7f5" class="w100">검색 유형을 선택해주세요.</a-tag>
-      </div>
+    <a-card :bordered="false" hoverable title="검색 유형을 선택해주세요.">
       <div class="mt5">
         <!--셀렉박스-->
         <a-select
@@ -37,138 +34,141 @@
         >
           <a-select-option value="search_filter_word">금지어</a-select-option>
           <a-select-option value="search_user_name" :hidden="isAdmin !== 1"
-            >등록자</a-select-option
+          >등록자</a-select-option
           >
         </a-select>
         <!--입력-->
-        <a-input style="width: 500px" v-model:value="searchValue" />
+        <a-input style="width: 200px" v-model:value="searchValue" />
         <!--검색버튼-->
         <a-button
           @click="searchApi"
           style="width: 100px; margin-left: 10px"
           type="primary"
-          >검색</a-button
+        >검색</a-button
         >
       </div>
-    </div>
+    </a-card>
 
     <!--리스트-->
-    <div id="FilterProductWordsBody" class="p20 bg-white">
-      <!--선택검색-->
-      <div
-        style="
+    <a-card :bordered="false" hoverable class="mt20">
+      <div id="FilterProductWordsBody">
+        <!--선택검색-->
+        <div
+          style="
           display: flex;
           justify-content: space-between;
           align-items: center;
         "
-      >
-        <!--사용자/관리자 버튼-->
-        <div>
-          <a-radio-group
-            @change="searchApi"
-            v-model:value="searchViewType"
-            :buttonStyle="'solid'"
-          >
-            <a-radio-button value="user">{{
-              isAdmin === 1 ? "사용자" : "나의 금지어"
-            }}</a-radio-button>
-            <a-radio-button value="admin">{{
-              isAdmin === 1 ? "관리자" : "기본 금지어"
-            }}</a-radio-button>
-          </a-radio-group>
-        </div>
-        <!--금지어 추가 버튼-->
-        <div>
-          <a-button
-            @click="showModal"
-            style="width: 100px; background-color: #2db7f5; border: none"
-            type="primary"
+        >
+          <!--사용자/관리자 버튼-->
+          <div>
+            <a-radio-group
+              @change="searchApi"
+              v-model:value="searchViewType"
+              :buttonStyle="'solid'"
+            >
+              <a-radio-button value="user">{{
+                  isAdmin === 1 ? "사용자" : "나의 금지어"
+                }}</a-radio-button>
+              <a-radio-button value="admin">{{
+                  isAdmin === 1 ? "관리자" : "기본 금지어"
+                }}</a-radio-button>
+            </a-radio-group>
+          </div>
+          <!--금지어 추가 버튼-->
+          <div>
+            <a-button
+              @click="showModal"
+              style="width: 100px; background-color: #2db7f5; border: none"
+              type="primary"
             >추가</a-button
-          >
+            >
+          </div>
         </div>
-      </div>
-      <div>
-        <a-tag color="#2db7f5" class="w100"></a-tag>
-      </div>
-      <a-table
-        :bordered="false"
-        :columns="columns"
-        :data-source="dataSource"
-        :row-selection="rowSelection"
-        :pagination="{ hideOnSinglePage: true, disabled: true, pageSize: pageSize }"
-      >
-        <!--head-->
-        <template #headerCell="{ column }">
-          <!--등록자명-->
-          <template v-if="column.key === 'user_name'">
-            <div style="text-align: center">
-              {{ column.title }}
-            </div>
-          </template>
-          <!--금지어내용-->
-          <template v-else-if="column.key === 'filter_word'">
-            <div style="text-align: center">{{ column.title }}</div>
-          </template>
-          <!--삭제버튼-->
-          <template v-else-if="column.key === 'delete'">
-            <div
-              :hidden="searchViewType === 'admin' && isAdmin !== 1"
-              style="text-align: center"
-            >
-              <a-button
-                type="primary"
-                danger
-                @click="deleteApi(checkedId, checkedId.value)"
+        <div>
+          <a-tag color="#2db7f5" class="w100"></a-tag>
+        </div>
+        <a-table
+          :bordered="false"
+          :columns="columns"
+          :data-source="dataSource"
+          :row-selection="rowSelection"
+          :pagination="{ hideOnSinglePage: true, disabled: true, pageSize: pageSize }"
+        >
+          <!--head-->
+          <template #headerCell="{ column }">
+            <!--등록자명-->
+            <template v-if="column.key === 'user_name'">
+              <div style="text-align: center">
+                {{ column.title }}
+              </div>
+            </template>
+            <!--금지어내용-->
+            <template v-else-if="column.key === 'filter_word'">
+              <div style="text-align: center">{{ column.title }}</div>
+            </template>
+            <!--삭제버튼-->
+            <template v-else-if="column.key === 'delete'">
+              <div
+                :hidden="searchViewType === 'admin' && isAdmin !== 1"
+                style="text-align: center"
+              >
+                <a-button
+                  type="primary"
+                  danger
+                  @click="deleteApi(checkedId, checkedId.value)"
                 >선택삭제</a-button
-              >
-            </div>
+                >
+              </div>
+            </template>
           </template>
-        </template>
 
-        <!--body-->
-        <template #bodyCell="{ column, record }">
-          <!--등록자명-->
-          <template v-if="column.key === 'user_name'">
-            <div
-              v-if="searchViewType !== 'admin' || isAdmin === 1"
-              style="text-align: center"
-            >
-              {{ record.user_name }}
-            </div>
-            <div v-else style="text-align: center">관리자</div>
-          </template>
-          <!--금지어내용-->
-          <template v-if="column.key === 'filter_word'">
-            <div style="text-align: center">{{ record.filter_word }}</div>
-          </template>
-          <!--삭제버튼-->
-          <template v-if="column.key === 'delete'">
-            <div
-              v-if="searchViewType !== 'admin' || isAdmin === 1"
-              style="text-align: center"
-            >
-              <a-button ghost danger @click="deleteApi([record.id], record.id)"
+          <!--body-->
+          <template #bodyCell="{ column, record }">
+            <!--등록자명-->
+            <template v-if="column.key === 'user_name'">
+              <div
+                v-if="searchViewType !== 'admin' || isAdmin === 1"
+                style="text-align: center"
+              >
+                {{ record.user_name }}
+              </div>
+              <div v-else style="text-align: center">관리자</div>
+            </template>
+            <!--금지어내용-->
+            <template v-if="column.key === 'filter_word'">
+              <div style="text-align: center">{{ record.filter_word }}</div>
+            </template>
+            <!--삭제버튼-->
+            <template v-if="column.key === 'delete'">
+              <div
+                v-if="searchViewType !== 'admin' || isAdmin === 1"
+                style="text-align: center"
+              >
+                <a-button ghost danger @click="deleteApi([record.id], record.id)"
                 >단일삭제</a-button
-              >
-            </div>
-            <div v-else style="text-align: center"></div>
+                >
+              </div>
+              <div v-else style="text-align: center"></div>
+            </template>
           </template>
-        </template>
-      </a-table>
-    </div>
+        </a-table>
+      </div>
 
-    <!--paging-->
-    <div class="w100 center top h50" style="background-color: white">
-      <a-pagination
-        v-model:current="current"
-        :page-size-options="pageSizeOptions"
-        :total="total"
-        show-size-changer
-        :page-size="pageSize"
-        @change="onChange"
-      >
-      </a-pagination>
-    </div>
+      <!--paging-->
+      <div class="w100 center top h50" style="background-color: white">
+        <a-pagination
+          v-model:current="current"
+          :page-size-options="pageSizeOptions"
+          :total="total"
+          show-size-changer
+          :page-size="pageSize"
+          @change="onChange"
+        >
+        </a-pagination>
+      </div>
+    </a-card>
+
   </div>
 </template>
 <script>

@@ -387,39 +387,6 @@ export const menus = [{
                 icon: FileExcelOutlined,
             },
         },
-        {
-            path: "/product/domeggook",
-            name: "prd_domeggook",
-            component: "Product/Domeggook",
-            meta: {
-                title: "예치금관리(준비중)",
-                isHide: true,
-                roles: ["ROLE_ADMIN"],
-                icon: PayCircleOutlined,
-            },
-        },
-        {
-            path: "/product/domeggook",
-            name: "prd_domeggook",
-            component: "Product/Domeggook",
-            meta: {
-                title: "상세페이지 제작(준비중)",
-                isHide: true,
-                roles: ["ROLE_ADMIN"],
-                icon: GroupOutlined,
-            },
-        },
-        {
-            path: "/product/domeggook",
-            name: "prd_domeggook",
-            component: "Product/Domeggook",
-            meta: {
-                title: "상품부가정보(준비중)",
-                isHide: true,
-                roles: ["ROLE_ADMIN"],
-                icon: FileTextOutlined,
-            },
-        },
     ]
 }]
 

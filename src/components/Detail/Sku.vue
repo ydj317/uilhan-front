@@ -1,7 +1,7 @@
 <template>
   <div id="eModelTitle_3" class="mt20 p20 bg-white">
     <!--sku 상단 버튼-->
-    <div class="top_button_container">
+    <div class="top_button_container" style="display: flex;justify-content: space-between;">
       <!--sku 상단 left 버튼-->
       <div class="top_button_left_item">
         <!--일괄적용-->
@@ -13,9 +13,9 @@
       </div>
 
       <!--sku 상단 right 버튼-->
-      <div class="w50 row">
+      <div class="row" style="display: flex;flex-direction: column;gap: 10px;">
         <!--도매마진-->
-        <div class="w33 row right" v-if="false">
+        <div class="row right" v-if="false">
           <a-select
               class="top_button_right_item_select mr5"
               :options="this.product.wholesale_margin"
@@ -30,41 +30,41 @@
         </div>
 
         <!--판매마진-->
-        <div class="w33 row right">
+        <div class="row right">
           <a-select
-              class="top_button_right_item_select mr5"
+              class="top_button_right_item_select"
               :options="this.product.selling_margin"
               v-model:value="this.product.selling_margin_option"
           >
           </a-select>
           <a-popconfirm title="판매마진을 수정하시겠습니까? 입력하신 판매가가 수정됩니다." @confirm="setSellingMargin('click')">
-            <a-button class="top_button_right_item_button">판매마진</a-button>
+            <a-button class="top_button_right_item_button" style="border-top-left-radius: unset;border-bottom-left-radius: unset">판매마진</a-button>
           </a-popconfirm>
         </div>
 
         <!--할인마진-->
-        <div class="w31 row right">
+        <div class="row right">
           <a-select
-              class="top_button_right_item_select mr5"
+              class="top_button_right_item_select"
               :options="this.product.disp_margin"
               v-model:value="this.product.disp_margin_option"
           >
           </a-select>
           <a-popconfirm title="권장가를 수정하시겠습니까? 입력하신 권장가가 수정됩니다." @confirm="setDispMargin('click')">
-            <a-button class="top_button_right_item_button">권장가</a-button>
+            <a-button class="top_button_right_item_button" style="border-top-left-radius: unset;border-bottom-left-radius: unset">권장가</a-button>
           </a-popconfirm>
         </div>
 
         <!--환율-->
-        <div class="w29 row right">
+        <div class="row right">
           <a-select
-              class="top_button_right_item_select mr5"
+              class="top_button_right_item_select"
               :options="this.product.rate_margin"
               v-model:value="this.product.rate_margin_option"
           >
           </a-select>
           <a-popconfirm title="환율을 수정하시겠습니까?" @confirm="setRateMargin">
-            <a-button class="top_button_right_item_button">환율</a-button>
+            <a-button class="top_button_right_item_button" style="border-top-left-radius: unset;border-bottom-left-radius: unset">환율</a-button>
           </a-popconfirm>
         </div>
       </div>
@@ -77,6 +77,8 @@
           @ok="skuImageWindowOk"
           @cancel="skuImageWindowCancel"
           v-model:visible="sku_image_window_visible"
+          okText="선택"
+          cancelText="닫기"
       >
         <img
             class="sku_window_image"
@@ -163,10 +165,12 @@
                   ? `height: 30px; text-align: center; border: none;`
                   : `height: 30px; text-align: center; border: none;`
               "
-                 style="display: flex;flex-direction: column;"
+                 style="display: flex;flex-direction: column;position: relative;"
             >
-              <span><span style="color: #1a1a1a;">{{ record.original_price_ko.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>원</span>
-              <span style="color: #999999">{{ record.original_price_cn }}위엔</span>
+              <span>{{ record.original_price_ko }}</span>
+                <div style="position: absolute;top: 25px;">
+                  <sub><span style="color: #999999">{{ record.original_price_cn }}위엔</span></sub>
+                </div>
             </div>
             <div v-if="record.original_price_cn === 0 || record.editor === 'T'"  style="border: 1px solid red">
               <a-input
@@ -265,7 +269,7 @@ export default {
         {
           title: "품목코드",
           key: "code",
-          width: "14%",
+          width: "12%",
         },
         {
           title: "품목명",
@@ -273,17 +277,17 @@ export default {
           width: "18%",
         },
         {
-          title: "재고",
+          title: "재고/개",
           key: "stock",
-          width: "9%",
+          width: "7%",
         },
         {
-          title: "구매원가",
+          title: "구매원가/원",
           key: "original_price_cn", // 한국돈 = 수집원가*설정환율
           width: "9%",
         },
         {
-          title: "해외운임",
+          title: "해외운임/원",
           key: "shipping_fee_cn", // 기본 0, 별도 기입
           width: "8%",
         },
@@ -293,24 +297,24 @@ export default {
         //   width: "9%",
         // },
         {
-          title: "권장가",
+          title: "권장가/원",
           key: "disp_price", // 할인가*할인전 가격설정
-          width: "9%",
+          width: "8%",
         },
         {
-          title: "판매가",
+          title: "판매가/원",
           key: "selling_price", // (구매원가+중국내 운임)*마진율
-          width: "9%",
+          width: "8%",
         },
         {
-          title: "운임",
+          title: "운임/원",
           key: "shipping_fee_ko",
-          width: "7%",
+          width: "6%",
         },
         {
-          title: "예상수익",
+          title: "예상수익/원",
           key: "expected_return",
-          width: "6%",
+          width: "7%",
         },
       ],
       sku_pagination: {
@@ -592,7 +596,12 @@ export default {
     skuImageWindowOk() {
       this.product.sku.map((data, i) => {
         if (data.key === this.selected_sku_image_key) {
-          this.product.sku[i].img = this.selected_sku_image_url;
+          if(!this.selected_sku_image_url){
+            this.product.sku[i].img = this.product.item_thumbnails[0].url
+          } else {
+            this.product.sku[i].img = this.selected_sku_image_url;
+          }
+
         }
       });
 
@@ -775,7 +784,7 @@ export default {
 }
 
 .top_button_right_item_select {
-  width: 150px;
+  width: 140px;
   color: #3051d3;
 }
 

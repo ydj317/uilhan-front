@@ -10,8 +10,8 @@
           <a-button @click="setNavigation('eModelTitle_' + i)" v-for="(name, i) in label">
             <AppstoreTwoTone v-if="name === '기본 정보'"/>
             <PictureTwoTone v-if="name === '상품 이미지'" />
-            <SettingTwoTone v-if="name === 'Spec'" />
-            <TagsTwoTone v-if="name === 'SKU'" />
+            <SettingTwoTone v-if="name === '옵션설정'" />
+            <TagsTwoTone v-if="name === '품목정보'" />
             <BankTwoTone v-if="name === '통관정보'" />
             <SlidersTwoTone v-if="name === '배송설정'" />
             <ProjectTwoTone v-if="name === '간략설명'" />
@@ -64,8 +64,8 @@ export default {
       label: [
         '기본 정보',
         '상품 이미지',
-        'Spec',
-        'SKU',
+        '옵션설정',
+        '품목정보',
         '통관정보',
         // '배송설정',
         '간략설명',
