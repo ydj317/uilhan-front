@@ -1,6 +1,4 @@
 <template>
-  <loading v-model:active="bLoading" :can-cancel="false" :is-full-page="true" />
-
   <a-card :bordered="false" title="주문관리" :style="{marginBottom:'20px'}">
     <div class="inline-block mr17">
       <h1>검색기간</h1>
@@ -135,15 +133,12 @@
 import { onMounted, reactive, ref } from "vue";
 import { AuthRequest } from "@/util/request";
 import Cookie from "js-cookie";
-import "vue-loading-overlay/dist/vue-loading.css";
-import Loading from "vue-loading-overlay";
 import { SearchOutlined, InsertRowAboveOutlined, DownloadOutlined } from "@ant-design/icons-vue";
 import _ from "lodash";
 import moment from "moment";
 import { message } from "ant-design-vue";
 
-let bLoading = ref(false);
-let cardLoading = ref(true);
+const cardLoading = ref(true);
 
 const statusRef = ref(null)
 const orderFromRef = ref(null)

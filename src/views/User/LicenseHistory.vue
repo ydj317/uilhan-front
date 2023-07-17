@@ -10,8 +10,16 @@
         <a-select-option value="1">사용자</a-select-option>
       </a-select>
       <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;" />
-      <a-button @click="getLicense" type="primary">검색</a-button>
     </a-input-group>
+
+    <div class="mt25" style="text-align: center;">
+      <a-button @click="getLicense" style="width: 100px;" type="primary">
+        <SearchOutlined />
+        검색
+      </a-button>
+      <a-button class="ml10" @click="initSearchParam()" style="width: 100px;" type="">초기화</a-button>
+    </div>
+
   </a-card>
   <a-card :loading="cardLoading" :bordered="false">
     <a-table :columns="table_columns" :data-source="licenseHistoryData" :pagination="pagination">
@@ -87,6 +95,7 @@ import Cookie from "js-cookie";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
 import { message } from "ant-design-vue";
+import { SearchOutlined } from "@ant-design/icons-vue";
 
 // loading
 const indicator = ref(false);
@@ -170,6 +179,10 @@ const pagination = ref({
   },
 });
 
+function initSearchParam() {
+  search_value.value = ''
+}
+
 function statusChange(id, status) {
   indicator.value = true;
 
@@ -199,7 +212,6 @@ function statusChange(id, status) {
 function getLicense() {
   cardLoading.value = true;
   const requestParams = {
-    orderBy: "desc",
     search_value: search_value.value
   };
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/licenseHistory/list", { params: requestParams }).then((res) => {
