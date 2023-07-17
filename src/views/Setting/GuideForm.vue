@@ -33,7 +33,7 @@
       <a-form-item label="기본설정" name="is_default">
         <a-radio-group v-model:value="formState.is_default">
           <a-radio :value="'1'">사용함</a-radio>
-          <a-radio :value="'0'">사용안함</a-radio>
+          <a-radio :value="'0'" :disabled="guideData !== undefined && guideData.length < 1">{{guideData}}사용안함</a-radio>
         </a-radio-group>
       </a-form-item>
 
@@ -59,7 +59,8 @@ import BoardEditor from "@/components/ImageEditor/BoardEditor.vue";
 const indicator = ref(false);
 const cartLoading = ref(true);
 
-const route = useRoute();
+const route = useRoute()
+const guideData = ref()
 const formState = reactive({
   id: route.params.id,
   name: "",
@@ -101,8 +102,25 @@ const onFinishFailed = errorInfo => {
 
 function getGuide() {
   if (!route.params.id) {
-    cartLoading.value = false;
+
+    AuthRequest.get(process.env.VUE_APP_API_URL + "/api/guide/list").then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+        }
+
+        guideData.value = res.data;
+
+        if (guideData.value.length < 1) {
+          formState.is_default = '1'
+        }
+
+        cartLoading.value = false;
+      }
+    );
+
+    return true;
   }
+
   const requestParams = {
     id: route.params.id
   };

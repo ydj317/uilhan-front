@@ -1,41 +1,50 @@
 <template>
   <div id="eModelTitle_6" class="mt20 p20 bg-white">
     <!--title-->
-    <h1><strong>상세설명</strong></h1>
-
-    <!-- 상세설명 편집기 -->
-    <div class="editorDiv">
+    <div style="display: flex; justify-content: space-between;">
+      <h1><strong>상세설명</strong></h1>
       <div class="editorToolbar">
-        <!--button-->
         <a-space>
           <span>옵션 테이블</span>
-          <a-select v-model:value="selectOptionValue" style="width: 120px">
-            <a-select-option v-for="selectOption in optionTableSelectOption" :key="selectOption.value" :value="selectOption.value" >{{selectOption.label}}</a-select-option>
-          </a-select>
+          <a-input-group compact>
+            <a-select v-model:value="selectOptionValue" style="width: 120px">
+              <a-select-option v-for="selectOption in optionTableSelectOption" :key="selectOption.value"
+                               :value="selectOption.value">
+                {{ selectOption.label }}
+              </a-select-option>
+            </a-select>
+            <a-button type="primary" @click="setOptionTableContent">적용</a-button>
+          </a-input-group>
         </a-space>
-        <a-button style="margin-left: 5px;" type="primary" @click="setEditorContent">
-          적용
-        </a-button>
-
-        <a-divider type="vertical" style="border-color: #999" />
-
-        <a-button
-            class="originalDetailTrans"
-            type="primary"
-            @click="translatePopup"
-        >상세 이미지번역</a-button>
 
         <a-divider type="vertical" style="border-color: #999" />
 
         <a-space>
           <span>안내정보</span>
-          <a-select v-model:value="guideValue" @change="handleSelectChange" style="width: 120px">
-            <a-select-option value="">선택</a-select-option>
-            <a-select-option v-for="data in guideData" :value="data.id" >{{data.name}}</a-select-option>
-          </a-select>
+          <div v-if="guideData.length > 0">
+            <a-input-group compact>
+              <a-select v-model:value="guideValue" style="width: 200px">
+                <a-select-option v-for="data in guideData" :value="data.id">
+                  {{ data.name }}
+                </a-select-option>
+                <a-select-option value="guide_cancel">제거</a-select-option>
+              </a-select>
+              <a-button type="primary" @click="setGuideContent">적용</a-button>
+            </a-input-group>
+          </div>
+          <router-link v-else to="/setting/guideForm">
+            <a-button type="primary">안내정보 등록</a-button>
+          </router-link>
         </a-space>
+
+        <a-divider type="vertical" style="border-color: #999" />
+
+        <a-button class="originalDetailTrans" type="primary" @click="translatePopup">상세 이미지번역</a-button>
       </div>
-      <a-divider />
+    </div>
+
+    <!-- 상세설명 편집기 -->
+    <div style="margin-top: 10px;">
       <TEditor
         ref="editor"
         v-model:value="product.item_detail"
@@ -58,36 +67,36 @@ export default {
   name: "productDetailDescription",
 
   components: {
-    TEditor,
+    TEditor
   },
 
   computed: {
-    ...mapState(["product"]),
+    ...mapState(["product"])
   },
 
   data() {
     return {
       optionTableId: "editor_option_table",
       aBakDetailImages: {},
-      selectOptionValue: "table_two_column",
+      selectOptionValue: "table_cancel",
       optionTableSelectOption: [
         {
           label: "두줄로 추가",
-          value: "table_two_column",
+          value: "table_two_column"
         },
         {
           label: "네줄로 추가",
-          value: "table_four_column",
+          value: "table_four_column"
         },
         {
           label: "제거",
-          value: "table_cancel",
+          value: "table_cancel"
         }
       ],
       guideBeforeId: "editor_before_guide",
       guideAfterId: "editor_after_guide",
-      guideValue: '',
-      guideData: [],
+      guideValue: "",
+      guideData: []
     };
   },
   mounted() {
@@ -95,14 +104,20 @@ export default {
     this.getGuide();
   },
   methods: {
-    handleSelectChange(value) {
-      const selectData = this.guideData.find(item => item.id === value)
-      console.log('==0==')
-      console.log(selectData)
-      this.product.item_detail = selectData.beforeCont + this.product.item_detail + selectData.afterCont
+    setGuideContent() {
+      const value = this.guideValue;
 
-      const beforeCont = `<div id="${this.guideBeforeId}">${selectData.beforeCont}</div>`;
-      const afterCont = `<div id="${this.guideAfterId}">${selectData.afterCont}</div>`;
+      const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
+      this.product.item_detail = this.product.item_detail.replace(regex, "");
+
+      if (value === "guide_cancel") {
+        return true;
+      }
+
+      const selectData = this.guideData.find(item => item.id === value);
+      const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${value}">${selectData.beforeCont}</div>`;
+      const afterCont = `<div id="${this.guideAfterId}" data-tid="${value}">${selectData.afterCont}</div>`;
+
       this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
     },
     getGuide() {
@@ -111,32 +126,27 @@ export default {
             message.error(res.message);
           }
 
-          console.log('==0==')
-          console.log(res.data)
-          this.guideData = res.data
-
-          const regex = /<div\s+id="(editor_before_guide|editor_after_guide)"\s+data-tid="(\d+)"[^>]*>/g;
-
-          let match;
-          while ((match = regex.exec(this.product.item_detail)) !== null) {
-            const id = match[1];
-            const dataTid = match[2];
-            console.log(`Found div with id ${id} and data-tid ${dataTid}`);
+          this.guideData = res.data;
+          if (this.guideData.length < 1) {
+            return true;
           }
 
-          console.log('==0==')
-          console.log(match)
-          if (match === null) {
-            this.guideValue = res.data.find(item => item.name === '33').id
-          } else {
+          this.guideValue = this.guideData.find(item => item.isDefault === "1").id;
 
-          }
-
+          // 기존에 없을때 자동적용
+          // const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
+          // const match = regex.exec(this.product.item_detail);
+          // if (match === null) {
+          //   const selectData = this.guideData.find(item => item.id === this.guideValue);
+          //   const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${this.guideValue}">${selectData.beforeCont}</div>`;
+          //   const afterCont = `<div id="${this.guideAfterId}" data-tid="${this.guideValue}">${selectData.afterCont}</div>`;
+          //   this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
+          // }
 
         }
-      )
+      );
     },
-    setEditorContent() {
+    setOptionTableContent() {
       let doc = window.tinymce.editors[0].dom.doc;
       let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
       if (this.selectOptionValue === "table_cancel") {
@@ -146,6 +156,7 @@ export default {
         }
         return;
       }
+
       let columnCount = this.selectOptionValue === "table_two_column" ? 2 : 4;
       let optionHtml = this.getOptionTable(columnCount);
       if (optionTableDoc) {
@@ -153,9 +164,31 @@ export default {
         this.product.item_detail = doc.documentElement.innerHTML;
       } else {
         this.product.item_detail = `<div id="${this.optionTableId}">${optionHtml}</div>${this.product.item_detail}`;
+
+        const regex = new RegExp(`<div id="${this.guideBeforeId}"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
+        const match = regex.exec(this.product.item_detail);
+        if (match !== null) {
+          this.product.item_detail = this.product.item_detail.replace(regex, "");
+          this.product.item_detail = match[0] + this.product.item_detail;
+        }
+
       }
     },
     fetchData() {
+      const regex = /id="(editor_option_table_\d+)"/g;
+      const match = regex.exec(this.product.item_detail);
+      if (match === null) {
+        return true;
+      }
+
+      if (match[1] === `${this.optionTableId}_2`) {
+        this.selectOptionValue = "table_two_column";
+      }
+
+      if (match[1] === `${this.optionTableId}_4`) {
+        this.selectOptionValue = "table_four_column";
+      }
+
       //품목 이미지, 품목명 변경에 따라 액션
       watchEffect(() => {
         this.product.sku.map(item => item.img);
@@ -177,10 +210,12 @@ export default {
       //테이블 2줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
         optionHtml = this.getOptionTable(2);
+        this.selectOptionValue = "table_two_column";
       }
       //테이블 4줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_4`)) {
         optionHtml = this.getOptionTable(4);
+        this.selectOptionValue = "table_four_column";
       }
       if (optionHtml) {
         optionTableDoc.innerHTML = optionHtml;
@@ -198,7 +233,7 @@ export default {
         if (i === 1 || i === trStartTag) {
           //다음번 tr 시작 태그
           trStartTag = i + columnCount;
-          optionHtml += '<tr>';
+          optionHtml += "<tr>";
         }
         let imgHtml = item.img === null || item.img === "" ? `<div style="height:100px;width:100px;"></div>` : `<img style="height:100px;width:100px;" src="${item.img}">`;
         optionHtml += `<td style="min-height:100px;min-width:100px;">${imgHtml}</td>`;
@@ -215,11 +250,11 @@ export default {
 
         //tr태그 닫음
         if (i % columnCount === 0) {
-          optionHtml += '</tr>';
+          optionHtml += "</tr>";
         }
         i++;
       });
-      optionHtml += '</table>'
+      optionHtml += "</table>";
 
       return optionHtml;
     },
@@ -292,27 +327,13 @@ export default {
           original_url: oImageInfo.url,
           translate_url: oImageInfo.url,
           translate_status:
-            oImageInfo.url.indexOf("https://i.tosoiot.com/") !== -1,
+            oImageInfo.url.indexOf("https://i.tosoiot.com/") !== -1
         });
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style scoped>
-.editorDiv {
-  display: flex;
-  flex-direction: column;
-}
-
-.editorDiv .editorToolbar {
-  margin-right: auto;
-}
-
-.button {
-  width: 150px;
-  margin-bottom: 10px;
-  margin-right: 10px;
-}
 </style>
