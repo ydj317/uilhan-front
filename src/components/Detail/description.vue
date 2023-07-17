@@ -134,14 +134,14 @@ export default {
           this.guideValue = this.guideData.find(item => item.isDefault === "1").id;
 
           // 기존에 없을때 자동적용
-          // const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
-          // const match = regex.exec(this.product.item_detail);
-          // if (match === null) {
-          //   const selectData = this.guideData.find(item => item.id === this.guideValue);
-          //   const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${this.guideValue}">${selectData.beforeCont}</div>`;
-          //   const afterCont = `<div id="${this.guideAfterId}" data-tid="${this.guideValue}">${selectData.afterCont}</div>`;
-          //   this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
-          // }
+          const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
+          const match = regex.exec(this.product.item_detail);
+          if (match === null) {
+            const selectData = this.guideData.find(item => item.id === this.guideValue);
+            const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${this.guideValue}">${selectData.beforeCont}</div>`;
+            const afterCont = `<div id="${this.guideAfterId}" data-tid="${this.guideValue}">${selectData.afterCont}</div>`;
+            this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
+          }
 
         }
       );
