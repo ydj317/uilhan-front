@@ -61,7 +61,7 @@ onBeforeMount(() => {
 <template>
   <template v-for="(item,index) in dataSource.data" :key="index">
     <a-modal :key="index" v-if="shouldShowPopup(item.id)" v-model:visible="dataSource.open[`open${item.id}`]" :title="item.title" @cancel="handleCancel(item.id)" :mask="false">
-      <div style="text-align: center;" v-html="item.content">
+      <div style="text-align: center;height: 600px;overflow: scroll;overflow-x: unset;" v-html="item.content">
       </div>
       <template #footer>
         <a-checkbox v-model:checked="dataSource.visibleDays['visibal'+item.id]" style="color: #999999">3일간 보이지 않기</a-checkbox>
