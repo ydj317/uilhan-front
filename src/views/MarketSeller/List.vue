@@ -248,6 +248,7 @@
                 </div>
             </div>
         </div>
+
         <a-card :bordered="false" title="마켓 연동">
         <div id="search">
             <div style="margin: 0; padding: 0; display: flex; justify-content: space-between;">
