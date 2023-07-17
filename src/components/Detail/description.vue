@@ -78,7 +78,7 @@ export default {
     return {
       optionTableId: "editor_option_table",
       aBakDetailImages: {},
-      selectOptionValue: "table_cancel",
+      selectOptionValue: "table_two_column",
       optionTableSelectOption: [
         {
           label: "두줄로 추가",
@@ -175,19 +175,18 @@ export default {
       }
     },
     fetchData() {
-      const regex = /id="(editor_option_table_\d+)"/g;
-      const match = regex.exec(this.product.item_detail);
-      if (match === null) {
-        return true;
-      }
-
-      if (match[1] === `${this.optionTableId}_2`) {
-        this.selectOptionValue = "table_two_column";
-      }
-
-      if (match[1] === `${this.optionTableId}_4`) {
-        this.selectOptionValue = "table_four_column";
-      }
+      // 절정된 옵션테이블 유형 선택함
+      // const regex = /id="(editor_option_table_\d+)"/g;
+      // const match = regex.exec(this.product.item_detail);
+      // if (match === null) {
+      //   return true;
+      // }
+      // if (match[1] === `${this.optionTableId}_2`) {
+      //   this.selectOptionValue = "table_two_column";
+      // }
+      // if (match[1] === `${this.optionTableId}_4`) {
+      //   this.selectOptionValue = "table_four_column";
+      // }
 
       //품목 이미지, 품목명 변경에 따라 액션
       watchEffect(() => {
