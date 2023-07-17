@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" title="안내정보">
+  <a-card :loading="cardLoading" :bordered="false" title="안내정보">
     <a-row type="flex" justify="space-between" :wrap="false" :style="{marginBottom:'10px'}">
       <a-col>
         <a-popconfirm title="삭제하시겠습니까?" @confirm="selectedDelete">
@@ -57,7 +57,7 @@ import { EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
 
 // loading
 const indicator = ref(false);
-const cartLoading = ref(true);
+const cardLoading = ref(true);
 
 const guideData = ref([]);
 const table_columns = ref([
@@ -133,7 +133,7 @@ function getGuide() {
         guideData.value[i].checked = false;
       }
 
-      cartLoading.value = false;
+      cardLoading.value = false;
     }
   );
 }

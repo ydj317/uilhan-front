@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" :title="'안내정보 ' + (route.params.id ? '수정' : '등록')">
+  <a-card :loading="cardLoading" :bordered="false" :title="'안내정보 ' + (route.params.id ? '수정' : '등록')">
     <a-form :model="formState" name="guide_form" @finish="onFinish"
             @finishFailed="onFinishFailed" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
             class="guide_form">
@@ -57,7 +57,7 @@ import BoardEditor from "@/components/ImageEditor/BoardEditor.vue";
 
 // loading
 const indicator = ref(false);
-const cartLoading = ref(true);
+const cardLoading = ref(true);
 
 const route = useRoute()
 const guideData = ref()
@@ -114,7 +114,7 @@ function getGuide() {
           formState.is_default = '1'
         }
 
-        cartLoading.value = false;
+        cardLoading.value = false;
       }
     );
 
@@ -135,7 +135,7 @@ function getGuide() {
       formState.after_cont = res.data.afterCont;
       formState.is_default = res.data.isDefault;
 
-      cartLoading.value = false;
+      cardLoading.value = false;
     }
   );
 }

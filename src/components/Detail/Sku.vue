@@ -1,36 +1,36 @@
 <template>
   <div id="eModelTitle_3" class="mt20 p20 bg-white">
+    <h1><strong>품목정보</strong></h1>
     <!--sku 상단 버튼-->
     <div class="top_button_container" style="display: flex;justify-content: space-between;">
       <!--sku 상단 left 버튼-->
       <div class="top_button_left_item">
         <!--일괄적용-->
         <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 구매원가, 해외운임, 권장가, 판매가)" @confirm="skuBatch">
-          <a-button class="top_button_left_item_button">일괄적용</a-button>
+          <a-button>일괄적용</a-button>
         </a-popconfirm>
         <!--품목삭제-->
-        <a-button class="top_button_left_item_button" @click="deleteSku">품목삭제</a-button>
+        <a-button @click="deleteSku">품목삭제</a-button>
       </div>
 
       <!--sku 상단 right 버튼-->
       <div class="row" style="display: flex;flex-direction: column;gap: 10px;">
         <!--도매마진-->
         <div class="row right" v-if="false">
+          <a-input-group compact>
           <a-select
               class="top_button_right_item_select mr5"
               :options="this.product.wholesale_margin"
               v-model:value="this.product.wholesale_margin_option"
           >
           </a-select>
-          <a-button
-              class="top_button_right_item_button"
-              @click="setWholesaleMargin"
-          >도매마진
-          </a-button>
+          <a-button type="primary" @click="setWholesaleMargin">도매마진</a-button>
+          </a-input-group>
         </div>
 
         <!--판매마진-->
         <div class="row right">
+          <a-input-group compact>
           <a-select
               class="top_button_right_item_select"
               :options="this.product.selling_margin"
@@ -38,12 +38,14 @@
           >
           </a-select>
           <a-popconfirm title="판매마진을 수정하시겠습니까? 입력하신 판매가가 수정됩니다." @confirm="setSellingMargin('click')">
-            <a-button class="top_button_right_item_button" style="border-top-left-radius: unset;border-bottom-left-radius: unset">판매마진</a-button>
+            <a-button type="primary" style="border-top-left-radius: unset;border-bottom-left-radius: unset">판매마진</a-button>
           </a-popconfirm>
+          </a-input-group>
         </div>
 
         <!--할인마진-->
         <div class="row right">
+          <a-input-group compact>
           <a-select
               class="top_button_right_item_select"
               :options="this.product.disp_margin"
@@ -51,12 +53,14 @@
           >
           </a-select>
           <a-popconfirm title="권장가를 수정하시겠습니까? 입력하신 권장가가 수정됩니다." @confirm="setDispMargin('click')">
-            <a-button class="top_button_right_item_button" style="border-top-left-radius: unset;border-bottom-left-radius: unset">권장가</a-button>
+            <a-button type="primary" style="border-top-left-radius: unset;border-bottom-left-radius: unset">권장가</a-button>
           </a-popconfirm>
+          </a-input-group>
         </div>
 
         <!--환율-->
         <div class="row right">
+          <a-input-group compact>
           <a-select
               class="top_button_right_item_select"
               :options="this.product.rate_margin"
@@ -64,8 +68,9 @@
           >
           </a-select>
           <a-popconfirm title="환율을 수정하시겠습니까?" @confirm="setRateMargin">
-            <a-button class="top_button_right_item_button" style="border-top-left-radius: unset;border-bottom-left-radius: unset">환율</a-button>
+            <a-button type="primary" style="border-top-left-radius: unset;border-bottom-left-radius: unset">환율</a-button>
           </a-popconfirm>
+          </a-input-group>
         </div>
       </div>
     </div>
@@ -168,7 +173,7 @@
                  style="display: flex;flex-direction: column;position: relative;"
             >
               <span>{{ record.original_price_ko }}</span>
-                <div style="position: absolute;top: 25px;">
+                <div style="position: absolute;top: 20px;">
                   <sub><span style="color: #999999">{{ record.original_price_cn }}위엔</span></sub>
                 </div>
             </div>

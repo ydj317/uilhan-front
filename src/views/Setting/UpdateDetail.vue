@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" :title="'사용자 정보 수정'">
+  <a-card :loading="cardLoading" :bordered="false" :title="'사용자 정보 수정'">
 
     <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">
@@ -116,7 +116,7 @@ import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
-const cartLoading = ref(true);
+const cardLoading = ref(true);
 
 const formState = reactive({
   username: "",
@@ -412,7 +412,7 @@ function getUser() {
       formState.com_ceo = res.data.com_ceo;
       splitPhone('tel', res.data.tel)
 
-      cartLoading.value = false;
+      cardLoading.value = false;
     }
   );
 }

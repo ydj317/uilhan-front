@@ -72,7 +72,7 @@
     </div>
   </a-card>
 
-  <a-card :bordered="false">
+  <a-card :loading="cardLoading" :bordered="false">
     <div class="mb10" style="display: flex; justify-content: flex-end;">
       <a-button @click="requestCollect" style="width: 130px; margin-left: 10px" type="primary">
         <template #icon>
@@ -143,6 +143,7 @@ import moment from "moment";
 import { message } from "ant-design-vue";
 
 let bLoading = ref(false);
+let cardLoading = ref(true);
 
 const statusRef = ref(null)
 const orderFromRef = ref(null)
@@ -338,7 +339,7 @@ const setMarketList = async () => {
 };
 
 const setTableData = async () => {
-  bLoading.value = true;
+  cardLoading.value = true;
 
   let regdateBegin = "";
   let regdateEnd = "";
@@ -365,7 +366,7 @@ const setTableData = async () => {
     }
   });
 
-  bLoading.value = false;
+  cardLoading.value = false;
 
   data.value = res.data.list;
   pagination.value.total = res.data.total;
@@ -375,8 +376,6 @@ const setTableData = async () => {
 };
 
 const excelDownload = () => {
-  bLoading = true;
-
   let regdateBegin = "";
   let regdateEnd = "";
 
@@ -409,7 +408,6 @@ const excelDownload = () => {
     let response = res;
     if (response === undefined) {
       message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
-      bLoading = false;
       return false;
     }
 
@@ -424,7 +422,6 @@ const excelDownload = () => {
     downloadElement.click(); // 点击下载
     document.body.removeChild(downloadElement); // 下载完成移除元素
     url.revokeObjectURL(href);
-    bLoading.value = false;
   });
 };
 

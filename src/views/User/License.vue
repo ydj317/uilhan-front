@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" title="서비스 관리">
+  <a-card :loading="cardLoading" :bordered="false" title="서비스 관리">
     <a-row type="flex" justify="space-between" :wrap="false" :style="{marginBottom:'10px'}">
       <a-col>
         <a-popconfirm title="삭제하시겠습니까?" @confirm="selectedDelete">
@@ -68,7 +68,7 @@ import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
-const cartLoading = ref(true);
+const cardLoading = ref(true);
 
 const licenseData = ref([]);
 const table_columns = ref([
@@ -159,7 +159,7 @@ function getLicense() {
         licenseData.value[i].checked = false;
       }
 
-      cartLoading.value = false;
+      cardLoading.value = false;
     }
   );
 }

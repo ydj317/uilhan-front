@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" title="서비스 결제" class="license-pay-page">
+  <a-card :loading="cardLoading" :bordered="false" title="서비스 결제" class="license-pay-page">
     <a-descriptions title="서비스" bordered :column="{ xs: 2, sm: 2, md: 2}" :style="{marginBottom:'20px'}">
       <a-descriptions-item label="서비스 선택">
         <a-select v-model:value="licenseSelected" @change="licenseSelectChange" style="width: 100%;">
@@ -68,7 +68,7 @@ import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
-const cartLoading = ref(true);
+const cardLoading = ref(true);
 
 const licenseList = ref([]);
 const licenseSelected = ref("");
@@ -143,7 +143,7 @@ function getLicense() {
 
       licenseList.value = res.data;
 
-      cartLoading.value = false;
+      cardLoading.value = false;
     }
   );
 }

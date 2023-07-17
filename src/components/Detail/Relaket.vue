@@ -60,19 +60,20 @@
             </a-form-item>
           </a-descriptions-item>
 
-          <a-descriptions-item label="상품고시 / 통관유형">
-            <div class="row w40">
-              <a-form-item class="w100">
+          <a-descriptions-item label="상품고시">
+              <a-form-item>
                 <a-select v-model:value="formState.mandatory_val" :options="formState.mandatory" placeholder="상품고시 선택해주세요.">
                 </a-select>
               </a-form-item>
-              <a-form-item class="ml20 w100">
+          </a-descriptions-item>
+
+          <a-descriptions-item label="통관유형">
+              <a-form-item>
                 <a-select v-model:value="formState.surtax" placeholder="통관유형 선택해주세요.">
                   <a-select-option value="Y">면세</a-select-option>
                   <a-select-option value="N">과세</a-select-option>
                 </a-select>
               </a-form-item>
-            </div>
           </a-descriptions-item>
 
           <a-descriptions-item label="배송 정책">

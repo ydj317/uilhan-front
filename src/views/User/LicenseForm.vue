@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" :title="'서비스 ' + (route.params.id ? '수정' : '등록')">
+  <a-card :loading="cardLoading" :bordered="false" :title="'서비스 ' + (route.params.id ? '수정' : '등록')">
     <a-form :model="formState" name="license_form" @finish="onFinish"
             @finishFailed="onFinishFailed" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
             class="license_form">
@@ -52,7 +52,7 @@ import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
-const cartLoading = ref(true);
+const cardLoading = ref(true);
 
 const route = useRoute();
 const formState = reactive({
@@ -88,7 +88,7 @@ const onFinishFailed = errorInfo => {
 
 function getLicense() {
   if (!route.params.id) {
-    cartLoading.value = false;
+    cardLoading.value = false;
   }
   const requestParams = {
     id: route.params.id
@@ -104,7 +104,7 @@ function getLicense() {
       formState.day = res.data.day;
       formState.status = res.data.status;
 
-      cartLoading.value = false;
+      cardLoading.value = false;
     }
   );
 }

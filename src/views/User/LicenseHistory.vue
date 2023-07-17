@@ -13,7 +13,7 @@
       <a-button @click="getLicense" type="primary">검색</a-button>
     </a-input-group>
   </a-card>
-  <a-card :loading="cartLoading" :bordered="false">
+  <a-card :loading="cardLoading" :bordered="false">
     <a-table :columns="table_columns" :data-source="licenseHistoryData" :pagination="pagination">
       <template #bodyCell="{ column,record, text }">
         <!--사용자-->
@@ -90,7 +90,7 @@ import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
-const cartLoading = ref(true);
+const cardLoading = ref(true);
 
 const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
 
@@ -197,7 +197,7 @@ function statusChange(id, status) {
 }
 
 function getLicense() {
-  cartLoading.value = true;
+  cardLoading.value = true;
   const requestParams = {
     orderBy: "desc",
     search_value: search_value.value
@@ -209,7 +209,7 @@ function getLicense() {
 
       licenseHistoryData.value = res.data;
 
-      cartLoading.value = false;
+      cardLoading.value = false;
     }
   );
 }

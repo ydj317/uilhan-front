@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" title="마진 & 환율" class="setting-page-margin"
+  <a-card :loading="cardLoading" :bordered="false" title="마진 & 환율" class="setting-page-margin"
           :style="{marginBottom:'20px'}">
     <a-descriptions title="마진율 설정" bordered :column="{ xs: 1, sm: 1, md: 1}">
       <a-descriptions-item label="도매마진율" v-if="false">
@@ -246,8 +246,8 @@ import { message } from "ant-design-vue";
 
 // loading
 const indicator = ref(false);
-const cartLoading = ref(true);
-const cartLoading2 = ref(true);
+const cardLoading = ref(true);
+const cardLoading2 = ref(true);
 
 const userData = ref({});
 const rateCn = ref(0);
@@ -610,7 +610,7 @@ function getUser() {
 
       collectionPriceList.value = res.data.collection;
 
-      cartLoading.value = false;
+      cardLoading.value = false;
     }
   );
 }
@@ -626,7 +626,7 @@ function getRate() {
       rateCn.value = res.data.cn;
       rateKor.value = res.data.ko;
 
-      cartLoading2.value = false;
+      cardLoading2.value = false;
     }
   );
 }

@@ -4,7 +4,7 @@
     :can-cancel="false"
     :is-full-page="true"
   />
-  <a-card :loading="cartLoading" :bordered="false" title="계정정보" class="setting-page-margin">
+  <a-card :loading="cardLoading" :bordered="false" title="계정정보" class="setting-page-margin">
     <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}">
       <a-descriptions-item label="API키 설정">
         <a-input-group compact>
@@ -104,7 +104,7 @@ const { product } = store.state;
 
 // loading
 const indicator = ref(false);
-const cartLoading = ref(true);
+const cardLoading = ref(true);
 
 const accessKey = ref();
 const secretKey = ref();
@@ -363,7 +363,7 @@ function getUser() {
         licenseEndTime.value = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24)) + '일'
       }
 
-      cartLoading.value = false;
+      cardLoading.value = false;
     }
   );
 }
