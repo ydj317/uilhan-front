@@ -623,11 +623,11 @@ export default {
 
     translatePopup(record, url = "") {
       // 변역완료된 상품은 편집
-      if (record.img.indexOf("https://i.tosoiot.com/") !== -1) {
-        this.requestXiangji([url]);
-
-        return false;
-      }
+      // if (record.img.indexOf("https://i.tosoiot.com/") !== -1) {
+      //   this.requestXiangji([url]);
+      //
+      //   return false;
+      // }
 
       this.product.bProductDetailsEditor = false;
       this.product.bProductImageEditor = false;

@@ -111,11 +111,11 @@ export default {
     },
     translatePopup(index, element) {
       // 변역완료된 상품은 편집
-      if (element.url.indexOf("https://i.tosoiot.com/") !== -1) {
-        this.requestXiangji([element.url]);
-
-        return false;
-      }
+      // if (element.url.indexOf("https://i.tosoiot.com/") !== -1) {
+      //   this.requestXiangji([element.url]);
+      //
+      //   return false;
+      // }
 
       this.product.bProductDetailsEditor = false;
       this.product.bProductImageEditor = true;

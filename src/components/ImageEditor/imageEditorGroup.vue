@@ -60,8 +60,15 @@
         <template v-slot:footer>
           <a-button type="primary" @click="skuTranslateImage(
             product.aPhotoCollection[0].key,
-            product.aPhotoCollection[0].original_url
+            product.aPhotoCollection[0].original_url,
+            true
           )">번역
+          </a-button>
+          <a-button type="primary" @click="skuTranslateImage(
+            product.aPhotoCollection[0].key,
+            product.aPhotoCollection[0].original_url,
+            false
+          )">편집
           </a-button>
           <a-button @click="product.bImageEditorModule = false">닫기</a-button>
         </template>
@@ -184,7 +191,8 @@ export default {
 
   methods: {
     // 이미지 번역
-    skuTranslateImage(index, url) {
+    skuTranslateImage(index, url, isTranslate) {
+      this.product.isTranslate = isTranslate
       let aImagesInfo = [
         {
           msg: "",
