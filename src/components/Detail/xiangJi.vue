@@ -6,17 +6,19 @@
       v-if="product.xiangjiVisible"
       :visible="product.xiangjiVisible"
       :closable="false"
-      :ok-text="'닫기'"
       :cancel-button-props="{ ghost: true, disabled: true }"
-      @ok="product.xiangjiVisible = false"
+      :footer="null"
     >
       <!-- 模板HTML 不可修改 -->
       <div id="app">
         <div id="some-dialog">
+          <div class="logo-hide"></div>
+          <div class="close-btn" @click="product.xiangjiVisible = false">닫기</div>
           <iframe
             id="xiangji-image-editor"
             title="象寄图片精修工具"
-            src="/static/xiangji/xiangjiProxy.html"
+            src="https://www.xiangjifanyi.com/image-editor/#/?lang=KOR"
+            style="border:none;"
             @load="iframeOnload()"
           ></iframe>
         </div>
@@ -30,7 +32,6 @@ import "@/util/jQuery_v1.10.2";
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
 import { lib } from "@/util/lib";
-import oTranslatRule from "../../../public/static/xiangji/xiangjiUi.json";
 import { message } from "ant-design-vue";
 
 export default {
@@ -56,111 +57,8 @@ export default {
         "*"
       );
 
-      // iFrame UI 실시간 번역
-      setInterval(() => !this.product.xiangjiVisible || this.translateUI());
-
       // loading 제거
       this.product.loading = false;
-    },
-
-    // 편집기 UI 번역
-    translateUI() {
-      // 이미지 편집기 프레임 body
-      let $oIframeImageEditor = window._$(
-        document
-          .getElementById("xiangji-image-editor")
-          .contentWindow.document.querySelector("body")
-      );
-
-      // 예외처리
-      $oIframeImageEditor.find("#app .header .logo").remove();
-      $oIframeImageEditor
-        .find("#app .anticon-question-circle")
-        .parent()
-        .remove();
-      $oIframeImageEditor
-        .find('[placeholder="原文内容"]')
-        .attr("placeholder", "원본");
-      $oIframeImageEditor
-        .find('[placeholder="译文内容"]')
-        .attr("placeholder", "번역본");
-
-      // if (
-      //   $oIframeImageEditor.find('[placeholder="译文内容"]').val() ===
-      //   "双击编辑文字"
-      // ) {
-      //   $oIframeImageEditor
-      //     .find('[placeholder="译文内容"]')
-      //     .val("123")
-      //     .trigger("click")
-      //     .trigger("input")
-      //     .trigger("keydown");
-      // }
-      // if (
-      //   $oIframeImageEditor.find('[placeholder="번역본"]').val() ===
-      //   "双击编辑文字"
-      // ) {
-      //   $oIframeImageEditor
-      //     .find('[placeholder="번역본"]')
-      //     .val("123")
-      //     .trigger("click")
-      //     .trigger("input")
-      //     .trigger("keydown");
-      // }
-
-      Object.keys(oTranslatRule.rule).map((sOrignalText) => {
-        // 기본룰
-        let oTranslateElement = $oIframeImageEditor.find(
-          `:contains(${sOrignalText})`
-        );
-
-        // 예외처리
-        let bException = Object.keys(oTranslatRule.exception).includes(
-          sOrignalText
-        );
-
-        if (bException) {
-          oTranslateElement = $oIframeImageEditor.find(
-            oTranslatRule.exception[sOrignalText]
-          );
-
-          if (oTranslateElement.text() !== oTranslatRule.rule[sOrignalText]) {
-            oTranslateElement.text(oTranslatRule.rule[sOrignalText]);
-          }
-        }
-
-        try {
-          if (oTranslateElement.length > 0 && !bException) {
-            oTranslateElement = oTranslateElement.eq(
-              oTranslateElement.length - 1
-            );
-            let sTranslateText = oTranslatRule.rule[sOrignalText];
-            let sOrignalContents = oTranslateElement[0].firstChild.data;
-
-            if (sOrignalContents && sOrignalContents.trim() === sOrignalText) {
-              oTranslateElement[0].firstChild.data = sOrignalContents.replace(
-                sOrignalText,
-                sTranslateText
-              );
-            } else {
-              sOrignalContents =
-                oTranslateElement[0].firstChild.nextSibling.data;
-              if (
-                sOrignalContents &&
-                sOrignalContents.trim() === sOrignalText
-              ) {
-                oTranslateElement[0].firstChild.nextSibling.data =
-                  sOrignalContents.replace(sOrignalText, sTranslateText);
-              }
-            }
-          }
-        } catch (e) {
-          // console.log(sOrignalText, {
-          //   oTranslateElement,
-          //   oTranslatRule.rule,
-          // });
-        }
-      });
     },
 
     // 이미지 편집기 적용후 처리
@@ -182,7 +80,7 @@ export default {
           from: "zh",
           to: "ko",
           list: aImagesInfo,
-          // market: this.product.item_market
+          isTranslate: this.product.isTranslate,
         };
 
         if (
@@ -265,6 +163,28 @@ export default {
 </script>
 
 <style>
+.logo-hide {
+  position:absolute;
+  top: 30px;
+  left: 30px;
+  background: #fff;
+  width: 110px;
+  height: 45px;
+}
+.close-btn {
+  padding: 4px 20px 6px;
+  position:absolute;
+  top: 36px;
+  right: 130px;
+  background: #2055f3;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+}
+.closeBtn:hover {
+  background: #4a7dff;
+}
+
 .xiangJi,
 .xiangJi #app,
 .xiangJi #some-dialog,

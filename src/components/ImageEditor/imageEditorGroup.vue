@@ -26,7 +26,8 @@
         </div>
 
         <template v-slot:footer>
-          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection)">번역</a-button>
+          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection, true)">번역</a-button>
+          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection, false)">편집</a-button>
           <a-button @click="product.bImageEditorModule = false">닫기</a-button>
         </template>
       </a-modal>
@@ -132,30 +133,20 @@
                       ></a-checkbox>
                     </div>
                     <div class="space-between">
-                      <a-button
-                        v-if="item.translate_status !== true"
-                        type="primary"
-                        class="w50"
-                        @click="detailTranslateImage(item)"
-                      >번역
-                      </a-button
-                      >
-                      <a-button
-                        v-else
-                        type="primary"
-                        class="w50"
-                        @click="detailRequestXiangji(item)"
-                      >편집
-                      </a-button
-                      >
-                      <a-button
-                        type="primary"
-                        class="w50"
-                        @click="deleteCheckedDetailImage(item.key)"
-                        danger
-                      >삭제
-                      </a-button
-                      >
+                      <a-button type="primary" class="w33"
+                                @click="detailTranslateImage(item, true)">번역
+                      </a-button>
+
+                      <a-button v-if="item.translate_status !== true" type="primary" class="w33"
+                                @click="detailTranslateImage(item, false)">편집
+                      </a-button>
+                      <a-button v-else type="primary" class="w33"
+                                @click="detailRequestXiangji(item)">편집2
+                      </a-button>
+
+                      <a-button type="primary" class="w33" danger
+                                @click="deleteCheckedDetailImage(item.key)">삭제
+                      </a-button>
                     </div>
                   </li>
                 </ul>
@@ -242,7 +233,8 @@ export default {
     },
 
     //상품이미지 번역
-    productTranslateImage(aImagesInfo) {
+    productTranslateImage(aImagesInfo, isTranslate) {
+      this.product.isTranslate = isTranslate
       this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
         let sTranslateUrl = oTranslateInfo[aImagesInfo[0].key].translate_url;
         this.product.item_thumbnails[aImagesInfo[0].key].url = sTranslateUrl;
@@ -269,7 +261,8 @@ export default {
     },
 
     // 이미지 번역
-    detailTranslateImage(item) {
+    detailTranslateImage(item, isTranslate) {
+      this.product.isTranslate = isTranslate
       this.product.translateImage([item], (oTranslateInfo) => {
         let sTranslateUrl = oTranslateInfo[item.key].translate_url;
 
@@ -403,7 +396,7 @@ export default {
       let optionTable = "";
       if (optionTableMatch !== null) {
         content = content.replace(regex, "");
-        optionTable = optionTableMatch[0]
+        optionTable = optionTableMatch[0];
       }
 
       // 안내정보 앞내용 백업 및 삭제
@@ -412,7 +405,7 @@ export default {
       let beforeGuide = "";
       if (beforeGuideMatch !== null) {
         content = content.replace(regex, "");
-        beforeGuide = beforeGuideMatch[0]
+        beforeGuide = beforeGuideMatch[0];
       }
 
       // 안내정보 뒤내용 백업 및 삭제
@@ -421,7 +414,7 @@ export default {
       let afterGuide = "";
       if (afterGuideMatch !== null) {
         content = content.replace(regex, "");
-        afterGuide = afterGuideMatch[0]
+        afterGuide = afterGuideMatch[0];
       }
 
       let imgReg = /<img.*?(?:>|\/>)/gi;
