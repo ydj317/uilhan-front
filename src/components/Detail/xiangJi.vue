@@ -178,8 +178,6 @@ export default {
     // 이미지 번역
     translateImage() {
       this.product.translateImage = (aImagesInfo = [], xiangjiCallback) => {
-        console.log('==0==')
-        console.log(this.product)
         let oParam = {
           from: "zh",
           to: "ko",
