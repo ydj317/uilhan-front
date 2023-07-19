@@ -26,7 +26,8 @@
         </div>
 
         <template v-slot:footer>
-          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection)">번역</a-button>
+          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection, true)">번역</a-button>
+          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection, false)">편집</a-button>
           <a-button @click="product.bImageEditorModule = false">닫기</a-button>
         </template>
       </a-modal>
@@ -59,8 +60,15 @@
         <template v-slot:footer>
           <a-button type="primary" @click="skuTranslateImage(
             product.aPhotoCollection[0].key,
-            product.aPhotoCollection[0].original_url
+            product.aPhotoCollection[0].original_url,
+            true
           )">번역
+          </a-button>
+          <a-button type="primary" @click="skuTranslateImage(
+            product.aPhotoCollection[0].key,
+            product.aPhotoCollection[0].original_url,
+            false
+          )">편집
           </a-button>
           <a-button @click="product.bImageEditorModule = false">닫기</a-button>
         </template>
@@ -132,11 +140,15 @@
                       ></a-checkbox>
                     </div>
                     <div class="space-between">
+                      <a-button type="primary" class="w33"
+                                @click="detailTranslateImage(item, true)">번역
+                      </a-button>
+
                       <a-button v-if="item.translate_status !== true" type="primary" class="w33"
-                                @click="detailTranslateImage(item)">번역
+                                @click="detailTranslateImage(item, false)">편집
                       </a-button>
                       <a-button v-else type="primary" class="w33"
-                                @click="detailRequestXiangji(item)">편집
+                                @click="detailRequestXiangji(item)">편집2
                       </a-button>
 
                       <a-button type="primary" class="w33" danger
@@ -179,7 +191,8 @@ export default {
 
   methods: {
     // 이미지 번역
-    skuTranslateImage(index, url) {
+    skuTranslateImage(index, url, isTranslate) {
+      this.product.isTranslate = isTranslate
       let aImagesInfo = [
         {
           msg: "",
@@ -228,7 +241,8 @@ export default {
     },
 
     //상품이미지 번역
-    productTranslateImage(aImagesInfo) {
+    productTranslateImage(aImagesInfo, isTranslate) {
+      this.product.isTranslate = isTranslate
       this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
         let sTranslateUrl = oTranslateInfo[aImagesInfo[0].key].translate_url;
         this.product.item_thumbnails[aImagesInfo[0].key].url = sTranslateUrl;
@@ -255,7 +269,8 @@ export default {
     },
 
     // 이미지 번역
-    detailTranslateImage(item) {
+    detailTranslateImage(item, isTranslate) {
+      this.product.isTranslate = isTranslate
       this.product.translateImage([item], (oTranslateInfo) => {
         let sTranslateUrl = oTranslateInfo[item.key].translate_url;
 

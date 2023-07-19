@@ -6,12 +6,12 @@
     <!--상단 버튼-->
     <div id="eModelTitle_1_header" class="mb20 space-between">
       <a-upload
-          name="file"
-          :headers="HEADER"
-          :multiple="true"
-          :showUploadList="false"
-          :beforeUpload="validateUploadImage"
-          :customRequest="uploadImage"
+        name="file"
+        :headers="HEADER"
+        :multiple="true"
+        :showUploadList="false"
+        :beforeUpload="validateUploadImage"
+        :customRequest="uploadImage"
       >
         <a-button>이미지 업로드</a-button>
       </a-upload>
@@ -22,27 +22,27 @@
     <!--이미지 리스트-->
     <div id="eModelTitle_1_conent">
       <draggable
-          class="row left wrap"
-          item-key="order"
-          v-bind="DRAG_OPTIONS"
-          v-model="product.item_thumbnails"
-          :component-data="DRAG_CONFIG"
+        class="row left wrap"
+        item-key="order"
+        v-bind="DRAG_OPTIONS"
+        v-model="product.item_thumbnails"
+        :component-data="DRAG_CONFIG"
       >
         <template #item="{ element, index }">
           <div
-              id="eModelTitle_1_conent_group"
-              class="w10 m5"
-              :key="index"
-              :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
+            id="eModelTitle_1_conent_group"
+            class="w10 m5"
+            :key="index"
+            :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
           >
             <div>
               <!--이미지-->
               <img
-                  class="w100"
-                  :src="element.url"
-                  @click="activedImage(element, index)"
-                  @dblclick="translatePopup(index, element)"
-                  alt=""
+                class="w100"
+                :src="element.url"
+                @click="activedImage(element, index)"
+                @dblclick="translatePopup(index, element)"
+                alt=""
               />
             </div>
           </div>
@@ -111,11 +111,11 @@ export default {
     },
     translatePopup(index, element) {
       // 변역완료된 상품은 편집
-      if (element.url.indexOf("https://i.tosoiot.com/") !== -1) {
-        this.requestXiangji([element.url]);
-
-        return false;
-      }
+      // if (element.url.indexOf("https://i.tosoiot.com/") !== -1) {
+      //   this.requestXiangji([element.url]);
+      //
+      //   return false;
+      // }
 
       this.product.bProductDetailsEditor = false;
       this.product.bProductImageEditor = true;
@@ -141,8 +141,8 @@ export default {
         Object.keys(oRequestId).map((sRequestId) => {
           this.product.item_thumbnails.map((data, i) => {
             if (
-                lib.isString(data.url, true) === true &&
-                data.url.split("/").includes(sRequestId) === true
+              lib.isString(data.url, true) === true &&
+              data.url.split("/").includes(sRequestId) === true
             ) {
               this.product.item_thumbnails[i].url = oRequestId[sRequestId];
             }
@@ -157,7 +157,7 @@ export default {
     //이미지 일괄 삭제
     deleteImages() {
       this.product.item_thumbnails = this.product.item_thumbnails.filter(
-          (item) => item.checked === false
+        (item) => item.checked === false
       );
     },
 
@@ -174,8 +174,8 @@ export default {
       formData.append("relation_type", "product");
       formData.append("product_idx", this.product.item_id);
       AuthRequest.post(
-          process.env.VUE_APP_API_URL + "/api/image",
-          formData
+        process.env.VUE_APP_API_URL + "/api/image",
+        formData
       ).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
