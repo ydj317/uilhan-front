@@ -1,4 +1,6 @@
 <template>
+  <notice-popup />
+
   <a-layout style="min-height: 1080px;">
     <a-layout-sider v-model:collapsed="collapsed" collapsible :trigger="null">
       <div class="logo" v-if="collapsed">
@@ -25,7 +27,6 @@
       </a-layout-content>
     </a-layout>
   </a-layout>
-
 </template>
 
 <script setup>
@@ -34,6 +35,7 @@ import {ref} from 'vue';
 import Sider from "@/views/Template/Sider.vue";
 import Header from "@/views/Template/Header.vue";
 import Content from "@/views/Template/Content.vue";
+import NoticePopup from "@/views/Template/NoticePopup.vue";
 
 const collapsed = ref(false)
 
