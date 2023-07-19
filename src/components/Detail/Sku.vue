@@ -174,7 +174,7 @@
             >
               <span>{{ record.original_price_ko }}</span>
               <div style="position: absolute;top: 20px;">
-                <sub><span style="color: #999999">{{ record.original_price_cn }}위엔</span></sub>
+                <sub><span style="color: #999999">{{ record.original_price_cn }}위안</span></sub>
               </div>
             </div>
             <div v-if="record.original_price_cn === 0 || record.editor === 'T'"  style="border: 1px solid red">
