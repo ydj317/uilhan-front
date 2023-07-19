@@ -148,7 +148,7 @@
                                 @click="detailTranslateImage(item, false)">편집
                       </a-button>
                       <a-button v-else type="primary" class="w33"
-                                @click="detailRequestXiangji(item)">편집2
+                                @click="detailRequestXiangji(item)">편집
                       </a-button>
 
                       <a-button type="primary" class="w33" danger
