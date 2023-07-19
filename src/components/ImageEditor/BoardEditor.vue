@@ -142,7 +142,7 @@ export default {
           });
         }
       },
-      contentValue: this.value + '&nbsp;',
+      contentValue: (this.value === '') ? this.value + '&nbsp;' : this.value,
 
     }
   },

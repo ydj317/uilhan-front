@@ -14,6 +14,14 @@
         <a-input v-model:value="formState.name" allow-clear placeholder="안내정보명을 입력해 주세요." />
       </a-form-item>
 
+      <a-form-item label="기본설정" name="is_default"
+                   :rules="[{ required: true, message: '기본설정을 선택해 주세요.' }]">
+        <a-radio-group v-model:value="formState.is_default">
+          <a-radio :value="'1'">사용함</a-radio>
+          <a-radio :value="'0'" :disabled="guideData !== undefined && guideData.length < 1">사용안함</a-radio>
+        </a-radio-group>
+      </a-form-item>
+
       <a-form-item label="안내정보(앞)" name="before_cont">
         <BoardEditor
           ref="beforeContEditor"
@@ -28,13 +36,6 @@
           v-model:value="formState.after_cont"
           @contentUpdate="afterContUpdate"
         />
-      </a-form-item>
-
-      <a-form-item label="기본설정" name="is_default">
-        <a-radio-group v-model:value="formState.is_default">
-          <a-radio :value="'1'">사용함</a-radio>
-          <a-radio :value="'0'" :disabled="guideData !== undefined && guideData.length < 1">{{guideData}}사용안함</a-radio>
-        </a-radio-group>
       </a-form-item>
 
       <div style="display: flex;justify-content: center;margin-top: 20px;">
