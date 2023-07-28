@@ -257,7 +257,7 @@
 </template>
 
 <script>
-import router from "router/index.js";
+import router, { setFilterRouteList } from "router/index.js";
 import { LoginRequest, NoAuthAjax } from "util/request";
 import { defineComponent, reactive, onBeforeMount, ref } from "vue";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
@@ -409,6 +409,8 @@ export default defineComponent({
 
           Cookie.set("member_name", returnData.member_name);
           Cookie.set("member_roles", returnData.member_roles);
+          const menuList = setFilterRouteList();
+          router.addRoute(menuList[0])
           message.success("회원가입에 성공하였습니다.");
           router.push("/product");
           return false;
