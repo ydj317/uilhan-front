@@ -63,7 +63,7 @@ const handleOk = () => {
       emit('refresh');
       setTimeout(() => {
         state.modal.buttonLoading = false;
-      }, 500)
+      }, 1200)
     }).catch((error) => {
       state.modal.buttonLoading = false;
       message.error(error.message);
