@@ -250,7 +250,7 @@ const onDeliveryAddressData = () => {
     selectDeliveryInAddress(formState.in_addr_ix);
 
     indicator.value = false;
-  }, 0)
+  }, 500)
 }
 
 </script>
