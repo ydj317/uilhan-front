@@ -410,6 +410,18 @@ export const menus = [{
                 icon: FileExcelOutlined,
             },
         },
+        {
+            path: "/excel2",
+            name: "excel2",
+            component: () => import("@/components/Tools/excelConvertTools2.vue"),
+            meta: {
+                title: "엑셀 컨버터 툴2",
+                isHide: false,
+                roles: [],
+                ids: ["irunkorea", "jwli"],
+                icon: FileExcelOutlined,
+            },
+        },
     ]
 }]
 
