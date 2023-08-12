@@ -59,8 +59,11 @@ const handleOk = () => {
         return false;
       }
       message.success(res.data.message);
-      state.modal.buttonLoading = false;
-
+      closeModal(); // 关闭弹窗
+      emit('refresh');
+      setTimeout(() => {
+        state.modal.buttonLoading = false;
+      }, 1200)
     }).catch((error) => {
       state.modal.buttonLoading = false;
       message.error(error.message);
@@ -68,8 +71,6 @@ const handleOk = () => {
     });
 
     deliveryModalFormRef.value.resetFields();
-    closeModal(); // 关闭弹窗
-    emit('refresh');
 
   }).catch(info => {
     console.log('Validate Failed:', info);
