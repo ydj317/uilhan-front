@@ -127,7 +127,7 @@ const onFinish = values => {
             name="cutCount"
             :rules="[{ required: true, message: '필수 입력 항목입니다.' }]"
         >
-          <a-input v-model:value="formState.intervalPercent" />
+          <a-input v-model:value="formState.cutCount" />
         </a-form-item>
 
 
