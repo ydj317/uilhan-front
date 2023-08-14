@@ -11,7 +11,7 @@
 
       <a-form-item label="기존 비밀번호" name="password" has-feedback>
         <a-input-password v-model:value="formState.password"
-                          type="password" placeholder="기존 비밀번호 입력해주시오" />
+                          type="password" placeholder="기존 비밀번호를 입력해주십시오" />
       </a-form-item>
 
       <a-form-item label="새로운 비밀번호" name="new_password" has-feedback>
@@ -21,7 +21,7 @@
 
       <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback>
         <a-input-password v-model:value="formState.password_confirm"
-                          type="password" placeholder="비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오" />
+                          type="password" placeholder="새로운 비밀번호를 한번 더 입력해주십시오" />
       </a-form-item>
 
       <div style="display: flex;justify-content: center;margin-top: 20px;">

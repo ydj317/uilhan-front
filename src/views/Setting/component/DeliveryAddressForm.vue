@@ -40,6 +40,38 @@ const state = reactive({
   },
 });
 
+// 우편번호 받아오기
+const addressRef = ref(null)
+const execDaumPostcode = () => {
+  new daum.Postcode({
+    oncomplete: function(data) {
+      state.form.zip_code = data.zonecode
+
+      // 지번 data.jibunAddress
+      state.form.address_1 = data.jibunAddress
+      // 도로 data.roadAddress
+      state.form.doro_address_1 = data.roadAddress
+
+      state.form.address_2 = ''
+      addressRef.value.focus();
+    }
+  }).open();
+};
+
+// 중국배대지 주소입력
+const setChAddress = () => {
+  state.form.address_1 = '86-1 Taipei Road'
+  state.form.address_2 = 'Huancui District'
+  state.form.city = 'Weihai City'
+  state.form.state = 'Shandong Province'
+};
+
+const formatPhone = (phone) => {
+  phone = phone.replace(/-/g, '')
+
+  return phone.slice(0, -8) + '-' + phone.slice(-8, -4) + '-' + phone.slice(-4)
+}
+
 const handleOk = () => {
   deliveryModalFormRef.value.validateFields().then(values => {
 
@@ -51,6 +83,13 @@ const handleOk = () => {
     } else {
       url = process.env.VUE_APP_API_URL + '/api/delivery/inAddressSave';
     }
+
+    state.form.addr_phone = formatPhone(state.form.addr_phone)
+    state.form.addr_mobile = formatPhone(state.form.addr_mobile)
+
+    // 신 우편번호, 상세는 같은값으로 넣음
+    state.form.doro_zip_code = state.form.zip_code
+    state.form.doro_address_2 = state.form.address_2
 
     AuthRequest.post(url, state.form).then((res) => {
       if (res.status !== '2000') {
@@ -81,7 +120,7 @@ const handleOk = () => {
 // 打开弹窗
 const openDialog = (type, action, id = null, data = {}) => {
   if (type === 'out_address') {
-    state.modal.title = '출고지 등록/수정';
+    state.modal.title = ' 출고지 등록/수정';
     state.modal.addrName = '출고지 명';
 
   } else {
@@ -151,7 +190,7 @@ defineExpose({
       @ok="handleOk"
   >
     <a-form ref="deliveryModalFormRef" :model="state.form" name="delivery_form" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
-            :label-col="{style:{width:'130px'}}">
+            :label-col="{style:{width:'130px'}}" class="deliveryModalForm">
       <a-form-item label="배송구분" name="addr_product_type">
         <a-radio-group v-model:value="state.form.addr_product_type">
           <a-radio value="1">일반상품</a-radio>
@@ -179,41 +218,35 @@ defineExpose({
 
       <a-form-item label="국가코드" name="nation_code">
         <a-radio-group v-model:value="state.form.nation_code">
-          <a-radio value="KR">한국어</a-radio>
-          <a-radio value="CN">중국어</a-radio>
-          <a-radio value="US">영어</a-radio>
-          <a-radio value="JP">일본어</a-radio>
+          <a-radio value="KR">한국</a-radio>
+          <a-radio value="CN">중국</a-radio>
         </a-radio-group>
       </a-form-item>
 
       <a-form-item label="우편번호" name="zip_code"
                    :rules="[{ required: true, message: '우편번호를 입력해 주세요.' }]">
-        <a-input v-model:value="state.form.zip_code" allow-clear/>
+        <a-input v-model:value="state.form.zip_code"
+                 style="width: 150px; margin-right: 10px;"
+                 :disabled="state.form.nation_code === 'KR'" allow-clear />
+        <a-button @click="execDaumPostcode" v-if="state.form.nation_code === 'KR'">우편번호 찾기</a-button>
+        <a-button @click="setChAddress" v-else>중국배대지 주소입력</a-button>
       </a-form-item>
 
       <a-form-item label="주소" name="address_1"
                    :rules="[{ required: true, message: '주소를 입력해 주세요.' }]">
-        <a-input v-model:value="state.form.address_1" allow-clear/>
+        <a-input v-model:value="state.form.address_1"
+                 :disabled="state.form.nation_code === 'KR'" allow-clear />
+      </a-form-item>
+
+      <a-form-item label="도로명 주소" name="doro_address_1"
+                   :rules="[{ required: true, message: '도로명주소를 입력해 주세요.' }]" v-if="state.form.nation_code === 'KR'">
+        <a-input v-model:value="state.form.doro_address_1"
+                 :disabled="state.form.nation_code === 'KR'" allow-clear />
       </a-form-item>
 
       <a-form-item label="주소 상세" name="address_2"
                    :rules="[{ required: true, message: '주소 상세를 입력해 주세요.' }]">
-        <a-input v-model:value="state.form.address_2" allow-clear/>
-      </a-form-item>
-
-      <a-form-item label="신 우편번호" name="doro_zip_code"
-                   :rules="[{ required: true, message: '신 우편번호를 입력해 주세요.' }]" v-if="state.form.nation_code === 'KR'">
-        <a-input v-model:value="state.form.doro_zip_code" allow-clear/>
-      </a-form-item>
-
-      <a-form-item label="도로명주소" name="doro_address_1"
-                   :rules="[{ required: true, message: '도로명주소를 입력해 주세요.' }]" v-if="state.form.nation_code === 'KR'">
-        <a-input v-model:value="state.form.doro_address_1" allow-clear/>
-      </a-form-item>
-
-      <a-form-item label="도로명주소 상세" name="doro_address_2"
-                   :rules="[{ required: true, message: '도로명주소 상세를 입력해 주세요.' }]" v-if="state.form.nation_code === 'KR'">
-        <a-input v-model:value="state.form.doro_address_2" allow-clear/>
+        <a-input v-model:value="state.form.address_2" allow-clear ref="addressRef"/>
       </a-form-item>
 
       <a-form-item label="도시" name="city"

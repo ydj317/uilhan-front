@@ -135,6 +135,14 @@ const getDeliveryDetail = (id) => {
       indicator.value = false;
     }, 100)
 
+    if (formState.delivery_policy === '1') {
+      formState.delivery_price = ''
+      formState.delivery_unit_price = ''
+      isDisabled.value = true
+    } else {
+      isDisabled.value = false
+    }
+
 
   }).catch((error) => {
     message.error(error.message);
@@ -253,6 +261,17 @@ const onDeliveryAddressData = () => {
   }, 1000)
 }
 
+const isDisabled = ref(true)
+const onDeliveryPolicyChange = () => {
+  if (formState.delivery_policy === '1') {
+    formState.delivery_price = ''
+    formState.delivery_unit_price = ''
+    isDisabled.value = true
+  } else {
+    isDisabled.value = false
+  }
+}
+
 </script>
 
 <template>
@@ -260,9 +279,9 @@ const onDeliveryAddressData = () => {
     <a-form :model="formState" name="delivery_form" @finish="onFinish"
             @finishFailed="onFinishFailed" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
             class="delivery_form">
-      <a-form-item label="배송정책명" name="template_name"
-                   :rules="[{ required: true, message: '배송정책명을 입력해 주세요.' }]">
-        <a-input v-model:value="formState.template_name" allow-clear placeholder="배송정책명을 입력해 주세요."/>
+      <a-form-item label="배송템플릿" name="template_name"
+                   :rules="[{ required: true, message: '배송템플릿을 입력해 주세요.' }]">
+        <a-input v-model:value="formState.template_name" allow-clear placeholder="배송템플릿을 입력해 주세요."/>
       </a-form-item>
       <a-form-item label="배송정책구분" name="delivery_product_type"
                    :rules="[{ required: true, message: '배송정책구분을 선택해 주세요.' }]">
@@ -293,27 +312,28 @@ const onDeliveryAddressData = () => {
         </a-radio-group>
       </a-form-item>
 
-      <a-form-item label="패키지" name="delivery_package">
+      <a-form-item label="묶음배송" name="delivery_package">
         <a-radio-group v-model:value="formState.delivery_package">
-          <a-radio value="N">묶음배송</a-radio>
-          <a-radio value="Y">개별배송</a-radio>
+          <a-radio value="N">가능</a-radio>
+          <a-radio value="Y">불가능</a-radio>
         </a-radio-group>
       </a-form-item>
 
-      <a-form-item label="배송정책타입" name="delivery_policy">
-        <a-radio-group v-model:value="formState.delivery_policy">
-          <a-radio value="1">무료배송</a-radio>
+      <a-form-item label="배송비종류" name="delivery_policy">
+        <a-radio-group v-model:value="formState.delivery_policy" @change="onDeliveryPolicyChange">
+
+        <a-radio value="1">무료배송</a-radio>
           <a-radio value="2">고정배송</a-radio>
           <a-radio value="6">1개당 배송비</a-radio>
         </a-radio-group>
       </a-form-item>
       <div style="display: flex;">
         <a-form-item label="배송비" name="delivery_price" :style="{flex:'1'}">
-          <a-input v-model:value="formState.delivery_price" allow-clear placeholder="배송비를 입력해 주세요."/>
+          <a-input v-model:value="formState.delivery_price" :disabled="isDisabled" allow-clear placeholder="배송비를 입력해 주세요."/>
         </a-form-item>
 
         <a-form-item label="상품 1개단위 배송비" name="delivery_unit_price" :style="{flex:'1',marginLeft:'-1px'}">
-          <a-input v-model:value="formState.delivery_unit_price" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요."/>
+          <a-input v-model:value="formState.delivery_unit_price" :disabled="isDisabled" allow-clear placeholder="상품 1개단위 배송비를 입력해 주세요."/>
         </a-form-item>
       </div>
 
@@ -338,10 +358,10 @@ const onDeliveryAddressData = () => {
                     placeholder="반품/교환 안내를 입력해 주세요."/>
       </a-form-item>
 
-      <a-form-item label="추가지역 배송비" name="delivery_region_use">
+      <a-form-item label="제주 및 도서산간 추가배송비" name="delivery_region_use">
         <a-radio-group v-model:value="formState.delivery_region_use">
           <a-radio value="Y">사용함</a-radio>
-          <a-radio value="N">정지</a-radio>
+          <a-radio value="N">사용안함</a-radio>
         </a-radio-group>
       </a-form-item>
 

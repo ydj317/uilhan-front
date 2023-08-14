@@ -59,7 +59,7 @@ const table_columns = computed(() => {
       dataIndex: "dt_ix"
     },
     {
-      title: "배송정책명",
+      title: "배송템플릿",
       dataIndex: "template_name"
     },
     {

@@ -41,7 +41,7 @@
           </a-button>
         </a-form-item>
         <a-form-item class="setting join">
-          <div><img width="22" height="14" src="../../assets/img/kor.png" alt=""> <img width="22" height="14" src="../../assets/img/chn.png" alt=""></div>
+          <div></div>
           <a-button type="link"><a href="/user/register"><UserOutlined /> 회원가입</a></a-button>
         </a-form-item>
       </a-form>

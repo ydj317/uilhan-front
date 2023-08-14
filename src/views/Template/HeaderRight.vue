@@ -3,27 +3,27 @@
   <div id="Header" class="pr20">
     <div class="h60 right center">
       <div id="download_ext"><a @click.self.prevent="extensionDown">크롬 확장 프로그램 </a></div>
-      <div id="language">
-        <div>
-          <img class="pointer mr20" @click="languageVisible" width="22" height="14" :src="language_src" alt="">
-        </div>
-        <a-select
-          class="absolute"
-          :default-open="true"
-          :autofocus="true"
-          v-if="language_visible"
-          ref="select"
-          v-model:value="language"
-          @change="languageVisible"
-          @blur="languageVisible"
-          style="right: 20px; top: 60px; width: 150px;"
-        >
-          <a-select-option value="kor"><img width="22" height="14" :src="kor" alt=""> 한국어
-          </a-select-option>
-          <a-select-option value="chn"><img width="22" height="14" :src="chn" alt=""> 中国语
-          </a-select-option>
-        </a-select>
-      </div>
+<!--      <div id="language">-->
+<!--        <div>-->
+<!--          <img class="pointer mr20" @click="languageVisible" width="22" height="14" :src="language_src" alt="">-->
+<!--        </div>-->
+<!--        <a-select-->
+<!--          class="absolute"-->
+<!--          :default-open="true"-->
+<!--          :autofocus="true"-->
+<!--          v-if="language_visible"-->
+<!--          ref="select"-->
+<!--          v-model:value="language"-->
+<!--          @change="languageVisible"-->
+<!--          @blur="languageVisible"-->
+<!--          style="right: 20px; top: 60px; width: 150px;"-->
+<!--        >-->
+<!--          <a-select-option value="kor"><img width="22" height="14" :src="kor" alt=""> 한국어-->
+<!--          </a-select-option>-->
+<!--          <a-select-option value="chn"><img width="22" height="14" :src="chn" alt=""> 中国语-->
+<!--          </a-select-option>-->
+<!--        </a-select>-->
+<!--      </div>-->
       <div id="setting" class="">
         <div class="center pointer" @click="settingVisible">
           <img src="../../assets/img/user.png" width="20" height="20" style="border-radius: 50px;" alt="">
