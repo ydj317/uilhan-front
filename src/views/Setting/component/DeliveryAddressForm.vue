@@ -60,6 +60,7 @@ const execDaumPostcode = () => {
 
 // 중국배대지 주소입력
 const setChAddress = () => {
+  state.form.zip_code = '264200'
   state.form.address_1 = '86-1 Taipei Road'
   state.form.address_2 = 'Huancui District'
   state.form.city = 'Weihai City'
