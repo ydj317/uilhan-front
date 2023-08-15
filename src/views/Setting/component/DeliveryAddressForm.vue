@@ -100,7 +100,7 @@ const handleOk = () => {
       }
       message.success(res.data.message);
       closeModal(); // 关闭弹窗
-      emit('refresh');
+      emit('refresh', state.modal.type);
       setTimeout(() => {
         state.modal.buttonLoading = false;
       }, 1200)
@@ -110,7 +110,7 @@ const handleOk = () => {
       return false;
     });
 
-    deliveryModalFormRef.value.resetFields();
+    // deliveryModalFormRef.value.resetFields();
 
   }).catch(info => {
     console.log('Validate Failed:', info);

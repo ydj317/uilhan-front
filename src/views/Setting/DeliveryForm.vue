@@ -142,8 +142,6 @@ const getDeliveryDetail = (id) => {
     } else {
       isDisabled.value = false
     }
-
-
   }).catch((error) => {
     message.error(error.message);
     indicator.value = false;
@@ -249,11 +247,21 @@ onBeforeMount(() => {
 /**
  * 출고지,교환/반품지 등록수정 완료후 실행
  */
-const onDeliveryAddressData = () => {
+const onDeliveryAddressData = (type) => {
   indicator.value = true;
+  getDeliveryOutAddressList();
+  getDeliveryInAddressList();
   setTimeout(() => {
-    getDeliveryOutAddressList();
-    getDeliveryInAddressList();
+    if (type === 'out_address') {
+      const keys = Object.keys(deliveryOutAddressList.value);
+      const lastKey = keys[keys.length - 1];
+      formState.out_addr_ix = deliveryOutAddressList.value[lastKey].addr_ix;
+    } else {
+      const keys = Object.keys(deliveryInAddress.value);
+      const lastKey = keys[keys.length - 1];
+      formState.in_addr_ix = deliveryInAddress.value[lastKey].addr_ix;
+    }
+
     selectDeliveryOutAddress(formState.out_addr_ix);
     selectDeliveryInAddress(formState.in_addr_ix);
 
@@ -423,7 +431,7 @@ const onDeliveryPolicyChange = () => {
         </div>
       </a-form-item>
 
-      <DeliveryAddressForm ref="deliveryModalRef" @refresh="onDeliveryAddressData()"/>
+      <DeliveryAddressForm ref="deliveryModalRef" @refresh="onDeliveryAddressData"/>
 
       <div style="display: flex;justify-content: center;margin-top: 20px;">
         <a-button type="primary" html-type="submit" :loading="buttonLoading">저장</a-button>
