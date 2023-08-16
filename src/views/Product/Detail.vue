@@ -75,9 +75,13 @@ import router from "@/router";
 // import Spec from "@/components/Detail/Spec";
 import Loading from "vue-loading-overlay";
 import { message } from "ant-design-vue";
-const Sku = defineAsyncComponent(() => import('@/components/Detail/Sku'))
-const NewSpec = defineAsyncComponent(() => import('@/components/Detail/Spec/NewSpec'))
-const Relaket = defineAsyncComponent(() => import('@/components/Detail/Relaket'))
+
+import Sku from "@/components/Detail/Sku";
+import NewSpec from "@/components/Detail/Spec/NewSpec";
+import Relaket from "@/components/Detail/Relaket";
+// const Sku = defineComponent(() => import('@/components/Detail/Sku'))
+// const NewSpec = defineComponent(() => import('@/components/Detail/Spec/NewSpec'))
+//const Relaket = defineComponent(() => import('@/components/Detail/Relaket'))
 const BasicInfo = defineAsyncComponent(() => import('@/components/Detail/basicInfo'))
 const Navigation = defineAsyncComponent(() => import('@/components/Detail/nanigation'))
 const CustomsInfo = defineAsyncComponent(() => import('@/components/Detail/customsInfo'))
