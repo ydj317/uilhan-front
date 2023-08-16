@@ -1,6 +1,6 @@
 <template>
   <div id="eModelTitle_3" class="mt20 p20 bg-white">
-    <h1><strong>품목정보</strong></h1>
+    <h1><strong>옵션정보</strong></h1>
     <!--sku 상단 버튼-->
     <div class="top_button_container" style="display: flex;justify-content: space-between;">
       <!--sku 상단 left 버튼-->
@@ -262,7 +262,7 @@ export default {
           width: "1%",
         },
         {
-          title: "품목이미지",
+          title: "옵션이미지",
           key: "img",
           width: "1%",
         },
@@ -277,7 +277,7 @@ export default {
           width: "12%",
         },
         {
-          title: "품목명",
+          title: "옵션명",
           key: "spec",
           width: "18%",
         },

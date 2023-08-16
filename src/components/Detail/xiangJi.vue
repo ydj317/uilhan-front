@@ -65,6 +65,7 @@ export default {
     listenerImageEditor() {
       let self = this;
       window.addEventListener("message", function (e) {
+        let content = window.tinymce.editors[0].getContent();
         const { name, all } = e.data;
         if (name === "XJ_IMAGE_EDITOR_URL") {
           // 편집완료후 데이터 업데이트

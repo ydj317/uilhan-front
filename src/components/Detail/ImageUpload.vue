@@ -1,7 +1,7 @@
 <template>
   <div id="eModelTitle_1" class="mt20 p20 bg-white">
     <!--title-->
-    <h1><strong>상품 이미지</strong></h1>
+    <h1><strong>대표 이미지</strong></h1>
 
     <!--상단 버튼-->
     <div id="eModelTitle_1_header" class="mb20 space-between">

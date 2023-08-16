@@ -95,73 +95,51 @@
         </div>
 
         <!-- 상세설명 이미지 리스트 -->
-        <div style="height: 620px; overflow: scroll;overflow-x: hidden;">
-          <table>
-            <tbody>
-            <tr>
-              <td>
-                <ul
+        <a-row :gutter="15" style="height: 620px; overflow: scroll;overflow-x: hidden;">
+          <a-col
+            v-for="(item, key) in product.aPhotoCollection"
+            :key="key"
+            class="mb15"
+            style="display: flex;justify-content: center;"
+            :xs="24" :sm="24" :md="24" :lg="12" :xl="8"
+          >
+            <a-card hoverable style="width: 250px">
+              <template #cover>
+                <a-image
+                  style="width: 250px; height: 250px"
+                  :src="item.translate_status ? item.translate_url : item.original_url"
+                  alt=""
+                />
+                <a-checkbox
+                  class="detailImageCheckbox"
+                  v-model:checked="item.checked"
                   style="
-                    display: flex;
-                    flex-wrap: wrap;
-                    justify-content: center;
-                    gap: 10px;
-                    padding: 0;
+                    position: absolute;
+                    left: 0;
+                    top: -3px;
+                    width: 20px;
+                    height: 20px;
                   "
-                >
-                  <li
-                    class="mb10"
-                    style="list-style: none"
-                    v-for="(item, key) in product.aPhotoCollection"
-                    :key="key"
-                  >
-                    <div style="border: 3px solid #dcdcdc;border-bottom: none; position: relative">
+                ></a-checkbox>
+              </template>
+              <template #actions>
+                <a-button @click="detailTranslateImage(item, true)"
+                          v-if="!item.translate_status"
+                >번역
+                </a-button>
 
-                      <a-image
-                        style="width: 190px; height: 190px"
-                        :src="
-                            item.translate_status
-                              ? item.translate_url
-                              : item.original_url
-                          "
-                        alt=""
-                      />
+                <a-button v-if="item.translate_status !== true"
+                          @click="detailTranslateImage(item, false)">편집
+                </a-button>
+                <a-button v-else @click="detailRequestXiangji(item)">편집
+                </a-button>
 
-                      <a-checkbox
-                        class="detailImageCheckbox"
-                        v-model:checked="item.checked"
-                        style="
-                          position: absolute;
-                          left: 0;
-                          top: -3px;
-                          width: 20px;
-                          height: 20px;
-                        "
-                      ></a-checkbox>
-                    </div>
-                    <div class="space-between">
-                      <a-button type="primary" class="w33"
-                                @click="detailTranslateImage(item, true)">번역
-                      </a-button>
-
-                      <a-button v-if="item.translate_status !== true" type="primary" class="w33"
-                                @click="detailTranslateImage(item, false)">편집
-                      </a-button>
-                      <a-button v-else type="primary" class="w33"
-                                @click="detailRequestXiangji(item)">편집
-                      </a-button>
-
-                      <a-button type="primary" class="w33" danger
-                                @click="deleteCheckedDetailImage(item.key)">삭제
-                      </a-button>
-                    </div>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+                <a-button danger @click="deleteCheckedDetailImage(item.key)">삭제
+                </a-button>
+              </template>
+            </a-card>
+          </a-col>
+        </a-row>
 
         <template v-slot:footer>
           <a-button style="float: left" type="primary" @click="downloadAllDetailImage">전체이미지 다운로드</a-button>
@@ -180,6 +158,7 @@ import { mapState } from "vuex";
 import { lib } from "@/util/lib";
 import { AuthRequest } from "@/util/request";
 import { message } from "ant-design-vue";
+import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
 
 export default {
   name: "ImageEditorGroup",
@@ -277,7 +256,7 @@ export default {
         // 팝업창 데이터 업데이트
         this.product.aPhotoCollection.map((data, i) => {
           if (item.key === data.key) {
-            this.product.aPhotoCollection[i].translate_status = true;
+            //this.product.aPhotoCollection[i].translate_status = true;
             this.product.aPhotoCollection[i].translate_url = sTranslateUrl;
           }
         });
@@ -306,6 +285,7 @@ export default {
           // 팝업창 데이터 업데이트
           this.product.aPhotoCollection.map((data, i) => {
             if (item.key === data.key) {
+              this.product.aPhotoCollection[i].translate_status = true;
               this.product.aPhotoCollection[i].translate_url =
                 oRequestId[sRequestId];
             }
