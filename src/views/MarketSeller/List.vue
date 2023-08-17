@@ -20,9 +20,9 @@
                         </div>
                         <table class="table">
                             <colgroup>
-                                <col width="125px" />
+                                <col width="135px" />
                                 <col width="auto" />
-                                <col width="125px" />
+                                <col width="170px" />
                                 <col width="auto" />
                             </colgroup>
                             <tbody>
@@ -35,22 +35,22 @@
                             </tr>
                             <tr v-show="show_key">
                                 <th>{{ API_Key }} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
-                                <td>
-                                    <a-input v-model:value="marketItem.apiKey" placeholder="" style="width: 190px;" />
+                                <td :colspan="show_ticket_key ? 0 : 3">
+                                    <a-input v-model:value="marketItem.apiKey" placeholder="" style="width: 160px;" />
                                 </td>
-                                <th>{{ API_Ticket_Key }} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
-                                <td>
-                                    <a-input v-model:value="marketItem.apiTicketKey" placeholder="" style="width: 190px;" />
+                                <th v-show="show_ticket_key">{{ API_Ticket_Key }} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
+                                <td v-show="show_ticket_key">
+                                    <a-input v-model:value="marketItem.apiTicketKey" placeholder="" style="width: 160px;" />
                                 </td>
                             </tr>
                             <tr>
                                 <th>{{마켓_아이디}} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
-                                    <a-input v-model:value="marketItem.siteLoginId" placeholder="" style="width: 190px;" />
+                                    <a-input v-model:value="marketItem.siteLoginId" placeholder="" style="width: 160px;" />
                                 </td>
                                 <th>{{마켓_비밀번호}} <span v-show="MUST_DATA[marketItem.site_code]['apiKey'] == 'true'">*</span></th>
                                 <td>
-                                    <a-input v-model:value="marketItem.siteLoginPw" placeholder="" style="width: 190px;" />
+                                    <a-input v-model:value="marketItem.siteLoginPw" placeholder="" style="width: 160px;" />
                                 </td>
                             </tr>
                             <tr v-show="show_esm">
@@ -639,7 +639,7 @@ const show_esm = computed(() => {
 
 const API_Key = computed(() => {
     if (marketItem.value.site_code === 'storefarm') {
-        return 'API ID';
+        return '애플리케이션 ID';
     } else if (marketItem.value.site_code === 'coupang') {
         return 'Access Key';
     } else if (marketItem.value.site_code === '11st') {
@@ -662,11 +662,11 @@ const API_Key = computed(() => {
 
 const API_Ticket_Key = computed(() => {
     if (marketItem.value.site_code === 'storefarm') {
-        return 'API Ticket';
+        return '애플리케이션 시크릿';
     } else if (marketItem.value.site_code === 'coupang') {
         return 'Secret Key';
     } else if (marketItem.value.site_code === '11st') {
-        return 'API Ticket';
+        return '';
     } else if (marketItem.value.site_code === 'wemakeprice') {
         return 'API Ticket';
     } else if (marketItem.value.site_code === 'interpark') {
@@ -682,7 +682,7 @@ const API_Ticket_Key = computed(() => {
     } else if (marketItem.value.site_code === 'qoo10_sg') {
       return 'API Ticket';
     }
-    return 'API Ticket Key';
+    return '애플리케이션 시크릿';
 });
 
 const 마켓_아이디 = computed(() => {
@@ -781,7 +781,11 @@ const show_company_code = computed(() => {
 
 
 const show_key = computed(() => {
-    return ['interpark', 'esm_gmarket', 'esm_auction'].indexOf(marketItem.value.site_code) < 0;
+    return [ 'interpark', 'esm_gmarket', 'esm_auction'].indexOf(marketItem.value.site_code) < 0;
+});
+
+const show_ticket_key = computed(() => {
+  return [ '11st', 'wemakeprice', 'tmon'].indexOf(marketItem.value.site_code) < 0;
 });
 
 const savePopupFn = async () => {

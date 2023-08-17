@@ -800,24 +800,6 @@ export default defineComponent({
           trigger: "change"
         }
       ],
-      tel1: [
-        {
-          validator: validatePhoneFirst,
-          trigger: "blur"
-        }
-      ],
-      tel2: [
-        {
-          validator: _validatePhone,
-          trigger: "blur"
-        }
-      ],
-      tel3: [
-        {
-          validator: validatePhone,
-          trigger: "blur"
-        }
-      ],
       ac_expect_date: [
         {
           validator: validateExdate,
