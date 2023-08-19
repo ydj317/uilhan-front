@@ -642,7 +642,7 @@ export default {
           visible: true,
           original_url: url,
           translate_url: "",
-          translate_status: false,
+          translate_status: record.translate_status,
         },
       ];
     },

@@ -116,7 +116,6 @@ export default {
       //
       //   return false;
       // }
-
       this.product.bProductDetailsEditor = false;
       this.product.bProductImageEditor = true;
       this.product.bImageEditorModule = true;
@@ -130,7 +129,7 @@ export default {
           visible: true,
           original_url: element.url,
           translate_url: "",
-          translate_status: false,
+          translate_status: element.translate_status,
         }
       ]
     },

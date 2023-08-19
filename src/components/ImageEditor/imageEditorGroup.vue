@@ -26,7 +26,7 @@
         </div>
 
         <template v-slot:footer>
-          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection, true)">번역</a-button>
+          <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection, true)" v-if="!product.aPhotoCollection[0].translate_status">번역</a-button>
           <a-button type="primary" @click="productTranslateImage(product.aPhotoCollection, false)">편집</a-button>
           <a-button @click="product.bImageEditorModule = false">닫기</a-button>
         </template>
@@ -58,11 +58,15 @@
         </div>
 
         <template v-slot:footer>
-          <a-button type="primary" @click="skuTranslateImage(
-            product.aPhotoCollection[0].key,
-            product.aPhotoCollection[0].original_url,
-            true
-          )">번역
+          <a-button type="primary"
+                    @click="skuTranslateImage(
+                      product.aPhotoCollection[0].key,
+                      product.aPhotoCollection[0].original_url,
+                      true
+                    )"
+                    v-if="!product.aPhotoCollection[0].translate_status"
+          >
+            번역
           </a-button>
           <a-button type="primary" @click="skuTranslateImage(
             product.aPhotoCollection[0].key,
@@ -190,7 +194,7 @@ export default {
         let sTranslateUrl = oTranslateInfo[index].translate_url;
         this.product.sku.map((data, i) => {
           if (data.key === index) {
-            this.product.sku[i].img = sTranslateUrl;
+            this.product.sku[i].translate_tmp_img = sTranslateUrl;
           }
         });
         this.skuRequestXiangji([sTranslateUrl]);
@@ -205,10 +209,11 @@ export default {
         Object.keys(oRequestId).map((sRequestId) => {
           this.product.sku.map((data, i) => {
             if (
-              lib.isString(data.img, true) === true &&
-              data.img.split("/").includes(sRequestId) === true
+              lib.isString(data.translate_tmp_img, true) === true &&
+              data.translate_tmp_img.split("/").includes(sRequestId) === true
             ) {
               this.product.sku[i].img = oRequestId[sRequestId];
+              this.product.sku[i].translate_status = true;
             }
           });
         });
@@ -224,7 +229,7 @@ export default {
       this.product.isTranslate = isTranslate
       this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
         let sTranslateUrl = oTranslateInfo[aImagesInfo[0].key].translate_url;
-        this.product.item_thumbnails[aImagesInfo[0].key].url = sTranslateUrl;
+        this.product.item_thumbnails[aImagesInfo[0].key].translate_tmp_url = sTranslateUrl;
         this.productRequestXiangji([sTranslateUrl]);
       });
     },
@@ -233,10 +238,11 @@ export default {
         Object.keys(oRequestId).map((sRequestId) => {
           this.product.item_thumbnails.map((data, i) => {
             if (
-              lib.isString(data.url, true) === true &&
-              data.url.split("/").includes(sRequestId) === true
+              lib.isString(data.translate_tmp_url, true) === true &&
+              data.translate_tmp_url.split("/").includes(sRequestId) === true
             ) {
               this.product.item_thumbnails[i].url = oRequestId[sRequestId];
+              this.product.item_thumbnails[i].translate_status = true;
             }
           });
         });
@@ -250,35 +256,32 @@ export default {
     // 이미지 번역
     detailTranslateImage(item, isTranslate) {
       this.product.isTranslate = isTranslate
+      this.product.aBakDetailImagesTmp = []
+
       this.product.translateImage([item], (oTranslateInfo) => {
         let sTranslateUrl = oTranslateInfo[item.key].translate_url;
 
         // 팝업창 데이터 업데이트
         this.product.aPhotoCollection.map((data, i) => {
           if (item.key === data.key) {
-            //this.product.aPhotoCollection[i].translate_status = true;
-            this.product.aPhotoCollection[i].translate_url = sTranslateUrl;
+            this.product.aPhotoCollection[i].translate_tmp_url = sTranslateUrl;
           }
         });
 
         // 상세내용 편집기 contents 업데이트
         this.product.aBakDetailImages.map((url, i) => {
           if (lib.isEmpty(oTranslateInfo[i]) === false) {
-            let content = window.tinymce.editors[0].getContent();
-            if (content !== undefined) {
-              content = content.replace(url, sTranslateUrl);
-              window.tinymce.editors[0].setContent(content);
-            }
+            this.product.aBakDetailImagesTmp[i] = sTranslateUrl
           }
         });
 
-        this.product.item_detail = window.tinymce.editors[0].getContent();
         this.detailRequestXiangji(item);
       });
     },
 
     detailRequestXiangji(item) {
-      let aImagesUrl = [item.translate_url];
+
+      let aImagesUrl = [item.translate_tmp_url];
       this.getDetailContentsImage();
       this.product.requestXiangji(aImagesUrl, (oRequestId) => {
         Object.keys(oRequestId).map((sRequestId) => {
@@ -292,14 +295,14 @@ export default {
           });
 
           // 상세내용 편집기 contents 업데이트
-          this.product.aBakDetailImages.map((url) => {
+          this.product.aBakDetailImagesTmp.map((url,index) => {
             if (
               lib.isString(url, true) === true &&
               url.split("/").includes(sRequestId) === true
             ) {
               let content = window.tinymce.editors[0].getContent();
               if (content !== undefined) {
-                content = content.replace(url, oRequestId[sRequestId]);
+                content = content.replace(this.product.aBakDetailImages[index], oRequestId[sRequestId]);
                 window.tinymce.editors[0].setContent(content);
               }
             }
