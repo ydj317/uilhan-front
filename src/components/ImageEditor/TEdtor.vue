@@ -92,8 +92,8 @@ export default {
   data(){
     return {
       init: {
-        language_url: '/tinymce/langs/zh_CN.js',  //引入语言包文件
-        language: 'zh_CN',  //语言类型
+        language_url: '/tinymce/langs/ko_KR.js',  //引入语言包文件
+        language: 'ko_KR',  //语言类型
 
         skin_url: '/tinymce/skins/ui/oxide',  //皮肤：浅色
         // skin_url: '/tinymce/skins/ui/oxide-dark',//皮肤：暗色

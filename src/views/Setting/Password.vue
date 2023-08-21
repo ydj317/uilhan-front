@@ -117,7 +117,7 @@ const onFinish = () => {
   };
 
   indicator.value = true;
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/userDetail", user).then((res) => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
       indicator.value = false;

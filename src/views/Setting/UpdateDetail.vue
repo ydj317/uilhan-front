@@ -13,10 +13,6 @@
         {{ formState.username }}
       </a-form-item>
 
-      <a-form-item label="비밀번호" name="password" has-feedback>
-        <a-input-password v-model:value="formState.password" type="password" placeholder="비밀번호 입력해주시오" />
-      </a-form-item>
-
       <a-form-item label="사용자명/사업자명" name="name" has-feedback>
         <a-input v-model:value="formState.name" placeholder="사용자명/사업자명을 입력해주시오" />
       </a-form-item>
@@ -120,7 +116,6 @@ const cardLoading = ref(true);
 
 const formState = reactive({
   username: "",
-  password: "",
   //[필수] 사용자명/사업자명
   name: "",
   //[필수] 이메일
@@ -347,7 +342,6 @@ const rulesRef = reactive({
 
 const onFinish = () => {
   let user = {
-    password: formState.password,
     name: formState.name,
     email: formState.email,
     phone: formState.phone1 + "-" + formState.phone2 + "-" + formState.phone3,
