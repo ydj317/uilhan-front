@@ -208,6 +208,28 @@ export default {
         return false;
       }
 
+      let maxPrice = Number.NEGATIVE_INFINITY; // Initialize with the smallest possible value
+      let minPrice = Number.POSITIVE_INFINITY; // Initialize with the largest possible value
+      for (const skuItem of this.product.sku) {
+        const { selling_price } = skuItem;
+        if (selling_price > maxPrice) {
+          maxPrice = selling_price;
+        }
+        if (selling_price < minPrice) {
+          minPrice = selling_price;
+        }
+      }
+
+      // this.product.sku에서 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 경고창 띄우기
+      for (const skuItem of this.product.sku) {
+        const { selling_price } = skuItem;
+        if (selling_price > minPrice * 1.5 || selling_price < minPrice * 0.5) {
+          message.warning("주문옵션 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능합니다.");
+          this.product.loading = false;
+          return false;
+        }
+      }
+
       // 태그 제거 (사양)
       let sItemDetail = this.product.item_detail;
       sItemDetail = sItemDetail.replaceAll(
