@@ -280,8 +280,7 @@ export default {
     },
 
     detailRequestXiangji(item) {
-
-      let aImagesUrl = [item.translate_tmp_url];
+      let aImagesUrl = [item.translate_tmp_url||item.translate_url];
       this.getDetailContentsImage();
       this.product.requestXiangji(aImagesUrl, (oRequestId) => {
         Object.keys(oRequestId).map((sRequestId) => {
