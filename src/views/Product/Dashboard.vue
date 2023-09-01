@@ -82,9 +82,9 @@
       <a-col :span="8">
         <a-card :loading="productLoading" :bordered="false" title="연동마켓">
           <div class="row1-content sendMarketLogo">
-            <a-tag class="logo-tag" v-for="market in accountMarket">
+            <a-checkable-tag class="logo-tag" v-for="market in accountMarket" @click="onOpenMarketUrl(market.split('::')[0])">
               <img :src="getLogoSrc('market-logo', market.split('::')[0])" alt=""> <span>{{ market.split('::')[1] }}</span>
-            </a-tag>
+            </a-checkable-tag>
           </div>
         </a-card>
       </a-col>
@@ -148,6 +148,21 @@ const comparedToYesterday = ref('-');
 const comparedToLastWeek = ref('-');
 
 const accountMarket = ref([]);
+const marketSellerUrl = {
+  '11st': 'https://login.11st.co.kr/auth/front/selleroffice/login.tmall',
+  gmarket: 'https://www.esmplus.com/Member/SignIn/LogOn',
+  esm_auction: 'https://www.esmplus.com/Member/SignIn/LogOn',
+  auction: 'https://www.esmplus.com/Member/SignIn/LogOn',
+  esm_gmarket: 'https://www.esmplus.com/Member/SignIn/LogOn',
+  tmon: 'https://ps.tmon.co.kr/',
+  lotteon: 'https://store.lotteon.com/cm/main/login_SO.wsp',
+  coupang: 'https://xauth.coupang.com/auth/realms/seller/protocol/openid-connect/auth?response_type=code&client_id=wing&redirect_uri=https%3A%2F%2Fwing.coupang.com%2Fsso%2Flogin?returnUrl%3Dhttps%253A%252F%252Fwing.coupang.com%252F&state=07f8260c-b504-4d28-ad9f-b8a1110402b4&login=true&ui_locales=ko-KR&scope=openid',
+  storefarm: 'https://accounts.commerce.naver.com/login?url=https%3A%2F%2Fsell.smartstore.naver.com%2F%23%2Flogin-callback',
+
+  qoo10_sg: 'https://qsm.qoo10.sg/GMKT.INC.Gsm.Web/login.aspx?ReturnUrl=%2fgmkt.inc.gsm.web%2f',
+
+
+}
 const boardData = ref([]);
 
 const productChartData = ref([]);
@@ -221,6 +236,10 @@ const orderChart = ref({
     }
   ]
 });
+
+const onOpenMarketUrl = (marketCode) => {
+  window.open(marketSellerUrl[marketCode], '_blank');
+}
 
 function getLogoSrc(fileName, marketCode) {
   try {
