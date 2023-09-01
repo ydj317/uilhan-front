@@ -550,7 +550,6 @@ export default defineComponent({
         }
 
         this.prdlist = res.data.list;
-
         for (let i = 0; i < this.prdlist.length; i++) {
           this.prdlist[i].key = i;
           this.prdlist[i].checked = false;
@@ -782,7 +781,8 @@ export default defineComponent({
           return false;
         }
 
-        this.getList();
+        window.location.reload()
+        //this.getList();
       });
     },
 
