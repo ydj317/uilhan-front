@@ -745,7 +745,7 @@ const 마켓_Company_Code = computed(() => {
     } else if (marketItem.value.site_code === 'wemakeprice') {
         return '';
     } else if (marketItem.value.site_code === 'interpark') {
-        return '업체번호';
+        return '';
     } else if (marketItem.value.site_code === 'tmon') {
         return '파트너 번호';
     } else if (marketItem.value.site_code === 'esm_gmarket') {
@@ -776,7 +776,7 @@ const 마켓_Company_Code = computed(() => {
  * @type {ComputedRef<boolean>}
  */
 const show_company_code = computed(() => {
-    return ['storefarm', '11st', 'wemakeprice', 'esm_gmarket', 'esm_auction'].indexOf(marketItem.value.site_code) < 0;
+    return ['storefarm', '11st', 'wemakeprice', 'esm_gmarket', 'esm_auction', 'tmon', 'interpark'].indexOf(marketItem.value.site_code) < 0;
 });
 
 

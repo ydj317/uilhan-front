@@ -7,10 +7,10 @@
     {
       "site_name": "11번가",
       "site_code": "11st",
-      "apiKey": "true",
+      "apiKey": "false",
       "apiTicketKey": "false",
-      "siteLoginId": "true",
-      "siteLoginPw": "true",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
       "apiCompanyCode": "false"
     },
     {
@@ -18,7 +18,7 @@
       "site_code": "esm_auction",
       "apiKey": "false",
       "apiTicketKey": "false",
-      "siteLoginId": "true",
+      "siteLoginId": "false",
       "siteLoginPw": "false",
       "apiCompanyCode": "false"
     },
@@ -27,7 +27,7 @@
       "site_code": "esm_gmarket",
       "apiKey": "false",
       "apiTicketKey": "false",
-      "siteLoginId": "true",
+      "siteLoginId": "false",
       "siteLoginPw": "false",
       "apiCompanyCode": "false"
     },
@@ -52,10 +52,10 @@
     {
       "site_name": "스마트스토어",
       "site_code": "storefarm",
-      "apiKey": "true",
+      "apiKey": "false",
       "apiTicketKey": "false",
-      "siteLoginId": "true",
-      "siteLoginPw": "true",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
       "apiCompanyCode": "false"
     },
     {
@@ -71,18 +71,18 @@
       "site_name": "옥션",
       "site_code": "auction",
       "apiKey": "false",
-      "apiTicketKey": "true",
-      "siteLoginId": "true",
-      "siteLoginPw": "true",
+      "apiTicketKey": "false",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
       "apiCompanyCode": "false"
     },
     {
       "site_name": "위메프",
       "site_code": "wemakeprice",
-      "apiKey": "true",
+      "apiKey": "false",
       "apiTicketKey": "false",
-      "siteLoginId": "true",
-      "siteLoginPw": "true",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
       "apiCompanyCode": "false"
     },
     {
@@ -90,8 +90,8 @@
       "site_code": "interpark",
       "apiKey": "false",
       "apiTicketKey": "false",
-      "siteLoginId": "true",
-      "siteLoginPw": "true",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
       "apiCompanyCode": "false"
     },
     {
@@ -99,27 +99,27 @@
       "site_code": "gmarket",
       "apiKey": "false",
       "apiTicketKey": "false",
-      "siteLoginId": "true",
-      "siteLoginPw": "true",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
       "apiCompanyCode": "false"
     },
     {
       "site_name": "카카오스토어",
       "site_code": "kakao",
-      "apiKey": "true",
+      "apiKey": "false",
       "apiTicketKey": "false",
-      "siteLoginId": "true",
-      "siteLoginPw": "true",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
       "apiCompanyCode": "false"
     },
     {
       "site_name": "쿠팡",
       "site_code": "coupang",
-      "apiKey": "true",
-      "apiTicketKey": "true",
-      "siteLoginId": "true",
-      "siteLoginPw": "true",
-      "apiCompanyCode": "true"
+      "apiKey": "false",
+      "apiTicketKey": "false",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
+      "apiCompanyCode": "false"
     },
     {
       "site_name": "티몬",
@@ -133,10 +133,10 @@
     {
       "site_name": "큐텐 싱가폴",
       "site_code": "qoo10_sg",
-      "apiKey": "true",
+      "apiKey": "false",
       "apiTicketKey": "false",
-      "siteLoginId": "true",
-      "siteLoginPw": "true",
+      "siteLoginId": "false",
+      "siteLoginPw": "false",
       "apiCompanyCode": "false"
     }
   ]
