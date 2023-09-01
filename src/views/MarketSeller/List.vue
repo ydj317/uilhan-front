@@ -255,13 +255,13 @@
 
                 <div>
                     <h3>마켓선택</h3>
-                    <a-select :options="SITE_CODE_LIST" v-model:value="searchParam.site_code" style="width: 250px">
+                    <a-select :options="SITE_CODE_LIST" v-model:value="searchParam.site_code" style="width: 250px" @change="setDataList">
                     </a-select>
                 </div>
 
                 <div>
                     <h3>노출선택</h3>
-                    <a-radio-group v-model:value="searchParam.disp">
+                    <a-radio-group v-model:value="searchParam.disp" @change="setDataList">
                         <a-radio-button value="">전체</a-radio-button>
                         <a-radio-button value="1">노출함</a-radio-button>
                         <a-radio-button value="0">노출안함</a-radio-button>
@@ -279,15 +279,6 @@
                     </a-radio-group>
                 </div>
             </div>
-
-            <div class="mt15" style="text-align: center;">
-                <a-button @click="setDataList" style="width: 100px;" type="primary">
-                    <template #icon><SearchOutlined /></template>
-                    검색
-                </a-button>
-                <a-button class="ml10" @click="initSearchParam()" style="width: 100px;" type="">초기화</a-button>
-            </div>
-
         </div>
         </a-card>
         <a-card :bordered="false" :style="{marginTop:'20px'}">
