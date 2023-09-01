@@ -271,7 +271,7 @@
 
                 <div>
                     <h3>연동상품유형</h3>
-                    <a-radio-group v-model:value="searchParam.product_type">
+                    <a-radio-group v-model:value="searchParam.product_type" @change="setDataList">
                         <a-radio-button value="">전체</a-radio-button>
                         <a-radio-button value="1">일반셀러(국내상품 계정)</a-radio-button>
                         <a-radio-button value="2">글로벌셀러(구매대행 계정)</a-radio-button>
