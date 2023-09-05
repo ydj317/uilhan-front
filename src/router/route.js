@@ -422,6 +422,18 @@ export const menus = [{
                 icon: FileExcelOutlined,
             },
         },
+        {
+            path: "/product/vvic",
+            name: "product_vvic",
+            component: () => import("@/views/Product/VvicList.vue"),
+            meta: {
+                title: "Vvic 상품관리",
+                isHide: false,
+                roles: [],
+                ids: ["irunkorea", "jwli"],
+                icon: GiftOutlined,
+            },
+        },
     ]
 }]
 
