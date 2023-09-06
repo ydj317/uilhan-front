@@ -50,13 +50,7 @@
       </div>
 
       <!--right button-->
-      <div class=" pl5" style="display: flex;flex-direction: row">
-        <a-button type="primary" class="mr10" @click.prevent="vvicProductCollect" :loading="collectLoading">
-          <template #icon>
-            <RetweetOutlined />
-          </template>
-          Vvic상품수집
-        </a-button>
+      <div class=" pl5" style="display: flex;flex-direction: row;gap: 20px;">
         <div>
         <a-button @click="vvicSelectionInsertIntoProduct()" type="primary" :disabled="((processCount-1) !== processTotal) || selectionTableData.length < 1">선택상품등록</a-button>
         <a-progress
@@ -64,6 +58,20 @@
           size="small"
         />
         </div>
+        <a-popconfirm
+          title="상품수집시 시간이 다소 소요될수 있습니다 계속하시겠습니까?"
+          ok-text="예"
+          cancel-text="아니요"
+          @confirm="vvicProductCollect"
+        >
+          <a-button type="danger" class="mr10" :loading="collectLoading">
+            <template #icon>
+              <RetweetOutlined />
+            </template>
+            Vvic상품수집
+          </a-button>
+        </a-popconfirm>
+
       </div>
     </div>
 
@@ -99,6 +107,11 @@
           <!--판매가-->
           <template v-if="column.key === 'item_price'">
             <div>{{ getMinSkuPrice(record.itemSku) }}</div>
+          </template>
+
+          <!-- 수집일 -->
+          <template v-if="column.key === 'create_at'">
+            <div>{{ record.createAt.split(" ")[0] }}</div>
           </template>
 
           <!--上新일-->
@@ -225,7 +238,13 @@ export default defineComponent({
           align: "center"
         },
         {
-          title: "업뎃일",
+          title: "수집일",
+          key: "create_at",
+          width: "10%",
+          align: "center"
+        },
+        {
+          title: "상신일",
           key: "item_up_time",
           width: "10%",
           align: "center"
@@ -275,10 +294,13 @@ export default defineComponent({
       });
     },
     vvicInsertIntoProductAPI(row){
-
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/product/vvicInsertIntoProduct", row).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
+          this.processPercent = 0;
+          this.processTotal = 0;
+          this.processCount = 1;
+          return false;
         }
 
         if (this.processCount === this.processTotal) {
@@ -315,6 +337,7 @@ export default defineComponent({
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/product/vvicRemoveProduct", row).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
+          return false;
         }
 
         message.success(row.itemCode + '상품삭제 되였습니다.');
@@ -340,10 +363,13 @@ export default defineComponent({
 
     // 상품 수집
     async vvicProductCollect() {
+
       this.collectLoading = true;
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/product/vvicProductCollect", {}).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
+          this.collectLoading = false;
+          return false;
         }
         this.collectLoading = false;
         message.success('상품수집 되였습니다.');

@@ -309,6 +309,10 @@ export default defineComponent({
             {
               label: "Aliexpress",
               value: "Aliexpress"
+            },
+            {
+              label: "Vvic",
+              value: "Vvic"
             }
           ],
           label: "상품수집마켓",
