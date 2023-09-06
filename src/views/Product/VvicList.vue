@@ -7,7 +7,7 @@
         <div class="inline-block mr17 mt10">
           <h1>검색기간</h1>
           <a-input-group compact>
-          <a-date-picker v-model:value="tableData.param.date" format="YYYY-MM-DD" />
+          <a-date-picker v-model:value="tableData.param.date" format="YYYY-MM-DD" placeholder="날자 선택"/>
           </a-input-group>
         </div>
 
@@ -103,7 +103,7 @@
 
           <!--上新일-->
           <template v-if="column.key === 'item_up_time'">
-            <div>{{ formatDate(record.itemUpTime) }}</div>
+            <div>{{ record.itemUpTime }}</div>
           </template>
 
           <template v-if="column.key === 'operation'">
@@ -118,7 +118,7 @@
         v-model:current="tableData.param.pageNum"
         v-model:page-size="tableData.param.limit"
         :total="tableData.total"
-        :show-total="total => `전체 상품 건수 ${tableData.total} / 상품 건수 ${tableData.param.limit}`"
+        :show-total="total => `전체 상품 건수 ${total} / 한페이지 ${tableData.param.limit}`"
         @change="pageChangeHandler"
       />
     </div>
@@ -284,10 +284,10 @@ export default defineComponent({
         if (this.processCount === this.processTotal) {
           this.processPercent = 100;
         } else {
-          this.processPercent += Math.floor((this.processCount / this.processTotal) * 100);
+          this.processPercent = Math.floor((this.processCount / this.processTotal) * 100);
         }
 
-        message.success('상품이 등록 되였습니다.');
+        message.success(`[${row.itemCode}]상품이 등록 되였습니다.`);
         this.processCount++;
       });
     },
