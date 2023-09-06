@@ -7,7 +7,7 @@
         <div class="inline-block mr17 mt10">
           <h1>검색기간</h1>
           <a-input-group compact>
-          <a-date-picker v-model:value="tableData.param.date" format="YYYY-MM-DD" placeholder="날자 선택"/>
+            <a-date-picker v-model:value="tableData.param.date" format="YYYY-MM-DD" placeholder="날자 선택" />
           </a-input-group>
         </div>
 
@@ -20,7 +20,7 @@
                 {{ config.label }}
               </a-select-option>
             </a-select>
-            <a-input v-model:value="tableData.param.search_value" placeholder="키워드" style="width: 300px;" allow-clear/>
+            <a-input v-model:value="tableData.param.search_value" placeholder="키워드" style="width: 300px;" allow-clear />
           </a-input-group>
         </div>
 
@@ -41,37 +41,44 @@
     <!--top-->
     <div id="content-header" class="row space-between">
       <!--left button-->
-      <div class="w12 space-between">
+      <div style="display: flex;gap: 15px;">
         <!--상품삭제-->
         <a-popconfirm title="삭제하시겠습니까?" @confirm.prevent="removeSelectionVvicProduct">
-          <a-button>상품삭제</a-button>
+          <a-button type="danger">상품삭제</a-button>
         </a-popconfirm>
 
+        <div>
+          <a-button @click="vvicSelectionInsertIntoProduct()" type="primary"
+                    :disabled="((processCount-1) !== processTotal) || selectionTableData.length < 1">선택상품등록
+          </a-button>
+          <a-progress
+            :percent="processPercent"
+            size="small"
+            :show-info="false"
+          />
+        </div>
       </div>
 
       <!--right button-->
       <div class=" pl5" style="display: flex;flex-direction: row;gap: 20px;">
-        <div>
-        <a-button @click="vvicSelectionInsertIntoProduct()" type="primary" :disabled="((processCount-1) !== processTotal) || selectionTableData.length < 1">선택상품등록</a-button>
-        <a-progress
-          :percent="processPercent"
-          size="small"
-        />
-        </div>
-        <a-popconfirm
-          title="상품수집시 시간이 다소 소요될수 있습니다 계속하시겠습니까?"
-          ok-text="예"
-          cancel-text="아니요"
-          @confirm="vvicProductCollect"
-        >
-          <a-button type="danger" class="mr10" :loading="collectLoading">
-            <template #icon>
-              <RetweetOutlined />
-            </template>
-            Vvic상품수집
-          </a-button>
-        </a-popconfirm>
 
+        <div>
+          <a-date-picker v-model:value="collectDate" style="width: 120px;" placeholder="수집일 선택" format="YYYY-MM-DD" :disabled-date="disabledDate"/>
+          <a-popconfirm
+            title="상품 수집시 시간이 다소 소요될수 있습니다! 계속하시겠습니까?"
+            ok-text="예"
+            cancel-text="아니요"
+            @confirm="vvicProductCollect"
+          >
+            <a-button type="danger" class="mr10" :loading="collectLoading">
+              <template #icon>
+                <RetweetOutlined />
+              </template>
+              Vvic상품수집
+            </a-button>
+          </a-popconfirm>
+
+        </div>
       </div>
     </div>
 
@@ -79,13 +86,14 @@
     <div id="content-content" class="pt20">
 
       <!--전체선택-->
-      <a-table ref="vvicListTableDataRef" :columns="LIST_COLUMNS_CONFIG" :data-source="tableData.list" :pagination="false"
+      <a-table ref="vvicListTableDataRef" :columns="LIST_COLUMNS_CONFIG" :data-source="tableData.list"
+               :pagination="false"
                :row-selection="rowSelection" class="mb15">
         <!--table body-->
         <template v-slot:bodyCell="{text, record, index, column}">
           <!--사진-->
           <template v-if="column.key === 'item_thumb'">
-            <a-image :src="record.itemThumbnails[0]" style="width: 50px; height: 50px;"/>
+            <a-image :src="record.itemThumbnails[0]" style="width: 50px; height: 50px;" />
           </template>
 
           <!--상품코드-->
@@ -98,7 +106,7 @@
           <!--상품명-->
           <template v-if="column.key === 'item_name'">
             <div class="item-name">
-              <a :href="record.itemUrl" target="_blank" >
+              <a :href="record.itemUrl" target="_blank">
                 {{ record.itemName }}
               </a>
             </div>
@@ -107,6 +115,12 @@
           <!--판매가-->
           <template v-if="column.key === 'item_price'">
             <div>{{ getMinSkuPrice(record.itemSku) }}</div>
+          </template>
+
+          <!--등록상태-->
+          <template v-if="column.key === 'status'">
+            <a-tag v-if="!record.status">미등록</a-tag>
+            <a-tag v-else color="success">등록</a-tag>
           </template>
 
           <!-- 수집일 -->
@@ -140,14 +154,14 @@
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
-import {AuthRequest} from "@/util/request";
+import { defineComponent, ref } from "vue";
+import { AuthRequest } from "@/util/request";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Cookie from "js-cookie";
 import MarketList from "components/List/MarketList";
-import {mapState} from "vuex";
+import { mapState } from "vuex";
 import {
   ClockCircleOutlined,
   CloseCircleOutlined,
@@ -157,6 +171,7 @@ import {
   RetweetOutlined
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
+import dayjs from "dayjs";
 
 export default defineComponent({
   components: {
@@ -169,12 +184,12 @@ export default defineComponent({
     CloseCircleOutlined,
     CheckCircleOutlined,
     LinkOutlined,
-    RetweetOutlined,
+    RetweetOutlined
   },
 
   computed: {
     ...mapState([
-      "relaket",
+      "relaket"
     ])
   },
 
@@ -189,13 +204,14 @@ export default defineComponent({
           search_value: "",
           date: null,
           pageNum: 1,
-          limit: 10,
+          limit: 10
         },
-        date: '',
+        date: ""
       },
       processPercent: 0,
       processTotal: 0,
       processCount: 1,
+      collectDate: dayjs(),
       collectLoading: false,
       SEARCH_DATE_CONFIG: [
         {
@@ -211,7 +227,7 @@ export default defineComponent({
         {
           key: "itemName",
           label: "상품명"
-        },
+        }
       ],
       LIST_COLUMNS_CONFIG: [
         {
@@ -229,12 +245,18 @@ export default defineComponent({
         {
           title: "상품명",
           key: "item_name",
-          align: "center",
+          align: "center"
         },
         {
           title: "판매가",
           key: "item_price",
           width: "12%",
+          align: "center"
+        },
+        {
+          title: "등록상태",
+          key: "status",
+          width: "8%",
           align: "center"
         },
         {
@@ -265,27 +287,27 @@ export default defineComponent({
         checkStrictly: false,
         onChange: (selectedRowKeys, selectedRows) => {
           this.selectionTableData = selectedRows;
-        },
+        }
       },
-      vvicListTableDataRef: ref(null),
-    }
+      vvicListTableDataRef: ref(null)
+    };
   },
 
   methods: {
     initSearchParam() {
-      this.tableData.param.date_type = "insert_date"
-      this.date = []
-      this.tableData.param.search_key = "itemCode"
-      this.tableData.param.search_value = ""
+      this.tableData.param.date_type = "insert_date";
+      this.date = [];
+      this.tableData.param.search_key = "itemCode";
+      this.tableData.param.search_value = "";
     },
     getList() {
-      this.tableData.listLoading = true
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/product/getVvicList", {params: this.tableData.param}).then((res) => {
+      this.tableData.listLoading = true;
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/product/getVvicList", { params: this.tableData.param }).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
         }
 
-        const {list,total} = res.data;
+        const { list, total } = res.data;
 
         this.tableData.list = list;
         this.tableData.total = total;
@@ -293,7 +315,7 @@ export default defineComponent({
         this.tableData.listLoading = false;
       });
     },
-    vvicInsertIntoProductAPI(row){
+    vvicInsertIntoProductAPI(row) {
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/product/vvicInsertIntoProduct", row).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
@@ -322,7 +344,7 @@ export default defineComponent({
 
     async vvicSelectionInsertIntoProduct() {
       if (this.selectionTableData.length < 1) {
-        message.warning('상품을 선택해주세요.');
+        message.warning("상품을 선택해주세요.");
         return false;
       }
       this.processCount = 1;
@@ -332,7 +354,7 @@ export default defineComponent({
       }
     },
 
-    callRemoveVvicProductAPI(row){
+    callRemoveVvicProductAPI(row) {
 
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/product/vvicRemoveProduct", row).then((res) => {
         if (res.status !== "2000") {
@@ -340,14 +362,14 @@ export default defineComponent({
           return false;
         }
 
-        message.success(row.itemCode + '상품삭제 되였습니다.');
+        message.success(row.itemCode + "상품삭제 되였습니다.");
       });
     },
 
     // 상품삭제
     async removeSelectionVvicProduct() {
       if (this.selectionTableData.length < 1) {
-        message.warning('상품을 선택해주세요.');
+        message.warning("상품을 선택해주세요.");
         return false;
       }
 
@@ -363,55 +385,46 @@ export default defineComponent({
 
     // 상품 수집
     async vvicProductCollect() {
-
+      if(this.collectDate === null){
+        message.error('수집일을 선택해주세요.');
+        return false
+      }
       this.collectLoading = true;
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/product/vvicProductCollect", {}).then((res) => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/product/vvicProductCollect", {collectDate:this.collectDate}).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           this.collectLoading = false;
           return false;
         }
         this.collectLoading = false;
-        message.success('상품수집 되였습니다.');
+        message.success("상품수집 되였습니다.");
       });
     },
 
-    getMinSkuPrice(sku){
-        // 최소가격
-        let minPrice = 0;
-        sku.map((item) => {
-          if (minPrice === 0) {
+    getMinSkuPrice(sku) {
+      // 최소가격
+      let minPrice = 0;
+      sku.map((item) => {
+        if (minPrice === 0) {
+          minPrice = item.price;
+        } else {
+          if (minPrice > item.price) {
             minPrice = item.price;
-          } else {
-            if (minPrice > item.price) {
-              minPrice = item.price;
-            }
           }
-        });
-        return minPrice;
+        }
+      });
+      return minPrice;
     },
 
-    onChangeDatePicker(value, dateString) {
-      this.tableData.param.start_time = dateString[0];
-      this.tableData.param.end_time = dateString[1];
-    },
-
-    // format timestamp to date
-    formatDate(timestamp) {
-      if (timestamp === 0) {
-        return "";
-      }
-      const date = new Date(timestamp * 1000);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      return year + "-" + month + "-" + day;
+    disabledDate(current) {
+      // Can not select days before today and today
+      return current && current > dayjs().endOf('day');
     },
   },
 
   // watch this.processPercent
   watch: {
-    processPercent: function (val) {
+    processPercent: function(val) {
       if (val === 100) {
         setTimeout(() => {
           this.processPercent = 0;
@@ -424,7 +437,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getList("reload");
-  },
+  }
 
 });
 </script>
