@@ -211,7 +211,7 @@ export default defineComponent({
       processPercent: 0,
       processTotal: 0,
       processCount: 1,
-      collectDate: dayjs(),
+      collectDate: dayjs().subtract(1, 'day'),
       collectLoading: false,
       SEARCH_DATE_CONFIG: [
         {
@@ -397,7 +397,7 @@ export default defineComponent({
           return false;
         }
         this.collectLoading = false;
-        message.success("상품수집 되였습니다.");
+        message.success("상품수집이 요청 되었습니다. 3~5분 소요됩니다.");
       });
     },
 
