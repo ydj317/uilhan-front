@@ -62,13 +62,14 @@ const syncProduct = (queryJson) => {
     let url = '';
     if(prdDetail.site_code === 'storefarm' || prdDetail.site_code === 'tmon') {
       message.warning('스마트스토어는 잠시 지원하지 않습니다.');
-      window.close();
+      setTimeout(() => {
+        window.close()
+      }, 500)
       //url = marketUrls[prdDetail.site_code] + prdDetail.site_id + '/products/' + queryJson.pid
     } else {
       url = marketUrls[prdDetail.site_code] + prdDetail.market_pid
       window.location.href = url
     }
-
 
   });
 }
@@ -82,6 +83,7 @@ onBeforeMount(() => {
 <template>
   <div style="display: flex;justify-content: center;align-items: center;width: 100vw;height: 100vh;">
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
+    <h3>페이지 이동중 입니다. 잠시만 기다려 주세요.</h3>
   </div>
 </template>
 
