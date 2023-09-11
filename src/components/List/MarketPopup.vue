@@ -49,7 +49,7 @@ const syncProduct = (queryJson) => {
         res.status !== "2000" ||
         lib.isEmpty(res.data)
     ) {
-      message.success(res.message);
+      message.error(res.message);
       router.push("/product");
       return false;
     }
