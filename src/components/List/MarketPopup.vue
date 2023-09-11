@@ -51,7 +51,9 @@ const syncProduct = (queryJson) => {
         lib.isEmpty(res.data)
     ) {
       message.error(res.message);
-      router.push("/product");
+      setTimeout(() => {
+        router.push("/product");
+      }, 1000);
       return false;
     }
 
