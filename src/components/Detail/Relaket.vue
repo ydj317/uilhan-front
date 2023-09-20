@@ -25,39 +25,17 @@
           </a-descriptions-item>
 
           <a-descriptions-item label="카테고리 검색">
-            <a-form-item>
-              <a-alert
-                show-icon
-                v-if="recommendCategory.bAlertShow"
-                :type="recommendCategory.sAlertType"
-                :message="recommendCategory.sAlertMessage"
-                :closable="recommendCategory.bAlertClosable"
-                :afterClose="recommendCategory.mAlertAfterClose"
-              />
-              <a-select
-                v-if="!recommendCategory.bAlertShow"
-                v-model:value="recommendCategory.aSearchValue"
-                mode="tags"
-
-                :maxTagCount="1"
-                :showArrow="true"
-                :allowClear="true"
-                :defaultOpen="recommendCategory.bDefaultOpen"
-                :autoClearSearchValue="true"
-                :options="recommendCategory.aOptions"
-                :notFoundContent="'추천 카테고리가 존재하지 않습니다. 수동으로 입력해 주세요.'"
-
-                :onFocus="recommendCategory.clickTheInputBox"
-                :onSearch="recommendCategory.clickTheInputBox"
-                :onChange="recommendCategory.selectListOptions"
-                :onSelect="recommendCategory.selectListOptions"
-                :onInputKeyDown="recommendCategory.enterKeywords"
-              >
-                <template v-if="cateLoading" #notFoundContent>
-                  <a-spin size="small"/>
-                </template>
-              </a-select>
-            </a-form-item>
+            <div style="position: relative;">
+              <div style="position: absolute;top: 0;right: 20px;">
+                <a-button size="small" type="primary" @click="openCategorySettingsDialog">선택</a-button>
+              </div>
+              <div style="display: flex;flex-direction: column;gap: 15px">
+                <div v-for="(item,key) in marketCategorys" :key="key">
+                  {{item.accountID}} : {{item.categoryNames}}
+                </div>
+              </div>
+            </div>
+            <category-settings :isShow="settingCategoryVisible" :itemSyncMarket="aProduct.item_sync_market"/>
           </a-descriptions-item>
 
           <a-descriptions-item label="상품고시">
@@ -129,9 +107,11 @@ import {ref, reactive, computed, onBeforeUnmount} from 'vue';
 import {mapState, useStore} from 'vuex';
 import {lib} from '@/util/lib';
 import { message } from "ant-design-vue";
+import categorySettings from "@/components/Detail/categorySettings";
+import CategorySettings from "@/components/Detail/categorySettings.vue";
 
 export default {
-  components: { mandatoryList},
+  components: {CategorySettings, mandatoryList},
 
   computed: {
     ...mapState([
@@ -170,6 +150,19 @@ export default {
 
     const isSync = ref(false);
     const keyStatus = ref(false);
+
+    const marketCategorys = [
+      {
+        accountID: 'coupang',
+        categoryNames: '패션의류/런닝/트레이닝/요가복/여성런닝복',
+      },
+      {
+        accountID: '11st',
+        categoryNames: '패션의류/런닝/트레이닝/요가복/여성런닝복',
+      },
+    ]
+    let settingCategoryVisible = ref(false);
+
     const syncSwitchChange = () => {
       if (isSync.value === true && !formState.last_cate) {
         //getCategory({pid: 0}, 0);
@@ -709,6 +702,9 @@ export default {
       }, 100)
     }
 
+    const openCategorySettingsDialog = () => {
+      settingCategoryVisible.value = true;
+    }
     return {
       aProduct,
       recommendCategory,
@@ -722,7 +718,10 @@ export default {
       getCategory,
       getCategoryNames,
       cateNames,
-      onCategoryChange
+      onCategoryChange,
+      marketCategorys,
+      openCategorySettingsDialog,
+      settingCategoryVisible
     }
   }
   ,

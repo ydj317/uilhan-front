@@ -160,7 +160,7 @@ import moment from "moment";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Cookie from "js-cookie";
-import MarketList from "components/List/MarketList";
+import MarketList from "@/components/List/MarketList";
 import { mapState } from "vuex";
 import {
   ClockCircleOutlined,
