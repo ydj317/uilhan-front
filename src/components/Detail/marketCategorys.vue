@@ -7,38 +7,38 @@
 </template>
 
 <script setup>
-import { onMounted, ref} from "vue";
-import {AuthRequest} from "@/util/request";
+import {onMounted, onUpdated, ref, toRefs, watch, watchEffect} from "vue";
+import {useCategoryApi} from "@/api/category";
 
-const { marketAccount, searchCategoryValue } = defineProps(['marketAccount', 'searchCategoryValue'])
+const props = defineProps(['marketAccount', 'modelValue'])
+const { marketAccount, modelValue } = toRefs(props)
 
 const categoryValue = ref([])
 const options = ref([]);
 
 const getMarketCategory = () => {
-  // useCategoryApi.getMarketCategoryList(marketAccount).then(res => {
-  //   console.log('res', res)
-  // })
-  AuthRequest.get('https://mock.apifox.cn/m2/3318349-0-default/111776451', {
-    params: {
-      marketAccount: marketAccount.split('::')[0]
-    }
-  }).then(res => {
+  useCategoryApi().getMarketCategoryList({marketAccount:marketAccount.value.split('::')[0]}).then(res => {
     options.value = res.data
-    console.log('res', res)
   })
+
 }
+
 onMounted( async () => {
   await getMarketCategory()
-  console.log('marketAccount', marketAccount)
-  console.log('searchCategoryValue', searchCategoryValue)
 })
 
-/*onUpdated(async () => {
-  await getMarketCategory()
-  console.log('marketAccount', marketAccount)
-  console.log('searchCategoryValue', searchCategoryValue)
-})*/
+// watchEffect searchCategoryValue
+watchEffect(() => {
+
+  if(modelValue.value !=='') {
+    console.log('searchCategoryValue', modelValue.value)
+  }
+})
+
+
+onUpdated(async () => {
+
+})
 </script>
 
 <style scoped>

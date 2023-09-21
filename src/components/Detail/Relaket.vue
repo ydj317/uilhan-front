@@ -35,7 +35,7 @@
                 </div>
               </div>
             </div>
-            <category-settings :isShow="settingCategoryVisible" :itemSyncMarket="aProduct.item_sync_market"/>
+            <category-settings :isShow="settingCategoryVisible" :itemSyncMarket="aProduct.item_sync_market" @cancelDialog="isShow"/>
           </a-descriptions-item>
 
           <a-descriptions-item label="상품고시">
@@ -702,6 +702,10 @@ export default {
       }, 100)
     }
 
+    const isShow = (visible) => {
+      settingCategoryVisible.value = visible;
+    }
+
     const openCategorySettingsDialog = () => {
       settingCategoryVisible.value = true;
     }
@@ -721,7 +725,8 @@ export default {
       onCategoryChange,
       marketCategorys,
       openCategorySettingsDialog,
-      settingCategoryVisible
+      settingCategoryVisible,
+      isShow
     }
   }
   ,
