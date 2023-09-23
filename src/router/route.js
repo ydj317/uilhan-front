@@ -434,6 +434,31 @@ export const menus = [{
                 icon: GiftOutlined,
             },
         },
+
+
+        {
+            path: "/market/accounts/list",
+            name: "market_accounts/list",
+            component: () => import("@/views/Market/AccountsList.vue"),
+            meta: {
+                title: "마켓계정관리",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                icon: GiftOutlined,
+            },
+        },
+        {
+            path: "/market/accounts/register/:id?",
+            name: "market_accounts_register",
+            component: () => import("@/views/MarketSeller/Register.vue"),
+            meta: {
+                title: "마켓계정관리-등록/수정",
+                isHide: true,
+                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                icon: GiftOutlined,
+            },
+        },
+        
     ]
 }]
 
