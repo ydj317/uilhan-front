@@ -221,6 +221,7 @@
       </a-table>
 
       <template v-slot:footer>
+        <a-button type="primary" @click="newSendMarket('single')">선택마켓연동</a-button>
         <a-button type="primary" @click="testsync('single')">선택제휴사연동</a-button>
         <a-button @click="closeResultPop('single')">닫기</a-button>
       </template>
@@ -867,6 +868,75 @@ export default defineComponent({
 
     testPop() {
       this.marketSyncPop = !this.marketSyncPop;
+    },
+
+    async newSendMarket(type) {
+      this.indicator = true;
+
+      let productList = this.getCheckList();
+      if (type === "single") {
+        productList = this.singleDetail.item_id;
+      }
+
+      let accountList = [
+        {'id': '10', 'market_code': 'coupang', 'username': 'user111', 'json_data': '{}'},
+        {'id': '11', 'market_code': 'coupang', 'username': 'user222', 'json_data': '{}'}
+      ];
+
+      if (productList === "," || productList.length === 0) {
+        message.warning("상품을 선택해주세요");
+        this.indicator = false;
+        return false;
+      }
+
+      if (accountList.length === 0 || accountList.length === undefined) {
+        message.warning("선택된 계정이 없습니다.");
+        this.indicator = false;
+        return false;
+      }
+
+      try {
+        let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
+          productList: productList,
+          accountList: accountList
+        });
+
+        if (res.status !== "2000") {
+          message.error(res.message);
+          this.indicator = false;
+          return false;
+        }
+
+        if (res.data !== undefined && res.data.length === 0) {
+          message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+          this.indicator = false;
+          return false;
+        }
+
+        let returnData = res.data;
+
+        if (type === "single") {
+          this.singleSyncPop = false;
+          this.singleDetail = [];
+          this.checkedList = [];
+        }
+
+        this.setResultPopData(true, [
+          returnData.success,
+          returnData.failedCode,
+          returnData.failed,
+          returnData.total,
+          returnData.data
+        ]);
+
+        this.indicator = false;
+
+        return true;
+      } catch (e) {
+        message.error(e.message);
+        this.indicator = false;
+        return false;
+      }
     },
 
     async testsync(type) {
