@@ -222,7 +222,6 @@
 
       <template v-slot:footer>
         <a-button type="primary" @click="newSendMarket('single')">선택마켓연동</a-button>
-        <a-button type="primary" @click="testsync('single')">선택제휴사연동</a-button>
         <a-button @click="closeResultPop('single')">닫기</a-button>
       </template>
     </a-modal>
@@ -875,7 +874,7 @@ export default defineComponent({
 
       let productList = this.getCheckList();
       if (type === "single") {
-        productList = this.singleDetail.item_id;
+        productList = this.singleDetail.item_id + "";
       }
 
       let accountList = [
@@ -937,85 +936,6 @@ export default defineComponent({
         this.indicator = false;
         return false;
       }
-    },
-
-    async testsync(type) {
-      this.indicator = true;
-      let list = "";
-      let marketList = [];
-      if (type === "multi") {
-        marketList = this.marketList;
-        list = this.getCheckList();
-      } else {
-        marketList = this.getCheckedMarketList();
-        list = this.singleDetail.item_id + "";
-      }
-
-      if (list === "," || list.length === 0) {
-        message.warning("상품을 선택해주세요");
-        this.indicator = false;
-        return false;
-      }
-
-      if (this.marketList.length === undefined) {
-        message.warning("선택된 제휴사가 없습니다.");
-        this.indicator = false;
-        return false;
-      }
-
-      try {
-
-        let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/sendmarket", {list: list});
-        if (res.status !== "2000") {
-          message.error(res.message);
-          this.indicator = false;
-          return false;
-        }
-
-        if (res.data !== undefined && res.data.length === 0) {
-          message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
-          this.indicator = false;
-          return false;
-        }
-
-      } catch (e) {
-        message.error(e.message);
-        this.indicator = false;
-        return false;
-      }
-
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/syncmarket",
-          {params: {list: list, market: marketList, options: this.options}}).then((res) => {
-        if (res.status !== "2000") {
-          message.error(res.message);
-        }
-
-        let returnData = res.data;
-        if (type === "multi") {
-          this.setResultPopData(true, [
-            returnData.success,
-            returnData.failedCode,
-            returnData.failed,
-            returnData.total,
-            returnData.data
-          ]);
-        } else {
-          this.singleSyncPop = false;
-          this.singleDetail = [];
-          this.checkedList = [];
-
-          this.setResultPopData(true, [
-            returnData.success,
-            returnData.failedCode,
-            returnData.failed,
-            returnData.total,
-            returnData.data
-          ]);
-        }
-
-        this.indicator = false;
-      });
-
     },
 
     setResultPopData(isOpen, data) {
