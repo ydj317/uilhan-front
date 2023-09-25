@@ -1,5 +1,5 @@
 <template>
-  <a-cascader v-model:value="categoryValue" :options="options" placeholder="Please select" style="width: 100%"
+  <a-cascader v-model:value="categoryValue" :options="options" placeholder="마켓별 카테고리를 선택해 주세요." style="width: 100%"
               class="mb15"/>
   <div style="display: flex;flex-direction: column;gap: 10px">
     <div>패션/아웃도어/패딩</div>
@@ -17,10 +17,9 @@ const categoryValue = ref([])
 const options = ref([]);
 
 const getMarketCategory = () => {
-  useCategoryApi().getMarketCategoryList({marketAccount:marketAccount.value.split('::')[0]}).then(res => {
+  useCategoryApi().getMarketCategoryList({market_code:marketAccount.value.split('::')[0]}).then(res => {
     options.value = res.data
   })
-
 }
 
 onMounted( async () => {
