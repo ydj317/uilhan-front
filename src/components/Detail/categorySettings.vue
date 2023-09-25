@@ -13,11 +13,11 @@
       <p class="mt5" style="color: #999999">도움말입니다.</p>
     </div>
     <div style="max-height: 500px;overflow-y: scroll">
-      <a-table :dataSource="itemSyncMarket" :pagination="false">
-        <a-table-column title="마켓계정" dataIndex="market_account" key="market_account" :width="120"></a-table-column>
-        <a-table-column title="마켓카테고리" dataIndex="category" key="category">
+      <a-table :dataSource="marketAccount" :pagination="false">
+        <a-table-column title="마켓계정" dataIndex="sellerId" key="sellerId" :width="120"></a-table-column>
+        <a-table-column title="마켓카테고리">
           <template #default="{ record }">
-            <market-categorys :marketAccount="record.market_account" v-model="searchCategoryValue" :key="record.market_account"></market-categorys>
+            <market-categorys :marketAccount="record.sellerId" v-model="searchCategoryValue" :key="record.sellerId"></market-categorys>
           </template>
         </a-table-column>
       </a-table>
@@ -28,6 +28,8 @@
 <script setup>
 import {onMounted, onUpdated, ref} from 'vue';
 import marketCategorys from "@/components/Detail/marketCategorys.vue";
+import { useMarketAccountApi } from '@/api/marketAccount';
+
 const props = defineProps(['isShow', 'itemSyncMarket'])
 const emit = defineEmits(['cancelDialog'])
 const {itemSyncMarket} = props
@@ -35,6 +37,7 @@ const {itemSyncMarket} = props
 const autoCompleteValue = ref('')
 const autoCompleteOptions = ref([])
 const searchCategoryValue = ref('')
+const marketAccount = ref('')
 const mockVal = (str, repeat = 1) => {
   return {
     value: str.repeat(repeat),
@@ -54,6 +57,13 @@ const onAutoCompSelect = (value) => {
   autoCompleteValue.value = ''
 };
 
+const getMarketAccount = () => {
+  useMarketAccountApi().getAccountList({page:1,pageSize:'50000'}).then(res => {
+    marketAccount.value = res.data.list
+  })
+};
+
+
 // watch(autoCompleteValue, () => {
 //   console.log('value', autoCompleteValue.value);
 // });
@@ -68,6 +78,7 @@ const handleCancel = () => {
 };
 // on mounted
 onMounted(() => {
+  getMarketAccount();
   console.log('mounted');
 });
 onUpdated(() => {

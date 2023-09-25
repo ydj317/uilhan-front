@@ -36,5 +36,18 @@ export function useMarketAccountApi() {
                 data,
             });
         },
+
+        // 연동확인
+        syncMarketCheck: (data) => {
+            return new Promise((resolve, reject) => {
+                resolve({
+                    data: {
+                    },
+                    status: '2000',
+                    message: '연동확인 성공'
+                });
+            });
+                
+        },
     }
 }

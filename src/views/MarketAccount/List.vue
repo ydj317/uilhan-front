@@ -36,8 +36,17 @@
                 <a-table-column title="마켓코드" dataIndex="marketCode" key="marketCode" />
                 <a-table-column title="마켓명" dataIndex="marketCode" key="marketCode" />
                 <a-table-column title="마켓ID" dataIndex="sellerId" key="sellerId" />
-                <a-table-column title="노출상태" dataIndex="isUse" key="isUse" />
-                <a-table-column title="등록일자" dataIndex="insDate" key="insDate" />
+                <a-table-column title="노출상태" dataIndex="isUse" key="isUse">
+                    <template #customRender="scope, record, index">
+                        <a-tag color="green" v-if="scope.record.isUse === 1">노출</a-tag>
+                        <a-tag color="red" v-else>미노출</a-tag>
+                    </template>
+                </a-table-column>
+                <a-table-column title="등록일자" dataIndex="insDate" key="insDate">
+                    <template #customRender="scope, record, index">
+                        {{ scope.record.insDate.split('T')[0] }}
+                    </template>
+                </a-table-column>
                 <a-table-column title="관리" dataIndex="manage" key="manage">
                     <template #customRender="scope, record, index">
                         <RouterLink :to="`/market/accounts/register/${scope.record['id']}`">
@@ -95,7 +104,7 @@ const getMarketList = () => {
 const getTableList = () => {
     useMarketAccountApi().getAccountList(state.tableData.params).then(res => {
         const { list, total } = res.data
-        console.log(list);
+
         state.tableData.data = list;
         state.tableData.total = total;
 
