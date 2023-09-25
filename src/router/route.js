@@ -39,7 +39,7 @@ export const menus = [{
             meta: {
                 title: "상품관리",
                 isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: GiftOutlined
             },
         },
@@ -50,7 +50,7 @@ export const menus = [{
             meta: {
                 title: "상품상세",
                 isHide: true,
-                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: PayCircleOutlined,
                 active: "/product"
             },
@@ -62,7 +62,7 @@ export const menus = [{
             meta: {
                 title: "상품이미지",
                 isHide: true,
-                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: '',
                 active: "/product"
             },
@@ -74,7 +74,7 @@ export const menus = [{
             meta: {
                 title: "주문관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: CalendarOutlined
             },
         },
@@ -85,7 +85,7 @@ export const menus = [{
             meta: {
                 title: "마켓연동",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: PayCircleOutlined
             },
         },
@@ -96,7 +96,7 @@ export const menus = [{
             meta: {
                 title: "게시판관리",
                 isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: ProfileOutlined
             },
             "children": [
@@ -142,7 +142,7 @@ export const menus = [{
                     meta: {
                         title: "공지사항",
                         isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
                     },
                 },
@@ -153,7 +153,7 @@ export const menus = [{
                     meta: {
                         title: "공지사항 - 보기",
                         isHide: true,
-                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
                         active: "/board/notice"
                     },
@@ -165,7 +165,7 @@ export const menus = [{
                     meta: {
                         title: "1:1 문의",
                         isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
                     },
                 },
@@ -176,7 +176,7 @@ export const menus = [{
                     meta: {
                         title: "1:1 문의 수정/삭제",
                         isHide: true,
-                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
                         active: "/board/question"
                     },
@@ -188,7 +188,7 @@ export const menus = [{
                     meta: {
                         title: "1:1 문의 보기",
                         isHide: true,
-                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
                         active: "/board/question"
                     },
@@ -201,7 +201,7 @@ export const menus = [{
             meta: {
                 title: "설정",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: SettingOutlined
             },
             "children": [
@@ -212,7 +212,7 @@ export const menus = [{
                     meta: {
                         title: "사용자 정보 수정",
                         isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
                 },
@@ -223,7 +223,7 @@ export const menus = [{
                     meta: {
                         title: "비밀번호 변경",
                         isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
                 },
@@ -234,7 +234,7 @@ export const menus = [{
                     meta: {
                         title: "계정정보",
                         isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
                 },
@@ -245,7 +245,7 @@ export const menus = [{
                     meta: {
                         title: "마진 & 환율",
                         isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
                 },
@@ -256,7 +256,7 @@ export const menus = [{
                     meta: {
                         title: "배송정책",
                         isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
                     }
                 },
@@ -267,7 +267,7 @@ export const menus = [{
                     meta: {
                         title: "안내정보",
                         isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
                 },
@@ -278,7 +278,7 @@ export const menus = [{
                     meta: {
                         title: "안내정보 추가/수정",
                         isHide: true,
-                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                         active: "/setting/template"
                     }
@@ -290,7 +290,7 @@ export const menus = [{
                     meta: {
                         title: "배송정책 추가/수정",
                         isHide: true,
-                        roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
                         active: "/setting/delivery"
                     }
@@ -303,7 +303,7 @@ export const menus = [{
             meta: {
                 title: "서비스 관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: MoneyCollectOutlined
             },
             "children": [
@@ -325,7 +325,7 @@ export const menus = [{
                     meta: {
                         title: "서비스 추가/수정",
                         isHide: true,
-                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                         active: "/user/license"
                     }
@@ -337,7 +337,7 @@ export const menus = [{
                     meta: {
                         title: "서비스 결제",
                         isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
                 },
@@ -348,7 +348,7 @@ export const menus = [{
                     meta: {
                         title: "서비스 이력",
                         isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER", "ROLE_RELAKET"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
                 },
@@ -372,7 +372,7 @@ export const menus = [{
             meta: {
                 title: "금지어 관리",
                 isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: CloseCircleOutlined,
             },
         },
@@ -394,7 +394,7 @@ export const menus = [{
             meta: {
                 title: "도매꾹",
                 isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: AppstoreOutlined,
             },
         },
@@ -437,26 +437,38 @@ export const menus = [{
 
 
         {
-            path: "/market/accounts/list",
-            name: "market_accounts/list",
-            component: () => import("@/views/Market/AccountsList.vue"),
+            path: "/market/accounts",
+            name: "market_accounts",
             meta: {
-                title: "마켓계정관리",
+                title: "마켓연동",
                 isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: GiftOutlined,
             },
-        },
-        {
-            path: "/market/accounts/register/:id?",
-            name: "market_accounts_register",
-            component: () => import("@/views/MarketSeller/Register.vue"),
-            meta: {
-                title: "마켓계정관리-등록/수정",
-                isHide: true,
-                roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_RELAKET"],
-                icon: GiftOutlined,
-            },
+            children: [
+                {
+                    path: "/market/accounts/list",
+                    name: "market_accounts_list",
+                    component: () => import("@/views/MarketAccount/List.vue"),
+                    meta: {
+                        title: "마켓계정관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: GiftOutlined,
+                    },
+                },
+                {
+                    path: "/market/accounts/register/:id?",
+                    name: "market_accounts_register",
+                    component: () => import("@/views/MarketAccount/Register.vue"),
+                    meta: {
+                        title: "마켓계정관리-등록/수정",
+                        isHide: true,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: GiftOutlined,
+                    },
+                },
+            ]
         },
         
     ]
