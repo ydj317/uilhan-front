@@ -156,18 +156,7 @@ export default {
      * @returns {boolean}
      */
     checkMarket() {
-      if (this.product.isSync === false) {
-        return false;
-      }
-
-      let cate = this.product.formState.last_cate;
-      if (cate === undefined || cate === null || cate.length === 0) {
-        message.warning("최하위 카테고리까지 선택해주세요");
-        return false;
-      }
-
       let mandatoryVal = this.product.formState.mandatory_val;
-
       if (mandatoryVal === "선택") {
         message.warning("상품고시정보를 선택해주세요");
         return false;
@@ -183,12 +172,6 @@ export default {
         return false;
       }
 
-      let dlvTemp = this.product.formState.delivery_template_real_val;
-      if (dlvTemp === null || dlvTemp === "선택") {
-        message.warning("배송정책정보를 선택해주십시오");
-        return false;
-      }
-
       return true;
     },
 
@@ -201,10 +184,8 @@ export default {
 
       this.product.loading = true;
 
-      let send = this.checkMarket();
-
       //연동필수데이터 없는 상황
-      if (this.product.isSync === true && send === false) {
+      if (this.checkMarket() === false) {
         this.product.loading = false;
         return false;
       }
@@ -227,7 +208,7 @@ export default {
       this.product.item_detail = sItemDetail;
 
       let oForm = new FormData();
-      oForm = this.getForm(oForm, send);
+      oForm = this.getForm(oForm);
 
       try {
         const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm);
@@ -417,10 +398,8 @@ export default {
 
       this.product.loading = true;
 
-      let send = this.checkMarket();
-
       //연동필수데이터 없는 상황
-      if (this.product.isSync === true && send === false) {
+      if (this.checkMarket() === false) {
         this.product.loading = false;
         return false;
       }
@@ -443,7 +422,7 @@ export default {
       this.product.item_detail = sItemDetail;
 
       let oForm = new FormData();
-      oForm = this.getForm(oForm, send);
+      oForm = this.getForm(oForm);
 
       try {
         const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm);
@@ -523,35 +502,28 @@ export default {
       return true;
     },
 
-    getForm(oForm, send) {
+    getForm(oForm) {
       let oProduct = this.product;
       let oFormState = oProduct.formState;
-
-      if (this.product.isSync === true && send === true) {
-        oForm = this.setForm(oForm, {
-          cate: oFormState.last_cate,
-          surtax: oFormState.surtax,
-          keyword: oFormState.keyword,
-          mandatory_val: oFormState.mandatory_val,
-          delivery_template: oFormState.delivery_template_real_val,
-          is_free_delivery: oFormState.item_is_free_delivery === true ? "T" : "F"
-        });
-      }
 
       oForm = this.setForm(oForm, {
         id: oProduct["item_id"],
         sku: JSON.stringify(oProduct.sku),
-        // rate: oProduct.rate_default,
         info: oProduct.item_info,
         name: oProduct.item_name,
         spec: JSON.stringify(oProduct.item_option),
         stock: oProduct["item_stock"],
         image: JSON.stringify(oProduct.item_thumbnails),
         detail: oProduct.item_detail,
-        use_sync: oProduct.isSync,
         trans_name: oProduct.item_trans_name,
         trans_status: oProduct.item_is_trans,
         cross_border: oProduct.item_cross_border,
+
+        surtax: oFormState.surtax,
+        keyword: oFormState.keyword,
+        mandatory_val: oFormState.mandatory_val,
+        is_free_delivery: oFormState.item_is_free_delivery === true ? "T" : "F",
+        shipping_fee: oFormState.item_shipping_fee,
 
         // 새로추가한 마진
         item_disp_margin_option: oProduct.item_disp_margin_option,
