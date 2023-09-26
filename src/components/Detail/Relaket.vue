@@ -11,12 +11,12 @@
                 <a-button size="small" type="primary" @click="openCategorySettingsDialog">선택</a-button>
               </div>
               <div style="display: flex;flex-direction: column;gap: 15px">
-                <div v-for="(item,key) in marketCategorys" :key="key">
-                  {{item.accountID}} : {{item.categoryNames}}
+                <div v-for="(item,key) in product.item_cate" :key="key">
+                  {{key}} : {{item.categoryNames}}
                 </div>
               </div>
             </div>
-            <category-settings :isShow="settingCategoryVisible" :itemSyncMarket="aProduct.item_sync_market" @cancelDialog="isShow"/>
+            <category-settings :isShow="settingCategoryVisible" @cancelDialog="isShow"/>
           </a-descriptions-item>
 
           <a-descriptions-item label="상품고시">
@@ -116,8 +116,7 @@ export default {
   },
 
   mounted() {
-    console.log('==0==')
-    console.log(this.product)
+
     // this.formState.mandatory_val = this.product;
     this.formState.item_shipping_fee = this.product.item_shipping_fee;
     this.formState.item_is_free_delivery = this.product.item_is_free_delivery;
