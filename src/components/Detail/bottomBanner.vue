@@ -302,6 +302,7 @@ export default {
     },
 
     async testsync(type) {
+
       this.product.loading = true;
       let list = "";
       let marketList = [];
