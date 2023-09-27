@@ -156,6 +156,12 @@ export default {
      * @returns {boolean}
      */
     checkMarket() {
+      let category = this.product.item_cate;
+      if (!category) {
+        message.warning("카테고리를 설정해 주세요");
+        return false;
+      }
+
       let mandatoryVal = this.product.formState.mandatory_val;
       if (mandatoryVal === "선택") {
         message.warning("상품고시정보를 선택해주세요");
@@ -516,7 +522,9 @@ export default {
         item_disp_margin_option: oProduct.item_disp_margin_option,
         item_selling_margin_option: oProduct.item_selling_margin_option,
         item_wholesale_margin_option: oProduct.item_wholesale_margin_option,
-        item_rate_margin_option: oProduct.item_rate_margin_option
+        item_rate_margin_option: oProduct.item_rate_margin_option,
+
+        item_cate: JSON.stringify(oProduct.item_cate)
       });
 
       return oForm;

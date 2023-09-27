@@ -5,14 +5,17 @@
       <div class="detail-basic">
         <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}" >
 
-          <a-descriptions-item label="카테고리 검색">
+          <a-descriptions-item label="카테고리 설정">
             <div style="position: relative;">
-              <div style="position: absolute;top: 0;right: 20px;">
-                <a-button size="small" type="primary" @click="openCategorySettingsDialog">선택</a-button>
+              <div style="position: absolute;top: 0px;right: 20px;">
+                <a-button size="small" type="primary" @click="openCategorySettingsDialog">설정</a-button>
               </div>
               <div style="display: flex;flex-direction: column;gap: 15px">
                 <div v-for="(item,key) in product.item_cate" :key="key">
                   {{key}} : {{item.categoryNames}}
+                </div>
+                <div v-if="!product.item_cate || product.item_cate.lenght < 1 ">
+                  <span style="color: #999999;">카테고리를 설정해 주세요.</span>
                 </div>
               </div>
             </div>
@@ -86,16 +89,6 @@ export default {
       item_shipping_fee: ''
     });
 
-    const marketCategorys = [
-      {
-        accountID: 'coupang',
-        categoryNames: '패션의류/런닝/트레이닝/요가복/여성런닝복',
-      },
-      {
-        accountID: '11st',
-        categoryNames: '패션의류/런닝/트레이닝/요가복/여성런닝복',
-      },
-    ]
     let settingCategoryVisible = ref(false);
 
     const isShow = (visible) => {
@@ -108,7 +101,6 @@ export default {
     return {
       aProduct,
       formState,
-      marketCategorys,
       openCategorySettingsDialog,
       settingCategoryVisible,
       isShow
@@ -116,7 +108,8 @@ export default {
   },
 
   mounted() {
-
+    console.log('==0==')
+    console.log(this.product)
     // this.formState.mandatory_val = this.product;
     this.formState.item_shipping_fee = this.product.item_shipping_fee;
     this.formState.item_is_free_delivery = this.product.item_is_free_delivery;
