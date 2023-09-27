@@ -502,16 +502,4 @@ export const notFoundAndNoPower = [
             isHide: true,
         }
     },
-    {
-        path: "/product/marketPopup/:query",
-        name: "prd_market_popup",
-        /* webpackChunkName: 'user_register' */
-        component: () => import("@/components/List/MarketPopup.vue"),
-        meta: {
-            title: "상품관리",
-            isHide: true,
-            roles: [],
-            ids: [],
-        },
-    },
 ];

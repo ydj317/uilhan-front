@@ -18,6 +18,7 @@
         class="tableSyncStatus"
         :dataSource="this.product.item_sync_market"
         :columns="SYNC_COLUMNS_CONFIG"
+        :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
       >
 
         <!--table header-->
@@ -30,22 +31,20 @@
 
         <!--table body-->
         <template v-slot:bodyCell="{ text, record, index, column }">
-          <!--단일선택-->
-          <template v-if="column.key === 'checked'">
-            <a-checkbox v-model:checked="record.checked"></a-checkbox>
-          </template>
 
           <!--연동계정-->
           <template v-if="column.key === 'market_account'">
-            연동계정 : {{ record.market_account }}
+            <img :src="getLogoSrc('market-logo', record.market_code)" style="width: 16px; height: 16px; margin-right: 5px;">
+            {{ record.seller_id }}
           </template>
 
           <!--상태-->
           <template v-if="column.key === 'status'">
-            <div class="syncStatus" :data-status="record.status">
-              {{ { "sending": "전송중", "success": "성공", "failed": "실패", "unsync": "미연동" }[record.status] }}<span
-              v-if="record.status === 'failed'"> 실패원인: {{ record.result }}</span>
-            </div>
+            <a-tag color="success" v-if="record.status === 'success'">연동성공</a-tag>
+            <a-tag color="processing" v-else-if="record.status === 'sending'">전송중</a-tag>
+            <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
+            <a-tag color="default" v-else>연동대기</a-tag>
+            <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
           </template>
 
           <!--연동시간-->
@@ -60,7 +59,7 @@
       </a-table>
 
       <template v-slot:footer>
-        <a-button type="primary" @click="testsync()">선택제휴사연동</a-button>
+        <a-button type="primary" @click="sendMarket()">선택마켓사연동</a-button>
         <a-button type="primary" @click="closeResultPop()" class="bg-697783">닫기</a-button>
       </template>
     </a-modal>
@@ -92,6 +91,7 @@ import router from "@/router";
 import { lib } from "@/util/lib";
 import moment from "moment/moment";
 import { message } from "ant-design-vue";
+import { useRoute } from "vue-router";
 
 export default {
   computed: {
@@ -102,10 +102,6 @@ export default {
 
     return {
       SYNC_COLUMNS_CONFIG: [
-        {
-          title: "선택",
-          key: "checked"
-        },
         {
           title: "쇼핑몰",
           key: "market_account"
@@ -126,22 +122,26 @@ export default {
       marketSyncFailedCode: [],
       marketSyncFailed: 0,
       marketSyncTotal: 0,
+      syncSelectedRowKeys: [],
       marketSyncResult: []
     };
   },
 
   methods: {
-    /**
-     * 번역 팝업열기
-     * @returns {boolean}
-     */
-    textTranslateSwicth() {
-      if (this.product.item_is_trans === true) {
-        message.warning("이미 번역한 상품입니다.");
-        return false;
+    getLogoSrc(fileName, marketCode) {
+      try {
+        return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
+      } catch (error) {
+        return require('../../assets/img/temp_image.png');
       }
+    },
 
-      this.product.text_trans_visible = true;
+    onSyncSelectChange(syncSelectedRowKeys) {
+      this.syncSelectedRowKeys = syncSelectedRowKeys;
+
+      for (let i = 0; i < this.product.item_sync_market.length; i++) {
+        this.product.item_sync_market[i].checked = this.syncSelectedRowKeys.includes(this.product.item_sync_market[i].key);
+      }
     },
 
     /**
@@ -271,17 +271,7 @@ export default {
       return true;
     },
 
-    checkAllMarket(checkAll) {
-      for (let i = 0; i < this.product.item_sync_market.length; i++) {
-        if (checkAll === false) {
-          this.product.item_sync_market[i].checked = true;
-        } else {
-          this.product.item_sync_market[i].checked = false;
-        }
-      }
-    },
-
-    closeResultPop(type) {
+    closeResultPop() {
       this.singleSyncPop = false;
     },
 
@@ -289,36 +279,22 @@ export default {
       this.marketSyncPop = false;
     },
 
-    getCheckedMarketList() {
-      let list = [];
-
-      for (let i = 0; i < this.product.item_sync_market.length; i++) {
-        if (this.product.item_sync_market[i].checked === true) {
-          list.push(this.product.item_sync_market[i].market_account);
-        }
-      }
-
-      return list;
-    },
-
-    async testsync(type) {
-
+    async sendMarket() {
       this.product.loading = true;
-      let list = "";
-      let marketList = [];
 
-      marketList = this.getCheckedMarketList();
-      list = this.product.item_id + "";
-
-      if (marketList.length === 0) {
-        message.warning("선택된 제휴사가 없습니다.");
+      let accountList = this.product.item_sync_market.filter(item => item.checked === true);
+      if (accountList.length === 0 || accountList.length === undefined) {
+        message.warning("선택된 계정이 없습니다.");
         this.product.loading = false;
         return false;
       }
 
       try {
+        let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
+          productList: this.product.item_id + "",
+          accountList: accountList
+        });
 
-        let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/sendmarket", { list: list });
         if (res.status !== "2000") {
           message.error(res.message);
           this.indicator = false;
@@ -331,33 +307,27 @@ export default {
           return false;
         }
 
-      } catch (e) {
-        message.error(e.message);
-        this.product.loading = false;
-        return false;
-      }
+        this.product.item_sync_market.forEach(item => {
+          if (item.checked === true) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以需要加1，并且要确保两位数格式
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-      const res3 = await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist");
-
-      if (res3.status !== "2000") {
-        message.error(res3.message);
-        return false;
-      }
-
-      const options = res3.data.data;
-
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/syncmarket",
-        { params: { list: list, market: marketList, options: options } }).then((res) => {
-        if (res.status !== "2000") {
-          message.error(res.message);
-        }
-
-        let returnData = res.data;
+            item.status = 'sending';
+            item.ins_time = formattedDateTime;
+          }
+        });
 
         this.singleSyncPop = false;
         this.singleDetail = [];
         this.checkedList = [];
 
+        let returnData = res.data;
         this.setResultPopData(true, [
           returnData.success,
           returnData.failedCode,
@@ -366,10 +336,14 @@ export default {
           returnData.data
         ]);
 
-
         this.product.loading = false;
-      });
 
+        return true;
+      } catch (e) {
+        message.error(e.message);
+        this.product.loading = false;
+        return false;
+      }
     },
 
     setResultPopData(isOpen, data) {
@@ -382,7 +356,7 @@ export default {
         this.marketSyncPop = true;
       } else {
         this.marketSyncSuccess = 0;
-        this.marketSyncFailedcode = "";
+        this.marketSyncFailedCode = "";
         this.marketSyncFailed = 0;
         this.marketSyncTotal = 0;
         this.marketSyncResult = [];
@@ -421,6 +395,17 @@ export default {
       sItemDetail = sItemDetail.replaceAll("<p>", "");
       sItemDetail = sItemDetail.replaceAll("</p>", "");
       this.product.item_detail = sItemDetail;
+
+      this.syncSelectedRowKeys = []
+      for (let i = 0; i < this.product.item_sync_market.length; i++) {
+        this.product.item_sync_market[i].key = i;
+        let isChecked = false;
+        if (this.product.item_sync_market[i].status !== "unsync") {
+          isChecked = true;
+          this.syncSelectedRowKeys.push(i)
+        }
+        this.product.item_sync_market[i].checked = isChecked;
+      }
 
       let oForm = new FormData();
       oForm = this.getForm(oForm);
@@ -542,8 +527,8 @@ export default {
       });
 
       return oForm;
-    }
-  }
+    },
+  },
 
 };
 </script>

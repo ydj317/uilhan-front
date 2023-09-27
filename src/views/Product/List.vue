@@ -69,10 +69,6 @@
 
       <!--right button-->
       <div class=" pl5 ">
-        <!--릴라켓연동-->
-        <!--          <a-popconfirm title="릴라켓에 연동하시겠습니까?" @confirm="sendMarket">-->
-        <!--            <a-button type="primary">릴라켓연동</a-button>-->
-        <!--          </a-popconfirm>-->
         <!--제휴사 상품연동-->
         <a-button @click="MarketListPop(record)" type="primary">제휴사 상품연동</a-button>
       </div>
@@ -114,17 +110,15 @@
               </a>
               <div class="cantent">
                 <a-space :size="5" class="item-market">
-                  <template v-for="(market_list, market_code) in record.show_sync_market" :key="market_code">
-                    <template v-for="(market_info, key) in market_list" :key="key">
-                      <a-tooltip placement="bottom">
-                        <template #title>
-                          <span>{{ market_info.market_account.split("::")[1] }}</span>
-                        </template>
-                        <span class="item-market-icon" :class="market_info.status" @click="openMarketPopup(market_info,record.item_sync_code)">
-                        <img :src="getLogoSrc('market-logo', market_info.market_account.split('::')[0])" alt="">
-                        </span>
-                      </a-tooltip>
-                    </template>
+                  <template v-for="(market_info, key) in record.item_sync_market" :key="key">
+                    <a-tooltip placement="bottom">
+                      <template #title>
+                        <span>{{ market_info.seller_id }}</span>
+                      </template>
+                      <span class="item-market-icon" :class="market_info.status" @click="openMarketPopup(market_info, market_info.market_prd_code)">
+                      <img :src="getLogoSrc('market-logo', market_info.market_code)" alt="">
+                      </span>
+                    </a-tooltip>
                   </template>
                 </a-space>
               </div>
@@ -192,9 +186,9 @@
           <!--연동계정-->
           <template v-if="column.key === 'market_account'">
             <div style="text-align: left">
-              <img :src="getLogoSrc('market-logo', record.market_account.split('::')[0])"
+              <img :src="getLogoSrc('market-logo', record.market_code)"
                    style="width: 16px; height: 16px; margin-right: 5px;">
-              {{ record.market_account.split('::')[1] }}
+              {{ record.seller_id }}
             </div>
           </template>
 
@@ -221,8 +215,8 @@
       </a-table>
 
       <template v-slot:footer>
-        <a-button type="primary" @click="newSendMarket('single')">선택마켓연동</a-button>
-        <a-button @click="closeResultPop('single')">닫기</a-button>
+        <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
+        <a-button @click="closeResultPop('close')">닫기</a-button>
       </template>
     </a-modal>
 
@@ -232,7 +226,7 @@
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">
           <a-list-item>
-            <a-card :title="item.market_account" style="width: 100%">
+            <a-card :title="item.market_code + '::' + item.seller_id" style="width: 100%">
               <p v-for="( prd ) in item.products">{{ prd.prd_code }} - {{ prd.result }}</p>
             </a-card>
           </a-list-item>
@@ -240,7 +234,7 @@
       </a-list>
       <template v-slot:footer>
         <a-button type="primary" @click="searchFailed">실패상품검색</a-button>
-        <a-button type="primary" @click="closeResultPop('multi')">확인</a-button>
+        <a-button type="primary" @click="closeResultPop('reset')">확인</a-button>
       </template>
     </a-modal>
 
@@ -265,6 +259,8 @@ import {
   DollarTwoTone, SearchOutlined
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
+import { lib } from "@/util/lib";
+import router from "@/router";
 
 export default defineComponent({
   components: {
@@ -480,7 +476,6 @@ export default defineComponent({
       singleDetail: [],
       checkedList: [],
       checkAll: false,
-      tempImage: require('../../assets/img/temp_image.png'),
       listLoading: true,
       MarketListVisible: false,
       prdSelectedRowKeys: [],
@@ -526,7 +521,7 @@ export default defineComponent({
       try {
         return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
       } catch (error) {
-        return this.tempImage;
+        return require('../../assets/img/temp_image.png');
       }
     },
 
@@ -561,18 +556,6 @@ export default defineComponent({
           if (this.prdlist[i].item_is_trans === true) {
             this.prdlist[i].item_name_type = "번역 상품명";
           }
-
-          // 연동 마켓 아이콘
-          let show_sync_market = {};
-          this.prdlist[i].item_sync_market.forEach(value => {
-            let key = value.market_account.split("::")[0];
-
-            if (!show_sync_market[key]) {
-              show_sync_market[key] = []; // 初始化为空数组
-            }
-            show_sync_market[key].push(value);
-          });
-          this.prdlist[i]["show_sync_market"] = show_sync_market;
 
           // SKU 최저가~최대가
           let selectedPrice = 0;
@@ -687,84 +670,12 @@ export default defineComponent({
       let list = "";
       for (let i = 0; i < this.prdlist.length; i++) {
         if (this.prdlist[i].checked === true) {
-          let comma = i === 0 ? "" : ",";
+          let comma = list === '' ? '' : ',';
           list += comma + this.prdlist[i].item_id;
         }
       }
 
       return list;
-    },
-
-    sendMarket() {
-      this.indicator = true;
-      let list = this.getCheckList();
-      if (list === undefined || list.length === 0) {
-        message.warning("선택된 상품이 없습니다.");
-        this.indicator = false;
-        return false;
-      }
-
-      let items = list.split(",");
-      let notCatePrd = "";
-      let hasCatePrd = "";
-
-      for (let i = 0; i < items.length; i++) {
-        let id = items[i];
-        if (id === undefined || id === "" || id === null) {
-          continue;
-        }
-
-        let item = this.prdlist.filter((item) => parseInt(item.item_id) === parseInt(id))[0];
-
-        if (item.item_cate === null) {
-          notCatePrd += notCatePrd.length === 0 ? "" : ",";
-          notCatePrd += item.item_id;
-          continue;
-        }
-
-        hasCatePrd += hasCatePrd.length === 0 ? "" : ",";
-        hasCatePrd += item.item_id;
-      }
-
-      if (notCatePrd.length === items.length) {
-        message.warning("선택하신 모든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.");
-        this.indicator = false;
-        return false;
-      }
-
-      if (notCatePrd.length > 0) {
-        message.warning(notCatePrd + " 등 상품의 카테고리 정보가 없습니다.");
-      }
-
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/sendmarket", {list: list}).then((res) => {
-        if (res.status !== "2000") {
-          message.error(res.message);
-          this.indicator = false;
-          return false;
-        }
-
-        if (res.data !== undefined && res.data.length === 0) {
-          message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
-          this.indicator = false;
-          return false;
-        }
-
-        let data = res.data;
-        let sMessage = "";
-        if (data.success_code.length) {
-          sMessage = "연동성공 상품 : " + data.success_code;
-        }
-        if (data.failed_code.length) {
-          sMessage += "\n연동실패 상품 : " + data.failed_code;
-        }
-        message.success(sMessage);
-        this.indicator = false;
-        this.getList();
-      }).catch((error) => {
-        message.error(error.message);
-        this.indicator = false;
-        return false;
-      });
     },
 
     deletePrd() {
@@ -775,18 +686,12 @@ export default defineComponent({
       }
 
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", {params: {list: list}}).then((res) => {
-        // if (res.status !== 200) {
-        //   message.warning('삭제실패');
-        //   return false;
-        // }
-
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
         }
 
         window.location.reload()
-        //this.getList();
       });
     },
 
@@ -807,10 +712,6 @@ export default defineComponent({
           message.error(res.message);
           return false;
         }
-        // if (res.status !== 200) {
-        //   message.warning('파일 다운로드에 실패하였습니다. \n일시적인 현상이오니 잠시후 재 시도하시길 바랍니다.');
-        //   return false;
-        // }
         window.open(res.data.path);
       });
     },
@@ -829,24 +730,13 @@ export default defineComponent({
     },
 
     closeResultPop(type) {
-      if (type === "multi") {
+      if (type === "reset") {
         this.setResultPopData(false);
       } else {
         this.singleSyncPop = false;
         this.singleDetail = [];
         this.checkedList = [];
       }
-    },
-
-    testmarket() {
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/category/sync", {
-        params: {
-          market_code: 'relaket',
-          cid: '019002001001000'
-        }
-      }).then((res) => {
-
-      });
     },
 
     getMarketList() {
@@ -856,36 +746,23 @@ export default defineComponent({
           return false;
         }
 
-        let returnData = res.data;
-        for (let i = 0; i < returnData.data.length; i++) {
-          returnData.data[i].key = i;
+        for (let i = 0; i < res.data.length; i++) {
+          res.data[i].key = i;
         }
 
-        this.options = returnData.data;
+        this.options = res.data;
       });
     },
 
-    testPop() {
-      this.marketSyncPop = !this.marketSyncPop;
-    },
-
-    async newSendMarket(type) {
+    async sendMarket() {
       this.indicator = true;
 
-      let productList = this.getCheckList();
-      if (type === "single") {
-        productList = this.singleDetail.item_id + "";
-      }
+      let accountList = this.singleDetail.item_sync_market.filter(item => item.checked === true);
 
-      let accountList = [
-        {'id': '10', 'market_code': 'coupang', 'username': 'user111', 'json_data': '{}'},
-        {'id': '11', 'market_code': 'coupang', 'username': 'user222', 'json_data': '{}'}
-      ];
-
-      if (productList === "," || productList.length === 0) {
-        message.warning("상품을 선택해주세요");
+      if (this.singleDetail.item_cate === null) {
+        message.warning("마켓연동에 필요한 카테고리 값이 없습니다.");
         this.indicator = false;
-        return false;
+        // return false;
       }
 
       if (accountList.length === 0 || accountList.length === undefined) {
@@ -896,7 +773,7 @@ export default defineComponent({
 
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
-          productList: productList,
+          productList: this.singleDetail.item_id + "",
           accountList: accountList
         });
 
@@ -912,14 +789,27 @@ export default defineComponent({
           return false;
         }
 
+        this.singleDetail.item_sync_market.forEach(item => {
+          if (item.checked === true) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以需要加1，并且要确保两位数格式
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+            item.status = 'sending';
+            item.ins_time = formattedDateTime;
+          }
+        });
+
+        this.singleSyncPop = false;
+        this.singleDetail = [];
+        this.checkedList = [];
+
         let returnData = res.data;
-
-        if (type === "single") {
-          this.singleSyncPop = false;
-          this.singleDetail = [];
-          this.checkedList = [];
-        }
-
         this.setResultPopData(true, [
           returnData.success,
           returnData.failedCode,
@@ -948,7 +838,7 @@ export default defineComponent({
         this.marketSyncPop = true;
       } else {
         this.marketSyncSuccess = 0;
-        this.marketSyncFailedcode = "";
+        this.marketSyncFailedCode = "";
         this.marketSyncFailed = 0;
         this.marketSyncTotal = 0;
         this.marketSyncResult = [];
@@ -967,24 +857,11 @@ export default defineComponent({
           isChecked = true;
           this.syncSelectedRowKeys.push(i)
         }
-
         this.singleDetail.item_sync_market[i].checked = isChecked;
       }
     },
 
-    getCheckedMarketList() {
-      let list = [];
-
-      for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
-        if (this.singleDetail.item_sync_market[i].checked === true) {
-          list.push(this.singleDetail.item_sync_market[i].market_account);
-        }
-      }
-
-      return list;
-    },
-
-    openMarketPopup(marketInfo,pid) {
+    openMarketPopup(marketInfo, market_prd_code) {
       if(marketInfo.status !== "success"){
         if(marketInfo.status === "unsync"){
           return;
@@ -993,29 +870,28 @@ export default defineComponent({
         return;
       }
 
-      const ssiIx = this.getMarketSsiIx(marketInfo.market_account)
-
-      if(!ssiIx) return;
-      if(!pid) return;
-
-      const request = {
-        ssi_ix: ssiIx,
-        site_id: marketInfo.market_account.split('::')[1],
-        pid: pid
+      const marketUrls = {
+        'storefarm': "https://smartstore.naver.com/",
+        'coupang': "https://www.coupang.com/vp/products/",
+        // 'sk11st': "https://www.11st.co.kr/products/",
+        // 'wemakeprice': "https://front.wemakeprice.com/deal/",
+        // 'interpark': "https://shopping.interpark.com/product/productInfo.do?prdNo=",
+        // 'tmon': "",
+        // 'esm_gmarket': "http://item.gmarket.co.kr/Item?goodscode=",
+        // 'lotteon': "https://www.lotteon.com/p/product/bundle/",
       }
 
-      const queryString = encodeURIComponent(new URLSearchParams(request).toString());
-      window.open('/product/marketPopup/'+ queryString, '_blank');
+      if (!lib.isNumeric(marketInfo.market_code)) {
+        message.warning("마켓코드가 잘못되었습니다.");
+        return false;
+      }
+      if (!lib.isNumeric(market_prd_code)) {
+        message.warning("상품코드가 잘못되었습니다.");
+        return false;
+      }
+
+      window.location.href = marketUrls[marketInfo.market_code] + market_prd_code
     },
-    getMarketSsiIx(siteId){
-      let ssiIx = '';
-      this.options.forEach((item) => {
-        if(item.value === siteId) {
-          ssiIx = item.ssi_ix
-        }
-      })
-      return ssiIx
-    }
   },
 
   beforeMount() {

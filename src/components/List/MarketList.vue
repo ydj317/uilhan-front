@@ -9,14 +9,14 @@
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'market_account'">
             <div style="text-align: left">
-              <img :src="getLogoSrc('market-logo', record.value.split('::')[0])"
+              <img :src="getLogoSrc('market-logo', record.market_code)"
                    style="width: 16px; height: 16px; margin-right: 5px;" >
-              {{ record.value.split('::')[1] }}
+              {{ record.seller_id }}
             </div>
           </template>
 
           <template v-if="column.key === 'market_name'">
-            <div  style="text-align: center;">{{record.value.split('::')[0]}}</div>
+            <div  style="text-align: center;">{{ record.market_code }}</div>
           </template>
 
         </template>
@@ -25,7 +25,7 @@
       <!--footer-->
       <template v-slot:footer>
         <div style="text-align: center">
-          <a-button type="primary" @click="testsync('multi')">연동</a-button>
+          <a-button type="primary" @click="sendMarket()">마켓연동</a-button>
           <a-button type="primary" @click="MarketListClose">닫기</a-button>
         </div>
       </template>
@@ -82,7 +82,7 @@ export default {
       try {
         return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
       } catch (error) {
-        return require(this.tempImage);
+        return require('../../assets/img/temp_image.png');
       }
     },
 
@@ -91,132 +91,116 @@ export default {
     },
 
     async sendMarket() {
-          let list = this.getCheckList();
-          if (list === undefined || list.length === 0) {
-              message.warning('선택된 상품이 없습니다.');
-              return false;
-          }
-
-          let items = list.split(',');
-          let notCatePrd = '';
-          let hasCatePrd = '';
-
-          for (let i = 0; i < items.length; i++) {
-              let id = items[i];
-              if (id === undefined || id === '' || id === null) {
-                  continue;
-              }
-
-              let item = this.relaket.data.prdlist.filter((item) => parseInt(item.item_id) === parseInt(id))[0];
-
-              if (item.item_cate === null) {
-                  notCatePrd += notCatePrd.length === 0 ? '' : ',';
-                  notCatePrd += item.item_id;
-                  continue;
-              }
-
-              hasCatePrd += hasCatePrd.length === 0 ? '' : ',';
-              hasCatePrd += item.item_id;
-          }
-
-          if (notCatePrd.length === items.length) {
-              message.warning('선택하신 모든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
-              return false;
-          }
-
-          if (notCatePrd.length > 0) {
-              message.warning(notCatePrd + ' 등 상품의 카테고리 정보가 없습니다.');
-          }
-
-          try {
-              const res = await AuthRequest.post(process.env.VUE_APP_API_URL + '/api/sendmarket', {list: list});
-
-              if (res.status !== '2000') {
-                  message.error(res.message)
-                  this.indicator = false;
-                  return false;
-              }
-
-              if (res.data !== undefined && res.data.length === 0) {
-                  message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
-                  this.indicator = false;
-                  return false;
-              }
-
-              return true;
-
-          } catch (e) {
-              message.error(e.message);
-              return false;
-          }
-      },
-
-    async testsync(type) {
-
       this.relaket.data.indicator = true;
 
-        // 릴라켓 연동
-        if (await this.sendMarket() === false) {
-            this.relaket.data.indicator = false;
-            return false;
-        }
+      let productList = this.getCheckList();
+      let accountList = this.relaket.data.options.filter(item => item.checked === true);
 
-
-      let list = '';
-      let marketList = [];
-      if (type === 'multi') {
-        marketList = this.relaket.data.marketList;
-        list = this.getCheckList();
-      } else {
-        marketList = this.getCheckedMarketList();
-        list = this.relaket.data.singleDetail.item_id + '';
+      if (productList === "," || productList.length === 0) {
+        message.warning('선택된 상품이 없습니다.');
+        this.relaket.data.indicator = false;
+        // return false;
       }
 
-      if (list === ',' || list.length === 0) {
-        message.warning('상품을 선택해주세요');
+      if (accountList.length === undefined || accountList.length === 0) {
+        message.warning("선택된 계정이 없습니다.");
         this.relaket.data.indicator = false;
         return false;
       }
 
-      let aOptions = JSON.parse(JSON.stringify(this.relaket.data.options));
+      let items = productList.split(',');
+      let notCatePrdList = '';
+      let hasCatePrdList = '';
 
-      marketList = [];
-      aOptions.map((options, i) => {
-        if (options.checked) {
-          delete aOptions[i].checked;
-          marketList.push(options.value);
+      for (let i = 0; i < items.length; i++) {
+        let id = items[i];
+        if (id === undefined || id === '' || id === null) {
+          continue;
         }
-      })
 
-      if (marketList.length === undefined) {
-        message.warning('선택된 제휴사가 없습니다.');
-        this.relaket.data.indicator = false;
-        return false;
+        let item = this.relaket.data.prdlist.filter((item) => parseInt(item.item_id) === parseInt(id))[0];
+
+        if (item.item_cate === null) {
+          notCatePrdList += notCatePrdList.length === 0 ? '' : ',';
+          notCatePrdList += item.item_id;
+          continue;
+        }
+
+        hasCatePrdList += hasCatePrdList.length === 0 ? '' : ',';
+        hasCatePrdList += item.item_id;
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + '/api/syncmarket',
-          {params: {list: list, market: marketList, options: aOptions}}).then((res) => {
-        if (res.status !== '2000') {
-          message.error(res.message)
+      if (notCatePrdList.split(',').length === items.length) {
+        message.warning('선택하신 모든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
+        this.relaket.data.indicator = false;
+        // return false;
+      }
+
+      if (notCatePrdList.length > 0) {
+        message.warning(notCatePrdList + ' 등 상품의 카테고리 정보가 없습니다.');
+        this.relaket.data.indicator = false;
+      }
+
+      try {
+        let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
+          productList: productList,
+          accountList: accountList
+        });
+
+        if (res.status !== "2000") {
+          message.error(res.message);
+          this.indicator = false;
+          return false;
         }
+
+        if (res.data !== undefined && res.data.length === 0) {
+          message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+          this.relaket.data.indicator = false;
+          return false;
+        }
+
+        const sellerIds = accountList.map(item => item.seller_id);
+        this.relaket.data.prdlist.forEach(item => {
+          let item_id = item.item_id + "";
+          if (items.includes(item_id)) {
+
+            item.item_sync_market.forEach(item2 => {
+              if (sellerIds.includes(item2.seller_id)) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以需要加1，并且要确保两位数格式
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+                item2.status = 'sending';
+                item2.ins_time = formattedDateTime;
+              }
+            })
+
+          }
+        });
 
         let returnData = res.data;
-        if (type === 'multi') {
-          this.relaket.data.setResultPopData(true, [
-            returnData.success,
-            returnData.failedCode,
-            returnData.failed,
-            returnData.total,
-            returnData.data,
-          ])
-        } else {
-          this.relaket.data.MarketListVisible = false;
-          this.relaket.data.singleDetail = [];
-        }
+        this.relaket.data.setResultPopData(true, [
+          returnData.success,
+          returnData.failedCode,
+          returnData.failed,
+          returnData.total,
+          returnData.data,
+        ])
 
         this.relaket.data.MarketListVisible = false;
         this.relaket.data.indicator = false;
-      });
+
+        return true;
+      } catch (e) {
+        message.error(e.message);
+        this.relaket.data.indicator = false;
+        return false;
+      }
 
     },
 
@@ -224,20 +208,8 @@ export default {
       let list = '';
       for (let i = 0; i < this.relaket.data.prdlist.length; i++) {
         if (this.relaket.data.prdlist[i].checked === true) {
-          let comma = i === 0 ? '' : ',';
+          let comma = list === '' ? '' : ',';
           list += comma + this.relaket.data.prdlist[i].item_id;
-        }
-      }
-
-      return list;
-    },
-
-    getCheckedMarketList() {
-      let list = [];
-
-      for (let i = 0; i < this.relaket.data.singleDetail.item_sync_market.length; i++) {
-        if (this.relaket.data.singleDetail.item_sync_market[i].checked === true) {
-          list.push(this.relaket.data.singleDetail.item_sync_market[i].market_account);
         }
       }
 
@@ -252,18 +224,10 @@ export default {
 </script>
 
 <style scoped>
-/*#container {*/
-/*  height: 800px;*/
-/*}*/
-
 .titleStyle {
   text-align: center;
   display: inline-block;
   width: 100%;
   margin-top: 10px;
-}
-
-.ant-table-thead {
-
 }
 </style>
