@@ -95,7 +95,7 @@
 import { reactive, onMounted, ref } from "vue";
 import { message } from "ant-design-vue";
 import { useMarketAccountApi } from '@/api/marketAccount';
-import { useDeliveryApi } from '@/api/delivery';
+import { useAccountJsonApi } from '@/api/accountJson';
 import {
     RedoOutlined,
     CheckCircleOutlined
@@ -175,11 +175,24 @@ const initFormData = () => {
 }
 
 const syncOutboundAddress = () => {
-    // @TODO: 카테고리 동기화
-    console.log('syncCategory');
+    useAccountJsonApi().syncOuboundAddress(state.formData).then(res => {
+        if (res.status !== "2000") {
+            message.error(res.message);
+            return false;
+        }
+
+        message.success('업데이트 요청 되었습니다. 잠시후 새로고침을 클릭해 주세요.');
+    });
 };
 const syncReturnAddress = () => {
-    // @TODO: 카테고리 동기화
+    useAccountJsonApi().syncReturnAddress(state.formData).then(res => {
+        if (res.status !== "2000") {
+            message.error(res.message);
+            return false;
+        }
+
+        message.success('업데이트 요청 되었습니다. 잠시후 새로고침을 클릭해 주세요.');
+    });
     console.log('syncReturnAddress');
 };
 const syncDelivery = () => {
@@ -189,7 +202,6 @@ const syncDelivery = () => {
 
 // 연동확인
 const handleSyncMarketCheck = () => {
-    console.log(state.formData.market_code);
     marketFormRef.value.validate().then(() => {
         useMarketAccountApi().syncMarketCheck(state.formData).then(res => {
             if (res.status !== "2000") {
@@ -203,7 +215,6 @@ const handleSyncMarketCheck = () => {
     }).catch((error) => {
         console.log('error', error);
     });
-
 };
 
 // 저장
@@ -229,26 +240,29 @@ const handleSubmit = (e) => {
     });
 };
 
-// 택배사 리스트
-const getDeliveryList = () => {
-    useDeliveryApi().getDeliveryList({}).then(res => {
-        state.deliveryList = res.data.list;
-    });
-}
 
 // 반품지 리스트
-const returnAddressList = () => {
+const getReturnAddressList = () => {
+    // useAccountJsonApi().getReturnAddress({account_id: props.accountInfo.id}).then(res => {
+    //     state.returnAddressList = res.data.list;
+    // });
     console.log('returnAddressList');
 }
 
 // 출고지 리스트
-const outboundAddressList = () => {
+const getOutboundAddressList = () => {
     console.log('outboundAddressList');
+
+    // useAccountJsonApi().getOutboundAddress({account_id: props.accountInfo.id}).then(res => {
+    //     state.outboundAddressList = res.data.list;
+    // });
 }
 
 onMounted(() => {
     initFormData()
-    getDeliveryList()
+    //getDeliveryList()
+    getOutboundAddressList()
+    getReturnAddressList()
 });
 
 const goBack = () => {

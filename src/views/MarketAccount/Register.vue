@@ -52,6 +52,9 @@ export default {
         Coupang,Storefarm
     },
     mounted() {
+        // @TODO 마켓계정 ID로 조회를 하여 로그인한 user_id와 일치하는지 확인 계정 user_id가 일치하지 않으면 접근 불가
+        // @TODO 마켓계정 ID가 없으면 마켓계정 등록 페이지로 이동
+
         this.getMarketList();
 
         const id = this.getAccountId();
@@ -78,7 +81,8 @@ export default {
         },
 
         getMarketAccount(id = '0') {
-            useMarketAccountApi().getAccountFind({ id: id }).then(res => {
+
+            useMarketAccountApi().getAccountFind(id).then(res => {
 
                 const { marketCode } = res.data
 

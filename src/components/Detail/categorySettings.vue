@@ -18,7 +18,6 @@
         </a-table-column>
       </a-table>
     </div>
-    <a-button type="primary" class="mt15" @click="handleOk">저장</a-button>
   </a-modal>
 </template>
 

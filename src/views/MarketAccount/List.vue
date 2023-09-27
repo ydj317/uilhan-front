@@ -34,7 +34,6 @@
             <a-table :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
                 :pagination="false">
                 <a-table-column title="마켓코드" dataIndex="marketCode" key="marketCode" />
-                <a-table-column title="마켓명" dataIndex="marketCode" key="marketCode" />
                 <a-table-column title="마켓ID" dataIndex="sellerId" key="sellerId" />
                 <a-table-column title="노출상태" dataIndex="isUse" key="isUse">
                     <template #customRender="scope, record, index">
@@ -54,7 +53,10 @@
                                 수정
                             </a-button>
                         </RouterLink>
-
+                        
+                        <a-button size="small" type="danger" class="ml10" @click="removeAccount(record['id'])">
+                            불러오기 정보설정
+                        </a-button>
                         <!-- <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No"
                             @confirm="removeAccount(record['id'])" class="ml10">
                             <template #title>

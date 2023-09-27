@@ -89,7 +89,7 @@
 
           <!--사진-->
           <template v-if="column.key === 'item_thumb'">
-            <a-image :src="record.item_thumb[0]" :fallback="tempImage" style="width: 50px; height: 50px;"/>
+            <a-image :src="record.item_thumb[0]" style="width: 50px; height: 50px;"/>
           </template>
 
           <!--상품코드-->

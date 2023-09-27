@@ -11,11 +11,10 @@ export function useMarketAccountApi() {
             });
         },
 
-        getAccountFind: (data) => {
+        getAccountFind: (id) => {
             return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/market/account/" + data.id,
-                method: "get",
-                params: data,
+                url: process.env.VUE_APP_API_URL + "/api/market/account/" + id,
+                method: "get"
             });
         },
 

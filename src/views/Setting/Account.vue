@@ -6,23 +6,23 @@
   />
   <a-card :loading="cardLoading" :bordered="false" title="계정정보" class="setting-page-margin">
     <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}">
-      <a-descriptions-item label="API키 설정">
+      <!-- <a-descriptions-item label="API키 설정">
         <a-input-group compact>
         <a-input v-model:value="accessKey" placeholder="AccessKey" style="width: 300px;" />
         <a-input v-show="false" class="mt5" v-model:value="secretKey" placeholder="SecretKey" style="width: 300px;" />
         <a-button @click="addKey" type="primary">등록</a-button>
         </a-input-group>
-      </a-descriptions-item>
+      </a-descriptions-item> -->
 
-      <a-descriptions-item label="서비스 유효일">
+      <!-- <a-descriptions-item label="서비스 유효일">
         {{ licenseEndTime === "" ? '서비스 종료' : licenseEndTime }}
         <router-link to="/user/licensePay" v-if="licenseEndTime === ''">
           <a-button type="primary" style="margin-left: 10px;">신청하기</a-button>
         </router-link>
-      </a-descriptions-item>
-      <a-descriptions-item label="서비스 마감일">
+      </a-descriptions-item> -->
+      <!-- <a-descriptions-item label="서비스 마감일">
         {{ licenseRemainingDays === "" ? '서비스 종료' : licenseRemainingDays }}
-      </a-descriptions-item>
+      </a-descriptions-item> -->
 
       <a-descriptions-item label="이미지 번역 남은 회수">
         <a-input :value="recharge" disabled style="width: 200px;" />
