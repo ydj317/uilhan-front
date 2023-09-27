@@ -297,21 +297,23 @@ export default {
 
         if (res.status !== "2000") {
           message.error(res.message);
-          this.indicator = false;
+          this.product.loading = false;
           return false;
         }
 
         if (res.data !== undefined && res.data.length === 0) {
           message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
-          this.indicator = false;
+          this.product.loading = false;
           return false;
         }
 
+        let returnData = res.data;
+
         this.product.item_sync_market.forEach(item => {
-          if (item.checked === true) {
+          if (returnData.successSeller.includes(item.seller_id)) {
             const now = new Date();
             const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以需要加1，并且要确保两位数格式
+            const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -327,7 +329,6 @@ export default {
         this.singleDetail = [];
         this.checkedList = [];
 
-        let returnData = res.data;
         this.setResultPopData(true, [
           returnData.success,
           returnData.failedCode,

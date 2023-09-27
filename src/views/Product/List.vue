@@ -221,7 +221,7 @@
     </a-modal>
 
     <!--제휴사 연동결과-->
-    <a-modal width="600px" v-model:visible="marketSyncPop" centered title="제휴사연동결과" @ok="">
+    <a-modal width="600px" v-model:visible="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('reset')">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">
@@ -534,12 +534,6 @@ export default defineComponent({
       return key1 === key2;
     },
 
-    buttonStyle(item_sync_status) {
-      return item_sync_status ?
-          "background-color: #3ddc97; border: none" :
-          "background-color: #f06543; border: none";
-    },
-
     getList(sType = "") {
       this.listLoading = true
       let param = this.getParam(sType);
@@ -730,8 +724,11 @@ export default defineComponent({
     },
 
     closeResultPop(type) {
+      console.log('==0==')
+      console.log(type)
       if (type === "reset") {
         this.setResultPopData(false);
+        this.getList();
       } else {
         this.singleSyncPop = false;
         this.singleDetail = [];
@@ -759,12 +756,6 @@ export default defineComponent({
 
       let accountList = this.singleDetail.item_sync_market.filter(item => item.checked === true);
 
-      if (this.singleDetail.item_cate === null) {
-        message.warning("마켓연동에 필요한 카테고리 값이 없습니다.");
-        this.indicator = false;
-        // return false;
-      }
-
       if (accountList.length === 0 || accountList.length === undefined) {
         message.warning("선택된 계정이 없습니다.");
         this.indicator = false;
@@ -788,22 +779,6 @@ export default defineComponent({
           this.indicator = false;
           return false;
         }
-
-        this.singleDetail.item_sync_market.forEach(item => {
-          if (item.checked === true) {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以需要加1，并且要确保两位数格式
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-            item.status = 'sending';
-            item.ins_time = formattedDateTime;
-          }
-        });
 
         this.singleSyncPop = false;
         this.singleDetail = [];

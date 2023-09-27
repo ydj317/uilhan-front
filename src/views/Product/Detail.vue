@@ -153,6 +153,15 @@ export default defineComponent({
 
         this.$store.state.product = Object.assign(this.product, res.data);
 
+        // 상품 전송여부 판단
+        this.product.is_sync = "F";
+        this.product.item_sync_market.forEach(item => {
+          if (item.status !== "unsync") {
+            this.product.is_sync = "T";
+            return false;
+          }
+        })
+
         this.initSku();
         this.product.onload = true;
         this.product.loading = false;

@@ -10,7 +10,7 @@
           <a-button>일괄적용</a-button>
         </a-popconfirm>
         <!--품목삭제-->
-        <a-button @click="deleteSku">품목삭제</a-button>
+        <a-button @click="deleteSku" :disabled="product.is_sync === 'T'">품목삭제</a-button>
       </div>
 
       <!--sku 상단 right 버튼-->
@@ -116,7 +116,7 @@
           <!--선택-->
           <template v-if="column.key === 'checked'">
             <div class="center">
-              <a-checkbox v-model:checked="record.checked"></a-checkbox>
+              <a-checkbox v-model:checked="record.checked" :disabled="product.is_sync === 'T'"></a-checkbox>
             </div>
           </template>
 

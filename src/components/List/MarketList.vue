@@ -99,46 +99,13 @@ export default {
       if (productList === "," || productList.length === 0) {
         message.warning('선택된 상품이 없습니다.');
         this.relaket.data.indicator = false;
-        // return false;
+        return false;
       }
 
       if (accountList.length === undefined || accountList.length === 0) {
         message.warning("선택된 계정이 없습니다.");
         this.relaket.data.indicator = false;
         return false;
-      }
-
-      let items = productList.split(',');
-      let notCatePrdList = '';
-      let hasCatePrdList = '';
-
-      for (let i = 0; i < items.length; i++) {
-        let id = items[i];
-        if (id === undefined || id === '' || id === null) {
-          continue;
-        }
-
-        let item = this.relaket.data.prdlist.filter((item) => parseInt(item.item_id) === parseInt(id))[0];
-
-        if (item.item_cate === null) {
-          notCatePrdList += notCatePrdList.length === 0 ? '' : ',';
-          notCatePrdList += item.item_id;
-          continue;
-        }
-
-        hasCatePrdList += hasCatePrdList.length === 0 ? '' : ',';
-        hasCatePrdList += item.item_id;
-      }
-
-      if (notCatePrdList.split(',').length === items.length) {
-        message.warning('선택하신 모든 상품의 마켓연동에 필요한 카테고리 값이 없습니다.');
-        this.relaket.data.indicator = false;
-        // return false;
-      }
-
-      if (notCatePrdList.length > 0) {
-        message.warning(notCatePrdList + ' 등 상품의 카테고리 정보가 없습니다.');
-        this.relaket.data.indicator = false;
       }
 
       try {
@@ -158,30 +125,6 @@ export default {
           this.relaket.data.indicator = false;
           return false;
         }
-
-        const sellerIds = accountList.map(item => item.seller_id);
-        this.relaket.data.prdlist.forEach(item => {
-          let item_id = item.item_id + "";
-          if (items.includes(item_id)) {
-
-            item.item_sync_market.forEach(item2 => {
-              if (sellerIds.includes(item2.seller_id)) {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以需要加1，并且要确保两位数格式
-                const day = String(now.getDate()).padStart(2, '0');
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-                item2.status = 'sending';
-                item2.ins_time = formattedDateTime;
-              }
-            })
-
-          }
-        });
 
         let returnData = res.data;
         this.relaket.data.setResultPopData(true, [

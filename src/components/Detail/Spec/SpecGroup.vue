@@ -8,7 +8,7 @@
         <th style="background-color: #ebeff0;">
           <div class="spec-option-group">
             <span class="spec-font">옵션그룹{{optionIndex + 1}}</span>
-            <a-input class="spec-option-input-size"  v-model:value="option.name" size="default" placeholder="옵션그룹" />
+            <a-input class="spec-option-input-size"  v-model:value="option.name" size="default" placeholder="옵션그룹" :disabled="product.is_sync === 'T'" />
             <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{ option.name.length }}</span> / 25</span>
           </div>
         </th>
@@ -18,15 +18,15 @@
         <th>
           <div class="spec-option-header">
             <div class="spec-option-left">
-              <a-checkbox class="spec-checkbox" v-model:checked="selectAll" @change="onCheckAllChange"></a-checkbox>
+              <a-checkbox class="spec-checkbox" v-model:checked="selectAll" @change="onCheckAllChange" :disabled="product.is_sync === 'T'"></a-checkbox>
               <span class="spec-font">옵션명</span>
             </div>
             <div class="spec-option-button">
-              <a-button @click="deleteOptionName" class="spec-right-button" type="primary">삭제</a-button>
-              <a-button @click="setTrim" class="spec-right-button" type="primary">빈칸</a-button>
-              <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary">특문</a-button>
-              <a-button @click="strLengthTo25" class="spec-right-button" type="primary">25자</a-button>
-              <a-button @click="setAtoZ" class="spec-right-button" type="primary">A-Z</a-button>
+              <a-button @click="deleteOptionName" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">삭제</a-button>
+              <a-button @click="setTrim" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">빈칸</a-button>
+              <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">특문</a-button>
+              <a-button @click="strLengthTo25" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">25자</a-button>
+              <a-button @click="setAtoZ" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">A-Z</a-button>
               <a-dropdown>
                 <template #overlay>
                   <a-menu>
@@ -34,11 +34,11 @@
                     <a-menu-item @click="handleMenuClick('A')">A.___</a-menu-item>
                   </a-menu>
                 </template>
-                <a-button class="spec-right-button">
+                <a-button class="spec-right-button" :disabled="product.is_sync === 'T'">
                   순번
                 </a-button>
               </a-dropdown>
-              <a-button @click="setBeforeOldOptionData" type="primary">Back</a-button>
+              <a-button @click="setBeforeOldOptionData" type="primary" :disabled="product.is_sync === 'T'">Back</a-button>
             </div>
           </div>
         </th>
@@ -50,12 +50,16 @@
         <td>
           <div class="spec-option-name">
             <label class="ant-checkbox-wrapper spec-checkbox" :class="{'ant-checkbox-wrapper-checked': selectedRows.indexOf(item.key) !== -1}">
-              <span class="ant-checkbox" :class="{'ant-checkbox-checked': selectedRows.indexOf(item.key) !== -1}"><input type="checkbox" class="ant-checkbox-input" v-model="selectedRows" :value="item.key" @change="updateSelectAll"><span class="ant-checkbox-inner"></span></span>
+              <span class="ant-checkbox" :class="{'ant-checkbox-checked': selectedRows.indexOf(item.key) !== -1}">
+                <input type="checkbox" class="ant-checkbox-input" v-model="selectedRows" :value="item.key" @change="updateSelectAll"
+                       :disabled="product.is_sync === 'T'">
+                <span class="ant-checkbox-inner"></span>
+              </span>
             </label>
-            <a-input class="input-size"  v-model:value="item.name" size="default" placeholder="옵션명" />
+            <a-input class="input-size"  v-model:value="item.name" size="default" placeholder="옵션명" :disabled="product.is_sync === 'T'" />
             <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">{{ item.name.length }}</span> / 25</span>
             <div class="spec-option-name-button">
-              <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large" class="spec-set-option-name-button"><MinusOutlined /></a-button>
+              <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large" class="spec-set-option-name-button" :disabled="product.is_sync === 'T'"><MinusOutlined /></a-button>
             </div>
           </div>
         </td>
