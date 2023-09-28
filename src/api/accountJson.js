@@ -21,7 +21,7 @@ export function useAccountJsonApi() {
             });
         },
 
-        getaAccountJson: (data) => {
+        getAccountJson: (data) => {
             return AuthRequest({
                 url: process.env.VUE_APP_API_URL + "/api/accountJson/List",
                 method: "GET",

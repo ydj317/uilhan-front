@@ -25,12 +25,6 @@
         <div v-if="state.formData.sync_market_status">
             <div style="display:flex;justify-content:space-between;align-items:center;" class="mb15">
                 <h3>마켓정보 불러오기</h3>
-                <a-button type="primary">
-                    <template #icon>
-                        <RedoOutlined />
-                    </template>
-                    새로고침
-                </a-button>
             </div>
 
             <a-form-item label="출고지/반품지">
@@ -59,11 +53,11 @@
                 </div>
 
                 <div>
-                    <a-tag class="ml15" v-if="state.sync_address_status === '0'">-</a-tag>
-                    <a-tag color="#87d068" class="ml15" v-else-if="state.sync_address_status === '1'">성공</a-tag>
+                    <a-button @click="syncOutboundAddress(state.formData.id)" class="ml15">업데이트</a-button>
+                    <a-tag class="ml15" v-if="state.sync_address_status == 0">-</a-tag>
+                    <a-tag color="#87d068" class="ml15" v-else-if="state.sync_address_status == 1">성공</a-tag>
                     <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
                     <span>{{ state.sync_address_date ?? '-' }}</span>
-                    <a-button @click="syncAddress()" class="ml15">업데이트</a-button>
                 </div>
             </div>
             </a-form-item>
@@ -152,7 +146,7 @@ const state = reactive({
     outboundAddressList: [],
 
     // 불러오기 상태
-    sync_address_status: '0',
+    sync_address_status: 0,
     sync_address_date: null,
 
 
@@ -202,7 +196,6 @@ const handleSyncMarketCheck = () => {
             state.formData.sync_market_status = true
         });
     }).catch((error) => {
-        console.log(123123);
         console.log('error', error);
     });
 
@@ -254,7 +247,7 @@ const syncOutboundAddress = ({account_id}) => {
 
 // 출고지/반품지 리스트 설정
 const getAddressList = () => {
-    useAccountJsonApi().getaAccountJson({ account_id: props.accountInfo.id, group: 'outbound_address' }).then(res => {
+    useAccountJsonApi().getAccountJson({ account_id: props.accountInfo.id, group: 'outbound_address' }).then(res => {
         
         const { marketJson,syncStatus,updDate } = res.data;
 

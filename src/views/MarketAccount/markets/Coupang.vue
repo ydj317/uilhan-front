@@ -2,7 +2,7 @@
     <a-form ref="marketFormRef" :model="state.formData" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
         class="market_form">
         <a-form-item name="seller_id" label="셀러ID" :rules="[{ required: true, message: '셀러ID를 입력해 주세요.' }]">
-            <a-input v-model:value="state.formData.seller_id" />
+            <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status" />
         </a-form-item>
 
         <a-form-item name="verdor_id" label="업체코드" :rules="[{ required: true, message: '업체코드를 입력해 주세요.' }]">
@@ -17,9 +17,9 @@
             <a-input v-model:value="state.formData.secret_key" />
         </a-form-item>
 
-        <a-button class="mt15" @click="handleSyncMarketCheck" :disabled="state.formData.sync_market_status" >
-            <template #icon v-if="state.formData.sync_market_status" >
-                <CheckCircleOutlined style="color:#67C23A;"/>
+        <a-button class="mt15" @click="handleSyncMarketCheck">
+            <template #icon v-if="state.formData.sync_market_status">
+                <CheckCircleOutlined style="color:#67C23A;" />
             </template>
             연동확인
         </a-button>
@@ -28,61 +28,41 @@
         <div v-if="state.formData.sync_market_status">
             <div style="display:flex;justify-content:space-between;align-items:center;" class="mb15">
                 <h3>마켓정보 불러오기</h3>
-                <a-button type="primary">
-                    <template #icon>
-                        <RedoOutlined />
-                    </template>
-                    새로고침
-                </a-button>
             </div>
-            <!-- <a-form-item label="택배사">
-                <a-select v-model:value="state.formData.delivery_code" placeholder="택배사를 선택해 주세요" style="width:260px;">
-                    <a-select-option :value="item.code" v-for="(item, key) in state.deliveryList" :key="key">{{ item.name
-                    }}</a-select-option>
-                </a-select>
-                <a-button @click="syncDelivery()" class="ml15">업데이트</a-button>
-                <a-tag class="ml15" style="width:38px;text-align:center">-</a-tag>
-                <span>2023-09-23</span>
-            </a-form-item> -->
 
-            <a-form-item label="출고지">
-                <a-select v-model:value="state.formData.outbound_address_code" placeholder="택배사를 선택해 주세요"
+            <a-form-item name="outbound_address_code" label="출고지" :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]">
+                <a-select v-model:value="state.formData.outbound_address_code" placeholder="출고지를 선택해 주세요"
                     style="width:260px;">
-                    <a-select-option :value="item.outbound_code" v-for="(item, key) in state.outboundAddressList"
-                        :key="key">{{ item.outbound_name }}</a-select-option>
+                    <a-select-option :value="item.outbound_address_code" v-for="(item, key) in state.outboundAddressList"
+                        :key="key">{{ item.outbound_address_name }}</a-select-option>
                 </a-select>
-                <a-button @click="syncOutboundAddress()" class="ml15">업데이트</a-button>
-                <a-tag color="#87d068" class="ml15">성공</a-tag>
-                <span>2023-09-23</span>
+                <a-button @click="syncOutboundAddress(state.formData.id)" class="ml15">업데이트</a-button>
+                <a-tag class="ml15" v-if="state.sync_outbound_address_status == 0">-</a-tag>
+                <a-tag color="#87d068" class="ml15" v-else-if="state.sync_outbound_address_status == 1">성공</a-tag>
+                <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
+                <span>{{ state.sync_outbound_address_date ?? '-' }}</span>
             </a-form-item>
 
-            <a-form-item label="반품지">
-                <a-select v-model:value="state.formData.return_address_code" placeholder="택배사를 선택해 주세요"
+            <a-form-item name="return_address_code" label="반품지" :rules="[{ required: true, message: '반품지를 선택해 주세요.' }]">
+                <a-select v-model:value="state.formData.return_address_code" placeholder="반품지를 선택해 주세요"
                     style="width:260px;">
                     <a-select-option :value="item.return_address_code" v-for="(item, key) in state.returnAddressList"
                         :key="key">{{ item.return_address_name }}</a-select-option>
                 </a-select>
-                <a-button @click="syncReturnAddress()" class="ml15">업데이트</a-button>
-                <a-tag color="#108ee9" class="ml15">성공</a-tag>
-                <span>2023-09-23</span>
+                <a-button @click="syncReturnAddress(state.formData.id)" class="ml15">업데이트</a-button>
+                <a-tag class="ml15" v-if="state.sync_return_address_status == 0">-</a-tag>
+                <a-tag color="#87d068" class="ml15" v-else-if="state.sync_return_address_status == 1">성공</a-tag>
+                <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
+                <span>{{ state.sync_return_address_date ?? '-' }}</span>
             </a-form-item>
 
 
             <h3 class="mt20">마켓정보설정</h3>
 
-            <a-form-item label="제주 추가 배송비">
-                <a-input v-model:value="state.formData.jeju_add_delivery_price" placeholder="제주 추가 배송비" style="width:160px" /> - <a-input
-                    placeholder="제주 외 도서산간 추가 배송비" style="width:200px" />
-            </a-form-item>
-            <a-form-item label="반품배송비(편도)">
-                <a-input v-model:value="state.formData.return_delivery_price" placeholder="반품배송비(편도)" style="width:160px" />
-            </a-form-item>
-            <a-form-item label="반품배송비(왕복)">
-                <a-input v-model:value="state.formData.return_delivery_price_round_trip" placeholder="반품배송비(왕복)" style="width:160px" />
-            </a-form-item>
 
-            <a-form-item label="A/S전화번호">
-                <a-input v-model:value="state.formData.as_phone_number" placeholder="A/S전화번호" style="width:140px" />
+            <a-form-item name="return_delivery_price" label="반품배송비(편도)"
+                :rules="[{ required: true, message: '반품배송비(왕복)를 입력해 주세요.' }]">
+                <a-input v-model:value="state.formData.return_delivery_price" placeholder="반품배송비(편도)" style="width:160px" />
             </a-form-item>
         </div>
         <a-button class="mt15" @click="goBack">돌아가기</a-button>
@@ -128,15 +108,11 @@ const state = reactive({
         sync_market_status: false,
 
         // 마켓정보 불러오기
-        delivery_code: null,
-        return_address_code: null,
-        outbound_address_code: null,
+        return_address_code: null,// 반품지
+        outbound_address_code: null,// 출고지
 
         // 마켓정보 설정
-        jeju_add_delivery_price: null,
-        return_delivery_price: null,
-        return_delivery_price_round_trip: null,
-        as_phone_number: null,
+        return_delivery_price: null,// 반품배송비(편도)
 
     },
 
@@ -144,8 +120,12 @@ const state = reactive({
     returnAddressList: [],
     outboundAddressList: [],
 
-    // 연동확인상태
+    // 불러오기 상태
+    sync_outbound_address_status: 0,
+    sync_outbound_address_date: null,
 
+    sync_return_address_status: 0,
+    sync_return_address_date: null,
 
 })
 
@@ -166,38 +146,37 @@ const initFormData = () => {
         state.formData.return_address_code = accountInfo.marketData.return_address_code;
         state.formData.outbound_address_code = accountInfo.marketData.outbound_address_code;
 
-        state.formData.jeju_add_delivery_price = accountInfo.marketData.jeju_add_delivery_price;
         state.formData.return_delivery_price = accountInfo.marketData.return_delivery_price;
-        state.formData.return_delivery_price_round_trip = accountInfo.marketData.return_delivery_price_round_trip;
-        state.formData.as_phone_number = accountInfo.marketData.as_phone_number;       
-        
+
     }
 }
 
-const syncOutboundAddress = () => {
-    useAccountJsonApi().syncOuboundAddress(state.formData).then(res => {
+const syncOutboundAddress = ({ account_id }) => {
+    useAccountJsonApi().syncOuboundAddress({ account_id: account_id, market_code: props.market_code }).then(res => {
         if (res.status !== "2000") {
             message.error(res.message);
             return false;
         }
 
-        message.success('업데이트 요청 되었습니다. 잠시후 새로고침을 클릭해 주세요.');
+        message.success('업데이트 완료 되었습니다. 출고지를 선택해 주세요.');
+
+        state.sync_outbound_address_status = '1';
+        state.sync_outbound_address_date = '2023-09-23 12:11:12'
     });
 };
-const syncReturnAddress = () => {
-    useAccountJsonApi().syncReturnAddress(state.formData).then(res => {
+const syncReturnAddress = ({ account_id }) => {
+    useAccountJsonApi().syncReturnAddress({ account_id: account_id, market_code: props.market_code }).then(res => {
         if (res.status !== "2000") {
             message.error(res.message);
             return false;
         }
 
-        message.success('업데이트 요청 되었습니다. 잠시후 새로고침을 클릭해 주세요.');
+        message.success('업데이트 완료 되었습니다. 반품지를 선택해 주세요.');
+
+        state.sync_return_address_status = '1';
+        state.sync_return_address_date = '2023-09-23 12:11:12'
     });
-    console.log('syncReturnAddress');
-};
-const syncDelivery = () => {
-    // @TODO: 택배사 동기화
-    console.log('syncDelivery');
+
 };
 
 // 연동확인
@@ -210,7 +189,11 @@ const handleSyncMarketCheck = () => {
             }
 
             message.success(res.message);
-            state.formData.sync_market_status = true;
+
+            // 출고지/반품지 수집실행
+            syncOutboundAddress({ account_id });
+            syncReturnAddress({ account_id });
+            state.formData.sync_market_status = true
         });
     }).catch((error) => {
         console.log('error', error);
@@ -243,24 +226,45 @@ const handleSubmit = (e) => {
 
 // 반품지 리스트
 const getReturnAddressList = () => {
-    // useAccountJsonApi().getReturnAddress({account_id: props.accountInfo.id}).then(res => {
-    //     state.returnAddressList = res.data.list;
-    // });
-    console.log('returnAddressList');
+    useAccountJsonApi().getAccountJson({ account_id: props.accountInfo.id, group: 'return_address' }).then(res => {
+
+        const { marketJson, syncStatus, updDate } = res.data;
+
+        // 업데이트상태/날짜
+        state.sync_return_address_status = syncStatus || '0';
+        state.sync_return_address_date = updDate || null;
+
+        marketJson?.forEach(item => {
+            state.returnAddressList.push({
+                return_address_code: item.code,
+                return_address_name: item.name + '-' + item.address
+            });
+        });
+    });
+
 }
 
 // 출고지 리스트
 const getOutboundAddressList = () => {
-    console.log('outboundAddressList');
+    useAccountJsonApi().getAccountJson({ account_id: props.accountInfo.id, group: 'outbound_address' }).then(res => {
+        const { marketJson, syncStatus, updDate } = res.data;
 
-    // useAccountJsonApi().getOutboundAddress({account_id: props.accountInfo.id}).then(res => {
-    //     state.outboundAddressList = res.data.list;
-    // });
+        // 업데이트상태/날짜
+        state.sync_outbound_address_status = syncStatus || '0';
+        state.sync_outbound_address_date = updDate || null;
+
+        marketJson?.forEach(item => {
+            state.outboundAddressList.push({
+                outbound_address_code: item.code,
+                outbound_address_name: item.name + '-' + item.address
+            });
+        });
+    });
 }
 
 onMounted(() => {
     initFormData()
-    //getDeliveryList()
+
     // 연동확인후
     if (state.formData.sync_market_status) {
         getOutboundAddressList()
@@ -294,4 +298,5 @@ const goBack = () => {
 
 .market_form .ant-form-item-control:nth-last-child {
     border-bottom: 1px solid #eeeeee;
-}</style>
+}
+</style>
