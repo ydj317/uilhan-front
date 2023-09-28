@@ -53,10 +53,7 @@
                                 수정
                             </a-button>
                         </RouterLink>
-                        
-                        <a-button size="small" type="danger" class="ml10" @click="removeAccount(record['id'])">
-                            불러오기 정보설정
-                        </a-button>
+
                         <!-- <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No"
                             @confirm="removeAccount(record['id'])" class="ml10">
                             <template #title>
@@ -87,6 +84,7 @@ const state = reactive({
         total: 0,
         loading: false,
         params: {
+            market_code: '',
             is_use: '',
             seller_id: '',
             page: 1,

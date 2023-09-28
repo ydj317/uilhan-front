@@ -6,7 +6,7 @@ export function useAccountJsonApi() {
         // 출고지 수집
         syncOuboundAddress: (data) => {
             return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/sync/address",
+                url: process.env.VUE_APP_API_URL + "/api/sync/outBoundAddress",
                 method: "POST",
                 data,
             });
@@ -15,7 +15,7 @@ export function useAccountJsonApi() {
         // 반품지 수집
         syncReturnAddress: (data) => {
             return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/sync/address",
+                url: process.env.VUE_APP_API_URL + "/api/sync/returnAddress",
                 method: "POST",
                 data,
             });

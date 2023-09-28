@@ -38,15 +38,11 @@ export function useMarketAccountApi() {
 
         // 연동확인
         syncMarketCheck: (data) => {
-            return new Promise((resolve, reject) => {
-                resolve({
-                    data: {
-                    },
-                    status: '2000',
-                    message: '연동확인 성공'
-                });
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/syncMarketCheck",
+                method: "POST",
+                data,
             });
-                
         },
     }
 }

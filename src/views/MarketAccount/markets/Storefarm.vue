@@ -2,16 +2,16 @@
     <a-form ref="marketFormRef" :model="state.formData" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
         class="market_form">
         <a-form-item name="seller_id" label="셀러ID" :rules="[{ required: true, message: '셀러ID를 입력해 주세요.' }]">
-            <a-input v-model:value="state.formData.seller_id" />
+            <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status"/>
         </a-form-item>
 
         <a-form-item name="client_id" label="Client Id" :rules="[{ required: true, message: 'client Id를 입력해 주세요.' }]">
-            <a-input v-model:value="state.formData.client_id" />
+            <a-input v-model:value="state.formData.client_id"  :disabled="state.formData.sync_market_status"/>
         </a-form-item>
 
         <a-form-item name="client_secret" label="Client Secret"
             :rules="[{ required: true, message: 'Client Secret를 입력해 주세요.' }]">
-            <a-input v-model:value="state.formData.client_secret" />
+            <a-input v-model:value="state.formData.client_secret"  :disabled="state.formData.sync_market_status"/>
         </a-form-item>
 
         <a-button class="mt15" @click="handleSyncMarketCheck" :disabled="state.formData.sync_market_status">
@@ -58,9 +58,10 @@
                 </div>
 
                 <div>
-                    <a-tag color="#87d068" class="ml15" v-if="state.formData.sync_address_status">성공</a-tag>
-                    <a-tag class="ml15" v-else>실패</a-tag>
-                    <span>{{ state.formData.sync_address_date }}</span>
+                    <a-tag class="ml15" v-if="state.sync_address_status === '0'">-</a-tag>
+                    <a-tag color="#87d068" class="ml15" v-else-if="state.sync_address_status === '1'">성공</a-tag>
+                    <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
+                    <span>{{ state.sync_address_date ?? '-' }}</span>
                     <a-button @click="syncAddress()" class="ml15">업데이트</a-button>
                 </div>
             </div>
@@ -146,7 +147,10 @@ const state = reactive({
     returnAddressList: [],
     outboundAddressList: [],
 
-    // 연동확인상태
+    // 불러오기 상태
+    sync_address_status: '0',
+    sync_address_date: null,
+
 
 
 })
@@ -167,10 +171,6 @@ const initFormData = () => {
         state.formData.return_address_code = accountInfo.marketData.return_address_code;
         state.formData.outbound_address_code = accountInfo.marketData.outbound_address_code;
 
-        // 업데이트상태/날짜
-        state.formData.sync_address_status = accountInfo.marketData.sync_address_status;
-        state.formData.sync_address_date = accountInfo.marketData.sync_address_date;
-
         state.formData.jeju_add_delivery_price = accountInfo.marketData.jeju_add_delivery_price;
         state.formData.jeju_add_delivery_price_round_trip = accountInfo.marketData.jeju_add_delivery_price_round_trip;
         state.formData.return_delivery_price = accountInfo.marketData.return_delivery_price;
@@ -188,23 +188,24 @@ const syncReturnAddress = () => {
     // @TODO: 카테고리 동기화
     console.log('syncReturnAddress');
 };
-const syncDelivery = () => {
-    // @TODO: 택배사 동기화
-    console.log('syncDelivery');
-};
+
 
 // 연동확인
 const handleSyncMarketCheck = () => {
-    console.log(state.formData.market_code);
+
     marketFormRef.value.validate().then(() => {
         useMarketAccountApi().syncMarketCheck(state.formData).then(res => {
             if (res.status !== "2000") {
                 message.error(res.message);
                 return false;
             }
-
+            const {account_id} = res.data;
             message.success(res.message);
-            state.formData.sync_market_status = true;
+            setTimeout(() => {
+                router.push("/market/accounts/register/" + account_id);
+            }, 500);
+
+            //state.formData.sync_market_status = true;
         });
     }).catch((error) => {
         console.log('error', error);
@@ -238,7 +239,13 @@ const handleSubmit = (e) => {
 // 출고지/반품지 리스트 설정
 const getAddressList = () => {
     useAccountJsonApi().getaAccountJson({ account_id: props.accountInfo.id, group: 'outbound_address' }).then(res => {
-        const { marketJson } = res.data;
+        
+        const { marketJson,syncStatus,updDate } = res.data;
+
+        // 업데이트상태/날짜
+        state.sync_address_status = syncStatus || '0';
+        state.sync_address_date = updDate || null;
+        
         marketJson?.addressBooks.forEach(item => {
 
             // item.name 에 반품지 글자가 들어가면 반품지로 설정
@@ -262,11 +269,16 @@ const getAddressList = () => {
 
 onMounted(() => {
     initFormData()
-    getAddressList()
+
+    // 연동확인후
+    if (state.formData.sync_market_status) {
+        getAddressList()    
+    }
+    
 });
 
 const goBack = () => {
-    router.go(-1);
+    router.push({ name: 'market_accounts_list' });
 };
 </script>
 <style>

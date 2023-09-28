@@ -261,8 +261,11 @@ const getOutboundAddressList = () => {
 onMounted(() => {
     initFormData()
     //getDeliveryList()
-    getOutboundAddressList()
-    getReturnAddressList()
+    // 연동확인후
+    if (state.formData.sync_market_status) {
+        getOutboundAddressList()
+        getReturnAddressList()
+    }
 });
 
 const goBack = () => {
