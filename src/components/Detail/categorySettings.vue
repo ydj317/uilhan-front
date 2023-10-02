@@ -72,7 +72,7 @@ const onAutoCompSelect = (value,name) => {
 };
 
 const getMarketAccount = () => {
-  useMarketAccountApi().getAccountList({ page: 1, pageSize: '50000' }).then(res => {
+  useMarketAccountApi().getAccountList({ page: 1, pageSize: '50000',is_use: 1}).then(res => {
     marketAccounts.value = res.data.list
   })
 };

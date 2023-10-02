@@ -16,8 +16,7 @@
     <!--기본 정보-->
     <BasicInfo></BasicInfo>
 
-    <!--Relaket-->
-    <Relaket></Relaket>
+    <MarketData> </MarketData>
 
     <!--이미지 편집기 세트-->
     <XiangJi></XiangJi>
@@ -78,10 +77,11 @@ import { message } from "ant-design-vue";
 
 import Sku from "@/components/Detail/Sku";
 import NewSpec from "@/components/Detail/Spec/NewSpec";
-import Relaket from "@/components/Detail/Relaket";
+
+import MarketData from "@/components/Detail/MarketData";
 // const Sku = defineComponent(() => import('@/components/Detail/Sku'))
 // const NewSpec = defineComponent(() => import('@/components/Detail/Spec/NewSpec'))
-//const Relaket = defineComponent(() => import('@/components/Detail/Relaket'))
+
 const BasicInfo = defineAsyncComponent(() => import('@/components/Detail/basicInfo'))
 const Navigation = defineAsyncComponent(() => import('@/components/Detail/nanigation'))
 const CustomsInfo = defineAsyncComponent(() => import('@/components/Detail/customsInfo'))
@@ -101,7 +101,7 @@ export default defineComponent({
     Sku,
     NewSpec,
     // Spec,
-    Relaket,
+    MarketData,
     Loading,
     BasicInfo,
     Navigation,

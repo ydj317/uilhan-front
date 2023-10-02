@@ -79,17 +79,6 @@ export const menus = [{
             },
         },
         {
-            path: "/market/seller/list",
-            name: "market_seller_list",
-            component: () => import("@/views/MarketSeller/List"),
-            meta: {
-                title: "마켓연동",
-                isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: PayCircleOutlined
-            },
-        },
-        {
             path: "/board",
             name: "board",
             redirect: "/board/list",
@@ -374,17 +363,6 @@ export const menus = [{
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: CloseCircleOutlined,
-            },
-        },
-        {
-            path: "/category",
-            name: "prd_market_sync_category",
-            component: () => import("@/components/List/SyncCategory.vue"),
-            meta: {
-                title: "카테고리 수집",
-                isHide: true,
-                roles: ["ROLE_ADMIN"],
-                icon: ''
             },
         },
         {

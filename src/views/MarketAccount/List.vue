@@ -37,8 +37,10 @@
                 <a-table-column title="마켓ID" dataIndex="sellerId" key="sellerId" />
                 <a-table-column title="노출상태" dataIndex="isUse" key="isUse">
                     <template #customRender="scope, record, index">
-                        <a-tag color="green" v-if="scope.record.isUse === 1">노출</a-tag>
-                        <a-tag color="red" v-else>미노출</a-tag>
+                        <a-switch v-model:checked="scope.record.isUse" @change="changeIsUse(scope.record)" 
+                        :checkedValue="1" :unCheckedValue="0"
+                        checked-children="On" un-checked-children="Off"
+                        />
                     </template>
                 </a-table-column>
                 <a-table-column title="등록일자" dataIndex="insDate" key="insDate">
@@ -77,6 +79,7 @@
 import { onMounted, reactive } from 'vue';
 import { useMarketAccountApi } from '@/api/marketAccount';
 import { useMarketApi } from '@/api/market';
+import { message } from 'ant-design-vue';
 
 const state = reactive({
     tableData: {
@@ -104,13 +107,24 @@ const getMarketList = () => {
 const getTableList = () => {
     useMarketAccountApi().getAccountList(state.tableData.params).then(res => {
         const { list, total } = res.data
-
+        console.log(list);
         state.tableData.data = list;
         state.tableData.total = total;
 
     });
 };
 
+const changeIsUse = (record) => {
+    console.log(record);
+    const params = {
+        account_id: record.id,
+        is_use: record.isUse ? 1 : 0,
+    };
+
+    useMarketAccountApi().updateAccountStatus(params).then(res => {
+        message.success('노출상태가 변경되었습니다.');
+    });
+};
 const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);

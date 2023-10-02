@@ -60,13 +60,13 @@
 </template>
 
 <script>
-import {mandatoryList} from 'config/Relaket/mandatory'
+
 import {ref, reactive, computed, onBeforeUnmount} from 'vue';
 import {mapState, useStore} from 'vuex';
 import CategorySettings from "@/components/Detail/categorySettings.vue";
-
+import { useMandatoryApi} from "@/api/mandatory";
 export default {
-  components: {CategorySettings, mandatoryList},
+  components: {CategorySettings},
 
   computed: {
     ...mapState([
@@ -82,7 +82,7 @@ export default {
       co_pid: '',
       options: [],
       surtax: 'Y',
-      mandatory: mandatoryList(),
+      mandatory: [],
       mandatory_val: '선택',
       keyword: null,
       item_is_free_delivery: false,
@@ -95,6 +95,11 @@ export default {
       settingCategoryVisible.value = visible;
     }
 
+    const getMandatory = () => {
+      useMandatoryApi().getList().then((res) => {
+        formState.mandatory = res;
+      })
+    }
     const openCategorySettingsDialog = () => {
       settingCategoryVisible.value = true;
     }
@@ -103,13 +108,16 @@ export default {
       formState,
       openCategorySettingsDialog,
       settingCategoryVisible,
-      isShow
+      isShow,
+      getMandatory
     }
   },
 
   mounted() {
     console.log('==0==')
     console.log(this.product)
+
+    this.getMandatory();
     // this.formState.mandatory_val = this.product;
     this.formState.item_shipping_fee = this.product.item_shipping_fee;
     this.formState.item_is_free_delivery = this.product.item_is_free_delivery;
