@@ -5,8 +5,8 @@
             <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status" />
         </a-form-item>
 
-        <a-form-item name="verdor_id" label="업체코드" :rules="[{ required: true, message: '업체코드를 입력해 주세요.' }]">
-            <a-input v-model:value="state.formData.verdor_id" />
+        <a-form-item name="vendor_id" label="업체코드" :rules="[{ required: true, message: '업체코드를 입력해 주세요.' }]">
+            <a-input v-model:value="state.formData.vendor_id" />
         </a-form-item>
 
         <a-form-item name="access_key" label="accessKey" :rules="[{ required: true, message: 'AccessKey를 입력해 주세요.' }]">
@@ -17,7 +17,7 @@
             <a-input v-model:value="state.formData.secret_key" />
         </a-form-item>
 
-        <a-button class="mt15" @click="handleSyncMarketCheck">
+        <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
             <template #icon v-if="state.formData.sync_market_status">
                 <CheckCircleOutlined style="color:#67C23A;" />
             </template>
@@ -30,26 +30,29 @@
                 <h3>마켓정보 불러오기</h3>
             </div>
 
-            <a-form-item name="outbound_address_code" label="출고지" :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]">
-                <a-select v-model:value="state.formData.outbound_address_code" placeholder="출고지를 선택해 주세요"
+            <a-form-item name="outboundShippingPlaceCode" label="출고지"
+                :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]">
+                <a-select v-model:value="state.formData.outboundShippingPlaceCode" placeholder="출고지를 선택해 주세요"
                     style="width:260px;">
                     <a-select-option :value="item.outbound_address_code" v-for="(item, key) in state.outboundAddressList"
                         :key="key">{{ item.outbound_address_name }}</a-select-option>
                 </a-select>
-                <a-button @click="syncOutboundAddress(state.formData.id)" class="ml15">업데이트</a-button>
+                <a-button @click="syncOutboundAddress(state.formData.id)" class="ml15"
+                    :loading="state.syncOutboundAddressLoading">업데이트</a-button>
                 <a-tag class="ml15" v-if="state.sync_outbound_address_status == 0">-</a-tag>
                 <a-tag color="#87d068" class="ml15" v-else-if="state.sync_outbound_address_status == 1">성공</a-tag>
                 <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
                 <span>{{ state.sync_outbound_address_date ?? '-' }}</span>
             </a-form-item>
 
-            <a-form-item name="return_address_code" label="반품지" :rules="[{ required: true, message: '반품지를 선택해 주세요.' }]">
-                <a-select v-model:value="state.formData.return_address_code" placeholder="반품지를 선택해 주세요"
-                    style="width:260px;">
+            <a-form-item name="returnCenterCode" label="반품지" :rules="[{ required: true, message: '반품지를 선택해 주세요.' }]">
+                <a-select v-model:value="state.formData.returnCenterCode" placeholder="반품지를 선택해 주세요" style="width:260px;"
+                    @change="setReturnCenterData">
                     <a-select-option :value="item.return_address_code" v-for="(item, key) in state.returnAddressList"
                         :key="key">{{ item.return_address_name }}</a-select-option>
                 </a-select>
-                <a-button @click="syncReturnAddress(state.formData.id)" class="ml15">업데이트</a-button>
+                <a-button @click="syncReturnAddress(state.formData.id)" class="ml15"
+                    :loading="state.syncReturnAddressLoading">업데이트</a-button>
                 <a-tag class="ml15" v-if="state.sync_return_address_status == 0">-</a-tag>
                 <a-tag color="#87d068" class="ml15" v-else-if="state.sync_return_address_status == 1">성공</a-tag>
                 <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
@@ -102,21 +105,24 @@ const state = reactive({
         id: '',
         market_code: props.market_code,
         seller_id: '',
-        verdor_id: '',
+        vendor_id: '',
         access_key: '',
         secret_key: '',
         sync_market_status: false,
 
         // 마켓정보 불러오기
-        return_address_code: null,// 반품지
-        outbound_address_code: null,// 출고지
+        returnCenterCode: null,// 반품지
+        outboundShippingPlaceCode: null,// 출고지
 
         // 마켓정보 설정
         return_delivery_price: null,// 반품배송비(편도)
 
     },
 
-    deliveryList: [],
+    syncCheckLoading: false,
+    syncOutboundAddressLoading: false,
+    syncReturnAddressLoading: false,
+
     returnAddressList: [],
     outboundAddressList: [],
 
@@ -137,62 +143,117 @@ const initFormData = () => {
         state.formData.id = accountInfo.id;
         state.formData.market_code = accountInfo.marketCode;
         state.formData.seller_id = accountInfo.marketData.seller_id;
-        state.formData.verdor_id = accountInfo.marketData.verdor_id;
+        state.formData.vendor_id = accountInfo.marketData.vendor_id;
         state.formData.access_key = accountInfo.marketData.access_key;
         state.formData.secret_key = accountInfo.marketData.secret_key;
         state.formData.sync_market_status = accountInfo.marketData.sync_market_status;
 
-        state.formData.delivery_code = accountInfo.marketData.delivery_code;
-        state.formData.return_address_code = accountInfo.marketData.return_address_code;
-        state.formData.outbound_address_code = accountInfo.marketData.outbound_address_code;
+        state.formData.outboundShippingPlaceCode = accountInfo.marketData.outboundShippingPlaceCode;
+        state.formData.returnCenterCode = accountInfo.marketData.returnCenterCode;
+        state.formData.returnZipCode = accountInfo.marketData.returnZipCode;
+        state.formData.returnAddress = accountInfo.marketData.returnAddress;
+        state.formData.returnAddressDetail = accountInfo.marketData.returnAddressDetail;
+        state.formData.companyContactNumber = accountInfo.marketData.companyContactNumber;
+        state.formData.shippingPlaceName = accountInfo.marketData.shippingPlaceName;
 
         state.formData.return_delivery_price = accountInfo.marketData.return_delivery_price;
 
     }
 }
 
-const syncOutboundAddress = ({ account_id }) => {
-    useAccountJsonApi().syncOuboundAddress({ account_id: account_id, market_code: props.market_code }).then(res => {
+const syncOutboundAddress = (account_id) => {
+    state.syncOutboundAddressLoading = true;
+    useAccountJsonApi().syncOutboundAddress({ account_id: account_id, market_code: props.market_code }).then(res => {
         if (res.status !== "2000") {
             message.error(res.message);
+            state.syncOutboundAddressLoading = false;
             return false;
         }
 
         message.success('업데이트 완료 되었습니다. 출고지를 선택해 주세요.');
 
-        state.sync_outbound_address_status = '1';
-        state.sync_outbound_address_date = '2023-09-23 12:11:12'
+        const { marketJson, syncStatus, updDate } = res.data;
+
+        // 업데이트상태/날짜
+        state.sync_outbound_address_status = syncStatus || '0';
+        state.sync_outbound_address_date = updDate || null;
+        state.outboundAddressList = [];
+        marketJson?.forEach(item => {
+            if (item.usable === true && item.placeAddresses[0].countryCode === 'CN') {
+                state.outboundAddressList.push({
+                    outbound_address_code: item.outboundShippingPlaceCode,
+                    outbound_address_name: item.shippingPlaceName
+                });
+            }
+        });
+
+        state.syncOutboundAddressLoading = false;
     });
 };
-const syncReturnAddress = ({ account_id }) => {
+const syncReturnAddress = (account_id) => {
+    state.syncReturnAddressLoading = true;
     useAccountJsonApi().syncReturnAddress({ account_id: account_id, market_code: props.market_code }).then(res => {
         if (res.status !== "2000") {
             message.error(res.message);
+            state.syncReturnAddressLoading = false;
             return false;
         }
 
         message.success('업데이트 완료 되었습니다. 반품지를 선택해 주세요.');
+        const { marketJson, syncStatus, updDate } = res.data;
 
-        state.sync_return_address_status = '1';
-        state.sync_return_address_date = '2023-09-23 12:11:12'
+        // 업데이트상태/날짜
+        state.sync_return_address_status = syncStatus || '0';
+        state.sync_return_address_date = updDate || null;
+        state.returnAddressList = [];
+        marketJson?.forEach(item => {
+            state.returnAddressList.push({
+                return_address_code: item.returnCenterCode,
+                return_address_name: item.shippingPlaceName + '-' + item.placeAddresses[0].returnAddress,
+                shippingPlaceName: item.shippingPlaceName,
+                companyContactNumber: item.placeAddresses[0].companyContactNumber,
+                returnZipCode: item.placeAddresses[0].returnZipCode,
+                returnAddress: item.placeAddresses[0].returnAddress,
+                returnAddressDetail: item.placeAddresses[0].returnAddressDetail,
+
+            });
+        });
+
+        state.syncReturnAddressLoading = false;
     });
 
 };
 
+const setReturnCenterData = (value) => {
+    const returnCenterCode = value;
+    const returnAddress = state.returnAddressList.find(item => item.return_address_code === returnCenterCode);
+
+    state.formData.returnCenterCode = returnCenterCode;
+    state.formData.returnZipCode = returnAddress.returnZipCode;
+    state.formData.returnAddress = returnAddress.returnAddress;
+    state.formData.returnAddressDetail = returnAddress.returnAddressDetail;
+    state.formData.companyContactNumber = returnAddress.companyContactNumber;
+    state.formData.shippingPlaceName = returnAddress.shippingPlaceName;
+}
 // 연동확인
 const handleSyncMarketCheck = () => {
+    state.syncCheckLoading = true;
     marketFormRef.value.validate().then(() => {
         useMarketAccountApi().syncMarketCheck(state.formData).then(res => {
             if (res.status !== "2000") {
                 message.error(res.message);
+                state.syncCheckLoading = false;
                 return false;
             }
 
+            const { account_id } = res.data;
             message.success(res.message);
 
             // 출고지/반품지 수집실행
-            syncOutboundAddress({ account_id });
-            syncReturnAddress({ account_id });
+            syncOutboundAddress(account_id);
+            syncReturnAddress(account_id);
+
+            state.syncCheckLoading = false;
             state.formData.sync_market_status = true
         });
     }).catch((error) => {
@@ -202,7 +263,9 @@ const handleSyncMarketCheck = () => {
 
 // 저장
 const handleSubmit = (e) => {
+
     // validation form
+    state.formData.vendor_user_id = state.formData.seller_id
     marketFormRef.value.validate().then(() => {
         useMarketAccountApi().registerOrModifyAccount(state.formData).then(res => {
             if (res.status !== "2000") {
@@ -216,8 +279,6 @@ const handleSubmit = (e) => {
             }, 500);
 
         });
-
-
     }).catch((error) => {
         console.log('error', error);
     });
@@ -236,8 +297,13 @@ const getReturnAddressList = () => {
 
         marketJson?.forEach(item => {
             state.returnAddressList.push({
-                return_address_code: item.code,
-                return_address_name: item.name + '-' + item.address
+                return_address_code: item.returnCenterCode,
+                return_address_name: item.shippingPlaceName + '-' + item.placeAddresses[0].returnAddress,
+                shippingPlaceName: item.shippingPlaceName,
+                companyContactNumber: item.placeAddresses[0].companyContactNumber,
+                returnZipCode: item.placeAddresses[0].returnZipCode,
+                returnAddress: item.placeAddresses[0].returnAddress,
+                returnAddressDetail: item.placeAddresses[0].returnAddressDetail,
             });
         });
     });
@@ -254,10 +320,12 @@ const getOutboundAddressList = () => {
         state.sync_outbound_address_date = updDate || null;
 
         marketJson?.forEach(item => {
-            state.outboundAddressList.push({
-                outbound_address_code: item.code,
-                outbound_address_name: item.name + '-' + item.address
-            });
+            if (item.usable === true && item.placeAddresses[0].countryCode === 'CN') {
+                state.outboundAddressList.push({
+                    outbound_address_code: item.outboundShippingPlaceCode,
+                    outbound_address_name: item.shippingPlaceName
+                });
+            }
         });
     });
 }
@@ -273,7 +341,7 @@ onMounted(() => {
 });
 
 const goBack = () => {
-    router.go(-1);
+    router.push({ name: 'market_accounts_list' });
 };
 </script>
 <style>
