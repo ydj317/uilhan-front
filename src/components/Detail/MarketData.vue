@@ -3,7 +3,7 @@
     <!--title-->
     <div>
       <div class="detail-basic">
-        <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}" >
+        <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1 }">
 
           <a-descriptions-item label="카테고리 설정">
             <div style="position: relative;">
@@ -11,31 +11,33 @@
                 <a-button size="small" type="primary" @click="openCategorySettingsDialog">설정</a-button>
               </div>
               <div style="display: flex;flex-direction: column;gap: 15px">
-                <div v-for="(item,key) in product.item_cate" :key="key">
-                  {{key}} : {{item.categoryNames}}
+                <div v-for="(item, key) in product.item_cate" :key="key">
+                  {{ key }} : {{ item.categoryNames }}
                 </div>
-                <div v-if="!product.item_cate || product.item_cate.lenght < 1 ">
+                <div v-if="!product.item_cate || product.item_cate.lenght < 1">
                   <span style="color: #999999;">카테고리를 설정해 주세요.</span>
                 </div>
               </div>
             </div>
-            <category-settings :isShow="settingCategoryVisible" @cancelDialog="isShow"/>
+            <category-settings :isShow="settingCategoryVisible" @cancelDialog="isShow" />
           </a-descriptions-item>
 
           <a-descriptions-item label="상품고시">
-              <a-form-item>
-                <a-select v-model:value="formState.mandatory_val" :options="formState.mandatory" placeholder="상품고시 선택해주세요.">
-                </a-select>
-              </a-form-item>
+            <a-form-item>
+              <a-select v-model:value="formState.mandatory_val" placeholder="상품고시 선택해주세요.">
+                <a-select-option v-for="(item, key) in formState.mandatory" :key="key" :value="item.value">{{ item.label
+                }}</a-select-option>
+              </a-select>
+            </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="통관유형">
-              <a-form-item>
-                <a-select v-model:value="formState.surtax" placeholder="통관유형 선택해주세요.">
-                  <a-select-option value="Y">면세</a-select-option>
-                  <a-select-option value="N">과세</a-select-option>
-                </a-select>
-              </a-form-item>
+            <a-form-item>
+              <a-select v-model:value="formState.surtax" placeholder="통관유형 선택해주세요.">
+                <a-select-option value="Y">면세</a-select-option>
+                <a-select-option value="N">과세</a-select-option>
+              </a-select>
+            </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="배송비">
@@ -43,13 +45,13 @@
               <p>
                 <a-checkbox v-model:checked="formState.item_is_free_delivery">무료 배송</a-checkbox>
               </p>
-              <a-input v-model:value="formState.item_shipping_fee" placeholder="배송비 입력"/>
+              <a-input v-model:value="formState.item_shipping_fee" placeholder="배송비 입력" />
             </a-form-item>
           </a-descriptions-item>
 
           <a-descriptions-item label="키워드">
             <a-form-item>
-              <a-input v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요"/>
+              <a-input v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요" />
             </a-form-item>
           </a-descriptions-item>
         </a-descriptions>
@@ -61,12 +63,12 @@
 
 <script>
 
-import {ref, reactive, computed, onBeforeUnmount} from 'vue';
-import {mapState, useStore} from 'vuex';
+import { ref, reactive, computed, onBeforeUnmount } from 'vue';
+import { mapState, useStore } from 'vuex';
 import CategorySettings from "@/components/Detail/categorySettings.vue";
-import { useMandatoryApi} from "@/api/mandatory";
+import { useMandatoryApi } from "@/api/mandatory";
 export default {
-  components: {CategorySettings},
+  components: { CategorySettings },
 
   computed: {
     ...mapState([
@@ -120,9 +122,9 @@ export default {
     this.getMandatory();
     // this.formState.mandatory_val = this.product;
     this.formState.item_shipping_fee = this.product.item_shipping_fee;
-    this.formState.item_is_free_delivery = this.product.item_is_free_delivery;
+    this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T' ? true : false;
 
-    this.formState.mandatory_val = this.product.item_mandatory;
+    this.formState.mandatory_val = this.product.item_mandatory ? this.product.item_mandatory : '선택';
 
     if (this.product.item_sync_keyword === 'null') {
       this.product.item_sync_keyword = '';

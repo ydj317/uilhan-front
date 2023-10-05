@@ -4,7 +4,7 @@ import {AuthRequest} from "@/util/request";
 export function useAccountJsonApi() {
     return {
         // 출고지 수집
-        syncOuboundAddress: (data) => {
+        syncOutboundAddress: (data) => {
             return AuthRequest({
                 url: process.env.VUE_APP_API_URL + "/api/sync/outBoundAddress",
                 method: "POST",

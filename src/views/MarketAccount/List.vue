@@ -37,10 +37,8 @@
                 <a-table-column title="마켓ID" dataIndex="sellerId" key="sellerId" />
                 <a-table-column title="노출상태" dataIndex="isUse" key="isUse">
                     <template #customRender="scope, record, index">
-                        <a-switch v-model:checked="scope.record.isUse" @change="changeIsUse(scope.record)" 
-                        :checkedValue="1" :unCheckedValue="0"
-                        checked-children="On" un-checked-children="Off"
-                        />
+                        <a-switch v-model:checked="scope.record.isUse" @change="changeIsUse(scope.record)" :checkedValue="1"
+                            :unCheckedValue="0" checked-children="On" un-checked-children="Off" />
                     </template>
                 </a-table-column>
                 <a-table-column title="등록일자" dataIndex="insDate" key="insDate">
@@ -115,7 +113,6 @@ const getTableList = () => {
 };
 
 const changeIsUse = (record) => {
-    console.log(record);
     const params = {
         account_id: record.id,
         is_use: record.isUse ? 1 : 0,
