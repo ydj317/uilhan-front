@@ -116,9 +116,6 @@ export default {
   },
 
   mounted() {
-    console.log('==0==')
-    console.log(this.product)
-
     this.getMandatory();
     // this.formState.mandatory_val = this.product;
     this.formState.item_shipping_fee = this.product.item_shipping_fee;

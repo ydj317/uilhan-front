@@ -12,39 +12,39 @@
     </a-affix>
 
     <!--제휴사 상품연동-->
-    <a-modal :maskClosable="false" v-model:visible="singleSyncPop" class="col w50">
-      <h3><strong>제휴사 상품연동</strong></h3>
+    <a-modal width="1000px" title="제휴사 상품연동" v-model:visible="singleSyncPop" centered>
       <a-table
         class="tableSyncStatus"
         :dataSource="this.product.item_sync_market"
         :columns="SYNC_COLUMNS_CONFIG"
         :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
       >
-
-        <!--table header-->
-        <template v-slot:headerCell="{ text, record, index, column }">
-          <!--전체선택-->
-          <template v-if="column.key === 'checked'">
-            <a-checkbox v-model:checked="checkAll" @click="checkAllMarket(checkAll)"></a-checkbox>
-          </template>
-        </template>
-
         <!--table body-->
         <template v-slot:bodyCell="{ text, record, index, column }">
 
           <!--연동계정-->
           <template v-if="column.key === 'market_account'">
-            <img :src="getLogoSrc('market-logo', record.market_code)" style="width: 16px; height: 16px; margin-right: 5px;">
-            {{ record.seller_id }}
+            <div style="text-align: left">
+              <img :src="getLogoSrc('market-logo', record.market_code)"
+                   style="width: 16px; height: 16px; margin-right: 5px;">
+              {{ record.seller_id }}
+            </div>
           </template>
 
           <!--상태-->
           <template v-if="column.key === 'status'">
-            <a-tag color="success" v-if="record.status === 'success'">연동성공</a-tag>
-            <a-tag color="processing" v-else-if="record.status === 'sending'">전송중</a-tag>
-            <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
-            <a-tag color="default" v-else>연동대기</a-tag>
-            <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
+            <div style="text-align: left">
+              <a-tag color="processing" v-if="record.status === 'sending'">전송중</a-tag>
+              <a-tag color="processing" v-else-if="record.status === 'approval'">승인대기</a-tag>
+              <a-tag color="success" v-else-if="record.status === 'success'">연동성공</a-tag>
+              <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
+              <a-tag color="default" v-else>연동대기</a-tag>
+              <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
+              <a-tag color="#108ee9" v-if="record.status === 'approval'"
+                     style="cursor: pointer" @click="approvalCheck(record)">
+                승인상태확인
+              </a-tag>
+            </div>
           </template>
 
           <!--연동시간-->
@@ -59,8 +59,8 @@
       </a-table>
 
       <template v-slot:footer>
-        <a-button type="primary" @click="sendMarket()">선택마켓사연동</a-button>
-        <a-button type="primary" @click="closeResultPop()" class="bg-697783">닫기</a-button>
+        <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
+        <a-button @click="closeResultPop('close')">닫기</a-button>
       </template>
     </a-modal>
 
@@ -104,15 +104,20 @@ export default {
       SYNC_COLUMNS_CONFIG: [
         {
           title: "쇼핑몰",
-          key: "market_account"
+          key: "market_account",
+          width: "200px",
+          align: "center"
         },
         {
           title: "연동상태",
-          key: "status"
+          key: "status",
+          align: "center"
         },
         {
           title: "연동시간",
-          key: "ins_time"
+          key: "ins_time",
+          width: "170px",
+          align: "center"
         }
       ],
       checkAll: false,
@@ -162,9 +167,21 @@ export default {
         return false;
       }
 
+      let isFree = this.product.formState.item_is_free_delivery;
+      let shippingFee = this.product.formState.item_shipping_fee;
+      if (isFree === false && shippingFee < 100) {
+        message.warning("무료배송이 아닌경우 배송비를 입력해 주세요");
+        return false;
+      }
+
+      if (shippingFee > 0 && shippingFee % 100 !== 0) {
+        message.warning("배송비는 100 단위료 입력해 주세요");
+        return false;
+      }
+
       let mandatoryVal = this.product.formState.mandatory_val;
       if (mandatoryVal === "선택") {
-        message.warning("상품고시정보를 선택해주세요");
+        message.warning("상품고시정보를 선택해 주세요");
         return false;
       }
 
@@ -285,6 +302,53 @@ export default {
       this.marketSyncPop = false;
     },
 
+    async approvalCheck(row) {
+      this.indicator = true;
+
+      try {
+        let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/approval_check", {
+          account_id: row.id,
+          market_id: row.market_id,
+        });
+
+        if (res.status !== "2000") {
+          message.error(res.message);
+          this.indicator = false;
+          return false;
+        }
+
+        if (res.data !== undefined && res.data.length === 0) {
+          message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+          this.indicator = false;
+          return false;
+        }
+
+        if (res.data.error !== false) {
+          message.error("승인상태 조회 실패");
+          this.indicator = false;
+          return false;
+        }
+
+        for (let i = 0; i < this.product.item_sync_market.length; i++) {
+          if (this.product.item_sync_market[i].id === row.id && this.product.item_sync_market[i].market_id) {
+            this.product.item_sync_market[i].status = res.data.status;
+            this.product.item_sync_market[i].result = res.data.result;
+            this.product.item_sync_date = new Date().toLocaleString();
+            this.product.item_sync_status = res.data.status === 'success' ? true : false;
+            this.product.item_sync_result = res.data.result;
+          }
+        }
+
+        this.indicator = false;
+
+        return true;
+      } catch (e) {
+        message.error(e.message);
+        this.indicator = false;
+        return false;
+      }
+    },
+
     async sendMarket() {
       this.product.loading = true;
 
@@ -403,8 +467,31 @@ export default {
       sItemDetail = sItemDetail.replaceAll("</p>", "");
       this.product.item_detail = sItemDetail;
 
+      let sycnMarkets = []
+      try {
+        const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/get_sync_market", {
+          'prd_id': this.product.item_id
+        });
+
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+
+        sycnMarkets = res.data;
+      } catch (e) {
+        message.error("연동상태 조회실패 하였습니다.");
+        return false;
+      }
+
       this.syncSelectedRowKeys = []
       for (let i = 0; i < this.product.item_sync_market.length; i++) {
+        const foundItem = sycnMarkets.find(item => item.market_code === this.product.item_sync_market[i].market_code &&
+          item.market_account === this.product.item_sync_market[i].seller_id);
+        if (foundItem) {
+          this.product.item_sync_market[i].status = foundItem.status;
+        }
+
         this.product.item_sync_market[i].key = i;
         let isChecked = false;
         if (this.product.item_sync_market[i].status !== "unsync") {
