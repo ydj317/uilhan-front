@@ -32,10 +32,12 @@
             <div style="font-size: 22px; color: #000; padding-bottom: 10px;">총 {{ allSales.toLocaleString() }}원</div>
             <div class="content content-1" style="display: flex; justify-content: flex-start; align-items: center;">
               <div style="margin-right: 10px; font-size: 14px; color: #999">전주 보다 {{ comparedToLastWeek }}%
-                <CaretUpFilled :rotate="comparedToLastWeek >= 0 ? 0 : 180" :style="comparedToLastWeek >= 0 ? 'color:red' : 'color:green'" />
+                <CaretUpFilled :rotate="comparedToLastWeek >= 0 ? 0 : 180"
+                  :style="comparedToLastWeek >= 0 ? 'color:red' : 'color:green'" />
               </div>
               <div style="margin-right: 10px; font-size: 14px; color: #999">어제 보다 {{ comparedToYesterday }}%
-                <CaretUpFilled :rotate="comparedToYesterday >= 0 ? 0 : 180" :style="comparedToYesterday >= 0 ? 'color:red' : 'color:green'" />
+                <CaretUpFilled :rotate="comparedToYesterday >= 0 ? 0 : 180"
+                  :style="comparedToYesterday >= 0 ? 'color:red' : 'color:green'" />
               </div>
             </div>
             <div style="font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
@@ -82,8 +84,10 @@
       <a-col :span="8">
         <a-card :loading="productLoading" :bordered="false" title="연동마켓">
           <div class="row1-content sendMarketLogo">
-            <a-checkable-tag class="logo-tag" v-for="market in accountMarket" @click="onOpenMarketUrl(market.split('::')[0])">
-              <img :src="getLogoSrc('market-logo', market.split('::')[0])" alt=""> <span>{{ market.split('::')[1] }}</span>
+            <a-checkable-tag class="logo-tag" v-for="market in accountMarket"
+              @click="onOpenMarketUrl(market.split('::')[0])">
+              <img :src="getLogoSrc('market-logo', market.split('::')[0])" alt=""> <span>{{ market.split('::')[1]
+              }}</span>
             </a-checkable-tag>
           </div>
         </a-card>
@@ -124,7 +128,6 @@
     </a-row>
 
   </div>
-
 </template>
 
 <script setup>
@@ -157,7 +160,7 @@ const marketSellerUrl = {
   "tmon": 'https://ps.tmon.co.kr/',
   "lotteon": 'https://store.lotteon.com/cm/main/login_SO.wsp',
   "coupang": 'https://xauth.coupang.com/auth/realms/seller/protocol/openid-connect/auth?response_type=code&client_id=wing&redirect_uri=https%3A%2F%2Fwing.coupang.com%2Fsso%2Flogin?returnUrl%3Dhttps%253A%252F%252Fwing.coupang.com%252F&state=07f8260c-b504-4d28-ad9f-b8a1110402b4&login=true&ui_locales=ko-KR&scope=openid',
-  "storefarm": 'https://accounts.commerce.naver.com/login?url=https%3A%2F%2Fsell.smartstore.naver.com%2F%23%2Flogin-callback',
+  "smartstore": 'https://accounts.commerce.naver.com/login?url=https%3A%2F%2Fsell.smartstore.naver.com%2F%23%2Flogin-callback',
   "qoo10_sg": 'https://qsm.qoo10.sg/GMKT.INC.Gsm.Web/login.aspx?ReturnUrl=%2fgmkt.inc.gsm.web%2f',
   "wemakeprice": 'https://wpartner.wemakeprice.com/login',
   "interpark": 'https://seller.interpark.com/login/loginForm.do',
@@ -260,17 +263,17 @@ function parseHTML(html) {
 }
 
 function getBoard() {
-  const params = {params: {type: 'notice'}}
+  const params = { params: { type: 'notice' } }
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list", params).then((res) => {
-      if (res.status !== "2000") {
-        message.error(res.message);
-        return false;
-      }
-
-      boardData.value = res.data;
-
-      boardLoading.value = false
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
     }
+
+    boardData.value = res.data;
+
+    boardLoading.value = false
+  }
   );
 }
 
@@ -351,16 +354,16 @@ onMounted(() => {
   text-align: center;
 }
 
-.hello .right > div {
+.hello .right>div {
   width: 80px;
   border-left: 1px solid #eee;
 }
 
-.hello .right > div:first-child {
+.hello .right>div:first-child {
   border: none;
 }
 
-.hello .right > div div:first-child {
+.hello .right>div div:first-child {
   color: #333;
   font-weight: bold;
 }
@@ -413,7 +416,8 @@ onMounted(() => {
 }
 
 .scroll {
-  overflow-y: scroll; /* 仅显示垂直滚动条 */
+  overflow-y: scroll;
+  /* 仅显示垂直滚动条 */
   height: 390px;
   padding-right: 20px;
 }
@@ -424,22 +428,26 @@ onMounted(() => {
 
 /* 滚动条整体样式 */
 .scroll::-webkit-scrollbar {
-  width: 8px; /* 设置滚动条的宽度 */
+  width: 8px;
+  /* 设置滚动条的宽度 */
 }
 
 /* 滚动条轨道样式 */
 .scroll::-webkit-scrollbar-track {
-  background-color: #f1f1f1; /* 设置滚动条轨道的背景颜色 */
+  background-color: #f1f1f1;
+  /* 设置滚动条轨道的背景颜色 */
 }
 
 /* 滚动条滑块样式 */
 .scroll::-webkit-scrollbar-thumb {
-  background-color: #888; /* 设置滚动条滑块的背景颜色 */
-  border-radius: 4px; /* 设置滚动条滑块的圆角 */
+  background-color: #888;
+  /* 设置滚动条滑块的背景颜色 */
+  border-radius: 4px;
+  /* 设置滚动条滑块的圆角 */
 }
 
 /* 鼠标悬停在滚动条上的样式 */
 .scroll::-webkit-scrollbar-thumb:hover {
-  background-color: #555; /* 设置滚动条滑块在鼠标悬停时的背景颜色 */
-}
-</style>
+  background-color: #555;
+  /* 设置滚动条滑块在鼠标悬停时的背景颜色 */
+}</style>
