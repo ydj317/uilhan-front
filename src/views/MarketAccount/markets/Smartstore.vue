@@ -208,6 +208,7 @@ const handleSyncMarketCheck = () => {
             const { account_id } = res.data;
             message.success(res.message);
 
+            state.formData.id = account_id;
             // 출고지/반품지 수집실행
             syncOutboundAddress(account_id);
             state.formData.sync_market_status = true
