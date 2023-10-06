@@ -1,36 +1,45 @@
 <template>
-  <a-cascader v-model:value="categoryValue" :options="options" placeholder="마켓별 카테고리를 선택해 주세요." style="width: 100%"
-    :field-names="{ label: 'cateName', value: 'cateId' }" :load-data="loadData" change-on-select class="mb15"
-    @change="handleCascaderChange" />
-  <div style="display: flex;flex-direction: column;gap: 10px">
-    <template v-for="(item, key) in searchMarketCategoryList" :key="key">
-      <div>
-        <a-typography-link @click="settingCategory(item)">
-          {{ item.cate_names.join(' / ') }}
-        </a-typography-link>
-      </div>
-    </template>
+  <div v-if="categoryLoading" style="display: flex;align-items: center;">
+    <LoadingOutlined /> <span style="color: #999999;margin-left: 5px;">카테고리 로딩중입니다.</span>
+  </div>
+  <div v-else>
+    <a-cascader v-model:value="categoryValue" :options="options" placeholder="마켓별 카테고리를 선택해 주세요." style="width: 100%"
+      :field-names="{ label: 'cateName', value: 'cateId' }" :load-data="loadData" change-on-select class="mb15"
+      @change="handleCascaderChange" :disabled="status === 'sending' || status === 'success' || status === 'approval'" />
+    <div style="display: flex;flex-direction: column;gap: 10px">
+      <template v-for="(item, key) in searchMarketCategoryList" :key="key">
+        <div>
+          <a-typography-link @click="settingCategory(item)">
+            {{ item.cate_names.join(' / ') }}
+          </a-typography-link>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { handleError, onMounted, onUpdated, ref, toRefs, watch, watchEffect } from "vue";
+import { onMounted, onUpdated, ref, toRefs, watchEffect } from "vue";
 import { useCategoryApi } from "@/api/category";
 import { useStore } from 'vuex';
+import { LoadingOutlined } from '@ant-design/icons-vue';
 const store = useStore();
 const { product } = toRefs(store.state);
 
-const props = defineProps(['marketCode', 'sellerId', 'modelValue'])
-const { marketCode, sellerId, modelValue } = toRefs(props)
+const props = defineProps(['marketCode', 'sellerId', 'modelValue', 'status'])
+const { marketCode, sellerId, modelValue, status } = toRefs(props)
 
 
 const categoryValue = ref([])
 const searchMarketCategoryList = ref([])
 const options = ref([]);
+const categoryLoading = ref(false)
 
 const getMarketCategory = () => {
+  categoryLoading.value = true
   useCategoryApi().getMarketCategoryList({ market_code: marketCode.value }).then(res => {
     options.value = res.data
+    categoryLoading.value = false
   })
 }
 
@@ -81,10 +90,13 @@ watchEffect(() => {
 
   if (modelValue.value !== '') {
     setTimeout(() => {
-      useCategoryApi().getAutoRecommendCategoryNames({ market_code: marketCode.value, search_keyword: modelValue.value }).then(res => {
+      if (!(status.value === 'sending' || status.value === 'success' || status.value === 'approval')) {
+        useCategoryApi().getAutoRecommendCategoryNames({ market_code: marketCode.value, search_keyword: modelValue.value }).then(res => {
+          searchMarketCategoryList.value = res.data
+        })
+      }
 
-        searchMarketCategoryList.value = res.data
-      })
+
     }, 100);
   }
 })

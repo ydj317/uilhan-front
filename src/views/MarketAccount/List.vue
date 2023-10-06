@@ -105,7 +105,7 @@ const getMarketList = () => {
 const getTableList = () => {
     useMarketAccountApi().getAccountList(state.tableData.params).then(res => {
         const { list, total } = res.data
-        console.log(list);
+
         state.tableData.data = list;
         state.tableData.total = total;
 
