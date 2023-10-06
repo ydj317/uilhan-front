@@ -329,7 +329,7 @@ export default {
         }
 
         for (let i = 0; i < this.product.item_sync_market.length; i++) {
-          if (this.singleDetail.item_sync_market[i].market_id === market_id) {
+          if (this.product.item_sync_market[i].market_id === market_id) {
             this.product.item_sync_market[i].status = res.data.status;
             this.product.item_sync_market[i].result = res.data.result;
             this.product.item_sync_date = new Date().toLocaleString();
