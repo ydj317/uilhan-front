@@ -1,8 +1,8 @@
 <template>
-  <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
+  <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true" />
 
   <!--검색-->
-  <a-card :bordered="false" title="상품관리" :style="{marginBottom:'20px'}">
+  <a-card :bordered="false" title="상품관리" :style="{ marginBottom: '20px' }">
     <div id="header">
       <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
       <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
@@ -22,11 +22,8 @@
             <a-select v-model:value="date_type" style="width: 150px;">
               <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
             </a-select>
-            <a-range-picker
-                v-model:value="date"
-                :placeholder="['Start Time', 'End Time']"
-                format="YYYY-MM-DD"
-                @change="onChangeDatePicker" style="width: 300px;"/>
+            <a-range-picker v-model:value="date" :placeholder="['Start Time', 'End Time']" format="YYYY-MM-DD"
+              @change="onChangeDatePicker" style="width: 300px;" />
           </a-input-group>
         </div>
 
@@ -39,7 +36,7 @@
                 {{ config.label }}
               </a-select-option>
             </a-select>
-            <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;"/>
+            <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;" />
           </a-input-group>
         </div>
 
@@ -78,10 +75,10 @@
     <div id="content-content" class="pt20">
       <!--전체선택-->
       <a-table class="test-custem" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination"
-               :row-selection="{ selectedRowKeys: prdSelectedRowKeys, onChange: onPrdSelectChange }">
+        :row-selection="{ selectedRowKeys: prdSelectedRowKeys, onChange: onPrdSelectChange }">
 
         <!--table body-->
-        <template v-slot:bodyCell="{text, record, index, column}">
+        <template v-slot:bodyCell="{ text, record, index, column }">
           <!--체크박스-->
           <template v-if="column.key === 'checked'">
             <a-checkbox v-model:checked="record.checked"></a-checkbox>
@@ -89,15 +86,15 @@
 
           <!--사진-->
           <template v-if="column.key === 'item_thumb'">
-            <a-image :src="record.item_thumb[0]" style="width: 50px; height: 50px;"/>
+            <a-image :src="record.item_thumb[0]" style="width: 50px; height: 50px;" />
           </template>
 
           <!--상품코드-->
           <template v-if="column.key === 'item_code'">
             <a-button type="dashed" :href="record.item_url" :target="'_blank'">
-            <span class="get-market-icon">
+              <span class="get-market-icon">
                 <img :src="getLogoSrc('get-logo', record.item_market.toLowerCase())" alt="">
-            </span>
+              </span>
               {{ record.item_code }}
             </a-button>
           </template>
@@ -115,8 +112,9 @@
                       <template #title>
                         <span>{{ market_info.seller_id }}</span>
                       </template>
-                      <span class="item-market-icon" :class="market_info.status" @click="openMarketPopup(market_info, market_info.market_prd_code)">
-                      <img :src="getLogoSrc('market-logo', market_info.market_code)" alt="">
+                      <span class="item-market-icon" :class="market_info.status"
+                        @click="openMarketPopup(market_info, market_info.market_prd_code)">
+                        <img :src="getLogoSrc('market-logo', market_info.market_code)" alt="">
                       </span>
                     </a-tooltip>
                   </template>
@@ -140,22 +138,22 @@
 
           <!--연동상태-->
           <template v-if="column.key === 'item_status'">
-          <span v-if="record.item_sync_date">
-            <!--연동성공-->
-            <a-tooltip v-if="record.item_sync_status">
+            <span v-if="record.item_sync_date">
+              <!--연동성공-->
+              <a-tooltip v-if="record.item_sync_status">
                 <template #title>{{ record.item_sync_result }}</template>
                 <a-tag color="success">연동성공</a-tag>
-            </a-tooltip>
-            <!--연동실패-->
-            <a-tooltip v-if="record.item_sync_status == false">
+              </a-tooltip>
+              <!--연동실패-->
+              <a-tooltip v-if="record.item_sync_status == false">
                 <template #title>{{ record.item_sync_result }}</template>
                 <a-tag color="error">연동실패</a-tag>
-            </a-tooltip>
-          </span>
-          <span v-else>
-            <!--연동대기-->
-            <a-tag color="default">연동대기</a-tag>
-          </span>
+              </a-tooltip>
+            </span>
+            <span v-else>
+              <!--연동대기-->
+              <a-tag color="default">연동대기</a-tag>
+            </span>
           </template>
 
           <!--제휴사연동-->
@@ -174,19 +172,16 @@
   <div id="footer">
     <!--제휴사 상품연동-->
     <a-modal width="1000px" title="제휴사 상품연동" v-model:visible="singleSyncPop" centered>
-      <a-table
-          class="tableSyncStatus"
-          :dataSource="singleDetail.item_sync_market"
-          :columns="SYNC_COLUMNS_CONFIG"
-          :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
-      >
+      <a-table class="tableSyncStatus" :dataSource="singleDetail.item_sync_market" :columns="SYNC_COLUMNS_CONFIG"
+        :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }">
+
         <!--table body-->
         <template v-slot:bodyCell="{ text, record, index, column }">
           <!--연동계정-->
           <template v-if="column.key === 'market_account'">
             <div style="text-align: left">
               <img :src="getLogoSrc('market-logo', record.market_code)"
-                   style="width: 16px; height: 16px; margin-right: 5px;">
+                style="width: 16px; height: 16px; margin-right: 5px;">
               {{ record.seller_id }}
             </div>
           </template>
@@ -247,14 +242,14 @@
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
-import {AuthRequest} from "@/util/request";
+import { defineComponent, ref } from "vue";
+import { AuthRequest } from "@/util/request";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Cookie from "js-cookie";
 import MarketList from "@/components/List/MarketList";
-import {mapState} from "vuex";
+import { mapState } from "vuex";
 import {
   ClockCircleOutlined,
   CloseCircleOutlined,
@@ -541,7 +536,7 @@ export default defineComponent({
     getList(sType = "") {
       this.listLoading = true
       let param = this.getParam(sType);
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", {params: param}).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
         }
@@ -564,7 +559,7 @@ export default defineComponent({
           }
 
           selectedPrice = this.prdlist[i].item_sku.filter(item => item.is_option_reference_price === 'T')
-              .map(item => item.selling_price);
+            .map(item => item.selling_price);
 
           show_price = selectedPrice[0]
           if (show_price === undefined) {
@@ -576,19 +571,19 @@ export default defineComponent({
             const userData = this.prdlist[i].user;
 
             selectedPrice = this.prdlist[i].item_sku.filter(item => item.is_option_reference_price === 'T')
-                .map(item =>
-                    Number(item.shipping_fee_cn) + Number(item.original_price_cn)
-                );
+              .map(item =>
+                Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+              );
 
             show_price = selectedPrice[0]
             if (show_price === undefined) {
               show_price = Math.min(...this.prdlist[i].item_sku.map(item =>
-                  Number(item.shipping_fee_cn) + Number(item.original_price_cn)
+                Number(item.shipping_fee_cn) + Number(item.original_price_cn)
               ))
             }
 
             show_price = Math.ceil(Number(show_price * (1 + Number(userData.selling_margin_option) / 100) *
-                Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
+              Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
           }
           this.prdlist[i]["show_price"] = show_price.toLocaleString() + "원";
         }
@@ -616,8 +611,8 @@ export default defineComponent({
         }
 
         if (
-            items[i].label.indexOf("(") === -1 &&
-            items[i].label.indexOf("%") === -1
+          items[i].label.indexOf("(") === -1 &&
+          items[i].label.indexOf("%") === -1
         ) {
           labelAddInfo = " ( " + items[i].value + symble + " )";
         }
@@ -683,7 +678,7 @@ export default defineComponent({
         return false;
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", {params: {list: list}}).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", { params: { list: list } }).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
@@ -701,10 +696,10 @@ export default defineComponent({
         this.indicator = true;
         param = this.getParam();
       } else {
-        param = {list: list};
+        param = { list: list };
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/exceldown", {params: param}).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/exceldown", { params: param }).then((res) => {
         this.indicator = false;
         if (res.status !== "2000") {
           message.error(res.message);
@@ -910,8 +905,8 @@ export default defineComponent({
     },
 
     openMarketPopup(marketInfo, market_prd_code) {
-      if(marketInfo.status !== "success"){
-        if(marketInfo.status === "unsync"){
+      if (marketInfo.status !== "success") {
+        if (marketInfo.status === "unsync") {
           return;
         }
         message.warning('연동준비중이거나 연동실패된 상품입니다.연동 완료후 시도해 주세요.');
@@ -919,7 +914,7 @@ export default defineComponent({
       }
 
       const marketUrls = {
-        'storefarm': "https://smartstore.naver.com/",
+        'smartstore': "https://smartstore.naver.com/",
         'coupang': "https://www.coupang.com/vp/products/",
         // 'sk11st': "https://www.11st.co.kr/products/",
         // 'wemakeprice': "https://front.wemakeprice.com/deal/",
@@ -958,7 +953,6 @@ export default defineComponent({
 
 <!--search-->
 <style scoped>
-
 /* 모든 title */
 #header h1 {
   font-size: 15px;
@@ -974,7 +968,6 @@ export default defineComponent({
 
 <!--list-->
 <style scoped>
-
 #content-content-checkAll {
   position: absolute;
   z-index: 9;
@@ -1020,7 +1013,9 @@ export default defineComponent({
   opacity: 1;
 }
 
-.failed img, .success img, .sending img {
+.failed img,
+.success img,
+.sending img {
   cursor: pointer;
   filter: grayscale(0%);
   opacity: 1;
@@ -1030,7 +1025,6 @@ export default defineComponent({
   font-size: 12px;
   color: #999;
 }
-
 </style>
 
 <!--footer-->

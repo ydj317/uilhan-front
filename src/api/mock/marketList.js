@@ -1,6 +1,6 @@
 export const marketList = [
     {label: "쇼핑몰(오픈마켓)", value: ''},
-    {label: "스마트스토어", value: 'storefarm'},
+    {label: "스마트스토어", value: 'smartstore'},
     {label: "쿠팡", value: 'coupang'},
     {label: "11번가", value: 'sk11st'},
     {label: "위메프", value: 'wemakeprice'},
