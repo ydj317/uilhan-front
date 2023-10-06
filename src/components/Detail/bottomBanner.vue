@@ -41,7 +41,7 @@
               <a-tag color="default" v-else>연동대기</a-tag>
               <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
               <a-tag color="#108ee9" v-if="record.status === 'approval'"
-                     style="cursor: pointer" @click="approvalCheck(record)">
+                     style="cursor: pointer" @click="approvalCheck(record.market_id)">
                 승인상태확인
               </a-tag>
             </div>
@@ -302,13 +302,12 @@ export default {
       this.marketSyncPop = false;
     },
 
-    async approvalCheck(row) {
+    async approvalCheck(market_id) {
       this.indicator = true;
 
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/approval_check", {
-          account_id: row.id,
-          market_id: row.market_id,
+          market_id: market_id,
         });
 
         if (res.status !== "2000") {
@@ -330,7 +329,7 @@ export default {
         }
 
         for (let i = 0; i < this.product.item_sync_market.length; i++) {
-          if (this.product.item_sync_market[i].id === row.id && this.product.item_sync_market[i].market_id) {
+          if (this.singleDetail.item_sync_market[i].market_id === market_id) {
             this.product.item_sync_market[i].status = res.data.status;
             this.product.item_sync_market[i].result = res.data.result;
             this.product.item_sync_date = new Date().toLocaleString();

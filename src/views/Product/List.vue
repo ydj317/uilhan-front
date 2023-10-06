@@ -196,7 +196,7 @@
               <a-tag color="default" v-else>연동대기</a-tag>
               <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
               <a-tag color="#108ee9" v-if="record.status === 'approval'"
-                     style="cursor: pointer" @click="approvalCheck(record)">
+                     style="cursor: pointer" @click="approvalCheck(record.market_id)">
                 승인상태확인
               </a-tag>
             </div>
@@ -748,13 +748,12 @@ export default defineComponent({
       });
     },
 
-    async approvalCheck(row) {
+    async approvalCheck(market_id) {
       this.indicator = true;
 
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/approval_check", {
-          account_id: row.id,
-          market_id: row.market_id,
+          market_id: market_id,
         });
 
         if (res.status !== "2000") {
@@ -776,7 +775,7 @@ export default defineComponent({
         }
 
         for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
-          if (this.singleDetail.item_sync_market[i].id === row.id && this.singleDetail.item_sync_market[i].market_id) {
+          if (this.singleDetail.item_sync_market[i].market_id === market_id) {
             this.singleDetail.item_sync_market[i].status = res.data.status;
             this.singleDetail.item_sync_market[i].result = res.data.result;
             this.singleDetail.item_sync_date = new Date().toLocaleString();
@@ -914,7 +913,7 @@ export default defineComponent({
       }
 
       const marketUrls = {
-        'smartstore': "https://smartstore.naver.com/",
+        'storefarm': "https://smartstore.naver.com/",
         'coupang': "https://www.coupang.com/vp/products/",
         // 'sk11st': "https://www.11st.co.kr/products/",
         // 'wemakeprice': "https://front.wemakeprice.com/deal/",
@@ -953,6 +952,7 @@ export default defineComponent({
 
 <!--search-->
 <style scoped>
+
 /* 모든 title */
 #header h1 {
   font-size: 15px;
@@ -968,6 +968,7 @@ export default defineComponent({
 
 <!--list-->
 <style scoped>
+
 #content-content-checkAll {
   position: absolute;
   z-index: 9;
@@ -1013,9 +1014,7 @@ export default defineComponent({
   opacity: 1;
 }
 
-.failed img,
-.success img,
-.sending img {
+.failed img, .success img, .sending img {
   cursor: pointer;
   filter: grayscale(0%);
   opacity: 1;
@@ -1025,6 +1024,7 @@ export default defineComponent({
   font-size: 12px;
   color: #999;
 }
+
 </style>
 
 <!--footer-->
