@@ -194,8 +194,9 @@ const initFormData = () => {
 
 // 연동확인
 const handleSyncMarketCheck = () => {
-    state.syncCheckLoading = true;
+
     marketFormRef.value.validate().then(() => {
+        state.syncCheckLoading = true;
         useMarketAccountApi().syncMarketCheck(state.formData).then(res => {
             if (res.status !== "2000") {
                 message.error(res.message);

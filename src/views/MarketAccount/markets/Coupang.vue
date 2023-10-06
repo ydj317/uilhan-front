@@ -237,9 +237,11 @@ const setReturnCenterData = (value) => {
 }
 // 연동확인
 const handleSyncMarketCheck = () => {
-    state.syncCheckLoading = true;
-    state.formData.vendor_user_id = state.formData.seller_id
+
     marketFormRef.value.validate().then(() => {
+        state.syncCheckLoading = true;
+        state.formData.vendor_user_id = state.formData.seller_id
+
         useMarketAccountApi().syncMarketCheck(state.formData).then(res => {
             if (res.status !== "2000") {
                 message.error(res.message);
