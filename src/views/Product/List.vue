@@ -215,12 +215,12 @@
 
       <template v-slot:footer>
         <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
-        <a-button @click="closeResultPop('close')">닫기</a-button>
+        <a-button @click="closeResultPop('single')">닫기</a-button>
       </template>
     </a-modal>
 
     <!--제휴사 연동결과-->
-    <a-modal width="600px" v-model:visible="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('reset')">
+    <a-modal width="600px" v-model:visible="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('multi')">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">
@@ -233,7 +233,7 @@
       </a-list>
       <template v-slot:footer>
         <a-button type="primary" @click="searchFailed">실패상품검색</a-button>
-        <a-button type="primary" @click="closeResultPop('reset')">확인</a-button>
+        <a-button type="primary" @click="closeResultPop('multi')">확인</a-button>
       </template>
     </a-modal>
 
@@ -723,14 +723,12 @@ export default defineComponent({
     },
 
     closeResultPop(type) {
-      if (type === "reset") {
+      if (type === "multi") {
         this.setResultPopData(false);
-        this.getList();
-      } else {
-        this.singleSyncPop = false;
-        this.singleDetail = [];
-        this.checkedList = [];
       }
+      this.singleSyncPop = false;
+      this.singleDetail = [];
+      this.checkedList = [];
     },
 
     getMarketList() {
