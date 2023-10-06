@@ -189,11 +189,16 @@
           <!--상태-->
           <template v-if="column.key === 'status'">
             <div style="text-align: left">
-              <a-tag color="success" v-if="record.status === 'success'">연동성공</a-tag>
-              <a-tag color="processing" v-else-if="record.status === 'sending'">전송중</a-tag>
+              <a-tag color="processing" v-if="record.status === 'sending'">전송중</a-tag>
+              <a-tag color="processing" v-else-if="record.status === 'approval'">승인대기</a-tag>
+              <a-tag color="success" v-else-if="record.status === 'success'">연동성공</a-tag>
               <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
               <a-tag color="default" v-else>연동대기</a-tag>
               <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
+              <a-tag color="#108ee9" v-if="record.status === 'approval'"
+                     style="cursor: pointer" @click="approvalCheck(record.market_id)">
+                승인상태확인
+              </a-tag>
             </div>
           </template>
 
@@ -718,8 +723,6 @@ export default defineComponent({
     },
 
     closeResultPop(type) {
-      console.log('==0==')
-      console.log(type)
       if (type === "reset") {
         this.setResultPopData(false);
         this.getList();
@@ -743,6 +746,52 @@ export default defineComponent({
 
         this.options = res.data;
       });
+    },
+
+    async approvalCheck(market_id) {
+      this.indicator = true;
+
+      try {
+        let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/approval_check", {
+          market_id: market_id,
+        });
+
+        if (res.status !== "2000") {
+          message.error(res.message);
+          this.indicator = false;
+          return false;
+        }
+
+        if (res.data !== undefined && res.data.length === 0) {
+          message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+          this.indicator = false;
+          return false;
+        }
+
+        if (res.data.error !== false) {
+          message.error("승인상태 조회 실패");
+          this.indicator = false;
+          return false;
+        }
+
+        for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
+          if (this.singleDetail.item_sync_market[i].market_id === market_id) {
+            this.singleDetail.item_sync_market[i].status = res.data.status;
+            this.singleDetail.item_sync_market[i].result = res.data.result;
+            this.singleDetail.item_sync_date = new Date().toLocaleString();
+            this.singleDetail.item_sync_status = res.data.status === 'success' ? true : false;
+            this.singleDetail.item_sync_result = res.data.result;
+          }
+        }
+
+        this.indicator = false;
+
+        return true;
+      } catch (e) {
+        message.error(e.message);
+        this.indicator = false;
+        return false;
+      }
     },
 
     async sendMarket() {
@@ -815,11 +864,35 @@ export default defineComponent({
       }
     },
 
-    singlePop(item) {
+    async singlePop(item) {
       this.singleSyncPop = !this.singleSyncPop;
       this.singleDetail = item;
+
+      let sycnMarkets = []
+      try {
+        const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/get_sync_market", {
+          'prd_id': this.singleDetail.item_id
+        });
+
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+
+        sycnMarkets = res.data;
+      } catch (e) {
+        message.error("연동상태 조회실패 하였습니다.");
+        return false;
+      }
+
       this.syncSelectedRowKeys = []
       for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
+        const foundItem = sycnMarkets.find(item => item.market_code === this.singleDetail.item_sync_market[i].market_code &&
+          item.market_account === this.singleDetail.item_sync_market[i].seller_id);
+        if (foundItem) {
+          this.singleDetail.item_sync_market[i].status = foundItem.status;
+        }
+
         this.singleDetail.item_sync_market[i].key = i;
         let isChecked = false;
         if (this.singleDetail.item_sync_market[i].status !== "unsync") {
@@ -840,7 +913,7 @@ export default defineComponent({
       }
 
       const marketUrls = {
-        'smartstore': "https://smartstore.naver.com/",
+        'storefarm': "https://smartstore.naver.com/",
         'coupang': "https://www.coupang.com/vp/products/",
         // 'sk11st': "https://www.11st.co.kr/products/",
         // 'wemakeprice': "https://front.wemakeprice.com/deal/",
@@ -879,6 +952,7 @@ export default defineComponent({
 
 <!--search-->
 <style scoped>
+
 /* 모든 title */
 #header h1 {
   font-size: 15px;
@@ -894,6 +968,7 @@ export default defineComponent({
 
 <!--list-->
 <style scoped>
+
 #content-content-checkAll {
   position: absolute;
   z-index: 9;
@@ -939,9 +1014,7 @@ export default defineComponent({
   opacity: 1;
 }
 
-.failed img,
-.success img,
-.sending img {
+.failed img, .success img, .sending img {
   cursor: pointer;
   filter: grayscale(0%);
   opacity: 1;
@@ -951,6 +1024,7 @@ export default defineComponent({
   font-size: 12px;
   color: #999;
 }
+
 </style>
 
 <!--footer-->
