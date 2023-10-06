@@ -1,18 +1,16 @@
 <template>
     <div>
-        <a-card :title="this.getAccountId() === '' ? '마켓계정등록' : '마켓계정수정' ">
+        <a-card :title="this.getAccountId() === '' ? '마켓계정등록' : '마켓계정수정'">
             <div>
                 <a-row>
                     <a-col :span="4"
                         style="display: flex;align-items: center;justify-content: right; padding:10px;background-color: #fafafa;border: 1px solid #eeeeee;border-bottom: none;"
-                        :style="market_code ==='' ? 'border-bottom: 1px solid #eeeeee;' : ''"
-                        >
+                        :style="market_code === '' ? 'border-bottom: 1px solid #eeeeee;' : ''">
                         <span style="padding-right: 8px;">마켓 : </span>
                     </a-col>
                     <a-col :span="20" class="pl10"
-                        style="padding:10px;border: 1px solid #eeeeee;border-bottom: none;border-left: none;" 
-                        :style="market_code ==='' ? 'border-bottom: 1px solid #eeeeee;' : ''"
-                        >
+                        style="padding:10px;border: 1px solid #eeeeee;border-bottom: none;border-left: none;"
+                        :style="market_code === '' ? 'border-bottom: 1px solid #eeeeee;' : ''">
                         <a-select v-model:value="market_code" clearable @change="handleChangeSelection"
                             style="width: 300px;" :disabled="this.getAccountId() !== ''">
                             <a-select-option :value="item.value" v-for="(item, key) in marketList" :key="key">{{
@@ -21,7 +19,8 @@
                         </a-select>
                     </a-col>
                 </a-row>
-                <component :is="market_code" v-if="market_code" :accountInfo="accountInfo" :key="market_code" :market_code="market_code"></component>
+                <component :is="market_code" v-if="market_code" :accountInfo="accountInfo" :key="market_code"
+                    :market_code="market_code"></component>
 
             </div>
         </a-card>
@@ -34,7 +33,7 @@ import { useMarketAccountApi } from '@/api/marketAccount';
 import { useMarketApi } from '@/api/market';
 
 import Coupang from "./markets/Coupang.vue";
-import Storefarm from "./markets/Storefarm.vue";
+import Smartstore from "./markets/Smartstore.vue";
 
 export default {
     data() {
@@ -42,14 +41,14 @@ export default {
             market_code: '',
             accountInfo: {},
             selectionMarket: '',
-            
+
             marketList: [],
             marketItemFormRef: null,
         }
     },
 
     components: {
-        Coupang,Storefarm
+        Coupang, Smartstore
     },
     mounted() {
         // @TODO 마켓계정 ID로 조회를 하여 로그인한 user_id와 일치하는지 확인 계정 user_id가 일치하지 않으면 접근 불가
@@ -77,7 +76,7 @@ export default {
             });
         },
         handleChangeSelection(value) {
-            
+
         },
 
         getMarketAccount(id = '0') {
