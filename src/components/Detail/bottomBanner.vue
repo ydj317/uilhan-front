@@ -60,7 +60,7 @@
 
       <template v-slot:footer>
         <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
-        <a-button @click="closeResultPop('close')">닫기</a-button>
+        <a-button @click="closeResultPop()">닫기</a-button>
       </template>
     </a-modal>
 
@@ -329,7 +329,7 @@ export default {
         }
 
         for (let i = 0; i < this.product.item_sync_market.length; i++) {
-          if (this.singleDetail.item_sync_market[i].market_id === market_id) {
+          if (this.product.item_sync_market[i].market_id === market_id) {
             this.product.item_sync_market[i].status = res.data.status;
             this.product.item_sync_market[i].result = res.data.result;
             this.product.item_sync_date = new Date().toLocaleString();
