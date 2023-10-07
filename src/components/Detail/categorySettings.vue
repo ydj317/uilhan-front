@@ -9,10 +9,11 @@
     <div style="max-height: 500px;overflow-y: scroll">
       <a-table :dataSource="marketAccounts" :pagination="false">
         <a-table-column title="마켓계정" dataIndex="seller_id" key="seller_id" :width="120"></a-table-column>
+        <a-table-column title="마켓코드" dataIndex="market_code" key="market_code" :width="120"></a-table-column>
         <a-table-column title="마켓카테고리">
           <template #default="{ record }">
             <market-categorys ref="marketCategorysRef" :marketCode="record.market_code" :sellerId="record.seller_id"
-              :status="record.status" v-model="searchCategoryValue" :key="record.seller_id">
+              :marketPrdCode="record.market_prd_code" v-model="searchCategoryValue" :key="record.seller_id">
             </market-categorys>
           </template>
         </a-table-column>
@@ -24,7 +25,6 @@
 <script setup>
 import { onMounted, onUpdated, ref, toRefs } from 'vue';
 import marketCategorys from "@/components/Detail/marketCategorys.vue";
-import { useMarketAccountApi } from '@/api/marketAccount';
 import { useCategoryApi } from "@/api/category";
 import { useStore } from 'vuex';
 const store = useStore();
@@ -76,18 +76,8 @@ const onAutoCompSelect = (value, name) => {
 };
 
 const getMarketAccount = () => {
-
   marketAccounts.value = product.value.item_sync_market
-  //marketAccounts.value = product
-  // useMarketAccountApi().getAccountList({ page: 1, pageSize: '50000', is_use: 1 }).then(res => {
-  //   marketAccounts.value = res.data.list
-  // })
 };
-
-
-// watch(autoCompleteValue, () => {
-//   console.log('value', autoCompleteValue.value);
-// });
 
 const handleOk = () => {
   emit("cancelDialog", false);
@@ -99,7 +89,6 @@ const handleCancel = () => {
 // on mounted
 onMounted(() => {
   getMarketAccount();
-  console.log('mounted');
 });
 onUpdated(() => {
   console.log('updated');

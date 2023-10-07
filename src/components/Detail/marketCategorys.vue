@@ -4,9 +4,9 @@
   </div>
   <div v-else>
     <a-cascader v-model:value="categoryValue" :options="options" placeholder="마켓별 카테고리를 선택해 주세요." style="width: 100%"
-      :field-names="{ label: 'cateName', value: 'cateId' }" :load-data="loadData" change-on-select class="mb15"
-      @change="handleCascaderChange" :disabled="status === 'sending' || status === 'success' || status === 'approval'" />
-    <div style="display: flex;flex-direction: column;gap: 10px">
+      :field-names="{ label: 'cateName', value: 'cateId' }" :load-data="loadData" change-on-select
+      @change="handleCascaderChange" :disabled="marketPrdCode !== ''" />
+    <div style="display: flex;flex-direction: column;gap: 10px" class="mt15" v-if="searchMarketCategoryList.length > 0">
       <template v-for="(item, key) in searchMarketCategoryList" :key="key">
         <div>
           <a-typography-link @click="settingCategory(item)">
@@ -26,8 +26,8 @@ import { LoadingOutlined } from '@ant-design/icons-vue';
 const store = useStore();
 const { product } = toRefs(store.state);
 
-const props = defineProps(['marketCode', 'sellerId', 'modelValue', 'status'])
-const { marketCode, sellerId, modelValue, status } = toRefs(props)
+const props = defineProps(['marketCode', 'sellerId', 'modelValue', 'marketPrdCode'])
+const { marketCode, sellerId, modelValue, marketPrdCode } = toRefs(props)
 
 
 const categoryValue = ref([])
@@ -81,22 +81,25 @@ const loadData = (selectedOptions) => {
   }, 100);
 };
 
+const initMarketCategory = () => {
+  if (product.value.item_cate && product.value.item_cate[sellerId.value]) {
+    categoryValue.value = product.value.item_cate[sellerId.value].categoryNames
+  }
+}
 onMounted(async () => {
   await getMarketCategory()
+  initMarketCategory()
 })
 
 // watchEffect searchCategoryValue
 watchEffect(() => {
-
   if (modelValue.value !== '') {
     setTimeout(() => {
-      if (!(status.value === 'sending' || status.value === 'success' || status.value === 'approval')) {
+      if (marketPrdCode.value === '') {
         useCategoryApi().getAutoRecommendCategoryNames({ market_code: marketCode.value, search_keyword: modelValue.value }).then(res => {
           searchMarketCategoryList.value = res.data
         })
       }
-
-
     }, 100);
   }
 })
