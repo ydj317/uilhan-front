@@ -1,6 +1,6 @@
 <template>
   <!--검색-->
-  <a-card :bordered="false" title="Vvic 상품관리" :style="{marginBottom:'20px'}">
+  <a-card :bordered="false" title="Vvic 상품관리" :style="{ marginBottom: '20px' }">
     <div id="header">
       <!--검색기간-->
       <div>
@@ -49,13 +49,9 @@
 
         <div>
           <a-button @click="vvicSelectionInsertIntoProduct()" type="primary"
-                    :disabled="((processCount-1) !== processTotal) || selectionTableData.length < 1">선택상품등록
+            :disabled="((processCount - 1) !== processTotal) || selectionTableData.length < 1">선택상품등록
           </a-button>
-          <a-progress
-            :percent="processPercent"
-            size="small"
-            :show-info="false"
-          />
+          <a-progress :percent="processPercent" size="small" :show-info="false" />
         </div>
       </div>
 
@@ -63,13 +59,10 @@
       <div class=" pl5" style="display: flex;flex-direction: row;gap: 20px;">
 
         <div>
-          <a-date-picker v-model:value="collectDate" style="width: 120px;" placeholder="수집일 선택" format="YYYY-MM-DD" :disabled-date="disabledDate"/>
-          <a-popconfirm
-            title="상품 수집시 시간이 다소 소요될수 있습니다! 계속하시겠습니까?"
-            ok-text="예"
-            cancel-text="아니요"
-            @confirm="vvicProductCollect"
-          >
+          <a-date-picker v-model:value="collectDate" style="width: 120px;" placeholder="수집일 선택" format="YYYY-MM-DD"
+            :disabled-date="disabledDate" />
+          <a-popconfirm title="상품 수집시 시간이 다소 소요될수 있습니다! 계속하시겠습니까?" ok-text="예" cancel-text="아니요"
+            @confirm="vvicProductCollect">
             <a-button type="danger" class="mr10" :loading="collectLoading">
               <template #icon>
                 <RetweetOutlined />
@@ -86,11 +79,10 @@
     <div id="content-content" class="pt20">
 
       <!--전체선택-->
-      <a-table ref="vvicListTableDataRef" :columns="LIST_COLUMNS_CONFIG" :data-source="tableData.list"
-               :pagination="false"
-               :row-selection="rowSelection" class="mb15">
+      <a-table ref="vvicListTableDataRef" :columns="LIST_COLUMNS_CONFIG" :data-source="tableData.list" :pagination="false"
+        :row-selection="rowSelection" class="mb15">
         <!--table body-->
-        <template v-slot:bodyCell="{text, record, index, column}">
+        <template v-slot:bodyCell="{ text, record, index, column }">
           <!--사진-->
           <template v-if="column.key === 'item_thumb'">
             <a-image :src="record.itemThumbnails[0]" style="width: 50px; height: 50px;" />
@@ -141,16 +133,11 @@
 
         </template>
       </a-table>
-      <a-pagination
-        v-model:current="tableData.param.pageNum"
-        v-model:page-size="tableData.param.limit"
-        :total="tableData.total"
-        :show-total="total => `전체 상품 건수 ${total} / 한페이지 ${tableData.param.limit}`"
-        @change="pageChangeHandler"
-      />
+      <a-pagination v-model:current="tableData.param.pageNum" v-model:page-size="tableData.param.limit"
+        :total="tableData.total" :show-total="total => `전체 상품 건수 ${total} / 한페이지 ${tableData.param.limit}`"
+        @change="pageChangeHandler" />
     </div>
   </a-card>
-
 </template>
 
 <script>
@@ -160,7 +147,6 @@ import moment from "moment";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Cookie from "js-cookie";
-import MarketList from "@/components/List/MarketList";
 import { mapState } from "vuex";
 import {
   ClockCircleOutlined,
@@ -179,7 +165,6 @@ export default defineComponent({
     DollarTwoTone,
     Loading,
     Cookie,
-    MarketList,
     ClockCircleOutlined,
     CloseCircleOutlined,
     CheckCircleOutlined,
@@ -188,9 +173,7 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState([
-      "relaket"
-    ])
+
   },
 
   data() {
@@ -385,12 +368,12 @@ export default defineComponent({
 
     // 상품 수집
     async vvicProductCollect() {
-      if(this.collectDate === null){
+      if (this.collectDate === null) {
         message.error('수집일을 선택해주세요.');
         return false
       }
       this.collectLoading = true;
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/product/vvicProductCollect", {collectDate:this.collectDate}).then((res) => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/product/vvicProductCollect", { collectDate: this.collectDate }).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           this.collectLoading = false;
@@ -424,7 +407,7 @@ export default defineComponent({
 
   // watch this.processPercent
   watch: {
-    processPercent: function(val) {
+    processPercent: function (val) {
       if (val === 100) {
         setTimeout(() => {
           this.processPercent = 0;
@@ -450,7 +433,6 @@ export default defineComponent({
 
 <!--search-->
 <style scoped>
-
 /* 모든 title */
 #header h1 {
   font-size: 15px;
@@ -466,7 +448,6 @@ export default defineComponent({
 
 <!--list-->
 <style scoped>
-
 #content-content-checkAll {
   position: absolute;
   z-index: 9;
@@ -512,7 +493,9 @@ export default defineComponent({
   opacity: 1;
 }
 
-.failed img, .success img, .sending img {
+.failed img,
+.success img,
+.sending img {
   cursor: pointer;
   filter: grayscale(0%);
   opacity: 1;
@@ -522,7 +505,6 @@ export default defineComponent({
   font-size: 12px;
   color: #999;
 }
-
 </style>
 
 <!--footer-->

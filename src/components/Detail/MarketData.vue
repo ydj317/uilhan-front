@@ -13,8 +13,9 @@
               <div style="display: flex;flex-direction: column;gap: 15px">
                 <div v-for="(item, key) in product.item_cate" :key="key">
                   {{ key }} : {{ item.categoryNames }}
+                  <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;" @click="removeCategory(key)" />
                 </div>
-                <div v-if="!product.item_cate || product.item_cate.lenght < 1">
+                <div v-if="!product.item_cate || Object.keys(product.item_cate).length == 0">
                   <span style="color: #999999;">카테고리를 설정해 주세요.</span>
                 </div>
               </div>
@@ -68,8 +69,10 @@ import { ref, reactive, computed, onBeforeUnmount } from 'vue';
 import { mapState, useStore } from 'vuex';
 import CategorySettings from "@/components/Detail/categorySettings.vue";
 import { useMandatoryApi } from "@/api/mandatory";
+import { CloseCircleTwoTone } from '@ant-design/icons-vue';
+
 export default {
-  components: { CategorySettings },
+  components: { CategorySettings, CloseCircleTwoTone },
 
   computed: {
     ...mapState([
@@ -106,16 +109,21 @@ export default {
     const openCategorySettingsDialog = () => {
       settingCategoryVisible.value = true;
     }
+
     return {
       aProduct,
       formState,
       openCategorySettingsDialog,
       settingCategoryVisible,
       isShow,
-      getMandatory
+      getMandatory,
     }
   },
-
+  methods: {
+    removeCategory(key) {
+      delete this.product.item_cate[key];
+    }
+  },
   mounted() {
     this.getMandatory();
     // this.formState.mandatory_val = this.product;
