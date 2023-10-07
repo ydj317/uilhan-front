@@ -482,13 +482,14 @@ export default {
         message.error("연동상태 조회실패 하였습니다.");
         return false;
       }
-
       this.syncSelectedRowKeys = []
       for (let i = 0; i < this.product.item_sync_market.length; i++) {
         const foundItem = sycnMarkets.find(item => item.market_code === this.product.item_sync_market[i].market_code &&
           item.market_account === this.product.item_sync_market[i].seller_id);
         if (foundItem) {
+          this.product.item_sync_market[i].market_id = foundItem.id;
           this.product.item_sync_market[i].status = foundItem.status;
+          this.product.item_sync_market[i].result = foundItem.result;
         }
 
         this.product.item_sync_market[i].key = i;
@@ -499,6 +500,10 @@ export default {
         }
         this.product.item_sync_market[i].checked = isChecked;
       }
+
+      console.log('==0==')
+      console.log(sycnMarkets)
+      console.log(this.product.item_sync_market)
 
       let oForm = new FormData();
       oForm = this.getForm(oForm);

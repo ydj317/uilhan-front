@@ -888,7 +888,9 @@ export default defineComponent({
         const foundItem = sycnMarkets.find(item => item.market_code === this.singleDetail.item_sync_market[i].market_code &&
           item.market_account === this.singleDetail.item_sync_market[i].seller_id);
         if (foundItem) {
+          this.singleDetail.item_sync_market[i].marker_id = foundItem.id;
           this.singleDetail.item_sync_market[i].status = foundItem.status;
+          this.singleDetail.item_sync_market[i].result = foundItem.result;
         }
 
         this.singleDetail.item_sync_market[i].key = i;
