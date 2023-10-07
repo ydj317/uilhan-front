@@ -6,6 +6,7 @@
                     <h3>마켓선택</h3>
                     <a-select v-model:value="state.tableData.params.market_code" style="width: 250px" @change="getTableList"
                         clearable>
+                        <a-select-option value="">쇼핑몰(오픈마켓)</a-select-option>
                         <a-select-option :value="item.value" v-for="(item, key) in state.marketList" :key="key">{{
                             item.label
                         }}</a-select-option>
@@ -99,7 +100,7 @@ const state = reactive({
 
 const getMarketList = () => {
     useMarketApi().getMarketList({}).then(res => {
-        state.marketList = res;
+        state.marketList = res.data;
     });
 };
 const getTableList = () => {

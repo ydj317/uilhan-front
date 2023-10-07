@@ -25,6 +25,7 @@
           <a-descriptions-item label="상품고시">
             <a-form-item>
               <a-select v-model:value="formState.mandatory_val" placeholder="상품고시 선택해주세요.">
+                <a-select-option value="선택">선택</a-select-option>
                 <a-select-option v-for="(item, key) in formState.mandatory" :key="key" :value="item.value">{{ item.label
                 }}</a-select-option>
               </a-select>
@@ -99,7 +100,7 @@ export default {
 
     const getMandatory = () => {
       useMandatoryApi().getList().then((res) => {
-        formState.mandatory = res;
+        formState.mandatory = res.data;
       })
     }
     const openCategorySettingsDialog = () => {

@@ -195,8 +195,8 @@
               <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
               <a-tag color="default" v-else>연동대기</a-tag>
               <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
-              <a-tag color="#108ee9" v-if="record.status === 'approval'"
-                     style="cursor: pointer" @click="approvalCheck(record.market_id)">
+              <a-tag color="#108ee9" v-if="record.status === 'approval'" style="cursor: pointer"
+                @click="approvalCheck(record.market_id)">
                 승인상태확인
               </a-tag>
             </div>
@@ -952,7 +952,6 @@ export default defineComponent({
 
 <!--search-->
 <style scoped>
-
 /* 모든 title */
 #header h1 {
   font-size: 15px;
@@ -968,7 +967,6 @@ export default defineComponent({
 
 <!--list-->
 <style scoped>
-
 #content-content-checkAll {
   position: absolute;
   z-index: 9;
@@ -1014,7 +1012,9 @@ export default defineComponent({
   opacity: 1;
 }
 
-.failed img, .success img, .sending img {
+.failed img,
+.success img,
+.sending img {
   cursor: pointer;
   filter: grayscale(0%);
   opacity: 1;
@@ -1024,7 +1024,6 @@ export default defineComponent({
   font-size: 12px;
   color: #999;
 }
-
 </style>
 
 <!--footer-->
