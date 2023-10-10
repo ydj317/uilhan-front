@@ -63,9 +63,9 @@
             <h3 class="mt20">마켓정보설정</h3>
 
 
-            <a-form-item name="return_delivery_price" label="반품배송비(편도)"
+            <a-form-item name="returnCharge" label="반품배송비(편도)"
                 :rules="[{ required: true, message: '반품배송비(왕복)를 입력해 주세요.' }]">
-                <a-input v-model:value="state.formData.return_delivery_price" placeholder="반품배송비(편도)" style="width:160px" />
+                <a-input v-model:value="state.formData.returnCharge" placeholder="반품배송비(편도)" style="width:160px" />
             </a-form-item>
         </div>
         <a-button class="mt15" @click="goBack">돌아가기</a-button>
@@ -115,7 +115,7 @@ const state = reactive({
         outboundShippingPlaceCode: null,// 출고지
 
         // 마켓정보 설정
-        return_delivery_price: null,// 반품배송비(편도)
+        returnCharge: null,// 반품배송비(편도)
 
     },
 
@@ -156,7 +156,7 @@ const initFormData = () => {
         state.formData.companyContactNumber = accountInfo.marketData.companyContactNumber;
         state.formData.shippingPlaceName = accountInfo.marketData.shippingPlaceName;
 
-        state.formData.return_delivery_price = accountInfo.marketData.return_delivery_price;
+        state.formData.returnCharge = accountInfo.marketData.returnCharge;
 
     }
 }
@@ -237,9 +237,11 @@ const setReturnCenterData = (value) => {
 }
 // 연동확인
 const handleSyncMarketCheck = () => {
-    state.syncCheckLoading = true;
-    state.formData.vendor_user_id = state.formData.seller_id
+
     marketFormRef.value.validate().then(() => {
+        state.syncCheckLoading = true;
+        state.formData.vendor_user_id = state.formData.seller_id
+
         useMarketAccountApi().syncMarketCheck(state.formData).then(res => {
             if (res.status !== "2000") {
                 message.error(res.message);

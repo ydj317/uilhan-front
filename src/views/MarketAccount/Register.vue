@@ -13,6 +13,7 @@
                         :style="market_code === '' ? 'border-bottom: 1px solid #eeeeee;' : ''">
                         <a-select v-model:value="market_code" clearable @change="handleChangeSelection"
                             style="width: 300px;" :disabled="this.getAccountId() !== ''">
+                            <a-select-option value="">쇼핑몰(오픈마켓)</a-select-option>
                             <a-select-option :value="item.value" v-for="(item, key) in marketList" :key="key">{{
                                 item.label
                             }}</a-select-option>
@@ -72,7 +73,7 @@ export default {
         // 마켓 리스트
         getMarketList() {
             useMarketApi().getMarketList({}).then(res => {
-                this.marketList = res;
+                this.marketList = res.data;
             });
         },
         handleChangeSelection(value) {

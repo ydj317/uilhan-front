@@ -1,12 +1,14 @@
 import {AuthRequest} from "@/util/request";
-import { marketList } from "./mock/marketList";
 
 export function useMarketApi() {
     return {
         // 마켓목록
         getMarketList: (data) => {
-            // return Promise marketList
-            return Promise.resolve(marketList)
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/selectList",
+                method: "get",
+                params: data,
+            });
         },
 
     }

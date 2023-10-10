@@ -26,7 +26,7 @@
           </a-spin>
         </a-descriptions-item>
         <a-descriptions-item label="금지어">
-          <a-tag color="warning" v-if="is_filter_word_list === false">금지어 없음</a-tag >
+          <a-tag color="warning" v-if="product.filter_word_status === true">금지어 없음</a-tag >
           <a-tag v-else v-for="(filter_words, i) in product.filter_word_list"
                  @click="deleteFilterWord(filter_words)" color="error" :key="i">
             {{ filter_words }}
