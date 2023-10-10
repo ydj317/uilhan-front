@@ -1,5 +1,5 @@
 <template>
-  <!--상품명 금지어-->
+  <!--상품명 -->
   <div id="filterWordContainer">
     <!--로딩-->
     <loading

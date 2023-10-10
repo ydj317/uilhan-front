@@ -121,7 +121,7 @@ export default {
     },
 
     /**
-     * 상품명 금지어 체크
+     * 상품명  체크
      * @returns {boolean}
      */
     validateFilterWord(sTransProductName = "") {
@@ -156,7 +156,7 @@ export default {
         }
 
         this.product.filter_word_validate_in_process = false;
-        message.success("금지어 체크완료");
+        message.success(" 체크완료");
       });
     },
   }

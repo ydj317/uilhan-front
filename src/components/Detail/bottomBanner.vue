@@ -501,10 +501,6 @@ export default {
         this.product.item_sync_market[i].checked = isChecked;
       }
 
-      console.log('==0==')
-      console.log(sycnMarkets)
-      console.log(this.product.item_sync_market)
-
       let oForm = new FormData();
       oForm = this.getForm(oForm);
 
