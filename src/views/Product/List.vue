@@ -4,7 +4,7 @@
   <!--검색-->
   <a-card :bordered="false" title="상품관리" :style="{ marginBottom: '20px' }">
     <div id="header">
-      <!--선택버튼 (상품수집마켓, 번역, 릴라켓연동)-->
+      <!--선택버튼 (상품수집마켓, 번역)-->
       <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
         <h1>{{ CONFIG.label }}</h1>
         <a-radio-group v-model:value="this[CONFIG.key]" :class="CONFIG.group_class" button-style="solid">
