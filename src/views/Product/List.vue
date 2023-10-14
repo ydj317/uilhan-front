@@ -247,6 +247,8 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Cookie from "js-cookie";
 import MarketList from "@/components/List/MarketList";
+import { useMarketApi } from "@/api/market";
+
 import { mapState } from "vuex";
 import {
   ClockCircleOutlined,
@@ -933,11 +935,24 @@ export default defineComponent({
 
       window.location.href = marketUrls[marketInfo.market_code] + market_prd_code
     },
+
+    getMarketDetailUrls() {
+      useMarketApi().getMarketDetailUrls({}).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+        console.log(res.data);
+        //this.marketDetailUrls = res.data;
+      });
+    }
   },
+
 
   beforeMount() {
     this.getList("reload");
     this.getMarketList();
+    this.getMarketDetailUrls();
   },
 
 });
