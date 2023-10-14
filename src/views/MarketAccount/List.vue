@@ -103,7 +103,7 @@ const removeAccount = (id) => {
 
     message.success(res.message);
 
-    getMarketList();
+    getTableList();
   });
 };
 const getTableList = () => {
@@ -118,7 +118,19 @@ const getTableList = () => {
 
 const getMarketList = () => {
   useMarketApi().getMarketList({}).then(res => {
-    state.marketList = res.data;
+    state.marketList = [];
+
+    console.log('==0==')
+    console.log(res.data)
+    for (let key in res.data) {
+      if (res.data.hasOwnProperty(key)) {
+        state.marketList.push({
+          value: key,
+          label: res.data[key]
+        });
+      }
+    }
+
   });
 };
 
