@@ -5,15 +5,15 @@
             <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status" />
         </a-form-item>
 
-        <a-form-item name="vendor_id" label="업체코드" :rules="[{ required: true, message: '업체코드를 입력해 주세요.' }]">
+        <a-form-item name="vendor_id" label="업체코드" @keyup="handleResetSyncStatus" :rules="[{ required: true, message: '업체코드를 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.vendor_id" />
         </a-form-item>
 
-        <a-form-item name="access_key" label="accessKey" :rules="[{ required: true, message: 'AccessKey를 입력해 주세요.' }]">
+        <a-form-item name="access_key" label="accessKey" @keyup="handleResetSyncStatus" :rules="[{ required: true, message: 'AccessKey를 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.access_key" />
         </a-form-item>
 
-        <a-form-item name="secret_key" label="secretKey" :rules="[{ required: true, message: 'AccessKey를 입력해 주세요.' }]">
+        <a-form-item name="secret_key" label="secretKey" @keyup="handleResetSyncStatus" :rules="[{ required: true, message: 'AccessKey를 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.secret_key" />
         </a-form-item>
 
@@ -287,6 +287,10 @@ const handleSubmit = (e) => {
         console.log('error', error);
     });
 };
+
+const handleResetSyncStatus = () => {
+  state.formData.sync_market_status = false;
+}
 
 
 // 반품지 리스트

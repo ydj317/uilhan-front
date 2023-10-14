@@ -5,11 +5,11 @@
             <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status" />
         </a-form-item>
 
-        <a-form-item name="client_id" label="Client Id" :rules="[{ required: true, message: 'client Id를 입력해 주세요.' }]">
+        <a-form-item name="client_id" @keyup="handleResetSyncStatus" label="Client Id" :rules="[{ required: true, message: 'client Id를 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.client_id" />
         </a-form-item>
 
-        <a-form-item name="client_secret" label="Client Secret"
+        <a-form-item name="client_secret" label="Client Secret" @keyup="handleResetSyncStatus"
             :rules="[{ required: true, message: 'Client Secret를 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.client_secret" />
         </a-form-item>
@@ -246,6 +246,10 @@ const handleSubmit = (e) => {
         console.log('error', error);
     });
 };
+
+const handleResetSyncStatus = () => {
+    state.formData.sync_market_status = false;
+}
 
 
 const syncOutboundAddress = (account_id) => {
