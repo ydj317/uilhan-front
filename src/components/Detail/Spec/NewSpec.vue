@@ -45,6 +45,16 @@ export default {
       this.temp_sku = [];
       this._getSku([], 0, this.product.item_option);
       this._setSku();
+
+
+      forEach(this.product.sku, (item, index) => {
+        if (index === 0) {
+          this.product.sku[index].is_option_reference_price = "T";
+        } else {
+          this.product.sku[index].is_option_reference_price = "F";
+        }
+      });
+
       //세팅후 초기화
       this.temp_item_option = cloneDeep(this.product.item_option);
     },

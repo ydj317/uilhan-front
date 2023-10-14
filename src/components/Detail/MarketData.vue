@@ -33,14 +33,14 @@
             </a-form-item>
           </a-descriptions-item>
 
-          <a-descriptions-item label="통관유형">
+          <!-- <a-descriptions-item label="통관유형">
             <a-form-item>
               <a-select v-model:value="formState.surtax" placeholder="통관유형 선택해주세요.">
                 <a-select-option value="Y">면세</a-select-option>
                 <a-select-option value="N">과세</a-select-option>
               </a-select>
             </a-form-item>
-          </a-descriptions-item>
+          </a-descriptions-item> -->
 
           <a-descriptions-item label="배송비">
             <a-form-item>
@@ -87,7 +87,7 @@ export default {
       pid: '',
       co_pid: '',
       options: [],
-      surtax: 'Y',
+      surtax: 'N',
       mandatory: [],
       mandatory_val: '선택',
       keyword: null,

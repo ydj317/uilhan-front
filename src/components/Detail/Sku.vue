@@ -142,12 +142,12 @@
 
           <template v-else-if="column.key === 'is_option_reference_price'">
             <div class="center">
-              <label class="ant-radio-wrapper" :class="{'ant-radio-wrapper-checked': option_reference_price_key === record.key}">
-              <span class="ant-radio" :class="{'ant-radio-checked': option_reference_price_key === record.key}">
-                <input @change="setIsOptionReferencePrice" type="radio" v-model="option_reference_price_key" :value="record.key" class="ant-radio-input">
-                <span class="ant-radio-inner"></span>
+              <label class="ant-radio-wrapper" :class="{'ant-radio-wrapper-checked': record.is_option_reference_price === 'T' }">
+              <span class="ant-radio" :class="{'ant-radio-checked': record.is_option_reference_price === 'T' }">
+                <span class="ant-radio-inner" @click="setIsOptionReferencePrice(record.key)"></span>
               </span>
               </label>
+
             </div>
           </template>
 
@@ -252,7 +252,6 @@ export default {
       selected_sku_image_url: "",
       selected_sku_image_index: 0,
       sku_image_window_visible: false,
-      option_reference_price_key: "",
       showPreview: false,
       previewSrc: '',
       sku_columns: [
@@ -334,9 +333,11 @@ export default {
   },
 
   methods: {
-    setIsOptionReferencePrice() {
+    setIsOptionReferencePrice(key) {
+      console.log('==0==')
+      console.log(key)
       forEach(this.product.sku, (item, index) => {
-        if (item.key === this.option_reference_price_key) {
+        if (item.key === key) {
           this.product.sku[index].is_option_reference_price = "T";
         } else {
           this.product.sku[index].is_option_reference_price = "F";
@@ -746,13 +747,6 @@ export default {
     //예상수익
     this.setExpectedReturn();
   },
-  created() {
-    forEach(this.product.sku, (item) => {
-      if (item?.is_option_reference_price === "T") {
-        this.option_reference_price_key = item.key;
-      }
-    });
-  }
 };
 </script>
 

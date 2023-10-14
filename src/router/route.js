@@ -33,6 +33,28 @@ export const menus = [{
             }
         },
         {
+            path: "/market/accounts/list",
+            name: "market_accounts_list",
+            component: () => import("@/views/MarketAccount/List.vue"),
+            meta: {
+                title: "마켓계정관리",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: GiftOutlined,
+            },
+        },
+        {
+            path: "/market/accounts/register/:id?",
+            name: "market_accounts_register",
+            component: () => import("@/views/MarketAccount/Register.vue"),
+            meta: {
+                title: "마켓계정관리-등록/수정",
+                isHide: true,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: GiftOutlined,
+            },
+        },
+        {
             path: "/product",
             name: "product",
             component: () => import("@/views/Product/List"),
@@ -239,17 +261,6 @@ export const menus = [{
                     }
                 },
                 {
-                    path: "/setting/delivery",
-                    name: "setting_delivery",
-                    component: () => import("@/views/Setting/DeliveryList.vue"),
-                    meta: {
-                        title: "배송정책",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    }
-                },
-                {
                     path: "/setting/guide",
                     name: "setting_guide",
                     component: () => import("@/views/Setting/Guide"),
@@ -270,18 +281,6 @@ export const menus = [{
                         roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                         active: "/setting/template"
-                    }
-                },
-                {
-                    path: "/setting/delivery/form/:id?",
-                    name: "setting_delivery_form",
-                    component: () => import("@/views/Setting/DeliveryForm.vue"),
-                    meta: {
-                        title: "배송정책 추가/수정",
-                        isHide: true,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                        active: "/setting/delivery"
                     }
                 },
             ]
@@ -412,43 +411,6 @@ export const menus = [{
                 icon: GiftOutlined,
             },
         },
-
-
-        {
-            path: "/market/accounts",
-            name: "market_accounts",
-            meta: {
-                title: "마켓연동",
-                isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: GiftOutlined,
-            },
-            children: [
-                {
-                    path: "/market/accounts/list",
-                    name: "market_accounts_list",
-                    component: () => import("@/views/MarketAccount/List.vue"),
-                    meta: {
-                        title: "마켓계정관리",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: GiftOutlined,
-                    },
-                },
-                {
-                    path: "/market/accounts/register/:id?",
-                    name: "market_accounts_register",
-                    component: () => import("@/views/MarketAccount/Register.vue"),
-                    meta: {
-                        title: "마켓계정관리-등록/수정",
-                        isHide: true,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: GiftOutlined,
-                    },
-                },
-            ]
-        },
-        
     ]
 }]
 

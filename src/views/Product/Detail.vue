@@ -236,7 +236,7 @@ export default defineComponent({
 
     initSku() {
       this.product.toLang = "ko";
-      this.initSkuSpecName();
+      // this.initSkuSpecName();
       this.skuLongName();
 
       for (let i = 0; i < this.product.sku.length; i++) {
