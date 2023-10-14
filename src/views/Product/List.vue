@@ -138,12 +138,10 @@
 
           <!--연동상태-->
           <template v-if="column.key === 'item_status'">
+
             <span v-if="record.item_sync_date">
               <!--연동성공-->
-              <a-tooltip v-if="record.item_sync_status">
-                <template #title>{{ record.item_sync_result }}</template>
-                <a-tag color="success">연동성공</a-tag>
-              </a-tooltip>
+              <a-tag color="success" v-if="record.item_sync_status">연동성공</a-tag>
               <!--연동실패-->
               <a-tooltip v-if="record.item_sync_status == false">
                 <template #title>{{ record.item_sync_result }}</template>
@@ -766,8 +764,8 @@ export default defineComponent({
           return false;
         }
 
-        if (res.data.error !== false) {
-          message.error("승인상태 조회 실패");
+        if (res.data.message !== undefined && res.data.message !== '') {
+          message.warning(res.data.message);
           this.indicator = false;
           return false;
         }

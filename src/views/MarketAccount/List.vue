@@ -50,20 +50,16 @@
                 <a-table-column title="관리" dataIndex="manage" key="manage">
                     <template #customRender="scope, record, index">
                         <RouterLink :to="`/market/accounts/register/${scope.record['id']}`">
-                            <a-button size="small">
-                                수정
-                            </a-button>
+                            <a-button size="small">수정</a-button>
                         </RouterLink>
 
-                        <!-- <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No"
-                            @confirm="removeAccount(record['id'])" class="ml10">
+                        <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No"
+                            @confirm="removeAccount(scope.record['id'])" class="ml10">
                             <template #title>
                                 <p>삭제 하시겠습니까?</p>
                             </template>
-                            <a-button class="mt5" type="danger" size="small">
-                                삭제
-                            </a-button>
-                        </a-popconfirm> -->
+                            <a-button class="mt5" type="danger" size="small">삭제</a-button>
+                        </a-popconfirm>
                     </template>
                 </a-table-column>
             </a-table>
@@ -98,10 +94,17 @@ const state = reactive({
     isModalVisible: false,
 });
 
-const getMarketList = () => {
-    useMarketApi().getMarketList({}).then(res => {
-        state.marketList = res.data;
-    });
+const removeAccount = (id) => {
+  useMarketAccountApi().removeAccount({'id': id}).then(res => {
+    if (res.status !== '2000') {
+      message.error(res.message);
+      return false;
+    }
+
+    message.success(res.message);
+
+    getTableList();
+  });
 };
 const getTableList = () => {
     useMarketAccountApi().getAccountList(state.tableData.params).then(res => {
@@ -111,6 +114,24 @@ const getTableList = () => {
         state.tableData.total = total;
 
     });
+};
+
+const getMarketList = () => {
+  useMarketApi().getMarketList({}).then(res => {
+    state.marketList = [];
+
+    console.log('==0==')
+    console.log(res.data)
+    for (let key in res.data) {
+      if (res.data.hasOwnProperty(key)) {
+        state.marketList.push({
+          value: key,
+          label: res.data[key]
+        });
+      }
+    }
+
+  });
 };
 
 const changeIsUse = (record) => {

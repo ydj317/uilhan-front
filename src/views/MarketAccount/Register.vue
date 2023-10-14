@@ -73,7 +73,17 @@ export default {
         // 마켓 리스트
         getMarketList() {
             useMarketApi().getMarketList({}).then(res => {
-                this.marketList = res.data;
+              this.marketList = [];
+
+              for (let key in res.data) {
+                if (res.data.hasOwnProperty(key)) {
+                  this.marketList.push({
+                    value: key,
+                    label: res.data[key]
+                  });
+                }
+              }
+
             });
         },
         handleChangeSelection(value) {

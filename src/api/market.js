@@ -5,7 +5,7 @@ export function useMarketApi() {
         // 마켓목록
         getMarketList: (data) => {
             return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/openmarket/selectList",
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/list",
                 method: "get",
                 params: data,
             });
