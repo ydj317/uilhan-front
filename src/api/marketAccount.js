@@ -52,5 +52,13 @@ export function useMarketAccountApi() {
                 data,
             });
         },
+
+        removeAccount: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/account/remove",
+                method: "POST",
+                data,
+            });
+        },
     }
 }
