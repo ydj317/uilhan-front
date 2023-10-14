@@ -134,7 +134,7 @@ export default {
           let aXiangjiRequestIds = [];
           aEditorImageUrl.map((sUrl) => {
             let aSplitImage = sUrl.split("/");
-            let sRequestId = aSplitImage[aSplitImage.length - 2];
+            let sRequestId = aSplitImage[3];
             aXiangjiRequestIds.push(sRequestId);
           });
 
