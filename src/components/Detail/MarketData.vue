@@ -67,7 +67,7 @@
 
           <a-descriptions-item label="키워드">
             <a-form-item>
-              <a-input v-model:value="formState.keyword" placeholder="최대 255자내로 입력해주세요" />
+              <a-input v-model:value="formState.keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다." />
             </a-form-item>
           </a-descriptions-item>
         </a-descriptions>
