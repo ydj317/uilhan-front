@@ -268,6 +268,11 @@ const handleSyncMarketCheck = () => {
 // 저장
 const handleSubmit = (e) => {
 
+  if (state.formData.sync_market_status === false) {
+    message.error('연동확인을 먼저 해주세요.');
+    return false;
+  }
+
     // validation form
     state.formData.vendor_user_id = state.formData.seller_id
     marketFormRef.value.validate().then(() => {
