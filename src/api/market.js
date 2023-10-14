@@ -11,5 +11,14 @@ export function useMarketApi() {
             });
         },
 
+        // 마켓상태
+        getMarketOrderStatusList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/getMarketOrderStatus",
+                method: "get",
+                params: data,
+            });
+        },
+
     }
 }
