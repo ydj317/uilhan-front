@@ -96,6 +96,13 @@ const state = reactive({
 
 const removeAccount = (id) => {
   useMarketAccountApi().removeAccount({'id': id}).then(res => {
+    if (res.status !== '2000') {
+      message.error(res.message);
+      return false;
+    }
+
+    message.success(res.message);
+
     getMarketList();
   });
 };
