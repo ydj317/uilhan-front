@@ -766,8 +766,8 @@ export default defineComponent({
           return false;
         }
 
-        if (res.data.error !== false) {
-          message.error("승인상태 조회 실패");
+        if (res.data.message !== undefined && res.data.message !== '') {
+          message.warning(res.data.message);
           this.indicator = false;
           return false;
         }
