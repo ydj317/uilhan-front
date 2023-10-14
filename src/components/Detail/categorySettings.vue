@@ -2,8 +2,12 @@
   <a-modal v-model:visible="props.isShow" title="계정별 카테고리 설정" @ok="handleOk" @cancel="handleCancel" style="width: 800px">
 
     <div class="mb15">
-      <a-auto-complete v-model:value="autoCompleteValue" :options="autoCompleteOptions" style="width: 100%"
-        placeholder="검색할 카테고리를 입력하세요." @select="onAutoCompSelect" @search="onAutoCompSearch" />
+      <div>
+        <a-auto-complete v-model:value="autoCompleteValue" :options="autoCompleteOptions" style="width: 90%"
+          placeholder="검색할 카테고리를 입력하세요." @select="onAutoCompSelect" @keydown.enter="onAutoCompSearch"
+          :open="autoCompleteOpen" />
+        <a-button class="ml10" type="primary" @click="onAutoCompSearch(autoCompleteValue)">검색</a-button>
+      </div>
       <p class="mt5" style="color: #999999">도움말입니다.</p>
     </div>
     <div style="max-height: 500px;overflow-y: scroll">
@@ -36,6 +40,7 @@ const emit = defineEmits(['cancelDialog'])
 
 const autoCompleteValue = ref('')
 const autoCompleteOptions = ref([])
+const autoCompleteOpen = ref(false)
 const searchCategoryValue = ref('')
 const marketCategorysRef = ref(null)
 const marketAccounts = ref('')
@@ -64,6 +69,8 @@ const onAutoCompSearch = (searchText) => {
       autoCompleteOptions.value = !searchText
         ? []
         : uniqueOptions
+
+      autoCompleteOpen.value = true
     })
   }, 300);
 
@@ -71,7 +78,7 @@ const onAutoCompSearch = (searchText) => {
 };
 
 const onAutoCompSelect = (value, name) => {
-
+  autoCompleteOpen.value = false
   searchCategoryValue.value = value
 };
 

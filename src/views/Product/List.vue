@@ -910,6 +910,7 @@ export default defineComponent({
         return;
       }
 
+      // @TODO API수집
       const marketUrls = {
         'storefarm': "https://smartstore.naver.com/",
         'coupang': "https://www.coupang.com/vp/products/",

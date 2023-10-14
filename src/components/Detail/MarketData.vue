@@ -11,12 +11,26 @@
                 <a-button size="small" type="primary" @click="openCategorySettingsDialog">설정</a-button>
               </div>
               <div style="display: flex;flex-direction: column;gap: 15px">
-                <div v-for="(item, key) in product.item_cate" :key="key">
-                  {{ key }} : {{ item.categoryNames }}
-                  <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;" @click="removeCategory(key)" />
-                </div>
-                <div v-if="!product.item_cate || Object.keys(product.item_cate).length == 0">
-                  <span style="color: #999999;">카테고리를 설정해 주세요.</span>
+                <div v-for="(market, key) in product.item_sync_market" :key="key"
+                  style="display: flex; align-items: center; gap: 6px;">
+                  <img :src="getLogoSrc(market.market_code)" style="width: 18px;height: 18px;" />
+                  {{ market.seller_id }}:
+
+                  <div v-if="product.item_cate">
+                    <div v-for="(item, cateKey) in product.item_cate" :key="cateKey">
+                      <div v-if="cateKey == market.seller_id">
+                        {{ item.categoryNames }}
+                        <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;"
+                          @click="removeCategory(cateKey)" v-if="market.market_prd_code === ''" />
+                      </div>
+                      <div v-else style="color: #999999;">
+                        카테고리 미설정
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else style="color: #999999;">
+                    카테고리 미설정
+                  </div>
                 </div>
               </div>
             </div>
@@ -65,7 +79,7 @@
 
 <script>
 
-import { ref, reactive, computed, onBeforeUnmount } from 'vue';
+import { ref, reactive, computed, defineAsyncComponent } from 'vue';
 import { mapState, useStore } from 'vuex';
 import CategorySettings from "@/components/Detail/categorySettings.vue";
 import { useMandatoryApi } from "@/api/mandatory";
@@ -122,10 +136,20 @@ export default {
   methods: {
     removeCategory(key) {
       delete this.product.item_cate[key];
-    }
+    },
+
+    getLogoSrc(marketCode) {
+      try {
+        return require(`../../assets/img/list/market-logo/${marketCode}.png`);
+      } catch (error) {
+        return "../../assets/img/temp_image.png"
+      }
+    },
   },
+
   mounted() {
     this.getMandatory();
+    console.log(this.product);
     // this.formState.mandatory_val = this.product;
     this.formState.item_shipping_fee = this.product.item_shipping_fee;
     this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T' ? true : false;

@@ -5,7 +5,8 @@
             <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status" />
         </a-form-item>
 
-        <a-form-item name="client_id" @keyup="handleResetSyncStatus" label="Client Id" :rules="[{ required: true, message: 'client Id를 입력해 주세요.' }]">
+        <a-form-item name="client_id" @keyup="handleResetSyncStatus" label="Client Id"
+            :rules="[{ required: true, message: 'client Id를 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.client_id" />
         </a-form-item>
 
@@ -273,21 +274,23 @@ const syncOutboundAddress = (account_id) => {
 
         marketJson?.addressBooks.forEach(item => {
 
-            // item.name 에 반품지 글자가 들어가면 반품지로 설정
-            if (item.name.indexOf('반품') > -1) {
-                state.returnAddressList.push({
-                    return_address_code: item.addressBookNo,
-                    return_address_name: item.name + '-' + item.address
-                });
-                return;
-            } else if (item.name.indexOf('출고') > -1) {
-                state.outboundAddressList.push({
-                    outbound_code: item.addressBookNo,
-                    outbound_name: item.name + '-' + item.address
-                });
-                return;
+            state.returnAddressList.push({
+                return_address_code: item.addressBookNo,
+                return_address_name: item.name + '-' + item.address
+            });
+
+            if (item.addressType === 'RELEASE') {
+                state.formData.outbound_address_code = item.addressBookNo;
             }
 
+            state.outboundAddressList.push({
+                outbound_code: item.addressBookNo,
+                outbound_name: item.name + '-' + item.address
+            });
+
+            if (item.addressType === 'REFUND_OR_EXCHANGE') {
+                state.formData.return_address_code = item.addressBookNo;
+            }
         });
 
         state.syncOutboundAddressLoading = false;
