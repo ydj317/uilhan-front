@@ -1,26 +1,15 @@
 <template>
   <!--편집기-->
   <div id="xiangJi">
-    <a-modal
-      class="xiangJi"
-      v-if="product.xiangjiVisible"
-      :visible="product.xiangjiVisible"
-      :closable="false"
-      :cancel-button-props="{ ghost: true, disabled: true }"
-      :footer="null"
-    >
+    <a-modal class="xiangJi" v-if="product.xiangjiVisible" :visible="product.xiangjiVisible" :closable="false"
+      :cancel-button-props="{ ghost: true, disabled: true }" :footer="null">
       <!-- 模板HTML 不可修改 -->
       <div id="app">
         <div id="some-dialog">
           <div class="logo-hide"></div>
           <div class="close-btn" @click="product.xiangjiVisible = false">닫기</div>
-          <iframe
-            id="xiangji-image-editor"
-            title="象寄图片精修工具"
-            src="https://www.xiangjifanyi.com/image-editor/#/?lang=KOR"
-            style="border:none;"
-            @load="iframeOnload()"
-          ></iframe>
+          <iframe id="xiangji-image-editor" title="象寄图片精修工具" src="https://www.xiangjifanyi.com/image-editor/#/?lang=KOR"
+            style="border:none;" @load="iframeOnload()"></iframe>
         </div>
       </div>
     </a-modal>
@@ -133,9 +122,10 @@ export default {
           // 불러올 이미지 ID 수집
           let aXiangjiRequestIds = [];
           aEditorImageUrl.map((sUrl) => {
-            let aSplitImage = sUrl.split("/");
-            let sRequestId = aSplitImage[3];
-            aXiangjiRequestIds.push(sRequestId);
+            const searchParams = new URLSearchParams(new URL(sUrl).search);
+            // requestID 값을 가져오기
+            const requestId = searchParams.get("requestID");
+            aXiangjiRequestIds.push(requestId);
           });
 
           // 불러올 이미지 ID
@@ -165,16 +155,17 @@ export default {
 
 <style>
 .logo-hide {
-  position:absolute;
+  position: absolute;
   top: 30px;
   left: 30px;
   background: #fff;
   width: 110px;
   height: 45px;
 }
+
 .close-btn {
   padding: 4px 20px 6px;
-  position:absolute;
+  position: absolute;
   top: 36px;
   right: 130px;
   background: #2055f3;
@@ -182,6 +173,7 @@ export default {
   color: #fff;
   cursor: pointer;
 }
+
 .closeBtn:hover {
   background: #4a7dff;
 }
@@ -211,10 +203,12 @@ export default {
   width: 100% !important;
   height: 100% !important;
 }
+
 .xiangJi .ant-modal-body {
   width: 100% !important;
   height: 95% !important;
 }
+
 .xiangJi .ant-modal-footer {
   display: flex;
   justify-content: flex-end;
@@ -223,7 +217,8 @@ export default {
   background-color: white !important;
   height: 5% !important;
 }
-.ant-modal-footer > button.ant-btn.ant-btn-background-ghost {
+
+.ant-modal-footer>button.ant-btn.ant-btn-background-ghost {
   display: none !important;
 }
 </style>
