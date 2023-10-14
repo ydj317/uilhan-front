@@ -4,7 +4,7 @@
     <div class="mb15">
       <div>
         <a-auto-complete v-model:value="autoCompleteValue" :options="autoCompleteOptions" style="width: 90%"
-          placeholder="검색할 카테고리를 입력하세요." @select="onAutoCompSelect" @keydown.enter="onAutoCompSearch"
+          placeholder="검색할 카테고리를 입력하세요." @select="onAutoCompSelect" @keydown.enter="onAutoCompSearch(autoCompleteValue)"
           :open="autoCompleteOpen" />
         <a-button class="ml10" type="primary" @click="onAutoCompSearch(autoCompleteValue)">검색</a-button>
       </div>

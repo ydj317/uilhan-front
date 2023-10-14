@@ -16,21 +16,19 @@
                   <img :src="getLogoSrc(market.market_code)" style="width: 18px;height: 18px;" />
                   {{ market.seller_id }}:
 
-                  <div v-if="product.item_cate">
-                    <div v-for="(item, cateKey) in product.item_cate" :key="cateKey">
-                      <div v-if="cateKey == market.seller_id">
-                        {{ item.categoryNames }}
-                        <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;"
-                          @click="removeCategory(cateKey)" v-if="market.market_prd_code === ''" />
-                      </div>
-                      <div v-else style="color: #999999;">
-                        카테고리 미설정
-                      </div>
-                    </div>
-                  </div>
-                  <div v-else style="color: #999999;">
+                  <div v-if="(product.item_cate !== null && !product.item_cate[market.seller_id]) || !product.item_cate"
+                    style="color: #999999;">
                     카테고리 미설정
                   </div>
+
+                  <div v-for="(item, cateKey) in product.item_cate" :key="cateKey">
+                    <div v-if="cateKey == market.seller_id">
+                      {{ item.categoryNames }}
+                      <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;"
+                        @click="removeCategory(cateKey)" v-if="market.market_prd_code === ''" />
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>

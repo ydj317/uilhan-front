@@ -20,5 +20,16 @@ export function useMarketApi() {
             });
         },
 
+        // 마켓별상품상세URL
+        getMarketDetailUrls: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/getMarketDetailUrls",
+                method: "get",
+                params: data,
+            });
+        },
+
+        
+
     }
 }
