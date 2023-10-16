@@ -322,17 +322,27 @@ export default {
           return false;
         }
 
-        if (res.data.error !== false) {
-          message.error("승인상태 조회 실패");
+        if (res.data.message !== undefined && res.data.message !== '') {
+          message.warning(res.data.message);
           this.indicator = false;
           return false;
         }
 
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        let now_time = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
         for (let i = 0; i < this.product.item_sync_market.length; i++) {
           if (this.product.item_sync_market[i].market_id === market_id) {
+            this.product.item_sync_market[i].upd_time = now_time;
             this.product.item_sync_market[i].status = res.data.status;
             this.product.item_sync_market[i].result = res.data.result;
-            this.product.item_sync_date = new Date().toLocaleString();
+            this.product.item_sync_date = now_time;
             this.product.item_sync_status = res.data.status === 'success' ? true : false;
             this.product.item_sync_result = res.data.result;
           }

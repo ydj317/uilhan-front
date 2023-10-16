@@ -772,11 +772,21 @@ export default defineComponent({
           return false;
         }
 
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        let now_time = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
         for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
           if (this.singleDetail.item_sync_market[i].market_id === market_id) {
+            this.singleDetail.item_sync_market[i].upd_time = now_time;
             this.singleDetail.item_sync_market[i].status = res.data.status;
             this.singleDetail.item_sync_market[i].result = res.data.result;
-            this.singleDetail.item_sync_date = new Date().toLocaleString();
+            this.singleDetail.item_sync_date = now_time;
             this.singleDetail.item_sync_status = res.data.status === 'success' ? true : false;
             this.singleDetail.item_sync_result = res.data.result;
           }
