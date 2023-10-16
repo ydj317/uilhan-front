@@ -412,7 +412,7 @@ export default defineComponent({
           const menuList = setFilterRouteList();
           router.addRoute(menuList[0])
           message.success("회원가입에 성공하였습니다.");
-          router.push("/product");
+          router.push("/market/accounts/list");
           return false;
         });
       });

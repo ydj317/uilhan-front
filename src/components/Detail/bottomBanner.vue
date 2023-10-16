@@ -445,7 +445,7 @@ export default {
     },
 
     /**
-     * 상품저장
+     * 상품연동
      * @returns {boolean}
      */
     async submitSync() {
