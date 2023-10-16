@@ -1,43 +1,38 @@
 <template>
-  <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true" />
   <div id="Header" class="pr20">
     <div class="h60 right center">
-      <div id="download_ext"><a @click.self.prevent="extensionDown">크롬 확장 프로그램 </a></div>
-<!--      <div id="language">-->
-<!--        <div>-->
-<!--          <img class="pointer mr20" @click="languageVisible" width="22" height="14" :src="language_src" alt="">-->
-<!--        </div>-->
-<!--        <a-select-->
-<!--          class="absolute"-->
-<!--          :default-open="true"-->
-<!--          :autofocus="true"-->
-<!--          v-if="language_visible"-->
-<!--          ref="select"-->
-<!--          v-model:value="language"-->
-<!--          @change="languageVisible"-->
-<!--          @blur="languageVisible"-->
-<!--          style="right: 20px; top: 60px; width: 150px;"-->
-<!--        >-->
-<!--          <a-select-option value="kor"><img width="22" height="14" :src="kor" alt=""> 한국어-->
-<!--          </a-select-option>-->
-<!--          <a-select-option value="chn"><img width="22" height="14" :src="chn" alt=""> 中国语-->
-<!--          </a-select-option>-->
-<!--        </a-select>-->
-<!--      </div>-->
+      <div id="download_ext">
+        <a @click.self.prevent="extensionDown" size="small">크롬 확장 프로그램 </a>
+        <a-spin v-if="indicator" />
+      </div>
+      <!--      <div id="language">-->
+      <!--        <div>-->
+      <!--          <img class="pointer mr20" @click="languageVisible" width="22" height="14" :src="language_src" alt="">-->
+      <!--        </div>-->
+      <!--        <a-select-->
+      <!--          class="absolute"-->
+      <!--          :default-open="true"-->
+      <!--          :autofocus="true"-->
+      <!--          v-if="language_visible"-->
+      <!--          ref="select"-->
+      <!--          v-model:value="language"-->
+      <!--          @change="languageVisible"-->
+      <!--          @blur="languageVisible"-->
+      <!--          style="right: 20px; top: 60px; width: 150px;"-->
+      <!--        >-->
+      <!--          <a-select-option value="kor"><img width="22" height="14" :src="kor" alt=""> 한국어-->
+      <!--          </a-select-option>-->
+      <!--          <a-select-option value="chn"><img width="22" height="14" :src="chn" alt=""> 中国语-->
+      <!--          </a-select-option>-->
+      <!--        </a-select>-->
+      <!--      </div>-->
       <div id="setting" class="">
         <div class="center pointer" @click="settingVisible">
           <img src="../../assets/img/user.png" width="20" height="20" style="border-radius: 50px;" alt="">
           <h3 class="m10">{{ user_name }}</h3>
         </div>
-        <a-select
-          class="absolute"
-          v-if="setting_visible"
-          :default-open="true"
-          :autofocus="true"
-          ref="select"
-          v-model:value="setting"
-          @select="seletedSetting"
-          @blur="settingVisible"
+        <a-select class="absolute" v-if="setting_visible" :default-open="true" :autofocus="true" ref="select"
+          v-model:value="setting" @select="seletedSetting" @blur="settingVisible"
           style="right: 19px;top: 60px;width: 150px;">
           <a-select-option value="setting">
             <SettingOutlined />
@@ -54,7 +49,7 @@
 </template>
 
 <script>
-import { UserOutlined, SettingOutlined, LogoutOutlined } from "@ant-design/icons-vue";
+import { UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined } from "@ant-design/icons-vue";
 import { AuthRequest } from "@/util/request";
 import Cookie from "js-cookie";
 import { cookieInit } from "@/util/auth";
