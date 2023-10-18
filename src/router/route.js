@@ -90,15 +90,41 @@ export const menus = [{
             },
         },
         {
-            path: "/order/list",
-            name: "order_list",
-            component: () => import("@/views/Order/List.vue"),
+            path: "/order",
+            name: "order",
+            redirect: "/order/list",
             meta: {
                 title: "주문관리",
                 isHide: false,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: CalendarOutlined
             },
+            "children": [
+                {
+                    path: "/order/list",
+                    name: "order_list",
+                    component: () => import("@/views/Order/List.vue"),
+                    meta: {
+                        title: "주문관리",
+                        isHide: false,
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
+                        icon: '',
+                        active: "/order/list"
+                    },
+                },
+                {
+                    path: "/order/info/:id?",
+                    name: "order_info",
+                    component: () => import("@/views/Order/Info.vue"),
+                    meta: {
+                        title: "주문상세",
+                        isHide: true,
+                        roles: ["ROLE_ADMIN"],
+                        icon: '',
+                        active: "/order/list"
+                    },
+                }
+            ]
         },
         {
             path: "/board",
