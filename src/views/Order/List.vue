@@ -81,53 +81,77 @@
     </div>
 
     <a-table :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
-      :pagination="false">
-      <a-table-column title="마켓" dataIndex="id" key="id" />
-      <a-table-column title="주문번호" dataIndex="order_id" key="order_id" />
-      <a-table-column title="상품번호" dataIndex="prd_code" key="prd_code"></a-table-column>
-      <a-table-column title="상품명/옵션명" dataIndex="items" key="items">
+      :pagination="false" :defaultExpandAllRows="true">
+      <a-table-column title="마켓" dataIndex="id" key="id">
         <template #default="{ record }">
-          <div style="display: grid;">
-            <a-space>
-              <div>
-                <div>{{ record.prd_name }}</div>
-                <div>{{ record.prd_option }}</div>
-                <div>{{ record.prd_option }}</div>
-                <div>{{ record.prd_option }}</div>
-              </div>
-            </a-space>
-            <a-space>
-              <div>
-                <div>{{ record.prd_name }}</div>
-                <div>{{ record.prd_option }}</div>
-              </div>
-            </a-space>
+          <div style="display: flex;align-items: center;gap: 5px;" v-if="record.market_code">
+            <img :src="getLogoSrc(record.market_code)" style="width: 18px;height: 18px;" />
+            {{ record.seller_id }}
           </div>
         </template>
-
       </a-table-column>
-      <a-table-column title="판매가" dataIndex="unit_price" key="unit_price"></a-table-column>
-      <a-table-column title="수량" dataIndex="quantity" key="quantity"></a-table-column>
-      <a-table-column title="결제액" dataIndex="unit_price" key="unit_price"></a-table-column>
-      <a-table-column title="주문자" dataIndex="orderer_name" key="orderer_name"></a-table-column>
+      <a-table-column title="주문번호" dataIndex="order_no" key="order_no"></a-table-column>
+      <a-table-column title="주문자" dataIndex="orderer_name" key="orderer_name" />
+      <a-table-column title="연락처" dataIndex="orderer_name" key="orderer_name"></a-table-column>
+      <a-table-column title="주문시간" dataIndex="ins_date" key="ins_date"></a-table-column>
       <a-table-column title="관리" dataIndex="manage" key="manage">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
-              <RouterLink :to="`/order/info/${record['id']}`">
+              <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id']">
                 <a-button size="small">상세</a-button>
               </RouterLink>
-              <a-button size="small" v-if="state.tableData.params.status === 'paid'">발주</a-button>
-              <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'">배송</a-button>
-              <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'">구매</a-button>
-              <a-button size="small"
-                v-if="state.tableData.params.status === 'shipping' || state.tableData.params.status === 'shippingComplete'">추적</a-button>
-
+              <a-button type="primary" size="small"
+                v-if="!record['id'] && state.tableData.params.status === 'paid'">발주</a-button>
+              <a-button type="success" size="small"
+                v-if="!record['id'] && state.tableData.params.status === 'shippingAddress'">배송</a-button>
+              <a-button size="small" v-if="!record['id'] && state.tableData.params.status === 'shipping'">추적</a-button>
             </a-space>
           </div>
         </template>
       </a-table-column>
+      <template #expandedRowRender="{ record }" style="padding:0">
+        <div>
+          <a-table :data-source="record.orderItems" :pagination="false" size="small" :row-selection="rowItemSelection"
+            :showHeader="true" style="padding: 0;" bordered>
+            <a-table-column title="이미지" dataIndex="prd_image" key="prd_image">
+              <template #default="{ record }">
+                <a-image src="https://picsum.photos/200/300" style="width: 50px;height: 50px;border-radius: 5px;" />
+              </template>
+            </a-table-column>
+            <a-table-column title="상품명" dataIndex="prd_name" key="prd_name" />
+            <a-table-column title="옵션명" dataIndex="prd_option" key="prd_option" />
+            <a-table-column title="수량" dataIndex="quantity" key="quantity" />
+            <a-table-column title="단가" dataIndex="unit_price" key="unit_price" />
+            <a-table-column title="운송장정보" dataIndex="invoice_number" key="invoice_number"
+              v-if="state.tableData.params.status !== 'paid'">
+              <template #default="{ record }">
+                <div style="display: flex;flex-direction: column;gap: 5px;">
+                  <a-select v-model="record.courier_name">
+                    <a-select-option value="1">CJ대한통운</a-select-option>
+                    <a-select-option value="2">우체국</a-select-option>
+                  </a-select>
+                  <a-input v-model:value="record.invoice_number" />
+                </div>
+
+              </template>
+            </a-table-column>
+            <a-table-column title="" dataIndex="command" key="command">
+              <template #default="{ record }">
+                <a-space>
+                  <a-button type="primary" size="small">발주</a-button>
+                  <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'">구매</a-button>
+                  <a-button type="info" size="small"
+                    v-if="state.tableData.params.status === 'shippingAddress'">배송</a-button>
+                  <a-button size="small" v-if="state.tableData.params.status === 'shipping'">추적</a-button>
+                </a-space>
+              </template>
+            </a-table-column>
+          </a-table>
+        </div>
+      </template>
     </a-table>
+
     <a-pagination :total="state.tableData.total" :page-size="state.tableData.params.pageSize"
       :current="state.tableData.params.page" @change="pageChangeHandler" class="mt15" />
   </a-card>
@@ -138,7 +162,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { useMarketOrderApi } from '@/api/order'
 import { useMarketApi } from '@/api/market'
 import { message } from 'ant-design-vue'
-import { DownloadOutlined, FileSyncOutlined } from '@ant-design/icons-vue';
+import { DownloadOutlined, FileSyncOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons-vue';
 
 
 const state = reactive({
@@ -158,7 +182,6 @@ const state = reactive({
       pageSize: 20,
     },
   },
-  tabActive: 'paid',
   orderStatus: [],
 });
 
@@ -199,12 +222,25 @@ const getMarketStatusList = () => {
   });
 }
 
-
-const rowSelection = {
+const rowItemSelection = ref({
+  columnTitle: '선택',
+  checkStrictly: false,
+  selectedRowKeys: [],
   onChange: (selectedRowKeys, selectedRows) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
-};
+  onSelect: (record, selected, selectedRows) => {
+    console.log(selectedRows);
+  },
+
+});
+
+const rowSelection = ref({
+  checkStrictly: false,
+  onChange: (selectedRowKeys, selectedRows) => {
+    rowItemSelection.value.selectedRowKeys = selectedRows.flatMap(row => row.orderItems.map(item => item.key));
+  },
+});
 
 const handleStatusChange = (e) => {
   getTableData()
@@ -212,6 +248,14 @@ const handleStatusChange = (e) => {
 const pageChangeHandler = (page) => {
   state.tableData.params.page = page;
   getTableData();
+}
+
+const getLogoSrc = (marketCode) => {
+  try {
+    return require(`../../assets/img/list/market-logo/${marketCode}.png`);
+  } catch (error) {
+    return "../../assets/img/temp_image.png"
+  }
 }
 
 onMounted(() => {
