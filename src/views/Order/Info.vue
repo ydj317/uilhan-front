@@ -8,14 +8,17 @@
 
 <script setup>
 import { reactive, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useMarketOrderApi } from '@/api/order'
+import { message } from "ant-design-vue";
 import Coupang from "./markets/Coupang.vue";
 import Smartstore from "./markets/SmartStore.vue";
 
 const router = useRouter();
+const route = useRoute();
 
 const state = reactive({
+  id: route.params.id,
   orderData: {}
 });
 
@@ -24,13 +27,13 @@ const markets = {
 }
 
 let marketCode = ref('')
-const getOrderInfo = async () => {
-  await useMarketOrderApi().getOrderInfo({}).then(res => {
+const getOrderDetail = async () => {
+  await useMarketOrderApi().getOrderDetail({ id: state.id }).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
     }
-
+    console.log(res.data);
     state.orderData = res.data;
 
     // 마켓코드 설정
@@ -40,7 +43,7 @@ const getOrderInfo = async () => {
 }
 
 onMounted(async () => {
-  await getOrderInfo();
+  await getOrderDetail();
 })
 
 
