@@ -123,7 +123,18 @@ export const menus = [{
                         icon: '',
                         active: "/order/list"
                     },
-                }
+                },
+                {
+                    path: "/order/claimlist",
+                    name: "order_claimlist",
+                    component: () => import("@/views/Order/ClaimList.vue"),
+                    meta: {
+                        title: "클레임관리",
+                        isHide: false,
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
+                        icon: '',
+                    },
+                },
             ]
         },
         {

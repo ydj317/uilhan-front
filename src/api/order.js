@@ -19,5 +19,23 @@ export function useMarketOrderApi() {
                 method: "get",
             });
         },
+
+        // 발주처리
+        placeOrder: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/order/placeOrder",
+                method: "post",
+                data: data,
+            });
+        },
+
+        // 배송처리
+        deliveryOrder: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/order/deliveryOrder",
+                method: "post",
+                data: data,
+            });
+        },
     }
 }

@@ -1,13 +1,5 @@
 <template>
-  <a-card title="주문관리">
-    <template #extra v-if="false">
-      <a-button class="ml10">
-        <template #icon>
-          <FileSyncOutlined />
-        </template>
-        주문수집
-      </a-button>
-    </template>
+  <a-card title="클레임관리">
     <div>
       <a-descriptions bordered :column="1" size="middle">
         <a-descriptions-item label="검색기간">
@@ -142,10 +134,10 @@
               <template #default="{ record }">
                 <a-space>
                   <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
-                    @click="placeOneOrder(scoped.record, record)">발주</a-button>
+                    @click="placeOrder(record.id)">발주</a-button>
                   <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'">구매</a-button>
                   <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
-                    @click="deliveryOrder(scoped.record, record)">배송</a-button>
+                    @click="deliveryOrder(record.id)">배송</a-button>
                   <a-button size="small" v-if="state.tableData.params.status === 'shipping'">추적</a-button>
                 </a-space>
               </template>
@@ -192,11 +184,10 @@ const state = reactive({
 
 // 주문 리스트
 const getTableData = () => {
-  state.tableData.loading = true;
+
   useMarketOrderApi().getOrderList(state.tableData.params).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
-      state.tableData.loading = false;
       return false;
     }
 
@@ -204,7 +195,7 @@ const getTableData = () => {
 
     state.tableData.data = list;
     state.tableData.total = total;
-    state.tableData.loading = false;
+
   });
 }
 
@@ -233,7 +224,6 @@ const rowItemSelection = ref({
   columnTitle: '선택',
   checkStrictly: false,
   selectedRowKeys: [],
-  selectedRowKeysTemp: [],
   onChange: (selectedRowKeys, selectedRows) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
@@ -249,14 +239,6 @@ const rowSelection = ref({
   onChange: (selectedRowKeys, selectedRows) => {
     rowSelection.value.selectedRowKeys = selectedRows.map(row => row.key);
     rowItemSelection.value.selectedRowKeys = selectedRows.flatMap(row => row.orderItems.map(item => item.key));
-    rowItemSelection.value.selectedRowKeysTemp = selectedRows.flatMap(row => row.orderItems.map(item => {
-      return {
-        order_no: row.order_no,
-        account_id: row.account_id,
-        shipping_box_id: row.shipping_box_id || row.order_no,
-        item_no: item.item_no,
-      };
-    }));
   },
 });
 
@@ -277,58 +259,16 @@ const getLogoSrc = (marketCode) => {
   }
 }
 
-/**
- * 선택발주처리
- */
 const placeOrderSelected = () => {
-
-  const selectedItemRowKeys = rowItemSelection.value.selectedRowKeysTemp;
-  if (selectedItemRowKeys.length === 0) {
-    message.error('발주처리할 주문을 선택해주세요.');
-    return false;
-  }
-
-  const selectedOrders = {};
-  selectedItemRowKeys.forEach(item => {
-    // 이미 존재하는 주문
-    if (selectedOrders[item.account_id]) {
-      // 이미 존재하는 주문번호
-      if (selectedOrders[item.account_id][item.order_no]) {
-        selectedOrders[item.account_id][item.order_no].items.push(item.item_no);
-        return;
-      }
-
-      // 존재하지 않는 주문번호
-      selectedOrders[item.account_id] = Object.assign(selectedOrders[item.account_id], {
-        [item.order_no]: {
-          order_no: item.order_no,
-          account_id: item.account_id,
-          shipping_box_id: item.shipping_box_id,
-          items: [item.item_no],
-        }
-      })
-      return;
-    } else {
-      // 존재하지 않는 주문
-      selectedOrders[item.account_id] = {
-        [item.order_no]: {
-          order_no: item.order_no,
-          account_id: item.account_id,
-          shipping_box_id: item.shipping_box_id,
-          items: [item.item_no],
-        }
-      }
-    }
-
-  });
-  placeOrderApi(selectedOrders);
-
+  console.log(rowSelection.value.selectedRowKeys);
+  console.log(rowItemSelection.value.selectedRowKeys)
 }
 
 // 발주처리
-const placeOrderApi = (order) => {
+const placeOrder = (itemId) => {
+
   useMarketOrderApi().placeOrder({
-    order
+    itemId
   }).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
@@ -338,39 +278,23 @@ const placeOrderApi = (order) => {
   });
 }
 
-const placeOneOrder = (orders, item) => {
-  const order = {};
-  order[orders.account_id] = {
-    [orders.order_no]: {
-      order_no: orders.order_no,
-      account_id: orders.account_id,
-      shipping_box_id: orders.shipping_box_id,
-      items: [item.item_no],
-    }
-  }
-
-  placeOrderApi(order);
-}
-
 // 배송처리
-const deliveryOrder = (order, item) => {
+const deliveryOrder = (itemId) => {
 
-  if (!state.courierNameValues[item.id]) {
+  if (!state.courierNameValues[itemId]) {
     message.error('택배사를 선택해주세요.');
     return false;
   }
 
-  if (!state.invoiceNumberValues[item.id]) {
+  if (!state.invoiceNumberValues[itemId]) {
     message.error('운송장번호를 입력해주세요.');
     return false;
   }
 
   useMarketOrderApi().deliveryOrder({
-    accountId: order.account_id,
-    orderId: order.id,
-    itemId: item.id,
-    courierName: state.courierNameValues[item.id],
-    invoiceNumber: state.invoiceNumberValues[item.id]
+    itemId,
+    courierName: state.courierNameValues[itemId],
+    invoiceNumber: state.invoiceNumberValues[itemId]
   }).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);

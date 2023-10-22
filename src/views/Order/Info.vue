@@ -33,11 +33,12 @@ const getOrderDetail = async () => {
       message.error(res.message);
       return false;
     }
-    console.log(res.data);
-    state.orderData = res.data;
+
+    const { marketAccount, marketOrder } = res.data
+    state.orderData = marketOrder;
 
     // 마켓코드 설정
-    marketCode.value = res.data.market_code.charAt(0).toUpperCase() + res.data.market_code.slice(1);
+    marketCode.value = marketAccount.marketCode.charAt(0).toUpperCase() + marketAccount.marketCode.slice(1);
 
   });
 }
