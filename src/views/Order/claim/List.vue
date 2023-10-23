@@ -17,12 +17,11 @@
             <a-input v-model:value="state.tableData.params.order_value" style="width: 300px;" allowClear />
           </a-input-group>
         </a-descriptions-item>
-        <a-descriptions-item label="주문자 수취인">
+        <a-descriptions-item label="반품자">
           <a-input-group compact>
             <a-input-group compact>
               <a-select v-model:value="state.tableData.params.orderer_type" style="width: 100px;">
-                <a-select-option value="bname">주문자</a-select-option>
-                <a-select-option value="rname">수취인</a-select-option>
+                <a-select-option value="rname">반품자</a-select-option>
               </a-select>
               <a-input v-model:value="state.tableData.params.orderer_value" style="width: 300px;" allowClear />
             </a-input-group>
@@ -100,7 +99,14 @@
             <a-table-column title="상품명" dataIndex="prd_name" key="prd_name" />
             <a-table-column title="옵션명" dataIndex="prd_option_name" key="prd_option_name" :width="240" />
             <a-table-column title="수량" dataIndex="quantity" key="quantity" :width="50" />
-            <a-table-column title="클레임사유" dataIndex="claim_code" key="claim_code" :width="120" />
+            <a-table-column title="클레임사유" dataIndex="claim_code" key="claim_code" :width="120">
+              <template #default="{ record }">
+                <a-space>
+                  {{ record.claim_message || '-' }}
+                  {{ record.claim_detail }}
+                </a-space>
+              </template>
+            </a-table-column>
             <a-table-column title="" dataIndex="command" key="command" :width="180">
               <template #default="{ record }">
                 <a-space>
