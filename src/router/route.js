@@ -125,8 +125,8 @@ export const menus = [{
                     },
                 },
                 {
-                    path: "/order/claimlist",
-                    name: "order_claimlist",
+                    path: "/claim/list",
+                    name: "claim_list",
                     component: () => import("@/views/Order/ClaimList.vue"),
                     meta: {
                         title: "클레임관리",

@@ -172,7 +172,7 @@ const state = reactive({
       orderer_type: 'bname',
       orderer_value: '',
       market_code: '',
-      status: 'paid',
+      status: 'cancelComplete',
       page: 1,
       pageSize: 20,
     },
@@ -201,7 +201,7 @@ const getTableData = () => {
 
 // 주문 상태 리스트
 const getMarketStatusList = () => {
-  useMarketApi().getMarketOrderStatusList({}).then(res => {
+  useMarketApi().getMarketOrderClaimStatusList({}).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;

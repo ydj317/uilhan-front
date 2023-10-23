@@ -20,7 +20,16 @@ export function useMarketApi() {
             });
         },
 
-        // 마켓별상품상세URL
+        // 마켓클레임상태
+        getMarketOrderClaimStatusList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/getMarketOrderClaimStatus",
+                method: "get",
+                params: data,
+            });
+        },
+
+        // 마켓별상품상세 URL
         getMarketDetailUrls: (data) => {
             return AuthRequest({
                 url: process.env.VUE_APP_API_URL + "/api/openmarket/getMarketDetailUrls",

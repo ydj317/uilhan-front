@@ -20,6 +20,15 @@ export function useMarketOrderApi() {
             });
         },
 
+        // 클레임목록
+        getOrderClaimList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/claim",
+                method: "get",
+                params: data,
+            });
+        },
+
         // 발주처리
         placeOrder: (data) => {
             return AuthRequest({
