@@ -79,7 +79,7 @@
 
     <a-table :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
       :pagination="false" :defaultExpandAllRows="true">
-      <a-table-column title="마켓" dataIndex="id" key="id">
+      <a-table-column :width="200" title="마켓" dataIndex="id" key="id">
         <template #default="{ record }">
           <div style="display: flex;align-items: center;gap: 5px;" v-if="record.market_code">
             <img :src="getLogoSrc(record.market_code)" style="width: 18px;height: 18px;" />
@@ -87,11 +87,16 @@
           </div>
         </template>
       </a-table-column>
-      <a-table-column title="주문번호" dataIndex="order_no" key="order_no"></a-table-column>
+      <a-table-column :width="200" title="주문번호" dataIndex="order_no" key="order_no"/>
       <a-table-column title="주문자" dataIndex="orderer_name" key="orderer_name" />
-      <a-table-column title="연락처" dataIndex="orderer_name" key="orderer_name"></a-table-column>
-      <a-table-column title="주문시간" dataIndex="ins_date" key="ins_date"></a-table-column>
-      <a-table-column title="관리" dataIndex="manage" key="manage">
+      <a-table-column :width="300" title="주문시간" dataIndex="order_date" key="order_date"/>
+      <a-table-column :width="300" title="수집시간" dataIndex="ins_date" key="ins_date">
+        <template #default="{ record }">
+          <span style="display: block;">{{ record['ins_date'] }}</span>
+          <span style="display: block; font-size: 13px; color: #999">( {{ record['upd_date'] }} )</span>
+        </template>
+      </a-table-column>
+      <a-table-column :width="200" title="관리" dataIndex="manage" key="manage">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
@@ -111,7 +116,7 @@
         <div>
           <a-table :data-source="scoped.record.orderItems" :pagination="false" size="small"
             :row-selection="rowItemSelection" :showHeader="true" style="padding: 0;" bordered>
-            <a-table-column title="이미지" dataIndex="prd_image" key="prd_image" :width="50">
+            <a-table-column :width="50" title="이미지" dataIndex="prd_image" key="prd_image">
               <template #default="{ record }">
                 <a-image :src="record.prd_image"
                   fallback="data:image/png;base64,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"
@@ -119,28 +124,38 @@
               </template>
             </a-table-column>
             <a-table-column title="상품명" dataIndex="prd_name" key="prd_name" />
-            <a-table-column title="옵션명" dataIndex="prd_option" key="prd_option" :width="240" />
-            <a-table-column title="수량" dataIndex="quantity" key="quantity" :width="50" />
-            <a-table-column title="단가" dataIndex="unit_price" key="unit_price" :width="80" />
-            <a-table-column title="운송장정보" dataIndex="invoice_number" key="invoice_number"
-              v-if="state.tableData.params.status !== 'paid'" :width="220">
+            <a-table-column :width="300" title="옵션명" dataIndex="prd_option" key="prd_option" />
+            <a-table-column :width="60" title="수량" dataIndex="quantity" key="quantity">
+              <template #default="{ record }">
+                {{ record['quantity'] - record['claim_quantity'] }}
+              </template>
+            </a-table-column>
+            <a-table-column :width="100" title="단가" dataIndex="unit_price" key="unit_price" />
+            <a-table-column :width="100" title="합계">
+              <template #default="{ record }">
+                {{ (record['quantity'] - record['claim_quantity']) * record['unit_price'] }}
+              </template>
+            </a-table-column>
+            <a-table-column :width="200" title="운송장정보" dataIndex="invoice_number" key="invoice_number"
+              v-if="state.tableData.params.status !== 'paid'">
               <template #default="{ record }">
                 <div style="display: flex;flex-direction: column;gap: 5px;"
                   v-if="state.tableData.params.status === 'shippingAddress'">
                   <a-select v-model:value="state.courierNameValues[record.id]">
+                    <a-select-option value="">선택</a-select-option>
                     <a-select-option value="1">CJ대한통운</a-select-option>
                     <a-select-option value="2">우체국</a-select-option>
                   </a-select>
                   <a-input v-model:value="state.invoiceNumberValues[record.id]" />
                 </div>
                 <div v-else>
-                  {{ record.courier_name }} -
-                  {{ record.invoice_number }}
+                  {{ record.courier_name }} - {{ record.invoice_number }}
                 </div>
 
               </template>
             </a-table-column>
-            <a-table-column title="" dataIndex="command" key="command" :width="180">
+            <a-table-column :width="200" title="최종상태변경시간" dataIndex="item_last_date" key="item_last_date"></a-table-column>
+            <a-table-column :width="100" title="" dataIndex="command" key="command">
               <template #default="{ record }">
                 <a-space>
                   <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
