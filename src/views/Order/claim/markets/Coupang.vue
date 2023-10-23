@@ -67,8 +67,6 @@
           <a-descriptions-item label="딜명">{{ item.itemOrgData.vendorItemPackageName }}</a-descriptions-item>
           <a-descriptions-item label="상품출고여부">{{ item.itemOrgData.releaseStatus }}</a-descriptions-item>
           <a-descriptions-item label="주문취소처리 담당자">{{ item.itemOrgData.cancelCompleteUser }}</a-descriptions-item>
-
-          <a-descriptions-item label="반품송장번호">{{ item.invoiceNumber }}</a-descriptions-item>
         </a-descriptions>
 
         <a-descriptions title="반품철회정보" bordered :column="2" :labelStyle="{ width: '220px' }"
