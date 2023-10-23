@@ -4,14 +4,6 @@
     <a-descriptions-item label="클레임요청시간">{{ orderData.returnDate }}</a-descriptions-item>
   </a-descriptions>
 
-  <a-descriptions title="주문자" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
-    :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="주문자 이름">{{ orderData.returnerName }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 email">{{ orderData.ordererName }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 연락처(안심번호)">{{ orderData.ordererName }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 연락처(실전화번호)">{{ orderData.ordererName }}</a-descriptions-item>
-  </a-descriptions>
-
   <div class="mt40" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }" style="">
     <h3>상품정보</h3>
     <a-collapse v-model:activeKey="state.collapseKey" style="background-color: white;" collapsible="header">
@@ -28,7 +20,8 @@
         <a-descriptions title="상품정보" bordered :column="2" :labelStyle="{ width: '220px' }"
           :contentStyle="{ width: '500px' }">
           <a-descriptions-item label="상품명">{{ item.prdName }}</a-descriptions-item>
-          <a-descriptions-item label="옵션명">{{ item.prdOption }}</a-descriptions-item>
+          <a-descriptions-item label="옵션명">{{ item.prdOptionName }}</a-descriptions-item>
+          <a-descriptions-item label="옵션번호">{{ item.prdOptionNo }}</a-descriptions-item>
           <a-descriptions-item label="수량">{{ item.quantity }}</a-descriptions-item>
           <a-descriptions-item label="클레임상태">
             <a-badge color="blue" :text="state.orderStatusList[item.status]" v-if="item.status === 'cancelComplete'" />
@@ -37,7 +30,52 @@
             <a-badge color="green" :text="state.orderStatusList[item.status]"
               v-else-if="item.status === 'returnComplete'" />
           </a-descriptions-item>
-          <a-descriptions-item label="클레임사유">{{ item.claimCode }} - {{ item.claimDetail }}</a-descriptions-item>
+          <a-descriptions-item label="원 배송번호">{{ item.itemOrgData.shipmentBoxId }}</a-descriptions-item>
+          <a-descriptions-item label="클레임번호">{{ item.claimNo }} </a-descriptions-item>
+          <a-descriptions-item label="클레임유형">{{ item.claimCode }} </a-descriptions-item>
+          <a-descriptions-item label="클레임상세">{{ item.claimDetail }}</a-descriptions-item>
+          <a-descriptions-item label="최종상태변경시간">{{ item.lastDate }}</a-descriptions-item>
+
+          <a-descriptions-item label="반품택배사">{{ item.courierName }}</a-descriptions-item>
+          <a-descriptions-item label="반품송장번호">{{ item.invoiceNumber }}</a-descriptions-item>
+          <a-descriptions-item label="반품 신청인 이름">{{ item.orgData.requesterName }}</a-descriptions-item>
+          <a-descriptions-item label="반품 신청인 전화번호(안심번호)">{{ item.orgData.requesterPhoneNumber }}</a-descriptions-item>
+          <a-descriptions-item label="반품 신청인 실전화번호">{{ item.orgData.requesterRealPhoneNumber }}</a-descriptions-item>
+          <a-descriptions-item label="반품 회수지 주소">{{ item.orgData.requesterAddress }}</a-descriptions-item>
+          <a-descriptions-item label="반품 회수지 상세주소">{{ item.orgData.requesterAddressDetail }}</a-descriptions-item>
+          <a-descriptions-item label="반품 회수지 우편번호">{{ item.orgData.requesterZipCode }}</a-descriptions-item>
+          <a-descriptions-item label="반품 사유 카테고리 1">{{ item.orgData.cancelReasonCategory1 }}</a-descriptions-item>
+          <a-descriptions-item label="반품 사유 카테고리 2">{{ item.orgData.cancelReasonCategory2 }}</a-descriptions-item>
+          <a-descriptions-item label="취소사유 상세내역">{{ item.orgData.cancelReason }}</a-descriptions-item>
+          <a-descriptions-item label="총 취소수량">{{ item.orgData.cancelCountSum }}</a-descriptions-item>
+          <a-descriptions-item label="반품배송번호">{{ item.orgData.returnDeliveryId }}</a-descriptions-item>
+          <a-descriptions-item label="회수종류">{{ item.orgData.returnDeliveryType }}</a-descriptions-item>
+          <a-descriptions-item label="출고중지처리상태">{{ item.orgData.releaseStopStatus }}</a-descriptions-item>
+          <a-descriptions-item label="동봉배송비">{{ item.orgData.enclosePrice }}</a-descriptions-item>
+          <a-descriptions-item label="귀책타입">{{ item.orgData.faultByType }}</a-descriptions-item>
+          <a-descriptions-item label="선환불 여부">{{ item.orgData.preRefund }}</a-descriptions-item>
+          <a-descriptions-item label="완료 확인 종류">{{ item.orgData.completeConfirmType }}</a-descriptions-item>
+          <a-descriptions-item label="완료 확인 시간">{{ item.orgData.completeConfirmDate }}</a-descriptions-item>
+          <a-descriptions-item label="반품사유코드">{{ item.orgData.reasonCode }}</a-descriptions-item>
+          <a-descriptions-item label="반품사유설명">{{ item.orgData.reasonCodeText }}</a-descriptions-item>
+          <a-descriptions-item label="예상 반품배송비">{{ item.orgData.returnShippingCharge }}</a-descriptions-item>
+
+          <a-descriptions-item label="딜번호">{{ item.itemOrgData.vendorItemPackageId }}</a-descriptions-item>
+          <a-descriptions-item label="딜명">{{ item.itemOrgData.vendorItemPackageName }}</a-descriptions-item>
+          <a-descriptions-item label="상품출고여부">{{ item.itemOrgData.releaseStatus }}</a-descriptions-item>
+          <a-descriptions-item label="주문취소처리 담당자">{{ item.itemOrgData.cancelCompleteUser }}</a-descriptions-item>
+
+          <a-descriptions-item label="반품송장번호">{{ item.invoiceNumber }}</a-descriptions-item>
+        </a-descriptions>
+
+        <a-descriptions title="반품철회정보" bordered :column="2" :labelStyle="{ width: '220px' }"
+                          :contentStyle="{ width: '500px' }" class="mt20">
+          <a-descriptions-item label="철회여부">{{ item.isCancel }}</a-descriptions-item>
+          <template v-if="item.cancelOrgData !== undefined">
+            <a-descriptions-item label="반품 접수번호">{{ item.cancelOrgData.cancelId }}</a-descriptions-item>
+            <a-descriptions-item label="반품 귀책">{{ item.cancelOrgData.refundDeliveryDuty }}</a-descriptions-item>
+            <a-descriptions-item label="반품철회 시각">{{ item.cancelOrgData.createdAt }}</a-descriptions-item>
+          </template>
         </a-descriptions>
 
         <template #extra>
@@ -84,6 +122,8 @@ const { orderData } = toRefs(props)
 
 
 onMounted(async () => {
+  console.log('==0==')
+  console.log(orderData.value)
   await getMarketClaimStatusList();
 })
 </script>
