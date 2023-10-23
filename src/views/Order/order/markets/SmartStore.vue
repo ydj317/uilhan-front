@@ -4,12 +4,27 @@
     <a-descriptions-item label="주문일시">{{ orderData.orderDate }}</a-descriptions-item>
   </a-descriptions>
 
-  <a-descriptions title="주문자" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
+  <a-descriptions title="주문자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
     :contentStyle="{ width: '500px' }">
     <a-descriptions-item label="주문자 이름">{{ orderData.ordererName }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 email">{{ orderData.ordererName }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 연락처(안심번호)">{{ orderData.ordererName }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 연락처(실전화번호)">{{ orderData.ordererName }}</a-descriptions-item>
+    <a-descriptions-item label="주문자 연락처(실전화번호)">{{ orderData.orgData.ordererTel }}</a-descriptions-item>
+  </a-descriptions>
+
+  <a-descriptions title="수령자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
+                  :contentStyle="{ width: '500px' }">
+    <a-descriptions-item label="배송구분">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.addressType === 'DOMESTIC' ? '국내배송' : '해외배송'}}</a-descriptions-item>
+    <a-descriptions-item label="수령자 이름">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.name }}</a-descriptions-item>
+    <a-descriptions-item label="수령자 연락처(일반전화)">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.tel1 }}</a-descriptions-item>
+    <a-descriptions-item label="수령자 연락처(휴대전화)">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.tel2 }}</a-descriptions-item>
+    <a-descriptions-item label="수령자 주소">({{ orderData.items[0].itemOrgData.productOrder.shippingAddress.zipCode}}){{ orderData.items[0].itemOrgData.productOrder.shippingAddress.country}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.city}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.city}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.baseAddress}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.detailedAddress}} </a-descriptions-item>
+  </a-descriptions>
+
+  <a-descriptions title="결제정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }">
+    <a-descriptions-item label="결제일시">{{ orderData.orderDate}}</a-descriptions-item>
+    <a-descriptions-item label="결제수단">{{ orderData.orgData.paymentMeans}}</a-descriptions-item>
+    <a-descriptions-item label="주문 할인액">{{ orderData.orgData.orderDiscountAmount}}</a-descriptions-item>
+    <a-descriptions-item label="최종 결제 금액">{{ orderData.orgData.generalPaymentAmount}}</a-descriptions-item>
+    <a-descriptions-item label="결제 위치 구분">{{ orderData.orgData.payLocationType}}</a-descriptions-item>
   </a-descriptions>
 
   <div class="mt40" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }" style="">
@@ -48,6 +63,7 @@
           :contentStyle="{ width: '500px' }">
           <a-descriptions-item label="택배사">{{ item.courierName }}</a-descriptions-item>
           <a-descriptions-item label="운송장번호">{{ item.invoiceNumber }}</a-descriptions-item>
+          <a-descriptions-item label="배송비">{{ item.itemOrgData.deliveryFeeAmount }}</a-descriptions-item>
         </a-descriptions>
 
         <a-descriptions title="해외배송정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
@@ -190,4 +206,5 @@ onMounted(async () => {
   getMarketDeliveryCompany();
   await getMarketOrderStatusList();
 })
+
 </script>

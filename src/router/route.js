@@ -119,7 +119,7 @@ export const menus = [{
                     meta: {
                         title: "주문상세",
                         isHide: true,
-                        roles: ["ROLE_ADMIN"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                         active: "/order/list"
                     },
