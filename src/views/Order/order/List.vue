@@ -141,8 +141,7 @@
               <template #default="{ record }">
                 <div style="display: flex;flex-direction: column;gap: 5px;"
                   v-if="state.tableData.params.status === 'shippingAddress'">
-                  <a-select v-model:value="state.courierNameValues[record.id]">
-                    <a-select-option value="">선택</a-select-option>
+                  <a-select v-model:value="state.courierNameValues[record.id]" placeholder="택배사를 선택해주세요.">
                     <a-select-option value="1">CJ대한통운</a-select-option>
                     <a-select-option value="2">우체국</a-select-option>
                   </a-select>
