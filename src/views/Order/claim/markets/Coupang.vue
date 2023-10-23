@@ -1,7 +1,7 @@
 <template>
   <a-descriptions title="클레임정보" bordered :column="2" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }">
     <a-descriptions-item label="주문번호">{{ orderData.orderNo }}</a-descriptions-item>
-    <a-descriptions-item label="클레임요청시간">{{ orderData.returnDate }}</a-descriptions-item>
+    <a-descriptions-item label="클레임요청시간">{{ orderData.claimDate }}</a-descriptions-item>
   </a-descriptions>
 
   <div class="mt40" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }" style="">
@@ -22,7 +22,10 @@
           <a-descriptions-item label="상품명">{{ item.prdName }}</a-descriptions-item>
           <a-descriptions-item label="옵션명">{{ item.prdOptionName }}</a-descriptions-item>
           <a-descriptions-item label="옵션번호">{{ item.prdOptionNo }}</a-descriptions-item>
-          <a-descriptions-item label="수량">{{ item.quantity }}</a-descriptions-item>
+          <a-descriptions-item label="수량">
+            {{ item.quantity }}
+            <span style="color: red;" v-if="item.isCancel === '1'">(반품철회)</span>
+          </a-descriptions-item>
           <a-descriptions-item label="클레임상태">
             <a-badge color="blue" :text="state.orderStatusList[item.status]" v-if="item.status === 'cancelComplete'" />
             <a-badge color="yellow" :text="state.orderStatusList[item.status]"
@@ -32,7 +35,7 @@
           </a-descriptions-item>
           <a-descriptions-item label="원 배송번호">{{ item.itemOrgData.shipmentBoxId }}</a-descriptions-item>
           <a-descriptions-item label="클레임번호">{{ item.claimNo }} </a-descriptions-item>
-          <a-descriptions-item label="클레임유형">{{ item.claimCode }} </a-descriptions-item>
+          <a-descriptions-item label="클레임사유">{{ item.claimCode }} </a-descriptions-item>
           <a-descriptions-item label="클레임상세">{{ item.claimDetail }}</a-descriptions-item>
           <a-descriptions-item label="최종상태변경시간">{{ item.lastDate }}</a-descriptions-item>
 
