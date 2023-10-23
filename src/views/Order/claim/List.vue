@@ -141,7 +141,7 @@ const state = reactive({
       paid_date: [],
       order_type: 'oid',
       order_value: '',
-      orderer_type: 'bname',
+      orderer_type: 'rname',
       orderer_value: '',
       market_code: '',
       status: 'cancelComplete',

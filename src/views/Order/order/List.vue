@@ -67,8 +67,8 @@
       </div>
       <div class="right-div" style="display: flex;align-items: center;">
         <a-tooltip>
-          <template #title>EXEL 다운로드</template>
-          <a-button>
+          <template #title>EXCEL 다운로드</template>
+          <a-button @click="excelDownload">
             <template #icon>
               <DownloadOutlined />
             </template>
@@ -433,6 +433,19 @@ const getMarketDeliveryCompany = () => {
     }
 
     state.marketDeliveryCompany = res.data;
+  });
+}
+
+
+const excelDownload = () => {
+  useMarketOrderApi().excelDownload(state.tableData.params).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    const url = res.data;
+    window.open(url);
   });
 }
 
