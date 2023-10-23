@@ -1,6 +1,6 @@
 <template>
   <a-card>
-    <component :is="markets[marketCode]" :key="marketCode" :orderData="state.orderData" />
+    <component :is="markets[marketCode]" :key="marketCode" :orderData="state.orderData" :marketCode="marketCode" />
 
     <a-button type="primary" @click="router.push('/order/list')" class="mt15">목록</a-button>
   </a-card>

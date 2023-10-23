@@ -57,15 +57,17 @@
         </a-descriptions>
 
         <template #extra>
-          <a-button @click="placeOneOrder(orderData, item)" size="small" v-if="item.status === 'paid'">
+          <a-button @click="receiverOneOrder(orderData, item)" size="small" v-if="item.status === 'paid'">
             발주
           </a-button>
           <div v-if="item.status === 'shippingAddress'">
             <a-input v-model:value="state.invoiceNumberValues[item.id]" style="width: 250px;" size="small">
               <template #addonBefore>
                 <a-select v-model:value="state.courierNameValues[item.id]" style="width: 120px" placeholder="택배사 선택">
-                  <a-select-option value="1">CJ대한통운</a-select-option>
-                  <a-select-option value="2">우체국</a-select-option>
+                  <a-select-option :value="key" :key="key"
+                    v-for="(company, key) in state.marketDeliveryCompany[orderData.market_code]">{{
+                      company
+                    }}</a-select-option>
                 </a-select>
               </template>
             </a-input>
@@ -103,6 +105,7 @@ const state = reactive({
   collapseKey: [],
   courierNameValues: {},
   invoiceNumberValues: {},
+  marketDeliveryCompany: {}
 });
 
 
@@ -118,8 +121,8 @@ const getMarketOrderStatusList = async () => {
 const { orderData } = toRefs(props)
 
 // 발주처리
-const placeOrderApi = (order) => {
-  useMarketOrderApi().placeOrder({
+const receiverOrderApi = (order) => {
+  useMarketOrderApi().receiverOrder({
     order
   }).then(res => {
     if (res.status !== "2000") {
@@ -130,7 +133,7 @@ const placeOrderApi = (order) => {
   });
 }
 
-const placeOneOrder = (orders, item) => {
+const receiverOneOrder = (orders, item) => {
   const order = {};
   order[orders.account_id] = {
     [orders.order_no]: {
@@ -141,7 +144,7 @@ const placeOneOrder = (orders, item) => {
     }
   }
 
-  placeOrderApi(order);
+  receiverOrderApi(order);
 }
 
 // 배송처리
@@ -172,7 +175,19 @@ const deliveryOrder = (order, item) => {
   });
 }
 
+const getMarketDeliveryCompany = () => {
+  useMarketApi().getMarketDeliveryCompany({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    state.marketDeliveryCompany = res.data;
+  });
+}
+
 onMounted(async () => {
+  getMarketDeliveryCompany();
   await getMarketOrderStatusList();
 })
 </script>

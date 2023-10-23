@@ -110,7 +110,7 @@
             <a-table-column title="" dataIndex="command" key="command" :width="180">
               <template #default="{ record }">
                 <a-space>
-                  <a-button size="small">마켓바로가기</a-button>
+                  <a-button size="small" @click="openMarketAdminPage(scoped.record.market_code)">마켓바로가기</a-button>
                 </a-space>
               </template>
             </a-table-column>
@@ -152,6 +152,7 @@ const state = reactive({
   orderStatus: [],
   courierNameValues: {},
   invoiceNumberValues: {},
+  marketAdminUrls: {},
 });
 
 // 주문 리스트
@@ -231,8 +232,30 @@ const getLogoSrc = (marketCode) => {
   }
 }
 
+const openMarketAdminPage = (marketCode) => {
+  const url = state.marketAdminUrls[marketCode]['return'];
+  if (!url) {
+    message.error("마켓 관리자 페이지가 등록되지 않았습니다.");
+    return false;
+  }
+
+  window.open(url);
+}
+
+const getMarketAdminUrls = () => {
+  useMarketApi().getMarketAdminUrls({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    state.marketAdminUrls = res.data;
+  });
+}
+
 onMounted(() => {
   getMarketStatusList();
+  getMarketAdminUrls();
   getTableData()
 })
 </script>

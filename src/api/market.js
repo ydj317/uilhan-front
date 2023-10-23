@@ -45,7 +45,24 @@ export function useMarketApi() {
                 method: "get",
             });
         },
+        
+        // /api/openmarket/getMarketDeliveryCompany
+        getMarketDeliveryCompany: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/getMarketDeliveryCompany",
+                method: "get",
+                params: data,
+            });
+        },
 
+        // /api/openmarket/getMarketAdminUrls
+        getMarketAdminUrls: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/getMarketAdminUrls",
+                method: "get",
+                params: data,
+            });
+        },
         
 
     }

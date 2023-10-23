@@ -57,7 +57,7 @@
     <div class="mb15" style="display: flex;justify-content: space-between;">
       <div class="left-div">
         <a-space>
-          <a-button @click="placeOrderSelected" v-if="state.tableData.params.status === 'paid'">
+          <a-button @click="receiverOrderSelected" v-if="state.tableData.params.status === 'paid'">
             <template #icon>
               <ContainerOutlined />
             </template>
@@ -87,9 +87,9 @@
           </div>
         </template>
       </a-table-column>
-      <a-table-column :width="200" title="주문번호" dataIndex="order_no" key="order_no"/>
+      <a-table-column :width="200" title="주문번호" dataIndex="order_no" key="order_no" />
       <a-table-column title="주문자" dataIndex="orderer_name" key="orderer_name" />
-      <a-table-column :width="300" title="주문시간" dataIndex="order_date" key="order_date"/>
+      <a-table-column :width="300" title="주문시간" dataIndex="order_date" key="order_date" />
       <a-table-column :width="300" title="수집시간" dataIndex="ins_date" key="ins_date">
         <template #default="{ record }">
           <span style="display: block;">{{ record['ins_date'] }}</span>
@@ -103,6 +103,7 @@
               <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id']">
                 <a-button size="small">상세</a-button>
               </RouterLink>
+              <a-button type="primary" size="small" @click="openMarketAdminPage(record.market_code)">마켓바로가기</a-button>
               <a-button type="primary" size="small"
                 v-if="!record['id'] && state.tableData.params.status === 'paid'">발주</a-button>
               <a-button type="success" size="small"
@@ -142,8 +143,10 @@
                 <div style="display: flex;flex-direction: column;gap: 5px;"
                   v-if="state.tableData.params.status === 'shippingAddress'">
                   <a-select v-model:value="state.courierNameValues[record.id]" placeholder="택배사를 선택해주세요.">
-                    <a-select-option value="1">CJ대한통운</a-select-option>
-                    <a-select-option value="2">우체국</a-select-option>
+                    <a-select-option :value="key" :key="key"
+                      v-for="(company, key) in state.marketDeliveryCompany[scoped.record.market_code]">{{
+                        company
+                      }}</a-select-option>
                   </a-select>
                   <a-input v-model:value="state.invoiceNumberValues[record.id]" />
                 </div>
@@ -153,12 +156,13 @@
 
               </template>
             </a-table-column>
-            <a-table-column :width="200" title="최종상태변경시간" dataIndex="item_last_date" key="item_last_date"></a-table-column>
+            <a-table-column :width="200" title="최종상태변경시간" dataIndex="item_last_date"
+              key="item_last_date"></a-table-column>
             <a-table-column :width="100" title="" dataIndex="command" key="command">
               <template #default="{ record }">
                 <a-space>
                   <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
-                    @click="placeOneOrder(scoped.record, record)">발주</a-button>
+                    @click="receiverOneOrder(scoped.record, record)">발주</a-button>
                   <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'">구매</a-button>
                   <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                     @click="deliveryOrder(scoped.record, record)">배송</a-button>
@@ -204,6 +208,7 @@ const state = reactive({
   orderStatus: [],
   courierNameValues: {},
   invoiceNumberValues: {},
+  marketDeliveryCompany: {},
 });
 
 // 주문 리스트
@@ -277,6 +282,9 @@ const rowSelection = ref({
 });
 
 const handleStatusChange = (e) => {
+  if (state.tableData.params.status === 'shippingAddress') {
+    getMarketDeliveryCompany();
+  }
   getTableData()
 }
 const pageChangeHandler = (page) => {
@@ -296,7 +304,7 @@ const getLogoSrc = (marketCode) => {
 /**
  * 선택발주처리
  */
-const placeOrderSelected = () => {
+const receiverOrderSelected = () => {
 
   const selectedItemRowKeys = rowItemSelection.value.selectedRowKeysTemp;
   if (selectedItemRowKeys.length === 0) {
@@ -337,13 +345,13 @@ const placeOrderSelected = () => {
     }
 
   });
-  placeOrderApi(selectedOrders);
+  receiverOrderApi(selectedOrders);
 
 }
 
 // 발주처리
-const placeOrderApi = (order) => {
-  useMarketOrderApi().placeOrder({
+const receiverOrderApi = (order) => {
+  useMarketOrderApi().receiverOrder({
     order
   }).then(res => {
     if (res.status !== "2000") {
@@ -354,7 +362,7 @@ const placeOrderApi = (order) => {
   });
 }
 
-const placeOneOrder = (orders, item) => {
+const receiverOneOrder = (orders, item) => {
   const order = {};
   order[orders.account_id] = {
     [orders.order_no]: {
@@ -365,7 +373,7 @@ const placeOneOrder = (orders, item) => {
     }
   }
 
-  placeOrderApi(order);
+  receiverOrderApi(order);
 }
 
 // 배송처리
@@ -396,8 +404,42 @@ const deliveryOrder = (order, item) => {
   });
 }
 
+const openMarketAdminPage = (marketCode) => {
+  const url = state.marketAdminUrls[marketCode]['order'];
+  if (!url) {
+    message.error("마켓 관리자 페이지가 등록되지 않았습니다.");
+    return false;
+  }
+
+  window.open(url);
+}
+
+const getMarketAdminUrls = () => {
+  useMarketApi().getMarketAdminUrls({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    state.marketAdminUrls = res.data;
+  });
+}
+
+const getMarketDeliveryCompany = () => {
+  useMarketApi().getMarketDeliveryCompany({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    state.marketDeliveryCompany = res.data;
+  });
+}
+
 onMounted(() => {
   getMarketStatusList();
+  getMarketAdminUrls();
+
   getTableData()
 })
 </script>

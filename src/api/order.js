@@ -37,9 +37,9 @@ export function useMarketOrderApi() {
         },
 
         // 발주처리
-        placeOrder: (data) => {
+        receiverOrder: (data) => {
             return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/market/order/placeOrder",
+                url: process.env.VUE_APP_API_URL + "/api/market/order/receiverOrder",
                 method: "post",
                 data: data,
             });
