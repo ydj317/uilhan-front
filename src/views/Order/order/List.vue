@@ -157,8 +157,7 @@
 
               </template>
             </a-table-column>
-            <a-table-column :width="200" title="최종상태변경시간" dataIndex="item_last_date"
-              key="item_last_date"></a-table-column>
+            <a-table-column :width="200" title="상태변경시간" dataIndex="item_last_date" key="item_last_date"></a-table-column>
             <a-table-column :width="100" title="" dataIndex="command" key="command">
               <template #default="{ record }">
                 <a-space>
