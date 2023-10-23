@@ -28,6 +28,14 @@ export function useMarketOrderApi() {
             });
         },
 
+        // /api/market/order/{id}
+        getClaimDetail: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/claim/" + data.id,
+                method: "get",
+            });
+        },
+
         // 발주처리
         placeOrder: (data) => {
             return AuthRequest({

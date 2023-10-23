@@ -21,7 +21,7 @@ export function useMarketApi() {
         },
 
         // 마켓클레임상태
-        getMarketOrderClaimStatusList: (data) => {
+        getMarketClaimStatusList: (data) => {
             return AuthRequest({
                 url: process.env.VUE_APP_API_URL + "/api/openmarket/getMarketOrderClaimStatus",
                 method: "get",

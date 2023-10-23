@@ -74,14 +74,12 @@
         </template>
       </a-table-column>
       <a-table-column title="주문번호" dataIndex="order_no" key="order_no"></a-table-column>
-      <a-table-column title="주문자" dataIndex="orderer_name" key="orderer_name" />
-      <a-table-column title="연락처" dataIndex="orderer_name" key="orderer_name"></a-table-column>
-      <a-table-column title="주문시간" dataIndex="ins_date" key="ins_date"></a-table-column>
+      <a-table-column title="클레임요청시간" dataIndex="return_date" key="return_date"></a-table-column>
       <a-table-column title="관리" dataIndex="manage" key="manage">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
-              <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id']">
+              <RouterLink :to="`/claim/info/${record['id']}`" v-if="record['id']">
                 <a-button size="small">상세</a-button>
               </RouterLink>
             </a-space>
@@ -90,7 +88,7 @@
       </a-table-column>
       <template #expandedRowRender="scoped" style="padding:0">
         <div>
-          <a-table :data-source="scoped.record.orderItems" :pagination="false" size="small"
+          <a-table :data-source="scoped.record.claimItems" :pagination="false" size="small"
             :row-selection="rowItemSelection" :showHeader="true" style="padding: 0;" bordered>
             <a-table-column title="이미지" dataIndex="prd_image" key="prd_image" :width="50">
               <template #default="{ record }">
@@ -102,34 +100,11 @@
             <a-table-column title="상품명" dataIndex="prd_name" key="prd_name" />
             <a-table-column title="옵션명" dataIndex="prd_option" key="prd_option" :width="240" />
             <a-table-column title="수량" dataIndex="quantity" key="quantity" :width="50" />
-            <a-table-column title="단가" dataIndex="unit_price" key="unit_price" :width="80" />
-            <a-table-column title="운송장정보" dataIndex="invoice_number" key="invoice_number"
-              v-if="state.tableData.params.status !== 'paid'" :width="220">
-              <template #default="{ record }">
-                <div style="display: flex;flex-direction: column;gap: 5px;"
-                  v-if="state.tableData.params.status === 'shippingAddress'">
-                  <a-select v-model:value="state.courierNameValues[record.id]">
-                    <a-select-option value="1">CJ대한통운</a-select-option>
-                    <a-select-option value="2">우체국</a-select-option>
-                  </a-select>
-                  <a-input v-model:value="state.invoiceNumberValues[record.id]" />
-                </div>
-                <div v-else>
-                  {{ record.courier_name }} -
-                  {{ record.invoice_number }}
-                </div>
-
-              </template>
-            </a-table-column>
+            <a-table-column title="클레임사유" dataIndex="claim_code" key="claim_code" :width="120" />
             <a-table-column title="" dataIndex="command" key="command" :width="180">
               <template #default="{ record }">
                 <a-space>
-                  <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
-                    @click="placeOrder(record.id)">발주</a-button>
-                  <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'">구매</a-button>
-                  <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
-                    @click="deliveryOrder(record.id)">배송</a-button>
-                  <a-button size="small" v-if="state.tableData.params.status === 'shipping'">추적</a-button>
+                  <a-button size="small">마켓바로가기</a-button>
                 </a-space>
               </template>
             </a-table-column>
@@ -192,7 +167,7 @@ const getTableData = () => {
 
 // 주문 상태 리스트
 const getMarketStatusList = () => {
-  useMarketApi().getMarketOrderClaimStatusList({}).then(res => {
+  useMarketApi().getMarketClaimStatusList({}).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
@@ -244,55 +219,10 @@ const pageChangeHandler = (page) => {
 // 로고 이미지
 const getLogoSrc = (marketCode) => {
   try {
-    return require(`../../assets/img/list/market-logo/${marketCode}.png`);
+    return require(`../../../assets/img/list/market-logo/${marketCode}.png`);
   } catch (error) {
-    return "../../assets/img/temp_image.png"
+    return "../../../assets/img/temp_image.png"
   }
-}
-
-const placeOrderSelected = () => {
-  console.log(rowSelection.value.selectedRowKeys);
-  console.log(rowItemSelection.value.selectedRowKeys)
-}
-
-// 발주처리
-const placeOrder = (itemId) => {
-
-  useMarketOrderApi().placeOrder({
-    itemId
-  }).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-    message.success('발주처리가 완료되었습니다.');
-  });
-}
-
-// 배송처리
-const deliveryOrder = (itemId) => {
-
-  if (!state.courierNameValues[itemId]) {
-    message.error('택배사를 선택해주세요.');
-    return false;
-  }
-
-  if (!state.invoiceNumberValues[itemId]) {
-    message.error('운송장번호를 입력해주세요.');
-    return false;
-  }
-
-  useMarketOrderApi().deliveryOrder({
-    itemId,
-    courierName: state.courierNameValues[itemId],
-    invoiceNumber: state.invoiceNumberValues[itemId]
-  }).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-    message.success('배송처리가 완료되었습니다.');
-  });
 }
 
 onMounted(() => {

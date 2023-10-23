@@ -288,9 +288,9 @@ const pageChangeHandler = (page) => {
 // 로고 이미지
 const getLogoSrc = (marketCode) => {
   try {
-    return require(`../../assets/img/list/market-logo/${marketCode}.png`);
+    return require(`../../../assets/img/list/market-logo/${marketCode}.png`);
   } catch (error) {
-    return "../../assets/img/temp_image.png"
+    return "../../../assets/img/temp_image.png"
   }
 }
 
