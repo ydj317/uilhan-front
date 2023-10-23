@@ -98,7 +98,7 @@
               </template>
             </a-table-column>
             <a-table-column title="상품명" dataIndex="prd_name" key="prd_name" />
-            <a-table-column title="옵션명" dataIndex="prd_option" key="prd_option" :width="240" />
+            <a-table-column title="옵션명" dataIndex="prd_option_name" key="prd_option_name" :width="240" />
             <a-table-column title="수량" dataIndex="quantity" key="quantity" :width="50" />
             <a-table-column title="클레임사유" dataIndex="claim_code" key="claim_code" :width="120" />
             <a-table-column title="" dataIndex="command" key="command" :width="180">
