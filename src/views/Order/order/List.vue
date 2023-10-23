@@ -126,9 +126,10 @@
             </a-table-column>
             <a-table-column title="상품명" dataIndex="prd_name" key="prd_name" />
             <a-table-column :width="300" title="옵션명" dataIndex="prd_option_name" key="prd_option_name" />
-            <a-table-column :width="60" title="수량" dataIndex="quantity" key="quantity">
+            <a-table-column :width="100" title="수량" dataIndex="quantity" key="quantity">
               <template #default="{ record }">
                 {{ record['quantity'] - record['claim_quantity'] }}
+                <span style="display: block; color: red;">(반품: {{ record['claim_quantity'] }})</span>
               </template>
             </a-table-column>
             <a-table-column :width="100" title="단가" dataIndex="unit_price" key="unit_price" />
