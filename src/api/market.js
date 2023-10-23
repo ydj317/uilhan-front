@@ -38,6 +38,14 @@ export function useMarketApi() {
             });
         },
 
+        // /api/openmarket/{marketCode}/getMarketReturnReasonList
+        getMarketReturnReasonList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/" + data.marketCode + "/getMarketReturnReasonList",
+                method: "get",
+            });
+        },
+
         
 
     }
