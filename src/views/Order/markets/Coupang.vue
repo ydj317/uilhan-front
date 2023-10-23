@@ -56,8 +56,7 @@
         </a-descriptions>
 
         <template #extra>
-          <a-button @click="placeOrder(orderData.orderNo, item.id)" size="small" v-if="item.status === 'paid'">
-            <template #icon><setting-outlined /></template>
+          <a-button @click="placeOneOrder(orderData, item)" size="small" v-if="item.status === 'paid'">
             발주
           </a-button>
           <div v-if="item.status === 'shippingAddress'">
@@ -69,8 +68,7 @@
                 </a-select>
               </template>
             </a-input>
-            <a-button @click="deliveryOrder(orderData.orderNo, item.id)" size="small" class="ml10">
-              <template #icon><setting-outlined /></template>
+            <a-button @click="deliveryOrder(orderData, item)" size="small" class="ml10">
               배송
             </a-button>
           </div>
@@ -118,11 +116,10 @@ const getMarketOrderStatusList = async () => {
 }
 const { orderData } = toRefs(props)
 
-const placeOrder = (orderNo, itemId) => {
-
+// 발주처리
+const placeOrderApi = (order) => {
   useMarketOrderApi().placeOrder({
-    orderNo,
-    itemId
+    order
   }).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
@@ -130,27 +127,41 @@ const placeOrder = (orderNo, itemId) => {
     }
     message.success('발주처리가 완료되었습니다.');
   });
+}
 
+const placeOneOrder = (orders, item) => {
+  const order = {};
+  order[orders.account_id] = {
+    [orders.order_no]: {
+      order_no: orders.order_no,
+      account_id: orders.account_id,
+      shipping_box_id: orders.shipping_box_id,
+      items: [item.item_no],
+    }
+  }
+
+  placeOrderApi(order);
 }
 
 // 배송처리
-const deliveryOrder = (orderNo, itemId) => {
+const deliveryOrder = (order, item) => {
 
-  if (!state.courierNameValues[itemId]) {
+  if (!state.courierNameValues[item.id]) {
     message.error('택배사를 선택해주세요.');
     return false;
   }
 
-  if (!state.invoiceNumberValues[itemId]) {
+  if (!state.invoiceNumberValues[item.id]) {
     message.error('운송장번호를 입력해주세요.');
     return false;
   }
 
   useMarketOrderApi().deliveryOrder({
-    orderNo,
-    itemId,
-    courierName: state.courierNameValues[itemId],
-    invoiceNumber: state.invoiceNumberValues[itemId]
+    accountId: order.account_id,
+    orderId: order.id,
+    itemId: item.id,
+    courierName: state.courierNameValues[item.id],
+    invoiceNumber: state.invoiceNumberValues[item.id]
   }).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
