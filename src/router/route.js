@@ -121,7 +121,7 @@ export const menus = [{
                         isHide: true,
                         roles: ["ROLE_ADMIN"],
                         icon: '',
-                        active: "/order"
+                        active: "/order/list"
                     },
                 },
                 {
@@ -144,7 +144,7 @@ export const menus = [{
                         isHide: true,
                         roles: ["ROLE_ADMIN"],
                         icon: '',
-                        active: "/order"
+                        active: "/claim/list"
                     },
                 },
             ]
