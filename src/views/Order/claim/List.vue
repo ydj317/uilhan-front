@@ -17,12 +17,11 @@
             <a-input v-model:value="state.tableData.params.order_value" style="width: 300px;" allowClear />
           </a-input-group>
         </a-descriptions-item>
-        <a-descriptions-item label="주문자 수취인">
+        <a-descriptions-item label="반품자">
           <a-input-group compact>
             <a-input-group compact>
               <a-select v-model:value="state.tableData.params.orderer_type" style="width: 100px;">
-                <a-select-option value="bname">주문자</a-select-option>
-                <a-select-option value="rname">수취인</a-select-option>
+                <a-select-option value="rname">반품자</a-select-option>
               </a-select>
               <a-input v-model:value="state.tableData.params.orderer_value" style="width: 300px;" allowClear />
             </a-input-group>
