@@ -124,7 +124,7 @@
               </template>
             </a-table-column>
             <a-table-column title="상품명" dataIndex="prd_name" key="prd_name" />
-            <a-table-column :width="300" title="옵션명" dataIndex="prd_option" key="prd_option" />
+            <a-table-column :width="300" title="옵션명" dataIndex="prd_option_name" key="prd_option_name" />
             <a-table-column :width="60" title="수량" dataIndex="quantity" key="quantity">
               <template #default="{ record }">
                 {{ record['quantity'] - record['claim_quantity'] }}
