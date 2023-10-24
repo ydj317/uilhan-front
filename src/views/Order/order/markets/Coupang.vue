@@ -86,7 +86,7 @@
           <a-descriptions-item label="상품별 개별 항목값">{{ item.itemOrgData.etcInfoValue }}</a-descriptions-item>
           <a-descriptions-item label="주문시 출고예정일">{{ item.itemOrgData.estimatedShippingDate }}</a-descriptions-item>
           <a-descriptions-item label="실제 출고예정일 (분리배송 시)">{{ item.itemOrgData.plannedShippingDate }}</a-descriptions-item>
-          <a-descriptions-item label="운송장번호 업로드 일시">{{ item.itemOrgData.invoiceNumberUploadDate }}</a-descriptions-item>
+          <a-descriptions-item label="운송장번호 업로드 일시">{{ item.itemOrgData.invoiceNumberUploadDate.replace('T', ' ') }}</a-descriptions-item>
           <a-descriptions-item label="업체상품옵션 추가 정보">{{ item.itemOrgData.extraProperties }}</a-descriptions-item>
           <a-descriptions-item label="최저가 상품 여부">{{ item.itemOrgData.pricingBadge }}</a-descriptions-item>
           <a-descriptions-item label="중고 상품 여부">{{ item.itemOrgData.usedProduct }}</a-descriptions-item>
