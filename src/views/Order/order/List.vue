@@ -67,8 +67,8 @@
       </div>
       <div class="right-div" style="display: flex;align-items: center;">
         <a-tooltip>
-          <template #title>EXEL 다운로드</template>
-          <a-button>
+          <template #title>EXCEL 다운로드</template>
+          <a-button @click="excelDownload">
             <template #icon>
               <DownloadOutlined />
             </template>
@@ -157,8 +157,7 @@
 
               </template>
             </a-table-column>
-            <a-table-column :width="200" title="최종상태변경시간" dataIndex="item_last_date"
-              key="item_last_date"></a-table-column>
+            <a-table-column :width="200" title="상태변경시간" dataIndex="item_last_date" key="item_last_date"></a-table-column>
             <a-table-column :width="100" title="" dataIndex="command" key="command">
               <template #default="{ record }">
                 <a-space>
@@ -434,6 +433,29 @@ const getMarketDeliveryCompany = () => {
     }
 
     state.marketDeliveryCompany = res.data;
+  });
+}
+
+
+const excelDownload = () => {
+  useMarketOrderApi().excelDownload(state.tableData.params).then(res => {
+    let response = res;
+    if (response === undefined) {
+      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+      return false;
+    }
+
+    let fileName = "order.xlsx";
+    let blob = new Blob([response], { type: "charset=utf-8" });
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let href = url.createObjectURL(blob); // 创建下载的链接
+    downloadElement.href = href;
+    downloadElement.download = decodeURI(fileName); // 下载后文件名
+    document.body.appendChild(downloadElement);
+    downloadElement.click(); // 点击下载
+    document.body.removeChild(downloadElement); // 下载完成移除元素
+    url.revokeObjectURL(href);
   });
 }
 

@@ -53,5 +53,13 @@ export function useMarketOrderApi() {
                 data: data,
             });
         },
+
+        excelDownload: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/order/excelDownload",
+                method: "post",
+                data: data,
+            });
+        },
     }
 }

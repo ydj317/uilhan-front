@@ -81,6 +81,8 @@
               <RouterLink :to="`/claim/info/${record['id']}`" v-if="record['id']">
                 <a-button size="small">상세</a-button>
               </RouterLink>
+
+              <a-button size="small" type="primary" @click="openMarketAdminPage(record.market_code)">마켓바로가기</a-button>
             </a-space>
           </div>
         </template>
@@ -102,13 +104,6 @@
               <template #default="{ record }">
                 <span>{{ record.quantity }}</span>
                 <span style="color: red;" v-if="record.is_cancel === '1'">(반품철회)</span>
-              </template>
-            </a-table-column>
-            <a-table-column title="" dataIndex="command" key="command" :width="180">
-              <template #default="{ record }">
-                <a-space>
-                  <a-button size="small" @click="openMarketAdminPage(scoped.record.market_code)">마켓바로가기</a-button>
-                </a-space>
               </template>
             </a-table-column>
           </a-table>
@@ -138,7 +133,7 @@ const state = reactive({
       paid_date: [],
       order_type: 'oid',
       order_value: '',
-      orderer_type: 'bname',
+      orderer_type: 'rname',
       orderer_value: '',
       market_code: '',
       status: 'cancelComplete',
