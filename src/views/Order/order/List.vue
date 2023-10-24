@@ -319,9 +319,9 @@ const receiverOrderSelected = () => {
 }
 
 // 발주처리
-const receiverOrderApi = (keys) => {
+const receiverOrderApi = (ids) => {
   useMarketOrderApi().receiverOrder({
-    keys
+    ids
   }).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
