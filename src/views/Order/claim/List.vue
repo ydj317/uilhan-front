@@ -73,8 +73,8 @@
         </template>
       </a-table-column>
       <a-table-column title="주문번호" dataIndex="order_no" key="order_no"></a-table-column>
-      <a-table-column title="클레임요청시간" dataIndex="return_date" key="return_date"></a-table-column>
-      <a-table-column title="관리" dataIndex="manage" key="manage">
+      <a-table-column title="클레임요청시간" dataIndex="claim_date" key="claim_date"></a-table-column>
+      <a-table-column title="" dataIndex="manage" key="manage">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
@@ -112,8 +112,6 @@
       </template>
     </a-table>
 
-    <a-pagination :total="state.tableData.total" :page-size="state.tableData.params.pageSize"
-      :current="state.tableData.params.page" @change="pageChangeHandler" class="mt15" />
   </a-card>
 </template>
 
@@ -225,6 +223,7 @@ const getLogoSrc = (marketCode) => {
   }
 }
 
+// 마켓 클레임 관리자 페이지
 const openMarketAdminPage = (marketCode) => {
   const url = state.marketAdminUrls[marketCode]['return'];
   if (!url) {
@@ -235,6 +234,7 @@ const openMarketAdminPage = (marketCode) => {
   window.open(url);
 }
 
+// 마켓 관리자 페이지 URL
 const getMarketAdminUrls = () => {
   useMarketApi().getMarketAdminUrls({}).then(res => {
     if (res.status !== "2000") {
@@ -246,13 +246,14 @@ const getMarketAdminUrls = () => {
   });
 }
 
-
+// 엑셀 다운로드
 const excelDownload = () => {
   const header = [
     { title: '주문번호', key: 'order_no' },
     { title: '셀러ID', key: 'seller_id' },
     { title: '클레임번호', key: 'claim_no' },
     { title: '클레임사유', key: 'claim_message' },
+    { title: '클레임사유상세', key: 'claim_detail' },
     { title: '클레임요청시간', key: 'claim_date' },
     { title: '상태', key: 'status' },
     { title: '상품코드', key: 'prd_code' },
@@ -278,8 +279,8 @@ const excelDownload = () => {
         seller_id: order.seller_id,
         claim_no: item.claim_no,
         claim_message: item.claim_message || '',
+        claim_detail: item.claim_detail,
         claim_date: order.claim_date,
-
         status: status[0].label,
         prd_code: item.prd_code,
         prd_name: item.prd_name,
@@ -298,7 +299,6 @@ const excelDownload = () => {
 
   table2excel(header, excelData, `x-plan-claim ${new Date().toLocaleString()}`);
 }
-
 
 // 검색
 const handleSearch = () => {

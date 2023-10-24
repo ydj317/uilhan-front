@@ -86,7 +86,7 @@
           <a-descriptions-item label="상품별 개별 항목값">{{ item.itemOrgData.etcInfoValue }}</a-descriptions-item>
           <a-descriptions-item label="주문시 출고예정일">{{ item.itemOrgData.estimatedShippingDate }}</a-descriptions-item>
           <a-descriptions-item label="실제 출고예정일 (분리배송 시)">{{ item.itemOrgData.plannedShippingDate }}</a-descriptions-item>
-          <a-descriptions-item label="운송장번호 업로드 일시">{{ item.itemOrgData.invoiceNumberUploadDate }}</a-descriptions-item>
+          <a-descriptions-item label="운송장번호 업로드 일시">{{ item.itemOrgData.invoiceNumberUploadDate.replace('T', ' ') }}</a-descriptions-item>
           <a-descriptions-item label="업체상품옵션 추가 정보">{{ item.itemOrgData.extraProperties }}</a-descriptions-item>
           <a-descriptions-item label="최저가 상품 여부">{{ item.itemOrgData.pricingBadge }}</a-descriptions-item>
           <a-descriptions-item label="중고 상품 여부">{{ item.itemOrgData.usedProduct }}</a-descriptions-item>
@@ -113,12 +113,6 @@
             </a-input>
             <a-button @click="deliveryOrder(orderData, item)" size="small" class="ml10">
               배송
-            </a-button>
-          </div>
-          <div v-if="item.status === 'shipping' || item.status === 'shippingComplete'">
-            {{ item.courierName }} <a-divider type="vertical" /> {{ item.invoiceNumber }}
-            <a-button size="small" class="ml10">
-              추적
             </a-button>
           </div>
         </template>
@@ -179,12 +173,12 @@ const receiverOrderApi = (order) => {
 
 const receiverOneOrder = (orders, item) => {
   const order = {};
-  order[orders.account_id] = {
-    [orders.order_no]: {
-      order_no: orders.order_no,
-      account_id: orders.account_id,
-      shipping_box_id: orders.shipping_box_id,
-      items: [item.item_no],
+  order[orders.accountId] = {
+    [orders.orderNo]: {
+      order_no: orders.orderNo,
+      account_id: orders.accountId,
+      shipping_box_id: item.shippingBoxNo,
+      items: [item.itemNo],
     }
   }
 
@@ -233,7 +227,6 @@ const getMarketDeliveryCompany = () => {
 onMounted(async () => {
   getMarketDeliveryCompany();
   await getMarketOrderStatusList();
-  console.log('==0==')
-  console.log(orderData.value)
 })
+
 </script>
