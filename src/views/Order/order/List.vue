@@ -183,6 +183,7 @@ import moment from "moment";
 import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
 import { DownloadOutlined, FileSyncOutlined, PlusOutlined, ContainerOutlined } from '@ant-design/icons-vue';
+import {forEach} from "lodash";
 
 
 const state = reactive({
@@ -329,8 +330,10 @@ const receiverOrderSelected = () => {
         [item.order_no]: {
           order_no: item.order_no,
           account_id: item.account_id,
-          shipping_box_id: item.shipping_box_id,
-          items: [item.item_no],
+          items: [{
+            'shipping_box_no' : item.shipping_box_no,
+            'item_no' : item.item_no
+          }]
         }
       })
       return;
@@ -340,8 +343,10 @@ const receiverOrderSelected = () => {
         [item.order_no]: {
           order_no: item.order_no,
           account_id: item.account_id,
-          shipping_box_id: item.shipping_box_id,
-          items: [item.item_no],
+          items: [{
+            'shipping_box_no' : item.shipping_box_no,
+            'item_no' : item.item_no
+          }]
         }
       }
     }
@@ -360,7 +365,20 @@ const receiverOrderApi = (order) => {
       message.error(res.message);
       return false;
     }
-    message.success('발주처리가 완료되었습니다.');
+
+    if (res.data.length < 1) {
+      message.error('처리결과를 받지 못하였습니다.');
+      return false;
+    }
+
+    forEach(res.data, (item) => {
+      if (item.message === '') {
+        message.success('발주처리 성공하였습니다.');
+      } else {
+        message.success(res.data.message);
+      }
+    });
+
   });
 }
 
@@ -370,8 +388,10 @@ const receiverOneOrder = (orders, item) => {
     [orders.order_no]: {
       order_no: orders.order_no,
       account_id: orders.account_id,
-      shipping_box_id: orders.shipping_box_id,
-      items: [item.item_no],
+      items: [{
+        'shipping_box_no' : item.shipping_box_no,
+        'item_no' : item.item_no
+      }],
     }
   }
 
