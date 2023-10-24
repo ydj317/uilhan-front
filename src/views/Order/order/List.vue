@@ -184,6 +184,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { useMarketOrderApi } from '@/api/order'
 import { useMarketApi } from '@/api/market'
+import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
 import { DownloadOutlined, FileSyncOutlined, PlusOutlined, ContainerOutlined } from '@ant-design/icons-vue';
 
@@ -256,12 +257,17 @@ const rowItemSelection = ref({
   selectedRowKeys: [],
   selectedRowKeysTemp: [],
   onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    rowSelection.value.selectedRowKeys = selectedRows.map(row => row.order_id);
+    rowItemSelection.value.selectedRowKeys = selectedRowKeys;
+    rowItemSelection.value.selectedRowKeysTemp = selectedRows.flatMap(row => {
+      return {
+        order_no: row.order_no,
+        account_id: row.account_id,
+        shipping_box_id: row.shipping_box_id || row.order_no,
+        item_no: row.item_no,
+      };
+    });
   },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(selectedRows);
-  },
-
 });
 
 // 주문 선택
@@ -438,25 +444,52 @@ const getMarketDeliveryCompany = () => {
 
 
 const excelDownload = () => {
-  useMarketOrderApi().excelDownload(state.tableData.params).then(res => {
-    let response = res;
-    if (response === undefined) {
-      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
-      return false;
-    }
+  const header = [
+    { title: '주문번호', key: 'order_no' },
+    { title: '주문자', key: 'orderer_name' },
+    { title: '주문시간', key: 'order_date' },
+    { title: '상태', key: 'status' },
+    { title: '상품코드', key: 'prd_code' },
+    { title: '상품명', key: 'prd_name' },
+    { title: '옵션명', key: 'prd_option_name' },
+    { title: '이미지', key: 'prd_image' },
+    { title: '수량', key: 'quantity' },
+    { title: '취소수량', key: 'claim_quantity' },
+    { title: '판매가', key: 'unit_price' },
+    { title: '수취인', key: 'receiver_name' },
+    { title: '택배사', key: 'courier_name' },
+    { title: '송장번호', key: 'invoice_number' },
+    { title: '수집날자', key: 'ins_date' },
+    { title: '업데이트날자', key: 'upd_date' },
+  ]
 
-    let fileName = "order.xlsx";
-    let blob = new Blob([response], { type: "charset=utf-8" });
-    let downloadElement = document.createElement("a");
-    let url = window.URL || window.webkitURL || window.moxURL;
-    let href = url.createObjectURL(blob); // 创建下载的链接
-    downloadElement.href = href;
-    downloadElement.download = decodeURI(fileName); // 下载后文件名
-    document.body.appendChild(downloadElement);
-    downloadElement.click(); // 点击下载
-    document.body.removeChild(downloadElement); // 下载完成移除元素
-    url.revokeObjectURL(href);
+  const excelData = [];
+
+  state.tableData.data.forEach(order => {
+    order.orderItems.forEach(item => {
+      const status = state.orderStatus.filter(it => it.value === item.status);
+      excelData.push({
+        order_no: order.order_no,
+        orderer_name: order.orderer_name,
+        order_date: order.order_date,
+        status: status[0].label,
+        prd_code: item.prd_code,
+        prd_name: item.prd_name,
+        prd_option_name: item.prd_option_name,
+        prd_image: item.prd_image,
+        quantity: item.quantity,
+        claim_quantity: item.claim_quantity,
+        unit_price: item.unit_price,
+        receiver_name: item.receiver_name,
+        courier_name: item.courier_name,
+        invoice_number: item.invoice_number,
+        ins_date: item.item_ins_date,
+        upd_date: item.item_upd_date,
+      })
+    })
   });
+
+  table2excel(header, excelData, `x-plan-order ${new Date().toLocaleString()}`);
 }
 
 onMounted(() => {

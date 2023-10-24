@@ -52,8 +52,8 @@
       </div>
       <div class="right-div" style="display: flex;align-items: center;">
         <a-tooltip>
-          <template #title>EXEL 다운로드</template>
-          <a-button>
+          <template #title>EXCEL 다운로드</template>
+          <a-button @click="excelDownload">
             <template #icon>
               <DownloadOutlined />
             </template>
@@ -106,6 +106,7 @@
                 <span style="color: red;" v-if="record.is_cancel === '1'">(반품철회)</span>
               </template>
             </a-table-column>
+            <a-table-column title="반품자" dataIndex="returner_name" key="returner_name" :width="100" />
           </a-table>
         </div>
       </template>
@@ -120,6 +121,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { useMarketOrderApi } from '@/api/order'
 import { useMarketApi } from '@/api/market'
+import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
 import { DownloadOutlined, FileSyncOutlined, PlusOutlined, ContainerOutlined } from '@ant-design/icons-vue';
 
@@ -190,12 +192,10 @@ const rowItemSelection = ref({
   checkStrictly: false,
   selectedRowKeys: [],
   onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(selectedRows);
-  },
+    rowSelection.value.selectedRowKeys = selectedRows.map(row => row.order_id);
+    rowItemSelection.value.selectedRowKeys = selectedRowKeys
 
+  },
 });
 
 // 주문 선택
@@ -203,7 +203,7 @@ const rowSelection = ref({
   checkStrictly: false,
   onChange: (selectedRowKeys, selectedRows) => {
     rowSelection.value.selectedRowKeys = selectedRows.map(row => row.key);
-    rowItemSelection.value.selectedRowKeys = selectedRows.flatMap(row => row.orderItems.map(item => item.key));
+    rowItemSelection.value.selectedRowKeys = selectedRows.flatMap(row => row.claimItems.map(item => item.key));
   },
 });
 
@@ -243,6 +243,59 @@ const getMarketAdminUrls = () => {
 
     state.marketAdminUrls = res.data;
   });
+}
+
+
+const excelDownload = () => {
+  const header = [
+    { title: '주문번호', key: 'order_no' },
+    { title: '셀러ID', key: 'seller_id' },
+    { title: '클레임번호', key: 'claim_no' },
+    { title: '클레임사유', key: 'claim_message' },
+    { title: '클레임요청시간', key: 'claim_date' },
+    { title: '상태', key: 'status' },
+    { title: '상품코드', key: 'prd_code' },
+    { title: '상품명', key: 'prd_name' },
+    { title: '옵션NO', key: 'prd_option_no' },
+    { title: '옵션명', key: 'prd_option_name' },
+    { title: '이미지', key: 'prd_image' },
+    { title: '수량', key: 'quantity' },
+    { title: '반품자', key: 'returner_name' },
+    { title: '택배사', key: 'courier_name' },
+    { title: '송장번호', key: 'invoice_number' },
+    { title: '수집날자', key: 'ins_date' },
+    { title: '업데이트날자', key: 'upd_date' },
+  ]
+
+  const excelData = [];
+
+  state.tableData.data.forEach(order => {
+    order.claimItems.forEach(item => {
+      const status = state.orderStatus.filter(it => it.value === item.status);
+      excelData.push({
+        order_no: order.order_no,
+        seller_id: order.seller_id,
+        claim_no: item.claim_no,
+        claim_message: item.claim_message || '',
+        claim_date: order.claim_date,
+
+        status: status[0].label,
+        prd_code: item.prd_code,
+        prd_name: item.prd_name,
+        prd_option_no: item.prd_option_no,
+        prd_option_name: item.prd_option_name,
+        prd_image: item.prd_image,
+        quantity: item.quantity,
+        returner_name: item.returner_name,
+        courier_name: item.courier_name,
+        invoice_number: item.invoice_number,
+        ins_date: item.item_ins_date,
+        upd_date: item.item_upd_date,
+      })
+    })
+  });
+
+  table2excel(header, excelData, `x-plan-claim ${new Date().toLocaleString()}`);
 }
 
 onMounted(() => {
