@@ -340,7 +340,7 @@ const deliveryOrder = (id) => {
       return false;
     }
 
-    message.success(res.data.message);
+    message.success(res.data.message === '' ? '배송처리 성공 하었습니다.' : res.data.message);
   });
 }
 
