@@ -108,9 +108,6 @@
               배송
             </a-button>
           </div>
-          <div v-if="item.status === 'shipping' || item.status === 'shippingComplete'">
-            {{ item.courierName }} <a-divider type="vertical" /> {{ item.invoiceNumber }}
-          </div>
         </template>
       </a-collapse-panel>
     </a-collapse>
