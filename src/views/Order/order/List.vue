@@ -174,6 +174,7 @@
 </template>
 
 <script setup>
+
 import { reactive, ref, onMounted } from 'vue'
 import { useMarketOrderApi } from '@/api/order'
 import { useMarketApi } from '@/api/market'
@@ -439,6 +440,7 @@ const getMarketDeliveryCompany = () => {
   });
 }
 
+// 구매 페이지 열기
 const purchaseProduct = (item) => {
   console.log(item);
   if (!item.prd_url) {
@@ -448,6 +450,7 @@ const purchaseProduct = (item) => {
   window.open(item.prd_url);
 }
 
+// 엑셀 다운로드
 const excelDownload = () => {
   const header = [
     { title: '주문번호', key: 'order_no' },
@@ -522,6 +525,7 @@ onMounted(() => {
 
   getTableData()
 })
+
 </script>
 
 <style scoped>
