@@ -163,7 +163,8 @@
                 <a-space>
                   <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
                     @click="receiverOneOrder(scoped.record, record)">발주</a-button>
-                  <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'">구매</a-button>
+                  <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'"
+                    @click="purchaseProduct(record)">구매</a-button>
                   <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                     @click="deliveryOrder(scoped.record, record)">배송</a-button>
                   <a-button size="small" v-if="state.tableData.params.status === 'shipping'">추적</a-button>
@@ -442,6 +443,14 @@ const getMarketDeliveryCompany = () => {
   });
 }
 
+const purchaseProduct = (item) => {
+  console.log(item);
+  if (!item.prd_url) {
+    message.error('구매 페이지가 등록되지 않았습니다.');
+    return false;
+  }
+  window.open(item.prd_url);
+}
 
 const excelDownload = () => {
   const header = [
