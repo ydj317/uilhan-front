@@ -1,7 +1,7 @@
 <template>
   <a-card title="주문관리">
-    <template #extra v-if="false">
-      <a-button class="ml10">
+    <template #extra>
+      <a-button class="ml10" @click="handleCollect">
         <template #icon>
           <FileSyncOutlined />
         </template>
@@ -182,7 +182,7 @@ import moment from "moment";
 import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
 import { DownloadOutlined, FileSyncOutlined, PlusOutlined, ContainerOutlined } from '@ant-design/icons-vue';
-import {forEach} from "lodash";
+import { forEach } from "lodash";
 
 
 const state = reactive({
@@ -330,8 +330,8 @@ const receiverOrderSelected = () => {
           order_no: item.order_no,
           account_id: item.account_id,
           items: [{
-            'shipping_box_no' : item.shipping_box_no,
-            'item_no' : item.item_no
+            'shipping_box_no': item.shipping_box_no,
+            'item_no': item.item_no
           }]
         }
       })
@@ -343,8 +343,8 @@ const receiverOrderSelected = () => {
           order_no: item.order_no,
           account_id: item.account_id,
           items: [{
-            'shipping_box_no' : item.shipping_box_no,
-            'item_no' : item.item_no
+            'shipping_box_no': item.shipping_box_no,
+            'item_no': item.item_no
           }]
         }
       }
@@ -388,8 +388,8 @@ const receiverOneOrder = (orders, item) => {
       order_no: orders.order_no,
       account_id: orders.account_id,
       items: [{
-        'shipping_box_no' : item.shipping_box_no,
-        'item_no' : item.item_no
+        'shipping_box_no': item.shipping_box_no,
+        'item_no': item.item_no
       }],
     }
   }
@@ -473,7 +473,7 @@ const purchaseProduct = (item) => {
 // 엑셀 다운로드
 const excelDownload = () => {
   const header = [
-    { title: '주문번호', key: 'order_no' },
+    { title: '주문번호', key: 'order_no', type: 'text' },
     { title: '주문자', key: 'orderer_name' },
     { title: '주문시간', key: 'order_date' },
     { title: '상태', key: 'status' },
@@ -517,7 +517,8 @@ const excelDownload = () => {
     })
   });
 
-  table2excel(header, excelData, `x-plan-order ${new Date().toLocaleString()}`);
+  const tableDatas = JSON.parse(JSON.stringify(excelData));
+  table2excel(header, tableDatas, `x-plan-order ${new Date().toLocaleString()}`);
 }
 
 
@@ -538,6 +539,19 @@ const handleSearch = () => {
 
   getTableData();
 }
+
+
+const handleCollect = () => {
+  useMarketOrderApi().collectMarketOrder({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    message.success('수집처리중 입니다. 잠시만 기다려 주세요.');
+  });
+}
+
 
 onMounted(() => {
   getMarketStatusList();
