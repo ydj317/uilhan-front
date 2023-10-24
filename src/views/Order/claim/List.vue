@@ -37,7 +37,7 @@
       </a-descriptions>
 
       <div style="display: flex;justify-content: center;">
-        <a-button type="primary" @click="getTableData" class="mt15">검색</a-button>
+        <a-button type="primary" @click="handleSearch" class="mt15">검색</a-button>
         <a-button @click="getTableData" class="ml15 mt15">초기화</a-button>
       </div>
     </div>
@@ -122,6 +122,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { useMarketOrderApi } from '@/api/order'
 import { useMarketApi } from '@/api/market'
 import table2excel from 'js-table2excel';
+import moment from "moment";
 import { message } from 'ant-design-vue'
 import { DownloadOutlined, FileSyncOutlined, PlusOutlined, ContainerOutlined } from '@ant-design/icons-vue';
 
@@ -132,7 +133,7 @@ const state = reactive({
     total: 0,
     loading: false,
     params: {
-      paid_date: [],
+      paid_date: [moment().subtract(15, 'days'), moment()],
       order_type: 'oid',
       order_value: '',
       orderer_type: 'rname',
@@ -296,6 +297,26 @@ const excelDownload = () => {
   });
 
   table2excel(header, excelData, `x-plan-claim ${new Date().toLocaleString()}`);
+}
+
+
+// 검색
+const handleSearch = () => {
+
+  if (!state.tableData.params.paid_date) {
+    message.error('검색기간을 선택해주세요.');
+    return false;
+  }
+
+  // state.tableData.params.paid_date 30일 이상 검색 불가
+  const diff = moment(state.tableData.params.paid_date[1]).diff(moment(state.tableData.params.paid_date[0]), 'days');
+
+  if (diff > 30) {
+    message.error('검색기간은 30일 이상 설정할 수 없습니다.');
+    return false;
+  }
+
+  getTableData();
 }
 
 onMounted(() => {

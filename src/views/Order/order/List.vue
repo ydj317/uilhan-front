@@ -46,7 +46,7 @@
       </a-descriptions>
 
       <div style="display: flex;justify-content: center;">
-        <a-button type="primary" @click="getTableData" class="mt15">검색</a-button>
+        <a-button type="primary" @click="handleSearch" class="mt15">검색</a-button>
         <a-button @click="getTableData" class="ml15 mt15">초기화</a-button>
       </div>
     </div>
@@ -185,6 +185,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { useMarketOrderApi } from '@/api/order'
 import { useMarketApi } from '@/api/market'
+import moment from "moment";
 import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
 import { DownloadOutlined, FileSyncOutlined, PlusOutlined, ContainerOutlined } from '@ant-design/icons-vue';
@@ -196,7 +197,7 @@ const state = reactive({
     total: 0,
     loading: false,
     params: {
-      paid_date: [],
+      paid_date: [moment().subtract(15, 'days'), moment()],
       order_type: 'oid',
       order_value: '',
       orderer_type: 'bname',
@@ -411,6 +412,7 @@ const deliveryOrder = (order, item) => {
   });
 }
 
+// 마켓 관리자 페이지 열기
 const openMarketAdminPage = (marketCode) => {
   const url = state.marketAdminUrls[marketCode]['order'];
   if (!url) {
@@ -421,6 +423,7 @@ const openMarketAdminPage = (marketCode) => {
   window.open(url);
 }
 
+// 마켓 관리자 페이지 URL
 const getMarketAdminUrls = () => {
   useMarketApi().getMarketAdminUrls({}).then(res => {
     if (res.status !== "2000") {
@@ -432,6 +435,7 @@ const getMarketAdminUrls = () => {
   });
 }
 
+// 택배사 목록
 const getMarketDeliveryCompany = () => {
   useMarketApi().getMarketDeliveryCompany({}).then(res => {
     if (res.status !== "2000") {
@@ -499,6 +503,25 @@ const excelDownload = () => {
   });
 
   table2excel(header, excelData, `x-plan-order ${new Date().toLocaleString()}`);
+}
+
+
+const handleSearch = () => {
+
+  if (!state.tableData.params.paid_date) {
+    message.error('검색기간을 선택해주세요.');
+    return false;
+  }
+
+  // state.tableData.params.paid_date 30일 이상 검색 불가
+  const diff = moment(state.tableData.params.paid_date[1]).diff(moment(state.tableData.params.paid_date[0]), 'days');
+
+  if (diff > 30) {
+    message.error('검색기간은 30일 이상 설정할 수 없습니다.');
+    return false;
+  }
+
+  getTableData();
 }
 
 onMounted(() => {
