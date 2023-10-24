@@ -251,18 +251,9 @@ const rowItemSelection = ref({
   columnTitle: '선택',
   checkStrictly: false,
   selectedRowKeys: [],
-  selectedRowKeysTemp: [],
   onChange: (selectedRowKeys, selectedRows) => {
     rowSelection.value.selectedRowKeys = selectedRows.map(row => row.order_id);
     rowItemSelection.value.selectedRowKeys = selectedRowKeys;
-    rowItemSelection.value.selectedRowKeysTemp = selectedRows.flatMap(row => {
-      return {
-        order_no: row.order_no,
-        account_id: row.account_id,
-        shipping_box_id: row.shipping_box_id || row.order_no,
-        item_no: row.item_no,
-      };
-    });
   },
 });
 
@@ -272,14 +263,6 @@ const rowSelection = ref({
   onChange: (selectedRowKeys, selectedRows) => {
     rowSelection.value.selectedRowKeys = selectedRows.map(row => row.key);
     rowItemSelection.value.selectedRowKeys = selectedRows.flatMap(row => row.orderItems.map(item => item.key));
-    rowItemSelection.value.selectedRowKeysTemp = selectedRows.flatMap(row => row.orderItems.map(item => {
-      return {
-        order_no: row.order_no,
-        account_id: row.account_id,
-        shipping_box_id: item.shipping_box_id || row.order_no,
-        item_no: item.item_no,
-      };
-    }));
   },
 });
 
@@ -307,7 +290,7 @@ const getLogoSrc = (marketCode) => {
  * 선택발주처리
  */
 const receiverOrderSelected = () => {
-  const selectedItemRowKeys = rowItemSelection.value.selectedRowKeysTemp;
+  const selectedItemRowKeys = rowItemSelection.value.selectedRowKeys;
   if (selectedItemRowKeys.length === 0) {
     message.error('발주처리할 주문을 선택해주세요.');
     return false;
@@ -331,8 +314,8 @@ const receiverOrderApi = (ids) => {
   });
 }
 
-const receiverOneOrder = (item_id) => {
-  receiverOrderApi([item_id]);
+const receiverOneOrder = (id) => {
+  receiverOrderApi([id]);
 }
 
 // 배송처리
