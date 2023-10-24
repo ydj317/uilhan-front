@@ -104,11 +104,6 @@
                 <a-button size="small">상세</a-button>
               </RouterLink>
               <a-button type="primary" size="small" @click="openMarketAdminPage(record.market_code)">마켓바로가기</a-button>
-              <a-button type="primary" size="small"
-                v-if="!record['id'] && state.tableData.params.status === 'paid'">발주</a-button>
-              <a-button type="success" size="small"
-                v-if="!record['id'] && state.tableData.params.status === 'shippingAddress'">배송</a-button>
-              <a-button size="small" v-if="!record['id'] && state.tableData.params.status === 'shipping'">추적</a-button>
             </a-space>
           </div>
         </template>
@@ -167,7 +162,6 @@
                     @click="purchaseProduct(record)">구매</a-button>
                   <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                     @click="deliveryOrder(scoped.record, record)">배송</a-button>
-                  <a-button size="small" v-if="state.tableData.params.status === 'shipping'">추적</a-button>
                 </a-space>
               </template>
             </a-table-column>
