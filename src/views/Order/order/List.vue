@@ -306,7 +306,7 @@ const receiverOrderApi = (ids) => {
     ids
   }).then(res => {
     if (res.status !== "2000") {
-      message.error(res.message);
+      message.error(res.data.message !== undefined ? res.data.message : res.message);
       return false;
     }
 
@@ -336,7 +336,7 @@ const deliveryOrder = (id) => {
     invoiceNumber: state.invoiceNumberValues[id]
   }).then(res => {
     if (res.status !== "2000") {
-      message.error(res.message);
+      message.error(res.data.message !== undefined ? res.data.message : res.message);
       return false;
     }
 
