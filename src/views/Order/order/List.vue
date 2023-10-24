@@ -96,7 +96,7 @@
           <span style="display: block; font-size: 13px; color: #999">( {{ record['upd_date'] }} )</span>
         </template>
       </a-table-column>
-      <a-table-column :width="200" title="관리" dataIndex="manage" key="manage">
+      <a-table-column :width="200" title="" dataIndex="manage" key="manage">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
@@ -153,7 +153,8 @@
               </template>
             </a-table-column>
             <a-table-column :width="200" title="상태변경시간" dataIndex="item_last_date" key="item_last_date"></a-table-column>
-            <a-table-column :width="100" title="" dataIndex="command" key="command">
+            <a-table-column :width="100" title="" dataIndex="command" key="command"
+              v-if="state.tableData.params.status === 'paid' || state.tableData.params.status === 'shippingAddress'">
               <template #default="{ record }">
                 <a-space>
                   <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
@@ -169,13 +170,11 @@
         </div>
       </template>
     </a-table>
-
-    <a-pagination :total="state.tableData.total" :page-size="state.tableData.params.pageSize"
-      :current="state.tableData.params.page" @change="pageChangeHandler" class="mt15" />
   </a-card>
 </template>
 
 <script setup>
+
 import { reactive, ref, onMounted } from 'vue'
 import { useMarketOrderApi } from '@/api/order'
 import { useMarketApi } from '@/api/market'
@@ -397,6 +396,7 @@ const getMarketDeliveryCompany = () => {
   });
 }
 
+// 구매 페이지 열기
 const purchaseProduct = (item) => {
   console.log(item);
   if (!item.prd_url) {
@@ -406,6 +406,7 @@ const purchaseProduct = (item) => {
   window.open(item.prd_url);
 }
 
+// 엑셀 다운로드
 const excelDownload = () => {
   const header = [
     { title: '주문번호', key: 'order_no' },
@@ -480,6 +481,7 @@ onMounted(() => {
 
   getTableData()
 })
+
 </script>
 
 <style scoped>
