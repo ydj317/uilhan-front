@@ -110,9 +110,6 @@
           </div>
           <div v-if="item.status === 'shipping' || item.status === 'shippingComplete'">
             {{ item.courierName }} <a-divider type="vertical" /> {{ item.invoiceNumber }}
-            <a-button size="small" class="ml10">
-              추적
-            </a-button>
           </div>
         </template>
       </a-collapse-panel>
