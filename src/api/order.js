@@ -54,5 +54,13 @@ export function useMarketOrderApi() {
             });
         },
 
+        // /api/collectMarketOrder
+        collectMarketOrder: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/collectMarketOrder",
+                method: "get",
+                data: data,
+            });
+        },
     }
 }

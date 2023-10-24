@@ -1,5 +1,13 @@
 <template>
   <a-card title="클레임관리">
+    <template #extra>
+      <a-button class="ml10" @click="handleCollect">
+        <template #icon>
+          <FileSyncOutlined />
+        </template>
+        주문수집
+      </a-button>
+    </template>
     <div>
       <a-descriptions bordered :column="1" size="middle">
         <a-descriptions-item label="검색기간">
@@ -317,6 +325,18 @@ const handleSearch = () => {
   }
 
   getTableData();
+}
+
+
+const handleCollect = () => {
+  useMarketOrderApi().collectMarketOrder({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    message.success('수집처리중 입니다. 잠시만 기다려 주세요.');
+  });
 }
 
 onMounted(() => {
