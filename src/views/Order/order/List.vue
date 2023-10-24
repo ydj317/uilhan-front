@@ -46,7 +46,7 @@
       </a-descriptions>
 
       <div style="display: flex;justify-content: center;">
-        <a-button type="primary" @click="getTableData" class="mt15">검색</a-button>
+        <a-button type="primary" @click="handleSearch" class="mt15">검색</a-button>
         <a-button @click="getTableData" class="ml15 mt15">초기화</a-button>
       </div>
     </div>
@@ -104,11 +104,6 @@
                 <a-button size="small">상세</a-button>
               </RouterLink>
               <a-button type="primary" size="small" @click="openMarketAdminPage(record.market_code)">마켓바로가기</a-button>
-              <a-button type="primary" size="small"
-                v-if="!record['id'] && state.tableData.params.status === 'paid'">발주</a-button>
-              <a-button type="success" size="small"
-                v-if="!record['id'] && state.tableData.params.status === 'shippingAddress'">배송</a-button>
-              <a-button size="small" v-if="!record['id'] && state.tableData.params.status === 'shipping'">추적</a-button>
             </a-space>
           </div>
         </template>
@@ -163,10 +158,10 @@
                 <a-space>
                   <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
                     @click="receiverOneOrder(scoped.record, record)">발주</a-button>
-                  <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'">구매</a-button>
+                  <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'"
+                    @click="purchaseProduct(record)">구매</a-button>
                   <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                     @click="deliveryOrder(scoped.record, record)">배송</a-button>
-                  <a-button size="small" v-if="state.tableData.params.status === 'shipping'">추적</a-button>
                 </a-space>
               </template>
             </a-table-column>
@@ -184,8 +179,11 @@
 import { reactive, ref, onMounted } from 'vue'
 import { useMarketOrderApi } from '@/api/order'
 import { useMarketApi } from '@/api/market'
+import moment from "moment";
+import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
 import { DownloadOutlined, FileSyncOutlined, PlusOutlined, ContainerOutlined } from '@ant-design/icons-vue';
+import {forEach} from "lodash";
 
 
 const state = reactive({
@@ -194,7 +192,7 @@ const state = reactive({
     total: 0,
     loading: false,
     params: {
-      paid_date: [],
+      paid_date: [moment().subtract(15, 'days'), moment()],
       order_type: 'oid',
       order_value: '',
       orderer_type: 'bname',
@@ -256,12 +254,17 @@ const rowItemSelection = ref({
   selectedRowKeys: [],
   selectedRowKeysTemp: [],
   onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    rowSelection.value.selectedRowKeys = selectedRows.map(row => row.order_id);
+    rowItemSelection.value.selectedRowKeys = selectedRowKeys;
+    rowItemSelection.value.selectedRowKeysTemp = selectedRows.flatMap(row => {
+      return {
+        order_no: row.order_no,
+        account_id: row.account_id,
+        shipping_box_id: row.shipping_box_id || row.order_no,
+        item_no: row.item_no,
+      };
+    });
   },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(selectedRows);
-  },
-
 });
 
 // 주문 선택
@@ -327,8 +330,10 @@ const receiverOrderSelected = () => {
         [item.order_no]: {
           order_no: item.order_no,
           account_id: item.account_id,
-          shipping_box_id: item.shipping_box_id,
-          items: [item.item_no],
+          items: [{
+            'shipping_box_no' : item.shipping_box_no,
+            'item_no' : item.item_no
+          }]
         }
       })
       return;
@@ -338,8 +343,10 @@ const receiverOrderSelected = () => {
         [item.order_no]: {
           order_no: item.order_no,
           account_id: item.account_id,
-          shipping_box_id: item.shipping_box_id,
-          items: [item.item_no],
+          items: [{
+            'shipping_box_no' : item.shipping_box_no,
+            'item_no' : item.item_no
+          }]
         }
       }
     }
@@ -358,7 +365,20 @@ const receiverOrderApi = (order) => {
       message.error(res.message);
       return false;
     }
-    message.success('발주처리가 완료되었습니다.');
+
+    if (res.data.length < 1) {
+      message.error('처리결과를 받지 못하였습니다.');
+      return false;
+    }
+
+    forEach(res.data, (item) => {
+      if (item.message === '') {
+        message.success('발주처리 성공하였습니다.');
+      } else {
+        message.success(res.data.message);
+      }
+    });
+
   });
 }
 
@@ -368,8 +388,10 @@ const receiverOneOrder = (orders, item) => {
     [orders.order_no]: {
       order_no: orders.order_no,
       account_id: orders.account_id,
-      shipping_box_id: orders.shipping_box_id,
-      items: [item.item_no],
+      items: [{
+        'shipping_box_no' : item.shipping_box_no,
+        'item_no' : item.item_no
+      }],
     }
   }
 
@@ -404,6 +426,7 @@ const deliveryOrder = (order, item) => {
   });
 }
 
+// 마켓 관리자 페이지 열기
 const openMarketAdminPage = (marketCode) => {
   const url = state.marketAdminUrls[marketCode]['order'];
   if (!url) {
@@ -414,6 +437,7 @@ const openMarketAdminPage = (marketCode) => {
   window.open(url);
 }
 
+// 마켓 관리자 페이지 URL
 const getMarketAdminUrls = () => {
   useMarketApi().getMarketAdminUrls({}).then(res => {
     if (res.status !== "2000") {
@@ -425,6 +449,7 @@ const getMarketAdminUrls = () => {
   });
 }
 
+// 택배사 목록
 const getMarketDeliveryCompany = () => {
   useMarketApi().getMarketDeliveryCompany({}).then(res => {
     if (res.status !== "2000") {
@@ -436,27 +461,81 @@ const getMarketDeliveryCompany = () => {
   });
 }
 
+const purchaseProduct = (item) => {
+  console.log(item);
+  if (!item.prd_url) {
+    message.error('구매 페이지가 등록되지 않았습니다.');
+    return false;
+  }
+  window.open(item.prd_url);
+}
 
 const excelDownload = () => {
-  useMarketOrderApi().excelDownload(state.tableData.params).then(res => {
-    let response = res;
-    if (response === undefined) {
-      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
-      return false;
-    }
+  const header = [
+    { title: '주문번호', key: 'order_no' },
+    { title: '주문자', key: 'orderer_name' },
+    { title: '주문시간', key: 'order_date' },
+    { title: '상태', key: 'status' },
+    { title: '상품코드', key: 'prd_code' },
+    { title: '상품명', key: 'prd_name' },
+    { title: '옵션명', key: 'prd_option_name' },
+    { title: '이미지', key: 'prd_image' },
+    { title: '수량', key: 'quantity' },
+    { title: '취소수량', key: 'claim_quantity' },
+    { title: '판매가', key: 'unit_price' },
+    { title: '수취인', key: 'receiver_name' },
+    { title: '택배사', key: 'courier_name' },
+    { title: '송장번호', key: 'invoice_number' },
+    { title: '수집날자', key: 'ins_date' },
+    { title: '업데이트날자', key: 'upd_date' },
+  ]
 
-    let fileName = "order.xlsx";
-    let blob = new Blob([response], { type: "charset=utf-8" });
-    let downloadElement = document.createElement("a");
-    let url = window.URL || window.webkitURL || window.moxURL;
-    let href = url.createObjectURL(blob); // 创建下载的链接
-    downloadElement.href = href;
-    downloadElement.download = decodeURI(fileName); // 下载后文件名
-    document.body.appendChild(downloadElement);
-    downloadElement.click(); // 点击下载
-    document.body.removeChild(downloadElement); // 下载完成移除元素
-    url.revokeObjectURL(href);
+  const excelData = [];
+
+  state.tableData.data.forEach(order => {
+    order.orderItems.forEach(item => {
+      const status = state.orderStatus.filter(it => it.value === item.status);
+      excelData.push({
+        order_no: order.order_no,
+        orderer_name: order.orderer_name,
+        order_date: order.order_date,
+        status: status[0].label,
+        prd_code: item.prd_code,
+        prd_name: item.prd_name,
+        prd_option_name: item.prd_option_name,
+        prd_image: item.prd_image,
+        quantity: item.quantity,
+        claim_quantity: item.claim_quantity,
+        unit_price: item.unit_price,
+        receiver_name: item.receiver_name,
+        courier_name: item.courier_name,
+        invoice_number: item.invoice_number,
+        ins_date: item.item_ins_date,
+        upd_date: item.item_upd_date,
+      })
+    })
   });
+
+  table2excel(header, excelData, `x-plan-order ${new Date().toLocaleString()}`);
+}
+
+
+const handleSearch = () => {
+
+  if (!state.tableData.params.paid_date) {
+    message.error('검색기간을 선택해주세요.');
+    return false;
+  }
+
+  // state.tableData.params.paid_date 30일 이상 검색 불가
+  const diff = moment(state.tableData.params.paid_date[1]).diff(moment(state.tableData.params.paid_date[0]), 'days');
+
+  if (diff > 30) {
+    message.error('검색기간은 30일 이상 설정할 수 없습니다.');
+    return false;
+  }
+
+  getTableData();
 }
 
 onMounted(() => {
