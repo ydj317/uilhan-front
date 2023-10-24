@@ -4,37 +4,38 @@
     <a-descriptions-item label="주문일시">{{ orderData.orderDate }}</a-descriptions-item>
   </a-descriptions>
 
-  <a-descriptions title="주문자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
-    :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="주문자 이름">{{ orderData.ordererName }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 연락처(실전화번호)">{{ orderData.orgData.ordererTel }}</a-descriptions-item>
+  <a-descriptions title="결제정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }">
+    <a-descriptions-item label="결제일시">{{ orderData.orderDate}}</a-descriptions-item>
+    <a-descriptions-item label="결제수단">{{ orderData.orgData.paymentMeans}}</a-descriptions-item>
+    <a-descriptions-item label="주문 할인액">{{ orderData.orgData.orderDiscountAmount}}</a-descriptions-item>
+    <a-descriptions-item label="후불 결제 최종 결제 금액">{{ orderData.orgData.payLaterPaymentAmount}}</a-descriptions-item>
+    <a-descriptions-item label="네이버페이 적립금 최종 결제 금액">{{ orderData.orgData.checkoutAccumulationPaymentAmount}}</a-descriptions-item>
+    <a-descriptions-item label="일반 결제 수단 최종 결제 금액">{{ orderData.orgData.generalPaymentAmount}}</a-descriptions-item>
+    <a-descriptions-item label="네이버페이 포인트 최종 결제 금액">{{ orderData.orgData.naverMileagePaymentAmount}}</a-descriptions-item>
+    <a-descriptions-item label="결제 위치 구분">{{ orderData.orgData.payLocationType}}</a-descriptions-item>
   </a-descriptions>
+
+  <a-descriptions title="주문자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
+                  :contentStyle="{ width: '500px' }">
+    <a-descriptions-item label="주문자 이름">{{ orderData.ordererName }}</a-descriptions-item>
+    <a-descriptions-item label="주문자 번호">{{ orderData.orgData.ordererNo }}</a-descriptions-item>
+    <a-descriptions-item label="주문자 연락처">{{ orderData.orgData.ordererTel }}</a-descriptions-item>
+  </a-descriptions>
+
 
   <a-descriptions title="수령자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
-    :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="배송구분">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.addressType ===
-      'DOMESTIC' ? '국내배송' : '해외배송' }}</a-descriptions-item>
-    <a-descriptions-item label="수령자 이름">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.name
-    }}</a-descriptions-item>
-    <a-descriptions-item label="수령자 연락처(일반전화)">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.tel1
-    }}</a-descriptions-item>
-    <a-descriptions-item label="수령자 연락처(휴대전화)">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.tel2
-    }}</a-descriptions-item>
-    <a-descriptions-item label="수령자 주소">({{ orderData.items[0].itemOrgData.productOrder.shippingAddress.zipCode }}){{
-      orderData.items[0].itemOrgData.productOrder.shippingAddress.country }} {{
-    orderData.items[0].itemOrgData.productOrder.shippingAddress.city }} {{
-    orderData.items[0].itemOrgData.productOrder.shippingAddress.city }} {{
-    orderData.items[0].itemOrgData.productOrder.shippingAddress.baseAddress }} {{
-    orderData.items[0].itemOrgData.productOrder.shippingAddress.detailedAddress }} </a-descriptions-item>
-  </a-descriptions>
-
-  <a-descriptions title="결제정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
-    :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="결제일시">{{ orderData.orderDate }}</a-descriptions-item>
-    <a-descriptions-item label="결제수단">{{ orderData.orgData.paymentMeans }}</a-descriptions-item>
-    <a-descriptions-item label="주문 할인액">{{ orderData.orgData.orderDiscountAmount }}</a-descriptions-item>
-    <a-descriptions-item label="최종 결제 금액">{{ orderData.orgData.generalPaymentAmount }}</a-descriptions-item>
-    <a-descriptions-item label="결제 위치 구분">{{ orderData.orgData.payLocationType }}</a-descriptions-item>
+                  :contentStyle="{ width: '500px' }">
+    <a-descriptions-item label="배송구분">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.addressType === 'DOMESTIC' ? '국내배송' : '해외배송'}}</a-descriptions-item>
+    <a-descriptions-item label="수령자 이름">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.name }}</a-descriptions-item>
+    <a-descriptions-item label="수령자 연락처 1">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.tel1 }}</a-descriptions-item>
+    <a-descriptions-item label="수령자 연락처 2">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.tel2 }}</a-descriptions-item>
+    <a-descriptions-item label="우편번호">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.zipCode}}</a-descriptions-item>
+    <a-descriptions-item label="국가">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.country}} </a-descriptions-item>
+    <a-descriptions-item label="도시">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.city}} </a-descriptions-item>
+    <a-descriptions-item label="주(state)">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.state}} </a-descriptions-item>
+    <a-descriptions-item label="기본 주소">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.baseAddress}}</a-descriptions-item>
+    <a-descriptions-item label="상세 주소">{{ orderData.items[0].itemOrgData.productOrder.shippingAddress.detailedAddress}} </a-descriptions-item>
+    <!--          <a-descriptions-item label="수령자 주소">({{ orderData.items[0].itemOrgData.productOrder.shippingAddress.zipCode}}) {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.country}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.city}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.baseAddress}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.detailedAddress}} </a-descriptions-item>-->
   </a-descriptions>
 
   <div class="mt40" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }" style="">
@@ -56,8 +57,10 @@
           <a-descriptions-item label="상품명">{{ item.prdName }}</a-descriptions-item>
           <a-descriptions-item label="옵션명">{{ item.prdOption }}</a-descriptions-item>
           <a-descriptions-item label="수량">{{ item.quantity }}</a-descriptions-item>
-          <a-descriptions-item label="개당">{{ item.unitPrice }}</a-descriptions-item>
-          <a-descriptions-item label="총 가격">{{ item.quantity * item.unitPrice }}</a-descriptions-item>
+          <a-descriptions-item label="상품 가격">{{ item.unitPrice }}</a-descriptions-item>
+          <a-descriptions-item label="판매자 부담 할인액">{{ item.itemOrgData.productOrder.sellerBurdenDiscountAmount }}</a-descriptions-item>
+          <a-descriptions-item label="상품 주문 금액(할인 적용 전 금액)">{{ item.itemOrgData.productOrder.totalProductAmount }}</a-descriptions-item>
+          <a-descriptions-item label="총 결제 금액(할인 적용 후 금액)">{{ item.itemOrgData.productOrder.totalPaymentAmount }}</a-descriptions-item>
           <a-descriptions-item label="주문상태">
             <a-badge color="blue" :text="state.orderStatusList[item.status]" v-if="item.status === 'paid'" />
             <a-badge color="yellow" :text="state.orderStatusList[item.status]"
@@ -66,20 +69,24 @@
             <a-badge color="green" :text="state.orderStatusList[item.status]"
               v-else-if="item.status === 'shippingComplete'" />
           </a-descriptions-item>
-          <a-descriptions-item label="수취인">{{ item.receiverName }}</a-descriptions-item>
         </a-descriptions>
 
         <a-descriptions title="배송정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
           :contentStyle="{ width: '500px' }">
           <a-descriptions-item label="택배사">{{ item.courierName }}</a-descriptions-item>
           <a-descriptions-item label="운송장번호">{{ item.invoiceNumber }}</a-descriptions-item>
-          <a-descriptions-item label="배송비">{{ item.itemOrgData.deliveryFeeAmount }}</a-descriptions-item>
+          <a-descriptions-item label="배송비 최종 할인액">{{ item.itemOrgData.productOrder.deliveryDiscountAmount }}</a-descriptions-item>
+          <a-descriptions-item label="배송비 합계">{{ item.itemOrgData.productOrder.deliveryFeeAmount }}</a-descriptions-item>
+          <a-descriptions-item label="지역별 추가 배송비">{{ item.itemOrgData.productOrder.sectionDeliveryFee }}</a-descriptions-item>
+          <a-descriptions-item label="배송비 형태(선불/착불/무료)">{{ item.itemOrgData.productOrder.shippingFeeType }}</a-descriptions-item>
+          <a-descriptions-item label="배송비 정책(조건별 무료 등)">{{ item.itemOrgData.productOrder.deliveryPolicyType }}</a-descriptions-item>
+          <a-descriptions-item label="배송 메모">{{ item.itemOrgData.productOrder.shippingMemo }}</a-descriptions-item>
+
         </a-descriptions>
 
         <a-descriptions title="해외배송정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
           :contentStyle="{ width: '500px' }">
-          <a-descriptions-item label="개인통관 고유부호">{{ item.itemOrgData.orderPrice }}</a-descriptions-item>
-          <a-descriptions-item label="통관용 구매자 전화번호">{{ item.itemOrgData.orderPrice }}</a-descriptions-item>
+          <a-descriptions-item label="구매자 개인통관고유부호">{{ item.itemOrgData.productOrder.individualCustomUniqueCode }}</a-descriptions-item>
         </a-descriptions>
 
         <template #extra>
