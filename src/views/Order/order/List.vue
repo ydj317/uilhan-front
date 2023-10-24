@@ -313,7 +313,12 @@ const receiverOrderSelected = () => {
     return false;
   }
 
-  receiverOrderApi(selectedItemRowKeys);
+  let ids = [];
+  selectedItemRowKeys.forEach(item => {
+    ids.push(item.account_id);
+  });
+
+  receiverOrderApi(ids);
 
 }
 
@@ -331,8 +336,8 @@ const receiverOrderApi = (ids) => {
   });
 }
 
-const receiverOneOrder = (item_id) => {
-  receiverOrderApi([item_id]);
+const receiverOneOrder = (id) => {
+  receiverOrderApi([id]);
 }
 
 // 배송처리
