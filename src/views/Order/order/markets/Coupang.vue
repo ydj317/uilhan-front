@@ -179,12 +179,12 @@ const receiverOrderApi = (order) => {
 
 const receiverOneOrder = (orders, item) => {
   const order = {};
-  order[orders.account_id] = {
-    [orders.order_no]: {
-      order_no: orders.order_no,
-      account_id: orders.account_id,
-      shipping_box_id: orders.shipping_box_id,
-      items: [item.item_no],
+  order[orders.accountId] = {
+    [orders.orderNo]: {
+      order_no: orders.orderNo,
+      account_id: orders.accountId,
+      shipping_box_id: item.shippingBoxNo,
+      items: [item.itemNo],
     }
   }
 
@@ -233,7 +233,6 @@ const getMarketDeliveryCompany = () => {
 onMounted(async () => {
   getMarketDeliveryCompany();
   await getMarketOrderStatusList();
-  console.log('==0==')
-  console.log(orderData.value)
 })
+
 </script>

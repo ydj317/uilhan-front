@@ -74,7 +74,7 @@
       </a-table-column>
       <a-table-column title="주문번호" dataIndex="order_no" key="order_no"></a-table-column>
       <a-table-column title="클레임요청시간" dataIndex="return_date" key="return_date"></a-table-column>
-      <a-table-column title="관리" dataIndex="manage" key="manage">
+      <a-table-column title="" dataIndex="manage" key="manage">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
@@ -112,8 +112,6 @@
       </template>
     </a-table>
 
-    <a-pagination :total="state.tableData.total" :page-size="state.tableData.params.pageSize"
-      :current="state.tableData.params.page" @change="pageChangeHandler" class="mt15" />
   </a-card>
 </template>
 
