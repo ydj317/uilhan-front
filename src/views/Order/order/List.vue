@@ -319,28 +319,28 @@ const receiverOneOrder = (id) => {
 }
 
 // 배송처리
-const deliveryOrder = (item_id) => {
-
-  if (!state.courierNameValues[item_id]) {
+const deliveryOrder = (id) => {
+  if (!state.courierNameValues[id]) {
     message.error('택배사를 선택해주세요.');
     return false;
   }
 
-  if (!state.invoiceNumberValues[item_id]) {
+  if (!state.invoiceNumberValues[id]) {
     message.error('운송장번호를 입력해주세요.');
     return false;
   }
 
   useMarketOrderApi().deliveryOrder({
-    itemId: item_id,
-    courierName: state.courierNameValues[item.id],
-    invoiceNumber: state.invoiceNumberValues[item.id]
+    id: id,
+    courierName: state.courierNameValues[id],
+    invoiceNumber: state.invoiceNumberValues[id]
   }).then(res => {
     if (res.status !== "2000") {
-      message.error(res.message);
+      message.error(res.data.message);
       return false;
     }
-    message.success('배송처리가 완료되었습니다.');
+
+    message.success(res.data.message === '' ? '배송처리 성공 하었습니다.' : res.data.message);
   });
 }
 
