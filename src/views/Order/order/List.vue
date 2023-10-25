@@ -163,6 +163,9 @@
                     @click="purchaseProduct(record)">구매</a-button>
                   <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                     @click="deliveryOrder(record.id)">배송</a-button>
+
+                  <a-button type="primary" size="small"
+                    @click="showHistory({ type: 'order', index_id: scoped.record.id, sub_index_id: record.id, title: record.prd_name + ' - ' + record.prd_option_name })">히스토리</a-button>
                 </a-space>
               </template>
             </a-table-column>
@@ -171,6 +174,7 @@
       </template>
     </a-table>
   </a-card>
+  <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData" />
 </template>
 
 <script setup>
@@ -182,8 +186,7 @@ import moment from "moment";
 import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
 import { DownloadOutlined, FileSyncOutlined, PlusOutlined, ContainerOutlined } from '@ant-design/icons-vue';
-import { forEach } from "lodash";
-
+import HistoryView from '@/components/HistoryView.vue'
 
 const state = reactive({
   tableData: {
@@ -468,6 +471,15 @@ const handleCollect = () => {
 
     message.success('수집처리중 입니다. 잠시만 기다려 주세요.');
   });
+}
+
+const historyVisible = ref(false);
+const historyData = ref({});
+
+const showHistory = (param) => {
+  console.log(param);
+  historyData.value = param;
+  historyVisible.value = true;
 }
 
 onMounted(() => {
