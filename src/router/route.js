@@ -142,7 +142,7 @@ export const menus = [{
                     meta: {
                         title: "클레임상세",
                         isHide: true,
-                        roles: ["ROLE_ADMIN"],
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                         active: "/claim/list"
                     },
