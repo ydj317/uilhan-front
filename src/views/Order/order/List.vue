@@ -1,7 +1,7 @@
 <template>
   <a-card title="주문관리">
-    <template #extra v-if="false">
-      <a-button class="ml10">
+    <template #extra>
+      <a-button class="ml10" @click="handleCollect">
         <template #icon>
           <FileSyncOutlined />
         </template>
@@ -182,7 +182,7 @@ import moment from "moment";
 import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
 import { DownloadOutlined, FileSyncOutlined, PlusOutlined, ContainerOutlined } from '@ant-design/icons-vue';
-import {forEach} from "lodash";
+import { forEach } from "lodash";
 
 
 const state = reactive({
@@ -473,6 +473,17 @@ const handleSearch = () => {
   }
 
   getTableData();
+}
+
+const handleCollect = () => {
+  useMarketOrderApi().collectMarketOrder({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    message.success('수집처리중 입니다. 잠시만 기다려 주세요.');
+  });
 }
 
 onMounted(() => {
