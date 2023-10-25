@@ -62,6 +62,5 @@ export function useMarketOrderApi() {
                 data: data,
             });
         },
-
     }
 }
