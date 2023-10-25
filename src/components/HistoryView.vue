@@ -4,6 +4,7 @@
     <h3>{{ historyData.title }}</h3>
     <a-divider />
     <div style="height:calc(100vh - 200px);overflow-y:scroll;padding:10px 0;" :v-loading="state.loading">
+      <div v-if="Object.keys(state.data).length < 1" style="color:#999999;">히스토리 기록이 없습니다.</div>
       <a-timeline>
         <a-timeline-item v-for="(history, index) in state.data" :key="index"
           :color="history.messageType === 'success' ? 'green' : history.messageType === 'error' ? 'red' : 'blue'">{{

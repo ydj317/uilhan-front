@@ -164,8 +164,8 @@
                   <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                     @click="deliveryOrder(record.id)">배송</a-button>
 
-                  <a-button type="primary" size="small"
-                    @click="showHistory({ type: 'order', index_id: scoped.record.id, sub_index_id: record.id, title: record.prd_name + ' - ' + record.prd_option_name })">히스토리</a-button>
+                  <!-- <a-button size="small"
+                    @click="showHistory({ type: 'order', index_id: scoped.record.id, sub_index_id: record.id, title: record.prd_name + ' - ' + record.prd_option_name })">기록</a-button> -->
                 </a-space>
               </template>
             </a-table-column>
