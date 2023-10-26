@@ -167,6 +167,9 @@
                     @click="purchaseProduct(record)">구매</a-button>
                   <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                     @click="deliveryOrder(record.id)">배송</a-button>
+
+                  <!-- <a-button size="small"
+                    @click="showHistory({ type: 'order', index_id: scoped.record.id, sub_index_id: record.id, title: record.prd_name + ' - ' + record.prd_option_name })">기록</a-button> -->
                 </a-space>
               </template>
             </a-table-column>
@@ -175,18 +178,21 @@
       </template>
     </a-table>
   </a-card>
+  <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData" />
 </template>
 
 <script setup>
 
 import { reactive, ref, onMounted } from 'vue'
+import {useMarketAccountApi} from "@/api/marketAccount";
 import { useMarketOrderApi } from '@/api/order'
 import { useMarketApi } from '@/api/market'
 import moment from "moment";
 import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
+import HistoryView from '@/components/HistoryView.vue'
 import { DownloadOutlined, FileSyncOutlined, ContainerOutlined } from '@ant-design/icons-vue';
-import {useMarketAccountApi} from "@/api/marketAccount";
+
 
 
 const state = reactive({
@@ -490,6 +496,14 @@ const handleCollect = () => {
   });
 }
 
+const historyVisible = ref(false);
+const historyData = ref({});
+
+const showHistory = (param) => {
+  console.log(param);
+  historyData.value = param;
+  historyVisible.value = true;
+}
 
 onMounted(async () => {
   await getMarketStatusList()

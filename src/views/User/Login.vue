@@ -118,7 +118,7 @@ export default defineComponent({
 
 
         ChannelIO('boot', {
-          "pluginKey": "9af85962-c843-4429-8d99-8436956baa33",
+          "pluginKey": "33974dfe-4ab5-4a61-8d67-748faed23416",
           "memberId": res.data.member_name,
           "profile": {
             "name": res.data.member_name
