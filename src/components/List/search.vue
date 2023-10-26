@@ -34,7 +34,6 @@
         <a-range-picker
             :value="[common.start_time, common.end_time]"
             format="YYYY-MM-DD"
-            :placeholder="['Start Time', 'End Time']"
             @change="onChangeDatePicker"
         />
       </a-space>
