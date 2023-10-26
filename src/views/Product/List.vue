@@ -22,8 +22,7 @@
             <a-select v-model:value="date_type" style="width: 150px;">
               <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
             </a-select>
-            <a-range-picker v-model:value="date" :placeholder="['Start Time', 'End Time']" format="YYYY-MM-DD"
-              @change="onChangeDatePicker" style="width: 300px;" />
+            <a-range-picker v-model:value="date" format="YYYY-MM-DD" @change="onChangeDatePicker" style="width: 300px;" />
           </a-input-group>
         </div>
 
