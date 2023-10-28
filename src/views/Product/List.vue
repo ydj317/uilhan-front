@@ -561,29 +561,6 @@ export default defineComponent({
             .map(item => item.selling_price);
 
           show_price = selectedPrice[0]
-          if (show_price === undefined) {
-            show_price = Math.min(...this.prdlist[i].item_sku.map(item => item.selling_price));
-          }
-
-          // 연동대기 상품은 판매가를 계산 해서 가져옴
-          if (show_price === 0) {
-            const userData = this.prdlist[i].user;
-
-            selectedPrice = this.prdlist[i].item_sku.filter(item => item.is_option_reference_price === 'T')
-              .map(item =>
-                Number(item.shipping_fee_cn) + Number(item.original_price_cn)
-              );
-
-            show_price = selectedPrice[0]
-            if (show_price === undefined) {
-              show_price = Math.min(...this.prdlist[i].item_sku.map(item =>
-                Number(item.shipping_fee_cn) + Number(item.original_price_cn)
-              ))
-            }
-
-            show_price = Math.ceil(Number(show_price * (1 + Number(userData.selling_margin_option) / 100) *
-              Number(userData.rate_margin_option)).toFixed(0) / 100) * 100;
-          }
           this.prdlist[i]["show_price"] = show_price.toLocaleString() + "원";
         }
 
@@ -599,27 +576,6 @@ export default defineComponent({
         this.checked = false;
         this.listLoading = false;
       });
-    },
-
-    setLabel(items, type, isRate = false) {
-      let labelAddInfo = "";
-      for (let i = 0; i < items.length; i++) {
-        let symble = "";
-        if (type === "margin" && isRate === false) {
-          symble = "%";
-        }
-
-        if (
-          items[i].label.indexOf("(") === -1 &&
-          items[i].label.indexOf("%") === -1
-        ) {
-          labelAddInfo = " ( " + items[i].value + symble + " )";
-        }
-
-        items[i].label += labelAddInfo;
-      }
-
-      return items;
     },
 
     substrName(sName) {
@@ -733,7 +689,8 @@ export default defineComponent({
     getMarketList() {
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist").then((res) => {
         if (res.status !== "2000") {
-          message.error(res.message);
+          message.error("설정하신 마켓계정 정보가 없습니다. \n마켓계정을 설정해주세요. ");
+
           return false;
         }
 
@@ -951,7 +908,7 @@ export default defineComponent({
           message.error(res.message);
           return false;
         }
-        console.log(res.data);
+        //console.log(res.data);
         //this.marketDetailUrls = res.data;
       });
     }

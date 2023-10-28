@@ -112,7 +112,6 @@ const getTableList = () => {
 
         state.tableData.data = list;
         state.tableData.total = total;
-
     });
 };
 
@@ -120,8 +119,6 @@ const getMarketList = () => {
   useMarketApi().getMarketList({}).then(res => {
     state.marketList = [];
 
-    console.log('==0==')
-    console.log(res.data)
     for (let key in res.data) {
       if (res.data.hasOwnProperty(key)) {
         state.marketList.push({
@@ -156,7 +153,6 @@ onMounted(() => {
 });
 
 const handleOk = (e) => {
-    console.log(e);
     state.isModalVisible = false;
 };
 

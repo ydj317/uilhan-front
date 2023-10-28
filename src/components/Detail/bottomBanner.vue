@@ -286,7 +286,7 @@ export default {
       for (const skuItem of this.product.sku) {
         const { selling_price } = skuItem;
         if (selling_price > minPrice * 1.5 || selling_price < minPrice * 0.5) {
-          message.warning("주문옵션 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능합니다.");
+          message.warning(`주문옵션(${skuItem.spec}) 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능합니다.`);
           return false;
         }
       }
@@ -614,12 +614,6 @@ export default {
         mandatory_val: oFormState.mandatory_val,
         is_free_delivery: oFormState.item_is_free_delivery === true ? "T" : "F",
         shipping_fee: oFormState.item_shipping_fee,
-
-        // 새로추가한 마진
-        item_disp_margin_option: oProduct.item_disp_margin_option,
-        item_selling_margin_option: oProduct.item_selling_margin_option,
-        item_wholesale_margin_option: oProduct.item_wholesale_margin_option,
-        item_rate_margin_option: oProduct.item_rate_margin_option,
 
         item_cate: JSON.stringify(oProduct.item_cate)
       });
