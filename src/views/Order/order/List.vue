@@ -1,7 +1,7 @@
 <template>
   <a-card title="주문관리">
     <template #extra>
-      <a-button class="ml10" @click="handleCollect">
+      <a-button class="ml10" @click.prevent="handleCollect">
         <template #icon>
           <FileSyncOutlined />
         </template>
@@ -51,7 +51,7 @@
       </a-descriptions>
 
       <div style="display: flex;justify-content: center;">
-        <a-button type="primary" @click="handleSearch" class="mt15">검색</a-button>
+        <a-button type="primary" @click.prevent="handleSearch" class="mt15">검색</a-button>
         <a-button @click="getTableData" class="ml15 mt15">초기화</a-button>
       </div>
     </div>
@@ -61,7 +61,7 @@
     <div class="mb15" style="display: flex;justify-content: space-between;">
       <div class="left-div">
         <a-space>
-          <a-button @click="receiverOrderSelected" v-if="state.tableData.params.status === 'paid'">
+          <a-button @click.prevent="receiverOrderSelected" v-if="state.tableData.params.status === 'paid'">
             <template #icon>
               <ContainerOutlined />
             </template>
@@ -72,7 +72,7 @@
       <div class="right-div" style="display: flex;align-items: center;">
         <a-tooltip>
           <template #title>EXCEL 다운로드</template>
-          <a-button @click="excelDownload">
+          <a-button @click.prevent="excelDownload">
             <template #icon>
               <DownloadOutlined />
             </template>
@@ -107,7 +107,7 @@
               <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id']">
                 <a-button size="small">상세</a-button>
               </RouterLink>
-              <a-button type="primary" size="small" @click="openMarketAdminPage(state.accountData[record.accountId].marketCode)">마켓바로가기</a-button>
+              <a-button type="primary" size="small" @click.prevent="openMarketAdminPage(state.accountData[record.accountId].marketCode)">마켓바로가기</a-button>
             </a-space>
           </div>
         </template>
@@ -162,11 +162,11 @@
               <template #default="{ record }">
                 <a-space>
                   <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
-                    @click="receiverOneOrder(record.id)">발주</a-button>
+                    @click.prevent="receiverOneOrder(record.id)">발주</a-button>
                   <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'"
-                    @click="purchaseProduct(record)">구매</a-button>
+                    @click.prevent="purchaseProduct(record)">구매</a-button>
                   <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
-                    @click="deliveryOrder(record.id)">배송</a-button>
+                    @click.prevent="deliveryOrder(record.id)">배송</a-button>
 
                   <!-- <a-button size="small"
                     @click="showHistory({ type: 'order', index_id: scoped.record.id, sub_index_id: record.id, title: record.prd_name + ' - ' + record.prd_option_name })">기록</a-button> -->

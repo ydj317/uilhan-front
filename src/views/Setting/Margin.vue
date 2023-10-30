@@ -37,14 +37,21 @@
               formState.settingDatas.rate.is_real_rate ? '실시간 환율' : formState.settingDatas.rate.rate_value ? formState.settingDatas.rate.rate_value : '미입력'
             }}
           </span>
+          +
+          ( 원가 x
+          <span>
+            {{
+            formState.settingDatas.rate.is_real_rate ? '실시간 환율' : formState.settingDatas.rate.rate_value ? formState.settingDatas.rate.rate_value : '미입력'
+          }}
+          </span> )
           x (
           <a-input-number v-model:value.number="formState.settingDatas.margin.margin_data.card_charge"
                           :disabled="formState.settingDatas.margin.is_auto_setting" :min="1" :max="100" :step="0.01"
-                          size="small" style="width: 60px;"/>
+                          addon-after="%" size="small" style="width: 100px;"/>
           +
           <a-input-number v-model:value.number="formState.settingDatas.margin.margin_data.margin_value"
                           :disabled="formState.settingDatas.margin.is_auto_setting" :min="0" :max="100" :step="0.1"
-                          size="small" style="width: 60px;"/>
+                          addon-after="%" size="small" style="width: 100px;"/>
           )
           +
           <a-input-number v-model:value.number="formState.settingDatas.margin.margin_data.min_margin"
