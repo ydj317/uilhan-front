@@ -560,7 +560,11 @@ export default defineComponent({
           selectedPrice = this.prdlist[i].item_sku.filter(item => item.is_option_reference_price === 'T')
             .map(item => item.selling_price);
 
-          show_price = selectedPrice[0]
+          if(selectedPrice.length === 0) {
+            selectedPrice = this.prdlist[i].item_sku.map(item => item.selling_price);
+          }
+
+          show_price = selectedPrice[0];
           this.prdlist[i]["show_price"] = show_price.toLocaleString() + "원";
         }
 
