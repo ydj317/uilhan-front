@@ -30,20 +30,6 @@
             </a-tooltip>
           </a-space>
         </template>
-        <a-radio-group v-model:value="formState.settingDatas.margin.is_auto_setting">
-          <a-radio :value="true">
-            자동 설정
-            <a-tooltip title="원가 x 환율 x (카드 수수료 1% + 퍼센트 마진 3%) + 최소마진: 0 + 해외배송비: 0">
-              <QuestionCircleOutlined/>
-            </a-tooltip>
-          </a-radio>
-          <a-radio :value="false">
-            수동 설정
-            <a-tooltip title="원가 x 환율 x (카드 수수료 + 퍼센트 마진) + 최소마진 + 해외배송비">
-              <QuestionCircleOutlined/>
-            </a-tooltip>
-          </a-radio>
-        </a-radio-group>
         <a-space>
           원가 x
           <span>
@@ -118,7 +104,7 @@ const formState = reactive({
     },
     // 마진
     margin: {
-      is_auto_setting: true, // 자동설정(true),수동설정(false) 여부
+      is_auto_setting: false, // 자동설정(true),수동설정(false) 여부
       // 수동설정일 경우
       margin_data: {
         card_charge: '1', // 수동설정일 경우 카드수수료
