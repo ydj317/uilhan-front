@@ -82,24 +82,81 @@
     </div>
 
     <a-table :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
-      :pagination="false" :defaultExpandAllRows="true">
+      :pagination="false" :defaultExpandAllRows="true" size="small">
       <a-table-column :width="200" title="마켓" dataIndex="id" key="id">
         <template #default="{ record }">
-          <div style="display: flex;align-items: center;gap: 5px;">
-            <img :src="getLogoSrc(state.accountData[record.accountId].marketCode)" style="width: 18px;height: 18px;" />
-            {{ state.accountData[record.accountId].sellerId }}
+          <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
+            <img :src="getLogoSrc(record.marketCode)" style="width: 18px;height: 18px;" />
+            {{ record.sellerId }}
           </div>
         </template>
       </a-table-column>
-      <a-table-column :width="200" title="주문번호" dataIndex="orderNo" key="orderNo" />
-      <a-table-column title="주문자" dataIndex="ordererName" key="ordererName" />
-      <a-table-column :width="300" title="주문시간" dataIndex="orderDate" key="orderDate" />
-      <a-table-column :width="300" title="수집시간" dataIndex="insDate" key="insDate">
+      <a-table-column :width="160" title="주문번호" dataIndex="orderNo" key="orderNo" />
+      <a-table-column :width="120" title="주문시간" dataIndex="orderDate" key="orderDate">
         <template #default="{ record }">
-          <span style="display: block;">{{ record['insDate'] }}</span>
-          <span style="display: block; font-size: 13px; color: #999">( {{ record['updDate'] }} )</span>
+          {{ moment(record.orderDate).format('YYYY-MM-DD')}}
         </template>
       </a-table-column>
+      <a-table-column :width="120" title="원본상품" dataIndex="prdCode" key="prdCode" >
+        <template #default="{ record }">
+          <a-space>
+            <a-button type="link" size="small" @click="handleOpenProduct({ marketCode: record.marketCode, prdCode: record.prdCode})">
+              <template #icon>
+                <ExportOutlined />
+              </template>
+              열기
+            </a-button>
+          </a-space>
+        </template>
+      </a-table-column>
+      <a-table-column title="상품명" dataIndex="prdName" key="prdName">
+        <template #default="{ record }">
+          <div style="display: flex;flex-direction: column;gap: 10px;">
+            <div>{{ record.prdName }}</div>
+            <div>{{ record.prdOptionName }}</div>
+          </div>
+        </template>
+      </a-table-column>
+      <a-table-column :width="80" title="수량" dataIndex="quantity" key="quantity">
+        <template #default="{ record }">
+          <div style="display: flex;flex-direction: column;gap: 10px;">
+            {{ record['quantity'] - record['claimQuantity'] }}
+            <span style="display: block; color: red;">(반품: {{ record['claimQuantity'] }})</span>
+          </div>
+        </template>
+      </a-table-column>
+      <a-table-column :width="80" title="가격" dataIndex="unitPrice" key="unitPrice">
+        <template #default="{ record }">
+          {{ (record['quantity'] - record['claimQuantity']) * record['unitPrice'] }}
+        </template>
+      </a-table-column>
+
+      <a-table-column :width="80" title="상태">
+        <template #default="{ record }">
+          {{ state.orderStatus.filter(it => it.value === record.status)[0].label }}
+        </template>
+      </a-table-column>
+
+      <a-table-column :width="100" title="운송장정보" dataIndex="invoiceNumber" key="invoiceNumber"
+                      v-if="state.tableData.params.status !== 'paid'">
+        <template #default="{ record }">
+          <div style="display: flex;flex-direction: column;gap: 5px;"
+               v-if="state.tableData.params.status === 'shippingAddress'">
+            <a-select v-model:value="state.courierNameValues[record.id]" placeholder="택배사를 선택해주세요.">
+              <a-select-option :value="key" :key="key"
+                               v-for="(company, key) in state.marketDeliveryCompany[record.marketCode]">{{
+                  company
+                }}</a-select-option>
+            </a-select>
+            <a-input v-model:value="state.invoiceNumberValues[record.id]" />
+          </div>
+          <div v-else>
+            {{ record.courierName }} - {{ record.invoiceNumber }}
+          </div>
+
+        </template>
+      </a-table-column>
+
       <a-table-column :width="200" title="" dataIndex="manage" key="manage">
         <template #default="{ record }">
           <div style="display: grid;">
@@ -107,75 +164,17 @@
               <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id']">
                 <a-button size="small">상세</a-button>
               </RouterLink>
+              <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
+                        @click.prevent="receiverOneOrder(record.id)">발주</a-button>
+              <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'"
+                        @click.prevent="purchaseProduct(record)">구매</a-button>
+              <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
+                        @click.prevent="deliveryOrder(record.id)">배송</a-button>
               <a-button type="primary" size="small" @click.prevent="openMarketAdminPage(state.accountData[record.accountId].marketCode)">마켓바로가기</a-button>
             </a-space>
           </div>
         </template>
       </a-table-column>
-      <template #expandedRowRender="scoped" style="padding:0">
-        <div>
-          <a-table :data-source="scoped.record.items" :pagination="false" size="small"
-            :row-selection="rowItemSelection" :showHeader="true" style="padding: 0;" bordered>
-            <a-table-column :width="50" title="이미지" dataIndex="prdImage" key="prdImage">
-              <template #default="{ record }">
-                <a-image :src="record.prdImage"
-                  fallback="data:image/png;base64,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"
-                  style="width: 50px;height: 50px;border-radius: 5px;" />
-              </template>
-            </a-table-column>
-            <a-table-column title="상품명" dataIndex="prdName" key="prdName" />
-            <a-table-column :width="300" title="옵션명" dataIndex="prdOptionName" key="prdOptionName" />
-            <a-table-column :width="100" title="수량" dataIndex="quantity" key="quantity">
-              <template #default="{ record }">
-                {{ record['quantity'] - record['claimQuantity'] }}
-                <span style="display: block; color: red;">(반품: {{ record['claimQuantity'] }})</span>
-              </template>
-            </a-table-column>
-            <a-table-column :width="100" title="단가" dataIndex="unitPrice" key="unitPrice" />
-            <a-table-column :width="100" title="합계">
-              <template #default="{ record }">
-                {{ (record['quantity'] - record['claimQuantity']) * record['unitPrice'] }}
-              </template>
-            </a-table-column>
-            <a-table-column :width="200" title="운송장정보" dataIndex="invoiceNumber" key="invoiceNumber"
-              v-if="state.tableData.params.status !== 'paid'">
-              <template #default="{ record }">
-                <div style="display: flex;flex-direction: column;gap: 5px;"
-                  v-if="state.tableData.params.status === 'shippingAddress'">
-                  <a-select v-model:value="state.courierNameValues[record.id]" placeholder="택배사를 선택해주세요.">
-                    <a-select-option :value="key" :key="key"
-                      v-for="(company, key) in state.marketDeliveryCompany[state.accountData[scoped.record.accountId].marketCode]">{{
-                        company
-                      }}</a-select-option>
-                  </a-select>
-                  <a-input v-model:value="state.invoiceNumberValues[record.id]" />
-                </div>
-                <div v-else>
-                  {{ record.courierName }} - {{ record.invoiceNumber }}
-                </div>
-
-              </template>
-            </a-table-column>
-            <a-table-column :width="200" title="상태변경시간" dataIndex="lastDate" key="lastDate"></a-table-column>
-            <a-table-column :width="100" title="" dataIndex="command" key="command"
-              v-if="state.tableData.params.status === 'paid' || state.tableData.params.status === 'shippingAddress'">
-              <template #default="{ record }">
-                <a-space>
-                  <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
-                    @click.prevent="receiverOneOrder(record.id)">발주</a-button>
-                  <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'"
-                    @click.prevent="purchaseProduct(record)">구매</a-button>
-                  <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
-                    @click.prevent="deliveryOrder(record.id)">배송</a-button>
-
-                  <!-- <a-button size="small"
-                    @click="showHistory({ type: 'order', index_id: scoped.record.id, sub_index_id: record.id, title: record.prd_name + ' - ' + record.prd_option_name })">기록</a-button> -->
-                </a-space>
-              </template>
-            </a-table-column>
-          </a-table>
-        </div>
-      </template>
     </a-table>
   </a-card>
   <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData" />
@@ -191,7 +190,7 @@ import moment from "moment";
 import table2excel from 'js-table2excel';
 import { message } from 'ant-design-vue'
 import HistoryView from '@/components/HistoryView.vue'
-import { DownloadOutlined, FileSyncOutlined, ContainerOutlined } from '@ant-design/icons-vue';
+import { DownloadOutlined, FileSyncOutlined, ContainerOutlined, ExportOutlined } from '@ant-design/icons-vue';
 
 
 
@@ -214,6 +213,7 @@ const state = reactive({
   courierNameValues: {},
   invoiceNumberValues: {},
   marketDeliveryCompany: {},
+  marketDetailUrls: {},
 });
 
 // 검색기간
@@ -280,27 +280,16 @@ const getMarketStatusList = async () => {
   });
 }
 
-// 상품 선택
-const rowItemSelection = ref({
-  columnTitle: '선택',
-  checkStrictly: false,
-  selectedRowKeys: [],
-  onChange: (selectedRowKeys, selectedRows) => {
-    rowSelection.value.selectedRowKeys = selectedRows.map(row => row.order_id);
-    rowItemSelection.value.selectedRowKeys = selectedRowKeys;
-  },
-});
-
 // 주문 선택
 const rowSelection = ref({
   checkStrictly: false,
   onChange: (selectedRowKeys, selectedRows) => {
-    rowSelection.value.selectedRowKeys = selectedRows.map(row => row.key);
-    rowItemSelection.value.selectedRowKeys = selectedRows.flatMap(row => row.orderItems.map(item => item.key));
+    rowSelection.value.selectedRowKeys = selectedRowKeys;
   },
 });
 
 const handleStatusChange = (e) => {
+  rowSelection.value.selectedRowKeys = [];
   if (state.tableData.params.status === 'shippingAddress') {
     getMarketDeliveryCompany();
   }
@@ -320,14 +309,14 @@ const getLogoSrc = (marketCode) => {
  * 선택발주처리
  */
 const receiverOrderSelected = () => {
-  const selectedItemRowKeys = rowItemSelection.value.selectedRowKeys;
-  if (selectedItemRowKeys.length === 0) {
+  const selectedRowKeys = rowSelection.value.selectedRowKeys;
+
+  if (!selectedRowKeys) {
     message.error('발주처리할 주문을 선택해주세요.');
     return false;
   }
 
-  receiverOrderApi(selectedItemRowKeys);
-
+  receiverOrderApi(selectedRowKeys);
 }
 
 // 발주처리
@@ -411,63 +400,32 @@ const getMarketDeliveryCompany = () => {
 
 // 구매 페이지 열기
 const purchaseProduct = (item) => {
-  console.log(item);
-  if (!item.prd_url) {
+  if (!item.prdUrl) {
     message.error('구매 페이지가 등록되지 않았습니다.');
     return false;
   }
-  window.open(item.prd_url);
+  window.open(item.prdUrl);
 }
 
 // 엑셀 다운로드
 const excelDownload = () => {
-  const header = [
-    { title: '주문번호', key: 'order_no', type: 'text' },
-    { title: '주문자', key: 'orderer_name' },
-    { title: '주문시간', key: 'order_date' },
-    { title: '상태', key: 'status' },
-    { title: '상품코드', key: 'prd_code' },
-    { title: '상품명', key: 'prd_name' },
-    { title: '옵션명', key: 'prd_option_name' },
-    { title: '이미지', key: 'prd_image' },
-    { title: '수량', key: 'quantity' },
-    { title: '취소수량', key: 'claim_quantity' },
-    { title: '판매가', key: 'unit_price' },
-    { title: '수취인', key: 'receiver_name' },
-    { title: '택배사', key: 'courier_name' },
-    { title: '송장번호', key: 'invoice_number' },
-    { title: '수집날자', key: 'ins_date' },
-    { title: '업데이트날자', key: 'upd_date' },
-  ]
+  useMarketOrderApi().downloadOrder(state.tableData.params).then(res => {
+    if (res === undefined) {
+      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+      return false;
+    }
+    // let blob = new Blob([res], { type: "charset=utf-8" });
+    // const url = window.URL.createObjectURL(blob);
+    // const a = document.createElement('a');
+    // a.href = url;
+    // a.download = 'x-plan-order.xlsx'; // 파일 이름을 설정합니다.
+    // document.body.appendChild(a);
+    // a.click();
+    // window.URL.revokeObjectURL(url);
+    // document.body.removeChild(a);
+    window.open(res.data.download_url)
 
-  const excelData = [];
-
-  state.tableData.data.forEach(order => {
-    order.orderItems.forEach(item => {
-      const status = state.orderStatus.filter(it => it.value === item.status);
-      excelData.push({
-        order_no: order.order_no,
-        orderer_name: order.orderer_name,
-        order_date: order.order_date,
-        status: status[0].label,
-        prd_code: item.prd_code,
-        prd_name: item.prd_name,
-        prd_option_name: item.prd_option_name,
-        prd_image: item.prd_image,
-        quantity: item.quantity,
-        claim_quantity: item.claim_quantity,
-        unit_price: item.unit_price,
-        receiver_name: item.receiver_name,
-        courier_name: item.courier_name,
-        invoice_number: item.invoice_number,
-        ins_date: item.item_ins_date,
-        upd_date: item.item_upd_date,
-      })
-    })
   });
-
-  const tableDatas = JSON.parse(JSON.stringify(excelData));
-  table2excel(header, tableDatas, `x-plan-order ${new Date().toLocaleString()}`);
 }
 
 const handleSearch = () => {
@@ -496,6 +454,25 @@ const handleCollect = () => {
   });
 }
 
+const getMarketDetailUrls = () => {
+  useMarketApi().getMarketDetailUrls({}).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    state.marketDetailUrls = res.data;
+  });
+}
+
+const handleOpenProduct = ({marketCode, prdCode}) => {
+  const url = state.marketDetailUrls[marketCode] + prdCode;
+  if (!url) {
+    message.error("상품 상세 페이지가 등록되지 않았습니다.");
+    return false;
+  }
+
+  window.open(url);
+}
 const historyVisible = ref(false);
 const historyData = ref({});
 
@@ -508,6 +485,7 @@ const showHistory = (param) => {
 onMounted(async () => {
   await getMarketStatusList()
   await getMarketAdminUrls()
+  await getMarketDetailUrls()
 
   await getAccountData()
   await getTableData()

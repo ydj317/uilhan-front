@@ -62,5 +62,14 @@ export function useMarketOrderApi() {
                 data: data,
             });
         },
+
+        // /api/market/order/download
+        downloadOrder: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/order/download",
+                method: "post",
+                data: data,
+            });
+        },
     }
 }
