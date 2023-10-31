@@ -1,11 +1,7 @@
 <template>
   <div id="container" class="w100" v-if="this.product.onload">
     <!--loading-->
-    <loading
-      v-model:active="this.product.loading"
-      :can-cancel="false"
-      :is-full-page="true"
-    />
+    <loading v-model:active="this.product.loading" :can-cancel="false" :is-full-page="true" />
 
     <!--번역팝업-->
     <TextTranslate></TextTranslate>
@@ -68,7 +64,7 @@ import { lib } from "@/util/lib";
 import { mapState } from "vuex";
 import { useRoute } from "vue-router";
 import { AuthRequest } from "@/util/request";
-import {defineAsyncComponent, defineComponent, ref} from "vue";
+import { defineAsyncComponent, defineComponent, ref } from "vue";
 import router from "@/router";
 
 // import Spec from "@/components/Detail/Spec";
@@ -168,27 +164,6 @@ export default defineComponent({
       });
     },
 
-    setLabel(items, type, isRate = false) {
-      let labelAddInfo = "";
-      for (let i = 0; i < items.length; i++) {
-        let symble = "";
-        if (type === "margin" && isRate === false) {
-          symble = "%";
-        }
-
-        if (
-          items[i].label.indexOf("(") === -1 &&
-          items[i].label.indexOf("%") === -1
-        ) {
-          labelAddInfo = " ( " + items[i].value + symble + " )";
-        }
-
-        items[i].label += labelAddInfo;
-      }
-
-      return items;
-    },
-
     skuLongName() {
       let aLongerSkuName = this.product.sku.filter(
         (data) => data.spec.length > 20
@@ -248,60 +223,8 @@ export default defineComponent({
       if (lib.isEmpty(this.product["item_upd"])) {
         this.product.is_modify = "F";
       }
-
-      // 마진율 초기화
-      ["wholesale", "supply", "selling", "disp", "rate"].map((sKey) => {
-        this.initMargin(sKey);
-      });
-
-      // // rate 옵션
-      // this.product.rate = lib.isArray(this.product.user.rate)
-      //     ? this.setLabel(this.product.user.rate, "rate")
-      //     : [];
-      //
-      // this.product.rate_option = 0;
-      //
-      // // 최초수정
-      // if (this.product.is_modify === "F" && !lib.isEmpty(this.product.user.rate_option)) {
-      //   this.product.rate_option = this.product.user.rate_option;
-      // }
     },
 
-    // 최초수정이고 계정별 마진이 있으면 계정별 마진 사용
-    // 최초수정아닐경우 상품별 마진 사용 (default: 0)
-    initMargin(field) {
-      let isRate = false;
-      if (field === "rate") {
-        isRate = true;
-      }
-
-      // 마진 옵션
-      this.product[field + "_margin"] = lib.isArray(
-        this.product.user[field + "_margin"]
-      )
-        ? this.setLabel(this.product.user[field + "_margin"], "margin", isRate)
-        : [];
-
-      this.product[field + "_margin_option"] = 0;
-
-      // 최초수정
-      if (
-        this.product.is_modify === "F" &&
-        !lib.isEmpty(this.product.user[field + "_margin_option"])
-      ) {
-        this.product[field + "_margin_option"] =
-          this.product.user[field + "_margin_option"];
-      }
-
-      // 수정
-      if (
-        this.product.is_modify === "T" &&
-        !lib.isEmpty(this.product["item_" + field + "_margin_option"])
-      ) {
-        this.product[field + "_margin_option"] =
-          this.product["item_" + field + "_margin_option"];
-      }
-    },
   },
 
   mounted() {

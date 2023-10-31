@@ -54,15 +54,6 @@
             </a-form-item>
           </a-descriptions-item> -->
 
-          <a-descriptions-item label="배송비">
-            <a-form-item>
-              <p>
-                <a-checkbox v-model:checked="formState.item_is_free_delivery">무료 배송</a-checkbox>
-              </p>
-              <a-input v-model:value="formState.item_shipping_fee" placeholder="배송비 입력" />
-            </a-form-item>
-          </a-descriptions-item>
-
           <a-descriptions-item label="키워드">
             <a-form-item>
               <a-input v-model:value="formState.keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다." />
@@ -103,8 +94,6 @@ export default {
       mandatory: [],
       mandatory_val: '선택',
       keyword: null,
-      item_is_free_delivery: false,
-      item_shipping_fee: ''
     });
 
     let settingCategoryVisible = ref(false);
@@ -147,10 +136,8 @@ export default {
 
   mounted() {
     this.getMandatory();
-    console.log(this.product);
+
     // this.formState.mandatory_val = this.product;
-    this.formState.item_shipping_fee = this.product.item_shipping_fee;
-    this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T' ? true : false;
 
     this.formState.mandatory_val = this.product.item_mandatory ? this.product.item_mandatory : '선택';
 

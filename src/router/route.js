@@ -376,17 +376,17 @@ export const menus = [{
                 icon: CloseCircleOutlined,
             },
         },
-        {
-            path: "/product/domeggook",
-            name: "prd_domeggook",
-            component: () => import("@/views/Product/Domeggook"),
-            meta: {
-                title: "도매꾹",
-                isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: AppstoreOutlined,
-            },
-        },
+        // {
+        //     path: "/product/domeggook",
+        //     name: "prd_domeggook",
+        //     component: () => import("@/views/Product/Domeggook"),
+        //     meta: {
+        //         title: "도매꾹",
+        //         isHide: false,
+        //         roles: ["ROLE_USER", "ROLE_ADMIN"],
+        //         icon: AppstoreOutlined,
+        //     },
+        // },
         {
             path: "/excel",
             name: "excel",

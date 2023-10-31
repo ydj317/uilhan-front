@@ -6,7 +6,7 @@
       <!--sku 상단 left 버튼-->
       <div class="top_button_left_item">
         <!--일괄적용-->
-        <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 구매원가, 해외운임, 권장가, 판매가)" @confirm="skuBatch">
+        <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 구매원가, 판매가)" @confirm="skuBatch">
           <a-button>일괄적용</a-button>
         </a-popconfirm>
         <!--품목삭제-->
@@ -15,62 +15,20 @@
 
       <!--sku 상단 right 버튼-->
       <div class="row" style="display: flex;flex-direction: column;gap: 10px;">
-        <!--도매마진-->
-        <div class="row right" v-if="false">
-          <a-input-group compact>
-            <a-select
-              class="top_button_right_item_select mr5"
-              :options="this.product.wholesale_margin"
-              v-model:value="this.product.wholesale_margin_option"
-            >
-            </a-select>
-            <a-button type="primary" @click="setWholesaleMargin">도매마진</a-button>
-          </a-input-group>
-        </div>
 
-        <!--판매마진-->
-        <div class="row right">
-          <a-input-group compact>
-            <a-select
-              class="top_button_right_item_select"
-              :options="this.product.selling_margin"
-              v-model:value="this.product.selling_margin_option"
-            >
-            </a-select>
-            <a-popconfirm title="판매마진을 수정하시겠습니까? 입력하신 판매가가 수정됩니다." @confirm="setSellingMargin('click')">
-              <a-button type="primary" style="border-top-left-radius: unset;border-bottom-left-radius: unset">판매마진</a-button>
-            </a-popconfirm>
-          </a-input-group>
-        </div>
-
-        <!--할인마진-->
-        <div class="row right">
-          <a-input-group compact>
-            <a-select
-              class="top_button_right_item_select"
-              :options="this.product.disp_margin"
-              v-model:value="this.product.disp_margin_option"
-            >
-            </a-select>
-            <a-popconfirm title="권장가를 수정하시겠습니까? 입력하신 권장가가 수정됩니다." @confirm="setDispMargin('click')">
-              <a-button type="primary" style="border-top-left-radius: unset;border-bottom-left-radius: unset">권장가</a-button>
-            </a-popconfirm>
-          </a-input-group>
-        </div>
-
-        <!--환율-->
-        <div class="row right">
-          <a-input-group compact>
-            <a-select
-              class="top_button_right_item_select"
-              :options="this.product.rate_margin"
-              v-model:value="this.product.rate_margin_option"
-            >
-            </a-select>
-            <a-popconfirm title="환율을 수정하시겠습니까?" @confirm="setRateMargin">
-              <a-button type="primary" style="border-top-left-radius: unset;border-bottom-left-radius: unset">환율</a-button>
-            </a-popconfirm>
-          </a-input-group>
+        <div>
+          <a-space>
+            <a-tooltip>
+              <template #title>
+                <div>무료배송 체크시 배송비를 판매가에 추가하여 등록 됩니다.</div>
+              </template>
+              <QuestionCircleOutlined/>
+            </a-tooltip>
+          <a-checkbox v-model:checked="formState.item_is_free_delivery" @change="handleShippingFeeDeliveryChange" >
+            무료 배송
+          </a-checkbox>
+          <a-input-number v-model:value.number="formState.item_shipping_fee" placeholder="배송비 입력" :step="1000" :min="0" style="width: 80px" @change="handleShippingFeeChange"/>
+          </a-space>
         </div>
       </div>
     </div>
@@ -179,13 +137,13 @@
             </div>
             <div v-if="record.original_price_cn === 0 || record.editor === 'T'"  style="border: 1px solid red">
               <a-input
-                :style="
+                  :style="
                   record.img
                     ? `height: 30px; text-align: center; border: none;`
                     : `height: 30px; text-align: center; border: none;`
                 "
-                @input="setOriginalPrice(record)"
-                v-model:value="record[column.key]"
+                  @input="setOriginalPrice(record)"
+                  v-model:value="record[column.key]"
               />
             </div>
           </template>
@@ -205,15 +163,18 @@
             />
           </template>
 
-          <!--자체가격입력(custom)-->
-          <template v-else-if="['wholesale_price', 'selling_price', 'disp_price'].includes(column.key)">
-            <a-input @blur="handlerCustomPrice(column.key, index)" :style="
-                record.img
-                  ? `height: 30px; text-align: center; border: none;`
-                  : `height: 30px; text-align: center; border: none;`
-              " v-model:value="record['custom_' + column.key]" />
+          <!-- 판매가 -->
+          <template v-else-if="column.key === 'selling_price'">
+              <a-input
+                :style="
+                  record.img
+                    ? `height: 30px; text-align: center; border: none;`
+                    : `height: 30px; text-align: center; border: none;`
+                "
+                @blur="handlerCustomPrice(column.key, index)"
+                v-model:value="record[column.key]"
+              />
           </template>
-
           <!--보여주기-->
           <template v-else>
             <div
@@ -234,13 +195,16 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import {mapState, useStore} from "vuex";
 import { lib } from "@/util/lib";
 import { forEach } from "lodash";
 import { message } from "ant-design-vue";
+import {computed, reactive} from "vue";
+import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 
 export default {
   name: "productDetailSku",
+  components: {QuestionCircleOutlined},
 
   computed: {
     ...mapState(["product"]),
@@ -291,21 +255,6 @@ export default {
           width: "9%",
         },
         {
-          title: "해외운임/원",
-          key: "shipping_fee_cn", // 기본 0, 별도 기입
-          width: "8%",
-        },
-        // {
-        //   title: "도매가",
-        //   key: "wholesale_price", // (구매원가+중국내 운임)*도매마진
-        //   width: "9%",
-        // },
-        {
-          title: "권장가/원",
-          key: "disp_price", // 할인가*할인전 가격설정
-          width: "8%",
-        },
-        {
           title: "판매가/원",
           key: "selling_price", // (구매원가+중국내 운임)*마진율
           width: "8%",
@@ -332,10 +281,21 @@ export default {
     };
   },
 
+  setup() {
+    const store = useStore()
+    const aProduct = computed(() => store.state.product)
+    const formState = reactive({
+      item_is_free_delivery: false,
+      item_shipping_fee: '',
+      original_item_skus: [],
+    });
+    return {
+      aProduct,
+      formState,
+    }
+  },
   methods: {
     setIsOptionReferencePrice(key) {
-      console.log('==0==')
-      console.log(key)
       forEach(this.product.sku, (item, index) => {
         if (item.key === key) {
           this.product.sku[index].is_option_reference_price = "T";
@@ -353,192 +313,29 @@ export default {
           // 구매원가 (중국화폐) 수정여부
           this.product.sku[i].editor = "T";
 
-          // 구매원가 (한국화폐)
-          this.product.sku[i].original_price_ko =
-            Math.ceil(
-              Number(
-                record["original_price_cn"] *
-                Number(this.product.rate_margin_option)
-              ) / 100
-            ) * 100;
-
-          // 도매가
-          let wholesale_price = (
-            (Number(data["original_price_cn"]) +
-              Number(data["shipping_fee_cn"])) *
-            (1 + Number(this.product["wholesale_margin_option"]) / 100) *
-            Number(this.product.rate_margin_option)
-          ).toFixed(0);
-          this.product.sku[i].wholesale_price =
-            Math.ceil(Number(wholesale_price) / 100) * 100;
-
-          // 판매가
-          let selling_price = (
-            (Number(data["original_price_cn"]) +
-              Number(data["shipping_fee_cn"])) *
-            (1 + Number(this.product["selling_margin_option"]) / 100) *
-            Number(this.product.rate_margin_option)
-          ).toFixed(0);
-          this.product.sku[i].selling_price =
-            Math.ceil(Number(selling_price) / 100) * 100;
           //custom_selling_price
           this.product.sku[i].custom_selling_price = Number(this.product.sku[i].selling_price);
 
-          let expected_return = (Number(this.product.sku[i].selling_price) - Number(this.product.sku[i].original_price_ko) - Number(this.product.sku[i].selling_price) * 0.12).toFixed(0);
+          let expected_return = (Number(this.product.sku[i].selling_price) - Number(this.product.sku[i].original_price_ko)).toFixed(0);
           this.product.sku[i].expected_return = Number(expected_return);
-
-          // 할인가
-          let disp_price = (
-            (Number(data["original_price_cn"]) +
-              Number(data["shipping_fee_cn"])) *
-            (1 + Number(this.product["selling_margin_option"]) / 100) *
-            (1 + Number(this.product["disp_margin_option"]) / 100) *
-            Number(this.product.rate_margin_option)
-          ).toFixed(0);
-          this.product.sku[i].disp_price =
-            Math.ceil(Number(disp_price) / 100) * 100;
-          //custom_disp_price
-          this.product.sku[i].custom_disp_price = Number(this.product.sku[i].disp_price);
         }
       });
     },
 
-    /**
-     * 도매마진율 설정
-     * 도매가 = ( 구매원가 + 중국내 운임 ) * 도매마진율
-     * sku[i].original_price = ( sku[i].original_price + sku[i].shipping_fee_cn ) * user.wholesale_margin
-     */
-    setWholesaleMargin() {
-      this.product.sku.map((data, i) => {
-        let wholesale_price = (
-          (Number(data["original_price_cn"]) +
-            Number(data["shipping_fee_cn"])) *
-          (1 + Number(this.product["wholesale_margin_option"]) / 100) *
-          Number(this.product.rate_margin_option)
-        ).toFixed(0);
-        this.product.sku[i].wholesale_price =
-          Math.ceil(Number(wholesale_price) / 100) * 100;
-      });
-      this.product.item_wholesale_margin_option =
-        this.product.wholesale_margin_option;
-    },
-
-    /**
-     * 판매마진율 설정
-     * 판매가 = ( 구매원가 + 중국내 운임 ) * 판매마진율
-     * sku[i].selling_price = ( sku[i].original_price + sku[i].shipping_fee_cn ) * user.selling_margin
-     */
-    setSellingMargin(type) {
-      this.product.sku.map((data, i) => {
-        let selling_price = (
-          (Number(data["original_price_cn"]) +
-            Number(data["shipping_fee_cn"])) *
-          (1 + Number(this.product["selling_margin_option"]) / 100) *
-          Number(this.product.rate_margin_option)
-        ).toFixed(0);
-        this.product.sku[i].selling_price =
-          Math.ceil(Number(selling_price) / 100) * 100;
-        if (type === "click") {
-          this.product.sku[i].custom_selling_price = Number(this.product.sku[i].selling_price);
-        }
-      });
-      if (type === "click") {
-        this.setExpectedReturn();
-      }
-      this.product.item_selling_margin_option =
-        this.product.selling_margin_option;
-    },
-
-    /**
-     * 할인마진율 설정
-     * 할인가 = 할인가 * 할인마진율
-     * sku[i].disp_price = sku[i].selling_price * user.disp_margin
-     */
-    setDispMargin(type) {
-      this.product.sku.map((data, i) => {
-        let disp_price = (
-          (Number(data["original_price_cn"]) +
-            Number(data["shipping_fee_cn"])) *
-          (1 + Number(this.product["selling_margin_option"]) / 100) *
-          (1 + Number(this.product["disp_margin_option"]) / 100) *
-          Number(this.product.rate_margin_option)
-        ).toFixed(0);
-        this.product.sku[i].disp_price =
-          Math.ceil(Number(disp_price) / 100) * 100;
-        if (type === "click") {
-          this.product.sku[i].custom_disp_price = Number(this.product.sku[i].disp_price);
-        }
-      });
-      this.product.item_disp_margin_option = this.product.disp_margin_option;
-    },
     handlerShippingFee(key, index) {
-      if (["shipping_fee_cn"].includes(key)) {
-        let original_price_cn = this.product.sku[index]["original_price_cn"];
-        let shipping_fee_cn = this.product.sku[index]["shipping_fee_cn"];
-        //도매가
-        let wholesale_price = (
-          (Number(original_price_cn) +
-            Number(shipping_fee_cn)) *
-          (1 + Number(this.product["wholesale_margin_option"]) / 100) *
-          Number(this.product.rate_margin_option)
-        ).toFixed(0);
-        this.product.sku[index].wholesale_price =
-          Math.ceil(Number(wholesale_price) / 100) * 100;
 
-        //disp_price
-        let disp_price = (
-          (Number(original_price_cn) +
-            Number(shipping_fee_cn)) *
-          (1 + Number(this.product["selling_margin_option"]) / 100) *
-          (1 + Number(this.product["disp_margin_option"]) / 100) *
-          Number(this.product.rate_margin_option)
-        ).toFixed(0);
-        this.product.sku[index].disp_price =
-          Math.ceil(Number(disp_price) / 100) * 100;
-        this.product.sku[index].custom_disp_price = Number(this.product.sku[index].disp_price);
-
-        //selling_price
-        let selling_price = (
-          (Number(original_price_cn) +
-            Number(shipping_fee_cn)) *
-          (1 + Number(this.product["selling_margin_option"]) / 100) *
-          Number(this.product.rate_margin_option)
-        ).toFixed(0);
-        this.product.sku[index].selling_price =
-          Math.ceil(Number(selling_price) / 100) * 100;
-        this.product.sku[index].custom_selling_price = Number(this.product.sku[index].selling_price);
-
-        //예상수익
-        let expected_return = (Number(this.product.sku[index].selling_price) - Number(this.product.sku[index].original_price_ko) - Number(this.product.sku[index].selling_price) * 0.12).toFixed(0);
+      //예상수익
+        let expected_return = (Number(this.product.sku[index].selling_price) - Number(this.product.sku[index].original_price_ko)).toFixed(0);
         this.product.sku[index].expected_return = Number(expected_return);
-      }
     },
+
     handlerCustomPrice(key, index) {
       //자체입력으로 의한 가격 동기화(권장가, 판매가, 예상수익)
-      if (["selling_price", "disp_price"].includes(key)) {
-        //가격 동기화
-        this.product.sku[index][key] = Number(this.product.sku[index]["custom_" + key]);
-        //예상수익 셋팅
         if (key === "selling_price") {
           let sellingPrice = Number(this.product.sku[index][key]);
-          let expected_return = (Number(sellingPrice) - Number(this.product.sku[index].original_price_ko) - Number(sellingPrice) * 0.12).toFixed(0);
+          let expected_return = (Number(sellingPrice) - Number(this.product.sku[index].original_price_ko)).toFixed(0);
           this.product.sku[index].expected_return = Number(expected_return);
         }
-      }
-    },
-
-    /**
-     * 환율 설정
-     * 도매가 = 도매가 * 환율마진율
-     * sku[i].wholesale_price = sku[i].wholesale_price * 선택한 환율
-     */
-    setRateMargin() {
-      this.setWholesaleMargin();
-      this.setSellingMargin();
-      this.setDispMargin();
-      this.setCustomPrice(false);
-      this.setExpectedReturn();
-      this.product.item_rate_margin_option = this.product.rate_margin_option;
     },
 
     // 품목삭제
@@ -564,11 +361,11 @@ export default {
       this.product.sku.map((sku, i) => {
         this.sku_columns.map((columns) => {
           //custom price
-          if (["selling_price", "disp_price"].includes(columns.key)) {
+          if (["selling_price"].includes(columns.key)) {
             this.product.sku[i]["custom_" + columns.key] = Number(this.product.sku[0]["custom_" +  columns.key]);
           }
           //original_price_ko
-          if (["original_price_cn"].includes(columns.key)) {
+          if (["original_price_ko"].includes(columns.key)) {
             this.product.sku[i]["original_price_ko"] = Number(this.product.sku[0]["original_price_ko"]);
           }
           if (!["checked", "code", "spec", "img", "is_option_reference_price"].includes(columns.key)) {
@@ -694,58 +491,55 @@ export default {
     },
 
     // 전체 마진자동셋팅
-    marginInit() {
-      if (this.product.is_modify === "T") {
-        //custom price 동기화
-        this.setCustomPrice(true);
-        return false;
+    shippingFeeInit() {
+      this.formState.item_shipping_fee = this.product.item_shipping_fee || 0;
+      this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T' ? true : false;
+      if(!this.formState.item_is_free_delivery){
+        this.formState.shipping_fee_ko = this.product.item_shipping_fee;
       }
-
-      this.setWholesaleMargin();
-      this.setSellingMargin();
-      this.setDispMargin();
-      //custom price 동기화
-      this.setCustomPrice(true);
     },
-    /**
-     * setCustomPrice
-     * bInit true(가격 초기화) false(액션시 가격 동기화)
-     *
-     * @param bInit
-     */
-    setCustomPrice(bInit) {
+
+    sellingPriceInit() {
       this.product.sku.map((data, i) => {
-        if (bInit === true) {
-          if (this.product.sku[i].custom_selling_price === null) {
-            this.product.sku[i].custom_selling_price = Number(this.product.sku[i].selling_price);
-          } else {
-            this.product.sku[i].selling_price = Number(this.product.sku[i].custom_selling_price);
-          }
-          if (this.product.sku[i].custom_disp_price === null) {
-            this.product.sku[i].custom_disp_price = Number(this.product.sku[i].disp_price);
-          } else {
-            this.product.sku[i].disp_price = Number(this.product.sku[i].custom_disp_price);
-          }
-        } else {
-          //custom 가격 셋팅
-          this.product.sku[i].custom_selling_price = Number(this.product.sku[i].selling_price);
-          this.product.sku[i].custom_disp_price = Number(this.product.sku[i].disp_price);
-        }
+        this.product.sku[i].original_selling_price = Number(data.selling_price);
       });
     },
+
+    handleShippingFeeChange(val) {
+        this.product.sku.map((data, i) => {
+          this.product.sku[i].shipping_fee_ko = val;
+        });
+
+      this.formState.item_shipping_fee = val;
+      this.product.formState.item_shipping_fee = val;
+      this.product.formState.item_is_free_delivery = this.formState.item_is_free_delivery;
+    },
+
+    handleShippingFeeDeliveryChange() {
+      if(this.formState.item_is_free_delivery) {
+        message.warn('배송비가 판매가에 적용됩니다.');
+      } else {
+        message.warn('배송비가 운임에 적용됩니다.');
+      }
+      this.product.formState.item_is_free_delivery = this.formState.item_is_free_delivery;
+    },
+
     setExpectedReturn() {
       this.product.sku.map((data, i) => {
-        let expected_return = (Number(data.selling_price) - Number(data.original_price_ko) - Number(data.selling_price) * 0.12).toFixed(0);
+        let expected_return = (Number(data.selling_price) - Number(data.original_price_ko)).toFixed(0);
         this.product.sku[i].expected_return = Number(expected_return);
       });
-    }
+    },
   },
 
   mounted() {
+
     this.css();
-    this.marginInit();
+    this.shippingFeeInit();
     //예상수익
+    this.handleShippingFeeChange(this.formState.item_shipping_fee);
     this.setExpectedReturn();
+
   },
 };
 </script>
@@ -762,29 +556,6 @@ export default {
   width: 180px;
   display: flex;
   justify-content: space-between;
-}
-
-.top_button_left_item_button {
-  background-color: #f06543;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
-
-.top_button_left_item_button:first-child {
-  background-color: #3ddc97;
-}
-
-.top_button_right_item_button {
-  background-color: #3ddc97;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
-
-.top_button_right_item_select {
-  width: 140px;
-  color: #3051d3;
 }
 
 .sku_window_image {
@@ -828,4 +599,5 @@ export default {
   max-width: 80%;
   max-height: 80%;
 }
+
 </style>

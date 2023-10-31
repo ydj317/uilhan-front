@@ -1,10 +1,5 @@
 <template>
-  <loading
-    v-model:active="indicator"
-    :can-cancel="false"
-    :is-full-page="true"
-  />
-  <a-card :loading="cardLoading" :bordered="false" :title="'사용자 정보 수정'">
+  <a-card :loading="formState.loading" :bordered="false" :title="'사용자 정보 수정'">
 
     <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">
@@ -104,15 +99,10 @@
 
 <script setup>
 import { AuthRequest } from "@/util/request";
-import "vue-loading-overlay/dist/vue-loading.css";
-import Loading from "vue-loading-overlay";
 import { onMounted, reactive, ref } from "vue";
 import router from "@/router";
 import { message } from "ant-design-vue";
-
-// loading
-const indicator = ref(false);
-const cardLoading = ref(true);
+import {useUserApi} from "@/api/user";
 
 const formState = reactive({
   username: "",
@@ -137,7 +127,9 @@ const formState = reactive({
   com_phone2: "",
   com_phone3: "",
   //대표자명
-  com_ceo: ""
+  com_ceo: "",
+
+  loading: false,
 });
 
 let validateName = async (rule, value) => {
@@ -352,17 +344,14 @@ const onFinish = () => {
     com_ceo: formState.com_ceo,
   };
 
-  indicator.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
     if (res.status !== '2000') {
       message.error(res.message)
-      indicator.value = false;
       return false;
     }
 
     message.success(res.message);
-
-    indicator.value = false;
+    getUserInfoData();
   });
 };
 
@@ -390,29 +379,34 @@ function splitPhone (key, phone) {
     }
   }}
 
-function getUser() {
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user", {}).then((res) => {
-      if (res.status !== "2000") {
-        message.error(res.message);
-      }
-
-      formState.username = res.data.member_name
-      formState.name = res.data.name
-      formState.email = res.data.email
-      splitPhone('phone', res.data.phone)
-      formState.com_name = res.data.com_name;
-      formState.com_number = res.data.com_number;
-      splitPhone('com_phone', res.data.com_phone)
-      formState.com_ceo = res.data.com_ceo;
-      splitPhone('tel', res.data.tel)
-
-      cardLoading.value = false;
+function getUserInfoData() {
+  formState.loading = true;
+  useUserApi().getUserInfoData({}).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      formState.loading = false;
+      return false;
     }
-  );
+
+    formState.username = res.data.username
+    formState.name = res.data.name
+    formState.email = res.data.email
+    splitPhone('phone', res.data.phone)
+    formState.com_name = res.data.com_name;
+    formState.com_number = res.data.com_number;
+    splitPhone('com_phone', res.data.com_phone)
+    formState.com_ceo = res.data.com_ceo;
+    splitPhone('tel', res.data.tel)
+
+    setTimeout(() => {
+      formState.loading = false;
+    }, 500);
+
+  });
 }
 
 onMounted(() => {
-  getUser();
+  getUserInfoData();
 });
 </script>
 

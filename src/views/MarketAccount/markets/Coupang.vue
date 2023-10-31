@@ -1,7 +1,7 @@
 <template>
     <a-form ref="marketFormRef" :model="state.formData" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
         class="market_form">
-        <a-form-item name="seller_id" label="셀러ID" :rules="[{ required: true, message: '셀러ID를 입력해 주세요.' }]">
+        <a-form-item name="seller_id" label="쿠팡ID" :rules="[{ required: true, message: '쿠팡ID를 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status" />
         </a-form-item>
 

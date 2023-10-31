@@ -1,17 +1,17 @@
 <template>
     <a-form ref="marketFormRef" :model="state.formData" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
         class="market_form">
-        <a-form-item name="seller_id" label="셀러ID" :rules="[{ required: true, message: '셀러ID를 입력해 주세요.' }]">
+        <a-form-item name="seller_id" label="스마트스토어ID" :rules="[{ required: true, message: '스마트스토어ID를 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status" />
         </a-form-item>
 
-        <a-form-item name="client_id" @keyup="handleResetSyncStatus" label="Client Id"
-            :rules="[{ required: true, message: 'client Id를 입력해 주세요.' }]">
+        <a-form-item name="client_id" @keyup="handleResetSyncStatus" label="애플리케이션ID"
+            :rules="[{ required: true, message: '애플리케이션ID를 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.client_id" />
         </a-form-item>
 
-        <a-form-item name="client_secret" label="Client Secret" @keyup="handleResetSyncStatus"
-            :rules="[{ required: true, message: 'Client Secret를 입력해 주세요.' }]">
+        <a-form-item name="client_secret" label="애플리케이션 시크릿" @keyup="handleResetSyncStatus"
+            :rules="[{ required: true, message: '애플리케이션 시크릿을 입력해 주세요.' }]">
             <a-input v-model:value="state.formData.client_secret" />
         </a-form-item>
 

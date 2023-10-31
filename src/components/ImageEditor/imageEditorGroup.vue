@@ -572,10 +572,6 @@ export default {
   cursor: pointer;
 }
 
-.ant-tooltip-inner {
-  /*padding: 0 !important;*/
-  width: 416px;
-}
 </style>
 
 <style scoped>

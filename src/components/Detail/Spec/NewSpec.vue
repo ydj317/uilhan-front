@@ -40,13 +40,14 @@ export default {
       if (!this._checkOptionGroup()) {
         return false;
       }
+      console.log(this.product.sku);
       //sku 값 씽크 맞춤
       this._syncSku();
       this.temp_sku = [];
       this._getSku([], 0, this.product.item_option);
       this._setSku();
 
-
+      console.log(this.product.sku);
       forEach(this.product.sku, (item, index) => {
         if (index === 0) {
           this.product.sku[index].is_option_reference_price = "T";
@@ -133,7 +134,6 @@ export default {
     _setSku() {
       let format_sku = [];
       let aOptionImage = this._getOptionImage();
-
       forEach(this.temp_sku, (sku) => {
         let sName = sku[0].name;
         if (sku.length > 1) {
@@ -144,11 +144,9 @@ export default {
           });
           sName = aTempName.join("::");
         }
-
         let bPush = true;
         forEach(this.product.sku, (original_sku) => {
-          // let aName = original_sku.spec.split('::');
-          if (original_sku.spec === sName) {
+          if (original_sku.spec.replace(/(\s*)/g, "") === sName.replace(/(\s*)/g, "")) {
             bPush = false;
             // 기존 sku 는 그대로 유지
             format_sku.push(original_sku);
@@ -176,12 +174,8 @@ export default {
             original_price_cn: 0,
             original_price_ko: 0,
             shipping_fee_cn: 0,
-            shipping_fee_ko: 0,
-            wholesale_price: 0,
-            disp_price: 0,
-            custom_disp_price: 0,
+            shipping_fee_ko: this.product.item_shipping_fee,
             selling_price: 0,
-            custom_selling_price: 0,
             expected_return: 0,
             key: ((1 + Math.random()) * 0x10000) | 0,
           });
