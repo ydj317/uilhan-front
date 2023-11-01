@@ -86,7 +86,7 @@
       <a-table-column :width="200" title="마켓" dataIndex="id" key="id">
         <template #default="{ record }">
           <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
-            <img :src="getLogoSrc(record.marketCode)" style="width: 18px;height: 18px;" />
+            <img :src="getLogoSrc(record.marketCode)" style="width: 18px;height: 18px;cursor: pointer;" @click="handleOpenMarketProduct({ marketCode: record.marketCode, prdCode: record.prdCode, marketData: record.marketData})"/>
             {{ record.sellerId }}
           </div>
         </template>
@@ -100,7 +100,7 @@
       <a-table-column :width="120" title="원본상품" dataIndex="prdCode" key="prdCode" >
         <template #default="{ record }">
           <a-space>
-            <a-button type="link" size="small" @click="handleOpenProduct({ marketCode: record.marketCode, prdCode: record.prdCode})">
+            <a-button type="link" size="small" @click.prevent="purchaseProduct(record)">
               <template #icon>
                 <ExportOutlined />
               </template>
@@ -145,7 +145,7 @@
         </template>
       </a-table-column>
 
-      <a-table-column :width="200" title="" dataIndex="manage" key="manage">
+      <a-table-column title="" dataIndex="manage" key="manage">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
@@ -158,7 +158,6 @@
                         @click.prevent="purchaseProduct(record)">구매</a-button>
               <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                         @click.prevent="deliveryOrder(record.id)">배송</a-button>
-              <a-button type="primary" size="small" @click.prevent="openMarketAdminPage(state.accountData[record.accountId].marketCode)">마켓바로가기</a-button>
             </a-space>
           </div>
         </template>
@@ -452,15 +451,23 @@ const getMarketDetailUrls = () => {
   });
 }
 
-const handleOpenProduct = ({marketCode, prdCode}) => {
-  const url = state.marketDetailUrls[marketCode] + prdCode;
+const handleOpenMarketProduct = ({marketCode, prdCode, marketData}) => {
+  let url = '';
+  if (marketCode === 'smartstore') {
+    url = marketData.channel_info.url + '/products/' + prdCode;
+  } else {
+    url = state.marketDetailUrls[marketCode] + prdCode;
+  }
+
   if (!url) {
     message.error("상품 상세 페이지가 등록되지 않았습니다.");
     return false;
   }
 
+
   window.open(url);
 }
+
 const historyVisible = ref(false);
 const historyData = ref({});
 
