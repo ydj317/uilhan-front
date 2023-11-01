@@ -285,8 +285,14 @@ export default {
       // this.product.sku에서 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 경고창 띄우기
       for (const skuItem of this.product.sku) {
         const { selling_price } = skuItem;
+        // 경고창 띄운 후에도 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 this.product.sku 에서 삭제
         if (selling_price > minPrice * 1.5 || selling_price < minPrice * 0.5) {
           message.warning(`주문옵션(${skuItem.spec}) 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능합니다.`);
+
+          // this.product.sku에서 삭제
+          this.product.sku = this.product.sku.filter(item => item.key !== skuItem.key);
+
+          // 삭제된 this.product.sku를 다시 this.product.deletedSku에 넣어주기
           return false;
         }
       }

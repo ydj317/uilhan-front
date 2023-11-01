@@ -4,7 +4,7 @@
     <!--옵션그룹해더, 옵션 셋팅, 옵션그룹 추가-->
     <div class="header-section">
       <!--세팅버튼-->
-      <div class="setting header-button">
+      <div class="setting header-button" style="display: flex;justify-content: space-between;width: 100%;padding-right: 15px;">
         <a-button class="floatRight" type="primary" @click="setting" :disabled="product.is_sync === 'T'">세팅</a-button>
       </div>
     </div>
@@ -17,9 +17,10 @@
 <script>
 import { lib } from "util/lib";
 import { forEach, cloneDeep} from "lodash";
-import { mapState } from "vuex";
+import {mapState, useStore} from "vuex";
 import SpecGroup from "./SpecGroup";
 import { message } from "ant-design-vue";
+import {computed, ref} from "vue";
 
 export default {
   name: "productDetailNewSpec",
@@ -35,19 +36,19 @@ export default {
       temp_item_option: cloneDeep(this.$store.state.product.item_option),
     };
   },
+
   methods: {
     setting() {
       if (!this._checkOptionGroup()) {
         return false;
       }
-      console.log(this.product.sku);
+
       //sku 값 씽크 맞춤
       this._syncSku();
       this.temp_sku = [];
       this._getSku([], 0, this.product.item_option);
       this._setSku();
 
-      console.log(this.product.sku);
       forEach(this.product.sku, (item, index) => {
         if (index === 0) {
           this.product.sku[index].is_option_reference_price = "T";
@@ -240,7 +241,7 @@ export default {
       }
 
       return check;
-    }
+    },
   }
 };
 </script>

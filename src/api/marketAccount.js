@@ -45,6 +45,15 @@ export function useMarketAccountApi() {
             });
         },
 
+        // 스마트스토어 계정 채널 정보 조회
+        syncSellerChannels: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/syncSellerChannels",
+                method: "POST",
+                data,
+            });
+        },
+
         updateAccountStatus: (data) => {
             return AuthRequest({
                 url: process.env.VUE_APP_API_URL + "/api/market/account/updateAccountStatus",
