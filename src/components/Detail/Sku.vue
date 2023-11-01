@@ -4,13 +4,20 @@
     <!--sku 상단 버튼-->
     <div class="top_button_container" style="display: flex;justify-content: space-between;">
       <!--sku 상단 left 버튼-->
-      <div class="top_button_left_item">
+      <div class="top_button_left_item" style="display: flex;gap: 10px;align-items: center">
         <!--일괄적용-->
         <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 구매원가, 판매가)" @confirm="skuBatch">
           <a-button>일괄적용</a-button>
         </a-popconfirm>
         <!--품목삭제-->
         <a-button @click="deleteSku" :disabled="product.is_sync === 'T'">품목삭제</a-button>
+        <a-divider type="vertical"></a-divider>
+        <div style="display: flex;gap: 5px">
+          <a-select v-model:value="setting_price_type">
+            <a-select-option value="min_price">최저 옵션가 기준 50%</a-select-option>
+          </a-select>
+          <a-button @click="settingSkuPrice">적용</a-button>
+        </div>
       </div>
 
       <!--sku 상단 right 버튼-->
@@ -218,6 +225,7 @@ export default {
       sku_image_window_visible: false,
       showPreview: false,
       previewSrc: '',
+      setting_price_type: 'min_price',
       sku_columns: [
         {
           title: "선택",
@@ -295,6 +303,36 @@ export default {
     }
   },
   methods: {
+    settingSkuPrice() {
+      if (this.setting_price_type === 'min_price') {
+        this.setSkuPriceMin();
+      }
+    },
+
+    setSkuPriceMin() {
+      let maxPrice = Number.NEGATIVE_INFINITY; // Initialize with the smallest possible value
+      let minPrice = Number.POSITIVE_INFINITY; // Initialize with the largest possible value
+      for (const skuItem of this.product.sku) {
+        const { selling_price } = skuItem;
+        if (selling_price > maxPrice) {
+          maxPrice = selling_price;
+        }
+        if (selling_price < minPrice) {
+          minPrice = selling_price;
+        }
+      }
+
+      // this.product.sku에서 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 경고창 띄우기
+      for (const skuItem of this.product.sku) {
+        const { selling_price } = skuItem;
+        // 경고창 띄운 후에도 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 this.product.sku 에서 삭제
+        if (selling_price > minPrice * 1.5 || selling_price < minPrice * 0.5) {
+          // this.product.sku에서 삭제
+          this.product.sku = this.product.sku.filter(item => item.key !== skuItem.key);
+        }
+      }
+    },
+
     setIsOptionReferencePrice(key) {
       forEach(this.product.sku, (item, index) => {
         if (item.key === key) {

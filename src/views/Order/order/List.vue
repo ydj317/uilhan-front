@@ -117,20 +117,8 @@
           </div>
         </template>
       </a-table-column>
-      <a-table-column :width="80" title="수량" dataIndex="quantity" key="quantity">
-        <template #default="{ record }">
-          <div style="display: flex;flex-direction: column;gap: 10px;">
-            {{ record['quantity'] - record['claimQuantity'] }}
-            <span style="display: block; color: red;">(반품: {{ record['claimQuantity'] }})</span>
-          </div>
-        </template>
-      </a-table-column>
-      <a-table-column :width="80" title="가격" dataIndex="unitPrice" key="unitPrice">
-        <template #default="{ record }">
-          {{ (record['quantity'] - record['claimQuantity']) * record['unitPrice'] }}
-        </template>
-      </a-table-column>
-
+      <a-table-column :width="80" title="수량" dataIndex="quantity" key="quantity" />
+      <a-table-column :width="130" title="최종결제 금액" dataIndex="totalPaymentAmount" key="totalPaymentAmount" />
       <a-table-column :width="80" title="상태">
         <template #default="{ record }">
           {{ state.orderStatus.filter(it => it.value === record.status)[0].label }}

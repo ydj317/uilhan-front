@@ -7,9 +7,12 @@
         <!--그룹명 영역-->
         <th style="background-color: #ebeff0;">
           <div class="spec-option-group">
-            <span class="spec-font">옵션그룹{{optionIndex + 1}}</span>
-            <a-input class="spec-option-input-size"  v-model:value="option.name" size="default" placeholder="옵션그룹" :disabled="product.is_sync === 'T'" />
-            <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{ option.name.length }}</span> / 25</span>
+            <span class="spec-font">옵션그룹{{ optionIndex + 1 }}</span>
+            <a-input class="spec-option-input-size" v-model:value="option.name" size="default" placeholder="옵션그룹"
+                     :disabled="product.is_sync === 'T'"/>
+            <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{
+                option.name.length
+              }}</span> / 25</span>
           </div>
         </th>
       </tr>
@@ -18,27 +21,57 @@
         <th>
           <div class="spec-option-header">
             <div class="spec-option-left">
-              <a-checkbox class="spec-checkbox" v-model:checked="selectAll" @change="onCheckAllChange" :disabled="product.is_sync === 'T'"></a-checkbox>
+              <a-checkbox class="spec-checkbox" v-model:checked="selectAll" @change="onCheckAllChange"
+                          :disabled="product.is_sync === 'T'"></a-checkbox>
               <span class="spec-font">옵션명</span>
             </div>
             <div class="spec-option-button">
-              <a-button @click="deleteOptionName" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">삭제</a-button>
-              <a-button @click="setTrim" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">빈칸</a-button>
-              <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">특문</a-button>
-              <a-button @click="strLengthTo25" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">25자</a-button>
-              <a-button @click="setAtoZ" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'">A-Z</a-button>
-              <a-dropdown>
+              <a-button @click="deleteOptionName" class="spec-right-button" type="primary"
+                        :disabled="product.is_sync === 'T'" size="small">삭제
+              </a-button>
+              <a-button @click="setTrim" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'"
+                        size="small">빈칸
+              </a-button>
+              <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
+                        :disabled="product.is_sync === 'T'" size="small">특문
+              </a-button>
+              <a-button @click="strLengthTo25" class="spec-right-button" type="primary"
+                        :disabled="product.is_sync === 'T'" size="small">25자
+              </a-button>
+              <a-button @click="setAtoZ" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'"
+                        size="small">A-Z
+              </a-button>
+              <a-dropdown size="small">
                 <template #overlay>
                   <a-menu>
                     <a-menu-item @click="handleMenuClick('N')">01.___</a-menu-item>
                     <a-menu-item @click="handleMenuClick('A')">A.___</a-menu-item>
                   </a-menu>
                 </template>
-                <a-button class="spec-right-button" :disabled="product.is_sync === 'T'">
+                <a-button class="spec-right-button" :disabled="product.is_sync === 'T'" size="small">
                   순번
                 </a-button>
               </a-dropdown>
-              <a-button @click="setBeforeOldOptionData" type="primary" :disabled="product.is_sync === 'T'">Back</a-button>
+              <a-button @click="setBeforeOldOptionData" class="spec-right-button" type="primary"
+                        :disabled="product.is_sync === 'T'" size="small">Back
+              </a-button>
+              <a-popover v-model:open="popoverVisible" trigger="click">
+                <template #content>
+                  <div style="display: flex;justify-content: end;padding: 15px 10px;">
+                    <a-space>
+                      <a-input v-model:value="option_group_find_str" style="width: 100px;"
+                               :disabled="product.is_sync === 'T'" placeholder="변경 전"></a-input>
+                      >
+                      <a-input v-model:value="option_group_replace_str" style="width: 100px;"
+                               :disabled="product.is_sync === 'T'" placeholder="변경 후"></a-input>
+                      <a-button type="primary" @click="handleReplaceOptionGroup()" :disabled="product.is_sync === 'T'">
+                        글자변경
+                      </a-button>
+                    </a-space>
+                  </div>
+                </template>
+                <a-button type="primary" size="small">글자변경</a-button>
+              </a-popover>
             </div>
           </div>
         </th>
@@ -49,17 +82,25 @@
       <tr v-for="(item, index) in option.data" :key="item.key">
         <td>
           <div class="spec-option-name">
-            <label class="ant-checkbox-wrapper spec-checkbox" :class="{'ant-checkbox-wrapper-checked': selectedRows.indexOf(item.key) !== -1}">
+            <label class="ant-checkbox-wrapper spec-checkbox"
+                   :class="{'ant-checkbox-wrapper-checked': selectedRows.indexOf(item.key) !== -1}">
               <span class="ant-checkbox" :class="{'ant-checkbox-checked': selectedRows.indexOf(item.key) !== -1}">
-                <input type="checkbox" class="ant-checkbox-input" v-model="selectedRows" :value="item.key" @change="updateSelectAll"
+                <input type="checkbox" class="ant-checkbox-input" v-model="selectedRows" :value="item.key"
+                       @change="updateSelectAll"
                        :disabled="product.is_sync === 'T'">
                 <span class="ant-checkbox-inner"></span>
               </span>
             </label>
-            <a-input class="input-size"  v-model:value="item.name" size="default" placeholder="옵션명" :disabled="product.is_sync === 'T'" />
-            <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">{{ item.name.length }}</span> / 25</span>
+            <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
+                     :disabled="product.is_sync === 'T'"/>
+            <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">{{
+                item.name.length
+              }}</span> / 25</span>
             <div class="spec-option-name-button">
-              <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large" class="spec-set-option-name-button" :disabled="product.is_sync === 'T'"><MinusOutlined /></a-button>
+              <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large"
+                        class="spec-set-option-name-button" :disabled="product.is_sync === 'T'">
+                <MinusOutlined/>
+              </a-button>
             </div>
           </div>
         </td>
@@ -70,9 +111,10 @@
 </template>
 <script>
 import {cloneDeep, forEach} from "lodash";
-import { mapState } from "vuex";
-import { PlusOutlined, MinusOutlined} from '@ant-design/icons-vue';
-import { message } from "ant-design-vue";
+import {mapState, useStore} from "vuex";
+import {PlusOutlined, MinusOutlined} from '@ant-design/icons-vue';
+import {message} from "ant-design-vue";
+import {computed, ref} from "vue";
 
 export default {
   name: "productDetailSpecGroup",
@@ -83,12 +125,49 @@ export default {
   components: {PlusOutlined, MinusOutlined},
   data() {
     return {
+      popoverVisible: false,
+      option_group_find_str: '',
+      option_group_replace_str: '',
       oldOptionData: cloneDeep(this.option.data),
       selectAll: false,
       selectedRows: [],
     };
   },
+
   methods: {
+    handleReplaceOptionGroup() {
+      if (this.option_group_find_str.trim().length === 0) {
+        message.warning('변경 전 글자를 입력해주세요.');
+        return false;
+      }
+
+      if (this.option_group_replace_str.trim().length === 0) {
+        message.warning('변경 후 글자을 입력해주세요.');
+        return false;
+      }
+
+      if (this.selectedRows.length === 0) {
+        message.warning('처리할 옵션명을 선택하세요.');
+        return false;
+      }
+
+      let newOptionData = [];
+      forEach(this.option.data, (item) => {
+        if (this.selectedRows.indexOf(item.key) !== -1) {
+          if (item.name.includes(this.option_group_find_str)) {
+            item.name = item.name.replace(this.option_group_find_str, this.option_group_replace_str);
+            newOptionData.push(item);
+          } else {
+            newOptionData.push(item);
+          }
+        } else {
+          newOptionData.push(item);
+        }
+      });
+
+      this.product.item_option[this.optionIndex].data = newOptionData;
+      this._setCheckBoxInit();
+    },
     deleteSpecGroup(optionIndex) {
       if (this.product.item_option.length === 1) {
         message.warning('옵션그룹 전부 삭제 불가합니다.');
@@ -97,7 +176,7 @@ export default {
       this.product.item_option.splice(optionIndex, 1);
     },
     addSpecOptionName(optionIndex) {
-      this.product.item_option[optionIndex].data.push({key:this._uniqueKey(), name: ''});
+      this.product.item_option[optionIndex].data.push({key: this._uniqueKey(), name: ''});
     },
     deleteSpecOptionName(optionIndex, index) {
       if (this.product.item_option[optionIndex].data.length === 1) {
@@ -258,6 +337,7 @@ export default {
     }
   }
 }
+
 </script>
 <style lang="css" scoped>
 .spec-box {
@@ -292,6 +372,7 @@ export default {
   margin-left: 10px;
   margin-right: 10px;
 }
+
 .spec-option-input-size {
   width: 50%;
 }
@@ -317,9 +398,11 @@ export default {
   margin-left: 10px;
   margin-right: 10px;
 }
+
 .spec-font {
   font-weight: normal;
 }
+
 .spec-option-header .spec-font {
   margin-left: 10px;
 }
@@ -346,6 +429,7 @@ export default {
   margin-left: auto;
   padding-right: 15px;
 }
+
 .spec-set-option-name-button {
   padding: 2px;
 }
