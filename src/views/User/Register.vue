@@ -50,9 +50,9 @@
         </a-descriptions-item>
 
         <a-descriptions-item>
-          <span class="required"><strong>사용자명/사업자명</strong></span>
+          <span class="required"><strong>사용자명</strong></span>
           <a-form-item name="name" has-feedback>
-            <a-input v-model:value="formState.name" placeholder="사용자명/사업자명" />
+            <a-input v-model:value="formState.name" placeholder="사용자명" />
           </a-form-item>
           <div class="help">최소 2자 최대 20자이내로 입력해주십시오</div>
         </a-descriptions-item>
@@ -479,10 +479,10 @@ export default defineComponent({
 
     let validateName = async (rule, value) => {
       if (value === "") {
-        return Promise.reject("사용자 또는 사업자명을 입력해주십시오");
+        return Promise.reject("사용자명을 입력해주십시오");
       } else {
         if (value.length < 2 || value.length > 20) {
-          return Promise.reject("사업자명은 최소 2자 최대 20자이내로 입력해주십시오");
+          return Promise.reject("사용자명은 최소 2자 최대 20자이내로 입력해주십시오");
         }
       }
 

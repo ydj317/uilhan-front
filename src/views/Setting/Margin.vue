@@ -41,8 +41,8 @@
           ( 원가 x
           <span>
             {{
-            formState.settingDatas.rate.is_real_rate ? '실시간 환율' : formState.settingDatas.rate.rate_value ? formState.settingDatas.rate.rate_value : '미입력'
-          }}
+              formState.settingDatas.rate.is_real_rate ? '실시간 환율' : formState.settingDatas.rate.rate_value ? formState.settingDatas.rate.rate_value : '미입력'
+            }}
           </span> )
           x (
           <a-input-number v-model:value.number="formState.settingDatas.margin.margin_data.card_charge"
@@ -144,6 +144,11 @@ function getUserInfoData() {
     if(!user_data || user_data.length < 1){
       formState.loading = false;
       return false;
+    }
+
+    // 빈 json 일때 백앤드에선 []로 저장되기에 추후에 버그가 생길수 있어서 프론트단에서 []받을시 강제로 {}로 전환
+    if (Array.isArray(user_data.margin_weight.markets) && user_data.margin_weight.markets.length === 0) {
+      user_data.margin_weight.markets = {};
     }
 
     formState.settingDatas = user_data;

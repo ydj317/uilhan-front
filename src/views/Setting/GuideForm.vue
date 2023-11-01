@@ -89,7 +89,7 @@ const onFinish = values => {
     }
 
     message.success("서비스 등록 성공하였습니다.");
-    router.push("/setting/guide");
+    router.push("/setting/updateDetail");
   }).catch((error) => {
     message.error(error.message);
     indicator.value = false;

@@ -240,44 +240,11 @@ export const menus = [{
                     }
                 },
                 {
-                    path: "/setting/password",
-                    name: "setting_password",
-                    component: () => import("@/views/Setting/Password"),
-                    meta: {
-                        title: "비밀번호 변경",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: '',
-                    }
-                },
-                {
-                    path: "/setting/account",
-                    name: "setting_account",
-                    component: () => import("@/views/Setting/Account"),
-                    meta: {
-                        title: "계정정보",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: '',
-                    }
-                },
-                {
                     path: "/setting/margin",
                     name: "setting_margin",
                     component: () => import("@/views/Setting/Margin"),
                     meta: {
                         title: "마진 & 환율",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: '',
-                    }
-                },
-                {
-                    path: "/setting/guide",
-                    name: "setting_guide",
-                    component: () => import("@/views/Setting/Guide"),
-                    meta: {
-                        title: "안내정보",
                         isHide: false,
                         roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
