@@ -454,6 +454,10 @@ const getMarketDetailUrls = () => {
 const handleOpenMarketProduct = ({marketCode, prdCode, marketData}) => {
   let url = '';
   if (marketCode === 'smartstore') {
+    if(!marketData.channel_info) {
+      message.error("상품 상세 페이지가 등록되지 않았습니다.마켓계정관리에서 연동확인을 다시 해주세요.");
+      return false;
+    }
     url = marketData.channel_info.url + '/products/' + prdCode;
   } else {
     url = state.marketDetailUrls[marketCode] + prdCode;
