@@ -154,8 +154,6 @@
               </RouterLink>
               <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
                         @click.prevent="receiverOneOrder(record.id)">발주</a-button>
-              <a-button size="small" v-if="state.tableData.params.status === 'shippingAddress'"
-                        @click.prevent="purchaseProduct(record)">구매</a-button>
               <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                         @click.prevent="deliveryOrder(record.id)">배송</a-button>
             </a-space>
