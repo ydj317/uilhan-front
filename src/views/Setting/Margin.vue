@@ -100,7 +100,7 @@
           </a-space>
         </template>
         <a-input-number v-model:value.number="formState.settingDatas.shipping_fee.exchange_fee"
-                        :min="0" :max="300" size="small" style="width: 150px" addon-after="원" />
+                        :min="0" size="small" style="width: 150px" addon-after="원" />
       </a-descriptions-item>
       <a-descriptions-item>
         <!-- label slot-->
@@ -110,7 +110,7 @@
           </a-space>
         </template>
         <a-input-number v-model:value.number="formState.settingDatas.shipping_fee.return_fee"
-                        :min="0" :max="300" size="small" style="width: 150px" addon-after="원" />
+                        :min="0" size="small" style="width: 150px" addon-after="원" />
       </a-descriptions-item>
     </a-descriptions>
     <div style="display: flex;justify-content: center" class="mt15">
