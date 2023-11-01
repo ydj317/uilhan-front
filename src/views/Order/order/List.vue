@@ -42,10 +42,15 @@
           </a-input-group>
         </a-descriptions-item>
         <a-descriptions-item label="주문상태">
+          <a-space>
           <a-radio-group v-model:value="state.tableData.params.status" button-style="solid" @change="handleStatusChange">
-            <a-radio-button v-for="option in state.orderStatus" :value="option.value">{{ option.label
-            }}</a-radio-button>
+            <a-radio-button v-for="option in state.orderStatus" :value="option.value">{{ option.label }}</a-radio-button>
           </a-radio-group>
+
+          <a-radio-group v-model:value="state.tableData.params.status" button-style="solid" @change="handleStatusChange">
+            <a-radio-button v-for="option in state.claimStatus" :value="option.value">{{ option.label }}</a-radio-button>
+          </a-radio-group>
+          </a-space>
         </a-descriptions-item>
 
       </a-descriptions>
@@ -117,11 +122,16 @@
           </div>
         </template>
       </a-table-column>
-      <a-table-column :width="80" title="수량" dataIndex="quantity" key="quantity" />
-      <a-table-column :width="130" title="최종결제 금액" dataIndex="totalPaymentAmount" key="totalPaymentAmount" />
+      <a-table-column :width="80" title="수량" dataIndex="quantity" key="quantity">
+        <template #default="{ record }">
+          <span v-if="Object.keys(state.orderStatus).length > 0 && Object.keys(state.orderStatus).includes(state.tableData.params.status)">{{ record.quantity - record.claimQuantity }}</span>
+          <span v-else>{{ record.quantity }}</span>
+        </template>
+      </a-table-column>
+      <a-table-column :width="130" title="최종결제 금액" dataIndex="totalPaymentAmount" key="totalPaymentAmount"  v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)"/>
       <a-table-column :width="80" title="상태">
         <template #default="{ record }">
-          {{ state.orderStatus.filter(it => it.value === record.status)[0].label }}
+          {{ state.allStatus.filter(it => it.value === record.status)[0].label }}
         </template>
       </a-table-column>
 
@@ -131,10 +141,9 @@
           <div style="display: flex;flex-direction: column;gap: 5px;"
                v-if="state.tableData.params.status === 'shippingAddress'">
             <a-select v-model:value="state.courierNameValues[record.id]" placeholder="택배사를 선택해주세요.">
-              <a-select-option :value="key" :key="key"
-                               v-for="(company, key) in state.marketDeliveryCompany[record.marketCode]">{{
-                  company
-                }}</a-select-option>
+              <a-select-option :value="key" :key="key" v-for="(company, key) in state.marketDeliveryCompany[record.marketCode]">
+                {{ company }}
+              </a-select-option>
             </a-select>
             <a-input v-model:value="state.invoiceNumberValues[record.id]" />
           </div>
@@ -145,7 +154,7 @@
         </template>
       </a-table-column>
 
-      <a-table-column title="" dataIndex="manage" key="manage">
+      <a-table-column title="" dataIndex="manage" key="manage" v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
@@ -167,16 +176,14 @@
 
 <script setup>
 
-import { reactive, ref, onMounted } from 'vue'
+import {onMounted, reactive, ref} from 'vue'
 import {useMarketAccountApi} from "@/api/marketAccount";
-import { useMarketOrderApi } from '@/api/order'
-import { useMarketApi } from '@/api/market'
+import {useMarketOrderApi} from '@/api/order'
+import {useMarketApi} from '@/api/market'
 import moment from "moment";
-import table2excel from 'js-table2excel';
-import { message } from 'ant-design-vue'
+import {message} from 'ant-design-vue'
 import HistoryView from '@/components/HistoryView.vue'
-import { DownloadOutlined, FileSyncOutlined, ContainerOutlined, ExportOutlined } from '@ant-design/icons-vue';
-
+import {ContainerOutlined, DownloadOutlined, ExportOutlined, FileSyncOutlined} from '@ant-design/icons-vue';
 
 
 const state = reactive({
@@ -195,6 +202,9 @@ const state = reactive({
   accountData: {},
   order_date: [moment().subtract(15, 'days'), moment()],
   orderStatus: [],
+  claimStatus: [],
+  allStatus: [],
+  claimStatusData: [],
   courierNameValues: {},
   invoiceNumberValues: {},
   marketDeliveryCompany: {},
@@ -254,14 +264,31 @@ const getMarketStatusList = async () => {
     }
 
     const statusObject = res.data;
-    const options = Object.keys(res.data).map((item, index) => {
+    state.orderStatus = Object.keys(statusObject).map((item, index) => {
       return {
         label: statusObject[item],
         value: item,
       }
-    })
+    });
+  });
+}
 
-    state.orderStatus = options;
+// 주문 상태 리스트
+const getMarketClaimStatusList = async () => {
+  await useMarketApi().getMarketClaimStatusList({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    console.log(res.data);
+    state.claimStatusData = res.data;
+    state.claimStatus = Object.keys(state.claimStatusData).map((item, index) => {
+      return {
+        label: state.claimStatusData[item],
+        value: item,
+      }
+    });
   });
 }
 
@@ -474,16 +501,17 @@ const historyVisible = ref(false);
 const historyData = ref({});
 
 const showHistory = (param) => {
-  console.log(param);
+
   historyData.value = param;
   historyVisible.value = true;
 }
 
 onMounted(async () => {
   await getMarketStatusList()
+  await getMarketClaimStatusList()
   await getMarketAdminUrls()
   await getMarketDetailUrls()
-
+  state.allStatus = [...state.orderStatus, ...state.claimStatus]
   await getAccountData()
   await getTableData()
 })

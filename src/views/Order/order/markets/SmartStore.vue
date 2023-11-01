@@ -71,7 +71,7 @@
     </a-descriptions-item>
     <a-descriptions-item label="상품명" >{{ orderData.prdName }}</a-descriptions-item>
     <a-descriptions-item label="옵션명" >{{ orderData.prdOptionName }}</a-descriptions-item>
-    <a-descriptions-item label="수량" >{{ orderData.quantity }}</a-descriptions-item>
+    <a-descriptions-item label="수량" >{{ orderData.quantity }} <span v-if="orderData.claimQuantity > 0" style="margin-left:10px;color: #DD4A68">(반품: {{ orderData.claimQuantity }})</span></a-descriptions-item>
     <a-descriptions-item label="최종 결제 금액" >{{ orderData.itemOrgData.productOrder.totalPaymentAmount }}</a-descriptions-item>
     <a-descriptions-item label="배송비" >{{ orderData.itemOrgData.productOrder.deliveryFeeAmount }}</a-descriptions-item>
 
