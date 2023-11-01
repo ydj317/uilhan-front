@@ -1,7 +1,7 @@
 <template>
   <a-card :loading="formState.loading" :bordered="false">
-    <a-descriptions title="마진율 설정" bordered :column="1" :labelStyle="{ width: '17%' }"
-                    :contentStyle="{ width: '83%' }">
+    <a-descriptions title="마진율 설정" bordered :column="1" :labelStyle="{ width: '100px' }"
+                    :contentStyle="{ width: '500px' }">
       <a-descriptions-item>
         <!-- label slot-->
         <template #label>
@@ -41,8 +41,8 @@
           ( 원가 x
           <span>
             {{
-            formState.settingDatas.rate.is_real_rate ? '실시간 환율' : formState.settingDatas.rate.rate_value ? formState.settingDatas.rate.rate_value : '미입력'
-          }}
+              formState.settingDatas.rate.is_real_rate ? '실시간 환율' : formState.settingDatas.rate.rate_value ? formState.settingDatas.rate.rate_value : '미입력'
+            }}
           </span> )
           x (
           <a-input-number v-model:value.number="formState.settingDatas.margin.margin_data.card_charge"
@@ -87,32 +87,6 @@
         </a-descriptions>
       </a-descriptions-item>
     </a-descriptions>
-  </a-card>
-
-  <a-card :loading="formState.loading" :bordered="false">
-    <a-descriptions title="기타 교환 반품비 설정" bordered :column="2" :labelStyle="{ width: '17%' }"
-                    :contentStyle="{ width: '33%' }">
-      <a-descriptions-item>
-        <!-- label slot-->
-        <template #label>
-          <a-space>
-            <span>교환 배송비</span>
-          </a-space>
-        </template>
-        <a-input-number v-model:value.number="formState.settingDatas.shipping_fee.exchange_fee"
-                        :min="0" size="small" style="width: 150px" addon-after="원" />
-      </a-descriptions-item>
-      <a-descriptions-item>
-        <!-- label slot-->
-        <template #label>
-          <a-space>
-            <span>반품 배송비</span>
-          </a-space>
-        </template>
-        <a-input-number v-model:value.number="formState.settingDatas.shipping_fee.return_fee"
-                        :min="0" size="small" style="width: 150px" addon-after="원" />
-      </a-descriptions-item>
-    </a-descriptions>
     <div style="display: flex;justify-content: center" class="mt15">
       <a-button type="primary" @click="handleSaveUserData">저장</a-button>
     </div>
@@ -151,11 +125,6 @@ const formState = reactive({
       is_use: false, // 사용(true),미사용(false) 여부
       markets: {},
     },
-    // 기타 교환 반품비 설정
-    shipping_fee: {
-      exchange_fee : 0,
-      return_fee : 0,
-    }
   },
   loading: false,
   marketList: [],
