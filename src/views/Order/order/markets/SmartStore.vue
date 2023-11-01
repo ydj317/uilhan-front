@@ -6,7 +6,7 @@
 
   <a-descriptions title="결제정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
     :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="결제일시">{{ moment(orderData.orderDate).format('YYYY-MM-DD') }}</a-descriptions-item>
+    <a-descriptions-item label="결제일시">{{ moment(orderData.orgData.paymentDate).format('YYYY-MM-DD') }}</a-descriptions-item>
     <a-descriptions-item label="결제수단">{{ orderData.orgData.paymentMeans }}</a-descriptions-item>
     <a-descriptions-item label="주문 할인액">{{ orderData.orgData.orderDiscountAmount }}</a-descriptions-item>
     <a-descriptions-item label="후불 결제 최종 결제 금액">{{ orderData.orgData.payLaterPaymentAmount }}</a-descriptions-item>
