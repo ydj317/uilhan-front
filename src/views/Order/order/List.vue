@@ -435,8 +435,18 @@ const excelDownload = () => {
     // a.click();
     // window.URL.revokeObjectURL(url);
     // document.body.removeChild(a);
-    window.open(res.data.download_url)
+    fetch(res.data.download_url)
+        .then(response => response.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'order'+ moment() +'.xlsx';
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
 
+    //window.open(res.data.download_url)
   });
 }
 
