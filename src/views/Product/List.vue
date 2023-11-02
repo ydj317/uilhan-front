@@ -906,6 +906,7 @@ export default defineComponent({
       } else {
         url = this.marketDetailUrls[marketInfo.market_code] + market_prd_code;
       }
+      console.log(url);
       window.open(url)
     },
 
