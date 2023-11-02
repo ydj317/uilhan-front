@@ -281,7 +281,6 @@ const getMarketClaimStatusList = async () => {
       return false;
     }
 
-    console.log(res.data);
     state.claimStatusData = res.data;
     state.claimStatus = Object.keys(state.claimStatusData).map((item, index) => {
       return {
@@ -428,23 +427,12 @@ const excelDownload = () => {
     }
     // let blob = new Blob([res], { type: "charset=utf-8" });
     // const url = window.URL.createObjectURL(blob);
-    // const a = document.createElement('a');
-    // a.href = url;
-    // a.download = 'x-plan-order.xlsx'; // 파일 이름을 설정합니다.
-    // document.body.appendChild(a);
-    // a.click();
-    // window.URL.revokeObjectURL(url);
-    // document.body.removeChild(a);
-    fetch(res.data.download_url)
-        .then(response => response.blob())
-        .then(blob => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'order'+ moment() +'.xlsx';
-          a.click();
-          window.URL.revokeObjectURL(url);
-        });
+    const a = document.createElement('a');
+    a.href = res.data.download_url;
+    a.download = 'x-plan-order.xlsx'; // 파일 이름을 설정합니다.
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 
     //window.open(res.data.download_url)
   });
