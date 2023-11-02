@@ -477,7 +477,8 @@ export default defineComponent({
       listLoading: true,
       MarketListVisible: false,
       prdSelectedRowKeys: [],
-      syncSelectedRowKeys: []
+      syncSelectedRowKeys: [],
+      marketDetailUrls: [],
     };
   },
 
@@ -874,6 +875,7 @@ export default defineComponent({
     },
 
     openMarketPopup(marketInfo, market_prd_code) {
+
       if (marketInfo.status !== "success") {
         if (marketInfo.status === "unsync") {
           return;
@@ -882,17 +884,6 @@ export default defineComponent({
         return;
       }
 
-      // @TODO API수집
-      const marketUrls = {
-        'storefarm': "https://smartstore.naver.com/",
-        'coupang': "https://www.coupang.com/vp/products/",
-        // 'sk11st': "https://www.11st.co.kr/products/",
-        // 'wemakeprice': "https://front.wemakeprice.com/deal/",
-        // 'interpark': "https://shopping.interpark.com/product/productInfo.do?prdNo=",
-        // 'tmon': "",
-        // 'esm_gmarket': "http://item.gmarket.co.kr/Item?goodscode=",
-        // 'lotteon': "https://www.lotteon.com/p/product/bundle/",
-      }
 
       if (!lib.isNumeric(marketInfo.market_code)) {
         message.warning("마켓코드가 잘못되었습니다.");
@@ -902,8 +893,20 @@ export default defineComponent({
         message.warning("상품코드가 잘못되었습니다.");
         return false;
       }
+      let url = '';
+      if(marketInfo.market_code === 'smartstore') {
+        // check channel_info
+        const channelInfo = marketInfo.market_data?.channel_info;
 
-      window.location.href = marketUrls[marketInfo.market_code] + market_prd_code
+        if (!channelInfo) {
+          message.warning("채널정보가 없습니다. 마켓계정관리에서 연동확인 후 다시 시도해주세요.");
+          return false;
+        }
+        url = `${channelInfo.url}/${market_prd_code}`;
+      } else {
+        url = this.marketDetailUrls[marketInfo.market_code] + market_prd_code;
+      }
+      window.open(url)
     },
 
     getMarketDetailUrls() {
@@ -913,7 +916,7 @@ export default defineComponent({
           return false;
         }
         //console.log(res.data);
-        //this.marketDetailUrls = res.data;
+        this.marketDetailUrls = res.data;
       });
     }
   },
