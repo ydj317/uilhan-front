@@ -427,14 +427,14 @@ const excelDownload = () => {
     }
     // let blob = new Blob([res], { type: "charset=utf-8" });
     // const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = res.data.download_url;
-    a.download = 'x-plan-order.xlsx'; // 파일 이름을 설정합니다.
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // const a = document.createElement('a');
+    // a.href = res.data.download_url;
+    // a.download = 'x-plan-order.xlsx'; // 파일 이름을 설정합니다.
+    // document.body.appendChild(a);
+    // a.click();
+    // document.body.removeChild(a);
 
-    //window.open(res.data.download_url)
+    window.open(res.data.download_url, "_blank");
   });
 }
 
