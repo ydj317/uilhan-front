@@ -141,11 +141,6 @@ export default {
         return false;
       }
 
-      if (this.option_group_replace_str.trim().length === 0) {
-        message.warning('변경 후 글자을 입력해주세요.');
-        return false;
-      }
-
       if (this.selectedRows.length === 0) {
         message.warning('처리할 옵션명을 선택하세요.');
         return false;
