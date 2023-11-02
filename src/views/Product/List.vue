@@ -898,7 +898,7 @@ export default defineComponent({
         // check channel_info
         const channelInfo = marketInfo.market_data?.channel_info;
 
-        if (!channelInfo) {
+        if (!channelInfo?.url) {
           message.warning("채널정보가 없습니다. 마켓계정관리에서 연동확인 후 다시 시도해주세요.");
           return false;
         }
@@ -906,7 +906,6 @@ export default defineComponent({
       } else {
         url = this.marketDetailUrls[marketInfo.market_code] + market_prd_code;
       }
-      console.log(url);
       window.open(url)
     },
 
