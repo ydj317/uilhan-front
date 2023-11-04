@@ -132,7 +132,7 @@
           <template #extra>
             <a-button size="small" @click="getTableList">새로고침</a-button>
           </template>
-          <a-table :data-source="account.orderData.data" :loading="account.orderData.loading"
+          <a-table :data-source="account.orderData.data" :loading="accountLoading"
                    :pagination="false" size="small">
             <a-table-column title="판매처" dataIndex="manage" key="manage">
               <template #default="{ record }">
@@ -188,6 +188,7 @@ const productLoading = ref(true);
 const orderLoading = ref(true);
 const boardLoading = ref(true);
 const dailySaleLoading = ref(true);
+const accountLoading = ref(true);
 
 const marketTotal = ref('-');
 const productTotal = ref('-');
@@ -423,6 +424,8 @@ const getTableList = () => {
 
     account.orderData.data = list;
     account.orderData.total = total;
+
+    accountLoading.value = false
   });
 };
 
