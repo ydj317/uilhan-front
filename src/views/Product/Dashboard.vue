@@ -163,6 +163,23 @@
                 <span style="color: #000000D9;" v-if="record.returnRequest <= 0">{{ record.returnRequest }}</span>
               </template>
             </a-table-column>
+            <template #summary>
+              <a-table-summary-row>
+                <a-table-summary-cell>합계</a-table-summary-cell>
+                <a-table-summary-cell align="center">
+                  <a-typography-text>{{account.orderData.totalPaid}}</a-typography-text>
+                </a-table-summary-cell>
+                <a-table-summary-cell align="center">
+                  <a-typography-text>{{account.orderData.totalShippingAddress}}</a-typography-text>
+                </a-table-summary-cell>
+                <a-table-summary-cell align="center">
+                  <a-typography-text>{{account.orderData.totalCancelComplete}}</a-typography-text>
+                </a-table-summary-cell>
+                <a-table-summary-cell align="center">
+                  <a-typography-text>{{account.orderData.totalReturnRequest}}</a-typography-text>
+                </a-table-summary-cell>
+              </a-table-summary-row>
+            </template>
           </a-table>
         </a-card>
       </a-col>
@@ -314,6 +331,10 @@ const account = reactive({
   orderData: {
     data: [],
     total: 0,
+    totalPaid: 0,
+    totalShippingAddress: 0,
+    totalCancelComplete: 0,
+    totalReturnRequest: 0,
     loading: false,
     params: {
       page: 1,
@@ -420,10 +441,14 @@ const getTableList = () => {
     if (res.status !== "2000") {
       message.error(res.message);
     }
-    const { list, total } = res.data
+    const { list, total, totalPaid, totalShippingAddress, totalCancelComplete, totalReturnRequest } = res.data
 
     account.orderData.data = list;
     account.orderData.total = total;
+    account.orderData.totalPaid = totalPaid;
+    account.orderData.totalShippingAddress = totalShippingAddress;
+    account.orderData.totalCancelComplete = totalCancelComplete;
+    account.orderData.totalReturnRequest = totalReturnRequest;
 
     accountLoading.value = false
   });
