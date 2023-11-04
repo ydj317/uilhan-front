@@ -28,22 +28,21 @@
       <a-col style="width: 60%">
         <a-row type="flex" justify="space-between" align="bottom" style="margin-top: 20px;" :gutter="20">
           <a-col :span="12">
-            <a-card :loading="orderLoading" :bordered="false" title="판매액">
+            <a-card :loading="dailySaleLoading" :bordered="false" title="매출현황">
+              <template #extra>
+                <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList" size="small">
+                  <a-radio-button value="1week">일주일</a-radio-button>
+                  <a-radio-button value="1month">1개월</a-radio-button>
+                  <a-radio-button value="3month">3개월</a-radio-button>
+                </a-radio-group>
+              </template>
               <div class="row1-content">
-                <div style="font-size: 22px; color: #000; padding-bottom: 10px;">총 {{ allSales.toLocaleString() }}원</div>
-                <div class="content content-1" style="display: flex; justify-content: flex-start; align-items: center;">
-                  <div style="margin-right: 10px; font-size: 14px; color: #999">전주 보다 {{ comparedToLastWeek }}%
-                    <CaretUpFilled :rotate="comparedToLastWeek >= 0 ? 0 : 180"
-                                   :style="comparedToLastWeek >= 0 ? 'color:red' : 'color:green'" />
-                  </div>
-                  <div style="margin-right: 10px; font-size: 14px; color: #999">어제 보다 {{ comparedToYesterday }}%
-                    <CaretUpFilled :rotate="comparedToYesterday >= 0 ? 0 : 180"
-                                   :style="comparedToYesterday >= 0 ? 'color:red' : 'color:green'" />
-                  </div>
-                </div>
-                <div style="font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
-                  오늘 판매액 {{ todaySales.toLocaleString() }}원
-                </div>
+                <a-radio-group v-model:value="state.dailyData.params.type" @change="getSaleList" size="small">
+                  <a-radio-button value="amount">판매 금액</a-radio-button>
+                  <a-radio-button value="quantity">판매 수량</a-radio-button>
+                  <a-radio-button value="count">판매 건수</a-radio-button>
+                </a-radio-group>
+                <e-charts class="chart-2" :option="dailySaleChart" />
               </div>
             </a-card>
           </a-col>
@@ -130,20 +129,41 @@
       </a-col>
       <a-col style="width: 38%; margin-top: 20px; margin-left: 20px" :gutter="20">
         <a-card :loading="boardLoading" :bordered="false" title="주문현황" style="height: 100%">
+          <template #extra>
+            <a-button size="small" @click="getTableList">새로고침</a-button>
+          </template>
           <a-table :data-source="account.orderData.data" :loading="account.orderData.loading"
                    :pagination="false" size="small">
             <a-table-column title="판매처" dataIndex="manage" key="manage">
-              <template #customRender="scope, record, index">
-                <img :src="getLogoSrc('market-logo', scope.record.market_code)" alt="" style="width: 20px">{{ scope.record.seller_id }}
+              <template #default="{ record }">
+                <img :src="getLogoSrc('market-logo', record.market_code)" alt="" style="width: 20px">{{ record.seller_id }}
               </template>
             </a-table-column>
-            <a-table-column title="결제완료" dataIndex="paid" key="paid" />
-            <a-table-column title="배송준비중 " dataIndex="shippingAddress" key="shippingAddress" />
-            <a-table-column title="주문취소" dataIndex="cancelComplete" key="cancelComplete" />
-            <a-table-column title="반품요청" dataIndex="returnRequest" key="returnRequest" />
+            <a-table-column title="결제완료" dataIndex="paid" key="paid" align="center">
+              <template #default="{ record }">
+                <span style="color: dodgerblue;" v-if="record.paid > 0">{{ record.paid }}</span>
+                <span style="color: #000000D9;" v-if="record.paid <= 0">{{ record.paid }}</span>
+              </template>
+            </a-table-column>
+            <a-table-column title="배송준비중 " dataIndex="shippingAddress" key="shippingAddress" align="center" >
+              <template #default="{ record }">
+                <span style="color: dodgerblue;" v-if="record.shippingAddress > 0">{{ record.shippingAddress }}</span>
+                <span style="color: #000000D9;" v-if="record.shippingAddress <= 0">{{ record.shippingAddress }}</span>
+              </template>
+            </a-table-column>
+            <a-table-column title="주문취소" dataIndex="cancelComplete" key="cancelComplete" align="center" >
+              <template #default="{ record }">
+                <span style="color: dodgerblue;" v-if="record.cancelComplete > 0">{{ record.cancelComplete }}</span>
+                <span style="color: #000000D9;" v-if="record.cancelComplete <= 0">{{ record.cancelComplete }}</span>
+              </template>
+            </a-table-column>
+            <a-table-column title="반품요청" dataIndex="returnRequest" key="returnRequest" align="center" >
+              <template #default="{ record }">
+                <span style="color: dodgerblue;" v-if="record.returnRequest > 0">{{ record.returnRequest }}</span>
+                <span style="color: #000000D9;" v-if="record.returnRequest <= 0">{{ record.returnRequest }}</span>
+              </template>
+            </a-table-column>
           </a-table>
-          <a-pagination :total="account.orderData.total" :page-size="account.orderData.params.pageSize"
-                        :current="account.orderData.params.page" @change="pageChangeHandler" class="mt15" />
         </a-card>
       </a-col>
     </a-row>
@@ -152,16 +172,22 @@
 </template>
 
 <script setup>
-import { CaretUpFilled } from "@ant-design/icons-vue";
 import {ref, onMounted, reactive} from "vue";
 import { AuthRequest } from "@/util/request";
 import { message } from "ant-design-vue";
 import ECharts from 'vue-echarts';
-import {useMarketAccountApi} from "@/api/marketAccount";
-
+const state = reactive({
+  dailyData: {
+    params: {
+      period : '1week',
+      type : 'amount'
+    }
+  }
+});
 const productLoading = ref(true);
 const orderLoading = ref(true);
 const boardLoading = ref(true);
+const dailySaleLoading = ref(true);
 
 const marketTotal = ref('-');
 const productTotal = ref('-');
@@ -223,6 +249,28 @@ const productChart = ref({
       data: productChartData
     }
   ]
+});
+
+const dailySaleChartData = ref([]);
+const dailySaleDaysData = ref([]);
+const dailySaleChart = ref({
+    tooltip: {
+      trigger: "axis",
+    },
+    xAxis: {
+      type: "category",
+      data: dailySaleDaysData,
+    },
+    yAxis: {
+      type: "value",
+    },
+    series: [
+      {
+        name: "示例数据",
+        type: "bar",
+        data: dailySaleChartData,
+      },
+    ],
 });
 
 const orderChartData = ref([]);
@@ -346,11 +394,24 @@ function getOrder() {
   });
 }
 
+const getSaleList = () => {
+  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/dailySale", state.dailyData).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+    }
+    dailySaleDaysData.value = res.data.days;
+    dailySaleChartData.value = res.data.sales;
+
+    dailySaleLoading.value = false
+  });
+}
+
 onMounted(() => {
   getOrder();
   getProduct();
   getBoard();
   getTableList();
+  getSaleList();
 });
 
 const getTableList = () => {
@@ -365,10 +426,6 @@ const getTableList = () => {
   });
 };
 
-const pageChangeHandler = (page) => {
-  state.tableData.params.page = page;
-  getTableList();
-}
 </script>
 
 <!--hello-->
@@ -428,7 +485,7 @@ const pageChangeHandler = (page) => {
 <style scoped>
 .row1-content {
   position: relative;
-  height: 110px;
+  height: 220px;
   overflow: hidden;
 }
 
