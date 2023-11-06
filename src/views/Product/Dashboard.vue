@@ -130,7 +130,7 @@
       <a-col style="width: 38%; margin-top: 20px; margin-left: 20px" :gutter="20">
         <a-card :loading="boardLoading" :bordered="false" title="주문현황" style="height: 100%">
           <template #extra>
-            <a-button size="small" @click="getTableList">새로고침</a-button>
+            <a-checkbox v-model:checked="isAutoCollect">자동수집</a-checkbox>
           </template>
           <a-table :data-source="account.orderData.data" :loading="accountLoading"
                    :pagination="false" size="small">
@@ -141,26 +141,26 @@
             </a-table-column>
             <a-table-column title="결제완료" dataIndex="paid" key="paid" align="center">
               <template #default="{ record }">
-                <span style="color: dodgerblue;" v-if="record.paid > 0">{{ record.paid }}</span>
-                <span style="color: #000000D9;" v-if="record.paid <= 0">{{ record.paid }}</span>
+                <span class="highlight" v-if="record.paidNew">{{ record.paidNew }}</span>
+                <span style="color: #000000D9;" v-if="!record.paidNew">{{ record.paid }}</span>
               </template>
             </a-table-column>
             <a-table-column title="배송준비중 " dataIndex="shippingAddress" key="shippingAddress" align="center" >
               <template #default="{ record }">
-                <span style="color: dodgerblue;" v-if="record.shippingAddress > 0">{{ record.shippingAddress }}</span>
-                <span style="color: #000000D9;" v-if="record.shippingAddress <= 0">{{ record.shippingAddress }}</span>
+                <span class="highlight" v-if="record.shippingAddressNew">{{ record.shippingAddressNew }}</span>
+                <span style="color: #000000D9;" v-if="!record.shippingAddressNew">{{ record.shippingAddress }}</span>
               </template>
             </a-table-column>
             <a-table-column title="주문취소" dataIndex="cancelComplete" key="cancelComplete" align="center" >
               <template #default="{ record }">
-                <span style="color: dodgerblue;" v-if="record.cancelComplete > 0">{{ record.cancelComplete }}</span>
-                <span style="color: #000000D9;" v-if="record.cancelComplete <= 0">{{ record.cancelComplete }}</span>
+                <span class="highlight" v-if="record.cancelCompleteNew">{{ record.cancelCompleteNew }}</span>
+                <span style="color: #000000D9;" v-if="!record.cancelCompleteNew">{{ record.cancelComplete }}</span>
               </template>
             </a-table-column>
             <a-table-column title="반품요청" dataIndex="returnRequest" key="returnRequest" align="center" >
               <template #default="{ record }">
-                <span style="color: dodgerblue;" v-if="record.returnRequest > 0">{{ record.returnRequest }}</span>
-                <span style="color: #000000D9;" v-if="record.returnRequest <= 0">{{ record.returnRequest }}</span>
+                <span class="highlight" v-if="record.returnRequestNew">{{ record.returnRequestNew }}</span>
+                <span style="color: #000000D9;" v-if="!record.returnRequestNew">{{ record.returnRequest }}</span>
               </template>
             </a-table-column>
             <template #summary>
@@ -189,10 +189,11 @@
 </template>
 
 <script setup>
-import {ref, onMounted, reactive} from "vue";
+import {ref, onMounted, reactive, onBeforeUnmount } from "vue";
 import { AuthRequest } from "@/util/request";
 import { message } from "ant-design-vue";
 import ECharts from 'vue-echarts';
+import {useMarketOrderApi} from "@/api/order";
 const state = reactive({
   dailyData: {
     params: {
@@ -206,6 +207,7 @@ const orderLoading = ref(true);
 const boardLoading = ref(true);
 const dailySaleLoading = ref(true);
 const accountLoading = ref(true);
+const isAutoCollect = ref(false);
 
 const marketTotal = ref('-');
 const productTotal = ref('-');
@@ -330,6 +332,7 @@ const orderChart = ref({
 const account = reactive({
   orderData: {
     data: [],
+    list: [],
     total: 0,
     totalPaid: 0,
     totalShippingAddress: 0,
@@ -441,19 +444,101 @@ const getTableList = () => {
     if (res.status !== "2000") {
       message.error(res.message);
     }
+
     const { list, total, totalPaid, totalShippingAddress, totalCancelComplete, totalReturnRequest } = res.data
 
-    account.orderData.data = list;
+    let orderDataView = [];
+    // 데이터를 조회해올때마다 루프 돌리며 판단하여 데이터 변경이 있는 애들을 찾아냄
+    const oldOrderData = sessionStorage.getItem('orderData');
+    if (oldOrderData) {
+      const oldOrderJson = JSON.parse(oldOrderData);
+      oldOrderJson.forEach((item) => {
+        const newData = findObjectById(item.id, list);
+        let newQty = 0;
+        newData.paidNew = '';
+        if(!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
+          newQty  = newData['paid'] - item['paid'];
+          newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
+        }
+        newData.shippingAddressNew = '';
+        if(!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
+          newQty  = newData['shippingAddress'] - item['shippingAddress'];
+          newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
+        }
+        newData.cancelCompleteNew = '';
+        if(!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
+          newQty  = newData['cancelComplete'] - item['cancelComplete'];
+          newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
+        }
+        newData.returnRequestNew = '';
+        if(!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
+          newQty  = newData['returnRequest'] - item['returnRequest'];
+          newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
+        }
+        orderDataView.push(newData);
+      });
+    } else {
+      orderDataView = list
+    }
+
+    account.orderData.data = orderDataView;
+    account.orderData.list = list
     account.orderData.total = total;
     account.orderData.totalPaid = totalPaid;
     account.orderData.totalShippingAddress = totalShippingAddress;
     account.orderData.totalCancelComplete = totalCancelComplete;
     account.orderData.totalReturnRequest = totalReturnRequest;
 
+    // 리스트 데이터를 세션스토레이지에 넣어서 비교할때 사용함
+    const newOrderData = JSON.stringify(list);
+    sessionStorage.setItem('orderData', newOrderData);
+
     accountLoading.value = false
   });
 };
 
+// id에 근거하여 object 찾아서 리턴
+const findObjectById = (id, list) => {
+  const object = list.find(obj => obj.id === id);
+  if (object) {
+    return object;
+  } else {
+    return null;
+  }
+};
+
+//주문수집 소스
+const handleCollect = () => {
+  useMarketOrderApi().collectMarketOrder({}).then(res => {
+    if (res.status !== "2000") {
+      return false;
+    }
+  });
+}
+
+// 监听页面关闭事件
+const handleBeforeUnload = (event) => {
+  event.preventDefault();
+  // 在页面关闭前执行操作
+  const newOrderData = JSON.stringify(account.orderData.list);
+  sessionStorage.setItem('orderData', newOrderData);
+};
+
+onBeforeUnmount(() => {
+  // 移除 beforeunload 事件监听器，确保页面关闭时不会再触发
+  window.removeEventListener('beforeunload', handleBeforeUnload);
+});
+
+// 添加 beforeunload 事件监听器
+window.addEventListener('beforeunload', handleBeforeUnload);
+
+// 주기적으로 주문현황을 리프래시 해줌
+setInterval(() => {
+  if (isAutoCollect.value === true) {
+    getTableList();
+    handleCollect();
+  }
+}, 300000);
 </script>
 
 <!--hello-->
@@ -515,6 +600,7 @@ const getTableList = () => {
   position: relative;
   height: 220px;
   overflow: hidden;
+  width: 100%;
 }
 
 .getMarketLogo .logo-tag {
@@ -546,6 +632,21 @@ const getTableList = () => {
 
 .sendMarketLogo span {
   padding-left: 5px;
+}
+
+.highlight {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    color: red;
+    opacity: 1;
+  }
+  50% {
+    color: red;
+    opacity: 0;
+  }
 }
 </style>
 
