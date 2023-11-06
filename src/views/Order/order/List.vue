@@ -87,22 +87,25 @@
     </div>
 
     <a-table :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
-      :pagination="false" :defaultExpandAllRows="true" size="small">
-      <a-table-column :width="200" title="마켓" dataIndex="id" key="id">
+      :pagination="false" :defaultExpandAllRows="true" size="small" :scroll="{ x: 1300}"
+    >
+      <a-table-column title="마켓" dataIndex="id" key="id">
         <template #default="{ record }">
           <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
-            <img :src="getLogoSrc(record.marketCode)" style="width: 18px;height: 18px;cursor: pointer;" @click="handleOpenMarketProduct({ marketCode: record.marketCode, prdCode: record.prdCode, marketData: record.marketData})"/>
+            <img :src="getLogoSrc(record.marketCode)" style="width: 18px;height: 18px;cursor: pointer;" @click="openMarketAdminPage(record.marketCode)"/>
             {{ record.sellerId }}
           </div>
         </template>
       </a-table-column>
-      <a-table-column :width="160" title="주문번호" dataIndex="orderNo" key="orderNo" />
-      <a-table-column :width="120" title="주문시간" dataIndex="orderDate" key="orderDate">
+      <a-table-column :width="160" title="주문번호/주문시간" dataIndex="orderNo" key="orderNo">
         <template #default="{ record }">
-          {{ moment(record.orderDate).format('YYYY-MM-DD')}}
+          <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
+            <span>{{ record.orderNo }}</span>
+            <span style="color: #999999;">({{ moment(record.orderDate).format('YYYY-MM-DD HH:mm:ss') }})</span>
+          </div>
         </template>
       </a-table-column>
-      <a-table-column :width="120" title="원본상품" dataIndex="prdCode" key="prdCode" >
+      <a-table-column :width="100" title="원본상품" dataIndex="prdCode" key="prdCode" >
         <template #default="{ record }">
           <a-space>
             <a-button type="link" size="small" @click.prevent="purchaseProduct(record)">
@@ -138,15 +141,21 @@
           <span v-else>{{ record.quantity }}</span>
         </template>
       </a-table-column>
-      <a-table-column :width="130" title="최종결제 금액" dataIndex="totalPaymentAmount" key="totalPaymentAmount"  v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)"/>
-      <a-table-column :width="80" title="상태">
+      <a-table-column :width="110" title="최종결제 금액" dataIndex="totalPaymentAmount" key="totalPaymentAmount"  v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)"/>
+      <a-table-column :width="100" title="상태">
         <template #default="{ record }">
-          {{ state.allStatus.filter(it => it.value === record.status)[0].label }}
+          <a-badge color="blue" :text="state.allStatus.filter(it => it.value === record.status)[0].label" v-if="record.status === 'paid'" />
+          <a-badge color="yellow" :text="state.allStatus.filter(it => it.value === record.status)[0].label"
+                   v-else-if="record.status === 'shippingAddress'" />
+          <a-badge color="orange" :text="state.allStatus.filter(it => it.value === record.status)[0].label" v-else-if="record.status === 'shipping'" />
+          <a-badge color="green" :text="state.allStatus.filter(it => it.value === record.status)[0].label"
+                   v-else-if="record.status === 'shippingComplete'" />
+          <a-badge color="red" :text="state.allStatus.filter(it => it.value === record.status)[0].label"
+                   v-else />
         </template>
       </a-table-column>
 
-      <a-table-column :width="100" title="운송장정보" dataIndex="invoiceNumber" key="invoiceNumber"
-                      v-if="state.tableData.params.status !== 'paid'">
+      <a-table-column :width="200" title="운송장정보" dataIndex="invoiceNumber" key="invoiceNumber" v-if="state.tableData.params.status !== 'paid'">
         <template #default="{ record }">
           <div style="display: flex;flex-direction: column;gap: 5px;"
                v-if="state.tableData.params.status === 'shippingAddress'">
@@ -155,7 +164,8 @@
                 {{ company }}
               </a-select-option>
             </a-select>
-            <a-input v-model:value="state.invoiceNumberValues[record.id]" />
+            <a-input v-model:value="state.invoiceNumberValues[record.id]" placeholder="송장번호를 입력해 주세요." allow-clear/>
+            <a-input v-model:value="state.personalCustomsClearanceCode" placeholder="개인통관부호를 입력해 주세요." allow-clear/>
           </div>
           <div v-else>
             {{ record.courierName }} - {{ record.invoiceNumber }}
@@ -164,16 +174,16 @@
         </template>
       </a-table-column>
 
-      <a-table-column title="" dataIndex="manage" key="manage" v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)">
+      <a-table-column title="" :width="160" fixed="right" dataIndex="manage" key="manage" v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
               <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id']">
                 <a-button size="small">상세</a-button>
               </RouterLink>
-              <a-button type="primary" size="small" v-if="state.tableData.params.status === 'paid'"
+              <a-button type="info" size="small" v-if="state.tableData.params.status === 'paid'"
                         @click.prevent="receiverOneOrder(record.id)">발주</a-button>
-              <a-button type="info" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
+              <a-button type="primary" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                         @click.prevent="deliveryOrder(record.id)">배송</a-button>
             </a-space>
           </div>
