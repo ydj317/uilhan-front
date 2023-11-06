@@ -136,7 +136,9 @@
                    :pagination="false" size="small">
             <a-table-column title="판매처" dataIndex="manage" key="manage">
               <template #default="{ record }">
-                <img :src="getLogoSrc('market-logo', record.market_code)" alt="" style="width: 20px">{{ record.seller_id }}
+                <div  style="cursor: pointer;" @click="openMarketAdminPage(record.market_code)">
+                  <img :src="getLogoSrc('market-logo', record.market_code)" alt="" style="width: 18px">{{ record.seller_id }}
+                </div>
               </template>
             </a-table-column>
             <a-table-column title="결제완료" dataIndex="paid" key="paid" align="center">
@@ -194,6 +196,7 @@ import { AuthRequest } from "@/util/request";
 import { message } from "ant-design-vue";
 import ECharts from 'vue-echarts';
 import {useMarketOrderApi} from "@/api/order";
+import { useMarketApi } from '@/api/market';
 const state = reactive({
   dailyData: {
     params: {
@@ -437,7 +440,20 @@ onMounted(() => {
   getBoard();
   getTableList();
   getSaleList();
+  getMarketAdminUrls();
 });
+
+// 마켓 관리자 페이지 URL
+const getMarketAdminUrls = async () => {
+  await useMarketApi().getMarketAdminUrls({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    state.marketAdminUrls = res.data;
+  });
+}
 
 const getTableList = () => {
   AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/order2").then((res) => {
@@ -514,6 +530,17 @@ const handleCollect = () => {
       return false;
     }
   });
+}
+
+// 마켓 관리자 페이지 열기
+const openMarketAdminPage = (marketCode) => {
+  const url = state.marketAdminUrls[marketCode]['order'];
+  if (!url) {
+    message.error("마켓 관리자 페이지가 등록되지 않았습니다.");
+    return false;
+  }
+
+  window.open(url);
 }
 
 // 监听页面关闭事件
