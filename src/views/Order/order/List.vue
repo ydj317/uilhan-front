@@ -165,7 +165,6 @@
               </a-select-option>
             </a-select>
             <a-input v-model:value="state.invoiceNumberValues[record.id]" placeholder="송장번호를 입력해 주세요." allow-clear/>
-            <a-input v-model:value="state.personalCustomsClearanceCode" placeholder="개인통관부호를 입력해 주세요." allow-clear/>
           </div>
           <div v-else>
             {{ record.courierName }} - {{ record.invoiceNumber }}
@@ -174,7 +173,7 @@
         </template>
       </a-table-column>
 
-      <a-table-column title="" :width="160" fixed="right" dataIndex="manage" key="manage" v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)">
+      <a-table-column title="" :width="180" fixed="right" dataIndex="manage" key="manage" v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
@@ -186,12 +185,21 @@
               <a-button type="primary" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                         @click.prevent="deliveryOrder(record.id)">배송</a-button>
             </a-space>
+            <a-space class="mt15" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 0">
+              <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'puragent'})">구매대행</a-button>
+              <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'shipagent'})">배송대행</a-button>
+            </a-space>
+            <a-space class="mt15" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1">
+              <a-tag color="#108ee9">신청서 작성완료</a-tag>
+            </a-space>
           </div>
         </template>
       </a-table-column>
     </a-table>
   </a-card>
   <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData" />
+  <BridgeFormView :visible.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData" />
+
 </template>
 
 <script setup>
@@ -203,6 +211,7 @@ import {useMarketApi} from '@/api/market'
 import moment from "moment";
 import {message} from 'ant-design-vue'
 import HistoryView from '@/components/HistoryView.vue'
+import BridgeFormView from '@/components/BridgeFormView.vue'
 import {ContainerOutlined, DownloadOutlined, ExportOutlined, FileSyncOutlined} from '@ant-design/icons-vue';
 
 
@@ -523,6 +532,14 @@ const showHistory = (param) => {
 
   historyData.value = param;
   historyVisible.value = true;
+}
+
+
+const bridgeFormVisible = ref(false);
+const bridgeFormData = ref({});
+const showBridgeForm = (param) => {
+  bridgeFormData.value = param;
+  bridgeFormVisible.value = true;
 }
 
 onMounted(async () => {

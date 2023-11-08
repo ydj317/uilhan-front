@@ -19,6 +19,22 @@ export function useMarketOrderApi() {
             });
         },
 
+        getOrderDetailForBridge: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/order/bridge/" + data.id,
+                method: "get",
+            });
+        },
+
+        // 계정등록/수정
+        registerBridgeOrder: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/order/bridge",
+                method: "POST",
+                data,
+            });
+        },
+
         // 클레임목록
         getClaimList: (data) => {
             return AuthRequest({
