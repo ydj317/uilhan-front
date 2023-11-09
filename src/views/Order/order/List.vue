@@ -173,24 +173,27 @@
         </template>
       </a-table-column>
 
-      <a-table-column title="" :width="180" fixed="right" dataIndex="manage" key="manage" v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)">
+      <a-table-column title="" :width="200" fixed="right" dataIndex="manage" key="manage" v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)">
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
               <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id']">
                 <a-button size="small">상세</a-button>
               </RouterLink>
+              <a-button size="small"
+                        @click.prevent="showHistory({title: record.prdName, type: 'order', index_id: record.id})">히스토리</a-button>
               <a-button type="info" size="small" v-if="state.tableData.params.status === 'paid'"
                         @click.prevent="receiverOneOrder(record.id)">발주</a-button>
               <a-button type="primary" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                         @click.prevent="deliveryOrder(record.id)">배송</a-button>
             </a-space>
-            <a-space class="mt15" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 0">
+            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 0">
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'puragent'})">구매대행</a-button>
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'shipagent'})">배송대행</a-button>
             </a-space>
-            <a-space class="mt15" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1">
-              <a-tag color="#108ee9">신청서 작성완료</a-tag>
+            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1">
+              <a-button size="small">상태확인</a-button>
+              <a-tag color="#15803d">- 신청서 작성완료 -</a-tag>
             </a-space>
           </div>
         </template>
@@ -271,6 +274,11 @@ const getAccountData = async () => {
 
 // 주문 리스트
 const getTableData = async () => {
+  if(state.tableData.params.account_ids.length === 0) {
+    message.error('계정을 선택해주세요.새로운 계정이면 먼저 마켓 계정관리에서 등록해주세요.');
+    return false;
+  }
+
   state.tableData.loading = true;
   await useMarketOrderApi().getOrderList(state.tableData.params).then(res => {
     if (res.status !== "2000") {
@@ -529,7 +537,6 @@ const historyVisible = ref(false);
 const historyData = ref({});
 
 const showHistory = (param) => {
-
   historyData.value = param;
   historyVisible.value = true;
 }
@@ -543,12 +550,12 @@ const showBridgeForm = (param) => {
 }
 
 onMounted(async () => {
+  await getAccountData()
   await getMarketStatusList()
   await getMarketClaimStatusList()
   await getMarketAdminUrls()
   await getMarketDetailUrls()
   state.allStatus = [...state.orderStatus, ...state.claimStatus]
-  await getAccountData()
   await getTableData()
 })
 

@@ -56,7 +56,7 @@
         <a-descriptions-item label="통관 방법">
           <div>
             <div>
-              <a-radio-group v-model:value="state.form.rrn_cd">
+              <a-radio-group v-model:value="state.form.rrn_cd" @change="handleRrnCdChange">
                 <a-radio value="목록통관">목록통관</a-radio>
                 <a-radio value="사업자통관">사업자통관</a-radio>
                 <a-radio value="일반통관">일반통관(개인통관고유번호 필수)</a-radio>
@@ -66,6 +66,22 @@
               * 목록통관 불가 상품(식품류) 및 총 금액이 150불 이상인 경우, 간이통관으로 진행되며, 수수료 3,000원이 배송비에 포함됩니다.
             </div>
           </div>
+        </a-descriptions-item>
+
+        <a-descriptions-item label="사업자 등록증" v-if="state.form.rrn_cd === '사업자통관'">
+          <a-upload
+              v-model:file-list="state.form.fileList"
+              name="Busilicense_bimg"
+              :max-count="1"
+              :action="state.uploadUrl"
+              :headers="state.uploadHeaders"
+              @change="handleUploadChange"
+          >
+            <a-button>
+              <upload-outlined></upload-outlined>
+              사업자 등록증 업로드
+            </a-button>
+          </a-upload>
         </a-descriptions-item>
         <a-descriptions-item label="주소 및 연락처">
           <div style="display: flex;flex-direction: column;gap: 15px">
@@ -244,6 +260,7 @@
 <script setup>
 import {toRefs, onMounted, watch, watchEffect, reactive, ref, computed} from 'vue'
 import {message} from "ant-design-vue";
+import { UploadOutlined } from '@ant-design/icons-vue';
 import {useMarketOrderApi} from "@/api/order";
 import {NoAuthAjax} from "@/util/request";
 
@@ -259,6 +276,7 @@ const emit = defineEmits(['close'])
 
 const state = reactive({
   form: {
+    id: '',
     order_id: '',
     app_type: bridgeFormData.value.type === 'puragent' ? '구매대행' : '배송대행',
     region: '칭다오', // 물류센터
@@ -273,6 +291,7 @@ const state = reactive({
     items: [],
 
     rrn_cd: '목록통관', // 통관방법
+    fileList: [], // 사업자등록증첨부파일
     personal_customs_clearance_code: '', // 개인통관 고유번호
     rrn_no_con: ['Y'], // 개인통관 고유번호 확인 오후 8:36 2020-02-21
 
@@ -291,7 +310,11 @@ const state = reactive({
   loading: false,
   confirmLoading: false,
   checkClearanceCodeLoading: false,
-  categoryData: []
+  categoryData: [],
+  uploadHeaders: {
+    
+  },
+  uploadUrl: 'http://192.168.56.101:8880/plugin/worldlink/fileUpload.php',
 })
 
 const onClose = () => {
@@ -311,6 +334,7 @@ const getOrderDetailForBridge = async () => {
       return false;
     }
     const {marketOrder} = res.data
+    state.form.id = marketOrder[0].id
     state.form.order_id = marketOrder[0].orderId
     state.form.receiver_name = marketOrder[0].receiverName
     state.form.receiver_name_en = fnHanEng(marketOrder[0].receiverName)
@@ -339,6 +363,33 @@ const getOrderDetailForBridge = async () => {
   });
 }
 const handleOk = () => {
+
+  if(state.form.rrn_cd === '사업자통관') {
+    if(state.form.fileList.length === 0) {
+      message.error('사업자등록증을 첨부해 주세요.');
+      return false;
+    }
+    if(state.form.fileList[0].response.code !== 2000) {
+      message.error(state.form.fileList[0].response.message);
+      return false;
+    }
+  }
+
+  if(!state.form.receiver_name){
+    message.error("받는 사람을 입력해 주세요.");
+    return false;
+  }
+
+  if(!state.form.personal_customs_clearance_code){
+    message.error("개인통관고유부호를 입력해 주세요.");
+    return false;
+  }
+
+  if(!state.form.receiver_tel1){
+    message.error("받는 사람 연락처를 입력해 주세요.");
+    return false;
+  }
+
   // check arc_seq
   if (state.form.items.some(item => item.arc_seq === '')) {
     message.error('통관품목을 선택해 주세요.');
@@ -542,7 +593,7 @@ function RRN_NO_API(ORDNO) {
 
   state.checkClearanceCodeLoading = true;
 
-  NoAuthAjax.get("http://bridge.localhost.com:8880/plugin/worldlink/ajax.app.prn.api.php", {
+  NoAuthAjax.get("http://192.168.56.101:8880/plugin/worldlink/ajax.app.prn.api.php", {
     headers: {
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
     },
@@ -574,7 +625,7 @@ function RRN_NO_API(ORDNO) {
 }
 
 const getCategory = async () => {
-  NoAuthAjax.get("http://bridge.localhost.com:8880/plugin/worldlink/arc_seq.php", {}).then((res) => {
+  NoAuthAjax.get("http://192.168.56.101:8880/plugin/worldlink/arc_seq.php", {}).then((res) => {
     if(res.status !== 200){
       message.error("통관유형을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
       return false;
@@ -590,6 +641,30 @@ const handleCategoryChange = (value, item) => {
   item.PRO_NM_CH = state.categoryData.find(item => item.ARC_SEQ === value).ca_chn
   item.hs_code = state.categoryData.find(item => item.ARC_SEQ === value).hs_code
 }
+
+const handleUploadChange = (info) => {
+  const {status} = info.file;
+  if (status !== 'uploading') {
+    console.log(info.file, info.fileList);
+  }
+  if (status === 'done') {
+    if(info.fileList[0].response.code !== 2000) {
+      message.error(info.fileList[0].response.message);
+      return false;
+    }
+    message.success(`${info.file.name} 파일 업로드 성공.`);
+  } else if (status === 'error') {
+    message.error(`${info.file.name} 파일 업로드 실패.`);
+  }
+}
+
+const handleRrnCdChange = (value) => {
+  if(state.form.rrn_cd === '사업자통관') {
+    state.form.fileList = []
+    message.info('사업자통관은 33,000원 통관비가 적용됩니다.');
+  }
+}
+
 watchEffect(() => {
   if (visible.value) {
     getOrderDetailForBridge()
