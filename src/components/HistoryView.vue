@@ -3,13 +3,14 @@
     <h2>히스토리</h2>
     <h3>{{ historyData.title }}</h3>
     <a-divider />
-    <div style="height:calc(100vh - 200px);overflow-y:scroll;padding:10px 0;" :v-loading="state.loading">
-      <div v-if="Object.keys(state.data).length < 1" style="color:#999999;">히스토리 기록이 없습니다.</div>
-      <a-timeline>
+    <div v-if="state.loading" style="display: flex;height:calc(100vh - 220px);overflow: hidden; justify-content: center;align-items: center;"><a-spin size="large" tip="로딩중..."/></div>
+    <div v-else style="height:calc(100vh - 200px);overflow-y:scroll;padding:10px 0;">
+      <a-timeline >
         <a-timeline-item v-for="(history, index) in state.data" :key="index"
           :color="history.messageType === 'success' ? 'green' : history.messageType === 'error' ? 'red' : 'blue'">{{
             history.insDate }} [{{ history.userName }}]<div>{{ history.message }}</div></a-timeline-item>
       </a-timeline>
+      <div v-if="state.loading === false && Object.keys(state.data).length < 1" style="color:#999999; padding: 20px 0;display: flex;justify-content: center;align-items: center;">히스토리 기록이 없습니다.</div>
     </div>
   </a-drawer>
 </template>
@@ -40,6 +41,7 @@ const onClose = () => {
 }
 
 const getHistoryList = async () => {
+  state.data = [];
   state.loading = true
   await useHistoryApi().getHistoryList(historyData.value).then(res => {
     if (res.status !== "2000") {

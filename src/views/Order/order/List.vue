@@ -188,7 +188,7 @@
                 <a-button size="small">상세</a-button>
               </RouterLink>
               <a-button size="small"
-                        @click.prevent="showHistory({title: record.prdName, type: 'order', index_id: record.id})">히스토리</a-button>
+                        @click.prevent="showHistory({title: record.prdName + ' - ' + record.prdOptionName, type: 'order', index_id: record.id})">히스토리</a-button>
               <a-button type="info" size="small" v-if="state.tableData.params.status === 'paid'"
                         @click.prevent="receiverOneOrder(record.id)">발주</a-button>
               <a-button type="primary" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
