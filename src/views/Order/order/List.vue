@@ -210,7 +210,7 @@
     </a-table>
   </a-card>
   <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData" />
-  <BridgeFormView :visible.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData" @update="getTableData"/>
+  <BridgeFormView :visible.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData" @update="getTableData" :key="bridgeFormData.type"/>
 
 </template>
 

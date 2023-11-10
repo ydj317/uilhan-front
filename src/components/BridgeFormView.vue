@@ -272,7 +272,7 @@ const props = defineProps({
 
 const {bridgeFormData} = toRefs(props)
 const emit = defineEmits(['close','update'])
-
+console.log(bridgeFormData.value.type);
 const state = reactive({
   form: {
     id: '',
@@ -357,6 +357,7 @@ const getOrderDetailForBridge = async () => {
         arc_seq: '',
         prdImage: item.prdImage,
         prdName: item.prdName,
+        prdNameCn: item.prdNameCn,
         prdOptionName: item.prdOptionName,
         prdUrl: item.prdUrl,
         quantity: item.quantity,
