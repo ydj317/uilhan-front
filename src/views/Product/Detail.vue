@@ -148,6 +148,9 @@ export default defineComponent({
         }
 
         this.$store.state.product = Object.assign(this.product, res.data);
+        if (Array.isArray(this.product.item_cate) && this.product.item_cate.length === 0){
+          this.product.item_cate = {};
+        }
 
         // 상품 전송여부 판단
         this.product.is_sync = "F";

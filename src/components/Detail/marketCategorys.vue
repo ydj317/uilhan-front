@@ -62,7 +62,7 @@ const handleCascaderChange = (value, selectedOptions) => {
   // check selectedOptions is isLeaf
   if (selectedOptions[selectedOptions.length - 1].isLeaf) {
     product.value.item_cate[sellerId.value] = { marketCode: marketCode.value, cateId: value[value.length - 1], categoryNames: selectedOptions.map(o => o.cateName).join(' / ') }
-    return
+    return false;
   }
 }
 
