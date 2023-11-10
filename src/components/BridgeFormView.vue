@@ -272,7 +272,7 @@ const props = defineProps({
 
 const {bridgeFormData} = toRefs(props)
 const emit = defineEmits(['close','update'])
-console.log(bridgeFormData.value.type);
+
 const state = reactive({
   form: {
     id: '',
