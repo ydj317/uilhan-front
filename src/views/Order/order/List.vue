@@ -74,7 +74,7 @@
           </a-button>
         </a-space>
       </div>
-      <div class="right-div" style="display: flex;align-items: center;">
+      <div class="right-div" style="display: flex;align-items: center;gap: 5px">
         <a-tooltip>
           <template #title>EXCEL 다운로드</template>
           <a-button @click.prevent="excelDownload">
@@ -83,6 +83,13 @@
             </template>
           </a-button>
         </a-tooltip>
+
+        <a-button @click.prevent="syncBridgeStatus" :loading="state.tableData.syncBridgeStatusLoading" v-if="state.tableData.params.status === 'shippingAddress'">
+          <template #icon>
+            <RedoOutlined />
+          </template>
+          배대지 상태 동기화
+        </a-button>
       </div>
     </div>
 
@@ -191,9 +198,11 @@
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'puragent'})">구매대행</a-button>
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'shipagent'})">배송대행</a-button>
             </a-space>
-            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1">
-              <a-button size="small">상태확인</a-button>
-              <a-tag color="#15803d">- 신청서 작성완료 -</a-tag>
+
+            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1" direction="vertical" align="center">
+              <a-tag color="pink">- 신청서 작성완료 -</a-tag>
+              <a-tag size="small" color="#15803d" v-if="state.syncStatusShow">{{ record.bridgeStatus }}</a-tag>
+              <a-tag size="small" v-else> - </a-tag>
             </a-space>
           </div>
         </template>
@@ -201,7 +210,7 @@
     </a-table>
   </a-card>
   <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData" />
-  <BridgeFormView :visible.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData" />
+  <BridgeFormView :visible.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData" @update="getTableData"/>
 
 </template>
 
@@ -215,7 +224,7 @@ import moment from "moment";
 import {message} from 'ant-design-vue'
 import HistoryView from '@/components/HistoryView.vue'
 import BridgeFormView from '@/components/BridgeFormView.vue'
-import {ContainerOutlined, DownloadOutlined, ExportOutlined, FileSyncOutlined} from '@ant-design/icons-vue';
+import {ContainerOutlined, DownloadOutlined, ExportOutlined, FileSyncOutlined, RedoOutlined} from '@ant-design/icons-vue';
 
 
 const state = reactive({
@@ -223,6 +232,7 @@ const state = reactive({
     data: [],
     total: 0,
     loading: false,
+    syncBridgeStatusLoading: false,
     params: {
       order_date: [moment().subtract(15, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
       account_ids: [],
@@ -242,6 +252,7 @@ const state = reactive({
   invoiceNumberValues: {},
   marketDeliveryCompany: {},
   marketDetailUrls: {},
+  syncStatusShow: false,
 });
 
 // 검색기간
@@ -288,6 +299,15 @@ const getTableData = async () => {
     }
 
     state.tableData.data = res.data;
+
+    // set courierNameValues default value
+    state.tableData.data.forEach((item) => {
+      if(item.courierName !== '' && item.invoiceNumber !== ''){
+        state.courierNameValues[item.id] = item.courierName;
+        state.invoiceNumberValues[item.id] = item.invoiceNumber;
+      }
+    });
+
     state.tableData.total = res.data.length;
     state.tableData.loading = false;
   });
@@ -476,6 +496,20 @@ const excelDownload = () => {
   });
 }
 
+const syncBridgeStatus = () => {
+  state.tableData.syncBridgeStatusLoading = true;
+  useMarketOrderApi().syncBridgeStatus({}).then(res => {
+    state.tableData.syncBridgeStatusLoading = false;
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    state.syncStatusShow = true;
+    message.success('수집완료 되였습니다.');
+    getTableData();
+  });
+}
+
 const handleSearch = () => {
   if (!state.tableData.params.order_date) {
     message.error('검색기간을 선택해주세요.');
@@ -560,38 +594,6 @@ onMounted(async () => {
 })
 
 </script>
-
-<style scoped>
-.order_status {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80px;
-  width: 100%;
-  cursor: pointer;
-  border-radius: 0.5rem;
-  border: 1px solid rgb(0 0 0 / 0.1);
-  transition: all 0.3s ease-in-out;
-}
-
-.order_status:hover {
-  /** box shadow */
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-.order_status.active {
-  background: linear-gradient(to bottom right, #359bfa, #1890ff);
-  color: white;
-  border-style: none;
-}
-
-.order_status.active:hover {
-  /** box shadow */
-  color: white;
-  background: linear-gradient(to bottom right, #3885f8, #1e44ff);
-}
-
-</style>
 
 <style>
 #header .ant-picker-input input {

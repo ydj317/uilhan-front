@@ -829,7 +829,7 @@ export default defineComponent({
     const bridgeSyncCheck = () => {
       if (formState.is_bridge_sync === true) {
         NoAuthAjax.post(
-            "http://192.168.56.101:8880/plugin/worldlink/checkMember.php", {
+            "http://192.168.56.101/plugin/worldlink/checkMember.php", {
               mb_id: formState.username
             }).then((res) => {
 

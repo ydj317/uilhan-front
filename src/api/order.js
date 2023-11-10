@@ -35,6 +35,14 @@ export function useMarketOrderApi() {
             });
         },
 
+        syncBridgeStatus: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/order/bridge/sync",
+                method: "POST",
+                data,
+            });
+        },
+
         // 클레임목록
         getClaimList: (data) => {
             return AuthRequest({

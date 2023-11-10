@@ -93,7 +93,6 @@
             <div style="display: flex;gap: 10px;align-items: center">
               <span>우편번호</span>
               <a-input v-model:value="state.form.receiver_post_code" style="width: 80px"/>
-              <a-button type="primary" class="ml10">우편번호 검색</a-button>
               <span>* 지번 주소 기재 시 통관지연이 될 수 있습니다.</span>
             </div>
             <div style="display: flex;gap: 10px;align-items: center">
@@ -223,13 +222,13 @@
           </a-checkbox-group>
         </a-descriptions-item>
         <a-descriptions-item label="원산지작업">
-          <a-checkbox-group v-model:value="state.form.EtcDlvr5">
+          <a-checkbox-group v-model:value="state.form.EtcDlvr6">
             <a-checkbox value="14">스티커라벨[100원]</a-checkbox>
             <a-checkbox value="15">봉제라벨[300원]</a-checkbox>
           </a-checkbox-group>
         </a-descriptions-item>
         <a-descriptions-item label="사업자옵션">
-          <a-checkbox-group v-model:value="state.form.EtcDlvr6">
+          <a-checkbox-group v-model:value="state.form.EtcDlvr7">
             <a-checkbox value="16">원산지증명서[30,000원]</a-checkbox>
           </a-checkbox-group>
         </a-descriptions-item>
@@ -272,7 +271,7 @@ const props = defineProps({
 })
 
 const {bridgeFormData} = toRefs(props)
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close','update'])
 
 const state = reactive({
   form: {
@@ -286,6 +285,8 @@ const state = reactive({
     receiver_tel1: '',
     receiver_addr1: '',
     receiver_addr2: '',
+    receiver_addr1_en: '',
+    receiver_addr2_en: '',
     receiver_post_code: '',
     message: '',
     items: [],
@@ -301,6 +302,7 @@ const state = reactive({
     EtcDlvr4: [], // 어댓터
     EtcDlvr5: [], // 기타옵션
     EtcDlvr6: [], // 원산지작업
+    EtcDlvr7: [], // 원산지작업
 
     auto_rls_yn: false, // 자동결제여부
     auto_req_yn: false, // 자동출고여부
@@ -311,10 +313,9 @@ const state = reactive({
   confirmLoading: false,
   checkClearanceCodeLoading: false,
   categoryData: [],
-  uploadHeaders: {
-    
-  },
-  uploadUrl: 'http://192.168.56.101:8880/plugin/worldlink/fileUpload.php',
+  uploadHeaders: {},
+  uploadUrl: 'http://192.168.56.101/plugin/worldlink/fileUpload.php',
+  checkPersonalCustomsClearanceCode : false,
 })
 
 const onClose = () => {
@@ -341,7 +342,10 @@ const getOrderDetailForBridge = async () => {
     state.form.receiver_tel1 = marketOrder[0].receiverTel1
     state.form.receiver_addr1 = marketOrder[0].receiverAddr1
     state.form.receiver_addr2 = marketOrder[0].receiverAddr2
+    state.form.receiver_addr1_en = fnHanEng(marketOrder[0].receiverAddr1)
+    state.form.receiver_addr2_en = fnHanEng(marketOrder[0].receiverAddr2)
     state.form.receiver_post_code = marketOrder[0].receiverPostCode
+    state.form.personal_customs_clearance_code = marketOrder[0].personalCustomsClearanceCode
     state.form.message = marketOrder[0].message
     state.form.items = [];
     marketOrder.forEach(item => {
@@ -382,6 +386,10 @@ const handleOk = () => {
 
   if(!state.form.personal_customs_clearance_code){
     message.error("개인통관고유부호를 입력해 주세요.");
+    return false;
+  }
+  if(state.checkPersonalCustomsClearanceCode === false){
+    message.error("개인통관고유부호를 확인해 주세요.");
     return false;
   }
 
@@ -439,8 +447,9 @@ const handleOk = () => {
       state.confirmLoading = false
       return false;
     }
-
+    state.confirmLoading = false
     message.success(`${state.form.app_type} 신청서가 등록되었습니다.`);
+    emit('update')
     emit('close')
   }).catch(err => {
     message.error(err.message);
@@ -593,7 +602,7 @@ function RRN_NO_API(ORDNO) {
 
   state.checkClearanceCodeLoading = true;
 
-  NoAuthAjax.get("http://192.168.56.101:8880/plugin/worldlink/ajax.app.prn.api.php", {
+  NoAuthAjax.get("http://192.168.56.101/plugin/worldlink/ajax.app.prn.api.php", {
     headers: {
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
     },
@@ -603,6 +612,7 @@ function RRN_NO_API(ORDNO) {
       MOB_NO: state.form.receiver_tel1.replace(/-/gi, ""),
     }
   }).then((res) => {
+    state.checkPersonalCustomsClearanceCode = true;
     if (res.data.tCnt === "1") {
       state.form.rrn_no_con = ["Y"];
       message.success("개인통관고유부호가 확인되었습니다.");
@@ -612,10 +622,10 @@ function RRN_NO_API(ORDNO) {
       } else {
         state.form.rrn_no_con = ["N"];
       }
-      message.error(res.data.txt);
+      message.warning(res.data.txt);
     } else {
       state.form.rrn_no_con = ["N"];
-      message.error(res.data.txt);
+      message.warning(res.data.txt);
     }
     state.checkClearanceCodeLoading = false;
   }).catch(err => {
@@ -625,7 +635,7 @@ function RRN_NO_API(ORDNO) {
 }
 
 const getCategory = async () => {
-  NoAuthAjax.get("http://192.168.56.101:8880/plugin/worldlink/arc_seq.php", {}).then((res) => {
+  NoAuthAjax.get("http://192.168.56.101/plugin/worldlink/arc_seq.php", {}).then((res) => {
     if(res.status !== 200){
       message.error("통관유형을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
       return false;
