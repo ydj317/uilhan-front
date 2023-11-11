@@ -278,6 +278,7 @@ import {isLogin, cookieInit} from "util/auth";
 import {useForm} from "ant-design-vue/es/form";
 import Loading from "vue-loading-overlay";
 import {message} from "ant-design-vue";
+import {useBridgeApi} from "@/api/bridge";
 
 
 export default defineComponent({
@@ -828,18 +829,24 @@ export default defineComponent({
 
     const bridgeSyncCheck = () => {
       if (formState.is_bridge_sync === true) {
+
         NoAuthAjax.post(
-            "http://192.168.56.101/plugin/worldlink/checkMember.php", {
+            process.env.VUE_APP_API_URL + "/api/bridge/syncCheck", {
               mb_id: formState.username
             }).then((res) => {
 
-              if (res.data.code !== "2000") {
-                message.error(res.data.message);
-                return false;
-              }
+          if (res.data.status !== "2000") {
+            message.error(res.data.message);
+            return false;
+          }
 
-              message.success("배대지 동시가입 가능 합니다. 회원가입 진행 해주세요.");
-              bridge_sync_pass.value = true;
+          if (res.data.data.code !== "2000") {
+            message.error(res.data.data.message);
+            return false;
+          }
+
+          message.success("배대지 동시가입 가능 합니다. 회원가입 진행 해주세요.");
+          bridge_sync_pass.value = true;
         });
       }
     };

@@ -262,6 +262,8 @@ import {message} from "ant-design-vue";
 import { UploadOutlined } from '@ant-design/icons-vue';
 import {useMarketOrderApi} from "@/api/order";
 import {NoAuthAjax} from "@/util/request";
+import {useBridgeApi} from "@/api/bridge";
+import Cookie from "js-cookie";
 
 const props = defineProps({
   visible: Boolean,
@@ -313,8 +315,10 @@ const state = reactive({
   confirmLoading: false,
   checkClearanceCodeLoading: false,
   categoryData: [],
-  uploadHeaders: {},
-  uploadUrl: 'http://192.168.56.101/plugin/worldlink/fileUpload.php',
+  uploadHeaders: {
+    token: Cookie.get("token")
+  },
+  uploadUrl: process.env.VUE_APP_API_URL + '/api/bridge/BusilicenseBimgUpload',
   checkPersonalCustomsClearanceCode : false,
 })
 
@@ -374,8 +378,8 @@ const handleOk = () => {
       message.error('사업자등록증을 첨부해 주세요.');
       return false;
     }
-    if(state.form.fileList[0].response.code !== 2000) {
-      message.error(state.form.fileList[0].response.message);
+    if(state.form.fileList[0].response.data.code !== 2000) {
+      message.error(state.form.fileList[0].response.data.message);
       return false;
     }
   }
@@ -602,18 +606,17 @@ function RRN_NO_API(ORDNO) {
   }
 
   state.checkClearanceCodeLoading = true;
-
-  NoAuthAjax.get("http://192.168.56.101/plugin/worldlink/ajax.app.prn.api.php", {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
-    },
-    params: {
-      ORD_NO: ORDNO,
-      ADRS_KR: state.form.receiver_name,
-      MOB_NO: state.form.receiver_tel1.replace(/-/gi, ""),
-    }
-  }).then((res) => {
+  useBridgeApi().checkPersonalCustomsClearanceCode({
+    ORD_NO: ORDNO,
+    ADRS_KR: state.form.receiver_name,
+    MOB_NO: state.form.receiver_tel1.replace(/-/gi, ""),
+  }).then(res => {
     state.checkPersonalCustomsClearanceCode = true;
+    if (res.status !== "2000") {
+      message.error(res.message);
+      state.checkClearanceCodeLoading = false;
+      return false;
+    }
     if (res.data.tCnt === "1") {
       state.form.rrn_no_con = ["Y"];
       message.success("개인통관고유부호가 확인되었습니다.");
@@ -636,9 +639,9 @@ function RRN_NO_API(ORDNO) {
 }
 
 const getCategory = async () => {
-  NoAuthAjax.get("http://192.168.56.101/plugin/worldlink/arc_seq.php", {}).then((res) => {
-    if(res.status !== 200){
-      message.error("통관유형을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
+  useBridgeApi().getArcSeq().then(res => {
+    if(res.status !== "2000"){
+      message.error("통관품목을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
       return false;
     }
     state.categoryData = res.data;
@@ -654,13 +657,14 @@ const handleCategoryChange = (value, item) => {
 }
 
 const handleUploadChange = (info) => {
+
   const {status} = info.file;
   if (status !== 'uploading') {
     console.log(info.file, info.fileList);
   }
   if (status === 'done') {
-    if(info.fileList[0].response.code !== 2000) {
-      message.error(info.fileList[0].response.message);
+    if(info.fileList[0].response.data.code !== 2000) {
+      message.error(info.fileList[0].response.data.message);
       return false;
     }
     message.success(`${info.file.name} 파일 업로드 성공.`);

@@ -30,6 +30,7 @@ import {onMounted, reactive} from "vue";
 import {useUserApi} from "@/api/user";
 import {message} from "ant-design-vue";
 import {NoAuthAjax} from "@/util/request";
+import {useBridgeApi} from "@/api/bridge";
 
 const formState = reactive({
   settingDatas: {
@@ -80,8 +81,12 @@ const bridgeSyncCheck = () => {
   if (checkValidation() === false) {
     return false;
   }
+  useBridgeApi().syncCheckIsMember(formState.settingDatas).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
 
-  NoAuthAjax.post('http://bridge.localhost.com:8880/plugin/worldlink/checkSync.php', formState.settingDatas).then((res) => {
     if (res.data.code !== "2000") {
       message.error(res.data.message);
       return false;
