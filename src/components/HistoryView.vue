@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { toRefs, onMounted, watch, watchEffect, reactive } from 'vue'
+import { toRefs, watchEffect, reactive } from 'vue'
 import { useHistoryApi } from '@/api/history'
 import { message } from "ant-design-vue";
 
