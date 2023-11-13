@@ -1,7 +1,8 @@
 <template>
   <a-modal v-model:visible="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청'" width="1000px"
            :confirm-loading="state.confirmLoading" @ok="handleOk" @cancel="onClose">
-    <div style="height: 600px;overflow-y: scroll;">
+    <div v-if="state.loading" style="height: 600px;display: flex;justify-content: center;align-items: center;"><a-spin size="large" /></div>
+    <div v-else style="height: 600px;overflow-y: scroll;">
       <a-descriptions title="물류센터를 선택해 주세요." bordered :column="1" :labelStyle="{ width: '100px' }"
                       :contentStyle="{ width: '500px' }">
         <a-descriptions-item label="물류 센터">
@@ -332,10 +333,10 @@ let visible = computed({
 })
 
 const getOrderDetailForBridge = async () => {
+  state.loading = true
   await useMarketOrderApi().getOrderDetailForBridge({id: bridgeFormData.value.record.orderId}).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
-      state.loading = false
       return false;
     }
     const {marketOrder} = res.data
@@ -369,7 +370,11 @@ const getOrderDetailForBridge = async () => {
         itemNo: item.itemNo,
       })
     })
-  });
+  }).catch(err => {
+    message.error(err.message);
+  }).finally(() => {
+    state.loading = false
+  })
 }
 const handleOk = () => {
 
