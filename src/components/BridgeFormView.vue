@@ -265,6 +265,7 @@ import {useMarketOrderApi} from "@/api/order";
 import {NoAuthAjax} from "@/util/request";
 import {useBridgeApi} from "@/api/bridge";
 import Cookie from "js-cookie";
+import {useUserApi} from "@/api/user";
 
 const props = defineProps({
   visible: Boolean,
@@ -332,6 +333,7 @@ let visible = computed({
   set: (value) => emit('close') // setter
 })
 
+// 주문정보 불러오기
 const getOrderDetailForBridge = async () => {
   state.loading = true
   await useMarketOrderApi().getOrderDetailForBridge({id: bridgeFormData.value.record.orderId}).then(res => {
@@ -376,6 +378,8 @@ const getOrderDetailForBridge = async () => {
     state.loading = false
   })
 }
+
+// 저장
 const handleOk = () => {
 
   if(state.form.rrn_cd === '사업자통관') {
@@ -467,9 +471,7 @@ const handleOk = () => {
   })
 };
 
-// ------------------------------------------------------------------------------
 // 한글->영문 이름 번역
-// ------------------------------------------------------------------------------
 const fnHanEng = (pVal) => {
 
   let sCho, sJung, sChong;
@@ -593,9 +595,7 @@ const fnHanEng2 = (pVal,Target) => {
   state.form[Target] = t;
 }
 
-// ------------------------------------------------------------------------------
-// 기능 :  관세 API 오전 8:57 2020-03-02
-// ------------------------------------------------------------------------------
+// 관세 API
 function RRN_NO_API(ORDNO) {
   if(!state.form.personal_customs_clearance_code){
     message.error("먼저 개인통관고유부호를 입력해 주세요.");
@@ -643,6 +643,7 @@ function RRN_NO_API(ORDNO) {
   })
 }
 
+// 통관 품목 불러오기
 const getCategory = async () => {
   useBridgeApi().getArcSeq().then(res => {
     if(res.status !== "2000"){
@@ -655,12 +656,14 @@ const getCategory = async () => {
   })
 }
 
+// 통관 품목 change 이벤트
 const handleCategoryChange = (value, item) => {
   item.PRO_NM = state.categoryData.find(item => item.ARC_SEQ === value).ca_eng
   item.PRO_NM_CH = state.categoryData.find(item => item.ARC_SEQ === value).ca_chn
   item.hs_code = state.categoryData.find(item => item.ARC_SEQ === value).hs_code
 }
 
+// 사업자 등록증 업로드 change 이벤트
 const handleUploadChange = (info) => {
 
   const {status} = info.file;
@@ -678,6 +681,7 @@ const handleUploadChange = (info) => {
   }
 }
 
+// 개인통관부호 change 이벤트
 const handleRrnCdChange = (value) => {
   if(state.form.rrn_cd === '사업자통관') {
     state.form.fileList = []

@@ -199,7 +199,7 @@
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'shipagent'})">배송대행</a-button>
             </a-space>
 
-            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1" direction="vertical" align="center">
+            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1 && state.is_bridge_sync === true" direction="vertical" align="center">
               <a-tag color="pink">- 신청서 작성완료 -</a-tag>
               <a-tag size="small" color="#15803d" v-if="state.syncStatusShow">{{ record.bridgeStatus }}</a-tag>
               <a-tag size="small" v-else> - </a-tag>
@@ -225,6 +225,7 @@ import {message} from 'ant-design-vue'
 import HistoryView from '@/components/HistoryView.vue'
 import BridgeFormView from '@/components/BridgeFormView.vue'
 import {ContainerOutlined, DownloadOutlined, ExportOutlined, FileSyncOutlined, RedoOutlined} from '@ant-design/icons-vue';
+import {useUserApi} from "@/api/user";
 
 
 const state = reactive({
@@ -253,6 +254,7 @@ const state = reactive({
   marketDeliveryCompany: {},
   marketDetailUrls: {},
   syncStatusShow: false,
+  is_bridge_sync: false,
 });
 
 // 검색기간
@@ -583,8 +585,27 @@ const showBridgeForm = (param) => {
   bridgeFormVisible.value = true;
 }
 
+
+const getUserInfoData = async () => {
+  try {
+    await useUserApi().getUserInfoData({}).then((res) => {
+      if (res.status !== "2000") {
+        message.error(res.message);
+        return false;
+      }
+
+      const { is_bridge_sync } = res.data;
+      state.is_bridge_sync = is_bridge_sync
+    });
+  } catch (error) {
+    message.error(error.message);
+    return false;
+  }
+}
+
 onMounted(async () => {
   await getAccountData()
+  await getUserInfoData()
   await getMarketStatusList()
   await getMarketClaimStatusList()
   await getMarketAdminUrls()
