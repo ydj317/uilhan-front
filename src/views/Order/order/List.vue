@@ -159,6 +159,7 @@
                    v-else-if="record.status === 'shippingComplete'" />
           <a-badge color="red" :text="state.allStatus.filter(it => it.value === record.status)[0].label"
                    v-else />
+          <a-tag color="volcano" v-if="!record.prdImage">마켓상품</a-tag>
         </template>
       </a-table-column>
 
