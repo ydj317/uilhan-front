@@ -12,10 +12,8 @@
             <PictureTwoTone v-if="name === '대표 이미지'" />
             <SettingTwoTone v-if="name === '옵션설정'" />
             <TagsTwoTone v-if="name === '옵션정보'" />
-            <BankTwoTone v-if="name === '통관정보'" />
             <SlidersTwoTone v-if="name === '배송설정'" />
-            <ProjectTwoTone v-if="name === '간략설명'" />
-            <BuildTwoTone v-if="name === '상세설명'" />
+            <BuildTwoTone v-if="name === '상세페이지'" />
             {{ name }}
           </a-button>
         </div>
@@ -66,10 +64,8 @@ export default {
         '대표 이미지',
         '옵션설정',
         '옵션정보',
-        '통관정보',
         // '배송설정',
-        '간략설명',
-        '상세설명',
+        '상세페이지',
       ],
     };
   },

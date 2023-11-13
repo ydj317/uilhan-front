@@ -60,7 +60,7 @@ export function useMarketOrderApi() {
             });
         },
 
-        // 발주처리
+        // 주문처리
         receiverOrder: (data) => {
             return AuthRequest({
                 url: process.env.VUE_APP_API_URL + "/api/market/order/receiverOrder",

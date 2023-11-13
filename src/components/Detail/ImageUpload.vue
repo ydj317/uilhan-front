@@ -1,7 +1,15 @@
 <template>
   <div id="eModelTitle_1" class="mt20 p20 bg-white">
     <!--title-->
-    <h1><strong>대표 이미지</strong></h1>
+    <h1><strong>대표 이미지</strong>
+      <a-tooltip>
+        <template #title>
+          <div class="mb10">상품 업로드 시 이미지는 마켓별 권장크기로 자동리사이징됩니다 (1000*1000)</div>
+          <div>이미지는 스마크스토어/쿠팡은 최대 10개,11번가 최대 5개, ESM2.0/인터파크 최대4개, 위메프 최대3개까지 등록 됩니다.</div>
+        </template>
+        <QuestionCircleOutlined/>
+      </a-tooltip>
+    </h1>
 
     <!--상단 버튼-->
     <div id="eModelTitle_1_header" class="mb20 space-between">
@@ -59,9 +67,11 @@ import draggable from "vuedraggable";
 import { AuthRequest } from "@/util/request";
 import { mapState } from "vuex";
 import { message } from "ant-design-vue";
+import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 
 export default {
   components: {
+    QuestionCircleOutlined,
     draggable,
   },
 

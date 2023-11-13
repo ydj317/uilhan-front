@@ -118,7 +118,7 @@ const getMarketOrderStatusList = async () => {
 }
 const { orderData, marketCode } = toRefs(props)
 
-// 발주처리
+// 주문처리
 const receiverOrderApi = (ids) => {
   useMarketOrderApi().receiverOrder({
     ids

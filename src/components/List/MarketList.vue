@@ -1,12 +1,24 @@
 <template>
   <div>
-    <a-modal width="600px" title="연동할 제휴사" v-model:visible="relaket.data.MarketListVisible" centered>
-
+    <a-modal width="600px" v-model:visible="relaket.data.MarketListVisible" centered>
+      <template #title>
+        선택상품 등록
+        <a-tooltip>
+          <template #title>
+            <div>상품을 등록할 마켓을 선택하여 등록해 주세요.</div>
+          </template>
+          <QuestionCircleOutlined/>
+        </a-tooltip>
+      </template>
       <a-table :columns="columns" :data-source="relaket.data.options" :pagination="{hideOnSinglePage:true}"
                :row-selection="{ selectedRowKeys: marketSelectedRowKeys, onChange: onMarketSelectChange }">
 
         <!--bodyCell-->
         <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'market_name'">
+            <div  style="text-align: center;">{{ record.market_code }}</div>
+          </template>
+
           <template v-if="column.key === 'market_account'">
             <div style="text-align: left">
               <img :src="getLogoSrc('market-logo', record.market_code)"
@@ -14,11 +26,6 @@
               {{ record.seller_id }}
             </div>
           </template>
-
-          <template v-if="column.key === 'market_name'">
-            <div  style="text-align: center;">{{ record.market_code }}</div>
-          </template>
-
         </template>
       </a-table>
 
@@ -37,8 +44,10 @@
 import {mapState} from 'vuex';
 import {AuthRequest} from '@/util/request';
 import { message } from "ant-design-vue";
+import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 
 export default {
+  components: {QuestionCircleOutlined},
   computed: {
     ...mapState([
       'relaket',
@@ -49,15 +58,16 @@ export default {
     return {
       columns: [
         {
-          title: '쇼핑몰',
-          key: 'market_account',
-          align: "center",
-          width: '200px'
-        },
-        {
-          title: '제휴사',
+          title: '마켓',
           key: 'market_name',
           align: "center",
+          width: '160px'
+        },
+        {
+          title: '계정',
+          key: 'market_account',
+          align: "center",
+
         },
       ],
       checkAll: false,

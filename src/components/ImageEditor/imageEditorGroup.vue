@@ -78,7 +78,7 @@
         </template>
       </a-modal>
 
-      <!--상세설명-->
+      <!--상세페이지-->
       <a-modal
         v-if="
           product.bImageEditorModule && product.bProductDetailsEditor === true
@@ -98,7 +98,7 @@
           </h3>
         </div>
 
-        <!-- 상세설명 이미지 리스트 -->
+        <!-- 상세페이지 이미지 리스트 -->
         <a-row :gutter="15" style="height: 620px; overflow: scroll;overflow-x: hidden;">
           <a-col
             v-for="(item, key) in product.aPhotoCollection"

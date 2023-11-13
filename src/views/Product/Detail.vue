@@ -29,25 +29,7 @@
     <!--Sku-->
     <Sku></Sku>
 
-    <!--통관정보-->
-    <div id="eModelTitle_4">
-      <a-collapse class="mt20 bg-white" v-model:activeKey="activeKey">
-        <a-collapse-panel key="1" header="통관정보 보기">
-          <CustomsInfo></CustomsInfo>
-        </a-collapse-panel>
-      </a-collapse>
-    </div>
-
-    <!--간략설명-->
-    <div id="eModelTitle_5">
-      <a-collapse class="mt20 bg-white" v-model:activeKey="activeKey">
-        <a-collapse-panel key="2" header="간략설명 보기">
-          <SimpleDescription></SimpleDescription>
-        </a-collapse-panel>
-      </a-collapse>
-    </div>
-
-    <!--상세설명-->
+    <!--상세페이지-->
     <Description></Description>
 
     <!--하단버튼-->

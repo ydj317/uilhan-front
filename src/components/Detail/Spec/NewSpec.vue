@@ -5,7 +5,7 @@
     <div class="header-section">
       <!--세팅버튼-->
       <div class="setting header-button" style="display: flex;justify-content: space-between;width: 100%;padding-right: 15px;">
-        <a-button class="floatRight" type="primary" @click="setting" :disabled="product.is_sync === 'T'">세팅</a-button>
+        <a-button class="floatRight" type="primary" @click="setting" :disabled="product.is_sync === 'T'">옵션 적용</a-button>
       </div>
     </div>
     <!--옵션그룹 영역-->
