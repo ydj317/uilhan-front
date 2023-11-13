@@ -560,12 +560,13 @@ onBeforeUnmount(() => {
 window.addEventListener('beforeunload', handleBeforeUnload);
 
 // 주기적으로 주문현황을 리프래시 해줌
+const minute = 1;
 setInterval(() => {
   if (isAutoCollect.value === true) {
     getTableList();
     handleCollect();
   }
-}, 300000);
+}, minute * 60 * 1000);
 </script>
 
 <!--hello-->
