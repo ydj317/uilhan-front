@@ -195,12 +195,12 @@
               <a-button type="primary" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                         @click.prevent="deliveryOrder(record.id)">배송</a-button>
             </a-space>
-            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 0 && state.is_bridge_sync === true">
+            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 0 && state.is_bridge_sync === true && record.prdImage">
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'puragent'})">구매대행</a-button>
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'shipagent'})">배송대행</a-button>
             </a-space>
 
-            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1 && state.is_bridge_sync === true" direction="vertical" align="center">
+            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1 && state.is_bridge_sync === true && record.prdImage" direction="vertical" align="center">
               <a-tag color="pink">- 신청서 작성완료 -</a-tag>
               <a-tag size="small" color="#15803d" v-if="state.syncStatusShow">{{ record.bridgeStatus }}</a-tag>
               <a-tag size="small" v-else> - </a-tag>
