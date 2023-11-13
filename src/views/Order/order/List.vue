@@ -194,7 +194,7 @@
               <a-button type="primary" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
                         @click.prevent="deliveryOrder(record.id)">배송</a-button>
             </a-space>
-            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 0">
+            <a-space class="mt10" v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 0 && state.is_bridge_sync === true">
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'puragent'})">구매대행</a-button>
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'shipagent'})">배송대행</a-button>
             </a-space>
