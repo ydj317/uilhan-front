@@ -28,7 +28,7 @@
             <a-tooltip>
               <template #title>
                 <div class="mb10">내가 남기고 싶은 마진율을 기입해주세요!</div>
-                <div>원가환율 + (원가환율)*(카드수수료+퍼센트마진))+최소 마진 + 해외배송비 • 알리익스프레스의 경우 별도로 해외배송비용이 없음</div>
+                <div>원가 + (원가환율)*(카드수수료+퍼센트마진))+최소 마진 + 해외배송비 • 알리익스프레스의 경우 별도로 해외배송비용이 없음</div>
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
