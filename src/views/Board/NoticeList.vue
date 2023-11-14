@@ -100,7 +100,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <a-card :bordered="false" :loading="state.tableData.loading">
+  <a-card :bordered="false" :loading="state.tableData.loading" title="공지사항">
     <div style="display: flex;justify-content: right;">
     <a-space>
       <a-input v-model:value="state.tableData.params.title" style="width: 200px;" allowClear/>

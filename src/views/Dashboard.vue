@@ -8,31 +8,17 @@
           <div class="text-2">저희 서비스를 이용해 주셔서 감사합니다.</div>
           <div class="text-3">문의사항이나 궁금한 점이 있으시면 오른쪽 아래 {챗아이콘}을 클릭하여 문의 부탁합니다.</div>
         </div>
-        <div class="right">
-          <div>
-            <div>연동마켓</div>
-            <div>{{ marketTotal }}</div>
-          </div>
-          <div>
-            <div>상품</div>
-            <div>{{ productTotal }}</div>
-          </div>
-          <div>
-            <div>주문</div>
-            <div>{{ orderTotal }}</div>
-          </div>
-        </div>
       </div>
     </a-card>
 
     <a-row type="flex" justify="space-between" align="top" style="margin-top: 20px;" :gutter="10">
-      <a-col :span="16">
+      <a-col :sm="24" :md="24" :lg="16">
         <div>
           <a-row :gutter="10">
             <a-col :span="8">
-              <a-card>
+              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center">
                 <a-statistic
-                    :value="11"
+                    :value="state.headerCount.marketTotal"
                     :value-style="{ color: '#3f8600' }"
                     style="margin-right: 50px"
                 >
@@ -40,12 +26,19 @@
                     <h3>마켓 연동</h3>
                   </template>
                 </a-statistic>
+                <div
+                    style="position:absolute;right:20px;top:20px;display: flex; justify-content: center; align-items: center;">
+                  <div
+                      style="width: 80px; height: 80px; border-radius: 50%; background-color: rgba(199,236,208,0.5); display: flex; justify-content: center; align-items: center;">
+                    <shopping-cart-outlined :style="{fontSize: '32px',color:'#17802c'}"/>
+                  </div>
+                </div>
               </a-card>
             </a-col>
             <a-col :span="8">
-              <a-card>
+              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center">
                 <a-statistic
-                    :value="9"
+                    :value="state.headerCount.productTotal"
                     class="demo-class"
                     :value-style="{ color: '#cf1322' }"
                 >
@@ -53,10 +46,17 @@
                     <h3>업로드 상품수</h3>
                   </template>
                 </a-statistic>
+                <div
+                    style="position:absolute;right:20px;top:20px;display: flex; justify-content: center; align-items: center;">
+                  <div
+                      style="width: 80px; height: 80px; border-radius: 50%; background-color: rgba(236,199,205,0.5); display: flex; justify-content: center; align-items: center;">
+                    <upload-outlined :style="{fontSize: '32px',color:'#ce1948'}"/>
+                  </div>
+                </div>
               </a-card>
             </a-col>
             <a-col :span="8">
-              <a-card>
+              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center">
                 <a-statistic
                     :value="9"
                     class="demo-class"
@@ -66,11 +66,18 @@
                     <h3>주문</h3>
                   </template>
                 </a-statistic>
+                <div
+                    style="position:absolute;right:20px;top:20px;display: flex; justify-content: center; align-items: center;">
+                  <div
+                      style="width: 80px; height: 80px; border-radius: 50%; background-color: rgba(199,208,236,0.5); display: flex; justify-content: center; align-items: center;">
+                    <shopping-outlined :style="{fontSize: '32px',color:'#2144b4'}"/>
+                  </div>
+                </div>
               </a-card>
             </a-col>
           </a-row>
         </div>
-        <a-card :loading="boardLoading" :bordered="false" title="주문현황" class="mt10">
+        <a-card :loading="orderLoading" :bordered="false" title="주문현황" class="mt10 mb10">
           <template #extra>
             <a-tooltip>
               <template #title>
@@ -80,13 +87,13 @@
             </a-tooltip>
             <a-checkbox v-model:checked="isAutoCollect" class="ml10">자동수집</a-checkbox>
           </template>
-          <a-table :data-source="account.orderData.data" :loading="accountLoading"
-                   :pagination="false" size="small">
+          <a-table :data-source="account.orderData.data" :pagination="false" size="small" summary>
             <a-table-column title="판매처" dataIndex="manage" key="manage">
               <template #default="{ record }">
-                <div style="cursor: pointer;" @click="openMarketAdminPage(record.market_code)">
+                <div style="cursor: pointer;display: flex;align-items: center"
+                     @click="openMarketAdminPage(record.market_code)">
                   <img :src="getLogoSrc('market-logo', record.market_code)" alt=""
-                       style="width: 18px">{{ record.seller_id }}
+                       style="width: 18px;border-radius: 50%;" class="mr10">{{ record.seller_id }}
                 </div>
               </template>
             </a-table-column>
@@ -96,10 +103,22 @@
                 <span style="color: #000000D9;" v-if="!record.paidNew">{{ record.paid }}</span>
               </template>
             </a-table-column>
-            <a-table-column title="배송준비중 " dataIndex="shippingAddress" key="shippingAddress" align="center">
+            <a-table-column title="배송준비중" dataIndex="shippingAddress" key="shippingAddress" align="center">
               <template #default="{ record }">
                 <span class="highlight" v-if="record.shippingAddressNew">{{ record.shippingAddressNew }}</span>
                 <span style="color: #000000D9;" v-if="!record.shippingAddressNew">{{ record.shippingAddress }}</span>
+              </template>
+            </a-table-column>
+            <a-table-column title="배송중" dataIndex="shipping" key="shipping" align="center">
+              <template #default="{ record }">
+                <span class="highlight" v-if="record.shippingNew">{{ record.shippingNew }}</span>
+                <span style="color: #000000D9;" v-if="!record.shippingNew">{{ record.shipping }}</span>
+              </template>
+            </a-table-column>
+            <a-table-column title="배송완료" dataIndex="shippingComplete" key="shippingComplete" align="center">
+              <template #default="{ record }">
+                <span class="highlight" v-if="record.shippingCompleteNew">{{ record.shippingCompleteNew }}</span>
+                <span style="color: #000000D9;" v-if="!record.shippingCompleteNew">{{ record.shippingComplete }}</span>
               </template>
             </a-table-column>
             <a-table-column title="주문취소" dataIndex="cancelComplete" key="cancelComplete" align="center">
@@ -114,6 +133,12 @@
                 <span style="color: #000000D9;" v-if="!record.returnRequestNew">{{ record.returnRequest }}</span>
               </template>
             </a-table-column>
+            <a-table-column title="반품완료" dataIndex="returnComplete" key="returnComplete" align="center">
+              <template #default="{ record }">
+                <span class="highlight" v-if="record.returnCompleteNew">{{ record.returnCompleteNew }}</span>
+                <span style="color: #000000D9;" v-if="!record.returnCompleteNew">{{ record.returnComplete }}</span>
+              </template>
+            </a-table-column>
             <template #summary>
               <a-table-summary-row>
                 <a-table-summary-cell>합계</a-table-summary-cell>
@@ -124,22 +149,37 @@
                   <a-typography-text>{{ account.orderData.totalShippingAddress }}</a-typography-text>
                 </a-table-summary-cell>
                 <a-table-summary-cell align="center">
+                  <a-typography-text>{{ account.orderData.totalShipping }}</a-typography-text>
+                </a-table-summary-cell>
+                <a-table-summary-cell align="center">
+                  <a-typography-text>{{ account.orderData.totalShippingComplete }}</a-typography-text>
+                </a-table-summary-cell>
+                <a-table-summary-cell align="center">
                   <a-typography-text>{{ account.orderData.totalCancelComplete }}</a-typography-text>
                 </a-table-summary-cell>
                 <a-table-summary-cell align="center">
                   <a-typography-text>{{ account.orderData.totalReturnRequest }}</a-typography-text>
+                </a-table-summary-cell>
+                <a-table-summary-cell align="center">
+                  <a-typography-text>{{ account.orderData.totalReturnComplete }}</a-typography-text>
                 </a-table-summary-cell>
               </a-table-summary-row>
             </template>
           </a-table>
         </a-card>
       </a-col>
-      <a-col :span="8">
-        <a-card :bordered="false" title="공지사항">
+      <a-col :sm="24" :md="24" :lg="8">
+        <a-card :bordered="true" title="공지사항" :loading="boardLoading">
+          <!-- more -->
+          <template #extra>
+            <router-link to="/board/notice">more</router-link>
+          </template>
           <a-list>
-              <a-list-item>공지 사항 입니다.</a-list-item>
-              <a-list-item>공지 사항 입니다222.</a-list-item>
-              <a-list-item>공지 사항 3333.</a-list-item>
+            <a-list-item v-for="(item,index) in boardData" :key="index">
+              <router-link :to="`/board/notice/view/${item.id}`">
+                {{ item.title }}
+              </router-link>
+            </a-list-item>
           </a-list>
         </a-card>
         <a-card :loading="dailySaleLoading" :bordered="false" title="매출현황" class="mt10">
@@ -151,17 +191,17 @@
               <a-radio-button value="3month">3개월</a-radio-button>
             </a-radio-group>
           </template>
-          <div class="row1-content">
-            <a-radio-group v-model:value="state.dailyData.params.type" @change="getSaleList" size="small">
-              <a-radio-button value="amount">판매 금액</a-radio-button>
-              <a-radio-button value="quantity">판매 수량</a-radio-button>
-              <a-radio-button value="count">판매 건수</a-radio-button>
-            </a-radio-group>
-            <e-charts class="chart-2" :option="dailySaleChart"/>
+          <a-radio-group v-model:value="state.dailyData.params.type" @change="getSaleList" size="small">
+            <a-radio-button value="amount">판매 금액</a-radio-button>
+            <a-radio-button value="quantity">판매 수량</a-radio-button>
+            <a-radio-button value="count">판매 건수</a-radio-button>
+          </a-radio-group>
+          <div class="dailySale" style="min-width: 460px;">
+            <e-charts :option="dailySaleChart" autoresize/>
           </div>
         </a-card>
         <a-card :loading="productLoading" :bordered="false" title="수집가능 마켓" class="mt10">
-          <div class="row1-content getMarketLogo">
+          <div class="getMarketLogo">
             <a href="https://www.taobao.com/" target="_blank">
               <a-tag class="logo-tag">
                 <img :src="getLogoSrc('get-logo', 'taobao')" alt=""> <span>타오바오</span>
@@ -193,52 +233,9 @@
             </a>
           </div>
         </a-card>
-      </a-col>
-      <!--<a-col :span="8">
-        <a-card :loading="productLoading" :bordered="false" title="연동마켓">
-          <div class="row1-content sendMarketLogo">
-            <a-checkable-tag class="logo-tag" v-for="market in accountMarket"
-                             @click="onOpenMarketUrl(market.split('::')[0])">
-              <img :src="getLogoSrc('market-logo', market.split('::')[0])" alt=""> <span>{{ market.split('::')[1]
-              }}</span>
-            </a-checkable-tag>
-          </div>
-        </a-card>
-      </a-col>-->
-    </a-row>
 
-    <!--        <a-row type="flex" justify="space-between" align="bottom" style="margin-top: 20px;" :gutter="20">-->
-    <!--          <a-col :span="12">-->
-    <!--            <a-card :loading="productLoading" :bordered="false" title="상품 연동 상태">-->
-    <!--              <div class="content2">-->
-    <!--                <e-charts class="chart-2" :option="productChart" />-->
-    <!--              </div>-->
-    <!--            </a-card>-->
-    <!--          </a-col>-->
-    <!--          <a-col :span="12">-->
-    <!--            <a-card :loading="orderLoading" :bordered="false" title="주문 상태">-->
-    <!--              <div class="content2">-->
-    <!--                <e-charts class="chart-3" :option="orderChart" />-->
-    <!--              </div>-->
-    <!--            </a-card>-->
-    <!--          </a-col>-->
-    <!--          &lt;!&ndash;<a-col :span="8">-->
-    <!--          <a-card :loading="boardLoading" :bordered="false" title="공지사항">-->
-    <!--              <div class="content2">-->
-    <!--                <div class="scroll">-->
-    <!--                  <template v-for="item in boardData">-->
-    <!--                    <div v-if="item.type === 'notice'" style="padding: 10px 0; border-bottom: 1px solid #eee;">-->
-    <!--                      <router-link :to="`/board/notice/view/${item.id}`">-->
-    <!--                        <h4>{{ item.title }}</h4>-->
-    <!--                        <span style="color: #999">{{ parseHTML(item.content) }}</span>-->
-    <!--                      </router-link>-->
-    <!--                    </div>-->
-    <!--                  </template>-->
-    <!--                </div>-->
-    <!--              </div>-->
-    <!--            </a-card>-->
-    <!--          </a-col>&ndash;&gt;-->
-    <!--        </a-row>-->
+      </a-col>
+    </a-row>
   </div>
 </template>
 
@@ -249,7 +246,7 @@ import {message} from "ant-design-vue";
 import ECharts from 'vue-echarts';
 import {useMarketOrderApi} from "@/api/order";
 import {useMarketApi} from '@/api/market';
-import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {QuestionCircleOutlined, ShoppingCartOutlined, UploadOutlined, ShoppingOutlined} from "@ant-design/icons-vue";
 
 const state = reactive({
   dailyData: {
@@ -257,23 +254,18 @@ const state = reactive({
       period: '1week',
       type: 'amount'
     }
+  },
+  headerCount: {
+    marketTotal: '0',
+    productTotal: '0',
+    orderTotal: '0'
   }
 });
-const productLoading = ref(true);
-const orderLoading = ref(true);
-const boardLoading = ref(true);
-const dailySaleLoading = ref(true);
-const accountLoading = ref(true);
+let productLoading = ref(false);
+let orderLoading = ref(false);
+let boardLoading = ref(false);
+let dailySaleLoading = ref(false);
 const isAutoCollect = ref(false);
-
-const marketTotal = ref('-');
-const productTotal = ref('-');
-const orderTotal = ref('-');
-
-const allSales = ref('-');
-const todaySales = ref('-');
-const comparedToYesterday = ref('-');
-const comparedToLastWeek = ref('-');
 
 const accountMarket = ref([]);
 const marketSellerUrl = {
@@ -341,9 +333,16 @@ const dailySaleChart = ref({
   yAxis: {
     type: "value",
   },
+  dataZoom: [
+    {
+      type: 'inside', // 확대/축소 타입: slider 또는 inside
+      start: 0, // 시작 비율 (0%)
+      end: 100, // 끝 비율 (100%)
+    },
+  ],
   series: [
     {
-      name: "示例数据",
+      name: "값:",
       type: "bar",
       data: dailySaleChartData,
     },
@@ -393,8 +392,11 @@ const account = reactive({
     total: 0,
     totalPaid: 0,
     totalShippingAddress: 0,
+    totalShipping: 0,
+    totalShippingComplete: 0,
     totalCancelComplete: 0,
     totalReturnRequest: 0,
+    totalReturnComplete: 0,
     loading: false,
     params: {
       page: 1,
@@ -412,9 +414,9 @@ const onOpenMarketUrl = (marketCode) => {
 
 function getLogoSrc(fileName, marketCode) {
   try {
-    return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
+    return require(`../assets/img/list/${fileName}/${marketCode}.png`);
   } catch (error) {
-    return require("../../assets/img/temp_image.png");
+    return require("assets/img/temp_image.png");
   }
 }
 
@@ -429,72 +431,51 @@ function parseHTML(html) {
   return div.textContent;
 }
 
-function getBoard() {
-  const params = {params: {type: 'notice'}}
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list", params).then((res) => {
+async function getBoard() {
+  boardLoading.value = true
+  const params = {params: {type: 'notice', page: 1, pageSize: 5}}
+  await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/board/list", params).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
         }
-
-        boardData.value = res.data;
-
+        const {total, rows} = res.data
+        boardData.value = rows;
         boardLoading.value = false
       }
   );
 }
 
-function getProduct() {
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/product").then((res) => {
+
+const getSaleList = async () => {
+  dailySaleLoading.value = true;
+  await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/dailySale", state.dailyData).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
-    }
-
-    productChartData.value = res.data.marketSyncList
-    accountMarket.value = res.data.accountMarket
-    marketTotal.value = res.data.accountMarket.length
-    productTotal.value = res.data.productTotal
-
-    productLoading.value = false
-  });
-}
-
-function getOrder() {
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/order").then((res) => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-    }
-
-    orderChartData.value = res.data.orderStatusList
-    orderTotal.value = res.data.orderTotal
-    allSales.value = res.data.allSales
-    todaySales.value = res.data.todaySales
-    comparedToYesterday.value = res.data.comparedToYesterday.toFixed(2)
-    comparedToLastWeek.value = res.data.comparedToLastWeek.toFixed(2)
-
-    orderLoading.value = false
-  });
-}
-
-const getSaleList = () => {
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/dailySale", state.dailyData).then((res) => {
-    if (res.status !== "2000") {
-      message.error(res.message);
+      return false;
     }
     dailySaleDaysData.value = res.data.days;
     dailySaleChartData.value = res.data.sales;
-
+  }).catch((e) => {
+    message.error(e.message);
+    return false
+  }).finally(() => {
     dailySaleLoading.value = false
   });
 }
 
 onMounted(() => {
-  getOrder();
-  getProduct();
-  getBoard();
-  getTableList();
-  getSaleList();
-  getMarketAdminUrls();
+  //getOrder();
+  Promise.all([getBoard(), getTableList(), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
+      .catch((e) => {
+        message.error(e.message)
+        return false;
+      });
+  // getProduct();
+  // getBoard();
+  // getTableList();
+  // getSaleList();
+  // getMarketAdminUrls();
 });
 
 // 마켓 관리자 페이지 URL
@@ -509,13 +490,38 @@ const getMarketAdminUrls = async () => {
   });
 }
 
-const getTableList = () => {
-  AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/order2").then((res) => {
+// 마켓 연동,업로드 상품수,주문 토탕
+const getHeaderCount = async () => {
+  await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/getHearderCount").then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
+      return false;
+    }
+    const {marketTotal, productTotal} = res.data;
+    state.headerCount.marketTotal = marketTotal;
+    state.headerCount.productTotal = productTotal;
+    //state.headerCount.orderTotal = orderTotal;
+  });
+}
+const getTableList = async () => {
+  orderLoading.value = true;
+  await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/order2").then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
     }
 
-    const {list, total, totalPaid, totalShippingAddress, totalCancelComplete, totalReturnRequest} = res.data
+    const {
+      list,
+      total,
+      totalPaid,
+      totalShippingAddress,
+      totalShipping,
+      totalShippingComplete,
+      totalCancelComplete,
+      totalReturnRequest,
+      totalReturnComplete
+    } = res.data
 
     let orderDataView = [];
     // 데이터를 조회해올때마다 루프 돌리며 판단하여 데이터 변경이 있는 애들을 찾아냄
@@ -535,6 +541,16 @@ const getTableList = () => {
           newQty = newData['shippingAddress'] - item['shippingAddress'];
           newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
         }
+        newData.shippingNew = '';
+        if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
+          newQty = newData['shipping'] - item['shipping'];
+          newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
+        }
+        newData.shippingCompleteNew = '';
+        if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
+          newQty = newData['shippingComplete'] - item['shippingComplete'];
+          newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
+        }
         newData.cancelCompleteNew = '';
         if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
           newQty = newData['cancelComplete'] - item['cancelComplete'];
@@ -544,6 +560,12 @@ const getTableList = () => {
         if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
           newQty = newData['returnRequest'] - item['returnRequest'];
           newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
+        }
+
+        newData.returnCompleteNew = '';
+        if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
+          newQty = newData['returnComplete'] - item['returnComplete'];
+          newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
         }
         orderDataView.push(newData);
       });
@@ -556,14 +578,21 @@ const getTableList = () => {
     account.orderData.total = total;
     account.orderData.totalPaid = totalPaid;
     account.orderData.totalShippingAddress = totalShippingAddress;
+    account.orderData.totalShipping = totalShipping;
+    account.orderData.totalShippingComplete = totalShippingComplete;
     account.orderData.totalCancelComplete = totalCancelComplete;
     account.orderData.totalReturnRequest = totalReturnRequest;
+    account.orderData.totalReturnComplete = totalReturnComplete;
 
     // 리스트 데이터를 세션스토레이지에 넣어서 비교할때 사용함
     const newOrderData = JSON.stringify(list);
     sessionStorage.setItem('orderData', newOrderData);
 
-    accountLoading.value = false
+  }).catch((e) => {
+    message.error(e.message);
+    return false
+  }).finally(() => {
+    orderLoading.value = false;
   });
 };
 
@@ -732,45 +761,13 @@ setInterval(() => {
 }
 </style>
 
-<!--row 3-->
-<style scoped>
-.content2 {
-  height: 400px;
+<style>
+.dailySale .echarts {
+  transform: scale(0.95);
+  transform-origin: center center;
+  transition: transform 0.3s ease; /* 변환에 애니메이션 적용 */
+  width: 100%;
+  height: 300px;
+  max-width: 490px;
 }
-
-.scroll {
-  overflow-y: scroll;
-  /* 仅显示垂直滚动条 */
-  height: 390px;
-  padding-right: 20px;
-}
-
-.scroll h4 {
-  font-weight: bold;
-}
-
-/* 滚动条整体样式 */
-.scroll::-webkit-scrollbar {
-  width: 8px;
-  /* 设置滚动条的宽度 */
-}
-
-/* 滚动条轨道样式 */
-.scroll::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-  /* 设置滚动条轨道的背景颜色 */
-}
-
-/* 滚动条滑块样式 */
-.scroll::-webkit-scrollbar-thumb {
-  background-color: #888;
-  /* 设置滚动条滑块的背景颜色 */
-  border-radius: 4px;
-  /* 设置滚动条滑块的圆角 */
-}
-
-/* 鼠标悬停在滚动条上的样式 */
-.scroll::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
-  /* 设置滚动条滑块在鼠标悬停时的背景颜色 */
-}</style>
+</style>

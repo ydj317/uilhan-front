@@ -24,7 +24,7 @@ export const menus = [{
         {
             path: "/dashboard",
             name: "dashboard",
-            component: () => import("@/views/Product/Dashboard"),
+            component: () => import("@/views/Dashboard.vue"),
             meta: {
                 title: "홈",
                 isHide: false,
