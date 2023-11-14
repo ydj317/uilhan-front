@@ -58,7 +58,7 @@
             <a-col :span="8">
               <a-card style="position: relative;display: flex;justify-content: start;justify-items: center">
                 <a-statistic
-                    :value="9"
+                    :value="state.headerCount.orderTotal"
                     class="demo-class"
                     :value-style="{ color: '#1332cf' }"
                 >
@@ -267,7 +267,6 @@ let boardLoading = ref(false);
 let dailySaleLoading = ref(false);
 const isAutoCollect = ref(false);
 
-const accountMarket = ref([]);
 const marketSellerUrl = {
   "11st": 'https://login.11st.co.kr/auth/front/selleroffice/login.tmall',
   "gmarket": 'https://www.esmplus.com/Member/SignIn/LogOn',
@@ -333,13 +332,6 @@ const dailySaleChart = ref({
   yAxis: {
     type: "value",
   },
-  dataZoom: [
-    {
-      type: 'inside', // 확대/축소 타입: slider 또는 inside
-      start: 0, // 시작 비율 (0%)
-      end: 100, // 끝 비율 (100%)
-    },
-  ],
   series: [
     {
       name: "값:",
@@ -583,6 +575,9 @@ const getTableList = async () => {
     account.orderData.totalCancelComplete = totalCancelComplete;
     account.orderData.totalReturnRequest = totalReturnRequest;
     account.orderData.totalReturnComplete = totalReturnComplete;
+
+    state.headerCount.orderTotal = totalPaid + totalShippingAddress + totalShipping + totalShippingComplete
+    state.headerCount.claimTotal = totalCancelComplete + totalReturnRequest + totalReturnComplete
 
     // 리스트 데이터를 세션스토레이지에 넣어서 비교할때 사용함
     const newOrderData = JSON.stringify(list);
