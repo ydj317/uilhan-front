@@ -18,7 +18,7 @@
         </div>
         <a-divider type="vertical"/>
         <div>
-          <a-button type="link" @click.self.prevent="extensionDown" size="small">크롬 확장 프로그램</a-button>
+          <a-button type="link" @click.prevent="extensionDown" size="small">크롬 확장 프로그램</a-button>
           <a-spin v-if="indicator"/>
         </div>
         <div id="setting" class="">
@@ -82,7 +82,7 @@ export default {
     Loading,
     UserOutlined,
     SettingOutlined,
-    LogoutOutlined
+    LogoutOutlined,
   },
 
   computed: {
