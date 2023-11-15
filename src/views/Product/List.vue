@@ -543,10 +543,10 @@ export default defineComponent({
       return key1 === key2;
     },
 
-    getList(sType = "") {
+    async getList(sType = "") {
       this.listLoading = true
       let param = this.getParam(sType);
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
+      await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
         }
@@ -701,8 +701,8 @@ export default defineComponent({
       this.checkedList = [];
     },
 
-    getMarketList() {
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist").then((res) => {
+    async getMarketList() {
+      await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist").then((res) => {
         if (res.status !== "2000") {
           message.error("설정하신 마켓계정 정보가 없습니다. \n마켓계정을 설정해주세요. ");
 
@@ -919,8 +919,8 @@ export default defineComponent({
       window.open(url)
     },
 
-    getMarketDetailUrls() {
-      useMarketApi().getMarketDetailUrls({}).then((res) => {
+    async getMarketDetailUrls() {
+      await useMarketApi().getMarketDetailUrls({}).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
@@ -933,9 +933,7 @@ export default defineComponent({
 
 
   beforeMount() {
-    this.getList("reload");
-    this.getMarketList();
-    this.getMarketDetailUrls();
+    Promise.all([this.getMarketList(), this.getMarketDetailUrls(), this.getList("reload")]);
   },
 
 });

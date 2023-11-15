@@ -463,11 +463,6 @@ onMounted(() => {
         message.error(e.message)
         return false;
       });
-  // getProduct();
-  // getBoard();
-  // getTableList();
-  // getSaleList();
-  // getMarketAdminUrls();
 });
 
 // 마켓 관리자 페이지 URL

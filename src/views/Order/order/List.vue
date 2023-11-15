@@ -581,8 +581,8 @@ const handleCollect = () => {
   });
 }
 
-const getMarketDetailUrls = () => {
-  useMarketApi().getMarketDetailUrls({}).then((res) => {
+const getMarketDetailUrls = async () => {
+  await useMarketApi().getMarketDetailUrls({}).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
@@ -648,12 +648,9 @@ const getUserInfoData = async () => {
 
 onMounted(async () => {
   await getAccountData()
-  await getUserInfoData()
-  await getMarketStatusList()
-  await getMarketClaimStatusList()
-  await getMarketAdminUrls()
-  await getMarketDetailUrls()
-  state.allStatus = [...state.orderStatus, ...state.claimStatus]
+  await Promise.all([getUserInfoData(), getMarketStatusList().then(() =>{
+    state.allStatus = [...state.orderStatus, ...state.claimStatus]
+  }), getMarketClaimStatusList(), getMarketAdminUrls(), getMarketDetailUrls()])
   await getTableData()
 })
 
