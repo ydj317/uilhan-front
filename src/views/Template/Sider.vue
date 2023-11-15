@@ -8,13 +8,16 @@
     >
       <template v-for="(menu, index) in state.menuList" :key="index">
         <template v-if="!menu.children && !menu.meta.isHide">
-          <a-menu-item :key="menu.path">
+          <a-menu-item :key="!menu.path.startsWith('http') ? menu.path : menu.name">
             <template #icon>
               <component :is="menu.meta.icon" />
             </template>
-            <router-link :to="menu.path">
+            <router-link :to="menu.path" v-if="!menu.path.startsWith('http')">
               <span>{{menu.meta.title}}</span>
             </router-link>
+            <a :href="menu.path" target="_blank" v-else>
+              <span>{{menu.meta.title}}</span>
+            </a>
           </a-menu-item>
         </template>
 

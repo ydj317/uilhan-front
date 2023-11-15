@@ -54,7 +54,16 @@
             </a-form-item>
           </a-descriptions-item> -->
 
-          <a-descriptions-item label="키워드">
+          <a-descriptions-item>
+            <template #label>
+              상품태그
+              <a-tooltip>
+                <template #title>
+                  <div>상품태그에는 상품 카테고리를 명칭을 기입 할 수 없습니다.</div>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
+            </template>
             <a-form-item>
               <a-input v-model:value="formState.keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다." />
             </a-form-item>
@@ -72,10 +81,10 @@ import { ref, reactive, computed, defineAsyncComponent } from 'vue';
 import { mapState, useStore } from 'vuex';
 import CategorySettings from "@/components/Detail/categorySettings.vue";
 import { useMandatoryApi } from "@/api/mandatory";
-import { CloseCircleTwoTone } from '@ant-design/icons-vue';
+import {CloseCircleTwoTone, QuestionCircleOutlined} from '@ant-design/icons-vue';
 
 export default {
-  components: { CategorySettings, CloseCircleTwoTone },
+  components: {QuestionCircleOutlined, CategorySettings, CloseCircleTwoTone },
 
   computed: {
     ...mapState([

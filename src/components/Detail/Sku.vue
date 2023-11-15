@@ -16,7 +16,15 @@
           <a-select v-model:value="setting_price_type">
             <a-select-option value="min_price">최저 옵션가 기준 50%</a-select-option>
           </a-select>
-          <a-button @click="settingSkuPrice">적용</a-button>
+          <a-button @click="settingSkuPrice">
+            적용
+            <a-tooltip>
+              <template #title>
+                <div>스마트스토어 옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 비활성화 합니다.</div>
+              </template>
+              <QuestionCircleOutlined/>
+            </a-tooltip>
+          </a-button>
         </div>
       </div>
 
@@ -238,7 +246,7 @@ export default {
           width: "1%",
         },
         {
-          title: "품목가 기준",
+          title: "옵션가 기준",
           key: "is_option_reference_price",
           width: "6%",
         },

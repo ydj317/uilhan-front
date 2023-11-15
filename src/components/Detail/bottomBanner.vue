@@ -6,7 +6,7 @@
         <!--          >텍스트 번역</a-button-->
         <!--        >-->
         <a-button type="primary" @click="submit">저장</a-button>
-        <a-button type="primary" @click="submitSync">연동</a-button>
+        <a-button type="primary" @click="submitSync">상품등록</a-button>
         <a-button type="primary" @click="backList">목록</a-button>
       </div>
     </a-affix>
@@ -161,11 +161,6 @@ export default {
      * @returns {boolean}
      */
     checkMarket() {
-      let category = this.product.item_cate;
-      if (!category) {
-        message.warning("카테고리를 설정해 주세요");
-        return false;
-      }
 
       let isFree = this.product.formState.item_is_free_delivery;
       let shippingFee = this.product.formState.item_shipping_fee;
@@ -287,13 +282,10 @@ export default {
         const { selling_price } = skuItem;
         // 경고창 띄운 후에도 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 this.product.sku 에서 삭제
         if (selling_price > minPrice * 1.5 || selling_price < minPrice * 0.5) {
-          message.warning(`주문옵션(${skuItem.spec}) 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능합니다.`);
+          console.log(`주문옵션(${skuItem.spec}) 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능합니다.`);
 
           // this.product.sku에서 삭제
           this.product.sku = this.product.sku.filter(item => item.key !== skuItem.key);
-
-          // 삭제된 this.product.sku를 다시 this.product.deletedSku에 넣어주기
-          return false;
         }
       }
 
@@ -458,6 +450,13 @@ export default {
       if (this.validateFilterProductWords() === false) return false;
 
       this.product.loading = true;
+
+      let category = this.product.item_cate;
+      if (!category) {
+        message.warning("마켓연동 하려면 카테고리를 설정해 주세요.");
+        this.product.loading = false;
+        return false;
+      }
 
       //연동필수데이터 없는 상황
       if (this.checkMarket() === false) {

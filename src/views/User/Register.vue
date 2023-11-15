@@ -16,27 +16,27 @@
       </div>
       <!--      :rules="rulesRef"-->
       <a-form
-        :rules="rulesRef"
-        ref="formRef"
-        class="registerForm"
-        :layout="`vertical`"
-        :model="formState"
-        @finish="handleFinish"
-        @finishFailed="handleFinishFailed"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
+          :rules="rulesRef"
+          ref="formRef"
+          class="registerForm"
+          :layout="`vertical`"
+          :model="formState"
+          @finish="handleFinish"
+          @finishFailed="handleFinishFailed"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
       >
         <a-descriptions-item>
           <span class="required"><strong>아이디</strong></span>
           <a-form-item name="username" has-feedback>
-            <a-input v-model:value="formState.username" placeholder="아이디" />
+            <a-input v-model:value="formState.username" placeholder="아이디"/>
           </a-form-item>
           <div class="help">최소 5자 최대 20자이내로 입력해주십시오</div>
         </a-descriptions-item>
         <a-descriptions-item>
           <span class="required"><strong>비밀번호</strong></span>
           <a-form-item name="password" has-feedback>
-            <a-input-password v-model:value="formState.password" type="password" placeholder="비밀번호" />
+            <a-input-password v-model:value="formState.password" type="password" placeholder="비밀번호"/>
           </a-form-item>
           <div class="help">비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오</div>
         </a-descriptions-item>
@@ -44,7 +44,7 @@
         <a-descriptions-item>
           <span class="required"><strong>비밀번호 확인</strong></span>
           <a-form-item name="password_confirm" has-feedback>
-            <a-input-password v-model:value="formState.password_confirm" type="password" placeholder="비밀번호 확인" />
+            <a-input-password v-model:value="formState.password_confirm" type="password" placeholder="비밀번호 확인"/>
           </a-form-item>
           <div class="help">비밀번호와 같게 입력해주십시오</div>
         </a-descriptions-item>
@@ -52,7 +52,7 @@
         <a-descriptions-item>
           <span class="required"><strong>사용자명</strong></span>
           <a-form-item name="name" has-feedback>
-            <a-input v-model:value="formState.name" placeholder="사용자명" />
+            <a-input v-model:value="formState.name" placeholder="사용자명"/>
           </a-form-item>
           <div class="help">최소 2자 최대 20자이내로 입력해주십시오</div>
         </a-descriptions-item>
@@ -60,7 +60,7 @@
         <a-descriptions-item>
           <span class="required"><strong>Email</strong></span>
           <a-form-item name="email" has-feedback>
-            <a-input v-model:value="formState.email" placeholder="Email" />
+            <a-input v-model:value="formState.email" placeholder="Email"/>
           </a-form-item>
           <div class="help">Email을 입력해주십시오</div>
         </a-descriptions-item>
@@ -70,14 +70,14 @@
           <div class="center init-pmbo" style="align-items: flex-start !important;">
             <a-form-item name="phone1" class="w32 mr12" has-feedback>
               <a-input v-model:value="formState.phone1" placeholder="휴대전화" :maxlength="3"
-                       @input="(event) => changeToInput(event, 3, phone2Input)" />
+                       @input="(event) => changeToInput(event, 3, phone2Input)"/>
             </a-form-item>
             <a-form-item name="phone2" class="w32 mr12" has-feedback>
               <a-input v-model:value="formState.phone2" placeholder="휴대전화" :maxlength="4"
-                       @input="(event) => changeToInput(event, 4, phone3Input)" ref="phone2Input" />
+                       @input="(event) => changeToInput(event, 4, phone3Input)" ref="phone2Input"/>
             </a-form-item>
             <a-form-item name="phone3" class="w32" has-feedback>
-              <a-input v-model:value="formState.phone3" placeholder="휴대전화" :maxlength="4" ref="phone3Input" />
+              <a-input v-model:value="formState.phone3" placeholder="휴대전화" :maxlength="4" ref="phone3Input"/>
             </a-form-item>
           </div>
           <div class="help">휴대전화를 입력해주십시오</div>
@@ -90,7 +90,7 @@
         <a-descriptions-item>
           <span class="required"><strong>업체명/사업자명</strong></span>
           <a-form-item name="com_name" has-feedback>
-            <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명" />
+            <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명"/>
           </a-form-item>
           <div class="help">최소 2자 최대 20자이내로 입력해주십시오</div>
         </a-descriptions-item>
@@ -98,7 +98,7 @@
         <a-descriptions-item>
           <span class="required"><strong>사업자번호</strong></span>
           <a-form-item name="com_number" has-feedback>
-            <a-input v-model:value="formState.com_number" placeholder="사업자번호" />
+            <a-input v-model:value="formState.com_number" placeholder="사업자번호"/>
           </a-form-item>
           <div class="help">사업자번호를 입력해주십시오</div>
         </a-descriptions-item>
@@ -108,15 +108,15 @@
           <div class="center init-pmbo" style="align-items: flex-start !important;">
             <a-form-item name="com_phone1" class="w32 mr12" has-feedback>
               <a-input v-model:value="formState.com_phone1" placeholder="사업장 전화번호" :maxlength="3"
-                       @input="(event) => changeToInput(event, 3, comPhone2Input)" />
+                       @input="(event) => changeToInput(event, 3, comPhone2Input)"/>
             </a-form-item>
             <a-form-item name="com_phone2" class="w32 mr12" has-feedback>
               <a-input v-model:value="formState.com_phone2" placeholder="사업장 전화번호" :maxlength="4"
-                       @input="(event) => changeToInput(event, 4, comPhone3Input)" ref="comPhone2Input" />
+                       @input="(event) => changeToInput(event, 4, comPhone3Input)" ref="comPhone2Input"/>
             </a-form-item>
             <a-form-item name="com_phone3" class="w32" has-feedback>
               <a-input v-model:value="formState.com_phone3" placeholder="사업장 전화번호" :maxlength="4"
-                       ref="comPhone3Input" />
+                       ref="comPhone3Input"/>
             </a-form-item>
           </div>
           <div class="help">사업장 전화번호를 입력해주십시오</div>
@@ -125,7 +125,7 @@
         <a-descriptions-item>
           <span class="required"><strong>대표자명</strong></span>
           <a-form-item name="com_ceo" has-feedback>
-            <a-input v-model:value="formState.com_ceo" placeholder="대표자명" />
+            <a-input v-model:value="formState.com_ceo" placeholder="대표자명"/>
           </a-form-item>
           <div class="help">최소 2자 최대 20자이내로 입력해주십시오</div>
         </a-descriptions-item>
@@ -135,14 +135,14 @@
           <div class="center init-pmbo" style="align-items: flex-start !important;">
             <a-form-item name="tel1" class="w32 mr12" has-feedback>
               <a-input v-model:value="formState.tel1" placeholder="유선전화" :maxlength="3"
-                       @input="(event) => changeToInput(event, 3, tell2Input)" />
+                       @input="(event) => changeToInput(event, 3, tell2Input)"/>
             </a-form-item>
             <a-form-item name="tel2" class="w32 mr12" has-feedback>
               <a-input v-model:value="formState.tel2" placeholder="유선전화" :maxlength="4"
-                       @input="(event) => changeToInput(event, 4, tell3Input)" ref="tell2Input" />
+                       @input="(event) => changeToInput(event, 4, tell3Input)" ref="tell2Input"/>
             </a-form-item>
             <a-form-item name="tel3" class="w32" has-feedback>
-              <a-input v-model:value="formState.tel3" placeholder="유선전화" :maxlength="4" ref="tell3Input" />
+              <a-input v-model:value="formState.tel3" placeholder="유선전화" :maxlength="4" ref="tell3Input"/>
             </a-form-item>
           </div>
           <div class="help">유선전화를 입력해주십시오</div>
@@ -155,7 +155,7 @@
             <a-form-item name="commission" has-feedback>
               <a-input v-model:value="formState.commission" placeholder="수수료율 [필수]">
                 <template #prefix>
-                  <LockOutlined style="color: rgba(0, 0, 0, 0.25)" />
+                  <LockOutlined style="color: rgba(0, 0, 0, 0.25)"/>
                 </template>
               </a-input>
             </a-form-item>
@@ -166,7 +166,7 @@
             <a-form-item name="wholesale_commission" has-feedback>
               <a-input v-model:value="formState.wholesale_commission" placeholder="도매 수수료 [필수]">
                 <template #prefix>
-                  <LockOutlined style="color: rgba(0, 0, 0, 0.25)" />
+                  <LockOutlined style="color: rgba(0, 0, 0, 0.25)"/>
                 </template>
               </a-input>
             </a-form-item>
@@ -177,9 +177,9 @@
             <a-form-item name="ac_expect_date" has-feedback>
               <a-tooltip color="white" placement="left">
                 <template #title>
-                  <span style="color: #848a8a" v-html="tooltip.ac_expect_date" />
+                  <span style="color: #848a8a" v-html="tooltip.ac_expect_date"/>
                 </template>
-                <a-input v-model:value="formState.ac_expect_date" placeholder="정산상품 기간설정" />
+                <a-input v-model:value="formState.ac_expect_date" placeholder="정산상품 기간설정"/>
               </a-tooltip>
             </a-form-item>
           </a-descriptions-item>
@@ -189,7 +189,7 @@
             <a-form-item name="account_type" v-bind="validateInfos.account_type">
               <a-tooltip color="white" placement="left">
                 <template #title>
-                  <span style="color: #848a8a" v-html="tooltip.account_type" />
+                  <span style="color: #848a8a" v-html="tooltip.account_type"/>
                 </template>
                 <a-select v-model:value="formState.account_type">
                   <a-select-option value="0">선택해주세요</a-select-option>
@@ -243,10 +243,22 @@
           </a-checkbox>
         </div>
 
+        <div class="foorterSetting">
+          <a-checkbox v-model:checked="formState.is_bridge_sync">
+            배대지 동시가입
+          </a-checkbox>
+          <a-button type="primary" size="small" @click.prevent="bridgeSyncCheck"
+                    :disabled="formState.is_bridge_sync === false">중복확인
+          </a-button>
+          <div style="color: #999999">배대지 아이디가 있을경우 동시가입 체크 해제후 가입해주시고 계정관리에서 바인딩해 주세요.</div>
+        </div>
+
         <a-form-item class="buttons">
-          <a-button type="primary" html-type="submit">회원가입</a-button>
+          <a-button type="primary" html-type="submit"
+                    :disabled="formState.is_bridge_sync === true && bridge_sync_pass !== true">회원가입
+          </a-button>
           <a-button class="init" type="link" :href="'/user/login'">
-            <UserOutlined />
+            <UserOutlined/>
             이미 회원이신가요? 로그인하기
           </a-button>
         </a-form-item>
@@ -257,15 +269,16 @@
 </template>
 
 <script>
-import router, { setFilterRouteList } from "router/index.js";
-import { LoginRequest, NoAuthAjax } from "util/request";
-import { defineComponent, reactive, onBeforeMount, ref } from "vue";
-import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
+import router, {setFilterRouteList} from "router/index.js";
+import {AuthRequest, LoginRequest, NoAuthAjax} from "util/request";
+import {defineComponent, reactive, onBeforeMount, ref} from "vue";
+import {UserOutlined, LockOutlined} from "@ant-design/icons-vue";
 import Cookie from "js-cookie";
-import { isLogin, cookieInit } from "util/auth";
-import { useForm } from "ant-design-vue/es/form";
+import {isLogin, cookieInit} from "util/auth";
+import {useForm} from "ant-design-vue/es/form";
 import Loading from "vue-loading-overlay";
-import { message } from "ant-design-vue";
+import {message} from "ant-design-vue";
+import {useBridgeApi} from "@/api/bridge";
 
 
 export default defineComponent({
@@ -282,7 +295,7 @@ export default defineComponent({
         return false;
       }
     });
-
+    const bridge_sync_pass = ref(false);
     const formRef = ref();
     const formState = reactive({
       username: "",
@@ -329,13 +342,14 @@ export default defineComponent({
       //[필수]수수료율
       commission: "0",
       //[필수]도매 수수료
-      wholesale_commission: "0"
+      wholesale_commission: "0",
+      is_bridge_sync: false
     });
 
     const tooltip = {
       account_type: "판매가: 정산방식 판매가에 수수료 적용 후 정산처리됩니다. " +
-        "<br/><br/>매입가: 정산방식 공급가로 정산되며, 하단 수수료에 0이 아닌 숫자를 입력시 그 숫자의 % 만큼 차감후 정산처리됩니다." +
-        "<br/><br/>선불: 공급가로 정산되며, 발주 요청시 송금처리",
+          "<br/><br/>매입가: 정산방식 공급가로 정산되며, 하단 수수료에 0이 아닌 숫자를 입력시 그 숫자의 % 만큼 차감후 정산처리됩니다." +
+          "<br/><br/>선불: 공급가로 정산되며, 발주 요청시 송금처리",
       ac_expect_date: "정산상품 기간설정은 1~30일내로 입력가능합니다."
     };
 
@@ -365,11 +379,12 @@ export default defineComponent({
         account_method: formState.account_method,
         account_div: formState.account_div,
         commission: formState.commission,
-        wholesale_commission: formState.wholesale_commission
+        wholesale_commission: formState.wholesale_commission,
+        is_bridge_sync: formState.is_bridge_sync
       };
 
       NoAuthAjax.post(
-        process.env.VUE_APP_API_URL + "/api/register", user).then((res) => {
+          process.env.VUE_APP_API_URL + "/api/register", user).then((res) => {
         if (res.data === undefined) {
           message.error("데이터처리중 오류가 발생했습니다. 오류가 지속될시 관리자에게 문의하시길 바랍니다.");
           return false;
@@ -387,7 +402,7 @@ export default defineComponent({
         };
 
         LoginRequest.post(
-          process.env.VUE_APP_API_URL + "/api/login", loginUser).then((res) => {
+            process.env.VUE_APP_API_URL + "/api/login", loginUser).then((res) => {
           if (res.status === undefined || res.status !== "2000") {
             message.error("일시적인 서버장애로 로그인에 실패하였습니다. 잠시 후 시도해주시길 바랍니다.");
             Cookie.remove("token");
@@ -432,7 +447,7 @@ export default defineComponent({
         }
 
         let returnData = await NoAuthAjax.post(
-          process.env.VUE_APP_API_URL + "/api/checkname", value).then((res) => {
+            process.env.VUE_APP_API_URL + "/api/checkname", value).then((res) => {
           return res.data;
         });
 
@@ -808,9 +823,33 @@ export default defineComponent({
       ]
     });
 
-    const { resetFields, validate, validateInfos } = useForm(formState, rulesRef);
+    const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
 
     const checked = ref(false);
+
+    const bridgeSyncCheck = () => {
+      if (formState.is_bridge_sync === true) {
+
+        NoAuthAjax.post(
+            process.env.VUE_APP_API_URL + "/api/bridge/syncCheck", {
+              mb_id: formState.username
+            }).then((res) => {
+
+          if (res.data.status !== "2000") {
+            message.error(res.data.message);
+            return false;
+          }
+
+          if (res.data.data.code !== "2000") {
+            message.error(res.data.data.message);
+            return false;
+          }
+
+          message.success("배대지 동시가입 가능 합니다. 회원가입 진행 해주세요.");
+          bridge_sync_pass.value = true;
+        });
+      }
+    };
 
     return {
       checked,
@@ -838,7 +877,9 @@ export default defineComponent({
       comPhone3Input,
       tell2Input,
       tell3Input,
-      changeToInput
+      changeToInput,
+      bridge_sync_pass,
+      bridgeSyncCheck
     };
   }
 });

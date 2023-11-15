@@ -1,5 +1,6 @@
 <template>
-  <a-card :loading="formState.loading" :bordered="false" :title="'사용자 정보 수정'">
+  <BindBridge />
+  <a-card :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
 
     <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">
@@ -109,6 +110,7 @@ import {useUserApi} from "@/api/user";
 import Password from "@/views/Setting/Password.vue";
 import Account from "@/views/Setting/Account.vue";
 import Guide from "@/views/Setting/Guide.vue";
+import BindBridge from "@/views/Setting/BindBridge.vue";
 
 const formState = reactive({
   username: "",

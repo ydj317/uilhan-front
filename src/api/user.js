@@ -20,5 +20,14 @@ export function useUserApi() {
             });
         },
 
+        bindBridge: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/user/bindBridge",
+                method: "post",
+                data: data,
+            });
+        },
+
+
     }
 }

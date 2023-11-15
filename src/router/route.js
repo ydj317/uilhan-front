@@ -11,7 +11,7 @@ import {
     CloseCircleOutlined,
     ProfileOutlined,
     DashboardOutlined,
-    FileExcelOutlined
+    FileExcelOutlined, NotificationOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -24,35 +24,13 @@ export const menus = [{
         {
             path: "/dashboard",
             name: "dashboard",
-            component: () => import("@/views/Product/Dashboard"),
+            component: () => import("@/views/Dashboard.vue"),
             meta: {
-                title: "메인",
+                title: "홈",
                 isHide: false,
                 roles: ["ROLE_USER"],
                 icon: DashboardOutlined
             }
-        },
-        {
-            path: "/market/accounts/list",
-            name: "market_accounts_list",
-            component: () => import("@/views/MarketAccount/List.vue"),
-            meta: {
-                title: "마켓계정관리",
-                isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: GiftOutlined,
-            },
-        },
-        {
-            path: "/market/accounts/register/:id?",
-            name: "market_accounts_register",
-            component: () => import("@/views/MarketAccount/Register.vue"),
-            meta: {
-                title: "마켓계정관리-등록/수정",
-                isHide: true,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: GiftOutlined,
-            },
         },
         {
             path: "/product",
@@ -113,6 +91,29 @@ export const menus = [{
             },
         },
         {
+            path: "/market/accounts/list",
+            name: "market_accounts_list",
+            component: () => import("@/views/MarketAccount/List.vue"),
+            meta: {
+                title: "마켓연동",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: GiftOutlined,
+            },
+        },
+        {
+            path: "/market/accounts/register/:id?",
+            name: "market_accounts_register",
+            component: () => import("@/views/MarketAccount/Register.vue"),
+            meta: {
+                title: "마켓연동관리-등록/수정",
+                isHide: true,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: GiftOutlined,
+            },
+        },
+
+        {
             path: "/board",
             name: "board",
             redirect: "/board/list",
@@ -156,29 +157,6 @@ export const menus = [{
                         roles: ["ROLE_ADMIN"],
                         icon: '',
                         active: "/board/list"
-                    },
-                },
-                {
-                    path: "/board/notice",
-                    name: "board_notice",
-                    component: () => import("@/views/Board/NoticeList.vue"),
-                    meta: {
-                        title: "공지사항",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
-                {
-                    path: "/board/notice/view/:id?",
-                    name: "board_notice_view",
-                    component: () => import("@/views/Board/NoticeView.vue"),
-                    meta: {
-                        title: "공지사항 - 보기",
-                        isHide: true,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                        active: "/board/notice"
                     },
                 },
                 {
@@ -233,7 +211,7 @@ export const menus = [{
                     name: "setting_updateDetail",
                     component: () => import("@/views/Setting/UpdateDetail"),
                     meta: {
-                        title: "사용자 정보 수정",
+                        title: "계정 정보",
                         isHide: false,
                         roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
@@ -244,7 +222,7 @@ export const menus = [{
                     name: "setting_margin",
                     component: () => import("@/views/Setting/Margin"),
                     meta: {
-                        title: "마진 & 환율",
+                        title: "수익률 & 환율 설정",
                         isHide: false,
                         roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
@@ -263,6 +241,49 @@ export const menus = [{
                     }
                 },
             ]
+        },
+        {
+            path: "/board/notice",
+            name: "board_notice",
+            component: () => import("@/views/Board/NoticeList.vue"),
+            meta: {
+                title: "공지사항",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: NotificationOutlined,
+            },
+        },
+        {
+            path: "/board/notice/view/:id?",
+            name: "board_notice_view",
+            component: () => import("@/views/Board/NoticeView.vue"),
+            meta: {
+                title: "공지사항 - 보기",
+                isHide: true,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: '',
+                active: "/board/notice"
+            },
+        },
+        {
+            path: "https://blog.naver.com/worldlink_",
+            name: "app_blog",
+            meta: {
+                title: "월드링크 블로그",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: '',
+            },
+        },
+        {
+            path: "https://open.kakao.com/o/ggOPXdSf",
+            name: "app_chat",
+            meta: {
+                title: "오픈 채팅방",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: '',
+            },
         },
         {
             path: "/user",

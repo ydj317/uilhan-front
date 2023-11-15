@@ -28,14 +28,14 @@
 
         <!--검색입력창-->
         <div class="inline-block mt10">
-          <h1>키워드</h1>
+          <h1>검색어</h1>
           <a-input-group compact>
             <a-select v-model:value="search_key" style="width: 150px;">
               <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">
                 {{ config.label }}
               </a-select-option>
             </a-select>
-            <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;" />
+            <a-input v-model:value="search_value" placeholder="검색어" style="width: 300px;" />
           </a-input-group>
         </div>
 
@@ -65,8 +65,8 @@
 
       <!--right button-->
       <div class=" pl5 ">
-        <!--제휴사 상품연동-->
-        <a-button @click="MarketListPop(record)" type="primary">제휴사 상품연동</a-button>
+        <!--선택상품 등록-->
+        <a-button @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
       </div>
     </div>
 
@@ -135,7 +135,7 @@
             </div>
           </template>
 
-          <!--연동상태-->
+          <!--등록상태-->
           <template v-if="column.key === 'item_status'">
 
             <span v-if="record.item_sync_date">
@@ -156,7 +156,7 @@
           <!--제휴사연동-->
           <template v-if="column.key === 'item_sync_status'">
             <div class="center">
-              <a-button @click="singlePop(record)" type="primary" shape="round">연동관리</a-button>
+              <a-button @click="singlePop(record)" type="primary" shape="round">등록관리</a-button>
             </div>
           </template>
 
@@ -165,10 +165,19 @@
     </div>
   </a-card>
 
-  <!--제휴사연동-->
+  <!--선택상품 등록-->
   <div id="footer">
-    <!--제휴사 상품연동-->
-    <a-modal width="1000px" title="제휴사 상품연동" v-model:visible="singleSyncPop" centered>
+    <!--선택상품 등록-->
+    <a-modal width="1000px" v-model:visible="singleSyncPop" centered>
+      <template #title>
+        선택상품 등록
+        <a-tooltip>
+          <template #title>
+            <div>상품을 등록할 마켓을 선택하여 등록해 주세요.</div>
+          </template>
+          <QuestionCircleOutlined/>
+        </a-tooltip>
+      </template>
       <a-table class="tableSyncStatus" :dataSource="singleDetail.item_sync_market" :columns="SYNC_COLUMNS_CONFIG"
         :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }">
 
@@ -254,7 +263,7 @@ import {
   CloseCircleOutlined,
   CheckCircleOutlined,
   LinkOutlined,
-  DollarTwoTone, SearchOutlined
+  DollarTwoTone, SearchOutlined, QuestionCircleOutlined
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import { lib } from "@/util/lib";
@@ -262,6 +271,7 @@ import router from "@/router";
 
 export default defineComponent({
   components: {
+    QuestionCircleOutlined,
     SearchOutlined,
     DollarTwoTone,
     Loading,
@@ -329,11 +339,11 @@ export default defineComponent({
               value: "0"
             },
             {
-              label: "미연동",
+              label: "미등록",
               value: "2"
             }
           ],
-          label: "연동상태",
+          label: "등록상태",
           key: "sync_status",
           class: "inline-block",
           group_class: "start"
@@ -394,13 +404,13 @@ export default defineComponent({
           align: "center"
         },
         {
-          title: "연동상태",
+          title: "등록상태",
           key: "item_status",
           width: "8%",
           align: "center"
         },
         {
-          title: "제휴사연동",
+          title: "마켓등록",
           key: "item_sync_status",
           width: "8%",
           align: "center"
@@ -427,18 +437,18 @@ export default defineComponent({
       },
       SYNC_COLUMNS_CONFIG: [
         {
-          title: "쇼핑몰",
+          title: "마켓",
           key: "market_account",
-          width: "200px",
           align: "center"
         },
         {
-          title: "연동상태",
+          title: "등록상태",
           key: "status",
-          align: "center"
+          align: "center",
+          width: "100px",
         },
         {
-          title: "연동시간",
+          title: "등록시간",
           key: "ins_time",
           width: "170px",
           align: "center"
@@ -850,7 +860,7 @@ export default defineComponent({
 
         sycnMarkets = res.data;
       } catch (e) {
-        message.error("연동상태 조회실패 하였습니다.");
+        message.error("등록상태 조회실패 하였습니다.");
         return false;
       }
 

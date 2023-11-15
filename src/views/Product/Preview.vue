@@ -92,12 +92,12 @@
       </a-collapse-panel>
     </a-collapse>
 
-    <!--상세설명 Module-->
+    <!--상세페이지 Module-->
     <a-collapse
       v-model:activeKey="visibleOfModuleSwitch[5]"
       class="pl20 pr20 pb20 mb30 bg-white"
     >
-      <a-collapse-panel key="1" header="상세설명">
+      <a-collapse-panel key="1" header="상세페이지">
         <div
           style="
             border: 1px solid gray;

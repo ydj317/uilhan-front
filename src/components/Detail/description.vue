@@ -2,7 +2,7 @@
   <div id="eModelTitle_6" class="mt20 p20 bg-white">
     <!--title-->
     <div style="display: flex; justify-content: space-between;">
-      <h1><strong>상세설명</strong></h1>
+      <h1><strong>상세페이지</strong></h1>
       <div class="editorToolbar">
         <a-space>
           <span>옵션 테이블</span>
@@ -33,7 +33,16 @@
             </a-input-group>
           </div>
           <router-link v-else to="/setting/guideForm">
-            <a-button type="primary">안내정보 등록</a-button>
+            <a-button type="primary">
+              상하단이미지 설정
+              <a-tooltip>
+                <template #title>
+                  <div class="mb10">상하단 이미지 설정 클릭 시 설정 페이지로 이동합니다.</div>
+                  <div>이동 전 수정하신 내용을 먼저 저장해주세요.</div>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
+            </a-button>
           </router-link>
         </a-space>
 
@@ -43,7 +52,7 @@
       </div>
     </div>
 
-    <!-- 상세설명 편집기 -->
+    <!-- 상세페이지 편집기 -->
     <div style="margin-top: 10px;">
       <TEditor
         ref="editor"
@@ -62,11 +71,13 @@ import TEditor from "../ImageEditor/TEdtor";
 import { watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
+import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 
 export default {
   name: "productDetailDescription",
 
   components: {
+    QuestionCircleOutlined,
     TEditor
   },
 
