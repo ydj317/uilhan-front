@@ -11,7 +11,8 @@ import {
     CloseCircleOutlined,
     ProfileOutlined,
     DashboardOutlined,
-    FileExcelOutlined, NotificationOutlined
+    FileExcelOutlined, NotificationOutlined,
+    ShoppingOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -98,7 +99,7 @@ export const menus = [{
                 title: "마켓연동",
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: GiftOutlined,
+                icon: ShoppingOutlined,
             },
         },
         {
@@ -109,7 +110,7 @@ export const menus = [{
                 title: "마켓연동관리-등록/수정",
                 isHide: true,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: GiftOutlined,
+                icon: ShoppingOutlined,
             },
         },
         {
@@ -178,6 +179,17 @@ export const menus = [{
                         roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
+                },
+                {
+                    path: "/user/FilterProductWords",
+                    name: "user_filterProductWords",
+                    component: () => import("@/views/User/FilterProductWords"),
+                    meta: {
+                        title: "금지어 관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
                 },
                 {
                     path: "/setting/guideForm/:id?",
@@ -303,17 +315,6 @@ export const menus = [{
                     }
                 },
             ]
-        },
-        {
-            path: "/user/FilterProductWords",
-            name: "user_filterProductWords",
-            component: () => import("@/views/User/FilterProductWords"),
-            meta: {
-                title: "금지어 관리",
-                isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: CloseCircleOutlined,
-            },
         },
         // {
         //     path: "/product/domeggook",
