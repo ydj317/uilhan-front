@@ -444,6 +444,8 @@ const receiverOrderApi = (ids) => {
     }
 
     message.success(res.data.message);
+  }).finally(() => {
+    getTableData();
   });
 }
 
@@ -474,6 +476,8 @@ const deliveryOrder = (id) => {
     }
 
     message.success(res.data.message === '' ? '배송처리 성공 하었습니다.' : res.data.message);
+  }).finally(() => {
+    getTableData();
   });
 }
 

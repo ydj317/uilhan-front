@@ -798,7 +798,6 @@ export default defineComponent({
         faildItem = this.smartStoreCategory.filter((item) => {
           return this.singleDetail.item_trans_name.includes(item.cate_name);
         })
-
       })
 
       if(faildItem.length > 0) {
