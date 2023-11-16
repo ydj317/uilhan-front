@@ -556,6 +556,9 @@ const syncBridgeStatus = () => {
     state.syncStatusShow = true;
     message.success('수집완료 되였습니다.');
     getTableData();
+  }).catch(() => {
+    message.success('서버연결에 실패 하였습니다.');
+    return false;
   });
 }
 
