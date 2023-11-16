@@ -11,7 +11,8 @@ import {
     CloseCircleOutlined,
     ProfileOutlined,
     DashboardOutlined,
-    FileExcelOutlined, NotificationOutlined
+    FileExcelOutlined, NotificationOutlined,
+    ShoppingOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -98,7 +99,7 @@ export const menus = [{
                 title: "마켓연동",
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: GiftOutlined,
+                icon: ShoppingOutlined,
             },
         },
         {
@@ -109,92 +110,43 @@ export const menus = [{
                 title: "마켓연동관리-등록/수정",
                 isHide: true,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: GiftOutlined,
+                icon: ShoppingOutlined,
             },
         },
-
         {
-            path: "/board",
-            name: "board",
-            redirect: "/board/list",
+            path: "/board/list",
+            name: "board_list",
+            component: () => import("@/views/Board/List.vue"),
             meta: {
-                title: "게시판관리",
+                title: "게시글관리",
                 isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: ProfileOutlined
+                roles: ["ROLE_ADMIN"],
+                icon: ProfileOutlined,
             },
-            "children": [
-                {
-                    path: "/board/list",
-                    name: "board_list",
-                    component: () => import("@/views/Board/List.vue"),
-                    meta: {
-                        title: "게시글관리",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
-                {
-                    path: "/board/form/:id?",
-                    name: "board_form",
-                    component: () => import("@/views/Board/Form.vue"),
-                    meta: {
-                        title: "게시글 추가/수정",
-                        isHide: true,
-                        roles: ["ROLE_ADMIN"],
-                        icon: '',
-                        active: "/board/list"
-                    },
-                },
-                {
-                    path: "/board/view/:id?",
-                    name: "board_view",
-                    component: () => import("@/views/Board/View.vue"),
-                    meta: {
-                        title: "게시글 보기",
-                        isHide: true,
-                        roles: ["ROLE_ADMIN"],
-                        icon: '',
-                        active: "/board/list"
-                    },
-                },
-                {
-                    path: "/board/question",
-                    name: "board_question",
-                    component: () => import("@/views/Board/QuestionList.vue"),
-                    meta: {
-                        title: "1:1 문의",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
-                {
-                    path: "/board/question/form/:id?",
-                    name: "board_question_form",
-                    component: () => import("@/views/Board/QuestionForm.vue"),
-                    meta: {
-                        title: "1:1 문의 수정/삭제",
-                        isHide: true,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                        active: "/board/question"
-                    },
-                },
-                {
-                    path: "/board/question/view/:id?",
-                    name: "board_question_view",
-                    component: () => import("@/views/Board/QuestionView.vue"),
-                    meta: {
-                        title: "1:1 문의 보기",
-                        isHide: true,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                        active: "/board/question"
-                    },
-                },
-            ]
+        },
+        {
+            path: "/board/form/:id?",
+            name: "board_form",
+            component: () => import("@/views/Board/Form.vue"),
+            meta: {
+                title: "게시글 추가/수정",
+                isHide: true,
+                roles: ["ROLE_ADMIN"],
+                icon: '',
+                active: "/board/list"
+            },
+        },
+        {
+            path: "/board/view/:id?",
+            name: "board_view",
+            component: () => import("@/views/Board/View.vue"),
+            meta: {
+                title: "게시글 보기",
+                isHide: true,
+                roles: ["ROLE_ADMIN"],
+                icon: '',
+                active: "/board/list"
+            },
         },
         {
             path: "/setting",
@@ -227,6 +179,17 @@ export const menus = [{
                         roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
+                },
+                {
+                    path: "/user/FilterProductWords",
+                    name: "user_filterProductWords",
+                    component: () => import("@/views/User/FilterProductWords"),
+                    meta: {
+                        title: "금지어 관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
                 },
                 {
                     path: "/setting/guideForm/:id?",
@@ -352,17 +315,6 @@ export const menus = [{
                     }
                 },
             ]
-        },
-        {
-            path: "/user/FilterProductWords",
-            name: "user_filterProductWords",
-            component: () => import("@/views/User/FilterProductWords"),
-            meta: {
-                title: "금지어 관리",
-                isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: CloseCircleOutlined,
-            },
         },
         // {
         //     path: "/product/domeggook",

@@ -45,6 +45,7 @@ import {mapState} from 'vuex';
 import {AuthRequest} from '@/util/request';
 import { message } from "ant-design-vue";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {useCategoryApi} from "@/api/category";
 
 export default {
   components: {QuestionCircleOutlined},
@@ -71,7 +72,8 @@ export default {
         },
       ],
       checkAll: false,
-      marketSelectedRowKeys: []
+      marketSelectedRowKeys: [],
+      smartStoreCategory: [],
     };
   },
 
@@ -101,22 +103,26 @@ export default {
     },
 
     async sendMarket() {
-      this.relaket.data.indicator = true;
 
       let productList = this.getCheckList();
       let accountList = this.relaket.data.options.filter(item => item.checked === true);
 
       if (productList === "," || productList.length === 0) {
         message.warning('선택된 상품이 없습니다.');
-        this.relaket.data.indicator = false;
         return false;
       }
 
       if (accountList.length === undefined || accountList.length === 0) {
         message.warning("선택된 계정이 없습니다.");
-        this.relaket.data.indicator = false;
         return false;
       }
+
+      const checkSmartStore = this.checkSmartStoreCategory(accountList);
+      if(checkSmartStore === false) {
+        return false
+      }
+
+      this.relaket.data.indicator = true;
 
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
@@ -157,6 +163,43 @@ export default {
 
     },
 
+    checkSmartStoreCategory(accountList) {
+      const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
+      const checkedPrdList = this.relaket.data.prdlist.filter((item) => item.checked === true);
+
+      let faildItem = [];
+      if(smartstoreAccounts.length === 0) {
+        return true;
+      }
+
+      checkedPrdList.map((prdItem) => {
+        faildItem = this.smartStoreCategory.filter((item) => {
+          return prdItem.item_sync_keyword.includes(item.cate_name);
+        })
+      })
+
+      if(faildItem.length > 0) {
+        message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
+        return false;
+      }
+      return true;
+    },
+
+    async getSmartstoreCategory() {
+      await useCategoryApi().getSmartstoreCategory({}).then((res) => {
+        if(res.status !== '2000'){
+          message.error(res.message);
+          return false;
+        }
+
+        this.smartStoreCategory = res.data
+      }).catch((e) => {
+        message.error(e.message);
+        return false;
+      })
+
+    },
+
     getCheckList() {
       let list = '';
       for (let i = 0; i < this.relaket.data.prdlist.length; i++) {
@@ -171,6 +214,7 @@ export default {
   },
 
   mounted() {
+    this.getSmartstoreCategory();
   },
 };
 

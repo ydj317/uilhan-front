@@ -46,12 +46,16 @@ const getHistoryList = async () => {
   await useHistoryApi().getHistoryList(historyData.value).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
-      state.loading = false
       return false;
     }
 
     const { list } = res.data;
     state.data = list;
+
+  }).catch((e) => {
+    message.error(e.message);
+    return false;
+  }).finally(() => {
     state.loading = false;
   });
 }

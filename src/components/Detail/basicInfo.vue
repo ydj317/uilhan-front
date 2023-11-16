@@ -3,7 +3,7 @@
     <h1><strong>기본정보</strong></h1>
 
     <div class="detail-basic">
-      <a-descriptions bordered :column="{ xs: 1, sm: 1, md: 1}" >
+      <a-descriptions bordered :column="1" >
         <a-descriptions-item label="상품명칭" v-if="product.item_is_trans === false">
           <a-input v-model:value="product.item_name" :placeholder="`상품명칭을 입력하세요.`" />
         </a-descriptions-item>

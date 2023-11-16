@@ -106,8 +106,8 @@ const removeAccount = (id) => {
     getTableList();
   });
 };
-const getTableList = () => {
-    useMarketAccountApi().getAccountList(state.tableData.params).then(res => {
+const getTableList = async () => {
+    await useMarketAccountApi().getAccountList(state.tableData.params).then(res => {
         const { list, total } = res.data
 
         state.tableData.data = list;
@@ -115,8 +115,8 @@ const getTableList = () => {
     });
 };
 
-const getMarketList = () => {
-  useMarketApi().getMarketList({}).then(res => {
+const getMarketList = async () => {
+  await useMarketApi().getMarketList({}).then(res => {
     state.marketList = [];
 
     for (let key in res.data) {
@@ -148,8 +148,7 @@ const rowSelection = {
 };
 
 onMounted(() => {
-    getTableList();
-    getMarketList();
+  Promise.all([getTableList(), getMarketList()])
 });
 
 const handleOk = (e) => {

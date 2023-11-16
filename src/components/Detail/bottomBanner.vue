@@ -12,7 +12,7 @@
     </a-affix>
 
     <!--제휴사 상품연동-->
-    <a-modal width="1000px" title="제휴사 상품연동" v-model:visible="singleSyncPop" centered>
+    <a-modal width="1000px" title="상품등록" v-model:visible="singleSyncPop" centered>
       <a-table
         class="tableSyncStatus"
         :dataSource="this.product.item_sync_market"
@@ -59,7 +59,7 @@
       </a-table>
 
       <template v-slot:footer>
-        <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
+        <a-button type="primary" @click="sendMarket()">선택마켓등록</a-button>
         <a-button @click="closeResultPop()">닫기</a-button>
       </template>
     </a-modal>
@@ -92,6 +92,7 @@ import { lib } from "@/util/lib";
 import moment from "moment/moment";
 import { message } from "ant-design-vue";
 import { useRoute } from "vue-router";
+import {useCategoryApi} from "@/api/category";
 
 export default {
   computed: {
@@ -103,18 +104,18 @@ export default {
     return {
       SYNC_COLUMNS_CONFIG: [
         {
-          title: "쇼핑몰",
+          title: "마켓",
           key: "market_account",
-          width: "200px",
+          width: "230px",
           align: "center"
         },
         {
-          title: "연동상태",
+          title: "등록상태",
           key: "status",
           align: "center"
         },
         {
-          title: "연동시간",
+          title: "등록시간",
           key: "ins_time",
           width: "170px",
           align: "center"
@@ -128,7 +129,8 @@ export default {
       marketSyncFailed: 0,
       marketSyncTotal: 0,
       syncSelectedRowKeys: [],
-      marketSyncResult: []
+      marketSyncResult: [],
+      smartStoreCategory: [],
     };
   },
 
@@ -357,15 +359,18 @@ export default {
     },
 
     async sendMarket() {
-      this.product.loading = true;
 
       let accountList = this.product.item_sync_market.filter(item => item.checked === true);
       if (accountList.length === 0 || accountList.length === undefined) {
         message.warning("선택된 계정이 없습니다.");
-        this.product.loading = false;
         return false;
       }
 
+      const checkSmartStore = this.checkSmartStoreCategory(accountList);
+      if(checkSmartStore === false) {
+        return false
+      }
+      this.product.loading = true;
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
           productList: this.product.item_id + "",
@@ -633,6 +638,42 @@ export default {
 
       return oForm;
     },
+
+    async getSmartstoreCategory() {
+      await useCategoryApi().getSmartstoreCategory({}).then((res) => {
+        if(res.status !== '2000'){
+          message.error(res.message);
+          return false;
+        }
+
+        this.smartStoreCategory = res.data
+      }).catch((e) => {
+        message.error(e.message);
+        return false;
+      })
+
+    },
+    checkSmartStoreCategory(accountList) {
+      const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
+
+      let faildItem = [];
+      if(smartstoreAccounts.length === 0) {
+        return true;
+      }
+
+      faildItem = this.smartStoreCategory.filter((item) => {
+        return this.product.formState.keyword.includes(item.cate_name);
+      })
+
+      if(faildItem.length > 0) {
+        message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
+        return false;
+      }
+      return true;
+    },
+  },
+  beforeMount() {
+    this.getSmartstoreCategory();
   },
 
 };
