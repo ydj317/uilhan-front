@@ -790,23 +790,23 @@ export default defineComponent({
     },
 
     checkSmartStoreCategory(accountList) {
+
       const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
 
-      // this.singleDetail.item_trans_name 에서 this.smartStoreCategory 안의 값들이 포함되였는지 구하고 싶어
       let faildItem = [];
-      smartstoreAccounts.forEach((AccountItem) => {
-        faildItem = this.smartStoreCategory.filter((item) => {
-          return this.singleDetail.item_trans_name.includes(item.cate_name);
-        })
+      if(smartstoreAccounts.length === 0) {
+        return true;
+      }
+
+      faildItem = this.smartStoreCategory.filter((item) => {
+        return this.singleDetail.item_sync_keyword.includes(item.cate_name);
       })
 
       if(faildItem.length > 0) {
         message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
         return false;
       }
-
       return true;
-
     },
 
     async sendMarket() {
