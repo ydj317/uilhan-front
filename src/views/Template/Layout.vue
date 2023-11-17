@@ -7,8 +7,8 @@
           <img src="@/assets/logo.png" style="height:35px;">
       </div>
       <div class="logo" v-if="!collapsed">
-          <img src="@/assets/logo_width.png" v-if="is_xplan">
-          <img src="@/assets/world_link_logo_width.png" v-else>
+          <img src="@/assets/logo_width.png" v-if="!is_xplan" :key="is_xplan" @click="goDashboard">
+          <img src="@/assets/world_link_logo_width.png" v-else :key="is_xplan"  @click="goDashboard">
       </div>
       <Sider/>
     </a-layout-sider>
@@ -40,6 +40,9 @@ import NoticePopup from "@/views/Template/NoticePopup.vue";
 
 const collapsed = ref(false)
 const is_xplan = ref(false)
+const goDashboard = () => {
+  window.location.href = '/dashboard'
+}
 
 onMounted(() => {
   const currentHost = window.location

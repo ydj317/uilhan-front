@@ -27,7 +27,7 @@ export const menus = [{
             name: "dashboard",
             component: () => import("@/views/Dashboard.vue"),
             meta: {
-                title: "홈",
+                title: "대시보드",
                 isHide: false,
                 roles: ["ROLE_USER"],
                 icon: DashboardOutlined
@@ -206,62 +206,6 @@ export const menus = [{
             ]
         },
         {
-            path: "/board/notice",
-            name: "board_notice",
-            component: () => import("@/views/Board/NoticeList.vue"),
-            meta: {
-                title: "공지사항",
-                isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: NotificationOutlined,
-            },
-        },
-        {
-            path: "/board/notice/view/:id?",
-            name: "board_notice_view",
-            component: () => import("@/views/Board/NoticeView.vue"),
-            meta: {
-                title: "공지사항 - 보기",
-                isHide: true,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: '',
-                active: "/board/notice"
-            },
-        },
-        {
-            path: "/blog",
-            name: "blog",
-            meta: {
-                title: "커뮤니티",
-                isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: MoneyCollectOutlined
-            },
-            "children": [
-                {
-                    path: "https://open.kakao.com/o/ggOPXdSf",
-                    name: "app_chat",
-                    meta: {
-                        title: "월드링크 오픈 채팅방",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
-                {
-                    path: "https://blog.naver.com/worldlink_",
-                    name: "app_blog",
-                    meta: {
-                        title: "월드링크 블로그",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
-            ]
-        },
-
-        {
             path: "/user",
             name: "user",
             meta: {
@@ -326,6 +270,61 @@ export const menus = [{
                         roles: ["ROLE_ADMIN"],
                         icon: '',
                     }
+                },
+            ]
+        },
+        {
+            path: "/board/notice",
+            name: "board_notice",
+            component: () => import("@/views/Board/NoticeList.vue"),
+            meta: {
+                title: "공지사항",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: NotificationOutlined,
+            },
+        },
+        {
+            path: "/board/notice/view/:id?",
+            name: "board_notice_view",
+            component: () => import("@/views/Board/NoticeView.vue"),
+            meta: {
+                title: "공지사항 - 보기",
+                isHide: true,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: '',
+                active: "/board/notice"
+            },
+        },
+        {
+            path: "/blog",
+            name: "blog",
+            meta: {
+                title: "커뮤니티",
+                isHide: false,
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                icon: MoneyCollectOutlined
+            },
+            "children": [
+                {
+                    path: "https://open.kakao.com/o/ggOPXdSf",
+                    name: "app_chat",
+                    meta: {
+                        title: "월드링크 오픈 채팅방",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+                {
+                    path: "https://blog.naver.com/worldlink_",
+                    name: "app_blog",
+                    meta: {
+                        title: "월드링크 블로그",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
                 },
             ]
         },
