@@ -5,9 +5,8 @@
   <div class="_container">
     <div class="header">
       <div class="icon">
-        <img src="../../assets/img/logo-light.png" alt="">
-        <img src="@/assets/logo_width.png" v-if="!is_xplan" :key="is_xplan" @click="goDashboard">
-        <img src="@/assets/world_link_logo_width.png" v-else :key="is_xplan"  @click="goDashboard">
+        <img src="../../assets/img/logo-light.png" v-if="!is_xplan" :key="is_xplan">
+        <img src="@/assets/img/logo-light-worldlink.png" v-else :key="is_xplan">
       </div>
       <!--        <div class="tip">-->
       <!--          <h5>이용해주셔서 감사합니다!</h5>-->
