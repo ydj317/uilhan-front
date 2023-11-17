@@ -59,7 +59,7 @@
               상품태그
               <a-tooltip>
                 <template #title>
-                  <div>상품태그에는 상품 카테고리를 명칭을 기입 할 수 없습니다.</div>
+                  <div>상품태그에는 상품 카테고리 명칭을 기입 할 수 없습니다.</div>
                 </template>
                 <QuestionCircleOutlined/>
               </a-tooltip>

@@ -152,7 +152,7 @@ export const menus = [{
             path: "/setting",
             name: "setting",
             meta: {
-                title: "설정",
+                title: "기타설정",
                 isHide: false,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: SettingOutlined
@@ -229,25 +229,38 @@ export const menus = [{
             },
         },
         {
-            path: "https://blog.naver.com/worldlink_",
-            name: "app_blog",
+            path: "/blog",
+            name: "blog",
             meta: {
-                title: "월드링크 블로그",
+                title: "커뮤니티",
                 isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: '',
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                icon: MoneyCollectOutlined
             },
+            "children": [
+                {
+                    path: "https://open.kakao.com/o/ggOPXdSf",
+                    name: "app_chat",
+                    meta: {
+                        title: "월드링크 오픈 채팅방",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+                {
+                    path: "https://blog.naver.com/worldlink_",
+                    name: "app_blog",
+                    meta: {
+                        title: "월드링크 블로그",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+            ]
         },
-        {
-            path: "https://open.kakao.com/o/ggOPXdSf",
-            name: "app_chat",
-            meta: {
-                title: "오픈 채팅방",
-                isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: '',
-            },
-        },
+
         {
             path: "/user",
             name: "user",

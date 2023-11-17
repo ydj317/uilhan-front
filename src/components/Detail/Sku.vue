@@ -35,7 +35,7 @@
           <a-space>
             <a-tooltip>
               <template #title>
-                <div>무료배송 체크시 배송비를 판매가에 추가하여 등록 됩니다.</div>
+                <div>무료배송 박스 체크 시 배송비를 상품 판매가 내 추가하여 등록 할 수 있는 기능입니다.</div>
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>

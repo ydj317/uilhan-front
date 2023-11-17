@@ -18,6 +18,9 @@
         </div>
         <a-divider type="vertical"/>
         <div>
+          <a-button type="link" size="small" @click="worldLinkGuide">월드링크 가이드북</a-button>
+        </div>
+        <div>
           <a-button type="link" @click.prevent="extensionDown" size="small">크롬 확장 프로그램</a-button>
           <a-spin v-if="indicator"/>
         </div>
@@ -135,7 +138,7 @@ export default {
         case "userinfo":
           break;
         case "setting":
-          location.href = "/setting/account";
+          location.href = "/setting/updateDetail";
           break;
         case "logout":
           this.logout();
@@ -172,6 +175,10 @@ export default {
         url.revokeObjectURL(href);
         this.indicator = false;
       });
+    },
+
+    worldLinkGuide() {
+      window.open("https://www.notion.so/worldlink/WORLD-LINK-0013348223c04c4792ed5d26b7c982ac", "_blank");
     },
 
     getRate() {

@@ -16,7 +16,16 @@
     </template>
     <div id="header">
       <a-descriptions bordered :column="1" size="middle">
-        <a-descriptions-item label="검색기간">
+        <a-descriptions-item>
+          <template #label>
+            검색기간
+            <a-tooltip>
+              <template #title>
+                <div>검색기간은 30일 단위로 조회 가능합니다.</div>
+              </template>
+              <QuestionCircleOutlined/>
+            </a-tooltip>
+          </template>
           <a-input-group compact>
             <a-space direction="vertical" :size="12">
               <a-range-picker v-model:value="state.order_date" @change="onChangeDatePicker"/>
@@ -38,7 +47,6 @@
           <a-input-group compact style="display: flex;">
             <a-select v-model:value="state.tableData.params.search_type" style="width: 100px;">
               <a-select-option value="order_no">주문번호</a-select-option>
-              <a-select-option value="item_no">품주번호</a-select-option>
               <a-select-option value="prd_code">상품번호</a-select-option>
               <a-select-option value="prd_name">상품명</a-select-option>
               <a-select-option value="prd_option_no">옵션번호</a-select-option>
@@ -654,11 +662,11 @@ const getUserInfoData = async () => {
 }
 
 onMounted(async () => {
-  await getAccountData()
-  await Promise.all([getUserInfoData(), getMarketStatusList().then(() =>{
-    state.allStatus = [...state.orderStatus, ...state.claimStatus]
-  }), getMarketClaimStatusList(), getMarketAdminUrls(), getMarketDetailUrls()])
-  await getTableData()
+  await Promise.all([getAccountData(), getUserInfoData(), getMarketStatusList(), getMarketClaimStatusList(), getMarketAdminUrls(), getMarketDetailUrls()])
+      .then(() => {
+        state.allStatus = [...state.orderStatus, ...state.claimStatus]
+        getTableData()
+      })
 })
 
 </script>

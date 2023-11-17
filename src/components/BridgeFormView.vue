@@ -1,8 +1,15 @@
 <template>
   <a-modal v-model:visible="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청'" width="1000px"
            :confirm-loading="state.confirmLoading" @ok="handleOk" @cancel="onClose">
-    <div v-if="state.loading" style="height: 600px;display: flex;justify-content: center;align-items: center;"><a-spin size="large" /></div>
-    <div v-else style="height: 600px;overflow-y: scroll;">
+    <a-affix>
+      <a-space direction="vertical" class="mb15">
+        <div>서비스 신청 유의사항</div>
+        <div>📢 구매대행 신청 시 기입 정보 다시 한번 확인 부탁드립니다 .</div>
+        <div>📢 주문 접수 완료 후 정보 수정은 월드링크 배대지 사이트에서만 가능합니다.</div>
+      </a-space>
+    </a-affix>
+    <div v-if="state.loading" style="height: 500px;display: flex;justify-content: center;align-items: center;"><a-spin size="large" /></div>
+    <div v-else style="height: 500px;overflow-y: scroll;">
       <a-descriptions title="물류센터를 선택해 주세요." bordered :column="1" :labelStyle="{ width: '100px' }"
                       :contentStyle="{ width: '500px' }">
         <a-descriptions-item label="물류 센터">
@@ -258,14 +265,14 @@
 </template>
 
 <script setup>
-import {toRefs, onMounted, watch, watchEffect, reactive, ref, computed} from 'vue'
+import {toRefs, watchEffect, reactive, computed} from 'vue'
 import {message} from "ant-design-vue";
-import { UploadOutlined } from '@ant-design/icons-vue';
+import {ExclamationCircleOutlined, UploadOutlined} from '@ant-design/icons-vue';
 import {useMarketOrderApi} from "@/api/order";
-import {NoAuthAjax} from "@/util/request";
 import {useBridgeApi} from "@/api/bridge";
 import Cookie from "js-cookie";
-import {useUserApi} from "@/api/user";
+import { createVNode } from 'vue';
+import { Modal } from 'ant-design-vue';
 
 const props = defineProps({
   visible: Boolean,
@@ -454,22 +461,37 @@ const handleOk = () => {
     return false;
   }
 
-  state.confirmLoading = true;
-  useMarketOrderApi().registerBridgeOrder(state.form).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      state.confirmLoading = false
-      return false;
-    }
-    state.confirmLoading = false
-    message.success(`${state.form.app_type} 신청서가 등록되었습니다.`);
-    emit('update')
-    emit('close')
-  }).catch(err => {
-    message.error(err.message);
-    state.confirmLoading = false
-  })
+  showConfirm()
 };
+
+const showConfirm = () => {
+  Modal.confirm({
+    title: '추가 수정 사항은 없으신가요?',
+    icon: createVNode(ExclamationCircleOutlined),
+    content: createVNode('div', {style: 'color:red;'}, '*주문 건 정보 수정은 월드링크 배대지 사이트에서만 가능합니다.'),
+    onOk() {
+      state.confirmLoading = true;
+      useMarketOrderApi().registerBridgeOrder(state.form).then(res => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          state.confirmLoading = false
+          return false;
+        }
+        state.confirmLoading = false
+        message.success(`${state.form.app_type} 신청서가 등록되었습니다.`);
+        emit('update')
+        emit('close')
+      }).catch(err => {
+        message.error(err.message);
+        state.confirmLoading = false
+      })
+    },
+    onCancel() {
+      console.log('Cancel');
+    },
+    class: 'test',
+  });
+}
 
 // 한글->영문 이름 번역
 const fnHanEng = (pVal) => {
