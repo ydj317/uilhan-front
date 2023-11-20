@@ -61,6 +61,10 @@
           <a-space>
             <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
                            @change="handleStatusChange">
+              <a-radio-button value="">전체</a-radio-button>
+            </a-radio-group>
+            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
+                           @change="handleStatusChange">
               <a-radio-button v-for="option in state.orderStatus" :value="option.value">{{
                   option.label
                 }}
@@ -108,8 +112,7 @@
           </a-button>
         </a-tooltip>
 
-        <a-button @click.prevent="syncBridgeStatus" :loading="state.tableData.syncBridgeStatusLoading"
-                  v-if="state.tableData.params.status === 'shippingAddress'">
+        <a-button @click.prevent="syncBridgeStatus" :loading="state.tableData.syncBridgeStatusLoading">
           <template #icon>
             <RedoOutlined/>
           </template>
@@ -195,11 +198,10 @@
         </template>
       </a-table-column>
 
-      <a-table-column :width="200" title="운송장정보" dataIndex="invoiceNumber" key="invoiceNumber"
-                      v-if="state.tableData.params.status !== 'paid'">
+      <a-table-column :width="200" title="운송장정보" dataIndex="invoiceNumber" key="invoiceNumber">
         <template #default="{ record }">
           <div style="display: flex;flex-direction: column;gap: 5px;"
-               v-if="state.tableData.params.status === 'shippingAddress'">
+               v-if="record.status === 'shippingAddress'">
             <a-select v-model:value="state.courierNameValues[record.id]" placeholder="택배사를 선택해주세요.">
               <a-select-option :value="key" :key="key"
                                v-for="(company, key) in state.marketDeliveryCompany[record.marketCode]">
@@ -215,33 +217,36 @@
         </template>
       </a-table-column>
 
-      <a-table-column title="" :width="200" fixed="right" dataIndex="manage" key="manage"
-                      v-if="!Object.keys(state.claimStatusData).includes(state.tableData.params.status)">
+      <a-table-column title="" :width="200" fixed="right" dataIndex="manage" key="manage" >
         <template #default="{ record }">
           <div style="display: grid;">
             <a-space>
-              <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id']">
+
+              <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id'] && Object.keys(state.orderStatusData).includes(record.status)">
                 <a-button size="small">상세</a-button>
               </RouterLink>
+<!--              <RouterLink :to="`/claim/info/${record['id']}`" v-if="record['id'] && Object.keys(state.claimStatusData).includes(record.status)">-->
+<!--                <a-button size="small">상세</a-button>-->
+<!--              </RouterLink>-->
               <a-button size="small"
                         @click.prevent="showHistory({title: record.prdName + ' - ' + record.prdOptionName, type: 'order', index_id: record.id})">
                 히스토리
               </a-button>
-              <a-button type="info" size="small" v-if="state.tableData.params.status === 'paid'"
+              <a-button type="info" size="small" v-if="record.status === 'paid'"
                         @click.prevent="receiverOneOrder(record.id)">발주
               </a-button>
-              <a-button type="primary" size="small" v-if="state.tableData.params.status === 'shippingAddress'"
+              <a-button type="primary" size="small" v-if="record.status === 'shippingAddress'"
                         @click.prevent="deliveryOrder(record.id)">배송
               </a-button>
             </a-space>
             <a-space class="mt10"
-                     v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 0 && state.is_bridge_sync === true && record.prdImage">
+                     v-if="record.status === 'shippingAddress' && record.isSendBridge === 0 && state.is_bridge_sync === true && record.prdImage">
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'puragent'})">구매대행</a-button>
               <a-button size="small" @click.prevent="showBridgeForm({record: record, type:'shipagent'})">배송대행</a-button>
             </a-space>
 
             <a-space class="mt10"
-                     v-if="state.tableData.params.status === 'shippingAddress' && record.isSendBridge === 1 && state.is_bridge_sync === true && record.prdImage"
+                     v-if="record.status === 'shippingAddress' && record.isSendBridge === 1 && state.is_bridge_sync === true && record.prdImage"
                      direction="vertical" align="center">
               <a-tag color="pink">- 신청서 작성완료 -</a-tag>
               <a-tag size="small" color="#15803d" v-if="state.syncStatusShow">{{ record.bridgeStatus }}</a-tag>
@@ -290,7 +295,7 @@ const state = reactive({
       account_ids: [],
       search_type: 'order_no',
       search_value: '',
-      status: 'paid',
+      status: '',
     },
   },
   accountData: {},
@@ -412,9 +417,7 @@ const rowSelection = ref({
 
 const handleStatusChange = (e) => {
   rowSelection.value.selectedRowKeys = [];
-  if (state.tableData.params.status === 'shippingAddress') {
-    getMarketDeliveryCompany();
-  }
+
   getTableData()
 }
 
@@ -513,8 +516,8 @@ const getMarketAdminUrls = async () => {
 }
 
 // 택배사 목록
-const getMarketDeliveryCompany = () => {
-  useMarketApi().getMarketDeliveryCompany({}).then(res => {
+const getMarketDeliveryCompany = async () => {
+  await useMarketApi().getMarketDeliveryCompany({}).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
@@ -662,7 +665,7 @@ const getUserInfoData = async () => {
 }
 
 onMounted(async () => {
-  await Promise.all([getAccountData(), getUserInfoData(), getMarketStatusList(), getMarketClaimStatusList(), getMarketAdminUrls(), getMarketDetailUrls()])
+  await Promise.all([getAccountData(), getUserInfoData(), getMarketStatusList(), getMarketClaimStatusList(), getMarketDeliveryCompany(), getMarketAdminUrls(), getMarketDetailUrls()])
       .then(() => {
         state.allStatus = [...state.orderStatus, ...state.claimStatus]
         getTableData()
