@@ -85,7 +85,7 @@
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
-            <a-checkbox v-model:checked="isAutoCollect" class="ml10">자동수집</a-checkbox>
+            <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
           </template>
           <a-table :data-source="account.orderData.data" :pagination="false" size="small" summary>
             <a-table-column title="판매처" dataIndex="manage" key="manage">
@@ -243,7 +243,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, reactive, onBeforeUnmount} from "vue";
+import {ref, onMounted, reactive, onBeforeUnmount, watch} from "vue";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
 import ECharts from 'vue-echarts';
@@ -422,17 +422,6 @@ function getLogoSrc(fileName, marketCode) {
   }
 }
 
-function parseHTML(html) {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-
-  if (div.innerHTML.length > 100) {
-    div.innerHTML = div.innerHTML.slice(0, 100) + "...";
-  }
-
-  return div.textContent;
-}
-
 async function getBoard() {
   boardLoading.value = true
   const params = {params: {type: 'notice', page: 1, pageSize: 5}}
@@ -468,7 +457,9 @@ const getSaleList = async () => {
 
 onMounted(() => {
   //getOrder();
-  Promise.all([getBoard(), getTableList(), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
+  Promise.all([getBoard(), getTableList().then(() => {
+    handleBeforeUnload();
+  }), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
       .catch((e) => {
         message.error(e.message)
         return false;
@@ -525,56 +516,56 @@ const getTableList = async () => {
     // 데이터를 조회해올때마다 루프 돌리며 판단하여 데이터 변경이 있는 애들을 찾아냄
     const oldOrderData = sessionStorage.getItem('orderData');
 
-    if (Array.isArray(oldOrderData) && oldOrderData.length > 0) {
+    if (oldOrderData) {
       const oldOrderJson = JSON.parse(oldOrderData);
       oldOrderJson.forEach((item) => {
-        const newData = findObjectById(item.id, list);
-        let newQty = 0;
-        newData.paidNew = '';
-        if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
-          newQty = newData['paid'] - item['paid'];
-          newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
-        }
-        newData.shippingAddressNew = '';
-        if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
-          newQty = newData['shippingAddress'] - item['shippingAddress'];
-          newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
-        }
-        newData.shippingNew = '';
-        if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
-          newQty = newData['shipping'] - item['shipping'];
-          newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
-        }
-        newData.shippingCompleteNew = '';
-        if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
-          newQty = newData['shippingComplete'] - item['shippingComplete'];
-          newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
-        }
+          const newData = findObjectById(item.id, list);
+          let newQty = 0;
+          newData.paidNew = '';
+          if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
+            newQty = newData['paid'] - item['paid'];
+            newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
+          }
+          newData.shippingAddressNew = '';
+          if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
+            newQty = newData['shippingAddress'] - item['shippingAddress'];
+            newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
+          }
+          newData.shippingNew = '';
+          if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
+            newQty = newData['shipping'] - item['shipping'];
+            newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
+          }
+          newData.shippingCompleteNew = '';
+          if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
+            newQty = newData['shippingComplete'] - item['shippingComplete'];
+            newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
+          }
 
-        newData.cancelRequestNew = '';
-        if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
-          newQty = newData['cancelRequest'] - item['cancelRequest'];
-          newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
-        }
+          newData.cancelRequestNew = '';
+          if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
+            newQty = newData['cancelRequest'] - item['cancelRequest'];
+            newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
+          }
 
-        newData.cancelCompleteNew = '';
-        if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
-          newQty = newData['cancelComplete'] - item['cancelComplete'];
-          newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
-        }
-        newData.returnRequestNew = '';
-        if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
-          newQty = newData['returnRequest'] - item['returnRequest'];
-          newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
-        }
+          newData.cancelCompleteNew = '';
+          if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
+            newQty = newData['cancelComplete'] - item['cancelComplete'];
+            newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
+          }
+          newData.returnRequestNew = '';
+          if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
+            newQty = newData['returnRequest'] - item['returnRequest'];
+            newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
+          }
 
-        newData.returnCompleteNew = '';
-        if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
-          newQty = newData['returnComplete'] - item['returnComplete'];
-          newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
-        }
-        orderDataView.push(newData);
-      });
+          newData.returnCompleteNew = '';
+          if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
+            newQty = newData['returnComplete'] - item['returnComplete'];
+            newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
+          }
+          orderDataView.push(newData);
+        });
     } else {
       orderDataView = list
     }
@@ -595,8 +586,8 @@ const getTableList = async () => {
     state.headerCount.claimTotal = totalCancelRequest + totalCancelComplete + totalReturnRequest + totalReturnComplete
 
     // 리스트 데이터를 세션스토레이지에 넣어서 비교할때 사용함
-    const newOrderData = JSON.stringify(list);
-    sessionStorage.setItem('orderData', newOrderData);
+    // const newOrderData = JSON.stringify(list);
+    // sessionStorage.setItem('orderData', newOrderData);
 
   }).catch((e) => {
     message.error(e.message);
@@ -637,29 +628,29 @@ const openMarketAdminPage = (marketCode) => {
 }
 
 // 监听页面关闭事件
-const handleBeforeUnload = (event) => {
-  event.preventDefault();
+const handleBeforeUnload = () => {
   // 在页面关闭前执行操作
   const newOrderData = JSON.stringify(account.orderData.list);
   sessionStorage.setItem('orderData', newOrderData);
 };
 
-onBeforeUnmount(() => {
-  // 移除 beforeunload 事件监听器，确保页面关闭时不会再触发
-  window.removeEventListener('beforeunload', handleBeforeUnload);
-});
-
-// 添加 beforeunload 事件监听器
-window.addEventListener('beforeunload', handleBeforeUnload);
-
-// 주기적으로 주문현황을 리프래시 해줌
-const minute = 1;
-setInterval(() => {
-  if (isAutoCollect.value === true) {
-    getTableList();
-    handleCollect();
+let intervalId = null;
+const handleAutoCollectChange = (e) => {
+  const minute = 1;
+  if(e.target.checked === true) {
+    intervalId = setInterval(() => {
+      getTableList();
+      handleCollect();
+    }, minute * 60 * 1000);
+  } else {
+    clearInterval(intervalId);
   }
-}, minute * 60 * 1000);
+}
+
+onBeforeUnmount(() => {
+  clearInterval(intervalId);
+  handleBeforeUnload();
+});
 </script>
 
 <!--hello-->
