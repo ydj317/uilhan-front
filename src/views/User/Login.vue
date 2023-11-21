@@ -5,7 +5,8 @@
   <div class="_container">
     <div class="header">
       <div class="icon">
-        <img src="../../assets/img/logo-light.png" alt="">
+        <img src="../../assets/img/logo-light.png" v-if="!is_xplan" :key="is_xplan">
+        <img src="@/assets/img/logo-light-worldlink.png" v-else :key="is_xplan">
       </div>
       <!--        <div class="tip">-->
       <!--          <h5>이용해주셔서 감사합니다!</h5>-->
@@ -54,7 +55,7 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
 import router, {setFilterRouteList} from "router/index.js";
 import { LoginRequest } from 'util/request';
-import { defineComponent, reactive, onBeforeMount, ref } from 'vue';
+import {defineComponent, reactive, onBeforeMount, ref, onMounted} from 'vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import Cookie from "js-cookie";
 import { isLogin, cookieInit } from "util/auth";
@@ -66,7 +67,11 @@ export default defineComponent({
     LockOutlined,
     Loading,
   },
-
+  data() {
+    return {
+      is_xplan: false,
+    };
+  },
   setup() {
     onBeforeMount(() => {
       if (isLogin() === true) {
@@ -182,6 +187,12 @@ export default defineComponent({
     if (localStorage.save_user_name === 'T' && localStorage.user_name) {
       this.formState.username = localStorage.user_name;
     }
+
+    const currentHost = window.location
+    if('www.worldlinklab.com' === currentHost.hostname) {
+      this.is_xplan = true
+    }
+
   }
 });
 </script>

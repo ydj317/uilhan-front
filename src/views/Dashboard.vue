@@ -16,7 +16,7 @@
         <div>
           <a-row :gutter="10">
             <a-col :span="8">
-              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center">
+              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center;cursor: pointer" @click="goLinkPage('/market/accounts/list')">
                 <a-statistic
                     :value="state.headerCount.marketTotal"
                     :value-style="{ color: '#3f8600' }"
@@ -36,7 +36,7 @@
               </a-card>
             </a-col>
             <a-col :span="8">
-              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center">
+              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center;cursor: pointer" @click="goLinkPage('/product')">
                 <a-statistic
                     :value="state.headerCount.productTotal"
                     class="demo-class"
@@ -56,7 +56,7 @@
               </a-card>
             </a-col>
             <a-col :span="8">
-              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center">
+              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center;cursor: pointer" @click="goLinkPage('/order/list')">
                 <a-statistic
                     :value="state.headerCount.orderTotal"
                     class="demo-class"
@@ -85,7 +85,7 @@
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
-            <a-checkbox v-model:checked="isAutoCollect" class="ml10">자동수집</a-checkbox>
+            <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
           </template>
           <a-table :data-source="account.orderData.data" :pagination="false" size="small" summary>
             <a-table-column title="판매처" dataIndex="manage" key="manage">
@@ -121,7 +121,13 @@
                 <span style="color: #000000D9;" v-if="!record.shippingCompleteNew">{{ record.shippingComplete }}</span>
               </template>
             </a-table-column>
-            <a-table-column title="주문취소" dataIndex="cancelComplete" key="cancelComplete" align="center">
+            <a-table-column title="취소요청" dataIndex="cancelRequest" key="cancelRequest" align="center">
+              <template #default="{ record }">
+                <span class="highlight" v-if="record.cancelRequestNew">{{ record.cancelRequestNew }}</span>
+                <span style="color: #000000D9;" v-if="!record.cancelRequestNew">{{ record.cancelRequest }}</span>
+              </template>
+            </a-table-column>
+            <a-table-column title="취소완료" dataIndex="cancelComplete" key="cancelComplete" align="center">
               <template #default="{ record }">
                 <span class="highlight" v-if="record.cancelCompleteNew">{{ record.cancelCompleteNew }}</span>
                 <span style="color: #000000D9;" v-if="!record.cancelCompleteNew">{{ record.cancelComplete }}</span>
@@ -153,6 +159,9 @@
                 </a-table-summary-cell>
                 <a-table-summary-cell align="center">
                   <a-typography-text>{{ account.orderData.totalShippingComplete }}</a-typography-text>
+                </a-table-summary-cell>
+                <a-table-summary-cell align="center">
+                  <a-typography-text>{{ account.orderData.totalCancelRequest }}</a-typography-text>
                 </a-table-summary-cell>
                 <a-table-summary-cell align="center">
                   <a-typography-text>{{ account.orderData.totalCancelComplete }}</a-typography-text>
@@ -225,12 +234,6 @@
                 <img :src="getLogoSrc('get-logo', 'aliexpress')" alt=""> <span>알리익스프레스</span>
               </a-tag>
             </a>
-
-            <a href="https://domeggook.com/" target="_blank">
-              <a-tag class="logo-tag">
-                <img :src="getLogoSrc('get-logo', 'domeggook')" alt=""> <span>도매꾹</span>
-              </a-tag>
-            </a>
           </div>
         </a-card>
 
@@ -240,13 +243,16 @@
 </template>
 
 <script setup>
-import {ref, onMounted, reactive, onBeforeUnmount} from "vue";
+import {ref, onMounted, reactive, onBeforeUnmount, watch} from "vue";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
 import ECharts from 'vue-echarts';
 import {useMarketOrderApi} from "@/api/order";
 import {useMarketApi} from '@/api/market';
 import {QuestionCircleOutlined, ShoppingCartOutlined, UploadOutlined, ShoppingOutlined} from "@ant-design/icons-vue";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 const state = reactive({
   dailyData: {
@@ -400,6 +406,10 @@ const account = reactive({
   isModalVisible: false,
 });
 
+const goLinkPage = (path) => {
+  window.location.href=path
+};
+
 const onOpenMarketUrl = (marketCode) => {
   window.open(marketSellerUrl[marketCode], '_blank');
 }
@@ -410,17 +420,6 @@ function getLogoSrc(fileName, marketCode) {
   } catch (error) {
     return require("assets/img/temp_image.png");
   }
-}
-
-function parseHTML(html) {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-
-  if (div.innerHTML.length > 100) {
-    div.innerHTML = div.innerHTML.slice(0, 100) + "...";
-  }
-
-  return div.textContent;
 }
 
 async function getBoard() {
@@ -458,7 +457,9 @@ const getSaleList = async () => {
 
 onMounted(() => {
   //getOrder();
-  Promise.all([getBoard(), getTableList(), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
+  Promise.all([getBoard(), getTableList().then(() => {
+    handleBeforeUnload();
+  }), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
       .catch((e) => {
         message.error(e.message)
         return false;
@@ -505,6 +506,7 @@ const getTableList = async () => {
       totalShippingAddress,
       totalShipping,
       totalShippingComplete,
+      totalCancelRequest,
       totalCancelComplete,
       totalReturnRequest,
       totalReturnComplete
@@ -514,49 +516,56 @@ const getTableList = async () => {
     // 데이터를 조회해올때마다 루프 돌리며 판단하여 데이터 변경이 있는 애들을 찾아냄
     const oldOrderData = sessionStorage.getItem('orderData');
 
-    if (Array.isArray(oldOrderData) && oldOrderData.length > 0) {
+    if (oldOrderData) {
       const oldOrderJson = JSON.parse(oldOrderData);
       oldOrderJson.forEach((item) => {
-        const newData = findObjectById(item.id, list);
-        let newQty = 0;
-        newData.paidNew = '';
-        if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
-          newQty = newData['paid'] - item['paid'];
-          newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
-        }
-        newData.shippingAddressNew = '';
-        if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
-          newQty = newData['shippingAddress'] - item['shippingAddress'];
-          newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
-        }
-        newData.shippingNew = '';
-        if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
-          newQty = newData['shipping'] - item['shipping'];
-          newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
-        }
-        newData.shippingCompleteNew = '';
-        if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
-          newQty = newData['shippingComplete'] - item['shippingComplete'];
-          newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
-        }
-        newData.cancelCompleteNew = '';
-        if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
-          newQty = newData['cancelComplete'] - item['cancelComplete'];
-          newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
-        }
-        newData.returnRequestNew = '';
-        if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
-          newQty = newData['returnRequest'] - item['returnRequest'];
-          newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
-        }
+          const newData = findObjectById(item.id, list);
+          let newQty = 0;
+          newData.paidNew = '';
+          if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
+            newQty = newData['paid'] - item['paid'];
+            newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
+          }
+          newData.shippingAddressNew = '';
+          if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
+            newQty = newData['shippingAddress'] - item['shippingAddress'];
+            newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
+          }
+          newData.shippingNew = '';
+          if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
+            newQty = newData['shipping'] - item['shipping'];
+            newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
+          }
+          newData.shippingCompleteNew = '';
+          if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
+            newQty = newData['shippingComplete'] - item['shippingComplete'];
+            newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
+          }
 
-        newData.returnCompleteNew = '';
-        if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
-          newQty = newData['returnComplete'] - item['returnComplete'];
-          newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
-        }
-        orderDataView.push(newData);
-      });
+          newData.cancelRequestNew = '';
+          if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
+            newQty = newData['cancelRequest'] - item['cancelRequest'];
+            newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
+          }
+
+          newData.cancelCompleteNew = '';
+          if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
+            newQty = newData['cancelComplete'] - item['cancelComplete'];
+            newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
+          }
+          newData.returnRequestNew = '';
+          if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
+            newQty = newData['returnRequest'] - item['returnRequest'];
+            newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
+          }
+
+          newData.returnCompleteNew = '';
+          if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
+            newQty = newData['returnComplete'] - item['returnComplete'];
+            newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
+          }
+          orderDataView.push(newData);
+        });
     } else {
       orderDataView = list
     }
@@ -568,16 +577,17 @@ const getTableList = async () => {
     account.orderData.totalShippingAddress = totalShippingAddress;
     account.orderData.totalShipping = totalShipping;
     account.orderData.totalShippingComplete = totalShippingComplete;
+    account.orderData.totalCancelRequest = totalCancelRequest;
     account.orderData.totalCancelComplete = totalCancelComplete;
     account.orderData.totalReturnRequest = totalReturnRequest;
     account.orderData.totalReturnComplete = totalReturnComplete;
 
     state.headerCount.orderTotal = totalPaid + totalShippingAddress + totalShipping + totalShippingComplete
-    state.headerCount.claimTotal = totalCancelComplete + totalReturnRequest + totalReturnComplete
+    state.headerCount.claimTotal = totalCancelRequest + totalCancelComplete + totalReturnRequest + totalReturnComplete
 
     // 리스트 데이터를 세션스토레이지에 넣어서 비교할때 사용함
-    const newOrderData = JSON.stringify(list);
-    sessionStorage.setItem('orderData', newOrderData);
+    // const newOrderData = JSON.stringify(list);
+    // sessionStorage.setItem('orderData', newOrderData);
 
   }).catch((e) => {
     message.error(e.message);
@@ -618,29 +628,29 @@ const openMarketAdminPage = (marketCode) => {
 }
 
 // 监听页面关闭事件
-const handleBeforeUnload = (event) => {
-  event.preventDefault();
+const handleBeforeUnload = () => {
   // 在页面关闭前执行操作
   const newOrderData = JSON.stringify(account.orderData.list);
   sessionStorage.setItem('orderData', newOrderData);
 };
 
-onBeforeUnmount(() => {
-  // 移除 beforeunload 事件监听器，确保页面关闭时不会再触发
-  window.removeEventListener('beforeunload', handleBeforeUnload);
-});
-
-// 添加 beforeunload 事件监听器
-window.addEventListener('beforeunload', handleBeforeUnload);
-
-// 주기적으로 주문현황을 리프래시 해줌
-const minute = 1;
-setInterval(() => {
-  if (isAutoCollect.value === true) {
-    getTableList();
-    handleCollect();
+let intervalId = null;
+const handleAutoCollectChange = (e) => {
+  const minute = 1;
+  if(e.target.checked === true) {
+    intervalId = setInterval(() => {
+      getTableList();
+      handleCollect();
+    }, minute * 60 * 1000);
+  } else {
+    clearInterval(intervalId);
   }
-}, minute * 60 * 1000);
+}
+
+onBeforeUnmount(() => {
+  clearInterval(intervalId);
+  handleBeforeUnload();
+});
 </script>
 
 <!--hello-->
