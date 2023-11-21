@@ -27,7 +27,7 @@
       <div style="display:flex;justify-content:space-between;align-items:center;" class="mb15">
         <h3>마켓정보 불러오기</h3>
       </div>
-      <a-form-item label="배송비정책">
+      <a-form-item label="배송비정책/추가배송비정책">
         <div style="display: flex; align-items: center;">
           <div>
             <div>
@@ -38,6 +38,17 @@
                   <a-select-option :value="item.shipping_cost_policy_code"
                                    v-for="(item, key) in state.shippingCostPolicy" :key="key">{{
                       item.shipping_cost_policy_name
+                    }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+              <a-form-item name="add_shipping_cost_policy_code" label="추가배송비정책"
+                           :rules="[{ required: true, message: '추가배송비정책을 선택해 주세요.' }]">
+                <a-select v-model:value="state.formData.add_shipping_cost_policy_code" placeholder="추가배송비정책을 선택해 주세요"
+                          style="width:260px;">
+                  <a-select-option :value="item.add_shipping_cost_policy_code"
+                                   v-for="(item, key) in state.addShippingCostPolicy" :key="key">{{
+                      item.add_shipping_cost_policy_name
                     }}
                   </a-select-option>
                 </a-select>
@@ -146,6 +157,7 @@ const state = reactive({
     return_address_code: null,
     outbound_address_code: null,
     shipping_cost_policy_code: null,
+    add_shipping_cost_policy_code: null,
 
     // 마켓정보 설정
     jeju_add_delivery_price: null, // 제주 추가 배송비
@@ -165,6 +177,7 @@ const state = reactive({
   returnAddressList: [],
   outboundAddressList: [],
   shippingCostPolicy: [],
+  addShippingCostPolicy: [],
 
   // 불러오기 상태
   sync_address_status: 0,
@@ -190,6 +203,7 @@ const initFormData = () => {
     state.formData.return_address_code = accountInfo.marketData.return_address_code;
     state.formData.outbound_address_code = accountInfo.marketData.outbound_address_code;
     state.formData.shipping_cost_policy_code = accountInfo.marketData.shipping_cost_policy_code;
+    state.formData.add_shipping_cost_policy_code = accountInfo.marketData.add_shipping_cost_policy_code;
 
 
   }
@@ -307,14 +321,21 @@ const getShippingCostPolicy = (account_id) => {
     }
 
     state.shippingCostPolicy = [];
+    state.addShippingCostPolicy = [];
 
     message.success('업데이트 완료 되었습니다. 배송비정책을 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
     marketJson?.data.forEach(item => {
-      if (item.useYn === 'Y') {
+      if (item.useYn === 'Y' && item.dvCstTypCd === 'DV_CST') {
         state.shippingCostPolicy.push({
           shipping_cost_policy_code: item.dvCstPolNo,
           shipping_cost_policy_name: item.dvCstPolNm
+        });
+      }
+      if (item.useYn === 'Y' && item.dvCstTypCd === 'ADTN_DV_CST') {
+        state.addShippingCostPolicy.push({
+          add_shipping_cost_policy_code: item.dvCstPolNo,
+          add_shipping_cost_policy_name: item.dvCstPolNm
         });
       }
     });
@@ -360,10 +381,16 @@ const getAccountJson = () => {
     state.sync_shipping_date = updDate || null;
 
     marketJson?.data.forEach(item => {
-      if (item.useYn === 'Y') {
+      if (item.useYn === 'Y' && item.dvCstTypCd === 'DV_CST') {
         state.shippingCostPolicy.push({
           shipping_cost_policy_code: item.dvCstPolNo,
           shipping_cost_policy_name: item.dvCstPolNm
+        });
+      }
+      if (item.useYn === 'Y' && item.dvCstTypCd === 'ADTN_DV_CST') {
+        state.addShippingCostPolicy.push({
+          add_shipping_cost_policy_code: item.dvCstPolNo,
+          add_shipping_cost_policy_name: item.dvCstPolNm
         });
       }
     });
