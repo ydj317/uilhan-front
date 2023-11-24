@@ -65,9 +65,8 @@
     <a-descriptions-item label="수취인 휴대폰번호">{{ orderData.itemOrgData.dvpMphnNo }}</a-descriptions-item>
     <a-descriptions-item label="수취인 이메일">{{ orderData.itemOrgData.dvpEmlAddr }}</a-descriptions-item>
     <a-descriptions-item label="배송지 우편번호">{{ orderData.itemOrgData.dvpZipNo }}</a-descriptions-item>
-    <a-descriptions-item label="배송지 배송지도로명우편주소">{{ orderData.itemOrgData.dvpStnmZipAddr }}</a-descriptions-item>
-    <a-descriptions-item label="배송지 배송지도로명상세주소">{{ orderData.itemOrgData.dvpStnmDtlAddr }}</a-descriptions-item>
-    <a-descriptions-item label="배송지 배송지도로명상세주소">{{ orderData.itemOrgData.dvpStnmDtlAddr }}</a-descriptions-item>
+    <a-descriptions-item label="배송지 배송지도로명 우편주소">{{ orderData.itemOrgData.dvpStnmZipAddr }}</a-descriptions-item>
+    <a-descriptions-item label="배송지 배송지도로명 상세주소">{{ orderData.itemOrgData.dvpStnmDtlAddr }}</a-descriptions-item>
     <a-descriptions-item label="개인통관고유번호">{{ orderData.itemOrgData.indvCstmPclrNo }}</a-descriptions-item>
   </a-descriptions>
 
