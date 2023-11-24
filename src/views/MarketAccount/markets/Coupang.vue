@@ -62,11 +62,87 @@
 
             <h3 class="mt20">마켓정보설정</h3>
 
+          <a-form-item>
+            <template #label>
+              <span>반품비(편도)</span>
+              <a-tooltip class="ml10">
+                <template #title>
+                  <p>
+                  쿠팡에 경우 다른 오픈마켓과 달리 상품 금액 별
+                  최대 반품비용이 별도로 존재합니다.
+                  </p>
+                  <p>
+                  상품 금액별 최대 반품비용을 참고하시고 설정해
+                  주시면 됩니다.
+                  </p>
+                  <p>
+                    <a-popover v-model:visible="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop" style="z-index: 999">
+                      <template #content>
+                        <table border="1" style="border: 1px solid #999" class="popoverTable">
+                          <tr>
+                            <th>항목</th>
+                            <th>상품 가격 기준</th>
+                            <th>배송비</th>
+                            <th>반품비 (편도)</th>
+                            <th>추가조건</th>
+                            <th>도서산간 배송비</th>
+                          </tr>
+                          <tr>
+                            <td rowspan="3">전체 카테고리</td>
+                            <td><strong>상품가</strong> &lt;&equals; 20,000</td>
+                            <td>최대 15,000</td>
+                            <td>최대 15,000</td>
+                            <td>반품배송비는 상품가를 초과하지 않아야 합니다.</td>
+                            <td rowspan="5">최대 8,000</td>
+                          </tr>
+                          <tr>
+                            <td>20,000 &lt; <strong>상품가</strong> &lt;&equals; 40,000</td>
+                            <td>최대 20,000</td>
+                            <td>최대 20,000</td>
+                            <td>반품배송비는 상품가를 초과하지 않아야 합니다.</td>
+                          </tr>
+                          <tr>
+                            <td><strong>상품가</strong> &gt; 40,000</td>
+                            <td>최대 30,000</td>
+                            <td>최대 100,000</td>
+                            <td>반품배송비는 상품가를 초과하지 않아야 합니다.</td>
+                          </tr>
+                          <tr>
+                            <td rowspan="2">일부 예외 카테고리</td>
+                            <td><strong>상품가</strong> &lt;&equals; 60,000</td>
+                            <td>최대 30,000</td>
+                            <td>최대 30,000</td>
+                            <td>-</td>
+                          </tr>
+                          <tr>
+                            <td><strong>상품가</strong> &gt; 60,000</td>
+                            <td>최대 200,000<p>(카테고리별 상이)</p></td>
+                            <td>최대 200,000<p>(카테고리별 상이)</p></td>
+                            <td>반품배송비는 상품가를 초과하지 않아야 합니다.</td>
+                          </tr>
+                        </table>
+                      </template>
+                      쿠팡 배송비 정책 자세히 보러가기 (삼각형 클릭)<a-button type="link">▶</a-button>
+                    </a-popover>
+                  </p>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
+            </template>
 
-            <a-form-item name="returnCharge" label="반품배송비(편도)"
-                :rules="[{ required: true, message: '반품배송비(왕복)를 입력해 주세요.' }]">
-                <a-input v-model:value="state.formData.returnCharge" placeholder="반품배송비(편도)" style="width:160px" />
+            <a-form-item name="returnChargeLow" label="상품가 <= 20000"
+                         :rules="[{ required: true, message: '상품가 <= 20000 일때 배송비를 입력해 주세요.' }]" :labelCol="{ span: 5 }">
+              <a-input-number v-model:value="state.formData.returnChargeLow" placeholder="최대 15000" style="width:160px" min="0" max="15000" step="1000"/>
             </a-form-item>
+            <a-form-item name="returnChargeMedium" label="20000 < 상품가 <= 40000"
+                         :rules="[{ required: true, message: '20000 < 상품가 <= 40000 일때 배송비를 입력해 주세요.' }]" :labelCol="{ span: 5 }">
+              <a-input-number v-model:value="state.formData.returnChargeMedium" placeholder="최대 20000" style="width:160px" min="0" max="20000" step="1000"/>
+            </a-form-item>
+            <a-form-item name="returnChargeHigh" label="상품가 > 40000"
+                         :rules="[{ required: true, message: '상품가 > 40000 일때 배송비를 입력해 주세요.' }]" :labelCol="{ span: 5 }">
+              <a-input-number v-model:value.number="state.formData.returnChargeHigh" placeholder="최대 40000" style="width:160px" min="0" max="40000" step="1000"/>
+            </a-form-item>
+          </a-form-item>
         </div>
         <a-button class="mt15" @click="goBack">돌아가기</a-button>
         <a-button class="mt15 ml15" @click="handleSubmit" type="primary">저장</a-button>
@@ -80,10 +156,10 @@ import { message } from "ant-design-vue";
 import { useMarketAccountApi } from '@/api/marketAccount';
 import { useAccountJsonApi } from '@/api/accountJson';
 import {
-    RedoOutlined,
-    CheckCircleOutlined
+  CheckCircleOutlined,
+  QuestionCircleOutlined
 } from '@ant-design/icons-vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
     market_code: {
@@ -97,7 +173,7 @@ const props = defineProps({
 });
 
 const router = useRouter();
-
+const popoverVisible = ref(false);
 const marketFormRef = ref(null);
 
 const state = reactive({
@@ -115,8 +191,9 @@ const state = reactive({
         outboundShippingPlaceCode: null,// 출고지
 
         // 마켓정보 설정
-        returnCharge: null,// 반품배송비(편도)
-
+        returnChargeLow: 0,
+        returnChargeMedium: 0,
+        returnChargeHigh: 0,
     },
 
     syncCheckLoading: false,
@@ -156,7 +233,9 @@ const initFormData = () => {
         state.formData.companyContactNumber = accountInfo.marketData.companyContactNumber;
         state.formData.shippingPlaceName = accountInfo.marketData.shippingPlaceName;
 
-        state.formData.returnCharge = accountInfo.marketData.returnCharge;
+        state.formData.returnChargeLow = accountInfo.marketData.returnChargeLow;
+        state.formData.returnChargeMedium = accountInfo.marketData.returnChargeMedium;
+        state.formData.returnChargeHigh = accountInfo.marketData.returnChargeHigh;
 
     }
 }
@@ -357,6 +436,20 @@ const goBack = () => {
     router.push({ name: 'market_accounts_list' });
 };
 </script>
+<style scoped>
+.popoverTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.popoverTable th {
+  background-color: #f5f5f5;
+  padding: 5px;
+  text-align: center;
+}
+.popoverTable td {
+  padding: 5px;
+}
+</style>
 <style>
 .market_form .ant-form-item {
     margin-bottom: 0;

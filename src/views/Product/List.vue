@@ -312,12 +312,12 @@ export default defineComponent({
               value: "all"
             },
             {
-              label: "Tmall",
-              value: "Tmall"
-            },
-            {
               label: "Taobao",
               value: "Taobao"
+            },
+            {
+              label: "Tmall",
+              value: "Tmall"
             },
             {
               label: "Alibaba",
@@ -327,10 +327,6 @@ export default defineComponent({
               label: "Aliexpress",
               value: "Aliexpress"
             },
-            {
-              label: "Vvic",
-              value: "Vvic"
-            }
           ],
           label: "상품수집마켓",
           key: "market_code",

@@ -47,5 +47,4 @@ onMounted(async () => {
   await getClaimDetail();
 })
 
-
 </script>
