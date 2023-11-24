@@ -6,6 +6,9 @@
     <a-cascader v-model:value="categoryValue" :options="options" placeholder="마켓별 카테고리를 선택해 주세요." style="width: 100%"
       :field-names="{ label: 'cateName', value: 'cateId' }" :load-data="loadData" change-on-select
       @change="handleCascaderChange" :disabled="marketPrdCode !== ''" />
+
+    <MarketDisplayCategorys :visible="displayCategorysVisible" :marketCode="marketCode" :sellerId="sellerId" :displayCategorys="displayCategorys"/>
+
     <div style="display: flex;flex-direction: column;gap: 10px" class="mt15" v-if="searchMarketCategoryList.length > 0">
       <template v-for="(item, key) in searchMarketCategoryList" :key="key">
         <div>
@@ -23,6 +26,8 @@ import { onMounted, onUpdated, ref, toRefs, watchEffect } from "vue";
 import { useCategoryApi } from "@/api/category";
 import { useStore } from 'vuex';
 import { LoadingOutlined } from '@ant-design/icons-vue';
+import MarketDisplayCategorys from './MarketDisplayCategorys.vue'
+import {message} from "ant-design-vue";
 const store = useStore();
 const { product } = toRefs(store.state);
 
@@ -34,6 +39,9 @@ const categoryValue = ref([])
 const searchMarketCategoryList = ref([])
 const options = ref([]);
 const categoryLoading = ref(false)
+
+const displayCategorysVisible = ref(false)
+const displayCategorys = ref([])
 
 const getMarketCategory = () => {
   categoryLoading.value = true
@@ -54,6 +62,7 @@ const settingCategory = (item) => {
   searchMarketCategoryList.value = []
 }
 
+const displayCategoryMarkets = ['lotteon'];
 // 자체선택 카테고리 설정
 const handleCascaderChange = (value, selectedOptions) => {
   if (!product.value.item_cate) {
@@ -62,6 +71,24 @@ const handleCascaderChange = (value, selectedOptions) => {
   // check selectedOptions is isLeaf
   if (selectedOptions[selectedOptions.length - 1].isLeaf) {
     product.value.item_cate[sellerId.value] = { marketCode: marketCode.value, cateId: value[value.length - 1], categoryNames: selectedOptions.map(o => o.cateName).join(' / ') }
+
+    // 전시카테고리 마켓
+    if(displayCategoryMarkets.includes(marketCode.value)) {
+      const cateId = selectedOptions.map(o => o.cateId)
+      useCategoryApi().getDisplayCategorys({ market_code: marketCode.value, seller_id: sellerId.value, cate_id: cateId }).then(res => {
+        if(res.status !== 2000) {
+          message.error(res.message)
+          return false;
+        }
+        console.log(res.data);
+        displayCategorys.value = res.data
+        displayCategorysVisible.value = true
+      }).catch(err => {
+        message.error(err.message)
+        return false;
+      })
+
+    }
     return false;
   }
 }
