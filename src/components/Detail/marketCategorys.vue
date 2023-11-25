@@ -7,7 +7,7 @@
       :field-names="{ label: 'cateName', value: 'cateId' }" :load-data="loadData" change-on-select
       @change="handleCascaderChange" :disabled="marketPrdCode !== ''" />
 
-    <MarketDisplayCategorys :visible="displayCategorysVisible" :marketCode="marketCode" :sellerId="sellerId" :displayCategorys="displayCategorys"/>
+    <MarketDisplayCategorys v-if="displayCategorysVisible" :marketCode="marketCode" :sellerId="sellerId" :displayCategorys="displayCategorys" />
 
     <div style="display: flex;flex-direction: column;gap: 10px" class="mt15" v-if="searchMarketCategoryList.length > 0">
       <template v-for="(item, key) in searchMarketCategoryList" :key="key">
@@ -42,7 +42,7 @@ const categoryLoading = ref(false)
 
 const displayCategorysVisible = ref(false)
 const displayCategorys = ref([])
-
+const displayCategoryMarkets = ['lotteon'];
 const getMarketCategory = () => {
   categoryLoading.value = true
   useCategoryApi().getMarketCategoryList({ market_code: marketCode.value }).then(res => {
@@ -60,9 +60,24 @@ const settingCategory = (item) => {
   }
   product.value.item_cate[sellerId.value] = { marketCode: marketCode.value, cateId: item.cate_ids[item.cate_ids.length - 1], categoryNames: categoryValue.value }
   searchMarketCategoryList.value = []
+  if(displayCategoryMarkets.includes(marketCode.value)) {
+    const cateId = item.cate_ids;
+    useCategoryApi().getDisplayCategorys({ market_code: marketCode.value, seller_id: sellerId.value, cate_id: cateId }).then(res => {
+      if(res.status !== "2000") {
+        message.error(res.message)
+        return false;
+      }
+      displayCategorys.value = res.data
+      displayCategorysVisible.value = true
+    }).catch(err => {
+      message.error(err.message)
+      return false;
+    })
+
+  }
 }
 
-const displayCategoryMarkets = ['lotteon'];
+
 // 자체선택 카테고리 설정
 const handleCascaderChange = (value, selectedOptions) => {
   if (!product.value.item_cate) {
@@ -76,11 +91,10 @@ const handleCascaderChange = (value, selectedOptions) => {
     if(displayCategoryMarkets.includes(marketCode.value)) {
       const cateId = selectedOptions.map(o => o.cateId)
       useCategoryApi().getDisplayCategorys({ market_code: marketCode.value, seller_id: sellerId.value, cate_id: cateId }).then(res => {
-        if(res.status !== 2000) {
+        if(res.status !== "2000") {
           message.error(res.message)
           return false;
         }
-        console.log(res.data);
         displayCategorys.value = res.data
         displayCategorysVisible.value = true
       }).catch(err => {
