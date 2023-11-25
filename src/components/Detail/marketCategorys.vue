@@ -6,7 +6,9 @@
     <a-cascader v-model:value="categoryValue" :options="options" placeholder="마켓별 카테고리를 선택해 주세요." style="width: 100%"
       :field-names="{ label: 'cateName', value: 'cateId' }" :load-data="loadData" change-on-select
       @change="handleCascaderChange" :disabled="marketPrdCode !== ''" />
-
+    <div v-if="displayCategoryLoading" style="display: flex;align-items: center;">
+      <LoadingOutlined /> <span style="color: #999999;margin-left: 5px;">전시카테고리 로딩중입니다.</span>
+    </div>
     <MarketDisplayCategorys v-if="displayCategorysVisible" :marketCode="marketCode" :sellerId="sellerId" :displayCategorys="displayCategorys" />
 
     <div style="display: flex;flex-direction: column;gap: 10px" class="mt15" v-if="searchMarketCategoryList.length > 0">
@@ -43,6 +45,7 @@ const categoryLoading = ref(false)
 const displayCategorysVisible = ref(false)
 const displayCategorys = ref([])
 const displayCategoryMarkets = ['lotteon'];
+let displayCategoryLoading = false
 const getMarketCategory = () => {
   categoryLoading.value = true
   useCategoryApi().getMarketCategoryList({ market_code: marketCode.value }).then(res => {
@@ -90,14 +93,18 @@ const handleCascaderChange = (value, selectedOptions) => {
     // 전시카테고리 마켓
     if(displayCategoryMarkets.includes(marketCode.value)) {
       const cateId = selectedOptions.map(o => o.cateId)
+      displayCategoryLoading = true
       useCategoryApi().getDisplayCategorys({ market_code: marketCode.value, seller_id: sellerId.value, cate_id: cateId }).then(res => {
+        console.log(displayCategoryLoading);
         if(res.status !== "2000") {
           message.error(res.message)
           return false;
         }
         displayCategorys.value = res.data
         displayCategorysVisible.value = true
+        displayCategoryLoading = false
       }).catch(err => {
+        displayCategoryLoading = false
         message.error(err.message)
         return false;
       })
