@@ -33,37 +33,21 @@
         <h3>마켓정보 불러오기</h3>
       </div>
 
-      <a-form-item name="outbound_address_code" label="출고지"
-                   :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]">
-        <a-select v-model:value="state.formData.outbound_address_code" placeholder="출고지를 선택해 주세요"
+      <a-form-item name="outbound_address_code" label="배송정책"
+                   :rules="[{ required: true, message: '배송정책을 선택해 주세요.' }]">
+        <a-select v-model:value="state.formData.delivery_code" placeholder="배송정책을 선택해 주세요"
                   style="width:260px;">
-          <a-select-option :value="item.outbound_address_code" v-for="(item, key) in state.outboundAddressList"
-                           :key="key">{{ item.outbound_address_name }}
+          <a-select-option :value="item.delivery_code" v-for="(item, key) in state.deliveryList"
+                           :key="key">{{ item.delivery_name }}
           </a-select-option>
         </a-select>
-        <a-button @click="syncOutboundAddress(state.formData.id)" class="ml15"
-                  :loading="state.syncOutboundAddressLoading">업데이트
+        <a-button @click="syncDelivery(state.formData.id)" class="ml15"
+                  :loading="state.syncDeliveryLoading">업데이트
         </a-button>
-        <a-tag class="ml15" v-if="state.sync_outbound_address_status === 0">-</a-tag>
-        <a-tag color="#87d068" class="ml15" v-else-if="state.sync_outbound_address_status === 1">성공</a-tag>
+        <a-tag class="ml15" v-if="state.sync_delivery_status === 0">-</a-tag>
+        <a-tag color="#87d068" class="ml15" v-else-if="state.sync_delivery_status === 1">성공</a-tag>
         <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
-        <span>{{ state.sync_outbound_address_date ?? '-' }}</span>
-      </a-form-item>
-
-      <a-form-item name="return_address_code" label="반품지" :rules="[{ required: true, message: '반품지를 선택해 주세요.' }]">
-        <a-select v-model:value="state.formData.return_address_code" placeholder="반품지를 선택해 주세요" style="width:260px;"
-                  >
-          <a-select-option :value="item.return_address_code" v-for="(item, key) in state.returnAddressList"
-                           :key="key">{{ item.return_address_name }}
-          </a-select-option>
-        </a-select>
-        <a-button @click="syncOutboundAddress(state.formData.id)" class="ml15"
-                  :loading="state.syncOutboundAddressLoading">업데이트
-        </a-button>
-        <a-tag class="ml15" v-if="state.sync_return_address_status === 0">-</a-tag>
-        <a-tag color="#87d068" class="ml15" v-else-if="state.sync_return_address_status === 1">성공</a-tag>
-        <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
-        <span>{{ state.sync_return_address_date ?? '-' }}</span>
+        <span>{{ state.sync_delivery_date ?? '-' }}</span>
       </a-form-item>
 
       <h3 class="mt20">마켓정보설정</h3>
@@ -81,7 +65,6 @@ import {useMarketAccountApi} from '@/api/marketAccount';
 import {useAccountJsonApi} from '@/api/accountJson';
 import {
   CheckCircleOutlined,
-  QuestionCircleOutlined
 } from '@ant-design/icons-vue';
 import {useRouter} from 'vue-router';
 
@@ -110,24 +93,17 @@ const state = reactive({
     sync_market_status: false,
 
     // 마켓정보 불러오기
-    return_address_code: null,// 반품지
-    outbound_address_code: null,// 출고지
+    delivery_code: null,// 출고지
   },
 
   syncCheckLoading: false,
-  syncOutboundAddressLoading: false,
-  syncReturnAddressLoading: false,
+  syncDeliveryLoading: false,
 
-  returnAddressList: [],
-  outboundAddressList: [],
+  deliveryList: [],
 
   // 불러오기 상태
-  sync_outbound_address_status: 0,
-  sync_outbound_address_date: null,
-
-  sync_return_address_status: 0,
-  sync_return_address_date: null,
-
+  sync_delivery_status: 0,
+  sync_delivery_date: null,
 })
 
 // 수정시 계정 데이터 설정
@@ -143,17 +119,16 @@ const initFormData = () => {
     state.formData.partner_token = accountInfo.marketData.partner_token;
     state.formData.sync_market_status = accountInfo.marketData.sync_market_status;
 
-    state.formData.outbound_address_code = accountInfo.marketData.outbound_address_code;
-    state.formData.return_address_code = accountInfo.marketData.return_address_code;
+    state.formData.delivery_code = accountInfo.marketData.delivery_code;
   }
 }
 
-const syncOutboundAddress = (account_id) => {
-  state.syncOutboundAddressLoading = true;
-  useAccountJsonApi().syncOutboundAddress({account_id: account_id, market_code: props.market_code}).then(res => {
+const syncDeliveryAddress = (account_id) => {
+  state.syncDeliveryLoading = true;
+  useAccountJsonApi().syncDelivery({account_id: account_id, market_code: props.market_code}).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
-      state.syncOutboundAddressLoading = false;
+      state.syncDeliveryLoading = false;
       return false;
     }
 

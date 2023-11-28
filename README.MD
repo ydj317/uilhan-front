@@ -84,3 +84,66 @@
 ### 상품관리 무료배송체크박스
 ### 상품전송시 상품가격 기준 반품배송비 설정
 
+
+## 티몬 (2023-11-27 ~ 2023-12-10)
+### 마켓계정관리(티몬) 추가
+#### 항목
+- 파트너 ID
+- 파트너 토큰
+- client ID
+- client secret
+- 
+
+### 배송지 수집, 배송템플릿 수집
+### 상품
+#### 상품등록
+- * vendorDealNo: 딜번호(티몬전시단위)에 해당 연동업체측 키 `O`
+- * vendorPolicyNo: 티몬 오퍼레이터를 통해 받은 정책번호 `O`
+- * deliveryTemplateNo: 배송템플릿번호 (계정정보에서 수집한 배송템플릿번호)`O`
+- * productType:배송상품 유형 타입 (계정정보에서 수집한 정보)`O`
+- sections: 상품선택정보들`X`
+- managedTitle: 티몬 내부에서 관리될 딜이름 `O`
+- salesStartDate: 판매시작일 `X`
+- salesEndDate: 판매종료일 `X`
+- categoryNo: 카테고리번호 `O`
+- subcategoryNos: 서브카테고리번호 `X`
+- * legalPermissionType: 법적허가유형 `V` 가전·컴퓨터, 뷰티, 생활·주방, 식품·건강, 출산·유아동 카테고리의 경우 필수
+- * importAdvertisementCertificate: 광고심의필증 `V` 법적허가/신고대상 상품인 경우 필수, Full Url
+- maxPurchaseQty: 최대구매수량 `X` 999
+- purchaseResetPeriod: 구매수량 초기화 주기 `X` 7
+- adultOnly: 성인상품여부 `X` false
+- title: 상품명 `O` 
+- titleDecoration: 판매용 제목 상단 홍보 문구(딜 홍보 문구) `O`
+- mainImages: 메인이미지 `O` 720X758(200kb), 동일이미지 등록 불가
+- homeRecommendedImages: 홈추천이미지 `X` 756X383(200kb) 앱 메인 특정 영역에 노출되는 이벤트성 이미지
+- dealMainVideo: 메인동영상 `X`
+- detailContents: 사이트 노출용 딜상세 내용 `O`
+- additionalInput: 추가입력사항 `X`
+- additionalInputTitle: 주문시 입력받을 부가정보 `X`
+- originCountryType: 원산지 표기 방식 `V` '식품·건강(52000000)', '해외직구>식품·건강(74030000)' 카테고리 선택시 필수
+- originCountryDetail: 원산지 상세 `V` 표기방식이 "직접입력"일 때 필수
+- originCountryCode: 원산지 코드 `V` 표기방식이 "수입산"일 때 필수
+- productInfos: 상품정보제공고시 정보들 `O`
+- kcAuthSubmitType: KC인증 제출 유형 `O`
+- kcAuths: KC인증들 `V` 제출타입일 경우 필수
+- deliveryCorp: 택배사 `X`
+- search: 검색 노출 여부 `X` true
+- keywords: 검색 키워드 `X` 최대 5개까지 입력가능.,키워드 하나에 최대 19자까지 입력 가능.키워드 구분은 띄어쓰기로 가능.
+- priceComparison: 가격비교사이트 노출 여부 `X` true
+- dealProductStatus: 상품상태 메타정보 `X` NEW(신상품)
+- dealSellMethod: 판매방식 메타정보 `X`
+- * useCustomsIdNo: 주문 시, 개인통관고유번호 입력유무 `X` productType이 해외직배송(DP02), 해외구매대행(DP03)일 경우 true로 필수, 등록이후 수정불가
+- mainDealOptionNo: 대표 가격으로 설정될 메인 딜옵션 번호 `X`
+- parallelImport: 병행수입 여부 `X` false
+- importDeclarationCertificate: 수입신고필증 `V` 병행수입 상품인 경우 필수, Full Url
+- distanceFeeGradeUsing: 지역별 차등배송비 사용여부 `X` false
+- distanceFeeGradeContents: 지역별 차등배송비 또는 사유 `V` 지역별차등배송비를 사용하는 경우 필수입력
+- extraInstallationCostUsing: 추가설치비 사용여부 `X` false
+- simpleRefundAble: 단순변심환불 가능 여부 `X` true 상품유형에 따라 불가능으로 설정 불가, 등록이후 수정불가
+- simpleRefundNotAvailableReason: 단순변심환불 불가능 사유 `V` 단순변심 환불 불가능으로 설정시 필수 입력
+- brandName: 브랜드명 `X`
+- dealOptions: 딜옵션들 `O`
+
+### 주문
+ - 주문수집
+ - 주문, 발주,배송처리
