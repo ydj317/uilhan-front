@@ -137,7 +137,7 @@
         <template #default="{ record }">
           <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
             <span>{{ record.orderNo }}</span>
-            <span style="color: #999999;">({{ moment(record.orderDate).format('YYYY-MM-DD HH:mm:ss') }})</span>
+            <span style="color: #999999;">({{ moment(record.orderDate || record.claimDate).format('YYYY-MM-DD HH:mm:ss') }})</span>
           </div>
         </template>
       </a-table-column>
