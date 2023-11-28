@@ -134,6 +134,10 @@ export default defineComponent({
           this.product.item_cate = {};
         }
 
+        if ((Array.isArray(this.product.item_disp_cate) && this.product.item_disp_cate.length === 0) || lib.isEmpty(this.product.item_disp_cate)){
+          this.product.item_disp_cate = {};
+        }
+
         // 상품 전송여부 판단
         this.product.is_sync = "F";
         this.product.item_sync_market.forEach(item => {
