@@ -124,7 +124,14 @@ export default {
           aEditorImageUrl.map((sUrl) => {
             const searchParams = new URLSearchParams(new URL(sUrl).search);
             // requestID 값을 가져오기
-            const requestId = searchParams.get("requestID");
+            let requestId = searchParams.get("requestID");
+
+            if(!requestId) {
+              const pattern = /\/[a-f0-9]{16}\//i; // 16자리의 영문자와 숫자 조합
+              const match = sUrl.match(pattern);
+              requestId = match[0].slice(1, -1); // '/' 문자 제거
+            }
+
             aXiangjiRequestIds.push(requestId);
           });
 
