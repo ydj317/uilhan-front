@@ -1,6 +1,6 @@
 <template>
   <a-card :loading="formState.loading" :bordered="false">
-    <a-descriptions title="마진율 설정" bordered :column="1" :labelStyle="{ width: '100px' }"
+    <a-descriptions title="수익률 설정" bordered :column="1" :labelStyle="{ width: '100px' }"
                     :contentStyle="{ width: '500px' }">
       <a-descriptions-item>
         <!-- label slot-->
@@ -24,8 +24,12 @@
       <a-descriptions-item>
         <template #label>
           <a-space>
-            <span>마진율 설정</span>
-            <a-tooltip title="마진율 설정은 상품수집시 설정한 옵션에 따라 계산되여 수집됩니다.">
+            <span>수익률 설정</span>
+            <a-tooltip>
+              <template #title>
+                <div class="mb10">내가 남기고 싶은 수익률을 기입해주세요!</div>
+                <div>원가 + (원가환율)*(카드수수료+퍼센트수익))+최소 수익 + 해외배송비 • 알리익스프레스의 경우 별도로 해외배송비용이 없음</div>
+              </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
           </a-space>
@@ -41,8 +45,8 @@
           ( 원가 x
           <span>
             {{
-            formState.settingDatas.rate.is_real_rate ? '실시간 환율' : formState.settingDatas.rate.rate_value ? formState.settingDatas.rate.rate_value : '미입력'
-          }}
+              formState.settingDatas.rate.is_real_rate ? '실시간 환율' : formState.settingDatas.rate.rate_value ? formState.settingDatas.rate.rate_value : '미입력'
+            }}
           </span> )
           x (
           <a-input-number v-model:value.number="formState.settingDatas.margin.margin_data.card_charge"
@@ -144,6 +148,11 @@ function getUserInfoData() {
     if(!user_data || user_data.length < 1){
       formState.loading = false;
       return false;
+    }
+
+    // 빈 json 일때 백앤드에선 []로 저장되기에 추후에 버그가 생길수 있어서 프론트단에서 []받을시 강제로 {}로 전환
+    if (Array.isArray(user_data.margin_weight.markets) && user_data.margin_weight.markets.length === 0) {
+      user_data.margin_weight.markets = {};
     }
 
     formState.settingDatas = user_data;

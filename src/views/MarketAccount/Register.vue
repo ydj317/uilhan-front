@@ -35,6 +35,8 @@ import { useMarketApi } from '@/api/market';
 
 import Coupang from "./markets/Coupang.vue";
 import Smartstore from "./markets/Smartstore.vue";
+import Interpark from "./markets/Interpark.vue";
+import Lotteon from "./markets/Lotteon.vue";
 
 export default {
     data() {
@@ -49,7 +51,7 @@ export default {
     },
 
     components: {
-        Coupang, Smartstore
+        Coupang, Smartstore, Interpark, Lotteon
     },
     mounted() {
         // @TODO 마켓계정 ID로 조회를 하여 로그인한 user_id와 일치하는지 확인 계정 user_id가 일치하지 않으면 접근 불가

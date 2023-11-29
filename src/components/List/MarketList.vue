@@ -1,12 +1,24 @@
 <template>
   <div>
-    <a-modal width="600px" title="연동할 제휴사" v-model:visible="relaket.data.MarketListVisible" centered>
-
+    <a-modal width="600px" v-model:visible="relaket.data.MarketListVisible" centered>
+      <template #title>
+        선택상품 등록
+        <a-tooltip>
+          <template #title>
+            <div>상품을 등록할 마켓을 선택하여 등록해 주세요.</div>
+          </template>
+          <QuestionCircleOutlined/>
+        </a-tooltip>
+      </template>
       <a-table :columns="columns" :data-source="relaket.data.options" :pagination="{hideOnSinglePage:true}"
                :row-selection="{ selectedRowKeys: marketSelectedRowKeys, onChange: onMarketSelectChange }">
 
         <!--bodyCell-->
         <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'market_name'">
+            <div  style="text-align: center;">{{ record.market_code }}</div>
+          </template>
+
           <template v-if="column.key === 'market_account'">
             <div style="text-align: left">
               <img :src="getLogoSrc('market-logo', record.market_code)"
@@ -14,11 +26,6 @@
               {{ record.seller_id }}
             </div>
           </template>
-
-          <template v-if="column.key === 'market_name'">
-            <div  style="text-align: center;">{{ record.market_code }}</div>
-          </template>
-
         </template>
       </a-table>
 
@@ -37,8 +44,11 @@
 import {mapState} from 'vuex';
 import {AuthRequest} from '@/util/request';
 import { message } from "ant-design-vue";
+import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {useCategoryApi} from "@/api/category";
 
 export default {
+  components: {QuestionCircleOutlined},
   computed: {
     ...mapState([
       'relaket',
@@ -49,19 +59,21 @@ export default {
     return {
       columns: [
         {
-          title: '쇼핑몰',
-          key: 'market_account',
-          align: "center",
-          width: '200px'
-        },
-        {
-          title: '제휴사',
+          title: '마켓',
           key: 'market_name',
           align: "center",
+          width: '160px'
+        },
+        {
+          title: '계정',
+          key: 'market_account',
+          align: "center",
+
         },
       ],
       checkAll: false,
-      marketSelectedRowKeys: []
+      marketSelectedRowKeys: [],
+      smartStoreCategory: [],
     };
   },
 
@@ -91,22 +103,26 @@ export default {
     },
 
     async sendMarket() {
-      this.relaket.data.indicator = true;
 
       let productList = this.getCheckList();
       let accountList = this.relaket.data.options.filter(item => item.checked === true);
 
       if (productList === "," || productList.length === 0) {
         message.warning('선택된 상품이 없습니다.');
-        this.relaket.data.indicator = false;
         return false;
       }
 
       if (accountList.length === undefined || accountList.length === 0) {
         message.warning("선택된 계정이 없습니다.");
-        this.relaket.data.indicator = false;
         return false;
       }
+
+      const checkSmartStore = this.checkSmartStoreCategory(accountList);
+      if(checkSmartStore === false) {
+        return false
+      }
+
+      this.relaket.data.indicator = true;
 
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
@@ -147,6 +163,43 @@ export default {
 
     },
 
+    checkSmartStoreCategory(accountList) {
+      const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
+      const checkedPrdList = this.relaket.data.prdlist.filter((item) => item.checked === true);
+
+      let faildItem = [];
+      if(smartstoreAccounts.length === 0) {
+        return true;
+      }
+
+      checkedPrdList.map((prdItem) => {
+        faildItem = this.smartStoreCategory.filter((item) => {
+          return prdItem.item_sync_keyword.includes(item.cate_name);
+        })
+      })
+
+      if(faildItem.length > 0) {
+        message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
+        return false;
+      }
+      return true;
+    },
+
+    async getSmartstoreCategory() {
+      await useCategoryApi().getSmartstoreCategory({}).then((res) => {
+        if(res.status !== '2000'){
+          message.error(res.message);
+          return false;
+        }
+
+        this.smartStoreCategory = res.data
+      }).catch((e) => {
+        message.error(e.message);
+        return false;
+      })
+
+    },
+
     getCheckList() {
       let list = '';
       for (let i = 0; i < this.relaket.data.prdlist.length; i++) {
@@ -161,6 +214,7 @@ export default {
   },
 
   mounted() {
+    this.getSmartstoreCategory();
   },
 };
 

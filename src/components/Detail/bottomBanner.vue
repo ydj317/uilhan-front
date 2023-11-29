@@ -6,13 +6,13 @@
         <!--          >텍스트 번역</a-button-->
         <!--        >-->
         <a-button type="primary" @click="submit">저장</a-button>
-        <a-button type="primary" @click="submitSync">연동</a-button>
+        <a-button type="primary" @click="submitSync">상품등록</a-button>
         <a-button type="primary" @click="backList">목록</a-button>
       </div>
     </a-affix>
 
     <!--제휴사 상품연동-->
-    <a-modal width="1000px" title="제휴사 상품연동" v-model:visible="singleSyncPop" centered>
+    <a-modal width="1000px" title="상품등록" v-model:visible="singleSyncPop" centered>
       <a-table
         class="tableSyncStatus"
         :dataSource="this.product.item_sync_market"
@@ -59,7 +59,7 @@
       </a-table>
 
       <template v-slot:footer>
-        <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
+        <a-button type="primary" @click="sendMarket()">선택마켓등록</a-button>
         <a-button @click="closeResultPop()">닫기</a-button>
       </template>
     </a-modal>
@@ -92,6 +92,7 @@ import { lib } from "@/util/lib";
 import moment from "moment/moment";
 import { message } from "ant-design-vue";
 import { useRoute } from "vue-router";
+import {useCategoryApi} from "@/api/category";
 
 export default {
   computed: {
@@ -103,18 +104,18 @@ export default {
     return {
       SYNC_COLUMNS_CONFIG: [
         {
-          title: "쇼핑몰",
+          title: "마켓",
           key: "market_account",
-          width: "200px",
+          width: "230px",
           align: "center"
         },
         {
-          title: "연동상태",
+          title: "등록상태",
           key: "status",
           align: "center"
         },
         {
-          title: "연동시간",
+          title: "등록시간",
           key: "ins_time",
           width: "170px",
           align: "center"
@@ -128,7 +129,8 @@ export default {
       marketSyncFailed: 0,
       marketSyncTotal: 0,
       syncSelectedRowKeys: [],
-      marketSyncResult: []
+      marketSyncResult: [],
+      smartStoreCategory: [],
     };
   },
 
@@ -161,11 +163,6 @@ export default {
      * @returns {boolean}
      */
     checkMarket() {
-      let category = this.product.item_cate;
-      if (!category) {
-        message.warning("카테고리를 설정해 주세요");
-        return false;
-      }
 
       let isFree = this.product.formState.item_is_free_delivery;
       let shippingFee = this.product.formState.item_shipping_fee;
@@ -285,9 +282,12 @@ export default {
       // this.product.sku에서 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 경고창 띄우기
       for (const skuItem of this.product.sku) {
         const { selling_price } = skuItem;
+        // 경고창 띄운 후에도 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 this.product.sku 에서 삭제
         if (selling_price > minPrice * 1.5 || selling_price < minPrice * 0.5) {
-          message.warning(`주문옵션(${skuItem.spec}) 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능합니다.`);
-          return false;
+          console.log(`주문옵션(${skuItem.spec}) 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능합니다.`);
+
+          // this.product.sku에서 삭제
+          this.product.sku = this.product.sku.filter(item => item.key !== skuItem.key);
         }
       }
 
@@ -359,15 +359,18 @@ export default {
     },
 
     async sendMarket() {
-      this.product.loading = true;
 
       let accountList = this.product.item_sync_market.filter(item => item.checked === true);
       if (accountList.length === 0 || accountList.length === undefined) {
         message.warning("선택된 계정이 없습니다.");
-        this.product.loading = false;
         return false;
       }
 
+      const checkSmartStore = this.checkSmartStoreCategory(accountList);
+      if(checkSmartStore === false) {
+        return false
+      }
+      this.product.loading = true;
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
           productList: this.product.item_id + "",
@@ -452,6 +455,13 @@ export default {
       if (this.validateFilterProductWords() === false) return false;
 
       this.product.loading = true;
+
+      let category = this.product.item_cate;
+      if (!category) {
+        message.warning("마켓연동 하려면 카테고리를 설정해 주세요.");
+        this.product.loading = false;
+        return false;
+      }
 
       //연동필수데이터 없는 상황
       if (this.checkMarket() === false) {
@@ -615,7 +625,8 @@ export default {
         is_free_delivery: oFormState.item_is_free_delivery === true ? "T" : "F",
         shipping_fee: oFormState.item_shipping_fee,
 
-        item_cate: JSON.stringify(oProduct.item_cate)
+        item_cate: JSON.stringify(oProduct.item_cate),
+        item_disp_cate: JSON.stringify(oProduct.item_disp_cate)
       });
 
       return oForm;
@@ -628,6 +639,42 @@ export default {
 
       return oForm;
     },
+
+    async getSmartstoreCategory() {
+      await useCategoryApi().getSmartstoreCategory({}).then((res) => {
+        if(res.status !== '2000'){
+          message.error(res.message);
+          return false;
+        }
+
+        this.smartStoreCategory = res.data
+      }).catch((e) => {
+        message.error(e.message);
+        return false;
+      })
+
+    },
+    checkSmartStoreCategory(accountList) {
+      const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
+
+      let faildItem = [];
+      if(smartstoreAccounts.length === 0) {
+        return true;
+      }
+
+      faildItem = this.smartStoreCategory.filter((item) => {
+        return this.product.formState.keyword.includes(item.cate_name);
+      })
+
+      if(faildItem.length > 0) {
+        message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
+        return false;
+      }
+      return true;
+    },
+  },
+  beforeMount() {
+    this.getSmartstoreCategory();
   },
 
 };

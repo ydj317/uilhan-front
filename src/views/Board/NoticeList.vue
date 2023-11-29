@@ -1,7 +1,7 @@
 <script setup>
 
 import {PushpinTwoTone, EyeOutlined} from "@ant-design/icons-vue";
-import {computed, onBeforeMount, ref} from "vue";
+import {computed, onBeforeMount, onMounted, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 import {AuthRequest} from "@/util/request";
 import { message } from "ant-design-vue";
@@ -12,8 +12,21 @@ let datasource = ref([]);
 let total = ref(0);
 let loading = ref(false);
 let checked = ref(true);
-let deleteLoading = ref(false);
 let selectedRowKeys = ref([]);
+
+const state = reactive({
+  tableData: {
+    data: [],
+    total: 0,
+    loading: false,
+    params: {
+      type: 'notice',
+      title: '',
+      page: 1,
+      pageSize: 20,
+    },
+  }
+});
 
 const pagination = ref({
   total: 0,
@@ -45,77 +58,73 @@ const table_columns = computed(() => {
  * 게시판 리스트
  */
 const getBoardList = () => {
-  loading.value = true
+  state.tableData.loading = true
 
   //const params = ''
-  const params = {params: {type: 'notice'}}
-
+  const params = {params: state.tableData.params}
   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/list', params).then((res) => {
     if (res.status !== '2000') {
-      loading.value = false;
       message.error(res.message)
       return false;
     }
-
-    total.value = res.data.length
-    datasource.value = Object.values(res.data)
-    loading.value = false;
+    const { total, rows } = res.data
+    state.tableData.total = total
+    state.tableData.data = rows
 
   }).catch((error) => {
-    loading.value = false;
-    message.error(error.message);
+    message.error(error.message+' - ')
     return false;
+  }).finally(() => {
+    state.tableData.loading = false;
   });
 }
 
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+};
 
-onBeforeMount(() => {
+const handleSearch = () => {
+  getBoardList();
+}
+
+const pageChangeHandler = (page) => {
+  state.tableData.params.page = page;
+  getBoardList();
+}
+
+onMounted(() => {
   getBoardList()
 })
 </script>
 
 <template>
-  <a-card :bordered="false" :loading="loading">
-    <a-row type="flex" justify="space-between" :wrap="false" :style="{marginBottom:'10px'}">
-      <a-col>
+  <a-card :bordered="false" :loading="state.tableData.loading" title="공지사항">
+    <div style="display: flex;justify-content: right;">
+    <a-space>
+      <a-input v-model:value="state.tableData.params.title" style="width: 200px;" allowClear/>
+      <a-button type="primary" @click.prevent="handleSearch" >검색</a-button>
+    </a-space>
+    </div>
 
-      </a-col>
-      <a-col>
-
-      </a-col>
-    </a-row>
-
-    <a-table :columns="table_columns" :data-source="datasource" :pagination="pagination">
-      <template #bodyCell="{ column,record, text, index }">
-        <template v-if="column.dataIndex === 'id'">
-          {{ total - index }}
+    <a-table :data-source="state.tableData.data" :loading="state.tableData.loading" :rowSelection="rowSelection"
+             :pagination="false" :defaultExpandAllRows="true" size="small" class="mt15"
+    >
+      <a-table-column title="ID" dataIndex="id" key="id" />
+      <a-table-column title="제목" dataIndex="title" key="title" />
+      <a-table-column title="시간" dataIndex="insDate" key="insDate" />
+      <a-table-column title="보기" dataIndex="controller" key="controller">
+        <template #default="{ record }">
+        <router-link :to="`/board/notice/view/${record.id}`">
+          <a-button type="primary" size="small">
+            <template #icon><eye-outlined/></template>
+          </a-button>
+        </router-link>
         </template>
-        <template v-if="column.dataIndex === 'title'">
-          <router-link :to="`/board/notice/view/${record.id}`">
-            <pushpin-two-tone two-tone-color="#eb2f96" v-if="record.isFixtop === true"/>
-            {{ text }}
-          </router-link>
-        </template>
-
-        <template v-if="column.dataIndex === 'type'">
-          <a-tag color="pink" v-if="text === 'notice'">{{ text }}</a-tag>
-          <a-tag v-else>{{ text }}</a-tag>
-        </template>
-
-        <template v-if="column.key === 'action'">
-          <span>
-            <router-link :to="`/board/notice/view/${record.id}`">
-              <a-button type="primary" size="small">
-                <template #icon><eye-outlined/></template>
-              </a-button>
-            </router-link>
-          </span>
-        </template>
-      </template>
+      </a-table-column>
     </a-table>
+    <a-pagination :total="state.tableData.total" :page-size="state.tableData.params.pageSize"
+                  :current="state.tableData.params.page" @change="pageChangeHandler" class="mt15" />
   </a-card>
 </template>
-
-<style scoped>
-
-</style>

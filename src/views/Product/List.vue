@@ -1,5 +1,5 @@
 <template>
-  <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true" />
+  <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
 
   <!--검색-->
   <a-card :bordered="false" title="상품관리" :style="{ marginBottom: '20px' }">
@@ -22,26 +22,27 @@
             <a-select v-model:value="date_type" style="width: 150px;">
               <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
             </a-select>
-            <a-range-picker v-model:value="date" format="YYYY-MM-DD" @change="onChangeDatePicker" style="width: 300px;" />
+            <a-range-picker v-model:value="date" format="YYYY-MM-DD" @change="onChangeDatePicker"
+                            style="width: 300px;"/>
           </a-input-group>
         </div>
 
         <!--검색입력창-->
         <div class="inline-block mt10">
-          <h1>키워드</h1>
+          <h1>검색어</h1>
           <a-input-group compact>
             <a-select v-model:value="search_key" style="width: 150px;">
               <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">
                 {{ config.label }}
               </a-select-option>
             </a-select>
-            <a-input v-model:value="search_value" placeholder="키워드" style="width: 300px;" />
+            <a-input v-model:value="search_value" placeholder="검색어" style="width: 300px;"/>
           </a-input-group>
         </div>
 
         <div class="mt25" style="text-align: center;">
           <a-button @click="getList" style="width: 100px;" type="primary">
-            <SearchOutlined />
+            <SearchOutlined/>
             검색
           </a-button>
           <a-button class="ml10" @click="initSearchParam()" style="width: 100px;" type="">초기화</a-button>
@@ -65,8 +66,8 @@
 
       <!--right button-->
       <div class=" pl5 ">
-        <!--제휴사 상품연동-->
-        <a-button @click="MarketListPop(record)" type="primary">제휴사 상품연동</a-button>
+        <!--선택상품 등록-->
+        <a-button @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
       </div>
     </div>
 
@@ -74,7 +75,7 @@
     <div id="content-content" class="pt20">
       <!--전체선택-->
       <a-table class="test-custem" :columns="LIST_COLUMNS_CONFIG" :data-source="prdlist" :pagination="pagination"
-        :row-selection="{ selectedRowKeys: prdSelectedRowKeys, onChange: onPrdSelectChange }">
+               :row-selection="{ selectedRowKeys: prdSelectedRowKeys, onChange: onPrdSelectChange }">
 
         <!--table body-->
         <template v-slot:bodyCell="{ text, record, index, column }">
@@ -85,7 +86,7 @@
 
           <!--사진-->
           <template v-if="column.key === 'item_thumb'">
-            <a-image :src="record.item_thumb[0]" style="width: 50px; height: 50px;" />
+            <a-image :src="record.item_thumb[0]" style="width: 50px; height: 50px;"/>
           </template>
 
           <!--상품코드-->
@@ -112,7 +113,7 @@
                         <span>{{ market_info.seller_id }}</span>
                       </template>
                       <span class="item-market-icon" :class="market_info.status"
-                        @click="openMarketPopup(market_info, market_info.market_prd_code)">
+                            @click="openMarketPopup(market_info, market_info.market_prd_code)">
                         <img :src="getLogoSrc('market-logo', market_info.market_code)" alt="">
                       </span>
                     </a-tooltip>
@@ -135,7 +136,7 @@
             </div>
           </template>
 
-          <!--연동상태-->
+          <!--등록상태-->
           <template v-if="column.key === 'item_status'">
 
             <span v-if="record.item_sync_date">
@@ -156,21 +157,39 @@
           <!--제휴사연동-->
           <template v-if="column.key === 'item_sync_status'">
             <div class="center">
-              <a-button @click="singlePop(record)" type="primary" shape="round">연동관리</a-button>
+              <a-space>
+                <a-button size="small"
+                          @click.prevent="showHistory({title: record.item_trans_name || record.item_name, type: 'product', index_id: record.item_id})">
+                  히스토리
+                </a-button>
+                <a-divider/>
+                <a-button @click="singlePop(record)" type="primary" shape="round">등록관리</a-button>
+              </a-space>
             </div>
           </template>
 
         </template>
       </a-table>
     </div>
+
+    <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData"/>
   </a-card>
 
-  <!--제휴사연동-->
+  <!--선택상품 등록-->
   <div id="footer">
-    <!--제휴사 상품연동-->
-    <a-modal width="1000px" title="제휴사 상품연동" v-model:visible="singleSyncPop" centered>
+    <!--선택상품 등록-->
+    <a-modal width="1000px" v-model:visible="singleSyncPop" centered>
+      <template #title>
+        선택상품 등록
+        <a-tooltip>
+          <template #title>
+            <div>상품을 등록할 마켓을 선택하여 등록해 주세요.</div>
+          </template>
+          <QuestionCircleOutlined/>
+        </a-tooltip>
+      </template>
       <a-table class="tableSyncStatus" :dataSource="singleDetail.item_sync_market" :columns="SYNC_COLUMNS_CONFIG"
-        :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }">
+               :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }">
 
         <!--table body-->
         <template v-slot:bodyCell="{ text, record, index, column }">
@@ -178,7 +197,7 @@
           <template v-if="column.key === 'market_account'">
             <div style="text-align: left">
               <img :src="getLogoSrc('market-logo', record.market_code)"
-                style="width: 16px; height: 16px; margin-right: 5px;">
+                   style="width: 16px; height: 16px; margin-right: 5px;">
               {{ record.seller_id }}
             </div>
           </template>
@@ -193,7 +212,7 @@
               <a-tag color="default" v-else>연동대기</a-tag>
               <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
               <a-tag color="#108ee9" v-if="record.status === 'approval'" style="cursor: pointer"
-                @click="approvalCheck(record.market_id)">
+                     @click="approvalCheck(record.market_id)">
                 승인상태확인
               </a-tag>
             </div>
@@ -239,29 +258,33 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
-import { AuthRequest } from "@/util/request";
+import {defineComponent, ref} from "vue";
+import {AuthRequest} from "@/util/request";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import Cookie from "js-cookie";
 import MarketList from "@/components/List/MarketList";
-import { useMarketApi } from "@/api/market";
+import {useMarketApi} from "@/api/market";
 
-import { mapState } from "vuex";
+import {mapState} from "vuex";
 import {
   ClockCircleOutlined,
   CloseCircleOutlined,
   CheckCircleOutlined,
   LinkOutlined,
-  DollarTwoTone, SearchOutlined
+  DollarTwoTone, SearchOutlined, QuestionCircleOutlined
 } from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
-import { lib } from "@/util/lib";
+import {message} from "ant-design-vue";
+import {lib} from "@/util/lib";
 import router from "@/router";
+import HistoryView from "@/components/HistoryView.vue";
+import {useCategoryApi} from "@/api/category";
 
 export default defineComponent({
   components: {
+    HistoryView,
+    QuestionCircleOutlined,
     SearchOutlined,
     DollarTwoTone,
     Loading,
@@ -289,12 +312,12 @@ export default defineComponent({
               value: "all"
             },
             {
-              label: "Tmall",
-              value: "Tmall"
-            },
-            {
               label: "Taobao",
               value: "Taobao"
+            },
+            {
+              label: "Tmall",
+              value: "Tmall"
             },
             {
               label: "Alibaba",
@@ -304,10 +327,6 @@ export default defineComponent({
               label: "Aliexpress",
               value: "Aliexpress"
             },
-            {
-              label: "Vvic",
-              value: "Vvic"
-            }
           ],
           label: "상품수집마켓",
           key: "market_code",
@@ -329,11 +348,11 @@ export default defineComponent({
               value: "0"
             },
             {
-              label: "미연동",
+              label: "미등록",
               value: "2"
             }
           ],
-          label: "연동상태",
+          label: "등록상태",
           key: "sync_status",
           class: "inline-block",
           group_class: "start"
@@ -394,13 +413,13 @@ export default defineComponent({
           align: "center"
         },
         {
-          title: "연동상태",
+          title: "등록상태",
           key: "item_status",
           width: "8%",
           align: "center"
         },
         {
-          title: "제휴사연동",
+          title: "마켓등록",
           key: "item_sync_status",
           width: "8%",
           align: "center"
@@ -427,18 +446,18 @@ export default defineComponent({
       },
       SYNC_COLUMNS_CONFIG: [
         {
-          title: "쇼핑몰",
+          title: "마켓",
           key: "market_account",
-          width: "200px",
-          align: "center"
+          align: "center",
+          width: "180px",
         },
         {
-          title: "연동상태",
+          title: "등록상태",
           key: "status",
-          align: "center"
+          align: "center",
         },
         {
-          title: "연동시간",
+          title: "등록시간",
           key: "ins_time",
           width: "170px",
           align: "center"
@@ -477,7 +496,11 @@ export default defineComponent({
       listLoading: true,
       MarketListVisible: false,
       prdSelectedRowKeys: [],
-      syncSelectedRowKeys: []
+      syncSelectedRowKeys: [],
+      marketDetailUrls: [],
+      historyVisible: false,
+      historyData: {},
+      smartStoreCategory: [],
     };
   },
 
@@ -532,10 +555,10 @@ export default defineComponent({
       return key1 === key2;
     },
 
-    getList(sType = "") {
+    async getList(sType = "") {
       this.listLoading = true
       let param = this.getParam(sType);
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", { params: param }).then((res) => {
+      await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", {params: param}).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
         }
@@ -558,9 +581,9 @@ export default defineComponent({
           }
 
           selectedPrice = this.prdlist[i].item_sku.filter(item => item.is_option_reference_price === 'T')
-            .map(item => item.selling_price);
+              .map(item => item.selling_price);
 
-          if(selectedPrice.length === 0) {
+          if (selectedPrice.length === 0) {
             selectedPrice = this.prdlist[i].item_sku.map(item => item.selling_price);
           }
 
@@ -637,7 +660,7 @@ export default defineComponent({
         return false;
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", { params: { list: list } }).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", {params: {list: list}}).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
@@ -655,10 +678,10 @@ export default defineComponent({
         this.indicator = true;
         param = this.getParam();
       } else {
-        param = { list: list };
+        param = {list: list};
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/exceldown", { params: param }).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/exceldown", {params: param}).then((res) => {
         this.indicator = false;
         if (res.status !== "2000") {
           message.error(res.message);
@@ -690,8 +713,8 @@ export default defineComponent({
       this.checkedList = [];
     },
 
-    getMarketList() {
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist").then((res) => {
+    async getMarketList() {
+      await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist").then((res) => {
         if (res.status !== "2000") {
           message.error("설정하신 마켓계정 정보가 없습니다. \n마켓계정을 설정해주세요. ");
 
@@ -762,8 +785,27 @@ export default defineComponent({
       }
     },
 
+    checkSmartStoreCategory(accountList) {
+
+      const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
+
+      let faildItem = [];
+      if(smartstoreAccounts.length === 0) {
+        return true;
+      }
+
+      faildItem = this.smartStoreCategory.filter((item) => {
+        return this.singleDetail.item_sync_keyword.includes(item.cate_name);
+      })
+
+      if(faildItem.length > 0) {
+        message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
+        return false;
+      }
+      return true;
+    },
+
     async sendMarket() {
-      this.indicator = true;
 
       let accountList = this.singleDetail.item_sync_market.filter(item => item.checked === true);
 
@@ -773,6 +815,12 @@ export default defineComponent({
         return false;
       }
 
+      const checkSmartStore = this.checkSmartStoreCategory(accountList);
+      if(checkSmartStore === false) {
+        return false
+      }
+
+      this.indicator = true;
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
           productList: this.singleDetail.item_id + "",
@@ -849,14 +897,14 @@ export default defineComponent({
 
         sycnMarkets = res.data;
       } catch (e) {
-        message.error("연동상태 조회실패 하였습니다.");
+        message.error("등록상태 조회실패 하였습니다.");
         return false;
       }
 
       this.syncSelectedRowKeys = []
       for (let i = 0; i < this.singleDetail.item_sync_market.length; i++) {
         const foundItem = sycnMarkets.find(item => item.market_code === this.singleDetail.item_sync_market[i].market_code &&
-          item.market_account === this.singleDetail.item_sync_market[i].seller_id);
+            item.market_account === this.singleDetail.item_sync_market[i].seller_id);
         if (foundItem) {
           this.singleDetail.item_sync_market[i].marker_id = foundItem.id;
           this.singleDetail.item_sync_market[i].status = foundItem.status;
@@ -874,6 +922,7 @@ export default defineComponent({
     },
 
     openMarketPopup(marketInfo, market_prd_code) {
+
       if (marketInfo.status !== "success") {
         if (marketInfo.status === "unsync") {
           return;
@@ -882,17 +931,6 @@ export default defineComponent({
         return;
       }
 
-      // @TODO API수집
-      const marketUrls = {
-        'storefarm': "https://smartstore.naver.com/",
-        'coupang': "https://www.coupang.com/vp/products/",
-        // 'sk11st': "https://www.11st.co.kr/products/",
-        // 'wemakeprice': "https://front.wemakeprice.com/deal/",
-        // 'interpark': "https://shopping.interpark.com/product/productInfo.do?prdNo=",
-        // 'tmon': "",
-        // 'esm_gmarket': "http://item.gmarket.co.kr/Item?goodscode=",
-        // 'lotteon': "https://www.lotteon.com/p/product/bundle/",
-      }
 
       if (!lib.isNumeric(marketInfo.market_code)) {
         message.warning("마켓코드가 잘못되었습니다.");
@@ -902,27 +940,57 @@ export default defineComponent({
         message.warning("상품코드가 잘못되었습니다.");
         return false;
       }
+      let url = '';
+      if (marketInfo.market_code === 'smartstore') {
+        // check channel_info
+        const channelInfo = marketInfo.market_data?.channel_info;
 
-      window.location.href = marketUrls[marketInfo.market_code] + market_prd_code
+        if (!channelInfo?.url) {
+          message.warning("채널정보가 없습니다. 마켓계정관리에서 연동확인 후 다시 시도해주세요.");
+          return false;
+        }
+        url = `${channelInfo.url}/${market_prd_code}`;
+      } else {
+        url = this.marketDetailUrls[marketInfo.market_code] + market_prd_code;
+      }
+      window.open(url)
     },
 
-    getMarketDetailUrls() {
-      useMarketApi().getMarketDetailUrls({}).then((res) => {
+    async getMarketDetailUrls() {
+      await useMarketApi().getMarketDetailUrls({}).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
         }
         //console.log(res.data);
-        //this.marketDetailUrls = res.data;
+        this.marketDetailUrls = res.data;
       });
+    },
+
+    async getSmartstoreCategory() {
+      await useCategoryApi().getSmartstoreCategory({}).then((res) => {
+        if(res.status !== '2000'){
+          message.error(res.message);
+          return false;
+        }
+
+        this.smartStoreCategory = res.data
+      }).catch((e) => {
+        message.error(e.message);
+        return false;
+      })
+
+    },
+
+    showHistory(param) {
+      this.historyData = param;
+      this.historyVisible = true;
     }
   },
 
 
   beforeMount() {
-    this.getList("reload");
-    this.getMarketList();
-    this.getMarketDetailUrls();
+    Promise.all([this.getMarketList(), this.getMarketDetailUrls(), this.getList("reload"), this.getSmartstoreCategory()]);
   },
 
 });

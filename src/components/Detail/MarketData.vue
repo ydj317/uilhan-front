@@ -12,35 +12,55 @@
               </div>
               <div style="display: flex;flex-direction: column;gap: 15px">
                 <div v-for="(market, key) in product.item_sync_market" :key="key"
-                  style="display: flex; align-items: center; gap: 6px;">
-                  <img :src="getLogoSrc(market.market_code)" style="width: 18px;height: 18px;" />
+                     style="display: flex; align-items: center; gap: 6px;">
+                  <img :src="getLogoSrc(market.market_code)" style="width: 18px;height: 18px;"/>
                   {{ market.seller_id }}:
 
-                  <div v-if="(product.item_cate !== null && !product.item_cate[market.seller_id]) || !product.item_cate"
-                    style="color: #999999;">
-                    카테고리 미설정
-                  </div>
+                  <div style="display: flex; flex-direction: column;">
+                    <div v-if="(product.item_cate !== null && !product.item_cate[market.seller_id]) || !product.item_cate"
+                         style="color: #999999;">
+                      카테고리 미설정
+                    </div>
 
-                  <div v-for="(item, cateKey) in product.item_cate" :key="cateKey">
-                    <div v-if="cateKey == market.seller_id">
-                      {{ item.categoryNames }}
-                      <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;"
-                        @click="removeCategory(cateKey)" v-if="market.market_prd_code === ''" />
+
+
+                    <div v-for="(item, cateKey) in product.item_cate" :key="cateKey">
+                      <div v-if="cateKey == market.seller_id">
+
+                        <a-tag color="#108ee9">표준</a-tag>: {{ item.categoryNames }}
+                        <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;"
+                                            @click="removeCategory(cateKey)" v-if="market.market_prd_code === ''"/>
+                      </div>
+                    </div>
+
+                    <div v-if="['lotteon'].includes(market.market_code) && ((product.item_disp_cate !== null && !product.item_disp_cate[market.seller_id]) || !product.item_disp_cate)"
+                         style="color: #999999;">
+                      전시 카테고리 미설정
+                    </div>
+                    <div v-for="(item, cateKey) in product.item_disp_cate" :key="cateKey">
+                      <div v-if="cateKey == market.seller_id">
+                        <a-tag color="#87d068">전시</a-tag>: {{ item.categoryNames }}
+                        <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;"
+                                            @click="removeDispCategory(cateKey)" v-if="market.market_prd_code === ''"/>
+                      </div>
                     </div>
                   </div>
+
 
                 </div>
               </div>
             </div>
-            <category-settings :isShow="settingCategoryVisible" @cancelDialog="isShow" />
+            <category-settings :isShow="settingCategoryVisible" @cancelDialog="isShow"/>
           </a-descriptions-item>
 
           <a-descriptions-item label="상품고시">
             <a-form-item>
               <a-select v-model:value="formState.mandatory_val" placeholder="상품고시 선택해주세요.">
                 <a-select-option value="선택">선택</a-select-option>
-                <a-select-option v-for="(item, key) in formState.mandatory" :key="key" :value="item.value">{{ item.label
-                }}</a-select-option>
+                <a-select-option v-for="(item, key) in formState.mandatory" :key="key" :value="item.value">{{
+                    item.label
+                  }}
+                </a-select-option>
               </a-select>
             </a-form-item>
           </a-descriptions-item>
@@ -54,9 +74,19 @@
             </a-form-item>
           </a-descriptions-item> -->
 
-          <a-descriptions-item label="키워드">
+          <a-descriptions-item>
+            <template #label>
+              상품태그
+              <a-tooltip>
+                <template #title>
+                  <div>상품태그에는 상품 카테고리 명칭을 기입 할 수 없습니다.</div>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
+            </template>
             <a-form-item>
-              <a-input v-model:value="formState.keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다." />
+              <a-input v-model:value="formState.keyword"
+                       placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다."/>
             </a-form-item>
           </a-descriptions-item>
         </a-descriptions>
@@ -68,14 +98,14 @@
 
 <script>
 
-import { ref, reactive, computed, defineAsyncComponent } from 'vue';
-import { mapState, useStore } from 'vuex';
+import {ref, reactive, computed, defineAsyncComponent} from 'vue';
+import {mapState, useStore} from 'vuex';
 import CategorySettings from "@/components/Detail/categorySettings.vue";
-import { useMandatoryApi } from "@/api/mandatory";
-import { CloseCircleTwoTone } from '@ant-design/icons-vue';
+import {useMandatoryApi} from "@/api/mandatory";
+import {CloseCircleTwoTone, QuestionCircleOutlined} from '@ant-design/icons-vue';
 
 export default {
-  components: { CategorySettings, CloseCircleTwoTone },
+  components: {QuestionCircleOutlined, CategorySettings, CloseCircleTwoTone},
 
   computed: {
     ...mapState([
@@ -123,6 +153,10 @@ export default {
   methods: {
     removeCategory(key) {
       delete this.product.item_cate[key];
+    },
+
+    removeDispCategory(key) {
+      delete this.product.item_disp_cate[key];
     },
 
     getLogoSrc(marketCode) {

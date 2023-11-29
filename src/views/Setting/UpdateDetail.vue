@@ -1,5 +1,6 @@
 <template>
-  <a-card :loading="formState.loading" :bordered="false" :title="'사용자 정보 수정'">
+  <BindBridge />
+  <a-card :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
 
     <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">
@@ -8,8 +9,8 @@
         {{ formState.username }}
       </a-form-item>
 
-      <a-form-item label="사용자명/사업자명" name="name" has-feedback>
-        <a-input v-model:value="formState.name" placeholder="사용자명/사업자명을 입력해주시오" />
+      <a-form-item label="사용자명" name="name" has-feedback>
+        <a-input v-model:value="formState.name" placeholder="사용자명을 입력해주시오" />
       </a-form-item>
 
       <a-form-item label="Email" name="email" has-feedback>
@@ -95,6 +96,9 @@
     </a-form>
 
   </a-card>
+  <Password />
+  <Account />
+  <Guide />
 </template>
 
 <script setup>
@@ -103,6 +107,10 @@ import { onMounted, reactive, ref } from "vue";
 import router from "@/router";
 import { message } from "ant-design-vue";
 import {useUserApi} from "@/api/user";
+import Password from "@/views/Setting/Password.vue";
+import Account from "@/views/Setting/Account.vue";
+import Guide from "@/views/Setting/Guide.vue";
+import BindBridge from "@/views/Setting/BindBridge.vue";
 
 const formState = reactive({
   username: "",
@@ -134,10 +142,10 @@ const formState = reactive({
 
 let validateName = async (rule, value) => {
   if (value === "") {
-    return Promise.reject("사용자 또는 사업자명을 입력해주십시오");
+    return Promise.reject("사용자명을 입력해주십시오");
   } else {
     if (value.length < 2 || value.length > 20) {
-      return Promise.reject("사업자명은 최소 2자 최대 20자이내로 입력해주십시오");
+      return Promise.reject("사용자명은 최소 2자 최대 20자이내로 입력해주십시오");
     }
   }
 

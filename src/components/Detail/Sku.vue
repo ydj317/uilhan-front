@@ -4,13 +4,28 @@
     <!--sku 상단 버튼-->
     <div class="top_button_container" style="display: flex;justify-content: space-between;">
       <!--sku 상단 left 버튼-->
-      <div class="top_button_left_item">
+      <div class="top_button_left_item" style="display: flex;gap: 10px;align-items: center">
         <!--일괄적용-->
         <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 구매원가, 판매가)" @confirm="skuBatch">
           <a-button>일괄적용</a-button>
         </a-popconfirm>
         <!--품목삭제-->
         <a-button @click="deleteSku" :disabled="product.is_sync === 'T'">품목삭제</a-button>
+        <a-divider type="vertical"></a-divider>
+        <div style="display: flex;gap: 5px">
+          <a-select v-model:value="setting_price_type">
+            <a-select-option value="min_price">최저 옵션가 기준 50%</a-select-option>
+          </a-select>
+          <a-button @click="settingSkuPrice">
+            적용
+            <a-tooltip>
+              <template #title>
+                <div>스마트스토어 옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 비활성화 합니다.</div>
+              </template>
+              <QuestionCircleOutlined/>
+            </a-tooltip>
+          </a-button>
+        </div>
       </div>
 
       <!--sku 상단 right 버튼-->
@@ -20,14 +35,42 @@
           <a-space>
             <a-tooltip>
               <template #title>
-                <div>무료배송 체크시 배송비를 판매가에 추가하여 등록 됩니다.</div>
+                <div>무료배송 박스 체크 시 배송비를 상품 판매가 내 추가하여 등록 할 수 있는 기능입니다.</div>
+                <a-popover v-model:visible="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop"
+                           style="z-index: 999">
+                  <template #content>
+                    <table border="1" style="border: 1px solid #999" class="popoverTable">
+                      <tr>
+                        <th>항목</th>
+                        <th>상품 가격 기준</th>
+                        <th>배송비</th>
+                      </tr>
+                      <tr>
+                        <td rowspan="3">전체 카테고리</td>
+                        <td><strong>상품가</strong> &lt;&equals; 20,000</td>
+                        <td>최대 15,000</td>
+                      </tr>
+                      <tr>
+                        <td>20,000 &lt; <strong>상품가</strong> &lt;&equals; 40,000</td>
+                        <td>최대 20,000</td>
+                      </tr>
+                      <tr>
+                        <td><strong>상품가</strong> &gt; 40,000</td>
+                        <td>최대 30,000</td>
+                      </tr>
+                    </table>
+                  </template>
+                  쿠팡 배송비 정책 자세히 보러가기 (삼각형 클릭)
+                  <a-button type="link">▶</a-button>
+                </a-popover>
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
-          <a-checkbox v-model:checked="formState.item_is_free_delivery" @change="handleShippingFeeDeliveryChange" >
-            무료 배송
-          </a-checkbox>
-          <a-input-number v-model:value.number="formState.item_shipping_fee" placeholder="배송비 입력" :step="1000" :min="0" style="width: 80px" @change="handleShippingFeeChange"/>
+            <a-checkbox v-model:checked="formState.item_is_free_delivery" @change="handleShippingFeeDeliveryChange">
+              무료 배송
+            </a-checkbox>
+            <a-input-number v-model:value.number="formState.item_shipping_fee" placeholder="배송비 입력" :step="1000"
+                            :min="0" style="width: 80px" @change="handleShippingFeeChange"/>
           </a-space>
         </div>
       </div>
@@ -36,38 +79,38 @@
     <!--이미지 선택 팝업-->
     <div>
       <a-modal
-        title="품목 이미지선택"
-        @ok="skuImageWindowOk"
-        @cancel="skuImageWindowCancel"
-        v-model:visible="sku_image_window_visible"
-        okText="선택"
-        cancelText="닫기"
+          title="품목 이미지선택"
+          @ok="skuImageWindowOk"
+          @cancel="skuImageWindowCancel"
+          v-model:visible="sku_image_window_visible"
+          okText="선택"
+          cancelText="닫기"
       >
         <img
-          class="sku_window_image"
-          alt=""
-          v-for="(item_thumbnails, i) in this.product.item_thumbnails"
-          :key="i"
-          :src="item_thumbnails.url"
-          :class="`${
+            class="sku_window_image"
+            alt=""
+            v-for="(item_thumbnails, i) in this.product.item_thumbnails"
+            :key="i"
+            :src="item_thumbnails.url"
+            :class="`${
             selected_sku_image_index === i ? 'checkedEl' : 'checkedNot'
           }`"
-          @click="selectSkuImage(i, item_thumbnails.url)"
-          @dblclick="openPreview(item_thumbnails.url)"
+            @click="selectSkuImage(i, item_thumbnails.url)"
+            @dblclick="openPreview(item_thumbnails.url)"
         />
       </a-modal>
       <div v-if="showPreview" class="preview-overlay" @click="closePreview">
-        <img :src="previewSrc" alt="Preview Image" />
+        <img :src="previewSrc" alt="Preview Image"/>
       </div>
     </div>
 
     <!--sku table-->
     <div>
       <a-table
-        :bordered="true"
-        :columns="sku_columns"
-        :pagination="sku_pagination"
-        :data-source="this.product.sku"
+          :bordered="true"
+          :columns="sku_columns"
+          :pagination="sku_pagination"
+          :data-source="this.product.sku"
       >
         <!--bodyCell-->
         <template v-slot:bodyCell="{ record, column, index }">
@@ -83,16 +126,16 @@
             <div class="col center">
               <div>
                 <img
-                  class="sku_image"
-                  alt=""
-                  v-if="record.img"
-                  :src="record.img"
-                  @click="translatePopup(record, record.img)"
+                    class="sku_image"
+                    alt=""
+                    v-if="record.img"
+                    :src="record.img"
+                    @click="translatePopup(record, record.img)"
                 />
               </div>
               <a-button
-                class="sku_image_button"
-                @click="skuImageWindowVisible(record.key)"
+                  class="sku_image_button"
+                  @click="skuImageWindowVisible(record.key)"
               >선택
               </a-button>
             </div>
@@ -100,7 +143,8 @@
 
           <template v-else-if="column.key === 'is_option_reference_price'">
             <div class="center">
-              <label class="ant-radio-wrapper" :class="{'ant-radio-wrapper-checked': record.is_option_reference_price === 'T' }">
+              <label class="ant-radio-wrapper"
+                     :class="{'ant-radio-wrapper-checked': record.is_option_reference_price === 'T' }">
               <span class="ant-radio" :class="{'ant-radio-checked': record.is_option_reference_price === 'T' }">
                 <span class="ant-radio-inner" @click="setIsOptionReferencePrice(record.key)"></span>
               </span>
@@ -112,8 +156,8 @@
           <!--스펙-->
           <template v-else-if="column.key === 'spec'">
             <div
-              class="center"
-              :style="record.spec.length > 20 ? 'color: red' : ''"
+                class="center"
+                :style="record.spec.length > 20 ? 'color: red' : ''"
             >
               {{ record.spec }}
             </div>
@@ -135,7 +179,7 @@
                 <sub><span style="color: #999999">{{ record.original_price_cn }}위안</span></sub>
               </div>
             </div>
-            <div v-if="record.original_price_cn === 0 || record.editor === 'T'"  style="border: 1px solid red">
+            <div v-if="record.original_price_cn === 0 || record.editor === 'T'" style="border: 1px solid red">
               <a-input
                   :style="
                   record.img
@@ -150,22 +194,22 @@
 
           <!--입력-->
           <template
-            v-else-if="['stock', 'shipping_fee_cn'].includes(column.key)"
+              v-else-if="['stock', 'shipping_fee_cn'].includes(column.key)"
           >
             <a-input
-              :style="
+                :style="
                 record.img
                   ? `height: 30px; text-align: center; border: none;`
                   : `height: 30px; text-align: center; border: none;`
               "
-              @blur="handlerShippingFee(column.key, index)"
-              v-model:value="record[column.key]"
+                @blur="handlerShippingFee(column.key, index)"
+                v-model:value="record[column.key]"
             />
           </template>
 
           <!-- 판매가 -->
           <template v-else-if="column.key === 'selling_price'">
-              <a-input
+            <a-input
                 :style="
                   record.img
                     ? `height: 30px; text-align: center; border: none;`
@@ -173,13 +217,13 @@
                 "
                 @blur="handlerCustomPrice(column.key, index)"
                 v-model:value="record[column.key]"
-              />
+            />
           </template>
           <!--보여주기-->
           <template v-else>
             <div
-              class="center"
-              :style="
+                class="center"
+                :style="
                 record.img
                   ? `height: 130px; text-align: center; border: none;`
                   : `height: 30px; text-align: center; border: none;`
@@ -196,10 +240,10 @@
 
 <script>
 import {mapState, useStore} from "vuex";
-import { lib } from "@/util/lib";
-import { forEach } from "lodash";
-import { message } from "ant-design-vue";
-import {computed, reactive} from "vue";
+import {lib} from "@/util/lib";
+import {forEach} from "lodash";
+import {message} from "ant-design-vue";
+import {computed, reactive, ref} from "vue";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 
 export default {
@@ -217,7 +261,9 @@ export default {
       selected_sku_image_index: 0,
       sku_image_window_visible: false,
       showPreview: false,
+      popoverVisible: false,
       previewSrc: '',
+      setting_price_type: 'min_price',
       sku_columns: [
         {
           title: "선택",
@@ -230,7 +276,7 @@ export default {
           width: "1%",
         },
         {
-          title: "품목가 기준",
+          title: "옵션가 기준",
           key: "is_option_reference_price",
           width: "6%",
         },
@@ -295,6 +341,36 @@ export default {
     }
   },
   methods: {
+    settingSkuPrice() {
+      if (this.setting_price_type === 'min_price') {
+        this.setSkuPriceMin();
+      }
+    },
+
+    setSkuPriceMin() {
+      let maxPrice = Number.NEGATIVE_INFINITY; // Initialize with the smallest possible value
+      let minPrice = Number.POSITIVE_INFINITY; // Initialize with the largest possible value
+      for (const skuItem of this.product.sku) {
+        const {selling_price} = skuItem;
+        if (selling_price > maxPrice) {
+          maxPrice = selling_price;
+        }
+        if (selling_price < minPrice) {
+          minPrice = selling_price;
+        }
+      }
+
+      // this.product.sku에서 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 경고창 띄우기
+      for (const skuItem of this.product.sku) {
+        const {selling_price} = skuItem;
+        // 경고창 띄운 후에도 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 this.product.sku 에서 삭제
+        if (selling_price > minPrice * 1.5 || selling_price < minPrice * 0.5) {
+          // this.product.sku에서 삭제
+          this.product.sku = this.product.sku.filter(item => item.key !== skuItem.key);
+        }
+      }
+    },
+
     setIsOptionReferencePrice(key) {
       forEach(this.product.sku, (item, index) => {
         if (item.key === key) {
@@ -325,26 +401,26 @@ export default {
     handlerShippingFee(key, index) {
 
       //예상수익
-        let expected_return = (Number(this.product.sku[index].selling_price) - Number(this.product.sku[index].original_price_ko)).toFixed(0);
-        this.product.sku[index].expected_return = Number(expected_return);
+      let expected_return = (Number(this.product.sku[index].selling_price) - Number(this.product.sku[index].original_price_ko)).toFixed(0);
+      this.product.sku[index].expected_return = Number(expected_return);
     },
 
     handlerCustomPrice(key, index) {
       //자체입력으로 의한 가격 동기화(권장가, 판매가, 예상수익)
-        if (key === "selling_price") {
-          let sellingPrice = Number(this.product.sku[index][key]);
-          let expected_return = (Number(sellingPrice) - Number(this.product.sku[index].original_price_ko)).toFixed(0);
-          this.product.sku[index].expected_return = Number(expected_return);
-        }
+      if (key === "selling_price") {
+        let sellingPrice = Number(this.product.sku[index][key]);
+        let expected_return = (Number(sellingPrice) - Number(this.product.sku[index].original_price_ko)).toFixed(0);
+        this.product.sku[index].expected_return = Number(expected_return);
+      }
     },
 
     // 품목삭제
     deleteSku() {
       if (
-        !lib.isArray(
-          this.product.sku.filter((data) => data.checked === true),
-          true
-        )
+          !lib.isArray(
+              this.product.sku.filter((data) => data.checked === true),
+              true
+          )
       ) {
         message.warning("선택된 품목이 없습니다.");
         return false;
@@ -352,7 +428,7 @@ export default {
 
       // 삭제
       this.product.sku = this.product.sku.filter(
-        (data) => data.checked !== true
+          (data) => data.checked !== true
       );
     },
 
@@ -362,7 +438,7 @@ export default {
         this.sku_columns.map((columns) => {
           //custom price
           if (["selling_price"].includes(columns.key)) {
-            this.product.sku[i]["custom_" + columns.key] = Number(this.product.sku[0]["custom_" +  columns.key]);
+            this.product.sku[i]["custom_" + columns.key] = Number(this.product.sku[0]["custom_" + columns.key]);
           }
           //original_price_ko
           if (["original_price_ko"].includes(columns.key)) {
@@ -399,7 +475,7 @@ export default {
     skuImageWindowOk() {
       this.product.sku.map((data, i) => {
         if (data.key === this.selected_sku_image_key) {
-          if(!this.selected_sku_image_url){
+          if (!this.selected_sku_image_url) {
             this.product.sku[i].img = this.product.item_thumbnails[0].url
           } else {
             this.product.sku[i].img = this.selected_sku_image_url;
@@ -451,8 +527,8 @@ export default {
         Object.keys(oRequestId).map((sRequestId) => {
           this.product.sku.map((data, i) => {
             if (
-              lib.isString(data.img, true) === true &&
-              data.img.split("/").includes(sRequestId) === true
+                lib.isString(data.img, true) === true &&
+                data.img.split("/").includes(sRequestId) === true
             ) {
               this.product.sku[i].img = oRequestId[sRequestId];
             }
@@ -460,8 +536,8 @@ export default {
           // SKU 使用 SPEC 图片编辑时 同时 更新 SPEC 图片 (图片编辑器 只认ID 不认图片)
           this.product.item_thumbnails.map((data, i) => {
             if (
-              lib.isString(data.url, true) === true &&
-              data.url.split("/").includes(sRequestId) === true
+                lib.isString(data.url, true) === true &&
+                data.url.split("/").includes(sRequestId) === true
             ) {
               this.product.item_thumbnails[i].url = oRequestId[sRequestId];
             }
@@ -478,7 +554,7 @@ export default {
     css() {
       // sku table 需要改 ant vue 底层 css
       Object.values(
-        document.querySelectorAll("#eModelTitle_3 th.ant-table-cell")
+          document.querySelectorAll("#eModelTitle_3 th.ant-table-cell")
       ).map((el) => {
         if (el.tagName === "TH") {
           el.style.backgroundColor = "#f7fdff";
@@ -494,7 +570,7 @@ export default {
     shippingFeeInit() {
       this.formState.item_shipping_fee = this.product.item_shipping_fee || 0;
       this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T' ? true : false;
-      if(!this.formState.item_is_free_delivery){
+      if (!this.formState.item_is_free_delivery) {
         this.formState.shipping_fee_ko = this.product.item_shipping_fee;
       }
     },
@@ -506,9 +582,9 @@ export default {
     },
 
     handleShippingFeeChange(val) {
-        this.product.sku.map((data, i) => {
-          this.product.sku[i].shipping_fee_ko = val;
-        });
+      this.product.sku.map((data, i) => {
+        this.product.sku[i].shipping_fee_ko = val;
+      });
 
       this.formState.item_shipping_fee = val;
       this.product.formState.item_shipping_fee = val;
@@ -516,7 +592,7 @@ export default {
     },
 
     handleShippingFeeDeliveryChange() {
-      if(this.formState.item_is_free_delivery) {
+      if (this.formState.item_is_free_delivery) {
         message.warn('배송비가 판매가에 적용됩니다.');
       } else {
         message.warn('배송비가 운임에 적용됩니다.');
@@ -598,6 +674,21 @@ export default {
 .preview-overlay img {
   max-width: 80%;
   max-height: 80%;
+}
+
+.popoverTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.popoverTable th {
+  background-color: #f5f5f5;
+  padding: 5px;
+  text-align: center;
+}
+
+.popoverTable td {
+  padding: 5px;
 }
 
 </style>

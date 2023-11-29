@@ -13,10 +13,13 @@ const props = defineProps({
     <template #title>{{ menuInfo.meta.title }}</template>
     <template v-for="item in menuInfo.children" :key="item.path">
       <template v-if="!item.children && !item.meta.isHide">
-        <a-menu-item :key="item.path">
-          <RouterLink :to="item.path">
-          <span>{{ item.meta.title }}</span>
-          </RouterLink>
+        <a-menu-item :key="!item.path.startsWith('http') ? item.path : item.name">
+          <router-link :to="item.path" v-if="!item.path.startsWith('http')">
+            <span>{{item.meta.title}}</span>
+          </router-link>
+          <a :href="item.path" target="_blank" v-else>
+            <span>{{item.meta.title}}</span>
+          </a>
         </a-menu-item>
       </template>
       <template v-else-if="!item.meta.isHide">
@@ -25,7 +28,3 @@ const props = defineProps({
     </template>
   </a-sub-menu>
 </template>
-
-<style scoped>
-
-</style>

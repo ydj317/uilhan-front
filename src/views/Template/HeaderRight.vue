@@ -1,10 +1,49 @@
 <template>
   <div id="Header" class="pr20">
     <div class="h60 right center">
-      <div id="download_ext">
-        <a @click.self.prevent="extensionDown" size="small">크롬 확장 프로그램 </a>
-        <a-spin v-if="indicator" />
-      </div>
+      <a-space>
+        <div>
+          <div v-if="rateLoading">
+            <a-spin />
+          </div>
+          <a-space v-else>
+            <div>
+              <img src="../../assets/img/chn.png" style="width:20px;"/> 1위안
+            </div>
+            <span>⇋</span>
+            <div>
+              <img src="../../assets/img/kor.png" style="width:20px;"/> {{ rate }}원
+            </div>
+          </a-space>
+        </div>
+        <a-divider type="vertical"/>
+        <div>
+          <a-button type="link" size="small" @click="worldLinkGuide">월드링크 가이드북</a-button>
+        </div>
+        <div>
+          <a-button type="link" @click.prevent="extensionDown" size="small">크롬 확장 프로그램</a-button>
+          <a-spin v-if="indicator"/>
+        </div>
+        <div id="setting" class="">
+          <div class="center pointer" @click="settingVisible">
+            <img src="../../assets/img/user.png" width="20" height="20" style="border-radius: 50px;" alt="">
+            <h3 class="m10">{{ user_name }}</h3>
+          </div>
+          <a-select class="absolute" v-if="setting_visible" :default-open="true" :autofocus="true" ref="select"
+                    v-model:value="setting" @select="seletedSetting" @blur="settingVisible"
+                    style="right: 19px;top: 60px;width: 150px;">
+            <a-select-option value="setting">
+              <SettingOutlined/>
+              설정
+            </a-select-option>
+            <a-select-option value="logout">
+              <LogoutOutlined/>
+              로그아웃
+            </a-select-option>
+          </a-select>
+        </div>
+      </a-space>
+
       <!--      <div id="language">-->
       <!--        <div>-->
       <!--          <img class="pointer mr20" @click="languageVisible" width="22" height="14" :src="language_src" alt="">-->
@@ -26,44 +65,27 @@
       <!--          </a-select-option>-->
       <!--        </a-select>-->
       <!--      </div>-->
-      <div id="setting" class="">
-        <div class="center pointer" @click="settingVisible">
-          <img src="../../assets/img/user.png" width="20" height="20" style="border-radius: 50px;" alt="">
-          <h3 class="m10">{{ user_name }}</h3>
-        </div>
-        <a-select class="absolute" v-if="setting_visible" :default-open="true" :autofocus="true" ref="select"
-          v-model:value="setting" @select="seletedSetting" @blur="settingVisible"
-          style="right: 19px;top: 60px;width: 150px;">
-          <a-select-option value="setting">
-            <SettingOutlined />
-            설정
-          </a-select-option>
-          <a-select-option value="logout">
-            <LogoutOutlined />
-            로그아웃
-          </a-select-option>
-        </a-select>
-      </div>
+
     </div>
   </div>
 </template>
 
 <script>
-import { UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined } from "@ant-design/icons-vue";
-import { AuthRequest } from "@/util/request";
+import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined} from "@ant-design/icons-vue";
+import {AuthRequest} from "@/util/request";
 import Cookie from "js-cookie";
-import { cookieInit } from "@/util/auth";
+import {cookieInit} from "@/util/auth";
 import router from "../../router";
-import { mapState } from "vuex";
+import {mapState} from "vuex";
 import Loading from "vue-loading-overlay";
-import { message } from "ant-design-vue";
+import {message} from "ant-design-vue";
 
 export default {
   components: {
     Loading,
     UserOutlined,
     SettingOutlined,
-    LogoutOutlined
+    LogoutOutlined,
   },
 
   computed: {
@@ -84,7 +106,10 @@ export default {
       user_name: Cookie.get("member_name"),
       setting: "userinfo",
       setting_visible: false,
-      indicator: false
+      indicator: false,
+
+      rate: 0,
+      rateLoading:false
     };
   },
 
@@ -113,7 +138,7 @@ export default {
         case "userinfo":
           break;
         case "setting":
-          location.href = "/setting/account";
+          location.href = "/setting/updateDetail";
           break;
         case "logout":
           this.logout();
@@ -129,7 +154,7 @@ export default {
 
     extensionDown() {
       this.indicator = true;
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/downloadext", { responseType: "blob" }).then((res) => {
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/downloadext", {responseType: "blob"}).then((res) => {
         let response = res;
         if (response === undefined) {
           message.error("확장프로그램 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
@@ -138,7 +163,7 @@ export default {
         }
 
         let fileName = "WorldLinkExtension.zip";
-        let blob = new Blob([response], { type: "charset=utf-8" });
+        let blob = new Blob([response], {type: "charset=utf-8"});
         let downloadElement = document.createElement("a");
         let url = window.URL || window.webkitURL || window.moxURL;
         let href = url.createObjectURL(blob); // 创建下载的链接
@@ -150,18 +175,37 @@ export default {
         url.revokeObjectURL(href);
         this.indicator = false;
       });
+    },
+
+    worldLinkGuide() {
+      window.open("https://www.notion.so/worldlink/WORLD-LINK-0013348223c04c4792ed5d26b7c982ac", "_blank");
+    },
+
+    getRate() {
+      this.rateLoading = true;
+      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/getrate", {}).then((res) => {
+        if(res.status !== '2000') {
+          message.error(res.message);
+          return false;
+        }
+        const { ko } = res.data;
+        this.rate = ko
+      }).catch((e) => {
+        message.error(e.message)
+        return false;
+      }).finally(() => {
+        this.rateLoading = false;
+      });
     }
+  },
+  mounted() {
+    this.getRate()
   }
 };
 
 </script>
 
 <style>
-#download_ext {
-  width: 150px;
-  padding-top: 5px;
-}
-
 /* 선택창 숨기기 */
 #Header #language .ant-select-selector,
 #Header #setting .ant-select-selector {

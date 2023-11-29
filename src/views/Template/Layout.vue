@@ -7,7 +7,8 @@
           <img src="@/assets/logo.png" style="height:35px;">
       </div>
       <div class="logo" v-if="!collapsed">
-          <img src="@/assets/logo_width.png">
+          <img src="@/assets/logo_width.png" v-if="!is_xplan" :key="is_xplan" @click="goDashboard">
+          <img src="@/assets/world_link_logo_width.png" v-else :key="is_xplan"  @click="goDashboard">
       </div>
       <Sider/>
     </a-layout-sider>
@@ -31,14 +32,24 @@
 
 <script setup>
 import {MenuUnfoldOutlined, MenuFoldOutlined} from '@ant-design/icons-vue';
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import Sider from "@/views/Template/Sider.vue";
 import Header from "@/views/Template/Header.vue";
 import Content from "@/views/Template/Content.vue";
 import NoticePopup from "@/views/Template/NoticePopup.vue";
 
 const collapsed = ref(false)
+const is_xplan = ref(false)
+const goDashboard = () => {
+  window.location.href = '/dashboard'
+}
 
+onMounted(() => {
+  const currentHost = window.location
+  if('www.worldlinklab.com' === currentHost.hostname) {
+    is_xplan.value = true
+  }
+})
 </script>
 
 <style scoped>

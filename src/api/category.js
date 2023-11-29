@@ -26,6 +26,20 @@ export function useCategoryApi() {
             });
         },
 
-        
+        getSmartstoreCategory: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/getSmartstoreCategory",
+                method: "get",
+                params: data,
+            });
+        },
+
+        getDisplayCategorys: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/getDisplayCategorys",
+                method: "get",
+                params: data,
+            });
+        }
     }
 }
