@@ -66,8 +66,10 @@
 
       <!--right button-->
       <div class=" pl5 ">
+        <a-button style="margin-right: 5px;" v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
+        <a-spin v-if="indicator"/>
         <!--선택상품 등록-->
-        <a-button @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
+        <a-button style="margin-left: 5px;"  @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
       </div>
     </div>
 
@@ -280,6 +282,8 @@ import {lib} from "@/util/lib";
 import router from "@/router";
 import HistoryView from "@/components/HistoryView.vue";
 import {useCategoryApi} from "@/api/category";
+import {useProductApi} from "@/api/product";
+import {useUserApi} from "@/api/user";
 
 export default defineComponent({
   components: {
@@ -501,6 +505,8 @@ export default defineComponent({
       historyVisible: false,
       historyData: {},
       smartStoreCategory: [],
+      userinfo: {},
+      haveDownloadProductPermission: false,
     };
   },
 
@@ -985,12 +991,54 @@ export default defineComponent({
     showHistory(param) {
       this.historyData = param;
       this.historyVisible = true;
-    }
+    },
+
+
+    productExcelDown() {
+      this.indicator = true;
+      useProductApi().downloadProductExcel(this.userinfo).then(res => {
+        if (res === undefined) {
+          message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+          this.indicator = false;
+          return false;
+        }
+        let blob = new Blob([res], { type: "charset=utf-8" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = res.data.download_url;
+        a.download = 'x-plan-order.xlsx'; // 파일 이름을 설정합니다.
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        window.open(res.data.download_url, "_blank");
+        this.indicator = true;
+      });
+    },
+
+    async getUserInfoData() {
+      try {
+        await useUserApi().getUserInfoData({}).then((res) => {
+          if (res.status !== "2000") {
+            message.error(res.message);
+            return false;
+          }
+          this.userinfo = res.data;
+          if (res.data['username'] === 'irunkorea_02' || res.data['username'] === 'jwli') {
+            this.haveDownloadProductPermission = true;
+          }
+
+        });
+      } catch (error) {
+        message.error(error.message);
+        return false;
+      }
+    },
   },
 
 
   beforeMount() {
-    Promise.all([this.getMarketList(), this.getMarketDetailUrls(), this.getList("reload"), this.getSmartstoreCategory()]);
+    Promise.all([this.getUserInfoData(), this.getMarketList(), this.getMarketDetailUrls(), this.getList("reload"), this.getSmartstoreCategory()]);
   },
 
 });
