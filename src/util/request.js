@@ -86,9 +86,6 @@ export const AuthRequest = (function () {
             config.headers['token'] = token;
         }
 
-        // 设置超时时间为 60000 毫秒（即60秒）
-        config.timeout = 600000;
-
         return config;
     });
 
