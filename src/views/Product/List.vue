@@ -1012,7 +1012,7 @@ export default defineComponent({
         document.body.removeChild(a);
 
         window.open(res.data.download_url, "_blank");
-        this.indicator = true;
+        this.indicator = false;
       });
     },
 
