@@ -131,6 +131,7 @@ export default {
               const match = sUrl.match(pattern);
               requestId = match[0].slice(1, -1); // '/' 문자 제거
             }
+
             aXiangjiRequestIds.push(requestId);
           });
 

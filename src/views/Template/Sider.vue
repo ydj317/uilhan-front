@@ -36,6 +36,7 @@ import {useRoute, useRouter} from "vue-router";
 
 import { setFilterRouteList } from "@/router"
 import SubMenu from "@/views/Template/SubMenu.vue";
+import {lib} from "@/util/lib";
 
 const router = useRouter()
 const route = useRoute()
@@ -66,7 +67,13 @@ const selectActive = computed(() => {
 
 state.selectedKeys = [selectActive.value];
 onBeforeMount(() => {
-  state.menuList = setFilterRouteList()[0].children
+  if(lib.isWorldLink()) {
+    state.menuList = setFilterRouteList()[0].children
+  } else {
+    // delete blog menu
+    state.menuList = setFilterRouteList()[0].children.filter(item => item.path !== '/blog')
+  }
+
   state.openKeys = ['/'+route.path.split('/').filter(Boolean)[0]]
 });
 
