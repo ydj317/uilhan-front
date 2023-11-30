@@ -291,6 +291,20 @@ export default {
         }
       }
 
+      // this.product.sku에서 is_option_reference_price가 모두 F일시 최소값을 T로 변경
+      const hasTrueOption = this.product.sku.some(skuItem => skuItem.is_option_reference_price === 'T');
+
+      if (!hasTrueOption) {
+        for (const skuItem of this.product.sku) {
+          // 제일 처음의 skuItem만 T로 변경
+
+          if (skuItem.selling_price === minPrice) {
+            skuItem.is_option_reference_price = 'T';
+            break;
+          }
+        }
+      }
+
       return true;
     },
 
