@@ -997,6 +997,12 @@ export default defineComponent({
     productExcelDown() {
       this.indicator = true;
       useProductApi().downloadProductExcel(this.userinfo).then(res => {
+        if (res['status'] !== '2000') {
+          message.error("권한이 없는 사용자입니다. \n관리자에게 문의하시길 바랍니다");
+          this.indicator = false;
+          return false;
+        }
+
         if (res === undefined) {
           message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
           this.indicator = false;
@@ -1006,7 +1012,7 @@ export default defineComponent({
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = res.data.download_url;
-        a.download = 'x-plan-order.xlsx'; // 파일 이름을 설정합니다.
+        a.download = 'product-all-download.xlsx'; // 파일 이름을 설정합니다.
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
