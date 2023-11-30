@@ -5,8 +5,8 @@
   <div class="_container">
     <div class="header">
       <div class="icon">
-        <img src="../../assets/img/logo-light.png" v-if="!is_xplan" :key="is_xplan">
-        <img src="@/assets/img/logo-light-worldlink.png" v-else :key="is_xplan">
+        <img src="../../assets/img/logo-light.png" v-if="!lib.isWorldLink()" key="logo-light">
+        <img src="@/assets/img/logo-light-worldlink.png" v-else key="logo-light-worldlink">
       </div>
       <!--        <div class="tip">-->
       <!--          <h5>이용해주셔서 감사합니다!</h5>-->
@@ -60,17 +60,13 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import Cookie from "js-cookie";
 import { isLogin, cookieInit } from "util/auth";
 import { message } from 'ant-design-vue';
+import {lib} from "@/util/lib";
 
 export default defineComponent({
   components: {
     UserOutlined,
     LockOutlined,
     Loading,
-  },
-  data() {
-    return {
-      is_xplan: false,
-    };
   },
   setup() {
     onBeforeMount(() => {
@@ -176,7 +172,8 @@ export default defineComponent({
       handleFinish,
       handleFinishFailed,
       redirectRegister,
-      info
+      info,
+      lib
     };
   },
 
@@ -188,11 +185,7 @@ export default defineComponent({
       this.formState.username = localStorage.user_name;
     }
 
-    const currentHost = window.location
-    if('www.worldlinklab.com' === currentHost.hostname) {
-      this.is_xplan = true
-    }
-
+    document.title = lib.isWorldLink() ? '월드링크' : 'X-PLAN'
   }
 });
 </script>
