@@ -45,7 +45,7 @@
             <SearchOutlined/>
             검색
           </a-button>
-          <a-button class="ml10" @click="initSearchParam()" style="width: 100px;" type="">초기화</a-button>
+          <a-button class="ml10" @click="initSearchParam()" style="width: 100px;">초기화</a-button>
         </div>
 
       </div>
@@ -145,7 +145,7 @@
               <!--연동성공-->
               <a-tag color="success" v-if="record.item_sync_status">연동성공</a-tag>
               <!--연동실패-->
-              <a-tooltip v-if="record.item_sync_status == false">
+              <a-tooltip v-if="record.item_sync_status === false">
                 <template #title>{{ record.item_sync_result }}</template>
                 <a-tag color="error">연동실패</a-tag>
               </a-tooltip>
@@ -199,7 +199,7 @@
           <template v-if="column.key === 'market_account'">
             <div style="text-align: left">
               <img :src="getLogoSrc('market-logo', record.market_code)"
-                   style="width: 16px; height: 16px; margin-right: 5px;">
+                   style="width: 16px; height: 16px; margin-right: 5px;" :alt="record.market_code">
               {{ record.seller_id }}
             </div>
           </template>
@@ -260,7 +260,7 @@
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
+import {defineComponent} from "vue";
 import {AuthRequest} from "@/util/request";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
@@ -279,7 +279,6 @@ import {
 } from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
-import router from "@/router";
 import HistoryView from "@/components/HistoryView.vue";
 import {useCategoryApi} from "@/api/category";
 import {useProductApi} from "@/api/product";
@@ -608,6 +607,9 @@ export default defineComponent({
         this.date = [moment(res.data.start_time), moment(res.data.end_time)];
         this.checked = false;
         this.listLoading = false;
+      }).catch(() => {
+        message.error("상품 리스트 조회 실패하였습니다.")
+        this.listLoading = false;
       });
     },
 
@@ -722,9 +724,7 @@ export default defineComponent({
     async getMarketList() {
       await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist").then((res) => {
         if (res.status !== "2000") {
-          message.error("설정하신 마켓계정 정보가 없습니다. \n마켓계정을 설정해주세요. ");
-
-          return false;
+          throw new Error("설정하신 마켓계정 정보가 없습니다. \n마켓계정을 설정해주세요. ");
         }
 
         for (let i = 0; i < res.data.length; i++) {
@@ -732,6 +732,9 @@ export default defineComponent({
         }
 
         this.options = res.data;
+      }).catch((e) => {
+        message.error(e.message);
+        return false;
       });
     },
 
@@ -776,7 +779,7 @@ export default defineComponent({
             this.singleDetail.item_sync_market[i].status = res.data.status;
             this.singleDetail.item_sync_market[i].result = res.data.result;
             this.singleDetail.item_sync_date = now_time;
-            this.singleDetail.item_sync_status = res.data.status === 'success' ? true : false;
+            this.singleDetail.item_sync_status = res.data.status === 'success';
             this.singleDetail.item_sync_result = res.data.result;
           }
         }

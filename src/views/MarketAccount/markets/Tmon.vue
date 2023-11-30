@@ -134,7 +134,7 @@ const syncShippingCostPolicy = (account_id) => {
       return false;
     }
 
-    message.success('업데이트 완료 되었습니다. 출고지를 선택해 주세요.');
+    message.success('업데이트 완료 되었습니다. 배송정책을 선택해 주세요.');
 
     const {marketJson, syncStatus, updDate} = res.data;
 
@@ -221,7 +221,7 @@ const handleResetSyncStatus = () => {
   state.formData.sync_market_status = false;
 }
 
-// 출고지 리스트
+// 배송정책 리스트
 const getShippingCostPolicyList = () => {
   useAccountJsonApi().getAccountJson({account_id: props.accountInfo.id, group: 'shipping_cost_policy'}).then(res => {
     const {marketJson, syncStatus, updDate} = res.data;
