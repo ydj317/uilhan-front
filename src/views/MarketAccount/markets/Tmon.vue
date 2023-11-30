@@ -33,21 +33,21 @@
         <h3>마켓정보 불러오기</h3>
       </div>
 
-      <a-form-item name="outbound_address_code" label="배송정책"
+      <a-form-item name="shipping_cost_policy_code" label="배송정책"
                    :rules="[{ required: true, message: '배송정책을 선택해 주세요.' }]">
-        <a-select v-model:value="state.formData.delivery_code" placeholder="배송정책을 선택해 주세요"
-                  style="width:260px;">
-          <a-select-option :value="item.delivery_code" v-for="(item, key) in state.deliveryList"
-                           :key="key">{{ item.delivery_name }}
+        <a-select v-model:value="state.formData.shipping_cost_policy_code" placeholder="배송정책을 선택해 주세요"
+                  style="width:260px;" @change="handleShippingCostPolicyChange">
+          <a-select-option :value="item.shipping_cost_policy_code" v-for="(item, key) in state.shippingCostPolicyList"
+                           :key="key">{{ item.shipping_cost_policy_name }}
           </a-select-option>
         </a-select>
-        <a-button @click="syncDelivery(state.formData.id)" class="ml15"
-                  :loading="state.syncDeliveryLoading">업데이트
+        <a-button @click="syncShippingCostPolicy(state.formData.id)" class="ml15"
+                  :loading="state.syncShippingCostPolicyLoading">업데이트
         </a-button>
-        <a-tag class="ml15" v-if="state.sync_delivery_status === 0">-</a-tag>
-        <a-tag color="#87d068" class="ml15" v-else-if="state.sync_delivery_status === 1">성공</a-tag>
+        <a-tag class="ml15" v-if="state.sync_shipping_cost_policy_status === 0">-</a-tag>
+        <a-tag color="#87d068" class="ml15" v-else-if="state.sync_shipping_cost_policy_status === 1">성공</a-tag>
         <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
-        <span>{{ state.sync_delivery_date ?? '-' }}</span>
+        <span>{{ state.sync_shipping_cost_policy_date ?? '-' }}</span>
       </a-form-item>
 
       <h3 class="mt20">마켓정보설정</h3>
@@ -93,17 +93,18 @@ const state = reactive({
     sync_market_status: false,
 
     // 마켓정보 불러오기
-    delivery_code: null,// 출고지
+    shipping_cost_policy_code: null,// 배송정책
+    delivery_product_types: []
   },
 
   syncCheckLoading: false,
-  syncDeliveryLoading: false,
+  syncShippingCostPolicyLoading: false,
 
-  deliveryList: [],
+  shippingCostPolicyList: [],
 
   // 불러오기 상태
-  sync_delivery_status: 0,
-  sync_delivery_date: null,
+  sync_shipping_cost_policy_status: 0,
+  sync_shipping_cost_policy_date: null,
 })
 
 // 수정시 계정 데이터 설정
@@ -119,16 +120,17 @@ const initFormData = () => {
     state.formData.partner_token = accountInfo.marketData.partner_token;
     state.formData.sync_market_status = accountInfo.marketData.sync_market_status;
 
-    state.formData.delivery_code = accountInfo.marketData.delivery_code;
+    state.formData.shipping_cost_policy_code = accountInfo.marketData.shipping_cost_policy_code;
+    state.formData.delivery_product_types = accountInfo.marketData.delivery_product_types;
   }
 }
 
-const syncDeliveryAddress = (account_id) => {
-  state.syncDeliveryLoading = true;
-  useAccountJsonApi().syncDelivery({account_id: account_id, market_code: props.market_code}).then(res => {
+const syncShippingCostPolicy = (account_id) => {
+  state.syncShippingCostPolicyLoading = true;
+  useAccountJsonApi().getShippingCostPolicy({account_id: account_id, market_code: props.market_code}).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
-      state.syncDeliveryLoading = false;
+      state.syncShippingCostPolicyLoading = false;
       return false;
     }
 
@@ -137,32 +139,21 @@ const syncDeliveryAddress = (account_id) => {
     const {marketJson, syncStatus, updDate} = res.data;
 
     // 업데이트상태/날짜
-    state.sync_outbound_address_status = syncStatus || '0';
-    state.sync_outbound_address_date = updDate || null;
-    state.outboundAddressList = [];
+    state.sync_shipping_cost_policy_status = syncStatus || '0';
+    state.sync_shipping_cost_policy_date = updDate || null;
+    state.shippingCostPolicyList = [];
 
-    state.sync_return_address_status = syncStatus || '0';
-    state.sync_return_address_date = updDate || null;
-    state.returnAddressList = [];
     marketJson?.forEach(item => {
-      // 출고지 type = D
-      if (item.available === true && item.type === 'D') {
-        state.outboundAddressList.push({
-          outbound_address_code: item.no,
-          outbound_address_name: item.addressName
-        });
-      }
 
-      // 반품지 type = R
-      if (item.available === true && item.type === 'R') {
-        state.returnAddressList.push({
-          return_address_code: item.no,
-          return_address_name: item.addressName
+        state.shippingCostPolicyList.push({
+          shipping_cost_policy_code: item.deliveryTemplateNo,
+          shipping_cost_policy_name: item.deliveryTemplateName,
+          delivery_product_types: item.deliveryProductTypes
         });
-      }
+
     });
 
-    state.syncOutboundAddressLoading = false;
+    state.syncShippingCostPolicyLoading = false;
   });
 };
 
@@ -184,7 +175,7 @@ const handleSyncMarketCheck = () => {
 
       state.formData.id = account_id;
       // 출고지/반품지 수집실행
-      syncOutboundAddress(account_id);
+      syncShippingCostPolicy(account_id);
 
       state.syncCheckLoading = false;
       state.formData.sync_market_status = true
@@ -220,38 +211,33 @@ const handleSubmit = (e) => {
   });
 };
 
+const handleShippingCostPolicyChange = (value) => {
+  const item = state.shippingCostPolicyList.find(item => item.shipping_cost_policy_code === value);
+
+  state.formData.delivery_product_types = item.delivery_product_types;
+}
+
 const handleResetSyncStatus = () => {
   state.formData.sync_market_status = false;
 }
 
 // 출고지 리스트
-const getOutboundAddressList = () => {
-  useAccountJsonApi().getAccountJson({account_id: props.accountInfo.id, group: 'outbound_address'}).then(res => {
+const getShippingCostPolicyList = () => {
+  useAccountJsonApi().getAccountJson({account_id: props.accountInfo.id, group: 'shipping_cost_policy'}).then(res => {
     const {marketJson, syncStatus, updDate} = res.data;
 
     // 업데이트상태/날짜
-    state.sync_outbound_address_status = syncStatus || '0';
-    state.sync_outbound_address_date = updDate || null;
-
-    state.sync_return_address_status = syncStatus || '0';
-    state.sync_return_address_date = updDate || null;
+    state.sync_shipping_cost_policy_status = syncStatus || '0';
+    state.sync_shipping_cost_policy_date = updDate || null;
+    state.shippingCostPolicyList = [];
 
     marketJson?.forEach(item => {
-      // 출고지 type = D
-      if (item.available === true && item.type === 'D') {
-        state.outboundAddressList.push({
-          outbound_address_code: item.no,
-          outbound_address_name: item.addressName
-        });
-      }
+      state.shippingCostPolicyList.push({
+        shipping_cost_policy_code: item.deliveryTemplateNo,
+        shipping_cost_policy_name: item.deliveryTemplateName,
+        delivery_product_types: item.deliveryProductTypes
+      });
 
-      // 반품지 type = R
-      if (item.available === true && item.type === 'R') {
-        state.returnAddressList.push({
-          return_address_code: item.no,
-          return_address_name: item.addressName
-        });
-      }
     });
   });
 }
@@ -261,7 +247,7 @@ onMounted(() => {
 
   // 연동확인후
   if (state.formData.sync_market_status) {
-    getOutboundAddressList()
+    getShippingCostPolicyList()
   }
 });
 
