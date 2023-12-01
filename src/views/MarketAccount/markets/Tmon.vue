@@ -91,7 +91,7 @@ const initFormData = () => {
   }
 }
 
-const callMarketCheck = async () => {
+const callMarketCheckAPI = async () => {
   const res = await useMarketAccountApi().syncMarketCheck(state.formData)
   if (res.status !== "2000") {
     throw new Error(res.message);
@@ -105,7 +105,7 @@ const handleSyncMarketCheck = () => {
   marketFormRef.value.validate().then(async () => {
     state.syncCheckLoading = true;
     try {
-      const res = await callMarketCheck();
+      const res = await callMarketCheckAPI();
       const {account_id} = res.data;
 
       message.success(res.message);
