@@ -11,12 +11,12 @@
     </a-form-item>
 
     <a-form-item name="client_secret" label="clientSecret" @keyup="handleResetSyncStatus"
-                 :rules="[{ required: true, message: 'ClientSecret를 입력해 주세요.' }]">
+                 :rules="[{ required: true, message: 'ClientSecret 를 입력해 주세요.' }]">
       <a-input v-model:value="state.formData.client_secret"/>
     </a-form-item>
 
     <a-form-item name="partner_token" label="파트너 API KEY" @keyup="handleResetSyncStatus"
-                 :rules="[{ required: true, message: '파트너 API KEY를 입력해 주세요.' }]">
+                 :rules="[{ required: true, message: '파트너 API KEY 를 입력해 주세요.' }]">
       <a-input v-model:value="state.formData.partner_token"/>
     </a-form-item>
 
@@ -37,7 +37,7 @@
 import {reactive, onMounted, ref} from "vue";
 import {message} from "ant-design-vue";
 import {useMarketAccountApi} from '@/api/marketAccount';
-import {useAccountJsonApi} from '@/api/accountJson';
+
 import {
   CheckCircleOutlined,
 } from '@ant-design/icons-vue';
@@ -79,44 +79,49 @@ const initFormData = () => {
   const accountInfo = props.accountInfo;
 
   if (Object.keys(accountInfo).length > 0) {
-    state.formData.id = accountInfo.id;
-    state.formData.market_code = accountInfo.marketCode;
-    state.formData.seller_id = accountInfo.marketData.seller_id;
-    state.formData.client_id = accountInfo.marketData.client_id;
-    state.formData.client_secret = accountInfo.marketData.client_secret;
-    state.formData.partner_token = accountInfo.marketData.partner_token;
-    state.formData.sync_market_status = accountInfo.marketData.sync_market_status;
+    const {id, marketCode, marketData = {}} = accountInfo;
+    const {seller_id, client_id, client_secret, partner_token, sync_market_status} = marketData;
+    state.formData.id = id;
+    state.formData.market_code = marketCode;
+    state.formData.seller_id = seller_id;
+    state.formData.client_id = client_id;
+    state.formData.client_secret = client_secret;
+    state.formData.partner_token = partner_token;
+    state.formData.sync_market_status = sync_market_status;
   }
 }
 
+const callMarketCheck = async () => {
+  const res = await useMarketAccountApi().syncMarketCheck(state.formData)
+  if (res.status !== "2000") {
+    throw new Error(res.message);
+  }
+
+  return res;
+}
 // 연동확인
 const handleSyncMarketCheck = () => {
 
-  marketFormRef.value.validate().then(() => {
+  marketFormRef.value.validate().then(async () => {
     state.syncCheckLoading = true;
-
-    useMarketAccountApi().syncMarketCheck(state.formData).then(res => {
-      if (res.status !== "2000") {
-        message.error(res.message);
-        state.syncCheckLoading = false;
-        return false;
-      }
-
+    try {
+      const res = await callMarketCheck();
       const {account_id} = res.data;
+
       message.success(res.message);
-
       state.formData.id = account_id;
-
-      state.syncCheckLoading = false;
       state.formData.sync_market_status = true
-    });
-  }).catch((error) => {
-    console.log('error', error);
+    } catch (e) {
+      message.error(e.message);
+      state.formData.sync_market_status = false;
+    } finally {
+      state.syncCheckLoading = false;
+    }
   });
 };
 
 // 저장
-const handleSubmit = (e) => {
+const handleSubmit = () => {
 
   if (state.formData.sync_market_status === false) {
     message.error('연동확인을 먼저 해주세요.');
