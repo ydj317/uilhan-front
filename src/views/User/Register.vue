@@ -4,7 +4,8 @@
   <div id="userRegister">
     <div class="header">
       <div class="icon">
-        <img src="../../assets/img/logo-light-worldlink.png" alt="">
+        <img src="@/assets/img/logo-light.png" v-if="!lib.isWorldLink()" key="logo-light">
+        <img src="@/assets/img/logo-light-worldlink.png" v-else key="logo-light-worldlink">
       </div>
       <!--      <div class="tip">-->
       <!--        <h5>저희 릴라켓플러스 이용해주셔서 감사합니다!</h5>-->
@@ -279,6 +280,7 @@ import {useForm} from "ant-design-vue/es/form";
 import Loading from "vue-loading-overlay";
 import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
+import {lib} from "@/util/lib";
 
 
 export default defineComponent({
@@ -879,7 +881,8 @@ export default defineComponent({
       tell3Input,
       changeToInput,
       bridge_sync_pass,
-      bridgeSyncCheck
+      bridgeSyncCheck,
+      lib
     };
   }
 });
