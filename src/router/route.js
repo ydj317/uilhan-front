@@ -12,7 +12,8 @@ import {
     ProfileOutlined,
     DashboardOutlined,
     FileExcelOutlined, NotificationOutlined,
-    ShoppingOutlined
+    ShoppingOutlined,
+    BarcodeOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -373,6 +374,17 @@ export const menus = [{
                 roles: [],
                 ids: ["irunkorea", "jwli"],
                 icon: GiftOutlined,
+            },
+        },
+        {
+            path: "/custom/order/list",
+            name: "customOrder_list",
+            component: () => import("@/views/CustomOrder/List.vue"),
+            meta: {
+                title: "구매관리",
+                isHide: false,
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                icon: BarcodeOutlined
             },
         },
     ]
