@@ -5,7 +5,7 @@
       <a-space direction="vertical" class="mb15">
         <div>서비스 신청 유의사항</div>
         <div>📢 구매대행 신청 시 기입 정보 다시 한번 확인 부탁드립니다 .</div>
-        <div>📢 주문 접수 완료 후 정보 수정은 월드링크 배대지 사이트에서만 가능합니다.</div>
+        <div>📢 주문 접수 완료 후 정보 수정은 배대지 사이트에서만 가능합니다.</div>
       </a-space>
     </a-affix>
     <div v-if="state.loading" style="height: 500px;display: flex;justify-content: center;align-items: center;"><a-spin size="large" /></div>
@@ -468,7 +468,7 @@ const showConfirm = () => {
   Modal.confirm({
     title: '추가 수정 사항은 없으신가요?',
     icon: createVNode(ExclamationCircleOutlined),
-    content: createVNode('div', {style: 'color:red;'}, '*주문 건 정보 수정은 월드링크 배대지 사이트에서만 가능합니다.'),
+    content: createVNode('div', {style: 'color:red;'}, '*주문 건 정보 수정은 배대지 사이트에서만 가능합니다.'),
     onOk() {
       state.confirmLoading = true;
       useMarketOrderApi().registerBridgeOrder(state.form).then(res => {

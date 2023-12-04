@@ -101,6 +101,15 @@ export class lib {
     return !this.isEmpty(res);
   }
 
+  static isWorldLink() {
+    const currentHost = window.location
+    const worldlinkhosts = [
+        'www.worldlinklab.com',
+        'worldlinklab.com',
+    ]
+    return worldlinkhosts.includes(currentHost.hostname);
+  }
+
   static getOraginalImageUrlToString(
     sImageUrl = "",
     aImageExtensionName = [".jpg", ".jpeg", ".bmp", ".png", ".gif"]

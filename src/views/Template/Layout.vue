@@ -7,8 +7,8 @@
           <img src="@/assets/logo.png" style="height:35px;">
       </div>
       <div class="logo" v-if="!collapsed">
-          <img src="@/assets/logo_width.png" v-if="!is_xplan" :key="is_xplan" @click="goDashboard">
-          <img src="@/assets/world_link_logo_width.png" v-else :key="is_xplan"  @click="goDashboard">
+          <img src="@/assets/logo_width.png" v-if="!lib.isWorldLink()" key="logo_width" @click="goDashboard">
+          <img src="@/assets/world_link_logo_width.png" v-else key="world_link_logo_width"  @click="goDashboard">
       </div>
       <Sider/>
     </a-layout-sider>
@@ -37,18 +37,27 @@ import Sider from "@/views/Template/Sider.vue";
 import Header from "@/views/Template/Header.vue";
 import Content from "@/views/Template/Content.vue";
 import NoticePopup from "@/views/Template/NoticePopup.vue";
+import {lib} from "@/util/lib";
+import {useRouter} from "vue-router";
 
+const router = useRouter();
 const collapsed = ref(false)
-const is_xplan = ref(false)
 const goDashboard = () => {
   window.location.href = '/dashboard'
 }
 
+// watch currentRoute
+router.afterEach((to, from) => {
+  const site = lib.isWorldLink() ? `월드링크` : 'X-PLAN';
+
+  const title = !to.meta.title ? '' : to.meta.title;
+  document.title = site + ' - ' + title;
+})
+
 onMounted(() => {
-  const currentHost = window.location
-  if('www.worldlinklab.com' === currentHost.hostname) {
-    is_xplan.value = true
-  }
+  // window title
+  const site = lib.isWorldLink() ? `월드링크` : 'X-PLAN';
+  document.title = site + ' - ' + router.currentRoute.value.meta.title;
 })
 </script>
 

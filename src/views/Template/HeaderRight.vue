@@ -18,7 +18,7 @@
         </div>
         <a-divider type="vertical"/>
         <div>
-          <a-button type="link" size="small" @click="worldLinkGuide">월드링크 가이드북</a-button>
+          <a-button type="link" size="small" @click="worldLinkGuide">가이드북</a-button>
         </div>
         <div>
           <a-button type="link" @click.prevent="extensionDown" size="small">크롬 확장 프로그램</a-button>
