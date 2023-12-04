@@ -4,7 +4,7 @@
   <div id="userRegister">
     <div class="header">
       <div class="icon">
-        <img src="../../assets/img/logo-light.png" alt="">
+        <img src="../../assets/img/logo-light-worldlink.png" alt="">
       </div>
       <!--      <div class="tip">-->
       <!--        <h5>저희 릴라켓플러스 이용해주셔서 감사합니다!</h5>-->
