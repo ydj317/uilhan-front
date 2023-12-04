@@ -530,7 +530,6 @@ const getUserInfoData = async () => {
   }
 }
 
-
 const activateEdit = (record, field) => {
   const input = document.getElementById(`${field}${record.id}`);
   input.focus();
@@ -538,8 +537,7 @@ const activateEdit = (record, field) => {
   input.readOnly = false;
 };
 
-
-const saveEdit = (record, field) => {
+const saveEdit = async (record, field) => {
   const input = document.getElementById(`${field}${record.id}`);
   input.style.backgroundColor = '#f0f0f0';
   input.readOnly = true;
@@ -549,30 +547,21 @@ const saveEdit = (record, field) => {
   if (inputValue == originalValue) {
     return false;
   }
-  record[field] = input.value;
-  updateCustomOrder(record);
-};
-
-const updateCustomOrder = async (record) => {
   const params = {
     id: record.id,
-    purchasePrice: record.purchasePrice,
-    charge: record.charge,
-    totalPaymentAmount: record.totalPaymentAmount,
-    purchaseOrderNo: record.purchaseOrderNo,
-    purchaseInvoiceNo: record.purchaseInvoiceNo,
-    packageStatusMemo: record.packageStatusMemo,
-    memo: record.memo,
-  }
+    [field]: inputValue,
+  };
 
   await useCustomOrderApi().updateCustomOrder(params).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
     }
-    message.success('수정되었습니다.');
+
+    record[field] = input.value;
   });
-}
+
+};
 
 
 onMounted(async () => {
