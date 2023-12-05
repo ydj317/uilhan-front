@@ -57,10 +57,10 @@
     <!--top-->
     <div id="content-header" class="row space-between">
       <!--left button-->
-      <div class="w12 space-between">
+      <div>
         <!--상품삭제-->
         <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
-          <a-button>상품삭제</a-button>
+          <a-button style="margin-right: 10px;">상품삭제</a-button>
         </a-popconfirm>
         <!--상품삭제-->
         <a-popconfirm @confirm="clonePrd">
@@ -76,11 +76,11 @@
       </div>
 
       <!--right button-->
-      <div class=" pl5 ">
-        <a-button style="margin-right: 5px;" v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
+      <div>
+        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
         <a-spin v-if="indicator"/>
         <!--선택상품 등록-->
-        <a-button style="margin-left: 5px;"  @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
+        <a-button style="margin-left: 10px;"  @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
       </div>
     </div>
 
