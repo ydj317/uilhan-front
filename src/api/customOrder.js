@@ -16,6 +16,13 @@ export function useCustomOrderApi() {
                 method: "post",
                 data: data,
             });
+        },
+        downloadCustomOrderExcel: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/excelDownload",
+                method: "post",
+                data: data,
+            });
         }
     }
 }

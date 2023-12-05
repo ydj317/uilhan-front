@@ -1,4 +1,6 @@
 <template>
+  <loading v-model:active="state.indicator" :can-cancel="false" :is-full-page="true"/>
+
   <a-card title="구매관리">
     <div id="header">
       <a-descriptions bordered :column="1" size="middle">
@@ -41,29 +43,6 @@
             <a-input v-model:value="state.tableData.params.search_value" style="width: 300px;" allowClear/>
           </a-input-group>
         </a-descriptions-item>
-        <a-descriptions-item label="주문상태">
-          <a-space>
-            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
-                           @change="handleStatusChange">
-              <a-radio-button value="">전체</a-radio-button>
-            </a-radio-group>
-            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
-                           @change="handleStatusChange">
-              <a-radio-button v-for="option in state.orderStatus" :value="option.value">{{
-                  option.label
-                }}
-              </a-radio-button>
-            </a-radio-group>
-
-            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
-                           @change="handleStatusChange">
-              <a-radio-button v-for="option in state.claimStatus" :value="option.value">{{
-                  option.label
-                }}
-              </a-radio-button>
-            </a-radio-group>
-          </a-space>
-        </a-descriptions-item>
 
       </a-descriptions>
 
@@ -77,18 +56,32 @@
   <a-card class="mt15">
     <div class="mb15" style="display: flex;justify-content: space-between;">
       <div class="right-div" style="display: flex;align-items: center;gap: 5px">
-        <a-button style="margin-right: 5px;"  @click="uploadOrderWithExcel" type="primary">
-          EXCEL 다운로드
+        <a-button style="margin-right: 5px;"  @click="downloadCustomOrderExcel" type="primary">
+          주문 다운로드
           <template #icon>
             <DownloadOutlined />
           </template>
         </a-button>
-        <a-button style="margin-right: 5px;"  @click="uploadOrderWithExcel" type="primary">
-          EXCEL 업로드
-          <template #icon>
-            <UploadOutlined />
-          </template>
-        </a-button>
+        <a-spin v-if="state.indicator"/>
+
+        <a-upload
+            :action="state.uploadCustomOrderPath"
+            v-model:fileList="state.fileList"
+            name="file"
+            :max-count="1"
+            :headers="state.headers"
+            :multiple="false"
+            :showUploadList="false"
+            @change="excelUploadCustomOrder"
+        >
+          <a-button class="custom-button" style="margin-right: 5px;"  type="primary">
+            주문 업로드
+            <template #icon>
+              <UploadOutlined />
+            </template>
+          </a-button>
+          <a-spin v-if="state.indicator"/>
+        </a-upload>
       </div>
     </div>
 
@@ -128,7 +121,7 @@
         </template>
       </a-table-column>
 
-      <a-table-column :width="100" title="품목코드" dataIndex="prdCode" key="prdCode">
+      <a-table-column :width="500" title="품목코드" dataIndex="prdCode" key="prdCode">
         <template #default="{ record }">
           <a-space>
             <span>{{ record.itemNo }}</span>
@@ -305,20 +298,17 @@ import {useMarketOrderApi} from '@/api/order'
 import {useMarketApi} from '@/api/market'
 import moment from "moment";
 import {message} from 'ant-design-vue'
-import HistoryView from '@/components/HistoryView.vue'
-import BridgeFormView from '@/components/BridgeFormView.vue'
-import { nextTick } from 'vue';
+
 import {
-  ContainerOutlined,
   DownloadOutlined,
   UploadOutlined,
   ExportOutlined,
-  FileSyncOutlined,
   QuestionCircleOutlined,
-  RedoOutlined
 } from '@ant-design/icons-vue';
 import {useUserApi} from "@/api/user";
 import {useCustomOrderApi} from "@/api/customOrder";
+import Cookie from "js-cookie";
+import Loading from "vue-loading-overlay";
 
 
 const state = reactive({
@@ -330,10 +320,8 @@ const state = reactive({
     params: {
       order_date: [moment().subtract(15, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
       userinfo: [],
-      account_ids: [],
       search_type: 'order_no',
-      search_value: '',
-      status: '',
+      search_value: ''
     },
   },
   accountData: {},
@@ -349,34 +337,22 @@ const state = reactive({
   marketDetailUrls: {},
   syncStatusShow: false,
   is_bridge_sync: false,
+  showUploadList:{
+    showPreviewIcon: false,
+    showRemoveIcon: false,
+    showDownloadIcon: false
+  },
+  uploadCustomOrderPath: process.env.VUE_APP_API_URL + "/api/custom/order/excelUpload" + "?XDEBUG_SESSION_START=PHPSTORM",
+  fileList: [],
+  headers: reactive({
+    token: Cookie.get("token")
+  }),
+  indicator: false,
 });
 
 // 검색기간
 const onChangeDatePicker = (value, dateString) => {
   state.tableData.params.order_date = [dateString[0], dateString[1]];
-}
-
-// 계정리스트
-const getAccountData = async () => {
-  state.tableData.loading = true;
-  await useMarketAccountApi().getAccountList({
-    'page': 'all',
-    'is_use': '1',
-  }).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      state.tableData.loading = false;
-      return false;
-    }
-
-    res.data.list.forEach((item) => {
-      state.tableData.params.account_ids.push(item.id);
-      item['value'] = item.id;
-      state.accountData[item.key] = item;
-    })
-
-    state.tableData.loading = false;
-  });
 }
 
 // 주문 리스트
@@ -410,41 +386,6 @@ const getTableData = async () => {
   });
 }
 
-// 주문 상태 리스트
-const getMarketStatusList = async () => {
-  await useMarketApi().getMarketOrderStatusList({}).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-
-    state.orderStatusData = res.data;
-    state.orderStatus = Object.keys(state.orderStatusData).map((item, index) => {
-      return {
-        label: state.orderStatusData[item],
-        value: item,
-      }
-    });
-  });
-}
-
-// 주문 상태 리스트
-const getMarketClaimStatusList = async () => {
-  await useMarketApi().getMarketClaimStatusList({}).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-
-    state.claimStatusData = res.data;
-    state.claimStatus = Object.keys(state.claimStatusData).map((item, index) => {
-      return {
-        label: state.claimStatusData[item],
-        value: item,
-      }
-    });
-  });
-}
 
 // 주문 선택
 const rowSelection = ref({
@@ -469,24 +410,40 @@ const purchaseProduct = (item) => {
   window.open(item.prdUrl);
 }
 
+
 // 엑셀 다운로드
-const uploadOrderWithExcel = () => {
-  useMarketOrderApi().downloadOrder(state.tableData.params).then(res => {
+const downloadCustomOrderExcel = () => {
+  useCustomOrderApi().downloadCustomOrderExcel(state.tableData.data).then(res => {
+    state.indicator = true;
     if (res === undefined) {
+      state.indicator = false;
       message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
       return false;
     }
-    // let blob = new Blob([res], { type: "charset=utf-8" });
-    // const url = window.URL.createObjectURL(blob);
-    // const a = document.createElement('a');
-    // a.href = res.data.download_url;
-    // a.download = 'x-plan-order.xlsx'; // 파일 이름을 설정합니다.
-    // document.body.appendChild(a);
-    // a.click();
-    // document.body.removeChild(a);
 
+    state.indicator = false;
     window.open(res.data.download_url, "_blank");
   });
+}
+
+// 엑셀 업로드
+const excelUploadCustomOrder = (res) => {
+  if (res.status === 'uploading') {
+    state.indicator = true;
+    return false;
+  }
+
+  if (res.status === 'error') {
+    state.indicator = false;
+    message.error(res.error.message);
+    return false;
+  }
+
+  if (res.status === 'done') {
+    state.indicator = false;
+    message.success(res.response.message);
+    getTableData();
+  }
 }
 
 const handleSearch = () => {
@@ -557,7 +514,7 @@ const saveEdit = async (record, field) => {
       message.error(res.message);
       return false;
     }
-
+    message.success(`수정되었습니다.`);
     record[field] = input.value;
   });
 
@@ -565,7 +522,7 @@ const saveEdit = async (record, field) => {
 
 
 onMounted(async () => {
-  await Promise.all([getAccountData(), getUserInfoData(), getMarketStatusList(), getMarketClaimStatusList(), getMarketDetailUrls()])
+  await Promise.all([getUserInfoData(), getMarketDetailUrls()])
       .then(() => {
         state.allStatus = [...state.orderStatus, ...state.claimStatus]
         getTableData()
