@@ -25,10 +25,11 @@
           <a-input-group compact style="display: flex;">
             <a-select v-model:value="state.tableData.params.search_type" style="width: 100px;">
               <a-select-option value="order_no">주문번호</a-select-option>
-              <a-select-option value="prd_code">상품번호</a-select-option>
               <a-select-option value="prd_name">상품명</a-select-option>
-              <a-select-option value="prd_option_no">옵션번호</a-select-option>
+              <a-select-option value="prd_code">상품코드</a-select-option>
+              <a-select-option value="item_no">품목코드</a-select-option>
               <a-select-option value="prd_option_name">옵션명</a-select-option>
+              <a-select-option value="prd_size_option">사이즈</a-select-option>
             </a-select>
             <a-input v-model:value="state.tableData.params.search_value" style="width: 300px;" allowClear/>
           </a-input-group>
@@ -45,7 +46,13 @@
 
   <a-card class="mt15">
     <div class="mb15" style="display: flex;justify-content: space-between;">
+      <div>
+        <a-popconfirm title="삭제하시겠습니까?" @confirm="deleteCustomOrder">
+          <a-button>삭제</a-button>
+        </a-popconfirm>
+      </div>
       <div class="right-div" style="display: flex;align-items: center;gap: 5px">
+        <!--상품삭제-->
         <a-button style="margin-right: 5px;" @click="downloadCustomOrderExcel" type="primary">
           주문 다운로드
           <template #icon>
@@ -206,6 +213,13 @@ const state = reactive({
       scopedSlots: {customRender: 'prd_image'},
     },
     {
+      title: "상품코드",
+      dataIndex: "prd_code",
+      key: "prd_code",
+      width: 200,
+      scopedSlots: {customRender: 'prd_code'},
+    },
+    {
       title: "품목코드",
       dataIndex: "item_no",
       key: "item_no",
@@ -216,8 +230,15 @@ const state = reactive({
       title: "옵션명",
       dataIndex: "prd_option_name",
       key: "prd_option_name",
-      width: 200,
+      width: 150,
       scopedSlots: {customRender: 'prd_option_name'},
+    },
+    {
+      title: "사이즈",
+      dataIndex: "prd_size_option",
+      key: "prd_size_option",
+      width: 150,
+      scopedSlots: {customRender: 'prd_size_option'},
     },
     {
       title: "주문수량",
@@ -319,6 +340,7 @@ const state = reactive({
     token: Cookie.get("token")
   }),
 
+  checkedList : [],
   indicator: false,
   editableData: {},
   editingKey: '',
@@ -359,7 +381,10 @@ const getTableData = async () => {
 const rowSelection = ref({
   checkStrictly: false,
   onChange: (selectedRowKeys, selectedRows) => {
+    state.checkedList = [];
+    state.checkedList.push(selectedRowKeys)
     rowSelection.value.selectedRowKeys = selectedRowKeys;
+
   },
 });
 
@@ -499,15 +524,24 @@ const openBarcodePopup = (record) => {
     printWindow.setPrintContent(content);
   };
 };
-const closeBarcodePopup = () => {
-  // 바코드 출력 팝업 닫기 로직
-  state.showBarcodePopup = false;
-}
-const printBarcode = () => {
-  // 프린트 기능
-  window.print(); // 브라우저에서 프린트 창 열기
-}
 
+const deleteCustomOrder = async () => {
+  if (state.checkedList[0].length === 0) {
+    message.error('삭제할 주문을 선택해주세요.');
+    return false;
+  }
+  state.indicator = true;
+  await useCustomOrderApi().deleteCustomOrder(state.checkedList[0]).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      state.indicator = false;
+      return false;
+    }
+    message.error(res.message);
+    getTableData();
+    state.indicator = false;
+  });
+}
 
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls()])
