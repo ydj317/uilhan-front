@@ -421,20 +421,20 @@ const downloadCustomOrderExcel = () => {
 
 // 엑셀 업로드
 const excelUploadCustomOrder = (res) => {
-  if (res.status === 'uploading') {
+  if (res.file.status === 'uploading') {
     state.indicator = true;
     return false;
   }
 
-  if (res.status === 'error') {
+  if (res.file.status === 'error') {
     state.indicator = false;
     message.error(res.error.message);
     return false;
   }
 
-  if (res.status === 'done') {
+  if (res.file.status === 'done') {
     state.indicator = false;
-    message.success(res.response.message);
+    message.success(res.file.response.message);
     getTableData();
   }
 }
