@@ -486,7 +486,7 @@ const openBarcodePopup = async (record) => {
     const content = `
   <div class="container" style="background-color: white;padding: 20px 15px;display: flex;flex-direction: column;gap: 15px;">
       <div style="display: flex;justify-content: space-between;gap: 10px;">
-          <div class="content" style="display: flex;flex-direction: column;gap: 5px;">
+          <div class="content" style="display: flex;flex-direction: column;gap: 5px;padding-top:10px;">
               <span style="font-size: 30pt;line-height: 35pt;font-weight: bold;">${record.prd_code}</span>
               <span style="font-size: 30pt;line-height: 40pt;font-weight: bold;">[${record.prd_option_name} ${record.prd_size_option}]</span>
           </div>
