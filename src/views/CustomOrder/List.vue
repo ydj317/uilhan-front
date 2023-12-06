@@ -1,6 +1,5 @@
 <template>
   <loading v-model:active="state.indicator" :can-cancel="false" :is-full-page="true"/>
-
   <a-card title="구매관리">
     <div id="header">
       <a-descriptions bordered :column="1" size="middle">
@@ -83,6 +82,7 @@
     </div>
 
     <a-table :columns="state.columns" :data-source="state.tableData.data" :loading="state.tableData.loading"
+             class="custom-order-table"
              :row-selection="rowSelection"
              :defaultExpandAllRows="true" size="small" :scroll="{ x: 1300}"
     >
@@ -168,6 +168,7 @@ import {onMounted, reactive, ref} from 'vue'
 import {useMarketApi} from '@/api/market'
 import moment from "moment";
 import {message} from 'ant-design-vue'
+import "vue-loading-overlay/dist/vue-loading.css";
 
 import {
   DownloadOutlined,
@@ -328,7 +329,7 @@ const state = reactive({
       order_date: [moment().subtract(15, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
       userinfo: [],
       search_type: 'order_no',
-      search_value: ''
+      search_value: '',
     },
   },
   accountData: {},
@@ -403,11 +404,10 @@ const purchaseProduct = (item) => {
   window.open(item.prdUrl);
 }
 
-
 // 엑셀 다운로드
 const downloadCustomOrderExcel = () => {
+  state.indicator = true;
   useCustomOrderApi().downloadCustomOrderExcel(state.tableData.data).then(res => {
-    state.indicator = true;
     if (res === undefined) {
       state.indicator = false;
       message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
@@ -548,7 +548,7 @@ const deleteCustomOrder = async () => {
       state.indicator = false;
       return false;
     }
-    message.error(res.message);
+    message.success(res.message);
     getTableData();
     state.indicator = false;
   });
@@ -569,5 +569,10 @@ onMounted(async () => {
 
 .editable-row-operations a {
   margin-right: 8px;
+}
+.custom-order-table .ant-table-pagination-right {
+  display: flex;
+  justify-content: flex-start;
+
 }
 </style>
