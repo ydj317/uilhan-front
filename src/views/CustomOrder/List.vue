@@ -335,7 +335,7 @@ const state = reactive({
   accountData: {},
   order_date: [moment().subtract(15, 'days'), moment()],
   marketDetailUrls: {},
-  uploadCustomOrderPath: process.env.VUE_APP_API_URL + "/api/custom/order/excelUpload" + "?XDEBUG_SESSION_START=PHPSTORM",
+  uploadCustomOrderPath: process.env.VUE_APP_API_URL + "/api/custom/order/excelUpload",
   fileList: [],
   headers: reactive({
     token: Cookie.get("token")
