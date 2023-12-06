@@ -12,7 +12,7 @@
 
     <a-form-item name="access_token" @keyup="handleResetSyncStatus" label="인증키"
                  :rules="[{ required: true, message: '인증키를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.access_token" placeholder="롯데ON 스토어 센터 > '판매자정보' 메뉴에서 '기본정보관리' 화면에 노출되는 '거래처번호'를 입력해주세요."/>
+      <a-input v-model:value="state.formData.access_token" placeholder="롯데ON 스토어 센터 > ‘OpenAPI관리’> 인증키 정보를 입력해주세요."/>
     </a-form-item>
 
     <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
