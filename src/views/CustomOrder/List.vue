@@ -475,29 +475,39 @@ const cancel = key => {
   delete state.editableData[key];
 };
 
-const openBarcodePopup = (record) => {
-  state.showPopupData.barcode = record.barcode;
-  state.showPopupData.prd_code = record.prd_code;
-  state.showPopupData.prd_option_name = record.prd_option_name;
-  state.showPopupData.prd_size_option = record.prd_size_option;
-  const content = `<div class="container">
-  <div class="title">${state.showPopupData.prd_code}</div>
-  <div class="description">${state.showPopupData.prd_option_name} ${state.showPopupData.prd_size_option}</div>
-  <div class="qr-code">
-    <!-- QR 코드 이미지를 여기에 포함시켜야 합니다. 예시 URL을 사용하거나 실제 경로로 변경하세요. -->
-    <img src="path-to-your-qr-code.png" alt="QR Code">
+const openBarcodePopup = async (record) => {
+  await useCustomOrderApi().createQrcode({code:record.barcode}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    state.showPopupData.prd_option_name = record.prd_option_name;
+    state.showPopupData.prd_size_option = record.prd_size_option;
+    const content = `
+  <div class="container" style="background-color: white;padding: 20px 15px;display: flex;flex-direction: column;gap: 15px;">
+      <div style="display: flex;justify-content: space-between;gap: 10px;">
+          <div class="content" style="display: flex;flex-direction: column;gap: 5px;">
+              <span style="font-size: 30pt;line-height: 35pt;font-weight: bold;">${record.prd_code}</span>
+              <span style="font-size: 30pt;line-height: 40pt;font-weight: bold;">[${record.prd_option_name} ${record.prd_size_option}]</span>
+          </div>
+          <div class="qr-code">
+              <img src="${res.data.qrCodeUrl}" alt="QR Code" style="width: 258px;height: 258px;">
+          </div>
+      </div>
+      <div style="display: flex;justify-content: center">
+          <h1 style="font-size: 50pt;line-height: 0;">${record.barcode}</h1>
+      </div>
   </div>
-  <div class="barcode">${state.showPopupData.barcode}</div>
-  <!-- 프린트 버튼 -->
+  `
 
-</div>
-`
+    // process.env.VUE_APP_API_URL
+    const printWindow = window.open('/print.html', 'Print', 'width=800,height=800');
+    printWindow.onload = function () {
+      printWindow.setPrintContent(content);
+    };
+  });
 
-  // process.env.VUE_APP_API_URL
-  const printWindow = window.open('/print.html', 'Print', 'width=800,height=800');
-  printWindow.onload = function() {
-    printWindow.setPrintContent(content);
-  };
+
 };
 const closeBarcodePopup = () => {
   // 바코드 출력 팝업 닫기 로직
@@ -508,6 +518,16 @@ const printBarcode = () => {
   window.print(); // 브라우저에서 프린트 창 열기
 }
 
+const createQrcode = (code) => {
+  // QR 코드 생성
+  useCustomOrderApi().createQrcode({code}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    state.showPopupData.barcode = res.data.qrCodeUrl;
+  });
+}
 
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls()])
