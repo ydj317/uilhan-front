@@ -20,17 +20,7 @@
             </a-space>
           </a-input-group>
         </a-descriptions-item>
-<!--        <a-descriptions-item label="계정">-->
-<!--          <a-input-group compact style="display: flex;">-->
-<!--            <a-select v-model:value="state.tableData.params.account_ids" mode="multiple" style="width: 100%"-->
-<!--                      placeholder="계정 선택">-->
-<!--              <a-select-option v-for="value in state.accountData" :value="value.value" :label="value.value">-->
-<!--                <img :src="getLogoSrc(value.marketCode)"-->
-<!--                     style="width: 18px; height: 18px;"/>&nbsp;&nbsp;{{ value.sellerId }}-->
-<!--              </a-select-option>-->
-<!--            </a-select>-->
-<!--          </a-input-group>-->
-<!--        </a-descriptions-item>-->
+
         <a-descriptions-item label="검색어">
           <a-input-group compact style="display: flex;">
             <a-select v-model:value="state.tableData.params.search_type" style="width: 100px;">
@@ -85,216 +75,87 @@
       </div>
     </div>
 
-    <a-table :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
-             :pagination="false" :defaultExpandAllRows="true" size="small" :scroll="{ x: 1300}"
+    <a-table :columns="state.columns" :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
+              :defaultExpandAllRows="true" size="small" :scroll="{ x: 1300}"
     >
-      <a-table-column title="주문번호" dataIndex="id" key="id">
-        <template #default="{ record }">
-          <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
-            <span>{{ record.orderNo }}</span>
+      <template #bodyCell="{ column,record, text }">
+        <!--주문번호-->
+        <template v-if="column.key === 'order_no'">
+            {{ record.order_no }}
+        </template>
+
+        <!--주문일자-->
+        <template v-if="column.key === 'ins_date'">
+          {{ moment(record.ins_date).format('YYYY-MM-DD HH:mm:ss') }}
+        </template>
+
+        <!--상품명-->
+        <template v-if="column.key === 'prd_name'">
+            {{ record.prd_name }}
+        </template>
+
+        <!--옵션이미지-->
+        <template v-if="column.key === 'prd_image'">
+            <a-image
+                :src="record.prd_image"
+                fallback="data:image/png;base64,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"
+                style="width: 60px; height: 60px; border-radius: 10px"
+            />
+        </template>
+
+        <!--실구매가-->
+        <template v-if="['purchase_price', 'purchase_order_no', 'charge', 'memo', 'package_status_memo', 'purchase_invoice_no','total_payment_amount'].includes(column.dataIndex)">
+          <div>
+            <a-input
+                v-if="state.editableData[record.key]"
+                v-model:value="state.editableData[record.key][column.dataIndex]"
+                style="margin: -5px 0"
+            />
+            <template v-else>
+              {{ text }}
+            </template>
           </div>
         </template>
-      </a-table-column>
 
-      <a-table-column :width="160" title="주문일자" dataIndex="orderNo" key="orderNo">
-        <template #default="{ record }">
-          <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
-            <span style="color: #999999;">({{ moment(record.insData).format('YYYY-MM-DD HH:mm:ss') }})</span>
-          </div>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="500" title="상품명"  dataIndex="prdName" key="prdName">
-        <template #default="{ record }">
-          <div style="display: flex;flex-direction: column;gap: 10px;">
-            <h4>{{ record.prdName }}</h4>
-          </div>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="옵션이미지" dataIndex="prdImage" key="prdImage">
-        <template #default="{ record }">
-          <a-image
-              :src="record.prdImage"
-              fallback="data:image/png;base64,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"
-              style="width:60px;height:60px;border-radius: 10px;"/>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="500" title="품목코드" dataIndex="prdCode" key="prdCode">
-        <template #default="{ record }">
+        <!--바코드-->
+        <template v-if="column.key === 'barcode'">
           <a-space>
-            <span>{{ record.itemNo }}</span>
-          </a-space>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="400" title="옵션명" dataIndex="prdOptionName" key="prdOptionName">
-        <template #default="{ record }">
-          <a-space>
-            <div style="display: flex;align-items: center;gap: 10px;">
-              <div style="display: flex;flex-direction: column; align-items: start;gap: 10px;">
-                <span>{{ record.prdOptionName }}</span>
-              </div>
-            </div>
-          </a-space>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="80" title="주문수량" dataIndex="quantity" key="quantity">
-        <template #default="{ record }">
-          <span v-else>{{ record.quantity }}</span>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="원가" dataIndex="originPrice" key="originPrice">
-        <template #default="{ record }">
-          <a-space>
-            <span>{{ record.originPrice }}</span>
-          </a-space>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="실구매가" dataIndex="purchasePrice" key="purchasePrice">
-        <template #default="{ record }">
-          <a-space >
-            <input
-                class="ant-input"
-                :id="'purchasePrice' + record.id"
-                @dblclick="activateEdit(record, 'purchasePrice')"
-                   @keyup.enter="saveEdit(record, 'purchasePrice')"
-                   @blur="saveEdit(record, 'purchasePrice')"
-                   :value="record.purchasePrice"
-                   style="width: 70px;background-color:#f0f0f0;"
-                readonly
-            />
-          </a-space>
-
-
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="수수료" dataIndex="charge" key="charge">
-        <template #default="{ record }">
-          <a-space>
-            <input :value="record.charge"
-                   class="ant-input"
-                   :id="'charge' + record.id"
-                   @dblclick="activateEdit(record, 'charge')"
-                   @keyup.enter="saveEdit(record, 'charge')"
-                   @blur="saveEdit(record, 'charge')"
-                   style="width: 40px; background-color:#f0f0f0;"
-                   readonly
-            />
-          </a-space>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="금액" dataIndex="totalPaymentAmount" key="totalPaymentAmount">
-        <template #default="{ record }">
-          <a-space>
-            <input :value="record.totalPaymentAmount"
-                   class="ant-input"
-                   :id="'totalPaymentAmount' + record.id"
-                   @dblclick="activateEdit(record, 'totalPaymentAmount')"
-                   @keyup.enter="saveEdit(record, 'totalPaymentAmount')"
-                   @blur="saveEdit(record, 'totalPaymentAmount')"
-                   style="width: 70px; background-color:#f0f0f0;"
-                   readonly
-            />
-          </a-space>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="구매번호" dataIndex="purchaseOrderNo" key="purchaseOrderNo">
-        <template #default="{ record }">
-          <a-space>
-            <input :value="record.purchaseOrderNo"
-                   class="ant-input"
-                   :id="'purchaseOrderNo' + record.id"
-                   @dblclick="activateEdit(record, 'purchaseOrderNo')"
-                   @keyup.enter="saveEdit(record, 'purchaseOrderNo')"
-                   @blur="saveEdit(record, 'purchaseOrderNo')"
-                   style="width: 150px; background-color:#f0f0f0;"
-                   readonly
-            />
-          </a-space>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="중국택배번호" dataIndex="purchaseInvoiceNo" key="purchaseInvoiceNo">
-        <template #default="{ record }">
-          <a-space>
-            <input :value="record.purchaseInvoiceNo"
-                   class="ant-input"
-                   :id="'purchaseInvoiceNo' + record.id"
-                   @dblclick="activateEdit(record, 'purchaseInvoiceNo')"
-                   @keyup.enter="saveEdit(record, 'purchaseInvoiceNo')"
-                   @blur="saveEdit(record, 'purchaseInvoiceNo')"
-                   style="width: 150px; background-color:#f0f0f0;"
-                   readonly
-            />
-          </a-space>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="중국택배현황 메모" dataIndex="packageStatusMemo" key="packageStatusMemo">
-        <template #default="{ record }">
-          <a-space>
-            <input :value="record.packageStatusMemo"
-                   class="ant-input"
-                   :id="'packageStatusMemo' + record.id"
-                   @dblclick="activateEdit(record, 'packageStatusMemo')"
-                   @keyup.enter="saveEdit(record, 'packageStatusMemo')"
-                   @blur="saveEdit(record, 'packageStatusMemo')"
-                   style="width: 150px; background-color:#f0f0f0;"
-                   readonly
-            />
-          </a-space>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="메모" dataIndex="memo" key="memo">
-        <template #default="{ record }">
-          <a-space>
-            <input :value="record.memo"
-                   class="ant-input"
-                   :id="'memo' + record.id"
-                   @dblclick="activateEdit(record, 'memo')"
-                   @keyup.enter="saveEdit(record, 'memo')"
-                   @blur="saveEdit(record, 'memo')"
-                   style="width: 150px; background-color:#f0f0f0;"
-                   readonly
-            />
-          </a-space>
-        </template>
-      </a-table-column>
-
-      <a-table-column :width="100" title="바코드" dataIndex="barCode" key="barCode">
-        <template #default="{ record }">
-          <a-space>
-            <a-button @click.prevent="handleBarcode(record)" type="primary" size="small">
+            <a-button
+                @click.prevent="handleBarcode(record)"
+                type="primary"
+                size="small"
+            >
               <template #icon>
-                <ExportOutlined/>
+                <ExportOutlined />
               </template>
               출력
             </a-button>
           </a-space>
         </template>
-      </a-table-column>
 
+        <template v-if="column.key === 'edit'">
+          <div class="editable-row-operations">
+          <span v-if="state.editableData[record.key]">
+            <a-typography-link @click="save(record.key)">저장</a-typography-link>
+            <a-popconfirm title="취소 하시겠습니까?" @confirm="cancel(record.key)">
+              <a>취소</a>
+            </a-popconfirm>
+          </span>
+            <span v-else>
+            <a @click="edit(record.key)">수정</a>
+          </span>
+          </div>
+        </template>
 
+      </template>
     </a-table>
+
   </a-card>
-
-
 </template>
 
 <script setup>
 
 import {onMounted, reactive, ref} from 'vue'
-import {useMarketAccountApi} from "@/api/marketAccount";
-import {useMarketOrderApi} from '@/api/order'
 import {useMarketApi} from '@/api/market'
 import moment from "moment";
 import {message} from 'ant-design-vue'
@@ -309,9 +170,132 @@ import {useUserApi} from "@/api/user";
 import {useCustomOrderApi} from "@/api/customOrder";
 import Cookie from "js-cookie";
 import Loading from "vue-loading-overlay";
-
+import {cloneDeep} from "lodash";
 
 const state = reactive({
+  columns: [
+    {
+      title: "주문번호",
+      dataIndex: "order_no",
+      key: "order_no",
+      width: 100,
+      fixed: 'left',
+      scopedSlots: {customRender: 'order_no'},
+    },
+    {
+      title: "주문일자",
+      dataIndex: "ins_date",
+      key: "ins_date",
+      width: 100,
+      scopedSlots: {customRender: 'ins_date'},
+    },
+    {
+      title: "상품명",
+      dataIndex: "prd_name",
+      key: "prd_name",
+      width: 200,
+      scopedSlots: {customRender: 'prd_name'},
+    },
+    {
+      title: "옵션이미지",
+      dataIndex: "prd_image",
+      key: "prd_image",
+      width: 100,
+      scopedSlots: {customRender: 'prd_image'},
+    },
+    {
+      title: "품목코드",
+      dataIndex: "item_no",
+      key: "item_no",
+      width: 100,
+      scopedSlots: {customRender: 'item_no'},
+    },
+    {
+      title: "옵션명",
+      dataIndex: "prd_option_name",
+      key: "prd_option_name",
+      width: 200,
+      scopedSlots: {customRender: 'prd_option_name'},
+    },
+    {
+      title: "주문수량",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 100,
+      scopedSlots: {customRender: 'quantity'},
+    },
+    {
+      title: "원가",
+      dataIndex: "original_price",
+      key: "original_price",
+      width: 100,
+      scopedSlots: {customRender: 'original_price'},
+    },
+    {
+      title: "실구매가",
+      dataIndex: "purchase_price",
+      key: "purchase_price",
+      width: 100,
+      scopedSlots: {customRender: 'purchase_price'},
+    },
+    {
+      title: "수수료",
+      dataIndex: "charge",
+      key: "charge",
+      width: 100,
+      scopedSlots: {customRender: 'charge'},
+    },
+    {
+      title: "금액",
+      dataIndex: "total_payment_amount",
+      key: "total_payment_amount",
+      width: 100,
+      scopedSlots: {customRender: 'total_payment_amount'},
+    },
+    {
+      title: "구매번호",
+      dataIndex: "purchase_order_no",
+      key: "purchase_order_no",
+      width: 100,
+      scopedSlots: {customRender: 'purchase_order_no'},
+    },
+    {
+      title: "중국택배번호",
+      dataIndex: "purchase_invoice_no",
+      key: "purchase_invoice_no",
+      width: 100,
+      scopedSlots: {customRender: 'purchase_invoice_no'},
+    },
+    {
+      title: "중국택배현황 메모",
+      dataIndex: "package_status_memo",
+      key: "package_status_memo",
+      width: 100,
+      scopedSlots: {customRender: 'package_status_memo'},
+    },
+    {
+      title: "메모",
+      dataIndex: "memo",
+      key: "memo",
+      width: 100,
+      scopedSlots: {customRender: 'memo'},
+    },
+    {
+      title: "바코드",
+      dataIndex: "barcode",
+      key: "barcode",
+      width: 100,
+      scopedSlots: {customRender: 'barcode'},
+    },
+    {
+      title: "액션",
+      dataIndex: "edit",
+      key: "edit",
+      width: 100,
+      scopedSlots: {customRender: 'edit'},
+      fixed: 'right',
+    }
+  ],
   tableData: {
     data: [],
     total: 0,
@@ -326,28 +310,16 @@ const state = reactive({
   },
   accountData: {},
   order_date: [moment().subtract(15, 'days'), moment()],
-  orderStatus: [],
-  orderStatusData: [],
-  claimStatus: [],
-  allStatus: [],
-  claimStatusData: [],
-  courierNameValues: {},
-  invoiceNumberValues: {},
-  marketDeliveryCompany: {},
   marketDetailUrls: {},
-  syncStatusShow: false,
-  is_bridge_sync: false,
-  showUploadList:{
-    showPreviewIcon: false,
-    showRemoveIcon: false,
-    showDownloadIcon: false
-  },
   uploadCustomOrderPath: process.env.VUE_APP_API_URL + "/api/custom/order/excelUpload" + "?XDEBUG_SESSION_START=PHPSTORM",
   fileList: [],
   headers: reactive({
     token: Cookie.get("token")
   }),
+
   indicator: false,
+  editableData: {},
+  editingKey: '',
 });
 
 // 검색기간
@@ -357,14 +329,8 @@ const onChangeDatePicker = (value, dateString) => {
 
 // 주문 리스트
 const getTableData = async () => {
-  // if (state.tableData.params.account_ids.length === 0) {
-  //   message.error('계정을 선택해주세요.새로운 계정이면 먼저 마켓 계정관리에서 등록해주세요.');
-  //   return false;
-  // }
-
   state.tableData.loading = true;
   await useCustomOrderApi().getCustomOrderList(state.tableData.params).then(res => {
-    console.log(res)
     if (res.status !== "2000") {
       message.error(res.message);
       state.tableData.loading = false;
@@ -372,15 +338,6 @@ const getTableData = async () => {
     }
 
     state.tableData.data = res.data;
-
-    // set courierNameValues default value
-    state.tableData.data.forEach((item) => {
-      if (item.courierName !== '' && item.invoiceNumber !== '') {
-        state.courierNameValues[item.id] = item.courierName;
-        state.invoiceNumberValues[item.id] = item.invoiceNumber;
-      }
-    });
-
     state.tableData.total = res.data.length;
     state.tableData.loading = false;
   });
@@ -478,8 +435,6 @@ const getUserInfoData = async () => {
         message.error(res.message);
         return false;
       }
-      const {is_bridge_sync} = res.data;
-      state.is_bridge_sync = is_bridge_sync
     });
   } catch (error) {
     message.error(error.message);
@@ -520,11 +475,34 @@ const saveEdit = async (record, field) => {
 
 };
 
+const edit = key => {
+    state.editableData[key] = cloneDeep(state.tableData.data.filter(item => key === item.key)[0]);
+};
+
+const save = async key => {
+  Object.assign(state.tableData.data.filter(item => key === item.key)[0], state.editableData[key]);
+  console.log(state.editableData[key])
+
+
+  await useCustomOrderApi().updateCustomOrder(state.editableData[key]).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    message.success(`수정되었습니다.`);
+  });
+
+  delete state.editableData[key];
+};
+
+const cancel = key => {
+  delete state.editableData[key];
+};
+
 
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls()])
       .then(() => {
-        state.allStatus = [...state.orderStatus, ...state.claimStatus]
         getTableData()
       })
 })
@@ -534,5 +512,9 @@ onMounted(async () => {
 <style>
 #header .ant-picker-input input {
   text-align: center;
+}
+
+.editable-row-operations a {
+  margin-right: 8px;
 }
 </style>
