@@ -393,20 +393,6 @@ const rowSelection = ref({
   },
 });
 
-const handleStatusChange = (e) => {
-  rowSelection.value.selectedRowKeys = [];
-
-  getTableData()
-}
-
-// 구매 페이지 열기
-const purchaseProduct = (item) => {
-  if (!item.prdUrl) {
-    message.error('구매 페이지가 등록되지 않았습니다.');
-    return false;
-  }
-  window.open(item.prdUrl);
-}
 
 // 엑셀 다운로드
 const downloadCustomOrderExcel = () => {
