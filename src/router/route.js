@@ -383,7 +383,8 @@ export const menus = [{
             meta: {
                 title: "구매관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                roles: [],
+                ids: ["1sjsj21s"],
                 icon: BarcodeOutlined
             },
         },
