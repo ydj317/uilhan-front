@@ -29,6 +29,10 @@
               <a-select-option value="item_no">품목코드</a-select-option>
               <a-select-option value="prd_option_name">옵션명</a-select-option>
               <a-select-option value="prd_size_option">사이즈</a-select-option>
+              <a-select-option value="purchase_order_no">구매번호</a-select-option>
+              <a-select-option value="purchase_invoice_no">중국택배번호</a-select-option>
+              <a-select-option value="package_status_memo">택배현황 메모</a-select-option>
+              <a-select-option value="memo">메모</a-select-option>
             </a-select>
             <a-input v-model:value="state.tableData.params.search_value" style="width: 300px;" allowClear/>
           </a-input-group>
@@ -291,7 +295,7 @@ const state = reactive({
       scopedSlots: {customRender: 'purchase_invoice_no'},
     },
     {
-      title: "중국택배현황 메모",
+      title: "택배현황 메모",
       dataIndex: "package_status_memo",
       key: "package_status_memo",
       width: 100,
