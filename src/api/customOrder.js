@@ -24,6 +24,14 @@ export function useCustomOrderApi() {
                 data: data,
             });
         },
+        // qrcode 생성
+        createQrcode: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/tools/getQrcode",
+                method: "get",
+                params: data,
+            });
+        },
         deleteCustomOrder: (data) => {
             return AuthRequest({
                 url: process.env.VUE_APP_API_URL + "/api/custom/order/delete",
