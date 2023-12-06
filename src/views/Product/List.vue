@@ -62,6 +62,17 @@
         <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
           <a-button>상품삭제</a-button>
         </a-popconfirm>
+        <!--상품삭제-->
+        <a-popconfirm @confirm="clonePrd">
+          <template #title>
+            <b>상품 복제 확인</b>
+            <br>
+            <span>선택한 상품을 복제하시겠습니다?</span>
+            <br>
+            <span style="font-size: 12px; color: #999;">*복제 된 상품은 최상단으로 이동합니다.</span>
+          </template>
+          <a-button>상품복제</a-button>
+        </a-popconfirm>
       </div>
 
       <!--right button-->
@@ -667,6 +678,23 @@ export default defineComponent({
       }
 
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", {params: {list: list}}).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+
+        window.location.reload()
+      });
+    },
+
+    clonePrd() {
+      let list = this.getCheckList();
+      if (list === undefined || list.length === 0) {
+        message.warning("선택된 상품이 없습니다.");
+        return false;
+      }
+
+      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/clone', list).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
