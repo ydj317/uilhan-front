@@ -46,10 +46,10 @@
   <a-card class="mt15">
     <div class="mb15" style="display: flex;justify-content: space-between;">
       <div class="right-div" style="display: flex;align-items: center;gap: 5px">
-        <a-button style="margin-right: 5px;"  @click="downloadCustomOrderExcel" type="primary">
+        <a-button style="margin-right: 5px;" @click="downloadCustomOrderExcel" type="primary">
           주문 다운로드
           <template #icon>
-            <DownloadOutlined />
+            <DownloadOutlined/>
           </template>
         </a-button>
         <a-spin v-if="state.indicator"/>
@@ -64,10 +64,10 @@
             :showUploadList="false"
             @change="excelUploadCustomOrder"
         >
-          <a-button class="custom-button" style="margin-right: 5px;"  type="primary">
+          <a-button class="custom-button" style="margin-right: 5px;" type="primary">
             주문 업로드
             <template #icon>
-              <UploadOutlined />
+              <UploadOutlined/>
             </template>
           </a-button>
           <a-spin v-if="state.indicator"/>
@@ -75,13 +75,14 @@
       </div>
     </div>
 
-    <a-table :columns="state.columns" :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
-              :defaultExpandAllRows="true" size="small" :scroll="{ x: 1300}"
+    <a-table :columns="state.columns" :data-source="state.tableData.data" :loading="state.tableData.loading"
+             :row-selection="rowSelection"
+             :defaultExpandAllRows="true" size="small" :scroll="{ x: 1300}"
     >
       <template #bodyCell="{ column,record, text }">
         <!--주문번호-->
         <template v-if="column.key === 'order_no'">
-            {{ record.order_no }}
+          {{ record.order_no }}
         </template>
 
         <!--주문일자-->
@@ -91,20 +92,21 @@
 
         <!--상품명-->
         <template v-if="column.key === 'prd_name'">
-            {{ record.prd_name }}
+          {{ record.prd_name }}
         </template>
 
         <!--옵션이미지-->
         <template v-if="column.key === 'prd_image'">
-            <a-image
-                :src="record.prd_image"
-                fallback="data:image/png;base64,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"
-                style="width: 60px; height: 60px; border-radius: 10px"
-            />
+          <a-image
+              :src="record.prd_image"
+              fallback="data:image/png;base64,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"
+              style="width: 60px; height: 60px; border-radius: 10px"
+          />
         </template>
 
         <!--실구매가-->
-        <template v-if="['purchase_price', 'purchase_order_no', 'charge', 'memo', 'package_status_memo', 'purchase_invoice_no','total_payment_amount'].includes(column.dataIndex)">
+        <template
+            v-if="['purchase_price', 'purchase_order_no', 'charge', 'memo', 'package_status_memo', 'purchase_invoice_no','total_payment_amount'].includes(column.dataIndex)">
           <div>
             <a-input
                 v-if="state.editableData[record.key]"
@@ -121,12 +123,12 @@
         <template v-if="column.key === 'barcode'">
           <a-space>
             <a-button
-                @click.prevent="handleBarcode(record)"
+                @click.prevent="openBarcodePopup(record)"
                 type="primary"
                 size="small"
             >
               <template #icon>
-                <ExportOutlined />
+                <ExportOutlined/>
               </template>
               출력
             </a-button>
@@ -149,8 +151,8 @@
 
       </template>
     </a-table>
-
   </a-card>
+
 </template>
 
 <script setup>
@@ -320,6 +322,15 @@ const state = reactive({
   indicator: false,
   editableData: {},
   editingKey: '',
+
+  // 바코드 팝업에 데이타
+  showPopupData: {
+    barcode: '',
+    prd_code: '',
+    prd_option_name: '',
+    prd_size_option: '',
+  },
+
 });
 
 // 검색기간
@@ -442,53 +453,18 @@ const getUserInfoData = async () => {
   }
 }
 
-const activateEdit = (record, field) => {
-  const input = document.getElementById(`${field}${record.id}`);
-  input.focus();
-  input.style.backgroundColor = '#FFFFFF';
-  input.readOnly = false;
-};
-
-const saveEdit = async (record, field) => {
-  const input = document.getElementById(`${field}${record.id}`);
-  input.style.backgroundColor = '#f0f0f0';
-  input.readOnly = true;
-  const inputValue = input.value;
-  const originalValue = record[field];
-  // 입력값과 원본값 비교 값이 변경되지 않았을 경우 아무것도 안함
-  if (inputValue == originalValue) {
-    return false;
-  }
-  const params = {
-    id: record.id,
-    [field]: inputValue,
-  };
-
-  await useCustomOrderApi().updateCustomOrder(params).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-    message.success(`수정되었습니다.`);
-    record[field] = input.value;
-  });
-
-};
-
 const edit = key => {
-    state.editableData[key] = cloneDeep(state.tableData.data.filter(item => key === item.key)[0]);
+  state.editableData[key] = cloneDeep(state.tableData.data.filter(item => key === item.key)[0]);
 };
 
 const save = async key => {
-  Object.assign(state.tableData.data.filter(item => key === item.key)[0], state.editableData[key]);
-  console.log(state.editableData[key])
-
-
   await useCustomOrderApi().updateCustomOrder(state.editableData[key]).then(res => {
     if (res.status !== "2000") {
+      delete state.editableData[key];
       message.error(res.message);
       return false;
     }
+    Object.assign(state.tableData.data.filter(item => key === item.key)[0], state.editableData[key]);
     message.success(`수정되었습니다.`);
   });
 
@@ -498,6 +474,39 @@ const save = async key => {
 const cancel = key => {
   delete state.editableData[key];
 };
+
+const openBarcodePopup = (record) => {
+  state.showPopupData.barcode = record.barcode;
+  state.showPopupData.prd_code = record.prd_code;
+  state.showPopupData.prd_option_name = record.prd_option_name;
+  state.showPopupData.prd_size_option = record.prd_size_option;
+  const content = `<div class="container">
+  <div class="title">${state.showPopupData.prd_code}</div>
+  <div class="description">${state.showPopupData.prd_option_name} ${state.showPopupData.prd_size_option}</div>
+  <div class="qr-code">
+    <!-- QR 코드 이미지를 여기에 포함시켜야 합니다. 예시 URL을 사용하거나 실제 경로로 변경하세요. -->
+    <img src="path-to-your-qr-code.png" alt="QR Code">
+  </div>
+  <div class="barcode">${state.showPopupData.barcode}</div>
+  <!-- 프린트 버튼 -->
+
+</div>
+`
+
+  // process.env.VUE_APP_API_URL
+  const printWindow = window.open('/print.html', 'Print', 'width=800,height=800');
+  printWindow.onload = function() {
+    printWindow.setPrintContent(content);
+  };
+};
+const closeBarcodePopup = () => {
+  // 바코드 출력 팝업 닫기 로직
+  state.showBarcodePopup = false;
+}
+const printBarcode = () => {
+  // 프린트 기능
+  window.print(); // 브라우저에서 프린트 창 열기
+}
 
 
 onMounted(async () => {
