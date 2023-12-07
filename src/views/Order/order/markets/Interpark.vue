@@ -112,7 +112,7 @@ const getMarketOrderStatusList = async () => {
   });
 }
 const { orderData, marketCode } = toRefs(props)
-console.log(orderData);
+
 // 주문처리
 const receiverOrderApi = (ids) => {
   useMarketOrderApi().receiverOrder({
@@ -168,7 +168,6 @@ onMounted(async () => {
   getMarketDeliveryCompany();
   await getMarketOrderStatusList();
 
-  console.log(orderData);
 })
 
 </script>
