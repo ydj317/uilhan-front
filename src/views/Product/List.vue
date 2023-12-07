@@ -1058,7 +1058,7 @@ export default defineComponent({
             return false;
           }
           this.userinfo = res.data;
-          if (res.data['username'] === 'irunkorea_02' || res.data['username'] === 'jwli') {
+          if (['irunkorea_02', 'jwli'].includes(res.data['username'])) {
             this.haveDownloadProductPermission = true;
           }
 

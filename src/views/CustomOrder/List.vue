@@ -88,7 +88,8 @@
     <a-table :columns="state.columns" :data-source="state.tableData.data" :loading="state.tableData.loading"
              class="custom-order-table"
              :row-selection="rowSelection"
-             :defaultExpandAllRows="true" size="small" :scroll="{ x: 1300}"
+             @resizeColumn="handleResizeColumn"
+             :defaultExpandAllRows="true" :scroll="{ x: 1300, y: 700}"
     >
       <template #bodyCell="{ column,record, text }">
         <!--주문번호-->
@@ -187,143 +188,167 @@ import Loading from "vue-loading-overlay";
 import {cloneDeep} from "lodash";
 
 const state = reactive({
-  columns: [
+  columns: ref([
     {
       title: "주문번호",
+      resizable: true,
       dataIndex: "order_no",
       key: "order_no",
       width: 100,
+      minWidth: 100,
+      maxWidth: 200,
       fixed: 'left',
-      scopedSlots: {customRender: 'order_no'},
+      // scopedSlots: {customRender: 'order_no'},
     },
     {
       title: "주문일자",
       dataIndex: "ins_date",
       key: "ins_date",
+      resizable: true,
       width: 100,
-      scopedSlots: {customRender: 'ins_date'},
+      minWidth: 100,
+      maxWidth: 200,
     },
     {
       title: "상품명",
+      resizable: true,
       dataIndex: "prd_name",
       key: "prd_name",
       width: 200,
-      scopedSlots: {customRender: 'prd_name'},
+      minWidth: 200,
+      maxWidth: 300,
     },
     {
       title: "옵션이미지",
+      resizable: true,
       dataIndex: "prd_image",
       key: "prd_image",
       width: 100,
-      scopedSlots: {customRender: 'prd_image'},
+      minWidth: 100,
+      maxWidth: 300,
     },
     {
       title: "상품코드",
+      resizable: true,
       dataIndex: "prd_code",
       key: "prd_code",
       width: 200,
-      scopedSlots: {customRender: 'prd_code'},
+      minWidth: 200,
+      maxWidth: 300,
     },
     {
       title: "품목코드",
+      resizable: true,
       dataIndex: "item_no",
       key: "item_no",
       width: 100,
-      scopedSlots: {customRender: 'item_no'},
+      minWidth: 100,
+      maxWidth: 300,
     },
     {
       title: "옵션명",
+      resizable: true,
       dataIndex: "prd_option_name",
       key: "prd_option_name",
       width: 150,
-      scopedSlots: {customRender: 'prd_option_name'},
+      minWidth: 150,
+      maxWidth: 300,
     },
     {
       title: "사이즈",
+      resizable: true,
       dataIndex: "prd_size_option",
       key: "prd_size_option",
       width: 150,
-      scopedSlots: {customRender: 'prd_size_option'},
+      minWidth: 150,
+      maxWidth: 300,
     },
     {
       title: "주문수량",
+      resizable: true,
       dataIndex: "quantity",
       key: "quantity",
       width: 100,
-      scopedSlots: {customRender: 'quantity'},
+      minWidth: 100,
+      maxWidth: 300,
     },
     {
       title: "원가",
+      resizable: true,
       dataIndex: "original_price",
       key: "original_price",
       width: 100,
-      scopedSlots: {customRender: 'original_price'},
+      minWidth: 100,
+      maxWidth: 300,
     },
     {
       title: "실구매가",
+      resizable: true,
       dataIndex: "purchase_price",
       key: "purchase_price",
       width: 100,
-      scopedSlots: {customRender: 'purchase_price'},
+      minWidth: 100,
+      maxWidth: 300,
     },
     {
       title: "수수료",
+      resizable: true,
       dataIndex: "charge",
       key: "charge",
       width: 100,
-      scopedSlots: {customRender: 'charge'},
+      minWidth: 100,
+      maxWidth: 300,
     },
     {
       title: "금액",
+      resizable: true,
       dataIndex: "total_payment_amount",
       key: "total_payment_amount",
       width: 100,
-      scopedSlots: {customRender: 'total_payment_amount'},
     },
     {
       title: "구매번호",
+      resizable: true,
       dataIndex: "purchase_order_no",
       key: "purchase_order_no",
       width: 100,
-      scopedSlots: {customRender: 'purchase_order_no'},
     },
     {
       title: "중국택배번호",
+      resizable: true,
       dataIndex: "purchase_invoice_no",
       key: "purchase_invoice_no",
       width: 100,
-      scopedSlots: {customRender: 'purchase_invoice_no'},
     },
     {
       title: "택배현황 메모",
+      resizable: true,
       dataIndex: "package_status_memo",
       key: "package_status_memo",
       width: 100,
-      scopedSlots: {customRender: 'package_status_memo'},
     },
     {
       title: "메모",
+      resizable: true,
       dataIndex: "memo",
       key: "memo",
       width: 100,
-      scopedSlots: {customRender: 'memo'},
     },
     {
       title: "바코드",
+      resizable: true,
       dataIndex: "barcode",
       key: "barcode",
       width: 100,
-      scopedSlots: {customRender: 'barcode'},
     },
     {
       title: "액션",
       dataIndex: "edit",
       key: "edit",
       width: 100,
-      scopedSlots: {customRender: 'edit'},
       fixed: 'right',
     }
-  ],
+  ]),
   tableData: {
     data: [],
     total: 0,
@@ -519,10 +544,7 @@ const openBarcodePopup = async (record) => {
       printWindow.setPrintContent(content);
     };
   });
-
-
 };
-
 
 const deleteCustomOrder = async () => {
   if (state.checkedList[0].length === 0) {
@@ -540,6 +562,11 @@ const deleteCustomOrder = async () => {
     getTableData();
     state.indicator = false;
   });
+}
+
+const handleResizeColumn = (w, col) => {
+  console.log(w, col);
+  col.width = w;
 }
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls()])
