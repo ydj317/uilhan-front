@@ -45,7 +45,7 @@
             <SearchOutlined/>
             검색
           </a-button>
-          <a-button class="ml10" @click="initSearchParam()" style="width: 100px;">초기화</a-button>
+          <a-button class="ml10" @click="initSearchParam()" style="width: 100px; border-color: #d9d9d9" >초기화</a-button>
         </div>
 
       </div>
@@ -191,7 +191,7 @@
   <!--선택상품 등록-->
   <div id="footer">
     <!--선택상품 등록-->
-    <a-modal width="1000px" v-model:visible="singleSyncPop" centered>
+    <a-modal width="1000px" v-model:open="singleSyncPop" centered>
       <template #title>
         선택상품 등록
         <a-tooltip>
@@ -249,7 +249,7 @@
     </a-modal>
 
     <!--제휴사 연동결과-->
-    <a-modal width="600px" v-model:visible="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('multi')">
+    <a-modal width="600px" v-model:open="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('multi')">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">

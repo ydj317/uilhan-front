@@ -12,7 +12,7 @@
     </a-affix>
 
     <!--제휴사 상품연동-->
-    <a-modal width="1000px" title="상품등록" v-model:visible="singleSyncPop" centered>
+    <a-modal width="1000px" title="상품등록" v-model:open="singleSyncPop" centered>
       <a-table
         class="tableSyncStatus"
         :dataSource="this.product.item_sync_market"
@@ -65,7 +65,7 @@
     </a-modal>
 
     <!--제휴사 연동결과-->
-    <a-modal width="600px" :maskClosable="false" v-model:visible="marketSyncPop" title="제휴사연동결과" @ok="">
+    <a-modal width="600px" :maskClosable="false" v-model:open="marketSyncPop" title="제휴사연동결과" @ok="">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">

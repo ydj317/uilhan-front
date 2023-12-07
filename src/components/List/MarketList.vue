@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal width="600px" v-model:visible="relaket.data.MarketListVisible" centered>
+    <a-modal width="600px" v-model:open="relaket.data.MarketListVisible" centered>
       <template #title>
         선택상품 등록
         <a-tooltip>
