@@ -60,7 +60,7 @@ onBeforeMount(() => {
 
 <template>
   <template v-for="(item,index) in dataSource.data" :key="index">
-    <a-modal :key="index" v-if="shouldShowPopup(item.id)" v-model:visible="dataSource.open[`open${item.id}`]" :title="item.title" @cancel="handleCancel(item.id)" :mask="false">
+    <a-modal :key="index" v-if="shouldShowPopup(item.id)" v-model:open="dataSource.open[`open${item.id}`]" :title="item.title" @cancel="handleCancel(item.id)" :mask="false">
       <div style="text-align: center;height: 600px;overflow: scroll;overflow-x: unset;" v-html="item.content">
       </div>
       <template #footer>

@@ -5,7 +5,7 @@ import antDV from "ant-design-vue";
 import moment from "moment";
 import App from "./App.vue";
 import "moment/dist/locale/zh-cn";
-import "ant-design-vue/dist/antd.css";
+import 'ant-design-vue/dist/reset.css';
 import "./assets/css/global.css";
 import 'echarts';
 import DatePicker from "ant-design-vue/es/date-picker/moment";

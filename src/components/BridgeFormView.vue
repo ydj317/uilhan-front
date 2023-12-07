@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:visible="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청'" width="1000px"
+  <a-modal v-model:open="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청'" width="1000px"
            :confirm-loading="state.confirmLoading" @ok="handleOk" @cancel="onClose">
     <a-affix>
       <a-space direction="vertical" class="mb15">

@@ -11,13 +11,13 @@
     <!--등록창-->
     <div>
       <a-modal
-        v-model:visible="visible"
+        v-model:open="visible"
         title="상품명 금지어 추가"
         @ok="handleOk"
         :ok-text="'추가'"
         :cancel-text="'취소'"
       >
-        <a-textarea :autosize="true" v-model:value="filterWord"></a-textarea>
+        <a-textarea :autoSize="true" v-model:value="filterWord"></a-textarea>
       </a-modal>
     </div>
 
