@@ -15,6 +15,7 @@ import Coupang from "./markets/Coupang.vue";
 import Smartstore from "./markets/SmartStore.vue";
 import Lotteon from "./markets/Lotteon.vue";
 import Tmon from "./markets/Tmon.vue";
+import Interpark from "./markets/Interpark.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -25,7 +26,7 @@ const state = reactive({
 });
 
 const markets = {
-  Coupang, Smartstore, Tmon, Lotteon
+  Coupang, Smartstore, Tmon, Lotteon, Interpark
 }
 
 let marketCode = ref('')
