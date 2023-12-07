@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Print</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #d5d5d5; /* 배경색 설정 */
+        }
+        #print-container{
+            background-color: white;
+            position: relative;
+            width: 180mm;
+            height: 100mm;
+            border: 1px solid rgb(128, 128, 128);
+            margin: 10mm auto 0 auto;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .print-button {
+            padding: 10px 20px;
+            border: 1px solid #9da6fa;
+            border-radius: 5px;
+            background-color: #1890ff;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .print-button:hover {
+            background-color: #40a9ff;
+        }
+
+        @media print {
+            .print-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="print-container">
+
+    </div>
+<div style="display: flex;justify-content: center;margin-top: 15px;">
+    <button class="print-button" onclick="window.print();">프린트</button>
+</div>
+<script>
+    // 프린트 내용을 설정하는 함수
+    function setPrintContent(htmlContent) {
+        document.getElementById('print-container').innerHTML = htmlContent;
+    }
+</script>
+</body>
+</html>
