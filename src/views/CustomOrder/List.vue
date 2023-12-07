@@ -1,5 +1,5 @@
 <template>
-  <loading v-model:active="state.indicator" :can-cancel="false" :is-full-page="true"/>
+  <loading v-model:active="state.indicator.table" :can-cancel="false" :is-full-page="true"/>
   <a-card title="구매관리">
     <div id="header">
       <a-descriptions bordered :column="1" size="middle">
@@ -62,7 +62,7 @@
             <DownloadOutlined/>
           </template>
         </a-button>
-        <a-spin v-if="state.indicator"/>
+        <a-spin v-if="state.indicator.download"/>
 
         <a-upload
             :action="state.uploadCustomOrderPath"
@@ -80,7 +80,7 @@
               <UploadOutlined/>
             </template>
           </a-button>
-          <a-spin v-if="state.indicator"/>
+          <a-spin v-if="state.indicator.upload"/>
         </a-upload>
       </div>
     </div>
@@ -194,20 +194,15 @@ const state = reactive({
       resizable: true,
       dataIndex: "order_no",
       key: "order_no",
-      width: 100,
-      minWidth: 100,
-      maxWidth: 200,
+      width: 131,
       fixed: 'left',
-      // scopedSlots: {customRender: 'order_no'},
     },
     {
       title: "주문일자",
       dataIndex: "ins_date",
       key: "ins_date",
       resizable: true,
-      width: 100,
-      minWidth: 100,
-      maxWidth: 200,
+      width: 159,
     },
     {
       title: "상품명",
@@ -215,17 +210,14 @@ const state = reactive({
       dataIndex: "prd_name",
       key: "prd_name",
       width: 200,
-      minWidth: 200,
-      maxWidth: 300,
+      minWidth: 100,
     },
     {
       title: "옵션이미지",
       resizable: true,
       dataIndex: "prd_image",
       key: "prd_image",
-      width: 100,
-      minWidth: 100,
-      maxWidth: 300,
+      width: 102
     },
     {
       title: "상품코드",
@@ -260,7 +252,7 @@ const state = reactive({
       dataIndex: "prd_size_option",
       key: "prd_size_option",
       width: 150,
-      minWidth: 150,
+      minWidth: 100,
       maxWidth: 300,
     },
     {
@@ -268,9 +260,8 @@ const state = reactive({
       resizable: true,
       dataIndex: "quantity",
       key: "quantity",
-      width: 100,
-      minWidth: 100,
-      maxWidth: 300,
+      width: 90,
+      maxWidth: 200,
     },
     {
       title: "원가",
@@ -305,27 +296,31 @@ const state = reactive({
       dataIndex: "total_payment_amount",
       key: "total_payment_amount",
       width: 100,
+      minWidth: 100,
+      maxWidth: 300,
     },
     {
       title: "구매번호",
       resizable: true,
       dataIndex: "purchase_order_no",
       key: "purchase_order_no",
-      width: 100,
+      width: 150,
+      minWidth: 90,
+      maxWidth: 300,
     },
     {
       title: "중국택배번호",
       resizable: true,
       dataIndex: "purchase_invoice_no",
       key: "purchase_invoice_no",
-      width: 100,
+      width: 130,
     },
     {
       title: "택배현황 메모",
       resizable: true,
       dataIndex: "package_status_memo",
       key: "package_status_memo",
-      width: 100,
+      width: 130,
     },
     {
       title: "메모",
@@ -336,7 +331,6 @@ const state = reactive({
     },
     {
       title: "바코드",
-      resizable: true,
       dataIndex: "barcode",
       key: "barcode",
       width: 100,
@@ -371,7 +365,12 @@ const state = reactive({
   }),
 
   checkedList : [],
-  indicator: false,
+  indicator: {
+    upload:false,
+    download:false,
+    table:false,
+
+  },
   editableData: {},
   editingKey: '',
 
@@ -421,15 +420,15 @@ const rowSelection = ref({
 
 // 엑셀 다운로드
 const downloadCustomOrderExcel = () => {
-  state.indicator = true;
+  state.indicator.download = true;
   useCustomOrderApi().downloadCustomOrderExcel(state.tableData.data).then(res => {
     if (res === undefined || res.status !== "2000") {
-      state.indicator = false;
+      state.indicator.download = false;
       message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
       return false;
     }
 
-    state.indicator = false;
+    state.indicator.download = false;
     window.open(res.data.download_url, "_blank");
   });
 }
@@ -437,18 +436,18 @@ const downloadCustomOrderExcel = () => {
 // 엑셀 업로드
 const excelUploadCustomOrder = (res) => {
   if (res.file.status === 'uploading') {
-    state.indicator = true;
+    state.indicator.upload = true;
     return false;
   }
 
   if (res.file.status === 'error') {
-    state.indicator = false;
+    state.indicator.upload = false;
     message.error(res.error.message);
     return false;
   }
 
   if (res.file.status === 'done') {
-    state.indicator = false;
+    state.indicator.upload = false;
     message.success(res.file.response.message);
     getTableData();
   }
@@ -551,23 +550,23 @@ const deleteCustomOrder = async () => {
     message.error('삭제할 주문을 선택해주세요.');
     return false;
   }
-  state.indicator = true;
+  state.indicator.table = true;
   await useCustomOrderApi().deleteCustomOrder(state.checkedList[0]).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
-      state.indicator = false;
+      state.indicator.table = false;
       return false;
     }
     message.success(res.message);
     getTableData();
-    state.indicator = false;
+    state.indicator.table = false;
   });
 }
 
 const handleResizeColumn = (w, col) => {
-  console.log(w, col);
   col.width = w;
 }
+
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls()])
       .then(() => {
