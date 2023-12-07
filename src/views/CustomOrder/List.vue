@@ -398,7 +398,7 @@ const rowSelection = ref({
 const downloadCustomOrderExcel = () => {
   state.indicator = true;
   useCustomOrderApi().downloadCustomOrderExcel(state.tableData.data).then(res => {
-    if (res === undefined) {
+    if (res === undefined || res.status !== "2000") {
       state.indicator = false;
       message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
       return false;
@@ -499,9 +499,8 @@ const openBarcodePopup = async (record) => {
     state.showPopupData.prd_option_name = record.prd_option_name;
     state.showPopupData.prd_size_option = record.prd_size_option;
     const content = `
-  <div class="container" style="background-color: white;padding: 20px 15px;display: flex;flex-direction: column;gap: 15px;">
       <div style="display: flex;justify-content: space-between;gap: 10px;">
-          <div class="content" style="display: flex;flex-direction: column;gap: 5px;padding-top:10px;">
+          <div  style="display: flex;flex-direction: column;gap: 5px;padding-top:10px;">
               <span style="font-size: 30pt;line-height: 35pt;font-weight: bold;">${record.prd_code}</span>
               <span style="font-size: 30pt;line-height: 40pt;font-weight: bold;">[${record.prd_option_name} ${record.prd_size_option}]</span>
           </div>
@@ -510,13 +509,12 @@ const openBarcodePopup = async (record) => {
           </div>
       </div>
       <div style="display: flex;justify-content: center">
-          <h1 style="font-size: 50pt;line-height: 0;">${record.barcode}</h1>
+          <h1 style="font-size: 40pt;line-height: 0;">${record.barcode}</h1>
       </div>
-  </div>
   `
 
     // process.env.VUE_APP_API_URL
-    const printWindow = window.open('/print.html', 'Print', 'width=800,height=800');
+    const printWindow = window.open('/print.html', '_blank' );
     printWindow.onload = function () {
       printWindow.setPrintContent(content);
     };
