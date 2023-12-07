@@ -113,19 +113,6 @@ const getMarketOrderStatusList = async () => {
 }
 const { orderData, marketCode } = toRefs(props)
 
-// 주문처리
-const receiverOrderApi = (ids) => {
-  useMarketOrderApi().receiverOrder({
-    ids
-  }).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-    message.success(res.data.message);
-  });
-}
-
 // 배송처리
 const deliveryOrder = (id) => {
 
