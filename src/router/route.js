@@ -377,16 +377,39 @@ export const menus = [{
             },
         },
         {
-            path: "/custom/order/list",
-            name: "customOrder_list",
-            component: () => import("@/views/CustomOrder/List.vue"),
+            path: "/customOrder",
+            name: "custom_order",
             meta: {
-                title: "구매관리",
+                title: "구매입출고관리",
                 isHide: false,
                 roles: [],
                 ids: ["irunkorea", "jwli", "1sjsj21s"],
                 icon: BarcodeOutlined
             },
+            "children": [
+                {
+                    path: "/customOrder/list",
+                    component: () => import("@/views/CustomOrder/List.vue"),
+                    name: "custom_order_list",
+                    meta: {
+                        title: "구매관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+                {
+                    path: "/customOrder/DeliveryReceipt",
+                    component: () => import("@/views/CustomOrder/DeliveryReceipt.vue"),
+                    name: "custom_order_delivery_receipt",
+                    meta: {
+                        title: "택배입고관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+            ]
         },
     ]
 }]

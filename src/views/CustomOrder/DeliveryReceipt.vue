@@ -119,91 +119,94 @@
         </a-upload>
       </div>
     </div>
-    <table class="header-table">
-      <thead style="position: sticky;top: 0;">
-      <tr>
-        <th rowspan="3">
-          <input type="checkbox"/>
-        </th>
-        <th style="width: 300px;">
-          주문번호
-        </th>
-        <th>상품코드</th>
-        <th>옵션명</th>
-        <th>원가</th>
-        <th>택배번호</th>
-        <th rowspan="3">현지운임</th>
-        <th rowspan="3">수정가능</th>
-      </tr>
-      <tr>
-        <th>주문일자</th>
-        <th>옵션코드</th>
-        <th>사이즈</th>
-        <th>실구매가</th>
-        <th>택배현황</th>
-      </tr>
-      <tr>
-        <th>주문상태</th>
-        <th>고객사코드(추가)</th>
-        <th></th>
-        <th>현지운임(추가)</th>
-        <th>바코드</th>
-      </tr>
-      </thead>
-      <tbody>
-      <template v-for="(item, key) in state.tableData.data" :key="key">
-        <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td rowspan="3"><input type="checkbox"></td>
-          <td>{{ item.order_no }}</td><!--주문번호-->
-          <td>{{ item.prd_code }}</td><!--상품코드-->
-          <td>{{ item.prd_option_name }}</td><!--옵션명-->
-          <td>{{ item.original_price }}</td><!--원가-->
-          <td>{{ item.purchase_invoice_no }}</td><!--택배번호-->
-          <td rowspan="3">{{ item.charge }}</td><!--현지운임-->
-          <td rowspan="3">
-            <div class="editable-row-operations">
-              <span v-if="state.editableData[item.key]">
-                <a-typography-link @click="save(item.key)">저장</a-typography-link>
-                <a-popconfirm title="취소 하시겠습니까?" @confirm="cancel(item.key)">
-                  <a>취소</a>
-                </a-popconfirm>
-              </span>
-              <span v-else>
-                <a @click="edit(item.key)">수정</a>
-              </span>
-            </div>
-          </td>
-        </tr>
-        <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td>{{ item.ins_date }}</td><!--주문일자-->
-          <td>{{ item.item_no }}</td><!--옵션코드-->
-          <td>{{ item.prd_size_option }}</td><!--사이즈-->
-          <td>{{ item.purchase_price }}</td><!--실구매가-->
-          <td>{{ item.memo }}</td><!--택배현황-->
-        </tr>
-        <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td>{{ item.shipping_status }}</td><!--주문상태-->
-          <td>{{ item.barcode }}</td><!--고객사코드(추가)-->
-          <td></td>
-          <td>{{ item.prd_size_option }}</td><!--현지운임(추가)-->
-          <td>
-            <!--바코드-->
+
+    <a-table :columns="state.columns" :data-source="state.tableData.data" :loading="state.tableData.loading"
+             class="custom-order-table"
+             :row-selection="rowSelection"
+             @resizeColumn="handleResizeColumn"
+             :defaultExpandAllRows="true" :scroll="{ x: 1300, y: 700}"
+    >
+      <template #bodyCell="{ column,record, text }">
+        <!--주문번호-->
+        <template v-if="column.key === 'order_no'">
+          {{ record.order_no }}
+        </template>
+
+        <!--주문일자-->
+        <template v-if="column.key === 'ins_date'">
+          {{ moment(record.ins_date).format('YYYY-MM-DD HH:mm:ss') }}
+        </template>
+
+        <!--상품명-->
+        <template v-if="column.key === 'prd_name'">
+          {{ record.prd_name }}
+        </template>
+
+        <!--옵션이미지-->
+        <template v-if="column.key === 'prd_image'">
+          <a-image
+              :src="record.prd_image"
+              fallback="data:image/png;base64,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"
+              style="width: 60px; height: 60px; border-radius: 10px"
+          />
+        </template>
+
+        <!--수정 가능한 항목-->
+        <template
+            v-if="[
+                'purchase_price',
+                'purchase_order_no',
+                'charge',
+                'memo',
+                'package_status_memo',
+                'purchase_invoice_no',
+                'total_payment_amount',
+                'arrival_quantity'
+                ].includes(column.dataIndex)">
+          <div>
+            <a-input
+                v-if="state.editableData[record.key]"
+                v-model:value="state.editableData[record.key][column.dataIndex]"
+                style="margin: -5px 0"
+            />
+            <template v-else>
+              {{ text }}
+            </template>
+          </div>
+        </template>
+
+        <!--바코드-->
+        <template v-if="column.key === 'barcode'">
+          <a-space>
             <a-button
-                @click.prevent="openBarcodePopup(item)"
+                @click.prevent="openBarcodePopup(record)"
+                type="primary"
                 size="small"
-                style="z-index: 99"
             >
               <template #icon>
                 <ExportOutlined/>
               </template>
               출력
             </a-button>
-          </td>
+          </a-space>
+        </template>
 
-        </tr>
+        <template v-if="column.key === 'edit'">
+          <div class="editable-row-operations">
+          <span v-if="state.editableData[record.key]">
+            <a-typography-link @click="save(record.key)">저장</a-typography-link>
+            <a-popconfirm title="취소 하시겠습니까?" @confirm="cancel(record.key)">
+              <a>취소</a>
+            </a-popconfirm>
+          </span>
+            <span v-else>
+            <a @click="edit(record.key)">수정</a>
+          </span>
+          </div>
+        </template>
+
       </template>
-      </tbody>
-    </table>
+    </a-table>
   </a-card>
 
 </template>
@@ -229,6 +232,183 @@ import Loading from "vue-loading-overlay";
 import {cloneDeep} from "lodash";
 
 const state = reactive({
+  columns: ref([
+    {
+      title: "주문번호",
+      resizable: true,
+      dataIndex: "order_no",
+      key: "order_no",
+      width: 131,
+      fixed: 'left',
+    },
+    {
+      title: "주문일자",
+      dataIndex: "ins_date",
+      key: "ins_date",
+      resizable: true,
+      width: 159,
+    },
+    {
+      title: "상품명",
+      resizable: true,
+      dataIndex: "prd_name",
+      key: "prd_name",
+      width: 200,
+      minWidth: 100,
+    },
+    {
+      title: "옵션이미지",
+      resizable: true,
+      dataIndex: "prd_image",
+      key: "prd_image",
+      width: 102
+    },
+    {
+      title: "상품코드",
+      resizable: true,
+      dataIndex: "prd_code",
+      key: "prd_code",
+      width: 200,
+      minWidth: 200,
+      maxWidth: 300,
+    },
+    {
+      title: "품목코드",
+      resizable: true,
+      dataIndex: "item_no",
+      key: "item_no",
+      width: 100,
+      minWidth: 100,
+      maxWidth: 300,
+    },
+    {
+      title: "옵션명",
+      resizable: true,
+      dataIndex: "prd_option_name",
+      key: "prd_option_name",
+      width: 150,
+      minWidth: 150,
+      maxWidth: 300,
+    },
+    {
+      title: "사이즈",
+      resizable: true,
+      dataIndex: "prd_size_option",
+      key: "prd_size_option",
+      width: 150,
+      minWidth: 100,
+      maxWidth: 300,
+    },
+    {
+      title: "주문수량",
+      resizable: true,
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 90,
+      maxWidth: 200,
+    },
+    {
+      title: "원가",
+      resizable: true,
+      dataIndex: "original_price",
+      key: "original_price",
+      width: 100,
+      minWidth: 100,
+      maxWidth: 300,
+    },
+    {
+      title: "현지운임",
+      resizable: true,
+      dataIndex: "local_shipping_price",
+      key: "local_shipping_price",
+      width: 100,
+      minWidth: 100,
+      maxWidth: 300,
+    },
+    {
+      title: "실구매가",
+      resizable: true,
+      dataIndex: "purchase_price",
+      key: "purchase_price",
+      width: 100,
+      minWidth: 100,
+      maxWidth: 300,
+    },
+    {
+      title: "수수료",
+      resizable: true,
+      dataIndex: "charge",
+      key: "charge",
+      width: 100,
+      minWidth: 100,
+      maxWidth: 300,
+    },
+    {
+      title: "금액",
+      resizable: true,
+      dataIndex: "total_payment_amount",
+      key: "total_payment_amount",
+      width: 100,
+      minWidth: 100,
+      maxWidth: 300,
+    },
+    {
+      title: "구매번호",
+      resizable: true,
+      dataIndex: "purchase_order_no",
+      key: "purchase_order_no",
+      width: 150,
+      minWidth: 90,
+      maxWidth: 300,
+    },
+    {
+      title: "택배번호",
+      resizable: true,
+      dataIndex: "purchase_invoice_no",
+      key: "purchase_invoice_no",
+      width: 130,
+    },
+    {
+      title: "택배상태",
+      resizable: true,
+      dataIndex: "package_status_memo",
+      key: "package_status_memo",
+      width: 130,
+    },
+    {
+      title: "실도착수량",
+      resizable: true,
+      dataIndex: "arrival_quantity",
+      key: "arrival_quantity",
+      width: 130,
+    },
+    {
+      title: "메모",
+      resizable: true,
+      dataIndex: "memo",
+      key: "memo",
+      width: 100,
+    },
+    {
+      title: "바코드",
+      dataIndex: "barcode",
+      key: "barcode",
+      width: 100,
+    },
+    {
+      title: "입출고상태",
+      dataIndex: "shipping_status",
+      key: "shipping_status",
+      width: 100,
+    },
+    {
+      title: "액션",
+      dataIndex: "edit",
+      key: "edit",
+      width: 100,
+      fixed: 'right',
+    }
+  ]),
   tableData: {
     data: [],
     total: 0,
@@ -515,14 +695,6 @@ onMounted(async () => {
       })
 })
 
-const isInPattern = (num) => {
-  // 4로 나눈 나머지가 0, 1, 또는 2인지 확인
-  if (num % 4 >= 0 && num % 4 <= 2) {
-    // (num - 4)를 6으로 나눈 나머지가 0인지 확인
-    return (num - 4) % 2 === 0;
-  }
-  return false;
-}
 </script>
 
 <style>
@@ -534,51 +706,9 @@ const isInPattern = (num) => {
   margin-right: 8px;
 }
 
-</style>
-<style scoped>
-.header-table {
-  overflow: auto;
-  width: 100%;
-}
+.custom-order-table .ant-table-pagination-right {
+  display: flex;
+  justify-content: flex-start;
 
-.header-table thead th, .header-table thead td {
-  padding: 10px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.5;
 }
-
-.header-table tbody th, .header-table tbody td {
-  padding: 10px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.5;
-  border: 1px solid #d9d9d9;
-}
-
-.header-table thead th {
-  border: 1px solid #4f46e5;
-  background-color: #6366f1;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: bold;
-  z-index: 999
-}
-
-.header-table tbody tr:nth-child(6n+1),
-.header-table tbody tr:nth-child(6n+2),
-.header-table tbody tr:nth-child(6n+3) {
-  background-color: #eeeeee; /* 원하는 색상 코드로 변경 */
-}
-
-.header-table tbody .bg-blue {
-  background-color: #edf1fc;
-}
-
-.header-table tbody .bg-white {
-  background-color: #ffffff;
-}
-
 </style>
