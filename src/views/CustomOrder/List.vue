@@ -45,12 +45,9 @@
                            @change="handleOrderStatusChange">
               <a-radio-button value="">전체</a-radio-button>
 
-              <a-radio-button v-for="option in state.orderStatus" :value="option.value">{{
-                  option.label
-                }}
-
+              <a-radio-button v-for="option in state.orderStatus" :value="option.value">
+                {{ option.label}}
                 <span>({{ state[option.value + 'Count'] }})</span>
-
               </a-radio-button>
             </a-radio-group>
 
@@ -63,9 +60,8 @@
             <a-radio-group v-model:value="state.tableData.params.shippingStatus" button-style="solid"
                            @change="handleOrderStatusChange">
               <a-radio-button value="">전체</a-radio-button>
-              <a-radio-button v-for="option in state.shippingStatus" :value="option.value">{{
-                  option.label
-                }}
+              <a-radio-button v-for="option in state.shippingStatus" :value="option.value">
+                {{ option.label }}
                 <span>({{ state[option.value + 'Count'] }})</span>
               </a-radio-button>
             </a-radio-group>
@@ -132,8 +128,10 @@
         <th>옵션명</th>
         <th>원가</th>
         <th>택배번호</th>
-        <th rowspan="3">현지운임</th>
-        <th rowspan="3">수정가능</th>
+        <th rowspan="3">메모</th>
+        <th rowspan="3">바코드</th>
+        <th rowspan="3">입출고상태</th>
+        <th rowspan="3">액션</th>
       </tr>
       <tr>
         <th>주문일자</th>
@@ -144,10 +142,10 @@
       </tr>
       <tr>
         <th>주문상태</th>
-        <th>고객사코드(추가)</th>
+        <th>고객사코드</th>
         <th></th>
-        <th>현지운임(추가)</th>
-        <th>바코드</th>
+        <th>현지운임</th>
+        <th></th>
       </tr>
       </thead>
       <tbody>
@@ -164,7 +162,21 @@
           <td>{{ item.prd_option_name }}</td><!--옵션명-->
           <td>{{ item.original_price }}</td><!--원가-->
           <td>{{ item.purchase_invoice_no }}</td><!--택배번호-->
-          <td rowspan="3">{{ item.charge }}</td><!--현지운임-->
+          <td rowspan="3">{{ item.memo }}</td><!--메모-->
+          <td rowspan="3">            <!--바코드-->
+            <a-button
+                @click.prevent="openBarcodePopup(item)"
+                size="small"
+                style="z-index: 99"
+            >
+              <template #icon>
+                <ExportOutlined/>
+              </template>
+              출력
+            </a-button></td><!--바코드-->
+          <td rowspan="3"> <!--입출고상태-->
+            {{ state.shippingStatus.find(obj=> obj.value === item.shipping_status) ? state.shippingStatus.find(obj=> obj.value === item.shipping_status).label : ''}}
+          </td>
           <td rowspan="3">
             <div class="editable-row-operations">
               <span v-if="state.editableData[item.key]">
@@ -184,7 +196,7 @@
           <td>{{ item.item_no }}</td><!--옵션코드-->
           <td>{{ item.prd_size_option }}</td><!--사이즈-->
           <td>{{ item.purchase_price }}</td><!--실구매가-->
-          <td>{{ item.memo }}</td><!--택배현황-->
+          <td>{{ item.package_status_memo }}</td><!--택배현황-->
         </tr>
         <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
           <td>{{ item.shipping_status }}</td><!--주문상태-->
@@ -192,17 +204,7 @@
           <td></td>
           <td>{{ item.prd_size_option }}</td><!--현지운임(추가)-->
           <td>
-            <!--바코드-->
-            <a-button
-                @click.prevent="openBarcodePopup(item)"
-                size="small"
-                style="z-index: 99"
-            >
-              <template #icon>
-                <ExportOutlined/>
-              </template>
-              출력
-            </a-button>
+
           </td>
 
         </tr>
