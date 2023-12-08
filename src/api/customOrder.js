@@ -38,6 +38,13 @@ export function useCustomOrderApi() {
                 method: "post",
                 data: data,
             });
+        },
+        getCountWithStatus: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/count",
+                method: "get",
+                params: data,
+            });
         }
     }
 }

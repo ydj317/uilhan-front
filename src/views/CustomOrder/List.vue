@@ -41,13 +41,14 @@
         <a-descriptions-item label="구매상태">
           <a-space>
 
-            <a-radio-group v-model:value="state.tableData.params.orderStatus" button-style="solid"
+            <a-radio-group v-model:value="state.tableData.params.order_status" button-style="solid"
                            @change="handleOrderStatusChange">
               <a-radio-button value="">전체</a-radio-button>
 
               <a-radio-button v-for="option in state.orderStatus" :value="option.value">
                 {{ option.label}}
-                <span>({{ state[option.value + 'Count'] }})</span>
+                <a-spin  v-if="state.indicator.count"></a-spin>
+                <span  v-else >({{ state[option.value + 'Count'] }})</span>
               </a-radio-button>
             </a-radio-group>
 
@@ -57,12 +58,13 @@
         <a-descriptions-item label="입출고상태">
           <a-space>
 
-            <a-radio-group v-model:value="state.tableData.params.shippingStatus" button-style="solid"
+            <a-radio-group v-model:value="state.tableData.params.shipping_status" button-style="solid"
                            @change="handleOrderStatusChange">
               <a-radio-button value="">전체</a-radio-button>
               <a-radio-button v-for="option in state.shippingStatus" :value="option.value">
                 {{ option.label }}
-                <span>({{ state[option.value + 'Count'] }})</span>
+                <a-spin  v-if="state.indicator.count"></a-spin>
+                <span  v-else >({{ state[option.value + 'Count'] }})</span>
               </a-radio-button>
             </a-radio-group>
 
@@ -116,32 +118,38 @@
       </div>
     </div>
     <table class="header-table">
-      <thead style="position: sticky;top: 0;">
+      <thead style="position: sticky;top: 0; background: #7273de; z-index: 100">
       <tr>
         <th rowspan="3">
-          <input type="checkbox" @change="handleCheckAll"/>
+          <a-checkbox @click.self="handleCheckAll"/>
         </th>
-        <th style="width: 300px;">
+        <th style="width: 150px;">
           주문번호
         </th>
+        <th style="width: 200px;" rowspan="3">상품명</th>
+        <th rowspan="3">옵션이미지</th>
         <th>상품코드</th>
         <th>옵션명</th>
         <th>원가</th>
         <th>택배번호</th>
+        <th rowspan="3">수수료</th>
+        <th rowspan="3">금액</th>
+        <th rowspan="3">구매번호</th>
+        <th rowspan="3">실도착수량</th>
         <th rowspan="3">메모</th>
         <th rowspan="3">바코드</th>
         <th rowspan="3">입출고상태</th>
-        <th rowspan="3">액션</th>
+        <th style="width: 90px;" rowspan="3">액션</th>
       </tr>
       <tr>
         <th>주문일자</th>
-        <th>옵션코드</th>
+        <th>품목코드</th>
         <th>사이즈</th>
         <th>실구매가</th>
         <th>택배현황</th>
       </tr>
       <tr>
-        <th>주문상태</th>
+        <th>구매상태</th>
         <th>고객사코드</th>
         <th></th>
         <th>현지운임</th>
@@ -156,14 +164,96 @@
       </tr>
       <template v-else v-for="(item, key) in state.tableData.data" :key="key">
         <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td rowspan="3"><input v-model:checked="item.checked" type="checkbox" @change="handleOrderChecked(item)"></td>
+          <td rowspan="3" style="cursor: pointer;" @click.self="handleOrderChecked(item)">
+            <a-checkbox v-model:checked="item.checked" @click.self="handleOrderChecked(item)"></a-checkbox>
+          </td>
           <td>{{ item.order_no }}</td><!--주문번호-->
+          <td rowspan="3">{{ item.prd_name }}</td><!--상품명-->
+          <td rowspan="3">
+            <a-image
+                :src="item.prd_image"
+                fallback="data:image/png;base64,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"
+                style="z-index: -1; width: 60px; height: 60px; border-radius: 10px"
+            />
+          </td><!--상품명-->
           <td>{{ item.prd_code }}</td><!--상품코드-->
           <td>{{ item.prd_option_name }}</td><!--옵션명-->
           <td>{{ item.original_price }}</td><!--원가-->
-          <td>{{ item.purchase_invoice_no }}</td><!--택배번호-->
-          <td rowspan="3">{{ item.memo }}</td><!--메모-->
-          <td rowspan="3">            <!--바코드-->
+          <td>
+            <a-input
+                v-if="state.editableData[item.key]"
+                v-model:value="state.editableData[item.key]['purchase_invoice_no']"
+                style="margin: -5px 0"
+            />
+            <span v-else>
+              {{ item.purchase_invoice_no }}
+            </span>
+          </td><!--택배번호-->
+
+          <!--수수료-->
+          <td rowspan="3">
+            <a-input-number
+                v-if="state.editableData[item.key]"
+                v-model:value="state.editableData[item.key]['charge']"
+                size="small"
+                :min="0"
+            />
+            <span v-else>
+              {{ item.charge }}
+            </span>
+          </td>
+
+          <!--금액-->
+          <td rowspan="3">
+            <a-input-number
+                v-if="state.editableData[item.key]"
+                v-model:value="state.editableData[item.key]['total_payment_amount']"
+                size="small"
+                :min="0"
+            />
+            <span v-else>
+              {{ item.total_payment_amount }}
+            </span>
+          </td>
+
+          <!--구매번호-->
+          <td rowspan="3">
+            <a-input
+                v-if="state.editableData[item.key]"
+                v-model:value="state.editableData[item.key]['purchase_order_no']"
+                size="small"
+            />
+            <span v-else>
+              {{ item.purchase_order_no }}
+            </span>
+          </td>
+
+          <!--실도착수량-->
+          <td rowspan="3">
+            <a-input
+                v-if="state.editableData[item.key]"
+                v-model:value="state.editableData[item.key]['arrival_quantity']"
+                size="small"
+            />
+            <span v-else>
+              {{ item.arrival_quantity }}
+            </span>
+          </td>
+
+          <!--메모-->
+          <td rowspan="3">
+            <a-input
+                v-if="state.editableData[item.key]"
+                v-model:value="state.editableData[item.key]['memo']"
+                size="small"
+            />
+            <span v-else>
+              {{ item.memo }}
+            </span>
+          </td>
+
+          <!--바코드-->
+          <td rowspan="3">
             <a-button
                 @click.prevent="openBarcodePopup(item)"
                 size="small"
@@ -173,10 +263,21 @@
                 <ExportOutlined/>
               </template>
               출력
-            </a-button></td><!--바코드-->
-          <td rowspan="3"> <!--입출고상태-->
-            {{ state.shippingStatus.find(obj=> obj.value === item.shipping_status) ? state.shippingStatus.find(obj=> obj.value === item.shipping_status).label : ''}}
+            </a-button></td>
+
+          <!--입출고상태-->
+          <td rowspan="3">
+            <a-select
+                size="small"
+                v-model:value="item.shipping_status"
+                style="width: 100px;">
+              <a-select-option v-for="option in state.shippingStatus" :value="option.value">
+                {{ option.label}}
+              </a-select-option>
+            </a-select>
           </td>
+
+          <!--   액션-->
           <td rowspan="3">
             <div class="editable-row-operations">
               <span v-if="state.editableData[item.key]">
@@ -192,17 +293,63 @@
           </td>
         </tr>
         <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td>{{ item.ins_date }}</td><!--주문일자-->
-          <td>{{ item.item_no }}</td><!--옵션코드-->
+          <td>{{ moment(item.ins_date).format('YYYY-MM-DD HH:mm:ss') }}</td><!--주문일자-->
+          <td>
+
+            {{ item.item_no }}
+          </td><!--품목코드-->
           <td>{{ item.prd_size_option }}</td><!--사이즈-->
-          <td>{{ item.purchase_price }}</td><!--실구매가-->
-          <td>{{ item.package_status_memo }}</td><!--택배현황-->
+
+          <!--실구매가-->
+          <td>
+              <a-input-number
+                  :min="0"
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['purchase_price']"
+                  size="small"
+              />
+              <span v-else>
+                {{ item.purchase_price }}
+              </span>
+          </td>
+
+          <!--택배현황-->
+          <td>
+            <a-input
+                v-if="state.editableData[item.key]"
+                v-model:value="state.editableData[item.key]['package_status_memo']"
+                size="small"
+            />
+            <span v-else>
+              {{ item.package_status_memo }}
+            </span>
+          </td>
         </tr>
         <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td>{{ item.shipping_status }}</td><!--주문상태-->
-          <td>{{ item.barcode }}</td><!--고객사코드(추가)-->
+          <td> <!--주문상태-->
+            <a-select
+                v-model:value="item.order_status"
+                size="small"
+                style="width: 100px;">
+              <a-select-option v-for="option in state.orderStatus" :value="option.value">
+                {{ option.label}}
+              </a-select-option>
+            </a-select>
+          </td>
+          <td class="{{}}">{{ item.barcode }}</td><!--고객사코드-->
           <td></td>
-          <td>{{ item.prd_size_option }}</td><!--현지운임(추가)-->
+          <!--현지운임-->
+          <td>
+            <a-input-number
+                :min="0"
+                v-if="state.editableData[item.key]"
+                v-model:value="state.editableData[item.key]['local_shipping_fee']"
+                size="small"
+            />
+            <span v-else>
+              {{ item.local_shipping_fee }}
+            </span>
+          </td>
           <td>
 
           </td>
@@ -246,8 +393,8 @@ const state = reactive({
       userinfo: [],
       search_type: 'order_no',
       search_value: '',
-      orderStatus: '',
-      shippingStatus: ''
+      order_status: '',
+      shipping_status: ''
     },
   },
   orderStatus: [],
@@ -258,10 +405,10 @@ const state = reactive({
   // 구매상태 카운트
   paidCount: 0,
   receiptCompletedCount: 0,
-  purchaseCompletedCount: 1,
-  returnCount: 2,
-  cancelCount: 3,
-  completeCount: 4,
+  purchaseCompletedCount: 0,
+  returnCount: 0,
+  cancelCount: 0,
+  completeCount: 0,
 
   // 입출고 상태 카운트
   shippingAddressCount: 0,
@@ -280,10 +427,11 @@ const state = reactive({
   }),
 
   checkedList: [],
-  indicator: {
-    upload: false,
-    download: false,
-    table: false,
+  indicator : {
+    upload : false,
+    download : false,
+    table : false,
+    count :false,
 
   },
   editableData: {},
@@ -330,9 +478,6 @@ const getCustomOrderStatusList = async () => {
         value: item,
       }
     });
-
-    console.log(state.orderStatus)
-    console.log(state.shippingStatus)
   });
 }
 
@@ -350,6 +495,8 @@ const getTableData = async () => {
     state.tableData.data = res.data;
     state.tableData.total = res.data.length;
     state.tableData.loading = false;
+  }).then(() => {
+    getCountWithStatus();
   });
 }
 
@@ -513,7 +660,7 @@ const deleteCustomOrder = async () => {
 }
 
 const handleOrderChecked = (item) => {
-  console.log(item);
+  console.log(item)
   item.checked = !item.checked;
 }
 
@@ -522,6 +669,32 @@ const handleCheckAll = (e) => {
   state.tableData.data.forEach(item => {
     item.checked = e.target.checked;
   })
+}
+
+const getCountWithStatus = async () => {
+  state.indicator.count = true;
+  await useCustomOrderApi().getCountWithStatus(state.tableData.params).then(res => {
+    if (res.status !== "2000") {
+      state.indicator.count = false;
+      message.error(res.message);
+      return false;
+    }
+
+    state.paidCount = res.data.paidCount;
+    state.receiptCompletedCount = res.data.receiptCompletedCount;
+    state.purchaseCompletedCount = res.data.purchaseCompletedCount;
+    state.returnCount = res.data.returnCount;
+    state.cancelCount = res.data.cancelCount;
+    state.completeCount = res.data.completeCount;
+
+    state.shippingAddressCount = res.data.shippingAddressCount;
+    state.waitWarehouseCount = res.data.waitWarehouseCount;
+    state.warehousingCount = res.data.warehousingCount;
+    state.partiallyWarehousingCount = res.data.partiallyWarehousingCount;
+    state.shippingCount = res.data.shippingCount;
+    state.indicator.count = false;
+  });
+
 }
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls(), getCustomOrderStatusList()])
@@ -574,12 +747,11 @@ const isInPattern = (num) => {
 }
 
 .header-table thead th {
-  border: 1px solid #4f46e5;
-  background-color: #6366f1;
+  border: 1px solid #8c96a4;
+  background-color: #284d77;
   color: #ffffff;
   font-size: 12px;
   font-weight: bold;
-  z-index: 999
 }
 
 .header-table tbody tr:nth-child(6n+1),
