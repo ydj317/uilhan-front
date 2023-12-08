@@ -403,7 +403,7 @@ export const menus = [{
                     component: () => import("@/views/CustomOrder/DeliveryReceipt.vue"),
                     name: "custom_order_delivery_receipt",
                     meta: {
-                        title: "택비입고관리",
+                        title: "택배입고관리",
                         isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
