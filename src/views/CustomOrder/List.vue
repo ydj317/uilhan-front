@@ -38,6 +38,41 @@
           </a-input-group>
         </a-descriptions-item>
 
+        <a-descriptions-item label="구매상태">
+          <a-space>
+
+            <a-radio-group v-model:value="state.tableData.params.orderStatus" button-style="solid"
+                           @change="handleOrderStatusChange">
+              <a-radio-button value="">전체</a-radio-button>
+
+              <a-radio-button v-for="option in state.orderStatus" :value="option.value">{{
+                  option.label
+                }}
+
+                <span>({{ state[option.value + 'Count'] }})</span>
+
+              </a-radio-button>
+            </a-radio-group>
+
+          </a-space>
+        </a-descriptions-item>
+
+        <a-descriptions-item label="입출고상태">
+          <a-space>
+
+            <a-radio-group v-model:value="state.tableData.params.shippingStatus" button-style="solid"
+                           @change="handleOrderStatusChange">
+              <a-radio-button value="">전체</a-radio-button>
+              <a-radio-button v-for="option in state.shippingStatus" :value="option.value">{{
+                  option.label
+                }}
+                <span>({{ state[option.value + 'Count'] }})</span>
+              </a-radio-button>
+            </a-radio-group>
+
+          </a-space>
+        </a-descriptions-item>
+
       </a-descriptions>
 
       <div style="display: flex;justify-content: center;">
@@ -116,9 +151,18 @@
           />
         </template>
 
-        <!--실구매가-->
+        <!--수정 가능한 항목-->
         <template
-            v-if="['purchase_price', 'purchase_order_no', 'charge', 'memo', 'package_status_memo', 'purchase_invoice_no','total_payment_amount'].includes(column.dataIndex)">
+            v-if="[
+                'purchase_price',
+                'purchase_order_no',
+                'charge',
+                'memo',
+                'package_status_memo',
+                'purchase_invoice_no',
+                'total_payment_amount',
+                'arrival_quantity'
+                ].includes(column.dataIndex)">
           <div>
             <a-input
                 v-if="state.editableData[record.key]"
@@ -273,6 +317,15 @@ const state = reactive({
       maxWidth: 300,
     },
     {
+      title: "현지운임",
+      resizable: true,
+      dataIndex: "local_shipping_price",
+      key: "local_shipping_price",
+      width: 100,
+      minWidth: 100,
+      maxWidth: 300,
+    },
+    {
       title: "실구매가",
       resizable: true,
       dataIndex: "purchase_price",
@@ -309,17 +362,24 @@ const state = reactive({
       maxWidth: 300,
     },
     {
-      title: "중국택배번호",
+      title: "택배번호",
       resizable: true,
       dataIndex: "purchase_invoice_no",
       key: "purchase_invoice_no",
       width: 130,
     },
     {
-      title: "택배현황 메모",
+      title: "택배상태",
       resizable: true,
       dataIndex: "package_status_memo",
       key: "package_status_memo",
+      width: 130,
+    },
+    {
+      title: "실도착수량",
+      resizable: true,
+      dataIndex: "arrival_quantity",
+      key: "arrival_quantity",
       width: 130,
     },
     {
@@ -333,6 +393,12 @@ const state = reactive({
       title: "바코드",
       dataIndex: "barcode",
       key: "barcode",
+      width: 100,
+    },
+    {
+      title: "입출고상태",
+      dataIndex: "shipping_status",
+      key: "shipping_status",
       width: 100,
     },
     {
@@ -353,8 +419,30 @@ const state = reactive({
       userinfo: [],
       search_type: 'order_no',
       search_value: '',
+      orderStatus: '',
+      shippingStatus: ''
     },
   },
+  orderStatus: [],
+  orderStatusData: [],
+  shippingStatus: [],
+  shippingStatusData: [],
+
+  // 구매상태 카운트
+  paidCount: 0,
+  receiptCompletedCount: 0,
+  purchaseCompletedCount: 1,
+  returnCount: 2,
+  cancelCount: 3,
+  completeCount: 4,
+
+  // 입출고 상태 카운트
+  shippingAddressCount: 0,
+  waitWarehouseCount: 0,
+  warehousingCount: 0,
+  partiallyWarehousingCount: 0,
+  shippingCount: 0,
+
   accountData: {},
   order_date: [moment().subtract(15, 'days'), moment()],
   marketDetailUrls: {},
@@ -364,11 +452,11 @@ const state = reactive({
     token: Cookie.get("token")
   }),
 
-  checkedList : [],
+  checkedList: [],
   indicator: {
-    upload:false,
-    download:false,
-    table:false,
+    upload: false,
+    download: false,
+    table: false,
 
   },
   editableData: {},
@@ -388,6 +476,39 @@ const state = reactive({
 const onChangeDatePicker = (value, dateString) => {
   state.tableData.params.order_date = [dateString[0], dateString[1]];
 }
+
+const handleOrderStatusChange = (e) => {
+  rowSelection.value.selectedRowKeys = [];
+
+  getTableData()
+}
+
+const getCustomOrderStatusList = async () => {
+  await useMarketApi().getCustomOrderStatusList({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    state.orderStatusData = res.data.orderStatus;
+    state.shippingStatusData = res.data.shippingStatus;
+    state.orderStatus = Object.keys(state.orderStatusData).map((item, index) => {
+      return {
+        label: state.orderStatusData[item],
+        value: item,
+      }
+    });
+    state.shippingStatus = Object.keys(state.shippingStatusData).map((item, index) => {
+      return {
+        label: state.shippingStatusData[item],
+        value: item,
+      }
+    });
+
+    console.log(state.orderStatus)
+    console.log(state.shippingStatus)
+  });
+}
+
 
 // 주문 리스트
 const getTableData = async () => {
@@ -515,7 +636,7 @@ const cancel = key => {
 };
 
 const openBarcodePopup = async (record) => {
-  await useCustomOrderApi().createQrcode({code:record.barcode}).then(res => {
+  await useCustomOrderApi().createQrcode({code: record.barcode}).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
@@ -538,7 +659,7 @@ const openBarcodePopup = async (record) => {
   `
 
     // process.env.VUE_APP_API_URL
-    const printWindow = window.open('/print.html', '_blank' );
+    const printWindow = window.open('/print.html', '_blank');
     printWindow.onload = function () {
       printWindow.setPrintContent(content);
     };
@@ -568,7 +689,7 @@ const handleResizeColumn = (w, col) => {
 }
 
 onMounted(async () => {
-  await Promise.all([getUserInfoData(), getMarketDetailUrls()])
+  await Promise.all([getUserInfoData(), getMarketDetailUrls(), getCustomOrderStatusList()])
       .then(() => {
         getTableData()
       })
@@ -584,6 +705,7 @@ onMounted(async () => {
 .editable-row-operations a {
   margin-right: 8px;
 }
+
 .custom-order-table .ant-table-pagination-right {
   display: flex;
   justify-content: flex-start;
