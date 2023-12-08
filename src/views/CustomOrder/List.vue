@@ -294,10 +294,12 @@
         </tr>
         <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
           <td>{{ moment(item.ins_date).format('YYYY-MM-DD HH:mm:ss') }}</td><!--주문일자-->
+          <!--품목코드-->
           <td>
-
-            {{ item.item_no }}
-          </td><!--품목코드-->
+            <a-button type="link" @click="openPrdCodePopup(item)">
+              {{ item.item_no }}
+            </a-button>
+          </td>
           <td>{{ item.prd_size_option }}</td><!--사이즈-->
 
           <!--실구매가-->
@@ -694,8 +696,13 @@ const getCountWithStatus = async () => {
     state.shippingCount = res.data.shippingCount;
     state.indicator.count = false;
   });
-
 }
+
+const openPrdCodePopup = (item) => {
+  window.open(item.prd_url, '_blank');
+}
+
+
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls(), getCustomOrderStatusList()])
       .then(() => {
