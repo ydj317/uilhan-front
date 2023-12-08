@@ -151,7 +151,12 @@
       </tr>
       </thead>
       <tbody>
-      <template v-for="(item, key) in state.tableData.data" :key="key">
+      <tr v-if="state.tableData.loading">
+        <td colspan="8" style="padding: 80px;background-color: white">
+          <a-spin size="large"/>
+        </td>
+      </tr>
+      <template v-else v-for="(item, key) in state.tableData.data" :key="key">
         <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
           <td rowspan="3"><input type="checkbox"></td>
           <td>{{ item.order_no }}</td><!--주문번호-->
