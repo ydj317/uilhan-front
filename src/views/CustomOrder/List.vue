@@ -123,7 +123,7 @@
       <thead style="position: sticky;top: 0;">
       <tr>
         <th rowspan="3">
-          <input type="checkbox"/>
+          <input type="checkbox" @change="handleCheckAll"/>
         </th>
         <th style="width: 300px;">
           주문번호
@@ -158,7 +158,7 @@
       </tr>
       <template v-else v-for="(item, key) in state.tableData.data" :key="key">
         <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td rowspan="3"><input type="checkbox"></td>
+          <td rowspan="3"><input v-model:checked="item.checked" type="checkbox" @change="handleOrderChecked(item)"></td>
           <td>{{ item.order_no }}</td><!--주문번호-->
           <td>{{ item.prd_code }}</td><!--상품코드-->
           <td>{{ item.prd_option_name }}</td><!--옵션명-->
@@ -492,12 +492,13 @@ const openBarcodePopup = async (record) => {
 };
 
 const deleteCustomOrder = async () => {
-  if (state.checkedList[0].length === 0) {
-    message.error('삭제할 주문을 선택해주세요.');
-    return false;
-  }
+
+  // 체크된 주문 없을시 경고창 띄우기
+  const checkedList = state.tableData.data.filter(item => item.checked === true)
+  checkedList.length === 0 && message.error('삭제할 주문을 선택해주세요.');
+
   state.indicator.table = true;
-  await useCustomOrderApi().deleteCustomOrder(state.checkedList[0]).then((res) => {
+  await useCustomOrderApi().deleteCustomOrder(checkedList).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
       state.indicator.table = false;
@@ -509,10 +510,17 @@ const deleteCustomOrder = async () => {
   });
 }
 
-const handleResizeColumn = (w, col) => {
-  col.width = w;
+const handleOrderChecked = (item) => {
+  console.log(item);
+  item.checked = !item.checked;
 }
 
+// 全选 全不选
+const handleCheckAll = (e) => {
+  state.tableData.data.forEach(item => {
+    item.checked = e.target.checked;
+  })
+}
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls(), getCustomOrderStatusList()])
       .then(() => {
