@@ -1,10 +1,10 @@
 <template>
-  <a-modal v-model:visible="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청'" width="1000px"
+  <a-modal v-model:open="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청'" width="1000px"
            :confirm-loading="state.confirmLoading" @ok="handleOk" @cancel="onClose">
     <a-affix>
       <a-space direction="vertical" class="mb15">
         <div>서비스 신청 유의사항</div>
-        <div>📢 구매대행 신청 시 기입 정보 다시 한번 확인 부탁드립니다 .</div>
+        <div>📢 {{ bridgeFormData.type === 'puragent' ? '구매대행' : '배송대행'}} 신청 시 기입 정보 다시 한번 확인 부탁드립니다 .</div>
         <div>📢 주문 접수 완료 후 정보 수정은 배대지 사이트에서만 가능합니다.</div>
       </a-space>
     </a-affix>

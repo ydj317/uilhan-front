@@ -1,5 +1,5 @@
 <template>
-  <div id="eModelTitle_6" class="mt20 p20 bg-white">
+  <div id="eModelTitle_4" class="mt20 p20 bg-white">
     <!--title-->
     <div style="display: flex; justify-content: space-between;">
       <h1><strong>상세페이지</strong></h1>

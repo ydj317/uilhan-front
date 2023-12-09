@@ -45,7 +45,7 @@
             <SearchOutlined/>
             검색
           </a-button>
-          <a-button class="ml10" @click="initSearchParam()" style="width: 100px;" type="">초기화</a-button>
+          <a-button class="ml10" @click="initSearchParam()" style="width: 100px; border-color: #d9d9d9" >초기화</a-button>
         </div>
 
       </div>
@@ -194,7 +194,7 @@
   <div id="footer">
 
     <!--상품삭제-->
-    <a-modal width="800px" v-model:visible="deletePrdPop" centered>
+    <a-modal width="800px" v-model:open="deletePrdPop" centered>
       <template #title>
         등록상품 삭제하기
         <a-tooltip>
@@ -239,7 +239,7 @@
     </a-modal>
 
     <!--등록관리-->
-    <a-modal width="1000px" v-model:visible="singleSyncPop" centered>
+    <a-modal width="1000px" v-model:open="singleSyncPop" centered>
       <template #title>
         선택상품 등록
         <a-tooltip>
@@ -297,7 +297,7 @@
     </a-modal>
 
     <!--연동결과-->
-    <a-modal width="600px" v-model:visible="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('multi')">
+    <a-modal width="600px" v-model:open="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('multi')">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">
@@ -927,11 +927,12 @@ export default defineComponent({
         return true;
       }
 
-      faildItem = this.smartStoreCategory.filter((item) => {
-        if (this.singleDetail.item_sync_keyword !== undefined && this.singleDetail.item_sync_keyword !== null) {
-          return this.singleDetail.item_sync_keyword.includes(item.cate_name);
-        }
-      })
+      if (this.singleDetail.item_sync_keyword !== undefined && this.singleDetail.item_sync_keyword !== null) {
+        faildItem = this.smartStoreCategory.filter((item) => {
+            return this.singleDetail.item_sync_keyword.includes(item.cate_name);
+
+        })
+      }
 
       if(faildItem.length > 0) {
         message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
@@ -1159,7 +1160,7 @@ export default defineComponent({
             return false;
           }
           this.userinfo = res.data;
-          if (res.data['username'] === 'irunkorea_02' || res.data['username'] === 'jwli') {
+          if (['irunkorea_02', 'jwli'].includes(res.data['username'])) {
             this.haveDownloadProductPermission = true;
           }
 

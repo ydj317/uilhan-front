@@ -82,7 +82,7 @@
           title="품목 이미지선택"
           @ok="skuImageWindowOk"
           @cancel="skuImageWindowCancel"
-          v-model:visible="sku_image_window_visible"
+          v-model:open="sku_image_window_visible"
           okText="선택"
           cancelText="닫기"
       >

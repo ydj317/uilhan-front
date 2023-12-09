@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal v-model:visible="product.text_trans_visible" title="텍스트 번역" @ok="textTranslate">
+    <a-modal v-model:open="product.text_trans_visible" title="텍스트 번역" @ok="textTranslate">
       <a-radio-group v-model:value="product.toLang">
         <a-radio  value="ko">to Korea</a-radio>
         <a-radio  value="ja">to Japan</a-radio>
