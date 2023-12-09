@@ -406,7 +406,9 @@ export default {
         let returnData = res.data;
 
         this.product.item_sync_market.forEach(item => {
-          if (returnData.successSeller.includes(item.seller_id)) {
+          let accountName = item.market_code + '|' + item.seller_id;
+
+          if (returnData.successSeller.includes(accountName)) {
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
