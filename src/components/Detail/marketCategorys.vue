@@ -61,7 +61,7 @@ const settingCategory = (item) => {
   if (!product.value.item_cate) {
     product.value.item_cate = {}
   }
-  let selectedOption = marketCode.value + sellerId.value
+  let selectedOption = marketCode.value + '@' + sellerId.value
   product.value.item_cate[selectedOption] = { marketCode: marketCode.value, cateId: item.cate_ids[item.cate_ids.length - 1], categoryNames: categoryValue.value }
   searchMarketCategoryList.value = []
   if(displayCategoryMarkets.includes(marketCode.value)) {
@@ -89,7 +89,7 @@ const handleCascaderChange = (value, selectedOptions) => {
   }
   // check selectedOptions is isLeaf
   if (selectedOptions[selectedOptions.length - 1].isLeaf) {
-    let selectedOption = marketCode.value + sellerId.value
+    let selectedOption = marketCode.value + '@' + sellerId.value
     product.value.item_cate[selectedOption] = { marketCode: marketCode.value, cateId: value[value.length - 1], categoryNames: selectedOptions.map(o => o.cateName).join(' / ') }
 
     // 전시카테고리 마켓
@@ -132,7 +132,7 @@ const loadData = (selectedOptions) => {
 };
 
 const initMarketCategory = () => {
-  let selectedOption = marketCode.value + sellerId.value
+  let selectedOption = marketCode.value + '@' + sellerId.value
   if (product.value.item_cate && product.value.item_cate[selectedOption]) {
     categoryValue.value = product.value.item_cate[selectedOption].categoryNames
   }
