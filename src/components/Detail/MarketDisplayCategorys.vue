@@ -43,7 +43,8 @@ const settingCategory = (item) => {
   if (!product.value.item_cate) {
     product.value.item_disp_cate = {}
   }
-  product.value.item_disp_cate[sellerId.value] = { marketCode: marketCode.value, cateId: item.cate_ids[item.cate_ids.length - 1], categoryNames: displayCategoryValue.value }
+  let accountName = marketCode.value + '|' + sellerId.value
+  product.value.item_disp_cate[accountName] = { marketCode: marketCode.value, cateId: item.cate_ids[item.cate_ids.length - 1], categoryNames: displayCategoryValue.value }
 }
 
 // const parseOptions = (categorys) => {
