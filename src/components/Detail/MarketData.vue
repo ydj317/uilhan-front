@@ -17,7 +17,7 @@
                   {{ market.seller_id }}:
 
                   <div style="display: flex; flex-direction: column;">
-                    <div v-if="(product.item_cate !== null && !product.item_cate[market.market_code + '@' + market.seller_id]) || !product.item_cate"
+                    <div v-if="(product.item_cate !== null && !product.item_cate[market.market_code + '|' + market.seller_id]) || !product.item_cate"
                          style="color: #999999;">
                       카테고리 미설정
                     </div>
@@ -25,7 +25,7 @@
 
 
                     <div v-for="(item, cateKey) in product.item_cate" :key="cateKey">
-                      <div v-if="cateKey == market.market_code + '@' + market.seller_id">
+                      <div v-if="cateKey == market.market_code + '|' + market.seller_id">
 
                         <a-tag color="#108ee9">표준</a-tag>: {{ item.categoryNames }}
                         <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;"
@@ -33,12 +33,12 @@
                       </div>
                     </div>
 
-                    <div v-if="['lotteon'].includes(market.market_code) && ((product.item_disp_cate !== null && !product.item_disp_cate[market.market_code + '@' + market.seller_id]) || !product.item_disp_cate)"
+                    <div v-if="['lotteon'].includes(market.market_code) && ((product.item_disp_cate !== null && !product.item_disp_cate[market.market_code + '|' + market.seller_id]) || !product.item_disp_cate)"
                          style="color: #999999;">
                       전시 카테고리 미설정
                     </div>
                     <div v-for="(item, cateKey) in product.item_disp_cate" :key="cateKey">
-                      <div v-if="cateKey == market.market_code + '@' + market.seller_id">
+                      <div v-if="cateKey == market.market_code + '|' + market.seller_id">
                         <a-tag color="#87d068">전시</a-tag>: {{ item.categoryNames }}
                         <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;"
                                             @click="removeDispCategory(cateKey)" v-if="market.market_prd_code === ''"/>

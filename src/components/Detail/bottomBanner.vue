@@ -676,9 +676,11 @@ export default {
         return true;
       }
 
-      faildItem = this.smartStoreCategory.filter((item) => {
-        return this.product.formState.keyword.includes(item.cate_name);
-      })
+      if (this.product.formState.keyword !== undefined && this.product.formState.keyword !== null) {
+        faildItem = this.smartStoreCategory.filter((item) => {
+            return this.product.formState.keyword.includes(item.cate_name);
+        })
+      }
 
       if(faildItem.length > 0) {
         message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
