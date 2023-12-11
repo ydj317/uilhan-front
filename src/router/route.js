@@ -336,6 +336,7 @@ export const menus = [{
             meta: {
                 title: "도매꾹",
                 isHide: false,
+                roles: [],
                 ids: ["jwli", "haeju"],
                 icon: AppstoreOutlined,
             },
@@ -385,6 +386,18 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 ids: ["jwli", "irunkorea", "haeju"],
+                icon: BarcodeOutlined
+            },
+        },
+        {
+            path: "/custom/order/list",
+            name: "customOrder_list",
+            component: () => import("@/views/CustomOrder/List.vue"),
+            meta: {
+                title: "고객 계정관리",
+                isHide: false,
+                roles: [],
+                ids: ["jwli"],
                 icon: BarcodeOutlined
             },
         },
