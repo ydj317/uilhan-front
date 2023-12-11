@@ -13,7 +13,8 @@ import {
     DashboardOutlined,
     FileExcelOutlined, NotificationOutlined,
     ShoppingOutlined,
-    BarcodeOutlined
+    BarcodeOutlined,
+    KeyOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -204,6 +205,18 @@ export const menus = [{
                         active: "/setting/template"
                     }
                 },
+                {
+                    path: "/setting/UserManage",
+                    name: "setting_userManage",
+                    component: () => import("@/views/Setting/UserManage.vue"),
+                    meta: {
+                        title: "고객 계정관리",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                        icon: ''
+                    },
+                }
             ]
         },
         {
@@ -386,18 +399,6 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 ids: ["jwli", "irunkorea", "haeju"],
-                icon: BarcodeOutlined
-            },
-        },
-        {
-            path: "/custom/order/list",
-            name: "customOrder_list",
-            component: () => import("@/views/CustomOrder/List.vue"),
-            meta: {
-                title: "고객 계정관리",
-                isHide: false,
-                roles: [],
-                ids: ["jwli"],
                 icon: BarcodeOutlined
             },
         },
