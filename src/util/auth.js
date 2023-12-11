@@ -52,3 +52,4 @@ export function getUserInfo() {
 //   d.setTime(d.getTime() + 60 * 3000);
 //   document.cookie = "user=" + escape('admin') + ";expires=" + d.toGMTString();
 // }
+

@@ -281,6 +281,7 @@ import Loading from "vue-loading-overlay";
 import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
 import {lib} from "@/util/lib";
+import {useRoute} from "vue-router";
 
 
 export default defineComponent({
@@ -297,6 +298,12 @@ export default defineComponent({
         return false;
       }
     });
+
+    let route = useRoute();
+    setTimeout(function () {
+      window.document.title = route?.meta?.title;
+    });
+
     const bridge_sync_pass = ref(false);
     const formRef = ref();
     const formState = reactive({

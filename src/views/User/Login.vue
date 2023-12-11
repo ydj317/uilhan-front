@@ -34,7 +34,8 @@
         </a-form-item>
         <a-form-item class="setting">
           <a-checkbox v-model:checked="checked">저장하기</a-checkbox>
-          <a-button type="link" @click="info"><LockOutlined />비밀번호 잊으셨나요?</a-button>
+<!--          <a-button type="link" @click="info"><LockOutlined />비밀번호 잊으셨나요?</a-button>-->
+          <a-button type="link"><a href="/user/find/password"><LockOutlined />비밀번호 잊으셨나요?</a></a-button>
         </a-form-item>
         <a-form-item class="footer">
           <a-button type="primary" html-type="submit" class="loginButton">
@@ -61,6 +62,7 @@ import Cookie from "js-cookie";
 import { isLogin, cookieInit } from "util/auth";
 import { message } from 'ant-design-vue';
 import {lib} from "@/util/lib";
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   components: {
@@ -80,13 +82,18 @@ export default defineComponent({
       }
     });
 
+    let route = useRoute();
+    setTimeout(function () {
+      window.document.title = route?.meta?.title;
+    });
+
     const formState = reactive({
       username: '',
-      password: '',
+      password: ''
     });
     let loading = ref(false);
     const handleFinish = () => {
-      if (formState.user === '' || formState.password === '') {
+      if (formState.username === '' || formState.password === '') {
         message.warning('아이디 또는 비밀번호을  입력해주시오');
         return true
       }
@@ -98,7 +105,7 @@ export default defineComponent({
       loading.value = true;
       LoginRequest.post(
         process.env.VUE_APP_API_URL + '/api/login', user).then((res) => {
-
+        console.log(res);
         if (res.status === 400 || res.status === 401) {
           message.warning('아이디 또는 비밀번호가 잘못 입력 되었습니다.');
           loading.value = false;
@@ -145,6 +152,7 @@ export default defineComponent({
     };
 
     const remember = false;
+
 
     const redirectRegister = () => {
       router.push("/user/register");
