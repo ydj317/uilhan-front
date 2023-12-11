@@ -105,7 +105,6 @@ export default defineComponent({
       loading.value = true;
       LoginRequest.post(
         process.env.VUE_APP_API_URL + '/api/login', user).then((res) => {
-        console.log(res);
         if (res.status === 400 || res.status === 401) {
           message.warning('아이디 또는 비밀번호가 잘못 입력 되었습니다.');
           loading.value = false;
