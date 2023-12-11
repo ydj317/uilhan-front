@@ -411,12 +411,26 @@ export const staticRoutes = [
         path: "/user/login",
         name: "user_login",
         component: () => import("@/views/User/Login.vue"),
+        meta: {
+            title: "로그인",
+        }
     },
     {
         path: "/user/register",
         name: "user_register",
         component: () => import("@/views/User/Register.vue"),
+        meta: {
+            title: "회원가입",
+        }
     },
+    {
+        path: "/user/find/password",
+        name: "user_find_password",
+        component: () => import("@/views/User/FindPassword.vue"),
+        meta: {
+            title: "비밀번호 찾기",
+        }
+    }
 ];
 
 /**
