@@ -12,7 +12,8 @@ import {
     ProfileOutlined,
     DashboardOutlined,
     FileExcelOutlined, NotificationOutlined,
-    ShoppingOutlined
+    ShoppingOutlined,
+    BarcodeOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -328,17 +329,17 @@ export const menus = [{
                 },
             ]
         },
-        // {
-        //     path: "/product/domeggook",
-        //     name: "prd_domeggook",
-        //     component: () => import("@/views/Product/Domeggook"),
-        //     meta: {
-        //         title: "도매꾹",
-        //         isHide: false,
-        //         roles: ["ROLE_USER", "ROLE_ADMIN"],
-        //         icon: AppstoreOutlined,
-        //     },
-        // },
+        {
+            path: "/product/domeggook",
+            name: "prd_domeggook",
+            component: () => import("@/views/Product/Domeggook"),
+            meta: {
+                title: "도매꾹",
+                isHide: false,
+                ids: ["jwli", "haeju"],
+                icon: AppstoreOutlined,
+            },
+        },
         {
             path: "/excel",
             name: "excel",
@@ -347,7 +348,7 @@ export const menus = [{
                 title: "엑셀 컨버터 툴",
                 isHide: false,
                 roles: [],
-                ids: ["irunkorea", "jwli"],
+                ids: ["jwli", "irunkorea"],
                 icon: FileExcelOutlined,
             },
         },
@@ -359,7 +360,7 @@ export const menus = [{
                 title: "엑셀 컨버터 툴2",
                 isHide: false,
                 roles: [],
-                ids: ["irunkorea", "jwli"],
+                ids: ["jwli", "irunkorea"],
                 icon: FileExcelOutlined,
             },
         },
@@ -371,8 +372,20 @@ export const menus = [{
                 title: "Vvic 상품관리",
                 isHide: false,
                 roles: [],
-                ids: ["irunkorea", "jwli"],
+                ids: ["jwli", "irunkorea", "haeju"],
                 icon: GiftOutlined,
+            },
+        },
+        {
+            path: "/custom/order/list",
+            name: "customOrder_list",
+            component: () => import("@/views/CustomOrder/List.vue"),
+            meta: {
+                title: "구매관리",
+                isHide: false,
+                roles: [],
+                ids: ["jwli", "irunkorea", "haeju"],
+                icon: BarcodeOutlined
             },
         },
     ]

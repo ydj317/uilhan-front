@@ -45,7 +45,7 @@
             <SearchOutlined/>
             검색
           </a-button>
-          <a-button class="ml10" @click="initSearchParam()" style="width: 100px;" type="">초기화</a-button>
+          <a-button class="ml10" @click="initSearchParam()" style="width: 100px; border-color: #d9d9d9" >초기화</a-button>
         </div>
 
       </div>
@@ -61,6 +61,17 @@
         <!--상품삭제-->
         <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
           <a-button>상품삭제</a-button>
+        </a-popconfirm>
+        <!--상품삭제-->
+        <a-popconfirm @confirm="clonePrd">
+          <template #title>
+            <b>상품 복제 확인</b>
+            <br>
+            <span>선택한 상품을 복제하시겠습니다?</span>
+            <br>
+            <span style="font-size: 12px; color: #999;">*복제 된 상품은 최상단으로 이동합니다.</span>
+          </template>
+          <a-button>상품복제</a-button>
         </a-popconfirm>
       </div>
 
@@ -180,7 +191,7 @@
   <!--선택상품 등록-->
   <div id="footer">
     <!--선택상품 등록-->
-    <a-modal width="1000px" v-model:visible="singleSyncPop" centered>
+    <a-modal width="1000px" v-model:open="singleSyncPop" centered>
       <template #title>
         선택상품 등록
         <a-tooltip>
@@ -238,7 +249,7 @@
     </a-modal>
 
     <!--제휴사 연동결과-->
-    <a-modal width="600px" v-model:visible="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('multi')">
+    <a-modal width="600px" v-model:open="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('multi')">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">
@@ -676,6 +687,23 @@ export default defineComponent({
       });
     },
 
+    clonePrd() {
+      let list = this.getCheckList();
+      if (list === undefined || list.length === 0) {
+        message.warning("선택된 상품이 없습니다.");
+        return false;
+      }
+
+      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/clone', list).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+
+        window.location.reload()
+      });
+    },
+
     excelDown() {
       let list = this.getCheckList();
 
@@ -1030,7 +1058,7 @@ export default defineComponent({
             return false;
           }
           this.userinfo = res.data;
-          if (res.data['username'] === 'irunkorea_02' || res.data['username'] === 'jwli') {
+          if (['irunkorea_02', 'jwli'].includes(res.data['username'])) {
             this.haveDownloadProductPermission = true;
           }
 

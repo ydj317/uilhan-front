@@ -12,7 +12,7 @@
     </a-affix>
 
     <!--제휴사 상품연동-->
-    <a-modal width="1000px" title="상품등록" v-model:visible="singleSyncPop" centered>
+    <a-modal width="1000px" title="상품등록" v-model:open="singleSyncPop" centered>
       <a-table
         class="tableSyncStatus"
         :dataSource="this.product.item_sync_market"
@@ -65,7 +65,7 @@
     </a-modal>
 
     <!--제휴사 연동결과-->
-    <a-modal width="600px" :maskClosable="false" v-model:visible="marketSyncPop" title="제휴사연동결과" @ok="">
+    <a-modal width="600px" :maskClosable="false" v-model:open="marketSyncPop" title="제휴사연동결과" @ok="">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">
@@ -406,7 +406,9 @@ export default {
         let returnData = res.data;
 
         this.product.item_sync_market.forEach(item => {
-          if (returnData.successSeller.includes(item.seller_id)) {
+          let accountName = item.market_code + '|' + item.seller_id;
+
+          if (returnData.successSeller.includes(accountName)) {
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -676,9 +678,11 @@ export default {
         return true;
       }
 
-      faildItem = this.smartStoreCategory.filter((item) => {
-        return this.product.formState.keyword.includes(item.cate_name);
-      })
+      if (this.product.formState.keyword !== undefined && this.product.formState.keyword !== null) {
+        faildItem = this.smartStoreCategory.filter((item) => {
+            return this.product.formState.keyword.includes(item.cate_name);
+        })
+      }
 
       if(faildItem.length > 0) {
         message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)

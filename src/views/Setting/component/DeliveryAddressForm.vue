@@ -183,7 +183,7 @@ defineExpose({
 
 <template>
   <a-modal
-      v-model:visible="state.modal.isShow"
+      v-model:open="state.modal.isShow"
       :title="state.modal.title"
       ok-text="저장"
       cancel-text="닫기"

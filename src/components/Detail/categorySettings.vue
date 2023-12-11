@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:visible="props.isShow" title="계정별 카테고리 설정" @ok="handleOk" @cancel="handleCancel" style="width: 800px">
+  <a-modal v-model:open="props.isShow" title="계정별 카테고리 설정" @ok="handleOk" @cancel="handleCancel" style="width: 800px">
 
     <div class="mb15">
       <div>

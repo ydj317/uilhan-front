@@ -39,7 +39,7 @@
         </template>
       </a-table>
     </div>
-    <a-modal width="600px" :maskClosable="false" v-model:visible="rechargePop" @ok="">
+    <a-modal width="600px" :maskClosable="false" v-model:open="rechargePop" @ok="">
       <template #title>
         <h3 style="text-align: center; display: inline-block; width: 90%"><b>이미지 번역 충전</b></h3>
       </template>
