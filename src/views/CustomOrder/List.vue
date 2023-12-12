@@ -1,90 +1,112 @@
 <template>
   <loading v-model:active="state.indicator.table" :can-cancel="false" :is-full-page="true"/>
-  <a-card title="구매관리">
-    <div id="header">
-      <a-descriptions bordered :column="1" size="middle">
-        <a-descriptions-item>
-          <template #label>
-            검색기간
-            <a-tooltip>
-              <template #title>
-                <div>검색기간은 30일 단위로 조회 가능합니다.</div>
+  <div style="display: flex; gap: 10px">
+    <a-card title="검색"  style=" width: 60%">
+      <div id="header">
+          <a-descriptions bordered :column="1" size="middle">
+            <a-descriptions-item>
+              <template #label>
+                검색기간
+                <a-tooltip>
+                  <template #title>
+                    <div>검색기간은 30일 단위로 조회 가능합니다.</div>
+                  </template>
+                  <QuestionCircleOutlined/>
+                </a-tooltip>
               </template>
-              <QuestionCircleOutlined/>
-            </a-tooltip>
-          </template>
-          <a-input-group compact>
-            <a-space direction="vertical" :size="12">
-              <a-range-picker v-model:value="state.order_date" @change="onChangeDatePicker"/>
-            </a-space>
-          </a-input-group>
-        </a-descriptions-item>
+              <a-input-group compact>
+                <a-space direction="vertical" :size="12">
+                  <a-range-picker v-model:value="state.order_date" @change="onChangeDatePicker"/>
+                </a-space>
+              </a-input-group>
+            </a-descriptions-item>
+            <a-descriptions-item label="검색어">
+              <a-input-group compact style="display: flex;">
+                <a-select v-model:value="state.tableData.params.search_type" style="width: 150px;">
+                  <a-select-option value="order_no">주문번호</a-select-option>
+                  <a-select-option value="prd_name">상품명</a-select-option>
+                  <a-select-option value="prd_code">상품코드</a-select-option>
+                  <a-select-option value="item_no">품목코드</a-select-option>
+                  <a-select-option value="barcode">고객사코드</a-select-option>
+                  <a-select-option value="prd_option_name">옵션명</a-select-option>
+                  <a-select-option value="prd_size_option">사이즈</a-select-option>
+                  <a-select-option value="purchase_order_no">구매번호</a-select-option>
+                  <a-select-option value="purchase_invoice_no">중국택배번호</a-select-option>
+                  <a-select-option value="package_status_memo">택배현황 메모</a-select-option>
+                  <a-select-option value="memo">메모</a-select-option>
+                </a-select>
+                <a-input v-model:value="state.tableData.params.search_value" style="width: 400px;" allowClear/>
+              </a-input-group>
+            </a-descriptions-item>
 
-        <a-descriptions-item label="검색어">
-          <a-input-group compact style="display: flex;">
-            <a-select v-model:value="state.tableData.params.search_type" style="width: 100px;">
-              <a-select-option value="order_no">주문번호</a-select-option>
-              <a-select-option value="prd_name">상품명</a-select-option>
-              <a-select-option value="prd_code">상품코드</a-select-option>
-              <a-select-option value="item_no">품목코드</a-select-option>
-              <a-select-option value="prd_option_name">옵션명</a-select-option>
-              <a-select-option value="prd_size_option">사이즈</a-select-option>
-              <a-select-option value="purchase_order_no">구매번호</a-select-option>
-              <a-select-option value="purchase_invoice_no">중국택배번호</a-select-option>
-              <a-select-option value="package_status_memo">택배현황 메모</a-select-option>
-              <a-select-option value="memo">메모</a-select-option>
-            </a-select>
-            <a-input v-model:value="state.tableData.params.search_value" style="width: 300px;" allowClear/>
-          </a-input-group>
-        </a-descriptions-item>
+            <a-descriptions-item label="구매상태">
+              <a-radio-group v-model:value="state.tableData.params.order_status" button-style="solid"
+                             @change="handleOrderStatusChange">
+                <a-radio-button value="">전체</a-radio-button>
 
-        <a-descriptions-item label="구매상태">
-          <a-space>
+                <a-radio-button v-for="option in state.orderStatus" :value="option.value">
+                  {{ option.label }}
+                  <a-spin v-if="state.indicator.count"></a-spin>
+                  <span v-else>({{ state[option.value + 'Count'] }})</span>
+                </a-radio-button>
+              </a-radio-group>
+            </a-descriptions-item>
 
-            <a-radio-group v-model:value="state.tableData.params.order_status" button-style="solid"
-                           @change="handleOrderStatusChange">
-              <a-radio-button value="">전체</a-radio-button>
+            <a-descriptions-item label="입출고상태">
 
-              <a-radio-button v-for="option in state.orderStatus" :value="option.value">
-                {{ option.label}}
-                <a-spin  v-if="state.indicator.count"></a-spin>
-                <span  v-else >({{ state[option.value + 'Count'] }})</span>
-              </a-radio-button>
-            </a-radio-group>
+              <a-radio-group v-model:value="state.tableData.params.shipping_status" button-style="solid"
+                             @change="handleOrderStatusChange">
+                <a-radio-button value="">전체</a-radio-button>
+                <a-radio-button v-for="option in state.shippingStatus" :value="option.value">
+                  {{ option.label }}
+                  <a-spin v-if="state.indicator.count"></a-spin>
+                  <span v-else>({{ state[option.value + 'Count'] }})</span>
+                </a-radio-button>
+              </a-radio-group>
+            </a-descriptions-item>
+          </a-descriptions>
 
-          </a-space>
-        </a-descriptions-item>
 
-        <a-descriptions-item label="입출고상태">
-          <a-space>
 
-            <a-radio-group v-model:value="state.tableData.params.shipping_status" button-style="solid"
-                           @change="handleOrderStatusChange">
-              <a-radio-button value="">전체</a-radio-button>
-              <a-radio-button v-for="option in state.shippingStatus" :value="option.value">
-                {{ option.label }}
-                <a-spin  v-if="state.indicator.count"></a-spin>
-                <span  v-else >({{ state[option.value + 'Count'] }})</span>
-              </a-radio-button>
-            </a-radio-group>
-
-          </a-space>
-        </a-descriptions-item>
-
-      </a-descriptions>
-
-      <div style="display: flex;justify-content: center;">
-        <a-button type="primary" @click.prevent="handleSearch" class="mt15">검색</a-button>
-        <a-button @click="getTableData" class="ml15 mt15">초기화</a-button>
+        <div style="display: flex;justify-content: center;">
+          <a-button type="primary" @click.prevent="handleSearch" class="mt15">검색</a-button>
+          <a-button @click="getTableData" class="ml15 mt15">초기화</a-button>
+        </div>
       </div>
-    </div>
-  </a-card>
+    </a-card>
+    <a-card title="스캔" style="width: 100%;flex: 1;">
+          <a-descriptions bordered :column="1" size="middle">
+            <a-descriptions-item style="height: 100px;">
+              <template #label>
+                택배번호 스캔
+              </template>
+              <a-input
+                  v-model:value="state.tableData.params.scan_package_no"
+                    @keyup.enter="openDetailPopup"
+                />
 
+            </a-descriptions-item>
+            <a-descriptions-item style="height: 100px;">
+              <template #label>
+                출고스캔
+              </template>
+              <a-input
+                  v-model:value="state.tableData.params.scan_barcode"
+                  @keyup.enter="searchWithBarcode"
+              />
+
+            </a-descriptions-item>
+          </a-descriptions>
+    </a-card>
+  </div>
   <a-card class="mt15">
     <div class="mb15" style="display: flex;justify-content: space-between;">
       <div>
         <a-popconfirm title="삭제하시겠습니까?" @confirm="deleteCustomOrder">
           <a-button>삭제</a-button>
+        </a-popconfirm>
+        <a-popconfirm v-if="state.tableData.params.order_status === 'paid'" title="접수완료 처리 하시겠습니까?" @confirm="receiptCompleted">
+          <a-button style="margin-left: 10px;">접수완료</a-button>
         </a-popconfirm>
       </div>
       <div class="right-div" style="display: flex;align-items: center;gap: 5px">
@@ -130,6 +152,7 @@
         <th rowspan="3">옵션이미지</th>
         <th>상품코드</th>
         <th>옵션명</th>
+        <th  style="width: 20px;" rowspan="3">주문수량</th>
         <th>원가</th>
         <th>택배번호</th>
         <th rowspan="3">수수료</th>
@@ -175,9 +198,10 @@
                 fallback="data:image/png;base64,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"
                 style="z-index: -1; width: 60px; height: 60px; border-radius: 10px"
             />
-          </td><!--상품명-->
+          </td>
           <td>{{ item.prd_code }}</td><!--상품코드-->
           <td>{{ item.prd_option_name }}</td><!--옵션명-->
+          <td rowspan="3">{{ item.quantity }}</td><!--주문수량-->
           <td>{{ item.original_price }}</td><!--원가-->
           <td>
             <a-input
@@ -263,16 +287,18 @@
                 <ExportOutlined/>
               </template>
               출력
-            </a-button></td>
+            </a-button>
+          </td>
 
           <!--입출고상태-->
           <td rowspan="3">
             <a-select
                 size="small"
                 v-model:value="item.shipping_status"
+                @change="updateStatus(item, 'shipping_status')"
                 style="width: 100px;">
               <a-select-option v-for="option in state.shippingStatus" :value="option.value">
-                {{ option.label}}
+                {{ option.label }}
               </a-select-option>
             </a-select>
           </td>
@@ -304,13 +330,13 @@
 
           <!--실구매가-->
           <td>
-              <a-input-number
-                  :min="0"
-                  v-if="state.editableData[item.key]"
-                  v-model:value="state.editableData[item.key]['purchase_price']"
-                  size="small"
-              />
-              <span v-else>
+            <a-input-number
+                :min="0"
+                v-if="state.editableData[item.key]"
+                v-model:value="state.editableData[item.key]['purchase_price']"
+                size="small"
+            />
+            <span v-else>
                 {{ item.purchase_price }}
               </span>
           </td>
@@ -328,13 +354,14 @@
           </td>
         </tr>
         <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td> <!--주문상태-->
+          <td> <!--구매관리-->
             <a-select
                 v-model:value="item.order_status"
                 size="small"
+                @change="updateStatus(item, 'order_status')"
                 style="width: 100px;">
               <a-select-option v-for="option in state.orderStatus" :value="option.value">
-                {{ option.label}}
+                {{ option.label }}
               </a-select-option>
             </a-select>
           </td>
@@ -362,14 +389,120 @@
     </table>
   </a-card>
 
+
+  <a-modal
+      v-model:open ="state.showDetailModal"
+      title="주문 상세"
+      @ok="saveDetail(state.detailModalData)"
+      width="1000px"
+  >
+    <template #footer>
+      <a-button key="close" @click="()=>{state.showDetailModal=false}">닫기</a-button>
+      <a-button key="save" type="primary" :loading="state.indicator.saveDetail" @click="saveDetail(state.detailModalData)">저장</a-button>
+    </template>
+
+
+      <a-descriptions bordered :column="2" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }" size="small">
+
+        <a-descriptions-item label="주문번호">{{ state.detailModalData.order_no }}</a-descriptions-item>
+        <a-descriptions-item label="주문일자">{{ state.detailModalData.ins_date }}</a-descriptions-item>
+        <a-descriptions-item label="구매상태">
+          <a-select
+              v-model:value="state.detailModalData.order_status"
+              size="small"
+              style="width: 100px;">
+            <a-select-option v-for="option in state.orderStatus" :value="option.value">
+              {{ option.label }}
+            </a-select-option>
+          </a-select>
+        </a-descriptions-item>
+
+        <a-descriptions-item label="상품명">{{ state.detailModalData.prd_name }}</a-descriptions-item>
+        <a-descriptions-item label="옵션이미지">
+          <a-image :src="state.detailModalData.prd_image"
+                   fallback="data:image/png;base64,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"
+                   style="width:50px;height:50px;border-radius: 5px;" />
+        </a-descriptions-item>
+        <a-descriptions-item label="상품코드">{{ state.detailModalData.prd_code }}</a-descriptions-item>
+        <a-descriptions-item label="품목코드">{{ state.detailModalData.item_no }}</a-descriptions-item>
+        <a-descriptions-item label="고객사코드">{{ state.detailModalData.bar_code }}</a-descriptions-item>
+        <a-descriptions-item label="옵션명">{{ state.detailModalData.prd_option_name }}</a-descriptions-item>
+        <a-descriptions-item label="사이즈">{{ state.detailModalData.prd_size_option }}</a-descriptions-item>
+        <a-descriptions-item label="주문수량">{{ state.detailModalData.quantity }}</a-descriptions-item>
+        <a-descriptions-item label="원가">{{ state.detailModalData.origin_price }}</a-descriptions-item>
+
+        <a-descriptions-item label="실구매가">
+          <a-input v-model:value="state.detailModalData.purchase_price" />
+        </a-descriptions-item>
+
+        <a-descriptions-item label="현지운임">
+          <a-input v-model:value="state.detailModalData.local_shipping_fee" />
+        </a-descriptions-item>
+
+        <a-descriptions-item label="택배번호">
+          <a-input v-model:value="state.detailModalData.purchase_invoice_no" />
+        </a-descriptions-item>
+
+        <a-descriptions-item label="택배현황">
+          <a-input v-model:value="state.detailModalData.package_status_memo" />
+        </a-descriptions-item>
+
+        <a-descriptions-item label="수수료">
+          <a-input v-model:value="state.detailModalData.charge" />
+        </a-descriptions-item>
+
+        <a-descriptions-item label="금액">
+          <a-input v-model:value="state.detailModalData.total_payment_amount" />
+        </a-descriptions-item>
+
+        <a-descriptions-item label="구매번호">
+          <a-input v-model:value="state.detailModalData.purchase_order_no" />
+        </a-descriptions-item>
+
+        <a-descriptions-item label="실도착수량">
+          <a-input ref="inputRef"  v-model:value="state.detailModalData.arrival_quantity" />
+        </a-descriptions-item>
+
+        <a-descriptions-item label="메모">
+          <a-input v-model:value="state.detailModalData.memo" />
+        </a-descriptions-item>
+
+        <a-descriptions-item label="바코드">
+          <a-button
+              @click.prevent="openBarcodePopup(state.detailModalData)"
+              size="small"
+          >
+            <template #icon>
+              <ExportOutlined/>
+            </template>
+            출력
+          </a-button>
+        </a-descriptions-item>
+
+        <a-descriptions-item label="입출고상태">
+          <a-select
+              size="small"
+              v-model:value="state.detailModalData.shipping_status"
+              style="width: 100px;">
+            <a-select-option v-for="option in state.shippingStatus" :value="option.value">
+              {{ option.label }}
+            </a-select-option>
+          </a-select>
+        </a-descriptions-item>
+      </a-descriptions>
+
+  </a-modal>
+
 </template>
+
+
 
 <script setup>
 
 import {onMounted, reactive, ref} from 'vue'
 import {useMarketApi} from '@/api/market'
 import moment from "moment";
-import {message} from 'ant-design-vue'
+import {modal, message} from 'ant-design-vue'
 import "vue-loading-overlay/dist/vue-loading.css";
 
 import {
@@ -396,7 +529,9 @@ const state = reactive({
       search_type: 'order_no',
       search_value: '',
       order_status: '',
-      shipping_status: ''
+      shipping_status: '',
+      scan_package_no: '',
+      scan_barcode: '',
     },
   },
   orderStatus: [],
@@ -429,11 +564,12 @@ const state = reactive({
   }),
 
   checkedList: [],
-  indicator : {
-    upload : false,
-    download : false,
-    table : false,
-    count :false,
+  indicator: {
+    upload: false,
+    download: false,
+    table: false,
+    count: false,
+    saveDetail: false,
 
   },
   editableData: {},
@@ -446,6 +582,10 @@ const state = reactive({
     prd_option_name: '',
     prd_size_option: '',
   },
+
+  showDetailModal: false,
+  detailModalData: {},
+  detailForm: ref(null),
 
 });
 
@@ -661,6 +801,23 @@ const deleteCustomOrder = async () => {
   });
 }
 
+const receiptCompleted = async () => {
+  // 체크된 주문 없을시 경고창 띄우기
+  const checkedList = state.tableData.data.filter(item => item.checked === true)
+  checkedList.length === 0 && message.error('접수완료 처리할 주문을 선택해주세요.');
+  state.indicator.table = true;
+  await useCustomOrderApi().setReceiptCompleted(checkedList).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      state.indicator.table = false;
+      return false;
+    }
+    message.success(res.message);
+    getTableData();
+    state.indicator.table = false;
+  });
+}
+
 const handleOrderChecked = (item) => {
   console.log(item)
   item.checked = !item.checked;
@@ -702,6 +859,75 @@ const openPrdCodePopup = (item) => {
   window.open(item.prd_url, '_blank');
 }
 
+const updateStatus = async (item, what) => {
+  const sendData = {
+    id: item.id,
+  }
+
+  if (what === 'order_status') {
+    sendData.order_status = item.order_status;
+  } else if (what === 'shipping_status') {
+    sendData.shipping_status = item.shipping_status;
+  }
+  await useCustomOrderApi().updateCustomOrder(sendData).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    message.success(`수정되었습니다.`);
+  });
+}
+
+const openDetailPopup = async () => {
+  state.indicator.table = true;
+  const param = {
+    'purchase_invoice_no': state.tableData.params.scan_package_no,
+  };
+  await useCustomOrderApi().getCustomOrderDetail(param).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      state.indicator.table = false;
+      return false;
+    }
+
+    console.log( res.data)
+    state.detailModalData = res.data;
+    state.showDetailModal = true;
+    state.indicator.table = false;
+  });
+}
+
+const saveDetail = async (detailData) => {
+  state.indicator.saveDetail = true;
+
+  if (detailData.arrival_quantity > detailData.purchase_quantity) {
+    message.error('실도착수량은 구매수량보다 클 수 없습니다.');
+    state.indicator.saveDetail = false;
+    return false;
+  }
+
+
+  await useCustomOrderApi().updateCustomOrder(detailData).then(res => {
+    if (res.status !== "2000") {
+      state.indicator.saveDetail = false;
+      message.error(res.message);
+      return false;
+    }
+
+    Object.assign(state.tableData.data.filter(item => detailData.id === item.key)[0], detailData);
+    message.success(`수정되었습니다.`);
+    state.indicator.saveDetail = false;
+    state.showDetailModal = false;
+  });
+}
+
+const searchWithBarcode = async () => {
+  state.tableData.params.search_type = 'barcode';
+  state.tableData.params.search_value = state.tableData.params.scan_barcode;
+  handleSearch();
+}
+
+
 
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls(), getCustomOrderStatusList()])
@@ -742,6 +968,7 @@ const isInPattern = (num) => {
   font-size: 12px;
   font-weight: 400;
   line-height: 1.5;
+  background: #7273de;
 }
 
 .header-table tbody th, .header-table tbody td {

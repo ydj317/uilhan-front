@@ -45,6 +45,21 @@ export function useCustomOrderApi() {
                 method: "get",
                 params: data,
             });
+        },
+        getCustomOrderDetail: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/detail",
+                method: "get",
+                params: data,
+            });
+        },
+        setReceiptCompleted : (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/receipt",
+                method: "post",
+                data: data,
+            });
         }
+
     }
 }
