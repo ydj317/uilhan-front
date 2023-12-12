@@ -13,7 +13,8 @@ import {
     DashboardOutlined,
     FileExcelOutlined, NotificationOutlined,
     ShoppingOutlined,
-    BarcodeOutlined
+    BarcodeOutlined,
+    KeyOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -204,6 +205,18 @@ export const menus = [{
                         active: "/setting/template"
                     }
                 },
+                {
+                    path: "/setting/UserManage",
+                    name: "setting_userManage",
+                    component: () => import("@/views/Setting/UserManage.vue"),
+                    meta: {
+                        title: "고객 계정관리",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                        icon: ''
+                    },
+                }
             ]
         },
         {
@@ -329,17 +342,18 @@ export const menus = [{
                 },
             ]
         },
-        // {
-        //     path: "/product/domeggook",
-        //     name: "prd_domeggook",
-        //     component: () => import("@/views/Product/Domeggook"),
-        //     meta: {
-        //         title: "도매꾹",
-        //         isHide: false,
-        //         roles: ["ROLE_USER", "ROLE_ADMIN"],
-        //         icon: AppstoreOutlined,
-        //     },
-        // },
+        {
+            path: "/product/domeggook",
+            name: "prd_domeggook",
+            component: () => import("@/views/Product/Domeggook"),
+            meta: {
+                title: "도매꾹",
+                isHide: false,
+                roles: [],
+                ids: ["jwli", "haeju"],
+                icon: AppstoreOutlined,
+            },
+        },
         {
             path: "/excel",
             name: "excel",
@@ -348,7 +362,7 @@ export const menus = [{
                 title: "엑셀 컨버터 툴",
                 isHide: false,
                 roles: [],
-                ids: ["irunkorea", "jwli"],
+                ids: ["jwli", "irunkorea"],
                 icon: FileExcelOutlined,
             },
         },
@@ -360,7 +374,7 @@ export const menus = [{
                 title: "엑셀 컨버터 툴2",
                 isHide: false,
                 roles: [],
-                ids: ["irunkorea", "jwli"],
+                ids: ["jwli", "irunkorea"],
                 icon: FileExcelOutlined,
             },
         },
@@ -372,7 +386,7 @@ export const menus = [{
                 title: "Vvic 상품관리",
                 isHide: false,
                 roles: [],
-                ids: ["irunkorea", "jwli"],
+                ids: ["jwli", "irunkorea", "haeju"],
                 icon: GiftOutlined,
             },
         },
@@ -383,7 +397,7 @@ export const menus = [{
                 title: "구매입출고관리",
                 isHide: false,
                 roles: [],
-                ids: ["irunkorea", "jwli", "1sjsj21s"],
+                ids: ["irunkorea", "jwli", "1sjsj21s", "haeju"],
                 icon: BarcodeOutlined
             },
             "children": [
@@ -420,12 +434,26 @@ export const staticRoutes = [
         path: "/user/login",
         name: "user_login",
         component: () => import("@/views/User/Login.vue"),
+        meta: {
+            title: "로그인",
+        }
     },
     {
         path: "/user/register",
         name: "user_register",
         component: () => import("@/views/User/Register.vue"),
+        meta: {
+            title: "회원가입",
+        }
     },
+    {
+        path: "/user/find/password",
+        name: "user_find_password",
+        component: () => import("@/views/User/FindPassword.vue"),
+        meta: {
+            title: "비밀번호 찾기",
+        }
+    }
 ];
 
 /**
