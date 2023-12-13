@@ -59,11 +59,8 @@
       <!--left button-->
       <div>
         <!--상품삭제-->
-        <a-button style="margin-right: 10px;" @click="deletePop(record)">상품삭제</a-button>
+        <a-button style="margin-right: 10px;" @click="deletePop()">상품삭제</a-button>
 
-        <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
-          <a-button style="margin-right: 10px;">상품삭제</a-button>
-        </a-popconfirm>
         <!--상품삭제-->
         <a-popconfirm @confirm="clonePrd">
           <template #title>
@@ -215,7 +212,7 @@
 
       <a-divider />
 
-      <div v-if="deleteOptions.length > 1">
+      <div v-if="deleteOptions.length > 0">
         <a-checkbox-group v-model:value="deleteCheckList">
           <a-checkbox v-for="option in deleteOptions" :key="option.value" :value="option.value" style="background: #e1ecfe; padding: 5px 8px 8px 12px; border-radius: 3px; margin: 5px 10px 5px 0;">
             <img :src="getLogoSrc('market-logo', option.market_code)" alt="" style="width: 16px; height: 16px; margin-right: 5px;">
@@ -233,8 +230,8 @@
       </div>
 
       <template v-slot:footer>
-        <a-button type="primary" @click="sendMarket()">삭제하기</a-button>
-        <a-button @click="closeResultPop('single')">취소</a-button>
+        <a-button type="primary" @click="deletePrd()">삭제하기</a-button>
+        <a-button @click="deletePrdPop = false">취소</a-button>
       </template>
     </a-modal>
 
@@ -560,6 +557,7 @@ export default defineComponent({
       deletePrdPop: false,
       deleteCheckList: [],
       deleteOptions: [],
+      deleteItems: [],
 
       singleSyncPop: false,
       singleDetail: [],
@@ -736,9 +734,8 @@ export default defineComponent({
         return false;
       }
 
-      this.deleteOptions = Object.values(this.prdlist
-          .filter(item => list.includes(item.item_id))
-          .flatMap(item => item.item_sync_market)
+      this.deleteItems = this.prdlist.filter(item => list.includes(item.item_id));
+      this.deleteOptions = Object.values(this.deleteItems.flatMap(item => item.item_sync_market)
           .reduce((acc, syncItem) => {
             const key = syncItem.id;
             if (!acc[key] && syncItem.status !== 'unsync') {
@@ -753,30 +750,25 @@ export default defineComponent({
 
       this.deletePrdPop = true;
 
-      return false;
-
-      if (this.deleteOptions.length === 0) {
-        AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", {params: {list: list}}).then((res) => {
-          if (res.status !== "2000") {
-            message.error(res.message);
-            return false;
-          }
-
-          window.location.reload()
-        });
-        return true;
-      }
-
     },
 
-    deletePrd() {
-      let list = this.getCheckList();
-      if (list === undefined || list.length === 0) {
-        message.warning("선택된 상품이 없습니다.");
+    async deletePrd() {
+      // 연동 마켓이 있을때 선택한 마켓이 없으면 선택하도록 얼럿
+      if (this.deleteOptions.length > 0 && this.deleteCheckList.length === 0) {
+        message.warning("삭제할 마켓을 선택해주세요.");
         return false;
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", {params: {list: list}}).then((res) => {
+      // 1. 연동 마켓이 없을때
+      // ㄴ리스트에서 상품삭제
+
+      // 2. 연동 마켓이 있을때
+      // ㄴ부분 마켓선택시 선택된 마켓만 삭제
+      // ㄴ전체 선택시 선택된 마켓 삭제 및 리스트에서 상품삭제
+      await useProductApi().deletePrd({
+        'deleteItems': this.deleteItems,
+        'deleteCheckList': this.deleteCheckList
+      }).then(res => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
@@ -784,6 +776,8 @@ export default defineComponent({
 
         window.location.reload()
       });
+
+      return true;
     },
 
     clonePrd() {
@@ -1124,9 +1118,9 @@ export default defineComponent({
     },
 
 
-    productExcelDown() {
+    async productExcelDown() {
       this.indicator = true;
-      useProductApi().downloadProductExcel(this.userinfo).then(res => {
+      await useProductApi().downloadProductExcel(this.userinfo).then(res => {
         if (res['status'] !== '2000') {
           message.error("권한이 없는 사용자입니다. \n관리자에게 문의하시길 바랍니다");
           this.indicator = false;
