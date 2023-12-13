@@ -501,7 +501,7 @@
 import {onMounted, reactive, ref} from 'vue'
 import {useMarketApi} from '@/api/market'
 import moment from "moment";
-import {modal, message} from 'ant-design-vue'
+import {message} from 'ant-design-vue'
 import "vue-loading-overlay/dist/vue-loading.css";
 
 import {
