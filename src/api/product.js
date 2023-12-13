@@ -11,5 +11,12 @@ export function useProductApi() {
                 data: data,
             });
         },
+        deletePrd: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/delete",
+                method: "post",
+                data: data,
+            });
+        },
     }
 }

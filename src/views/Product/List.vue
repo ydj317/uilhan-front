@@ -57,11 +57,10 @@
     <!--top-->
     <div id="content-header" class="row space-between">
       <!--left button-->
-      <div class="w12 space-between">
+      <div>
         <!--상품삭제-->
-        <a-popconfirm title="삭제하시겠습니까?" @confirm="deletePrd">
-          <a-button>상품삭제</a-button>
-        </a-popconfirm>
+        <a-button style="margin-right: 10px;" @click="deletePop()">상품삭제</a-button>
+
         <!--상품삭제-->
         <a-popconfirm @confirm="clonePrd">
           <template #title>
@@ -76,11 +75,11 @@
       </div>
 
       <!--right button-->
-      <div class=" pl5 ">
-        <a-button style="margin-right: 5px;" v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
-        <a-spin v-if="indicator"/>
+      <div>
+        <a-spin style="margin-right: 10px;" v-if="indicator" />
+        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
         <!--선택상품 등록-->
-        <a-button style="margin-left: 5px;"  @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
+        <a-button style="margin-left: 10px;" @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
       </div>
     </div>
 
@@ -188,9 +187,55 @@
     <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData"/>
   </a-card>
 
-  <!--선택상품 등록-->
+  <!--팝업-->
   <div id="footer">
-    <!--선택상품 등록-->
+
+    <!--상품삭제-->
+    <a-modal width="800px" v-model:open="deletePrdPop" centered>
+      <template #title>
+        등록상품 삭제하기
+        <a-tooltip>
+          <template #title>
+            <div>전체삭제 할 경우 리스트에서 상품이 삭제됩니다.</div>
+          </template>
+          <QuestionCircleOutlined/>
+        </a-tooltip>
+      </template>
+
+      <div class="space-between">
+        <div>선택한 상품의 삭제할 오픈마켓을 선택해주세요.<br>11번가 / 롯데온 / 위메프는 상품 삭제를 지원하지안아 "판매중지" 상태로 변경됩니다.</div>
+        <div>
+          <a-button style="margin-right: 10px;" @click="deleteCheckList = deleteOptions.map(option => option.value)">전체선택</a-button>
+          <a-button @click="deleteCheckList = []">전체해제</a-button>
+        </div>
+      </div>
+
+      <a-divider />
+
+      <div v-if="deleteOptions.length > 0">
+        <a-checkbox-group v-model:value="deleteCheckList">
+          <a-checkbox v-for="option in deleteOptions" :key="option.value" :value="option.value" style="background: #e1ecfe; padding: 5px 8px 8px 12px; border-radius: 3px; margin: 5px 10px 5px 0;">
+            <img :src="getLogoSrc('market-logo', option.market_code)" alt="" style="width: 16px; height: 16px; margin-right: 5px;">
+            {{ option.label }}
+          </a-checkbox>
+        </a-checkbox-group>
+      </div>
+
+      <div style="color: red;" v-else>
+        <a-empty>
+          <template #description>
+            <span>연동된 마켓이 없습니다. 리스트에서 상품을 삭제 하기겠습니까?</span>
+          </template>
+        </a-empty>
+      </div>
+
+      <template v-slot:footer>
+        <a-button type="primary" @click="deletePrd()">삭제하기</a-button>
+        <a-button @click="deletePrdPop = false">취소</a-button>
+      </template>
+    </a-modal>
+
+    <!--등록관리-->
     <a-modal width="1000px" v-model:open="singleSyncPop" centered>
       <template #title>
         선택상품 등록
@@ -248,7 +293,7 @@
       </template>
     </a-modal>
 
-    <!--제휴사 연동결과-->
+    <!--연동결과-->
     <a-modal width="600px" v-model:open="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('multi')">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
@@ -266,6 +311,7 @@
       </template>
     </a-modal>
 
+    <!--선택상품 등록-->
     <MarketList v-if="MarketListVisible"></MarketList>
   </div>
 </template>
@@ -279,6 +325,9 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import Cookie from "js-cookie";
 import MarketList from "@/components/List/MarketList";
 import {useMarketApi} from "@/api/market";
+
+import { Empty } from 'ant-design-vue';
+const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 
 import {mapState} from "vuex";
 import {
@@ -504,6 +553,12 @@ export default defineComponent({
       marketSyncFailed: 0,
       marketSyncTotal: 0,
       marketSyncFailedCode: "",
+
+      deletePrdPop: false,
+      deleteCheckList: [],
+      deleteOptions: [],
+      deleteItems: [],
+
       singleSyncPop: false,
       singleDetail: [],
       checkedList: [],
@@ -518,6 +573,8 @@ export default defineComponent({
       smartStoreCategory: [],
       userinfo: {},
       haveDownloadProductPermission: false,
+
+      simpleImage
     };
   },
 
@@ -670,14 +727,48 @@ export default defineComponent({
       return list;
     },
 
-    deletePrd() {
+    deletePop() {
       let list = this.getCheckList();
       if (list === undefined || list.length === 0) {
         message.warning("선택된 상품이 없습니다.");
         return false;
       }
 
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/delete", {params: {list: list}}).then((res) => {
+      this.deleteItems = this.prdlist.filter(item => list.includes(item.item_id));
+      this.deleteOptions = Object.values(this.deleteItems.flatMap(item => item.item_sync_market)
+          .reduce((acc, syncItem) => {
+            const key = syncItem.id;
+            if (!acc[key] && syncItem.status !== 'unsync') {
+              acc[key] = {
+                market_code: syncItem.market_code,
+                label: syncItem.seller_id,
+                value: syncItem.id
+              };
+            }
+            return acc;
+          }, {}));
+
+      this.deletePrdPop = true;
+
+    },
+
+    async deletePrd() {
+      // 연동 마켓이 있을때 선택한 마켓이 없으면 선택하도록 얼럿
+      if (this.deleteOptions.length > 0 && this.deleteCheckList.length === 0) {
+        message.warning("삭제할 마켓을 선택해주세요.");
+        return false;
+      }
+
+      // 1. 연동 마켓이 없을때
+      // ㄴ리스트에서 상품삭제
+
+      // 2. 연동 마켓이 있을때
+      // ㄴ부분 마켓선택시 선택된 마켓만 삭제
+      // ㄴ전체 선택시 선택된 마켓 삭제 및 리스트에서 상품삭제
+      await useProductApi().deletePrd({
+        'deleteItems': this.deleteItems,
+        'deleteCheckList': this.deleteCheckList
+      }).then(res => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
@@ -685,6 +776,8 @@ export default defineComponent({
 
         window.location.reload()
       });
+
+      return true;
     },
 
     clonePrd() {
@@ -828,9 +921,12 @@ export default defineComponent({
         return true;
       }
 
-      faildItem = this.smartStoreCategory.filter((item) => {
-        return this.singleDetail.item_sync_keyword.includes(item.cate_name);
-      })
+      if (this.singleDetail.item_sync_keyword !== undefined && this.singleDetail.item_sync_keyword !== null) {
+        faildItem = this.smartStoreCategory.filter((item) => {
+            return this.singleDetail.item_sync_keyword.includes(item.cate_name);
+
+        })
+      }
 
       if(faildItem.length > 0) {
         message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
@@ -1022,9 +1118,9 @@ export default defineComponent({
     },
 
 
-    productExcelDown() {
+    async productExcelDown() {
       this.indicator = true;
-      useProductApi().downloadProductExcel(this.userinfo).then(res => {
+      await useProductApi().downloadProductExcel(this.userinfo).then(res => {
         if (res['status'] !== '2000') {
           message.error("권한이 없는 사용자입니다. \n관리자에게 문의하시길 바랍니다");
           this.indicator = false;
