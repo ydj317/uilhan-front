@@ -59,7 +59,7 @@ export function useCustomOrderApi() {
                 method: "post",
                 data: data,
             });
-        }
+        },
 
     }
 }

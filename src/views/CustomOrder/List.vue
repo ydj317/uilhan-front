@@ -389,7 +389,6 @@
     </table>
   </a-card>
 
-
   <a-modal
       v-model:open ="state.showDetailModal"
       title="주문 상세"
@@ -880,6 +879,11 @@ const updateStatus = async (item, what) => {
 
 const openDetailPopup = async () => {
   state.indicator.table = true;
+  if (state.tableData.params.scan_package_no.trim() === '') {
+    message.error('택배번호를 입력해주세요.');
+    state.indicator.table = false;
+    return false;
+  }
   const param = {
     'purchase_invoice_no': state.tableData.params.scan_package_no,
   };
@@ -922,6 +926,12 @@ const saveDetail = async (detailData) => {
 }
 
 const searchWithBarcode = async () => {
+
+  if (state.tableData.params.scan_barcode.trim() === '') {
+    message.error('바코드를 입력해주세요.');
+    return false;
+  }
+
   state.tableData.params.search_type = 'barcode';
   state.tableData.params.search_value = state.tableData.params.scan_barcode;
   handleSearch();
