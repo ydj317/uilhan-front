@@ -3,7 +3,7 @@
   <div style="display: flex; gap: 10px">
     <a-card title="검색"  style=" width: 60%">
       <div id="header">
-          <a-descriptions bordered :column="1" size="middle">
+          <a-descriptions bordered :column="1" size="small">
             <a-descriptions-item>
               <template #label>
                 검색기간
@@ -75,7 +75,7 @@
       </div>
     </a-card>
     <a-card title="스캔" style="width: 100%;flex: 1;">
-          <a-descriptions bordered :column="1" size="middle">
+          <a-descriptions bordered :column="1" size="small">
             <a-descriptions-item style="height: 100px;">
               <template #label>
                 택배번호 스캔
@@ -139,6 +139,18 @@
         </a-upload>
       </div>
     </div>
+    <div style="margin-bottom: 10px;">
+      <a-pagination
+          v-model:current="state.pagination.current"
+          v-model:page-size="state.pagination.pageSize"
+          show-size-changer
+          @showSizeChange="onShowSizeChange"
+          :total="state.pagination.total"
+          :show-total="(total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`"
+          :page-size-options="[10, 30, 50, 100]"
+          @change="handlePageChange"
+      />
+    </div>
     <table class="header-table">
       <thead style="position: sticky;top: 0; background: #7273de; z-index: 100">
       <tr>
@@ -185,7 +197,7 @@
           <a-spin size="large"/>
         </td>
       </tr>
-      <template v-else v-for="(item, key) in state.tableData.data" :key="key">
+      <template v-else v-for="(item, key) in state.tableData.showData" :key="key">
         <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
           <td rowspan="3" style="cursor: pointer;" @click.self="handleOrderChecked(item)">
             <a-checkbox v-model:checked="item.checked" @click.self="handleOrderChecked(item)"></a-checkbox>
@@ -387,6 +399,18 @@
       </template>
       </tbody>
     </table>
+    <div style="margin-top: 10px;">
+      <a-pagination
+          v-model:current="state.pagination.current"
+          v-model:page-size="state.pagination.pageSize"
+          show-size-changer
+          @showSizeChange="onShowSizeChange"
+          :total="state.pagination.total"
+          :show-total="(total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`"
+          :page-size-options="[10, 30, 50, 100]"
+          @change="handlePageChange"
+      />
+    </div>
   </a-card>
 
   <a-modal
@@ -519,6 +543,7 @@ import {cloneDeep} from "lodash";
 const state = reactive({
   tableData: {
     data: [],
+    showData: [],
     total: 0,
     loading: false,
     syncBridgeStatusLoading: false,
@@ -585,8 +610,31 @@ const state = reactive({
   showDetailModal: false,
   detailModalData: {},
   detailForm: ref(null),
+  pagination: {
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  },
 
 });
+
+const handlePageChange = (page, pageSize) => {
+  console.log(page, pageSize)
+  state.pagination.current = page;
+  state.pagination.pageSize = pageSize;
+  reloadShowData();
+}
+
+const onShowSizeChange = (current, pageSize) => {
+  console.log(current, pageSize);
+  state.pagination.current = current;
+  state.pagination.pageSize = pageSize;
+  reloadShowData();
+}
+
+const reloadShowData = () => {
+  state.tableData.showData = state.tableData.data.slice((state.pagination.current - 1) * state.pagination.pageSize, state.pagination.current * state.pagination.pageSize);
+}
 
 // 검색기간
 const onChangeDatePicker = (value, dateString) => {
@@ -634,7 +682,8 @@ const getTableData = async () => {
     }
 
     state.tableData.data = res.data;
-    state.tableData.total = res.data.length;
+    state.pagination.total = res.data.length;
+    reloadShowData();
     state.tableData.loading = false;
   }).then(() => {
     getCountWithStatus();
@@ -649,7 +698,6 @@ const rowSelection = ref({
     state.checkedList = [];
     state.checkedList.push(selectedRowKeys)
     rowSelection.value.selectedRowKeys = selectedRowKeys;
-
   },
 });
 

@@ -53,7 +53,7 @@
             <a-button style="margin-left: 5px; margin-bottom: 5px; width: 140px" type="primary"
                       @click.prevent="receiptListExcelDownload">
               <template #icon>
-                <ProfileOutlined />
+                <ProfileOutlined/>
               </template>
               엑셀 다운로드
             </a-button>
@@ -65,6 +65,9 @@
             :columns="state.columns"
             :data-source="state.tableData.data"
             :loading="state.tableData.loading"
+            :pagination="state.pagination"
+            v-model:current="state.pagination.current"
+            :defaultExpandAllRows="true" :scroll="{ x: 600, y: 600}"
         >
           <template #bodyCell="{ column, text, record }">
             <template v-if="column.key === 'receipt_date'">
@@ -124,7 +127,6 @@ const state = reactive({
   ],
   tableData: {
     data: [],
-    total: 0,
     loading: false,
     syncBridgeStatusLoading: false,
     params: {
@@ -149,6 +151,17 @@ const state = reactive({
 
   order_date: [],
   invoiceNo: '',
+  pagination: {
+    size: 'middle',
+    position: ['bottomLeft'],
+    defaultCurrent: 1,
+    defaultPageSize: 10,
+    pageSizeOptions: ['10', '30', '50', '100'],
+    total: 0,
+    showSizeChanger: true,
+    showQuickJumper: true,
+    showTotal: (total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`,
+  },
 
 });
 
@@ -245,6 +258,7 @@ const getTableData = async () => {
     }
 
     state.tableData.data = res.data;
+    state.pagination.total = res.data.length;
     state.tableData.loading = false;
     state.indicator.loading = false;
   })
