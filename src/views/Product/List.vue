@@ -1087,8 +1087,6 @@ export default defineComponent({
         }
         url = `${channelInfo.url}/${market_prd_code}`;
       } else if (marketInfo.market_code === 'coupang') {
-        console.log('==0==')
-        console.log(marketInfo)
         if (marketInfo.front_code !== undefined) {
           market_prd_code = marketInfo.front_code
         }
