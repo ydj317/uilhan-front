@@ -38,6 +38,55 @@ export function useCustomOrderApi() {
                 method: "post",
                 data: data,
             });
+        },
+        getCountWithStatus: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/count",
+                method: "get",
+                params: data,
+            });
+        },
+        getCustomOrderDetail: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/detail",
+                method: "get",
+                params: data,
+            });
+        },
+        setReceiptCompleted : (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/receipt",
+                method: "post",
+                data: data,
+            });
+        },
+
+        getCustomOrderReceiptList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/receiptList",
+                method: "get",
+                params: data,
+            });
+        },
+
+        // 입고처리
+        setWaitWarehouse : (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/waitWarehouse",
+                method: "post",
+                data: data,
+            });
+        },
+
+        downloadCustomOrderReceiptList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/receiptList/download",
+                method: "post",
+                data: data,
+            });
         }
+
+
+
     }
 }

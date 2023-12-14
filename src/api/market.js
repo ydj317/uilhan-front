@@ -63,6 +63,14 @@ export function useMarketApi() {
                 params: data,
             });
         },
+
+        getCustomOrderStatusList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/getCustomOrderStatusList",
+                method: "get",
+                params: data,
+            });
+        }
         
 
     }
