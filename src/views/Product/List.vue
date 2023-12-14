@@ -753,9 +753,11 @@ export default defineComponent({
     },
 
     async deletePrd() {
+      this.indicator = true;
       // 연동 마켓이 있을때 선택한 마켓이 없으면 선택하도록 얼럿
       if (this.deleteOptions.length > 0 && this.deleteCheckList.length === 0) {
         message.warning("삭제할 마켓을 선택해주세요.");
+        this.indicator = false;
         return false;
       }
 
@@ -771,6 +773,7 @@ export default defineComponent({
       }).then(res => {
         if (res.status !== "2000") {
           message.error(res.message);
+          this.indicator = false;
           return false;
         }
 
