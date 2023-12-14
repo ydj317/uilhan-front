@@ -334,9 +334,9 @@
           <td>{{ moment(item.ins_date).format('YYYY-MM-DD HH:mm:ss') }}</td><!--주문일자-->
           <!--품목코드-->
           <td>
-            <a-button type="link" @click="openPrdCodePopup(item)">
+            <a @click="openPrdCodePopup(item)">
               {{ item.item_no }}
-            </a-button>
+            </a>
           </td>
           <td>{{ item.prd_size_option }}</td><!--사이즈-->
 
@@ -619,14 +619,12 @@ const state = reactive({
 });
 
 const handlePageChange = (page, pageSize) => {
-  console.log(page, pageSize)
   state.pagination.current = page;
   state.pagination.pageSize = pageSize;
   reloadShowData();
 }
 
 const onShowSizeChange = (current, pageSize) => {
-  console.log(current, pageSize);
   state.pagination.current = current;
   state.pagination.pageSize = pageSize;
   reloadShowData();
@@ -705,6 +703,12 @@ const rowSelection = ref({
 // 엑셀 다운로드
 const downloadCustomOrderExcel = () => {
   state.indicator.download = true;
+  if (state.tableData.data.length === 0) {
+    state.indicator.download = false;
+    message.error('엑셀 다운로드 할 데이터가 없습니다.');
+    return false;
+  }
+
   useCustomOrderApi().downloadCustomOrderExcel(state.tableData.data).then(res => {
     if (res === undefined || res.status !== "2000") {
       state.indicator.download = false;
@@ -866,7 +870,6 @@ const receiptCompleted = async () => {
 }
 
 const handleOrderChecked = (item) => {
-  console.log(item)
   item.checked = !item.checked;
 }
 
@@ -942,7 +945,6 @@ const openDetailPopup = async () => {
       return false;
     }
 
-    console.log( res.data)
     state.detailModalData = res.data;
     state.showDetailModal = true;
     state.indicator.table = false;
@@ -1040,7 +1042,7 @@ const isInPattern = (num) => {
 
 .header-table thead th {
   border: 1px solid #8c96a4;
-  background-color: #284d77;
+  background-color: #002770;
   color: #ffffff;
   font-size: 12px;
   font-weight: bold;

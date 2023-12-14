@@ -397,7 +397,7 @@ export const menus = [{
                 title: "구매입출고관리",
                 isHide: false,
                 roles: [],
-                ids: ["irunkorea", "jwli", "1sjsj21s", "haeju"],
+                ids: ["irunkorea", "jwli", "haeju"],
                 icon: BarcodeOutlined
             },
             "children": [

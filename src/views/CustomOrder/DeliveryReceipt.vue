@@ -286,20 +286,22 @@ const handleReceiving = async () => {
 
 const receiptListExcelDownload = async () => {
   state.indicator.loading = true;
-  await useCustomOrderApi().downloadCustomOrderReceiptList(state.tableData.params).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
+
+  if (state.tableData.data.length === 0) {
+    state.indicator.loading = false;
+    message.error('엑셀 다운로드 할 데이터가 없습니다.');
+    return false;
+  }
+
+  await useCustomOrderApi().downloadCustomOrderReceiptList(state.tableData.data).then(res => {
+    if (res === undefined || res.status !== "2000") {
       state.indicator.loading = false;
+      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
       return false;
     }
 
-    const url = window.URL.createObjectURL(new Blob([res.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', '택배사입고처리.xlsx');
-    document.body.appendChild(link);
-    link.click();
     state.indicator.loading = false;
+    window.open(res.data.download_url, "_blank");
   })
 
 }
