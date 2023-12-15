@@ -130,9 +130,9 @@ const state = reactive({
     loading: false,
     syncBridgeStatusLoading: false,
     params: {
-      order_date: [],
+      order_date: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
       userinfo: [],
-      period: 'all',
+      period: 'today',
     },
   },
   period: [
@@ -149,7 +149,7 @@ const state = reactive({
     loading: false
   },
 
-  order_date: [],
+  order_date: [moment(), moment()],
   invoiceNo: '',
   pagination: {
     size: 'middle',

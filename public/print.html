@@ -5,6 +5,7 @@
     <title>Print</title>
     <style>
         body {
+            zoom: 3;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
@@ -13,8 +14,8 @@
         #print-container{
             background-color: white;
             position: relative;
-            width: 180mm;
-            height: 100mm;
+            width: 50mm;
+            height: 30mm;
             border: 1px solid rgb(128, 128, 128);
             margin: 10mm auto 0 auto;
             padding: 20px 15px;
@@ -37,6 +38,9 @@
         }
 
         @media print {
+            .body {
+                zoom: 1;
+            }
             .print-button {
                 display: none;
             }
@@ -48,12 +52,20 @@
 
     </div>
 <div style="display: flex;justify-content: center;margin-top: 15px;">
-    <button class="print-button" onclick="window.print();">프린트</button>
+    <button class="print-button" onclick="customPrint();">프린트</button>
 </div>
 <script>
     // 프린트 내용을 설정하는 함수
     function setPrintContent(htmlContent) {
         document.getElementById('print-container').innerHTML = htmlContent;
+    }
+
+    function customPrint() {
+        let zoom = document.body.style.zoom;
+        document.body.style.zoom = 1;
+        // 프린트
+        window.print();
+        document.body.style.zoom = zoom;
     }
 </script>
 </body>

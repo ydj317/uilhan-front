@@ -31,8 +31,8 @@
                   <a-select-option value="prd_option_name">옵션명</a-select-option>
                   <a-select-option value="prd_size_option">사이즈</a-select-option>
                   <a-select-option value="purchase_order_no">구매번호</a-select-option>
-                  <a-select-option value="purchase_invoice_no">중국택배번호</a-select-option>
-                  <a-select-option value="package_status_memo">택배현황 메모</a-select-option>
+                  <a-select-option value="purchase_invoice_no">택배번호</a-select-option>
+                  <a-select-option value="package_status_memo">택배현황</a-select-option>
                   <a-select-option value="memo">메모</a-select-option>
                 </a-select>
                 <a-input v-model:value="state.tableData.params.search_value" style="width: 400px;" allowClear/>
@@ -137,6 +137,13 @@
           </a-button>
           <a-spin v-if="state.indicator.upload"/>
         </a-upload>
+
+        <a-button class="custom-button"   @click="downloadSampleExcel" style="margin-right: 5px;" >
+          업로드 샘플
+          <template #icon>
+            <DownloadOutlined/>
+          </template>
+        </a-button>
       </div>
     </div>
     <div style="margin-bottom: 10px;">
@@ -147,7 +154,7 @@
           @showSizeChange="onShowSizeChange"
           :total="state.pagination.total"
           :show-total="(total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`"
-          :page-size-options="[10, 30, 50, 100]"
+          :page-size-options="[10, 50, 100, 500, 1000, 1500, 2000]"
           @change="handlePageChange"
       />
     </div>
@@ -171,7 +178,7 @@
         <th rowspan="3">금액</th>
         <th rowspan="3">구매번호</th>
         <th rowspan="3">실도착수량</th>
-        <th rowspan="3">메모</th>
+        <th rowspan="3" style="width: 80px;">메모</th>
         <th rowspan="3">바코드</th>
         <th rowspan="3">입출고상태</th>
         <th style="width: 90px;" rowspan="3">액션</th>
@@ -193,7 +200,7 @@
       </thead>
       <tbody>
       <tr v-if="state.tableData.loading">
-        <td colspan="8" style="padding: 80px;background-color: white">
+        <td colspan="17" style="padding: 80px;background-color: white">
           <a-spin size="large"/>
         </td>
       </tr>
@@ -278,7 +285,8 @@
 
           <!--메모-->
           <td rowspan="3">
-            <a-input
+            <a-textarea
+                :rows="5"
                 v-if="state.editableData[item.key]"
                 v-model:value="state.editableData[item.key]['memo']"
                 size="small"
@@ -407,7 +415,7 @@
           @showSizeChange="onShowSizeChange"
           :total="state.pagination.total"
           :show-total="(total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`"
-          :page-size-options="[10, 30, 50, 100]"
+          :page-size-options="[10, 50, 100, 500, 1000, 1500, 2000]"
           @change="handlePageChange"
       />
     </div>
@@ -455,11 +463,11 @@
         <a-descriptions-item label="원가">{{ state.detailModalData.origin_price }}</a-descriptions-item>
 
         <a-descriptions-item label="실구매가">
-          <a-input v-model:value="state.detailModalData.purchase_price" />
+          <a-input-number v-model:value="state.detailModalData.purchase_price" />
         </a-descriptions-item>
 
         <a-descriptions-item label="현지운임">
-          <a-input v-model:value="state.detailModalData.local_shipping_fee" />
+          <a-input-number v-model:value="state.detailModalData.local_shipping_fee" />
         </a-descriptions-item>
 
         <a-descriptions-item label="택배번호">
@@ -467,15 +475,15 @@
         </a-descriptions-item>
 
         <a-descriptions-item label="택배현황">
-          <a-input v-model:value="state.detailModalData.package_status_memo" />
+          <a-textarea v-model:value="state.detailModalData.package_status_memo" />
         </a-descriptions-item>
 
         <a-descriptions-item label="수수료">
-          <a-input v-model:value="state.detailModalData.charge" />
+          <a-input-number v-model:value="state.detailModalData.charge" />
         </a-descriptions-item>
 
         <a-descriptions-item label="금액">
-          <a-input v-model:value="state.detailModalData.total_payment_amount" />
+          <a-input-number v-model:value="state.detailModalData.total_payment_amount" />
         </a-descriptions-item>
 
         <a-descriptions-item label="구매번호">
@@ -483,11 +491,11 @@
         </a-descriptions-item>
 
         <a-descriptions-item label="실도착수량">
-          <a-input ref="inputRef"  v-model:value="state.detailModalData.arrival_quantity" />
+          <a-input-number ref="inputRef"  v-model:value="state.detailModalData.arrival_quantity" />
         </a-descriptions-item>
 
         <a-descriptions-item label="메모">
-          <a-input v-model:value="state.detailModalData.memo" />
+          <a-textarea v-model:value="state.detailModalData.memo" />
         </a-descriptions-item>
 
         <a-descriptions-item label="바코드">
@@ -548,7 +556,7 @@ const state = reactive({
     loading: false,
     syncBridgeStatusLoading: false,
     params: {
-      order_date: [moment().subtract(15, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+      order_date: [moment().subtract(7, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
       userinfo: [],
       search_type: 'order_no',
       search_value: '',
@@ -579,7 +587,7 @@ const state = reactive({
   shippingCount: 0,
 
   accountData: {},
-  order_date: [moment().subtract(15, 'days'), moment()],
+  order_date: [moment().subtract(7, 'days'), moment()],
   marketDetailUrls: {},
   uploadCustomOrderPath: process.env.VUE_APP_API_URL + "/api/custom/order/excelUpload",
   fileList: [],
@@ -721,6 +729,10 @@ const downloadCustomOrderExcel = () => {
   });
 }
 
+const downloadSampleExcel = () => {
+  window.open('/sampleFile/custom-order-upload-sample.xlsx', '_blank');
+}
+
 // 엑셀 업로드
 const excelUploadCustomOrder = (res) => {
   if (res.file.status === 'uploading') {
@@ -812,16 +824,16 @@ const openBarcodePopup = async (record) => {
     state.showPopupData.prd_size_option = record.prd_size_option;
     const content = `
       <div style="display: flex;justify-content: space-between;gap: 10px;">
-          <div  style="display: flex;flex-direction: column;gap: 5px;padding-top:10px;">
-              <span style="font-size: 30pt;line-height: 35pt;font-weight: bold;">${record.prd_code}</span>
-              <span style="font-size: 30pt;line-height: 40pt;font-weight: bold;">[${record.prd_option_name} ${record.prd_size_option}]</span>
+          <div style="display: flex;flex-direction: column;gap: 5px;padding-top:10px; ">
+              <span style="font-size: 10pt;line-height: 2pt;font-weight: bold;">${record.prd_code}</span>
+              <span style="font-size: 8pt;line-height: 10pt;font-weight: bold;">[${record.prd_option_name} ${record.prd_size_option}]</span>
           </div>
           <div class="qr-code">
-              <img src="${res.data.qrCodeUrl}" alt="QR Code" style="width: 258px;height: 258px;">
+              <img src="${res.data.qrCodeUrl}" alt="QR Code" style="width: 80px;height: 80px;">
           </div>
       </div>
-      <div style="display: flex;justify-content: center">
-          <h1 style="font-size: 40pt;line-height: 0;">${record.barcode}</h1>
+      <div style="display: flex;justify-content: center; transform: translateY(-15px);">
+          <h1 style="font-size: 15pt;line-height: 1;">${record.barcode}</h1>
       </div>
   `
 
@@ -925,6 +937,7 @@ const updateStatus = async (item, what) => {
       return false;
     }
     message.success(`수정되었습니다.`);
+    getCountWithStatus();
   });
 }
 
