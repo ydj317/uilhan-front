@@ -46,7 +46,7 @@
         wrap-class-name="full-modal"
         centered
       >
-        <!-- 번역 남은 회수 -->
+        <!-- 번역 남은 회수 선택-->
         <div class="w100 right center">
           <h3 class="pr5">
             남은회수: <span class="red">{{ product.recharge }}</span>
@@ -91,7 +91,7 @@
         width="50%"
         centered
       >
-        <!-- 번역 남은 회수 -->
+        <!-- 번역 남은 회수 상세이미지번역-->
         <div class="w100 right center">
           <h3 class="pr5">
             남은회수: <span class="red">{{ product.recharge }}</span>
@@ -99,7 +99,7 @@
         </div>
 
         <!-- 상세페이지 이미지 리스트 -->
-        <a-row :gutter="15" style="height: 620px; overflow: scroll;overflow-x: hidden;">
+        <a-row :gutter="15" style="overflow: scroll;overflow-x: hidden;">
           <a-col
             v-for="(item, key) in product.aPhotoCollection"
             :key="key"
