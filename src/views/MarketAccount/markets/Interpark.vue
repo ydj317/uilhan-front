@@ -37,6 +37,10 @@
       <a-input v-model:value="state.formData.return_address_client_secret" />
     </a-form-item>
 
+    <a-form-item name="supply_seq" @keyup="handleResetSyncStatus" label="업체/공급계약번호"
+                 :rules="[{ required: true, message: '업체/공급계약번호를 입력해 주세요.' }]">
+      <a-input v-model:value="state.formData.supply_seq" placeholder="판매자 센터->판매자정보관리->관리계정(ID)관리->업체/공급계약번호->1000********/1"/>
+    </a-form-item>
 
     <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
       <template #icon v-if="state.formData.sync_market_status">
@@ -151,6 +155,7 @@ const state = reactive({
     prd_update_client_secret: '',
     return_address_client_id: '',
     return_address_client_secret: '',
+    supply_seq: '',
 
     sync_market_status: false,
 
@@ -194,6 +199,7 @@ const initFormData = () => {
 
     state.formData.return_address_client_id = accountInfo.marketData.return_address_client_id;
     state.formData.return_address_client_secret = accountInfo.marketData.return_address_client_secret;
+    state.formData.supply_seq = accountInfo.marketData?.supply_seq;
 
     state.formData.sync_market_status = accountInfo.marketData.sync_market_status;
 

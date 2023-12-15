@@ -100,7 +100,6 @@
 <script setup>
 
 import {message} from "ant-design-vue";
-import {AuthRequest} from "@/util/request";
 import {onMounted, reactive} from "vue";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {useMarketApi} from "@/api/market";
@@ -137,15 +136,20 @@ const formState = reactive({
 function getUserInfoData() {
   formState.loading = true;
   useUserApi().getUserInfoData({}).then((res) => {
+
     if (res.status !== "2000") {
       message.error(res.message);
       formState.loading = false;
       return false;
     }
 
-    const { user_data } =res.data;
-
+    const { user_data } = res.data;
     if(!user_data || user_data.length < 1){
+      formState.loading = false;
+      return false;
+    }
+
+    if (user_data.margin_weight === undefined) {
       formState.loading = false;
       return false;
     }

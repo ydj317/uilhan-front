@@ -13,7 +13,8 @@ import {
     DashboardOutlined,
     FileExcelOutlined, NotificationOutlined,
     ShoppingOutlined,
-    BarcodeOutlined
+    BarcodeOutlined,
+    KeyOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -204,6 +205,18 @@ export const menus = [{
                         active: "/setting/template"
                     }
                 },
+                {
+                    path: "/setting/UserManage",
+                    name: "setting_userManage",
+                    component: () => import("@/views/Setting/UserManage.vue"),
+                    meta: {
+                        title: "고객 계정관리",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                        icon: ''
+                    },
+                }
             ]
         },
         {
@@ -336,6 +349,7 @@ export const menus = [{
             meta: {
                 title: "도매꾹",
                 isHide: false,
+                roles: [],
                 ids: ["jwli", "haeju"],
                 icon: AppstoreOutlined,
             },
@@ -377,16 +391,39 @@ export const menus = [{
             },
         },
         {
-            path: "/custom/order/list",
-            name: "customOrder_list",
-            component: () => import("@/views/CustomOrder/List.vue"),
+            path: "/customOrder",
+            name: "custom_order",
             meta: {
-                title: "구매관리",
+                title: "구매입출고관리",
                 isHide: false,
                 roles: [],
-                ids: ["jwli", "irunkorea", "haeju"],
+                ids: ["irunkorea", "jwli", "haeju"],
                 icon: BarcodeOutlined
             },
+            "children": [
+                {
+                    path: "/customOrder/list",
+                    component: () => import("@/views/CustomOrder/List.vue"),
+                    name: "custom_order_list",
+                    meta: {
+                        title: "구매관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+                {
+                    path: "/customOrder/DeliveryReceipt",
+                    component: () => import("@/views/CustomOrder/DeliveryReceipt.vue"),
+                    name: "custom_order_delivery_receipt",
+                    meta: {
+                        title: "택배입고관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+            ]
         },
     ]
 }]
