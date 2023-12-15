@@ -28,7 +28,7 @@
         <h3>마켓정보 불러오기</h3>
       </div>
 
-      <a-form-item name="return_shipping_fee" label="반품배송비" :rules="[{ required: true, message: '반품배송비를 입력해 주세요.' }, { validator: validateReturnShippingFee }]">
+      <a-form-item name="return_shipping_fee" label="반품배송비" :rules="[{ validator: validateReturnShippingFee }]">
         <a-input v-model:value="state.formData.return_shipping_fee"  placeholder="반품배송비를 입력해 주세요." style="width: 210px; margin-right: 10px;" />
         <a-checkbox v-model:checked="state.formData.return_shipping_fee_method">초도 배송비부과</a-checkbox>
       </a-form-item>
@@ -178,15 +178,9 @@ const state = reactive({
 })
 
 const validateReturnShippingFee = (rule, value, callback) => {
-  if (value) {
-    if (!/^\d+$/.test(value)) {
-      callback('숫자만 입력 가능합니다.');
-    } else if (value % 100 !== 0) {
-      callback('100단위로 입력 가능합니다.');
-    } else {
-      callback();
-    }
-  } else {
+  if (value && !/^\d+$/.test(value)) {
+    callback('숫자만 입력 가능합니다.');
+  }else {
     callback();
   }
 }
