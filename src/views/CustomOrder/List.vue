@@ -833,7 +833,7 @@ const openBarcodePopup = async (record) => {
           </div>
       </div>
       <div style="display: flex;justify-content: center; transform: translateY(-15px);">
-          <h1 style="font-size: 15pt;line-height: 1;">${record.barcode}</h1>
+          <h1 style="font-size: 14pt;line-height: 1;">${record.barcode}</h1>
       </div>
   `
 
