@@ -324,7 +324,7 @@ export const menus = [{
                     path: "https://open.kakao.com/o/ggOPXdSf",
                     name: "app_chat",
                     meta: {
-                        title: "월드링크 오픈 채팅방",
+                        title: "오픈채팅방",
                         isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
@@ -334,7 +334,7 @@ export const menus = [{
                     path: "https://blog.naver.com/worldlink_",
                     name: "app_blog",
                     meta: {
-                        title: "월드링크 블로그",
+                        title: "블로그",
                         isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
