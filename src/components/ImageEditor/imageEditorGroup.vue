@@ -99,7 +99,7 @@
         </div>
 
         <!-- 상세페이지 이미지 리스트 -->
-        <a-row :gutter="15" style="overflow: scroll;overflow-x: hidden;">
+        <a-row :gutter="15" style="max-height: 620px; overflow: scroll;overflow-x: hidden;">
           <a-col
             v-for="(item, key) in product.aPhotoCollection"
             :key="key"
