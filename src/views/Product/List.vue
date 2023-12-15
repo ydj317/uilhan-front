@@ -1086,6 +1086,11 @@ export default defineComponent({
           return false;
         }
         url = `${channelInfo.url}/${market_prd_code}`;
+      } else if (marketInfo.market_code === 'coupang') {
+        if (marketInfo.front_code !== undefined) {
+          market_prd_code = marketInfo.front_code
+        }
+        url = this.marketDetailUrls[marketInfo.market_code] + market_prd_code;
       } else {
         url = this.marketDetailUrls[marketInfo.market_code] + market_prd_code;
       }
