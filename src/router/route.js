@@ -367,18 +367,6 @@ export const menus = [{
             },
         },
         {
-            path: "/product/vvic",
-            name: "product_vvic",
-            component: () => import("@/views/Product/VvicList.vue"),
-            meta: {
-                title: "Vvic 상품관리",
-                isHide: false,
-                roles: [],
-                ids: ["jwli", "irunkorea", "haeju"],
-                icon: GiftOutlined,
-            },
-        },
-        {
             path: "/customOrder",
             name: "custom_order",
             meta: {
