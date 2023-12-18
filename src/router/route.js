@@ -324,7 +324,7 @@ export const menus = [{
                     path: "https://open.kakao.com/o/ggOPXdSf",
                     name: "app_chat",
                     meta: {
-                        title: "오픈채팅방",
+                        title: "오픈 채팅방",
                         isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
