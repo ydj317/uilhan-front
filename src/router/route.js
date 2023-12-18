@@ -403,12 +403,13 @@ export const menus = [{
         },
         {
             path: "/excel",
-            name: "excel1",
+            name: "excel",
             component: () => import("@/components/Tools/excelConvertTools.vue"),
             meta: {
                 title: "엑셀 컨버터 툴",
                 isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                ids: ["jwli", "irunkorea"],
+                roles: [],
                 icon: FileExcelOutlined,
             },
         },
@@ -419,45 +420,10 @@ export const menus = [{
             meta: {
                 title: "엑셀 컨버터 툴2",
                 isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: FileExcelOutlined,
-            },
-        },
-        {
-            path: "/excel",
-            name: "excel",
-            component: () => import("@/components/Tools/excelConvertTools.vue"),
-            meta: {
-                title: "기타기능",
-                isHide: false,
-                roles: [],
                 ids: ["jwli", "irunkorea"],
+                roles: [],
                 icon: FileExcelOutlined,
             },
-            "children": [
-                {
-                    path: "/excel/tool",
-                    name: "excel1",
-                    component: () => import("@/components/Tools/excelConvertTools.vue"),
-                    meta: {
-                        title: "엑셀 컨버터 툴",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: FileExcelOutlined,
-                    },
-                },
-                {
-                    path: "/excel/tool2",
-                    name: "excel2",
-                    component: () => import("@/components/Tools/excelConvertTools2.vue"),
-                    meta: {
-                        title: "엑셀 컨버터 툴2",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: FileExcelOutlined,
-                    },
-                },
-            ]
         },
     ]
 }]
