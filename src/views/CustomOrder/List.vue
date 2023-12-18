@@ -31,8 +31,8 @@
                   <a-select-option value="prd_option_name">옵션명</a-select-option>
                   <a-select-option value="prd_size_option">사이즈</a-select-option>
                   <a-select-option value="purchase_order_no">구매번호</a-select-option>
-                  <a-select-option value="purchase_invoice_no">중국택배번호</a-select-option>
-                  <a-select-option value="package_status_memo">택배현황 메모</a-select-option>
+                  <a-select-option value="purchase_invoice_no">택배번호</a-select-option>
+                  <a-select-option value="package_status_memo">택배현황</a-select-option>
                   <a-select-option value="memo">메모</a-select-option>
                 </a-select>
                 <a-input v-model:value="state.tableData.params.search_value" style="width: 400px;" allowClear/>
@@ -53,7 +53,6 @@
             </a-descriptions-item>
 
             <a-descriptions-item label="입출고상태">
-
               <a-radio-group v-model:value="state.tableData.params.shipping_status" button-style="solid"
                              @change="handleOrderStatusChange">
                 <a-radio-button value="">전체</a-radio-button>
@@ -105,8 +104,13 @@
         <a-popconfirm title="삭제하시겠습니까?" @confirm="deleteCustomOrder">
           <a-button>삭제</a-button>
         </a-popconfirm>
-        <a-popconfirm v-if="state.tableData.params.order_status === 'paid'" title="접수완료 처리 하시겠습니까?" @confirm="receiptCompleted">
+        <a-popconfirm v-if="state.tableData.params.order_status === 'paid'" title="접수완료 처리 하시겠습니까?"
+                      @confirm="updateSelectOrdersState('receiptCompleted')"    >
           <a-button style="margin-left: 10px;">접수완료</a-button>
+        </a-popconfirm>
+        <a-popconfirm v-if="state.tableData.params.order_status === 'receiptCompleted'" title="구매완료 처리 하시겠습니까?"
+                      @confirm="updateSelectOrdersState('purchaseCompleted')">
+          <a-button style="margin-left: 10px;">구매완료</a-button>
         </a-popconfirm>
       </div>
       <div class="right-div" style="display: flex;align-items: center;gap: 5px">
@@ -137,6 +141,13 @@
           </a-button>
           <a-spin v-if="state.indicator.upload"/>
         </a-upload>
+
+        <a-button class="custom-button"   @click="downloadSampleExcel" style="margin-right: 5px;" >
+          업로드 샘플
+          <template #icon>
+            <DownloadOutlined/>
+          </template>
+        </a-button>
       </div>
     </div>
     <div style="margin-bottom: 10px;">
@@ -147,7 +158,7 @@
           @showSizeChange="onShowSizeChange"
           :total="state.pagination.total"
           :show-total="(total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`"
-          :page-size-options="[10, 30, 50, 100]"
+          :page-size-options="[10, 50, 100, 500, 1000, 1500, 2000]"
           @change="handlePageChange"
       />
     </div>
@@ -160,18 +171,18 @@
         <th style="width: 150px;">
           주문번호
         </th>
-        <th style="width: 200px;" rowspan="3">상품명</th>
+        <th style="width: 150px;" rowspan="3">상품명</th>
         <th rowspan="3">옵션이미지</th>
         <th>상품코드</th>
-        <th>옵션명</th>
+        <th style="width: 150px;"  >옵션명</th>
         <th  style="width: 20px;" rowspan="3">주문수량</th>
         <th>원가</th>
-        <th>택배번호</th>
+        <th style="width: 80px;" >택배번호</th>
         <th rowspan="3">수수료</th>
         <th rowspan="3">금액</th>
         <th rowspan="3">구매번호</th>
         <th rowspan="3">실도착수량</th>
-        <th rowspan="3">메모</th>
+        <th rowspan="3" style="width: 80px;">메모</th>
         <th rowspan="3">바코드</th>
         <th rowspan="3">입출고상태</th>
         <th style="width: 90px;" rowspan="3">액션</th>
@@ -193,7 +204,7 @@
       </thead>
       <tbody>
       <tr v-if="state.tableData.loading">
-        <td colspan="8" style="padding: 80px;background-color: white">
+        <td colspan="17" style="padding: 80px;background-color: white">
           <a-spin size="large"/>
         </td>
       </tr>
@@ -217,6 +228,7 @@
           <td>{{ item.original_price }}</td><!--원가-->
           <td>
             <a-input
+                size="small"
                 v-if="state.editableData[item.key]"
                 v-model:value="state.editableData[item.key]['purchase_invoice_no']"
                 style="margin: -5px 0"
@@ -278,7 +290,8 @@
 
           <!--메모-->
           <td rowspan="3">
-            <a-input
+            <a-textarea
+                :rows="5"
                 v-if="state.editableData[item.key]"
                 v-model:value="state.editableData[item.key]['memo']"
                 size="small"
@@ -309,7 +322,10 @@
                 v-model:value="item.shipping_status"
                 @change="updateStatus(item, 'shipping_status')"
                 style="width: 100px;">
-              <a-select-option v-for="option in state.shippingStatus" :value="option.value">
+              <a-select-option v-if="['paid', 'receiptCompleted'].includes(item.order_status)"  value="shippingAddress">
+                미발송
+              </a-select-option>
+              <a-select-option v-else v-for="option in state.shippingStatus" :value="option.value">
                 {{ option.label }}
               </a-select-option>
             </a-select>
@@ -319,13 +335,13 @@
           <td rowspan="3">
             <div class="editable-row-operations">
               <span v-if="state.editableData[item.key]">
-                <a-typography-link @click="save(item.key)">저장</a-typography-link>
-                <a-popconfirm title="취소 하시겠습니까?" @confirm="cancel(item.key)">
+                <a-typography-link @click="saveRow(item.key)">저장</a-typography-link>
+                <a-popconfirm title="취소 하시겠습니까?" @confirm="cancelRow(item.key)">
                   <a>취소</a>
                 </a-popconfirm>
               </span>
               <span v-else>
-                <a @click="edit(item.key)">수정</a>
+                <a @click="editRow(item.key)">수정</a>
               </span>
             </div>
           </td>
@@ -407,7 +423,7 @@
           @showSizeChange="onShowSizeChange"
           :total="state.pagination.total"
           :show-total="(total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`"
-          :page-size-options="[10, 30, 50, 100]"
+          :page-size-options="[10, 50, 100, 500, 1000, 1500, 2000]"
           @change="handlePageChange"
       />
     </div>
@@ -421,7 +437,7 @@
   >
     <template #footer>
       <a-button key="close" @click="()=>{state.showDetailModal=false}">닫기</a-button>
-      <a-button key="save" type="primary" :loading="state.indicator.saveDetail" @click="saveDetail(state.detailModalData)">저장</a-button>
+      <a-button key="saveRow" type="primary" :loading="state.indicator.saveDetail" @click="saveDetail(state.detailModalData)">저장</a-button>
     </template>
 
 
@@ -455,11 +471,11 @@
         <a-descriptions-item label="원가">{{ state.detailModalData.origin_price }}</a-descriptions-item>
 
         <a-descriptions-item label="실구매가">
-          <a-input v-model:value="state.detailModalData.purchase_price" />
+          <a-input-number v-model:value="state.detailModalData.purchase_price" />
         </a-descriptions-item>
 
         <a-descriptions-item label="현지운임">
-          <a-input v-model:value="state.detailModalData.local_shipping_fee" />
+          <a-input-number v-model:value="state.detailModalData.local_shipping_fee" />
         </a-descriptions-item>
 
         <a-descriptions-item label="택배번호">
@@ -467,15 +483,15 @@
         </a-descriptions-item>
 
         <a-descriptions-item label="택배현황">
-          <a-input v-model:value="state.detailModalData.package_status_memo" />
+          <a-textarea v-model:value="state.detailModalData.package_status_memo" />
         </a-descriptions-item>
 
         <a-descriptions-item label="수수료">
-          <a-input v-model:value="state.detailModalData.charge" />
+          <a-input-number v-model:value="state.detailModalData.charge" />
         </a-descriptions-item>
 
         <a-descriptions-item label="금액">
-          <a-input v-model:value="state.detailModalData.total_payment_amount" />
+          <a-input-number v-model:value="state.detailModalData.total_payment_amount" />
         </a-descriptions-item>
 
         <a-descriptions-item label="구매번호">
@@ -483,11 +499,11 @@
         </a-descriptions-item>
 
         <a-descriptions-item label="실도착수량">
-          <a-input ref="inputRef"  v-model:value="state.detailModalData.arrival_quantity" />
+          <a-input-number ref="inputRef"  v-model:value="state.detailModalData.arrival_quantity" />
         </a-descriptions-item>
 
         <a-descriptions-item label="메모">
-          <a-input v-model:value="state.detailModalData.memo" />
+          <a-textarea v-model:value="state.detailModalData.memo" />
         </a-descriptions-item>
 
         <a-descriptions-item label="바코드">
@@ -548,7 +564,7 @@ const state = reactive({
     loading: false,
     syncBridgeStatusLoading: false,
     params: {
-      order_date: [moment().subtract(15, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+      order_date: [moment().subtract(7, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
       userinfo: [],
       search_type: 'order_no',
       search_value: '',
@@ -579,7 +595,7 @@ const state = reactive({
   shippingCount: 0,
 
   accountData: {},
-  order_date: [moment().subtract(15, 'days'), moment()],
+  order_date: [moment().subtract(7, 'days'), moment()],
   marketDetailUrls: {},
   uploadCustomOrderPath: process.env.VUE_APP_API_URL + "/api/custom/order/excelUpload",
   fileList: [],
@@ -653,12 +669,14 @@ const getCustomOrderStatusList = async () => {
     }
     state.orderStatusData = res.data.orderStatus;
     state.shippingStatusData = res.data.shippingStatus;
+
     state.orderStatus = Object.keys(state.orderStatusData).map((item, index) => {
       return {
         label: state.orderStatusData[item],
         value: item,
       }
     });
+
     state.shippingStatus = Object.keys(state.shippingStatusData).map((item, index) => {
       return {
         label: state.shippingStatusData[item],
@@ -721,6 +739,10 @@ const downloadCustomOrderExcel = () => {
   });
 }
 
+const downloadSampleExcel = () => {
+  window.open('/sampleFile/custom-order-upload-sample.xlsx', '_blank');
+}
+
 // 엑셀 업로드
 const excelUploadCustomOrder = (res) => {
   if (res.file.status === 'uploading') {
@@ -780,12 +802,13 @@ const getUserInfoData = async () => {
   }
 }
 
-const edit = key => {
+const editRow = key => {
   state.editableData[key] = cloneDeep(state.tableData.data.filter(item => key === item.key)[0]);
 };
 
-const save = async key => {
-  await useCustomOrderApi().updateCustomOrder(state.editableData[key]).then(res => {
+const saveRow = async key => {
+  const sendParam = [state.editableData[key]];
+  await useCustomOrderApi().updateCustomOrder(sendParam).then(res => {
     if (res.status !== "2000") {
       delete state.editableData[key];
       message.error(res.message);
@@ -798,7 +821,7 @@ const save = async key => {
   delete state.editableData[key];
 };
 
-const cancel = key => {
+const cancelRow = key => {
   delete state.editableData[key];
 };
 
@@ -812,16 +835,16 @@ const openBarcodePopup = async (record) => {
     state.showPopupData.prd_size_option = record.prd_size_option;
     const content = `
       <div style="display: flex;justify-content: space-between;gap: 10px;">
-          <div  style="display: flex;flex-direction: column;gap: 5px;padding-top:10px;">
-              <span style="font-size: 30pt;line-height: 35pt;font-weight: bold;">${record.prd_code}</span>
-              <span style="font-size: 30pt;line-height: 40pt;font-weight: bold;">[${record.prd_option_name} ${record.prd_size_option}]</span>
+          <div style="display: flex;flex-direction: column;gap: 5px;padding-top:10px; ">
+              <span style="font-size: 10pt;line-height: 2pt;font-weight: bold;">${record.prd_code}</span>
+              <span style="font-size: 7pt;line-height: 10pt;font-weight: bold;">[${record.prd_option_name} ${record.prd_size_option}]</span>
           </div>
           <div class="qr-code">
-              <img src="${res.data.qrCodeUrl}" alt="QR Code" style="width: 258px;height: 258px;">
+              <img src="${res.data.qrCodeUrl}" alt="QR Code" style="width: 80px;height: 80px;">
           </div>
       </div>
-      <div style="display: flex;justify-content: center">
-          <h1 style="font-size: 40pt;line-height: 0;">${record.barcode}</h1>
+      <div style="display: flex;justify-content: center; transform: translateY(-15px);">
+          <h1 style="font-size: 14pt;line-height: 1;">${record.barcode}</h1>
       </div>
   `
 
@@ -852,12 +875,24 @@ const deleteCustomOrder = async () => {
   });
 }
 
-const receiptCompleted = async () => {
+/**
+ * 체크한 주문들 상태 일괄변경
+ * @returns {Promise<void>}
+ */
+const updateSelectOrdersState = async (changeState) => {
   // 체크된 주문 없을시 경고창 띄우기
   const checkedList = state.tableData.data.filter(item => item.checked === true)
   checkedList.length === 0 && message.error('접수완료 처리할 주문을 선택해주세요.');
+
+  const sendParam = checkedList.map(item => {
+    return {
+      id: item.id,
+      order_status: changeState,
+    }
+  });
+
   state.indicator.table = true;
-  await useCustomOrderApi().setReceiptCompleted(checkedList).then((res) => {
+  await useCustomOrderApi().updateCustomOrder(sendParam).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
       state.indicator.table = false;
@@ -912,19 +947,16 @@ const openPrdCodePopup = (item) => {
 const updateStatus = async (item, what) => {
   const sendData = {
     id: item.id,
+    [what]: item[what],
   }
 
-  if (what === 'order_status') {
-    sendData.order_status = item.order_status;
-  } else if (what === 'shipping_status') {
-    sendData.shipping_status = item.shipping_status;
-  }
-  await useCustomOrderApi().updateCustomOrder(sendData).then(res => {
+  await useCustomOrderApi().updateCustomOrder([sendData]).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
     }
     message.success(`수정되었습니다.`);
+    getCountWithStatus();
   });
 }
 
@@ -1027,7 +1059,7 @@ const isInPattern = (num) => {
   text-align: center;
   font-size: 12px;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1;
   background: #7273de;
 }
 
@@ -1036,7 +1068,7 @@ const isInPattern = (num) => {
   text-align: center;
   font-size: 12px;
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.2;
   border: 1px solid #d9d9d9;
 }
 

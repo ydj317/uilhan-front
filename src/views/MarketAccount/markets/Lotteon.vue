@@ -27,23 +27,14 @@
       <div style="display:flex;justify-content:space-between;align-items:center;" class="mb15">
         <h3>마켓정보 불러오기</h3>
       </div>
-      <a-form-item label="배송비정책/추가배송비정책">
+
+      <a-form-item name="return_shipping_fee" label="반품배송비" :rules="[{ validator: validateReturnShippingFee }]">
+        <a-input v-model:value="state.formData.return_shipping_fee"  placeholder="반품배송비를 입력해 주세요." style="width: 210px; margin-right: 10px;" />
+        <a-checkbox v-model:checked="state.formData.return_shipping_fee_method">초도 배송비부과</a-checkbox>
+      </a-form-item>
+      <a-form-item name="add_shipping_cost_policy_code" label="추가배송비정책" :rules="[{ required: true, message: '추가배송비정책을 선택해 주세요.' }]">
         <div style="display: flex; align-items: center;">
           <div>
-            <div>
-              <a-form-item name="shipping_cost_policy_code" label="배송비정책"
-                           :rules="[{ required: true, message: '배송비정책을 선택해 주세요.' }]">
-                <a-select v-model:value="state.formData.shipping_cost_policy_code" placeholder="배송비정책을 선택해 주세요"
-                          style="width:260px;">
-                  <a-select-option :value="item.shipping_cost_policy_code"
-                                   v-for="(item, key) in state.shippingCostPolicy" :key="key">{{
-                      item.shipping_cost_policy_name
-                    }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-              <a-form-item name="add_shipping_cost_policy_code" label="추가배송비정책"
-                           :rules="[{ required: true, message: '추가배송비정책을 선택해 주세요.' }]">
                 <a-select v-model:value="state.formData.add_shipping_cost_policy_code" placeholder="추가배송비정책을 선택해 주세요"
                           style="width:260px;">
                   <a-select-option :value="item.add_shipping_cost_policy_code"
@@ -52,8 +43,6 @@
                     }}
                   </a-select-option>
                 </a-select>
-              </a-form-item>
-            </div>
           </div>
           <div>
             <a-button @click="getShippingCostPolicy(state.formData.id)" class="ml15"
@@ -156,7 +145,8 @@ const state = reactive({
     // 마켓정보 불러오기
     return_address_code: null,
     outbound_address_code: null,
-    shipping_cost_policy_code: null,
+    return_shipping_fee: '',
+    return_shipping_fee_method: true,
     add_shipping_cost_policy_code: null,
 
     // 마켓정보 설정
@@ -187,6 +177,14 @@ const state = reactive({
 
 })
 
+const validateReturnShippingFee = (rule, value, callback) => {
+  if (value && !/^\d+$/.test(value)) {
+    callback('숫자만 입력 가능합니다.');
+  }else {
+    callback();
+  }
+}
+
 // 수정시 계정 데이터 설정
 const initFormData = () => {
   const accountInfo = props.accountInfo;
@@ -202,10 +200,9 @@ const initFormData = () => {
     // 마켓정보 불러오기
     state.formData.return_address_code = accountInfo.marketData.return_address_code;
     state.formData.outbound_address_code = accountInfo.marketData.outbound_address_code;
-    state.formData.shipping_cost_policy_code = accountInfo.marketData.shipping_cost_policy_code;
+    state.formData.return_shipping_fee = accountInfo.marketData.return_shipping_fee;
+    state.formData.return_shipping_fee_method = accountInfo.marketData.return_shipping_fee_method;
     state.formData.add_shipping_cost_policy_code = accountInfo.marketData.add_shipping_cost_policy_code;
-
-
   }
 }
 
@@ -326,12 +323,6 @@ const getShippingCostPolicy = (account_id) => {
     message.success('업데이트 완료 되었습니다. 배송비정책을 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
     marketJson?.data.forEach(item => {
-      if (item.useYn === 'Y' && item.dvCstTypCd === 'DV_CST') {
-        state.shippingCostPolicy.push({
-          shipping_cost_policy_code: item.dvCstPolNo,
-          shipping_cost_policy_name: item.dvCstPolNm
-        });
-      }
       if (item.useYn === 'Y' && item.dvCstTypCd === 'ADTN_DV_CST') {
         state.addShippingCostPolicy.push({
           add_shipping_cost_policy_code: item.dvCstPolNo,
@@ -381,12 +372,6 @@ const getAccountJson = () => {
     state.sync_shipping_date = updDate || null;
 
     marketJson?.data.forEach(item => {
-      if (item.useYn === 'Y' && item.dvCstTypCd === 'DV_CST') {
-        state.shippingCostPolicy.push({
-          shipping_cost_policy_code: item.dvCstPolNo,
-          shipping_cost_policy_name: item.dvCstPolNm
-        });
-      }
       if (item.useYn === 'Y' && item.dvCstTypCd === 'ADTN_DV_CST') {
         state.addShippingCostPolicy.push({
           add_shipping_cost_policy_code: item.dvCstPolNo,

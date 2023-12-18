@@ -355,30 +355,6 @@ export const menus = [{
             },
         },
         {
-            path: "/excel",
-            name: "excel",
-            component: () => import("@/components/Tools/excelConvertTools.vue"),
-            meta: {
-                title: "엑셀 컨버터 툴",
-                isHide: false,
-                roles: [],
-                ids: ["jwli", "irunkorea"],
-                icon: FileExcelOutlined,
-            },
-        },
-        {
-            path: "/excel2",
-            name: "excel2",
-            component: () => import("@/components/Tools/excelConvertTools2.vue"),
-            meta: {
-                title: "엑셀 컨버터 툴2",
-                isHide: false,
-                roles: [],
-                ids: ["jwli", "irunkorea"],
-                icon: FileExcelOutlined,
-            },
-        },
-        {
             path: "/product/vvic",
             name: "product_vvic",
             component: () => import("@/views/Product/VvicList.vue"),
@@ -421,6 +397,42 @@ export const menus = [{
                         isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
+                    },
+                },
+            ]
+        },
+        {
+            path: "/excel",
+            name: "excel",
+            component: () => import("@/components/Tools/excelConvertTools.vue"),
+            meta: {
+                title: "기타기능",
+                isHide: false,
+                roles: [],
+                ids: ["jwli", "irunkorea"],
+                icon: FileExcelOutlined,
+            },
+            "children": [
+                {
+                    path: "/excel/tool1",
+                    name: "excel1",
+                    component: () => import("@/components/Tools/excelConvertTools.vue"),
+                    meta: {
+                        title: "엑셀 컨버터 툴",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: FileExcelOutlined,
+                    },
+                },
+                {
+                    path: "/excel/tool2",
+                    name: "excel2",
+                    component: () => import("@/components/Tools/excelConvertTools2.vue"),
+                    meta: {
+                        title: "엑셀 컨버터 툴2",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: FileExcelOutlined,
                     },
                 },
             ]
