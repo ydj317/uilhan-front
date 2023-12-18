@@ -402,6 +402,28 @@ export const menus = [{
             ]
         },
         {
+            path: "/excel/tool",
+            name: "excel1",
+            component: () => import("@/components/Tools/excelConvertTools.vue"),
+            meta: {
+                title: "엑셀 컨버터 툴",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: FileExcelOutlined,
+            },
+        },
+        {
+            path: "/excel/tool2",
+            name: "excel2",
+            component: () => import("@/components/Tools/excelConvertTools2.vue"),
+            meta: {
+                title: "엑셀 컨버터 툴2",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: FileExcelOutlined,
+            },
+        },
+        {
             path: "/excel",
             name: "excel",
             component: () => import("@/components/Tools/excelConvertTools.vue"),
@@ -414,7 +436,7 @@ export const menus = [{
             },
             "children": [
                 {
-                    path: "/excel/tool1",
+                    path: "/excel/tool",
                     name: "excel1",
                     component: () => import("@/components/Tools/excelConvertTools.vue"),
                     meta: {
