@@ -402,7 +402,7 @@ export const menus = [{
             ]
         },
         {
-            path: "/excel/tool",
+            path: "/excel",
             name: "excel1",
             component: () => import("@/components/Tools/excelConvertTools.vue"),
             meta: {
@@ -413,7 +413,7 @@ export const menus = [{
             },
         },
         {
-            path: "/excel/tool2",
+            path: "/excel2",
             name: "excel2",
             component: () => import("@/components/Tools/excelConvertTools2.vue"),
             meta: {
