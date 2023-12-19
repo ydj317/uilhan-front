@@ -100,6 +100,9 @@
   <a-card class="mt15">
     <div class="mb15" style="display: flex;justify-content: space-between;">
       <div>
+        <a-button style="margin-right: 5px;" @click="openModifyAllPopup">
+          일괄수정
+        </a-button>
         <a-popconfirm v-if="state.tableData.params.order_status === 'paid'" title="접수완료 처리 하시겠습니까?"
                       @confirm="updateSelectOrdersState('receiptCompleted')">
           <a-button style="margin-left: 10px;">접수완료</a-button>
@@ -162,7 +165,7 @@
       <thead style="position: sticky;top: 0; background: #7273de; z-index: 100">
       <tr>
         <th rowspan="3">
-          <a-checkbox @click.self="handleCheckAll"/>
+          <a-checkbox v-model:checked="state.tableData.checkAll"  @click.self="handleCheckAll"/>
         </th>
         <th style="width: 150px;">
           주문번호
@@ -319,7 +322,7 @@
                 @change="updateStatus(item, 'shipping_status')"
                 style="width: 100px;">
 
-              <a-select-option  v-for="option in state.shippingStatus" :value="option.value">
+              <a-select-option v-for="option in state.shippingStatus" :value="option.value">
                 {{ option.label }}
               </a-select-option>
             </a-select>
@@ -465,7 +468,7 @@
           <a-input v-model:value="state.prdDetailModal.selectOrderData.purchase_invoice_no"/>
         </a-descriptions-item>
 
-        <a-descriptions-item  label="옵션이미지">
+        <a-descriptions-item label="옵션이미지">
           <a-image :src="state.prdDetailModal.selectOrderData.prd_image"
                    fallback="data:image/png;base64,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"
                    style="width:150px;height:150px;border-radius: 5px;"/>
@@ -493,8 +496,14 @@
         </a-descriptions-item>
 
         <a-descriptions-item label="상품명">{{ state.prdDetailModal.selectOrderData.prd_name }}</a-descriptions-item>
-        <a-descriptions-item label="옵션명">{{ state.prdDetailModal.selectOrderData.prd_option_name }}</a-descriptions-item>
-        <a-descriptions-item label="사이즈">{{ state.prdDetailModal.selectOrderData.prd_size_option }}</a-descriptions-item>
+        <a-descriptions-item label="옵션명">{{
+            state.prdDetailModal.selectOrderData.prd_option_name
+          }}
+        </a-descriptions-item>
+        <a-descriptions-item label="사이즈">{{
+            state.prdDetailModal.selectOrderData.prd_size_option
+          }}
+        </a-descriptions-item>
         <a-descriptions-item label="주문수량">{{ state.prdDetailModal.selectOrderData.quantity }}</a-descriptions-item>
 
         <a-descriptions-item label="실도착수량">
@@ -532,6 +541,64 @@
 
     </a-space>
   </a-modal>
+  <a-modal
+      v-model:open="state.modifyAllModal.show"
+      title="일괄수정"
+      width="1000px"
+  >
+    <table border="1">
+      <tbody style="line-height: 10px;" v-for="item in state.modifyAllModal.column">
+      <tr v-if="item.code === 'order_status'">
+        <th>
+          <a-checkbox v-model:checked="item.isChecked">{{item.label}}</a-checkbox>
+        </th>
+        <td>
+          <a-select
+              v-model:value="item.value"
+              size="small"
+              style="width: 100px;">
+            <a-select-option v-for="option in state.orderStatus" :value="option.value">
+              {{ option.label }}
+            </a-select-option>
+          </a-select>
+        </td>
+      </tr>
+
+      <tr v-else-if="item.code === 'shipping_status' ">
+        <th>
+          <a-checkbox v-model:checked="item.isChecked">{{item.label}}</a-checkbox>
+        </th>
+        <td>
+          <a-select
+              v-model:value="item.value"
+              size="small"
+              style="width: 100px;">
+            <a-select-option v-for="option in state.shippingStatus" :value="option.value">
+              {{ option.label }}
+            </a-select-option>
+          </a-select>
+        </td>
+      </tr>
+
+      <tr v-else >
+        <th>
+          <a-checkbox v-model:checked="item.isChecked">{{item.label}}</a-checkbox>
+        </th>
+        <td>
+          <a-input size="small" v-model:value="item.value"></a-input>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <template #footer>
+      <a-button key="close" @click="()=>{state.modifyAllModal.show=false}">닫기</a-button>
+      <a-button key="saveRow" type="primary" :loading="state.indicator.saveModifyAll"
+                @click="saveModifyAll()">저장
+      </a-button>
+    </template>
+
+  </a-modal>
 
 </template>
 
@@ -559,6 +626,8 @@ import {cloneDeep} from "lodash";
 const state = reactive({
   tableData: {
     data: [],
+    checkedList: [],
+    checkAll: false,
     showData: [],
     total: 0,
     loading: false,
@@ -603,14 +672,13 @@ const state = reactive({
     token: Cookie.get("token")
   }),
 
-  checkedList: [],
   indicator: {
     upload: false,
     download: false,
     table: false,
     count: false,
     saveDetail: false,
-
+    saveModifyAll: false
   },
   editableData: {},
   editingKey: '',
@@ -626,10 +694,85 @@ const state = reactive({
   // 주문 상세 모달
   prdDetailModal: {
     data: [],
-    show: true,
+    show: false,
     selectOrderNo: '',
     selectOrderData: {},
     editData: {},
+  },
+
+  modifyAllModal: {
+    show: false,
+    column: [
+      {
+        label : '구매상태',
+        code : 'order_status',
+        value : 'paid',
+        isChecked: false,
+        inputType: 'select',
+      },
+      {
+        label : '실구매가',
+        code : 'purchase_price',
+        value : '',
+        isChecked: false,
+      },
+      {
+        label : '현지운임',
+        code : 'local_shipping_fee',
+        value : '',
+        isChecked: false,
+      },
+      {
+        label : '택배번호',
+        code : 'purchase_invoice_no',
+        value : '',
+        isChecked: false,
+      },
+      {
+        label : '택배현황',
+        code : 'package_status_memo',
+        value : '',
+        isChecked: false,
+      },
+      {
+        label : '수수료',
+        code : 'charge',
+        value : '',
+        isChecked: false,
+      },
+      {
+        label : '금액',
+        code : 'total_payment_amount',
+        value : '',
+        isChecked: false,
+      },
+      {
+        label : '구매번호',
+        code : 'purchase_order_no',
+        value : '',
+        isChecked: false,
+      },
+      {
+        label : '실도착수량',
+        code : 'arrival_quantity',
+        value : '',
+        isChecked: false,
+      },
+      {
+        label : '메모',
+        code : 'memo',
+        value : '',
+        isChecked: false,
+      },
+      {
+        label : '입출고상태',
+        code : 'shipping_status',
+        value : 'shippingAddress',
+        isChecked: false,
+        inputType: 'select',
+      },
+    ],
+
   },
 
   pagination: {
@@ -643,6 +786,14 @@ const state = reactive({
 const handlePageChange = (page, pageSize) => {
   state.pagination.current = page;
   state.pagination.pageSize = pageSize;
+  state.tableData.checkAll = false;
+
+  // 전에 체크 했던거 초기화
+  state.tableData.checkedList.forEach((item, index) => {
+    state.tableData.checkedList[index].checked = false;
+  });
+  state.tableData.checkedList = [];
+
   reloadShowData();
 }
 
@@ -662,8 +813,6 @@ const onChangeDatePicker = (value, dateString) => {
 }
 
 const handleOrderStatusChange = (e) => {
-  rowSelection.value.selectedRowKeys = [];
-
   getTableData()
 }
 
@@ -711,18 +860,6 @@ const getTableData = async () => {
     getCountWithStatus();
   });
 }
-
-
-// 주문 선택
-const rowSelection = ref({
-  checkStrictly: false,
-  onChange: (selectedRowKeys, selectedRows) => {
-    state.checkedList = [];
-    state.checkedList.push(selectedRowKeys)
-    rowSelection.value.selectedRowKeys = selectedRowKeys;
-  },
-});
-
 
 // 엑셀 다운로드
 const downloadCustomOrderExcel = () => {
@@ -916,12 +1053,14 @@ const updateSelectOrdersState = async (changeState) => {
 
 const handleOrderChecked = (item) => {
   item.checked = !item.checked;
+  state.tableData.checkedList = state.tableData.data.filter(item => item.checked === true)
 }
 
 // 全选 全不选
 const handleCheckAll = (e) => {
-  state.tableData.data.forEach(item => {
+  state.tableData.showData.forEach(item => {
     item.checked = e.target.checked;
+    state.tableData.checkedList = state.tableData.data.filter(item => item.checked === true)
   })
 }
 
@@ -1023,7 +1162,7 @@ const saveDetail = async (orders) => {
     }
     message.success(`수정되었습니다.`);
     state.indicator.saveDetail = false;
-    state.showDetailModal = false;
+    state.prdDetailModal.show = false;
   });
 }
 
@@ -1042,6 +1181,81 @@ const searchWithBarcode = async () => {
 const handleOrderNoChange = (e) => {
   state.prdDetailModal.selectOrderNo = e.target.value;
   state.prdDetailModal.selectOrderData = state.prdDetailModal.data.filter(item => item.order_no === state.prdDetailModal.selectOrderNo)[0];
+}
+
+// 일괄수정
+const openModifyAllPopup = () => {
+  // 팝업창 값 초기화
+  state.modifyAllModal.column.forEach(item => {
+    item.isChecked = false;
+    if (item.code === 'order_status')
+      item.value = 'paid';
+    else if (item.code === 'shipping_status')
+      item.value = 'shippingAddress';
+    else
+      item.value = '';
+  });
+
+  // 체크된 주문 없을시 경고창 띄우기
+  if (state.tableData.checkedList.length === 0) {
+    message.error('일괄수정할 주문을 선택해주세요.');
+    return false;
+  }
+  state.modifyAllModal.show = true;
+}
+
+const saveModifyAll = () => {
+
+  let validCheck = true;
+  const editData = state.modifyAllModal.column
+      .filter(item => item.isChecked === true)
+      .reduce((accumulator, item) => {
+        accumulator[item.code] = item.value;
+        return accumulator;
+      }, {});
+
+  if (Object.keys(editData).length === 0) {
+    message.error('수정할 항목을 체크해주세요.');
+    return false;
+  }
+
+  state.modifyAllModal.column.forEach(item => {
+    if (item.isChecked === true && item.value.trim() === '') {
+      message.error(`${item.label}을 입력해주세요.`);
+      validCheck = false;
+      return false;
+    }
+  });
+
+  if (!validCheck) return false;
+
+  if ('shipping_status' in editData && ['paid', 'receiptCompleted'].includes(editData.order_status) && (editData.shipping_status !== 'shippingAddress')) {
+    message.error('접수대기 와 접수완료 주문은 입출고상태를 미발송으로만 변경할 수 있습니다.');
+    return false;
+  }
+
+  const sendParam = state.tableData.checkedList.map(item => {
+    return {
+      id: item.id,
+      ...editData,
+    }
+  });
+
+  state.indicator.saveModifyAll = true;
+  useCustomOrderApi().updateCustomOrder(sendParam).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      state.indicator.saveModifyAll = false;
+      return false;
+    }
+    message.success(`수정되었습니다.`);
+    getTableData();
+    state.modifyAllModal.show = false;
+    state.indicator.saveModifyAll = false;
+    state.tableData.checkAll = false;
+    state.tableData.checkedList = [];
+  });
+
 }
 
 
