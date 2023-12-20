@@ -399,6 +399,17 @@ export const menus = [{
                         icon: '',
                     },
                 },
+                {
+                    path: "/customOrder/shipmentManage",
+                    component: () => import("@/views/CustomOrder/shipmentManage.vue"),
+                    name: "custom_order_shipment_manage",
+                    meta: {
+                        title: "출고관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
             ]
         },
         {

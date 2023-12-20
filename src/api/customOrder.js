@@ -53,13 +53,6 @@ export function useCustomOrderApi() {
                 params: data,
             });
         },
-        setReceiptCompleted : (data) => {
-            return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/custom/order/receipt",
-                method: "post",
-                data: data,
-            });
-        },
 
         getCustomOrderReceiptList: (data) => {
             return AuthRequest({
@@ -84,9 +77,40 @@ export function useCustomOrderApi() {
                 method: "post",
                 data: data,
             });
+        },
+
+        // 출고완료 그룹, 아이템 리스트 생성
+        addShipment : (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/shipmentGroup/add",
+                method: "post",
+                data: data,
+            });
+        },
+
+        getShipmentGroupList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/shipmentGroup/list",
+                method: "get",
+                params: data,
+            });
+        },
+
+        downloadGroupItemsExcel: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/shipmentGroup/itemsExcelDownload",
+                method: "post",
+                data: data,
+            });
+        },
+
+        downloadAllShipmentItemsExcel: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/shipmentGroup/allItemsExcelDownload",
+                method: "post",
+                data: data,
+            });
         }
-
-
 
     }
 }

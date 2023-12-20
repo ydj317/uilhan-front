@@ -73,7 +73,9 @@
       </div>
     </a-card>
     <a-card title="스캔" style="width: 100%;flex: 1;">
-      <a-descriptions bordered :column="1" size="small">
+      <a-descriptions
+          bordered :column="1"
+          size="small">
         <a-descriptions-item style="height: 100px;">
           <template #label>
             택배번호 스캔
@@ -84,16 +86,7 @@
           />
 
         </a-descriptions-item>
-        <a-descriptions-item style="height: 100px;">
-          <template #label>
-            출고스캔
-          </template>
-          <a-input
-              v-model:value="state.tableData.params.scan_barcode"
-              @keyup.enter="searchWithBarcode"
-          />
 
-        </a-descriptions-item>
       </a-descriptions>
     </a-card>
   </div>
@@ -165,7 +158,7 @@
       <thead style="position: sticky;top: 0; background: #7273de; z-index: 100">
       <tr>
         <th rowspan="3">
-          <a-checkbox v-model:checked="state.tableData.checkAll"  @click.self="handleCheckAll"/>
+          <a-checkbox v-model:checked="state.tableData.checkAll" @click.self="handleCheckAll"/>
         </th>
         <th style="width: 150px;">
           주문번호
@@ -544,52 +537,46 @@
   <a-modal
       v-model:open="state.modifyAllModal.show"
       title="일괄수정"
-      width="1000px"
+      width="800px"
   >
-    <table border="1">
-      <tbody style="line-height: 10px;" v-for="item in state.modifyAllModal.column">
-      <tr v-if="item.code === 'order_status'">
-        <th>
-          <a-checkbox v-model:checked="item.isChecked">{{item.label}}</a-checkbox>
-        </th>
-        <td>
-          <a-select
-              v-model:value="item.value"
-              size="small"
-              style="width: 100px;">
-            <a-select-option v-for="option in state.orderStatus" :value="option.value">
-              {{ option.label }}
-            </a-select-option>
-          </a-select>
-        </td>
-      </tr>
+    <a-descriptions bordered
+                    :column="1"
+                    :labelStyle="{ width: '200px' , height: '10px' }"
+                    :contentStyle="{ width: 'auto', height: '10px' }">
+      <a-descriptions-item v-for="item in state.modifyAllModal.column">
+        <template #label>
+          <a-checkbox v-model:checked="item.isChecked">{{ item.label }}</a-checkbox>
+        </template>
 
-      <tr v-else-if="item.code === 'shipping_status' ">
-        <th>
-          <a-checkbox v-model:checked="item.isChecked">{{item.label}}</a-checkbox>
-        </th>
-        <td>
-          <a-select
-              v-model:value="item.value"
-              size="small"
-              style="width: 100px;">
-            <a-select-option v-for="option in state.shippingStatus" :value="option.value">
-              {{ option.label }}
-            </a-select-option>
-          </a-select>
-        </td>
-      </tr>
+        <a-select
+            size="middle"
+            v-model:value="item.value"
+            v-if="item.code === 'order_status'"
+            @change="changeCheck(item)"
+            style="width: 100px;">
+          <a-select-option v-for="option in state.orderStatus" :value="option.value">
+            {{ option.label }}
+          </a-select-option>
+        </a-select>
 
-      <tr v-else >
-        <th>
-          <a-checkbox v-model:checked="item.isChecked">{{item.label}}</a-checkbox>
-        </th>
-        <td>
-          <a-input size="small" v-model:value="item.value"></a-input>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+        <a-select
+            @change="changeCheck(item)"
+            v-model:value="item.value"
+            size="middle"
+            v-else-if="item.code === 'shipping_status' "
+            style="width: 100px;">
+          <a-select-option v-for="option in state.shippingStatus" :value="option.value">
+            {{ option.label }}
+          </a-select-option>
+        </a-select>
+
+        <a-textarea v-else-if="item.code ==='memo'" v-model:value="item.value" @change="changeCheck(item)"></a-textarea>
+        <a-input-number v-else-if="item.inputType === 'number'" v-model:value="item.value" size="middle"
+                        @change="changeCheck(item)" style="width:100% "></a-input-number>
+        <a-input v-else v-model:value="item.value" size="middle" @change="changeCheck(item)"></a-input>
+
+      </a-descriptions-item>
+    </a-descriptions>
 
     <template #footer>
       <a-button key="close" @click="()=>{state.modifyAllModal.show=false}">닫기</a-button>
@@ -704,70 +691,75 @@ const state = reactive({
     show: false,
     column: [
       {
-        label : '구매상태',
-        code : 'order_status',
-        value : 'paid',
+        label: '구매상태',
+        code: 'order_status',
+        value: 'paid',
         isChecked: false,
         inputType: 'select',
       },
       {
-        label : '실구매가',
-        code : 'purchase_price',
-        value : '',
+        label: '실구매가',
+        code: 'purchase_price',
+        value: '',
+        isChecked: false,
+        inputType: 'number',
+      },
+      {
+        label: '현지운임',
+        code: 'local_shipping_fee',
+        value: '',
+        isChecked: false,
+        inputType: 'number',
+      },
+      {
+        label: '택배번호',
+        code: 'purchase_invoice_no',
+        value: '',
         isChecked: false,
       },
       {
-        label : '현지운임',
-        code : 'local_shipping_fee',
-        value : '',
+        label: '택배현황',
+        code: 'package_status_memo',
+        value: '',
         isChecked: false,
       },
       {
-        label : '택배번호',
-        code : 'purchase_invoice_no',
-        value : '',
+        label: '수수료',
+        code: 'charge',
+        value: '',
+        isChecked: false,
+        inputType: 'number',
+      },
+      {
+        label: '금액',
+        code: 'total_payment_amount',
+        value: '',
+        isChecked: false,
+        inputType: 'number',
+      },
+      {
+        label: '구매번호',
+        code: 'purchase_order_no',
+        value: '',
         isChecked: false,
       },
       {
-        label : '택배현황',
-        code : 'package_status_memo',
-        value : '',
+        label: '실도착수량',
+        code: 'arrival_quantity',
+        value: '',
+        isChecked: false,
+        inputType: 'number',
+      },
+      {
+        label: '메모',
+        code: 'memo',
+        value: '',
         isChecked: false,
       },
       {
-        label : '수수료',
-        code : 'charge',
-        value : '',
-        isChecked: false,
-      },
-      {
-        label : '금액',
-        code : 'total_payment_amount',
-        value : '',
-        isChecked: false,
-      },
-      {
-        label : '구매번호',
-        code : 'purchase_order_no',
-        value : '',
-        isChecked: false,
-      },
-      {
-        label : '실도착수량',
-        code : 'arrival_quantity',
-        value : '',
-        isChecked: false,
-      },
-      {
-        label : '메모',
-        code : 'memo',
-        value : '',
-        isChecked: false,
-      },
-      {
-        label : '입출고상태',
-        code : 'shipping_status',
-        value : 'shippingAddress',
+        label: '입출고상태',
+        code: 'shipping_status',
+        value: 'shippingAddress',
         isChecked: false,
         inputType: 'select',
       },
@@ -1097,6 +1089,7 @@ const updateStatus = async (item, what) => {
 
   if (what === 'shipping_status' && ['paid', 'receiptCompleted'].includes(item.order_status) && item.shipping_status !== 'shippingAddress') {
     message.error('접수대기 와 접수완료 주문은 입출고상태를 미발송으로만 변경할 수 있습니다.');
+    item.shipping_status = 'shippingAddress';
     return false;
   }
 
@@ -1166,18 +1159,6 @@ const saveDetail = async (orders) => {
   });
 }
 
-const searchWithBarcode = async () => {
-
-  if (state.tableData.params.scan_barcode.trim() === '') {
-    message.error('바코드를 입력해주세요.');
-    return false;
-  }
-
-  state.tableData.params.search_type = 'barcode';
-  state.tableData.params.search_value = state.tableData.params.scan_barcode;
-  handleSearch();
-}
-
 const handleOrderNoChange = (e) => {
   state.prdDetailModal.selectOrderNo = e.target.value;
   state.prdDetailModal.selectOrderData = state.prdDetailModal.data.filter(item => item.order_no === state.prdDetailModal.selectOrderNo)[0];
@@ -1231,6 +1212,7 @@ const saveModifyAll = () => {
 
   if ('shipping_status' in editData && ['paid', 'receiptCompleted'].includes(editData.order_status) && (editData.shipping_status !== 'shippingAddress')) {
     message.error('접수대기 와 접수완료 주문은 입출고상태를 미발송으로만 변경할 수 있습니다.');
+    editData.shipping_status = 'shippingAddress';
     return false;
   }
 
@@ -1255,6 +1237,15 @@ const saveModifyAll = () => {
     state.tableData.checkAll = false;
     state.tableData.checkedList = [];
   });
+
+}
+
+const changeCheck = (item) => {
+  if (item.inputType === 'number') {
+    item.isChecked = item.value !== null;
+  } else {
+    item.isChecked = item.value.trim() !== '';
+  }
 
 }
 
