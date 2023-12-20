@@ -149,6 +149,14 @@
           <div class="help">유선전화를 입력해주십시오</div>
         </a-descriptions-item>
 
+        <a-descriptions-item>
+          <span class="required"><strong>추천ID</strong></span>
+          <a-form-item name="com_name" has-feedback>
+            <a-input v-model:value="formState.parent_user" placeholder="추천ID"/>
+          </a-form-item>
+          <div class="help">추천ID가 있다면 기입해주세요.</div>
+        </a-descriptions-item>
+
         <!-- 가입시 입력 안해되는 항목 -->
         <div v-if="false">
           <a-descriptions-item>
@@ -352,7 +360,9 @@ export default defineComponent({
       commission: "0",
       //[필수]도매 수수료
       wholesale_commission: "0",
-      is_bridge_sync: false
+      is_bridge_sync: false,
+      // 추천ID
+      parent_user: ""
     });
 
     const tooltip = {
@@ -389,7 +399,8 @@ export default defineComponent({
         account_div: formState.account_div,
         commission: formState.commission,
         wholesale_commission: formState.wholesale_commission,
-        is_bridge_sync: formState.is_bridge_sync
+        is_bridge_sync: formState.is_bridge_sync,
+        parent_user: formState.parent_user
       };
 
       NoAuthAjax.post(
