@@ -9,6 +9,13 @@
         {{ formState.username }}
       </a-form-item>
 
+      <a-form-item label="추천코드">
+        <a-button @click="copyText(formState.recommend_code)">
+          {{ formState.recommend_code }}
+          <CopyOutlined />
+        </a-button>
+      </a-form-item>
+
       <a-form-item label="사용자명" name="name" has-feedback>
         <a-input v-model:value="formState.name" placeholder="사용자명을 입력해주시오" />
       </a-form-item>
@@ -103,6 +110,9 @@
 
 <script setup>
 import { AuthRequest } from "@/util/request";
+import {
+  CopyOutlined
+} from "@ant-design/icons-vue";
 import { onMounted, reactive, ref } from "vue";
 import router from "@/router";
 import { message } from "ant-design-vue";
@@ -139,6 +149,16 @@ const formState = reactive({
 
   loading: false,
 });
+
+const copyText = (recommend_code) => {
+  var textArea = document.createElement("textarea");
+  textArea.value = recommend_code;
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textArea);
+  message.success('복사성공 하였습니다.');
+};
 
 let validateName = async (rule, value) => {
   if (value === "") {
@@ -404,6 +424,7 @@ function getUserInfoData() {
     formState.com_number = res.data.com_number;
     splitPhone('com_phone', res.data.com_phone)
     formState.com_ceo = res.data.com_ceo;
+    formState.recommend_code = res.data.recommend_code;
     splitPhone('tel', res.data.tel)
 
     setTimeout(() => {

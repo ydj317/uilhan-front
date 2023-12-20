@@ -56,6 +56,10 @@ const searchKeyword = ref([
   {
     key: "name",
     label: "사용자명"
+  },
+  {
+    key: "parent_user",
+    label: "추천ID"
   }
 ]);
 
@@ -68,6 +72,10 @@ const tableColumns = ref([
   {
     title: '아이디',
     dataIndex: 'username',
+  },
+  {
+    title: '추천ID',
+    dataIndex: 'parent_user',
   },
   {
     title: '사용자명',
