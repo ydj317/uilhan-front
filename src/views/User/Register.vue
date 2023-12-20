@@ -150,11 +150,11 @@
         </a-descriptions-item>
 
         <a-descriptions-item>
-          <span class="required"><strong>추천ID</strong></span>
+          <span class="required"><strong>추천코드</strong></span>
           <a-form-item name="com_name" has-feedback>
-            <a-input v-model:value="formState.parent_user" placeholder="추천ID"/>
+            <a-input v-model:value="formState.parent_user" placeholder="추천코드"/>
           </a-form-item>
-          <div class="help">추천ID가 있다면 기입해주세요.</div>
+          <div class="help">추천코드가 있다면 기입해주세요.</div>
         </a-descriptions-item>
 
         <!-- 가입시 입력 안해되는 항목 -->
