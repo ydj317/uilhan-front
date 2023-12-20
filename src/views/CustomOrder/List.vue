@@ -1201,10 +1201,22 @@ const saveModifyAll = () => {
   }
 
   state.modifyAllModal.column.forEach(item => {
-    if (item.isChecked === true && item.value.trim() === '') {
+    console.log(item.value)
+    if (item.isChecked && item.inputType === 'number') {
+      if (item.value === null || item.value === '') {
+        message.error(`${item.label}을 입력해주세요.`);
+        validCheck = false;
+        return false;
+      } else if (item.value < 0) {
+        message.error(`${item.label}은 0보다 작을 수 없습니다.`);
+        validCheck = false;
+        return false;
+      }
+    } else if (item.isChecked && item.value.trim() === '') {
       message.error(`${item.label}을 입력해주세요.`);
       validCheck = false;
       return false;
+
     }
   });
 

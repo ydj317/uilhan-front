@@ -386,6 +386,7 @@ const setShipping = async () => {
     state.indicator.loading = false;
     message.success(res.message);
     state.beforeShipTable.data = [];
+    getShipmentTableData();
   })
 }
 
