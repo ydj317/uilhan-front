@@ -10,7 +10,10 @@
       </a-form-item>
 
       <a-form-item label="추천코드">
-        <a-button @click="copyText(formState.recommend_code)">{{ formState.recommend_code }}</a-button>
+        <a-button @click="copyText(formState.recommend_code)">
+          {{ formState.recommend_code }}
+          <CopyOutlined />
+        </a-button>
       </a-form-item>
 
       <a-form-item label="사용자명" name="name" has-feedback>
@@ -107,6 +110,9 @@
 
 <script setup>
 import { AuthRequest } from "@/util/request";
+import {
+  CopyOutlined
+} from "@ant-design/icons-vue";
 import { onMounted, reactive, ref } from "vue";
 import router from "@/router";
 import { message } from "ant-design-vue";

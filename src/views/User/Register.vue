@@ -152,7 +152,7 @@
         <a-descriptions-item>
           <span class="required"><strong>추천코드</strong></span>
           <a-form-item name="com_name" has-feedback>
-            <a-input v-model:value="formState.parent_user" placeholder="추천코드"/>
+            <a-input v-model:value="formState.recommend_code" placeholder="추천코드"/>
           </a-form-item>
           <div class="help">추천코드가 있다면 기입해주세요.</div>
         </a-descriptions-item>
@@ -362,7 +362,7 @@ export default defineComponent({
       wholesale_commission: "0",
       is_bridge_sync: false,
       // 추천ID
-      parent_user: ""
+      recommend_code: ""
     });
 
     const tooltip = {
@@ -400,7 +400,7 @@ export default defineComponent({
         commission: formState.commission,
         wholesale_commission: formState.wholesale_commission,
         is_bridge_sync: formState.is_bridge_sync,
-        parent_user: formState.parent_user
+        recommend_code: formState.recommend_code
       };
 
       NoAuthAjax.post(
