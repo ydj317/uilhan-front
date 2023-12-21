@@ -81,30 +81,37 @@ const tableColumns = ref([
   {
     title: 'No.',
     dataIndex: 'key',
+    width: '5%',
   },
   {
     title: '아이디',
     dataIndex: 'username',
+    width: '10%',
   },
   {
     title: '추천코드',
     dataIndex: 'recommend_code',
+    width: '10%',
   },
   {
     title: '대리점아이디',
     dataIndex: 'parent_user',
+    width: '10%',
   },
   {
     title: '사용자명',
     dataIndex: 'name',
+    width: '15%',
   },
   {
     title: 'Email',
     dataIndex: 'email',
+    width: '20%',
   },
   {
     title: '휴대전화',
     dataIndex: 'phone',
+    width: '15%',
   },
   {
     title: 'Action',
