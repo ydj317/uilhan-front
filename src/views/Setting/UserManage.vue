@@ -106,7 +106,7 @@ const tableColumns = ref([
   {
     title: 'Email',
     dataIndex: 'email',
-    width: '20%',
+    width: '15%',
   },
   {
     title: '휴대전화',
