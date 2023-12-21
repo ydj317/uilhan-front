@@ -1231,7 +1231,12 @@ const saveModifyAll = () => {
       return false;
     }
     message.success(`수정되었습니다.`);
-    getTableData();
+
+    // 수정된 주문들 테이블에 반영
+    state.tableData.checkedList.forEach(item => {
+      Object.assign(state.tableData.data.filter(data => data.id === item.id)[0], editData);
+    });
+
     state.modifyAllModal.show = false;
     state.indicator.saveModifyAll = false;
     state.tableData.checkAll = false;
