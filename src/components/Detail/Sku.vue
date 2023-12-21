@@ -155,10 +155,7 @@
 
           <!--스펙-->
           <template v-else-if="column.key === 'spec'">
-            <div
-                class="center"
-                :style="record.spec.length > 20 ? 'color: red' : ''"
-            >
+            <div class="center" :style="record.spec.length > 20 ? 'color: red' : ''">
               {{ record.spec }}
             </div>
           </template>

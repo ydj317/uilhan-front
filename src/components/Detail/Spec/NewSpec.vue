@@ -45,8 +45,7 @@ export default {
 
       //sku 값 씽크 맞춤
       this._syncSku();
-      this.temp_sku = [];
-      this._getSku([], 0, this.product.item_option);
+      this._getSku(this.product.item_option);
       this._setSku();
 
       forEach(this.product.sku, (item, index) => {
@@ -122,15 +121,22 @@ export default {
         }
       });
     },
-    _getSku(aTempSku, i, aOptions) {
-      forEach(aOptions[i].data, (val, key) => {
-        if (i < aOptions.length - 1) {
-          aTempSku[i] = aOptions[i].data[key];
-          this._getSku(aTempSku, i + 1, aOptions);
-        } else {
-          this.temp_sku.push([...aTempSku, aOptions[i].data[key]]);
-        }
-      });
+    _getSku(aOptions) {
+      this.temp_sku = [];
+
+      if (aOptions.length === 1) {
+        forEach(aOptions[0].data, (val, key) => {
+          this.temp_sku.push([aOptions[0].data[key]]);
+        });
+      }
+
+      if (aOptions.length === 2) {
+        forEach(aOptions[1].data, (val, key2) => {
+          forEach(aOptions[0].data, (val, key1) => {
+            this.temp_sku.push([aOptions[0].data[key1], aOptions[1].data[key2]]);
+          });
+        });
+      }
     },
     _setSku() {
       let format_sku = [];

@@ -86,16 +86,19 @@
                    :class="{'ant-checkbox-wrapper-checked': selectedRows.indexOf(item.key) !== -1}">
               <span class="ant-checkbox" :class="{'ant-checkbox-checked': selectedRows.indexOf(item.key) !== -1}">
                 <input type="checkbox" class="ant-checkbox-input" v-model="selectedRows" :value="item.key"
-                       @change="updateSelectAll"
-                       :disabled="product.is_sync === 'T'">
+                       @change="updateSelectAll" :disabled="product.is_sync === 'T'">
+
+                <span style="margin-left: 10px;" v-if="item.img">
+                  <img :src="item.img" style="border-radius: 5px; width: 30px; height: 30px;" />
+                </span>
+
                 <span class="ant-checkbox-inner"></span>
               </span>
             </label>
-            <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
-                     :disabled="product.is_sync === 'T'"/>
-            <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">{{
-                item.name.length
-              }}</span> / 25</span>
+            <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명" :disabled="product.is_sync === 'T'"/>
+            <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">
+              {{ item.name.length }}
+            </span> / 25</span>
             <div class="spec-option-name-button">
               <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large"
                         class="spec-set-option-name-button" :disabled="product.is_sync === 'T'">
