@@ -86,7 +86,7 @@ const tableColumns = ref([
   {
     title: '아이디',
     dataIndex: 'username',
-    width: '10%',
+    width: '15%',
   },
   {
     title: '추천코드',
@@ -96,7 +96,7 @@ const tableColumns = ref([
   {
     title: '대리점아이디',
     dataIndex: 'parent_user',
-    width: '10%',
+    width: '15%',
   },
   {
     title: '사용자명',
