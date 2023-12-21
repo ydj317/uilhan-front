@@ -143,13 +143,11 @@
 
           <template v-else-if="column.key === 'is_option_reference_price'">
             <div class="center">
-              <label class="ant-radio-wrapper"
-                     :class="{'ant-radio-wrapper-checked': record.is_option_reference_price === 'T' }">
-              <span class="ant-radio" :class="{'ant-radio-checked': record.is_option_reference_price === 'T' }">
-                <span class="ant-radio-inner" @click="setIsOptionReferencePrice(record.key)"></span>
-              </span>
+              <label class="ant-radio-wrapper" :class="{'ant-radio-wrapper-checked': record.is_option_reference_price === 'T' }">
+                <span class="ant-radio" :class="{'ant-radio-checked': record.is_option_reference_price === 'T' }">
+                  <span class="ant-radio-inner" @click="setIsOptionReferencePrice(record.key)"></span>
+                </span>
               </label>
-
             </div>
           </template>
 
@@ -632,6 +630,41 @@ export default {
 </script>
 
 <style scoped>
+.ant-radio-wrapper {
+  position: relative;;
+  border: 1px solid #ccc;
+  width: 17px;
+  height: 17px;
+  border-radius: 100%;
+}
+.ant-radio-wrapper.ant-radio-wrapper-checked {
+  border: 1px solid #4096ff;
+}
+
+.ant-radio-inner {
+  cursor: pointer;
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+}
+
+.ant-radio {
+  display: inline-block;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 7px;
+  height: 7px;
+  background: #ccc;
+  border-radius: 100%;
+}
+.ant-radio.ant-radio-checked {
+  background: #4096ff;
+}
+
 .top_button_container {
   height: 38px;
   display: flex;
