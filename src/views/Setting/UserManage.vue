@@ -22,6 +22,12 @@
     <a-table :dataSource="userData" :columns="tableColumns">
 
       <template #bodyCell="{ column, record }">
+        <template v-if="column.title === '추천코드'">
+          <a-button @click="copyText(record.recommend_code)">
+            {{ record.recommend_code }}
+            <CopyOutlined />
+          </a-button>
+        </template>
         <template v-if="column.title === 'Action'">
           <a-button type="primary" @click="userLogin(record)">로그인 하기</a-button>
         </template>
@@ -33,6 +39,9 @@
 </template>
 
 <script setup>
+import {
+  CopyOutlined
+} from "@ant-design/icons-vue";
 import {onMounted, reactive, ref} from "vue";
 import {message} from "ant-design-vue";
 import {useUserApi} from "@/api/user";
@@ -58,8 +67,12 @@ const searchKeyword = ref([
     label: "사용자명"
   },
   {
+    key: "recommend_code",
+    label: "추천코드"
+  },
+  {
     key: "parent_user",
-    label: "추천ID"
+    label: "대리점아이디"
   }
 ]);
 
@@ -74,7 +87,11 @@ const tableColumns = ref([
     dataIndex: 'username',
   },
   {
-    title: '추천ID',
+    title: '추천코드',
+    dataIndex: 'recommend_code',
+  },
+  {
+    title: '대리점아이디',
     dataIndex: 'parent_user',
   },
   {
@@ -93,6 +110,16 @@ const tableColumns = ref([
     title: 'Action',
   }
 ]);
+
+const copyText = (recommend_code) => {
+  var textArea = document.createElement("textarea");
+  textArea.value = recommend_code;
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textArea);
+  message.success('복사성공 하였습니다.');
+};
 
 // 로컬스토리지 저장
 const checked = ref(localStorage.save_user_name === 'T');
