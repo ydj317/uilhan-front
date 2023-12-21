@@ -89,7 +89,7 @@
                        @change="updateSelectAll" :disabled="product.is_sync === 'T'">
 
                 <span style="margin-left: 10px;" v-if="item.img">
-                  <img :src="item.img" style="border-radius: 5px; width: 30px; height: 30px;" />
+                  <a-image :src="item.img" style="border-radius: 5px; width: 30px; height: 30px;" :previewMask="false" />
                 </span>
 
                 <span class="ant-checkbox-inner"></span>
