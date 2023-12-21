@@ -104,9 +104,9 @@ export function useCustomOrderApi() {
             });
         },
 
-        downloadAllShipmentItemsExcel: (data) => {
+        downloadSearchItemsExcel: (data) => {
             return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/custom/order/shipmentGroup/allItemsExcelDownload",
+                url: process.env.VUE_APP_API_URL + "/api/custom/order/shipmentGroup/downloadSearchItemsExcel",
                 method: "post",
                 data: data,
             });
