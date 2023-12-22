@@ -22,6 +22,12 @@
     <a-table :dataSource="userData" :columns="tableColumns">
 
       <template #bodyCell="{ column, record }">
+        <template v-if="column.title === '추천코드'">
+          <a-button @click="copyText(record.recommend_code)">
+            {{ record.recommend_code }}
+            <CopyOutlined />
+          </a-button>
+        </template>
         <template v-if="column.title === 'Action'">
           <a-button type="primary" @click="userLogin(record)">로그인 하기</a-button>
         </template>
@@ -33,6 +39,9 @@
 </template>
 
 <script setup>
+import {
+  CopyOutlined
+} from "@ant-design/icons-vue";
 import {onMounted, reactive, ref} from "vue";
 import {message} from "ant-design-vue";
 import {useUserApi} from "@/api/user";
@@ -56,6 +65,14 @@ const searchKeyword = ref([
   {
     key: "name",
     label: "사용자명"
+  },
+  {
+    key: "recommend_code",
+    label: "추천코드"
+  },
+  {
+    key: "parent_user",
+    label: "대리점아이디"
   }
 ]);
 
@@ -64,27 +81,52 @@ const tableColumns = ref([
   {
     title: 'No.',
     dataIndex: 'key',
+    width: '5%',
   },
   {
     title: '아이디',
     dataIndex: 'username',
+    width: '15%',
+  },
+  {
+    title: '추천코드',
+    dataIndex: 'recommend_code',
+    width: '10%',
+  },
+  {
+    title: '대리점아이디',
+    dataIndex: 'parent_user',
+    width: '15%',
   },
   {
     title: '사용자명',
     dataIndex: 'name',
+    width: '15%',
   },
   {
     title: 'Email',
     dataIndex: 'email',
+    width: '15%',
   },
   {
     title: '휴대전화',
     dataIndex: 'phone',
+    width: '15%',
   },
   {
     title: 'Action',
   }
 ]);
+
+const copyText = (recommend_code) => {
+  var textArea = document.createElement("textarea");
+  textArea.value = recommend_code;
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textArea);
+  message.success('복사성공 하였습니다.');
+};
 
 // 로컬스토리지 저장
 const checked = ref(localStorage.save_user_name === 'T');
