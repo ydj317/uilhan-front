@@ -1,75 +1,74 @@
 <template>
   <loading v-model:active="state.indicator.table" :can-cancel="false" :is-full-page="true"/>
-  <div style="display: flex; gap: 10px">
-    <a-card title="검색" style=" width: 60%">
+  <div style="display: flex; gap: 10px; height: 220px;">
+    <a-card style=" width: 51%">
       <div id="header">
-        <a-descriptions bordered :column="1" size="small">
-          <a-descriptions-item>
-            <template #label>
-              검색기간
-              <a-tooltip>
-                <template #title>
-                  <div>검색기간은 30일 단위로 조회 가능합니다.</div>
+        <a-space>
+          <div>
+            <a-descriptions bordered :column="1" size="small">
+              <a-descriptions-item>
+                <template #label>
+                  검색기간
                 </template>
-                <QuestionCircleOutlined/>
-              </a-tooltip>
-            </template>
-            <a-input-group compact>
-              <a-space direction="vertical" :size="12">
-                <a-range-picker v-model:value="state.order_date" @change="onChangeDatePicker"/>
-              </a-space>
-            </a-input-group>
-          </a-descriptions-item>
-          <a-descriptions-item label="검색어">
-            <a-input-group compact style="display: flex;">
-              <a-select v-model:value="state.tableData.params.search_type" style="width: 150px;">
-                <a-select-option value="order_no">주문번호</a-select-option>
-                <a-select-option value="prd_name">상품명</a-select-option>
-                <a-select-option value="prd_code">상품코드</a-select-option>
-                <a-select-option value="item_no">품목코드</a-select-option>
-                <a-select-option value="barcode">고객사코드</a-select-option>
-                <a-select-option value="prd_option_name">옵션명</a-select-option>
-                <a-select-option value="prd_size_option">사이즈</a-select-option>
-                <a-select-option value="purchase_order_no">구매번호</a-select-option>
-                <a-select-option value="purchase_invoice_no">택배번호</a-select-option>
-                <a-select-option value="package_status_memo">택배현황</a-select-option>
-                <a-select-option value="memo">메모</a-select-option>
-              </a-select>
-              <a-input v-model:value="state.tableData.params.search_value" style="width: 400px;" allowClear/>
-            </a-input-group>
-          </a-descriptions-item>
+                <a-input-group size="small" compact>
+                  <a-space direction="vertical" :size="12">
+                    <a-range-picker v-model:value="state.order_date" @change="onChangeDatePicker"/>
+                  </a-space>
+                </a-input-group>
+              </a-descriptions-item>
+              <a-descriptions-item label="검색어">
+                <a-input-group compact style="display: flex;">
+                  <a-select size="small" v-model:value="state.tableData.params.search_type" style="width: 150px;">
+                    <a-select-option value="order_no">주문번호</a-select-option>
+                    <a-select-option value="prd_name">상품명</a-select-option>
+                    <a-select-option value="prd_code">상품코드</a-select-option>
+                    <a-select-option value="item_no">품목코드</a-select-option>
+                    <a-select-option value="barcode">고객사코드</a-select-option>
+                    <a-select-option value="prd_option_name">옵션명</a-select-option>
+                    <a-select-option value="prd_size_option">사이즈</a-select-option>
+                    <a-select-option value="purchase_order_no">구매번호</a-select-option>
+                    <a-select-option value="purchase_invoice_no">택배번호</a-select-option>
+                    <a-select-option value="package_status_memo">택배현황</a-select-option>
+                    <a-select-option value="memo">메모</a-select-option>
+                  </a-select>
+                  <a-input size="small" v-model:value="state.tableData.params.search_value" style="width: 400px;"
+                           allowClear/>
+                </a-input-group>
+              </a-descriptions-item>
 
-          <a-descriptions-item label="구매상태">
-            <a-radio-group v-model:value="state.tableData.params.order_status" button-style="solid"
-                           @change="handleOrderStatusChange">
-              <a-radio-button value="">전체</a-radio-button>
+              <a-descriptions-item label="구매상태">
+                <a-radio-group size="small" v-model:value="state.tableData.params.order_status" button-style="solid"
+                               @change="handleOrderStatusChange">
+                  <a-radio-button value="">전체</a-radio-button>
 
-              <a-radio-button v-for="option in state.orderStatus" :value="option.value">
-                {{ option.label }}
-                <a-spin v-if="state.indicator.count"></a-spin>
-                <span v-else>({{ state[option.value + 'Count'] }})</span>
-              </a-radio-button>
-            </a-radio-group>
-          </a-descriptions-item>
+                  <a-radio-button v-for="option in state.orderStatus" :value="option.value">
+                    {{ option.label }}
+                    <a-spin size="small" v-if="state.indicator.count"></a-spin>
+                    <span v-else>({{ state[option.value + 'Count'] }})</span>
+                  </a-radio-button>
+                </a-radio-group>
+              </a-descriptions-item>
 
-          <a-descriptions-item label="입출고상태">
-            <a-radio-group v-model:value="state.tableData.params.shipping_status" button-style="solid"
-                           @change="handleOrderStatusChange">
-              <a-radio-button value="">전체</a-radio-button>
-              <a-radio-button v-for="option in state.shippingStatus" :value="option.value">
-                {{ option.label }}
-                <a-spin v-if="state.indicator.count"></a-spin>
-                <span v-else>({{ state[option.value + 'Count'] }})</span>
-              </a-radio-button>
-            </a-radio-group>
-          </a-descriptions-item>
-        </a-descriptions>
-
-
-        <div style="display: flex;justify-content: center;">
-          <a-button type="primary" @click.prevent="handleSearch" class="mt15">검색</a-button>
-          <a-button @click="getTableData" class="ml15 mt15">초기화</a-button>
-        </div>
+              <a-descriptions-item label="입출고상태">
+                <a-radio-group size="small" v-model:value="state.tableData.params.shipping_status" button-style="solid"
+                               @change="handleOrderStatusChange">
+                  <a-radio-button value="">전체</a-radio-button>
+                  <a-radio-button v-for="option in state.shippingStatus" :value="option.value">
+                    {{ option.label }}
+                    <a-spin size="small" v-if="state.indicator.count"></a-spin>
+                    <span v-else>({{ state[option.value + 'Count'] }})</span>
+                  </a-radio-button>
+                </a-radio-group>
+              </a-descriptions-item>
+            </a-descriptions>
+          </div>
+          <div>
+            <a-space align="center" direction="vertical">
+              <a-button size="middle" type="primary" @click.prevent="handleSearch" class="mt15">검색</a-button>
+              <a-button size="middle" @click="getTableData" class="ml15 mt15">초기화</a-button>
+            </a-space>
+          </div>
+        </a-space>
       </div>
     </a-card>
     <a-card title="스캔" style="width: 100%;flex: 1;">
@@ -90,10 +89,17 @@
       </a-descriptions>
     </a-card>
   </div>
-  <a-card class="mt15">
-    <div class="mb15" style="display: flex;justify-content: space-between;">
+  <a-card class="mt10">
+    <div class="mb10"
+         style="display: flex;
+         justify-content: space-between;
+         position: sticky;top: 0;
+         background-color: #ffffff;
+         height: 35px;
+         align-items: center;
+         z-index: 900">
       <div>
-        <a-button style="margin-right: 5px;" @click="openModifyAllPopup">
+        <a-button style="margin-right: 5px; " @click="openModifyAllPopup">
           일괄수정
         </a-button>
         <a-popconfirm v-if="state.tableData.params.order_status === 'paid'" title="접수완료 처리 하시겠습니까?"
@@ -114,7 +120,6 @@
           </template>
         </a-button>
         <a-spin v-if="state.indicator.download"/>
-
         <a-upload
             :action="state.uploadCustomOrderPath"
             v-model:fileList="state.fileList"
@@ -142,297 +147,288 @@
         </a-button>
       </div>
     </div>
-    <div style="margin-bottom: 10px;">
-      <a-pagination
-          v-model:current="state.pagination.current"
-          v-model:page-size="state.pagination.pageSize"
-          show-size-changer
-          @showSizeChange="onShowSizeChange"
-          :total="state.pagination.total"
-          :show-total="(total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`"
-          :page-size-options="[10, 50, 100, 500, 1000, 1500, 2000]"
-          @change="handlePageChange"
-      />
-    </div>
-    <table class="header-table">
-      <thead style="position: sticky;top: 0; background: #7273de; z-index: 100">
-      <tr>
-        <th rowspan="3">
-          <a-checkbox v-model:checked="state.tableData.checkAll" @click.self="handleCheckAll"/>
-        </th>
-        <th style="width: 150px;">
-          주문번호
-        </th>
-        <th style="width: 150px;" rowspan="3">상품명</th>
-        <th rowspan="3">옵션이미지</th>
-        <th>상품코드</th>
-        <th style="width: 150px;">옵션명</th>
-        <th style="width: 20px;" rowspan="3">주문수량</th>
-        <th>원가</th>
-        <th style="width: 80px;">택배번호</th>
-        <th rowspan="3">수수료</th>
-        <th rowspan="3">금액</th>
-        <th rowspan="3">구매번호</th>
-        <th rowspan="3">실도착수량</th>
-        <th rowspan="3" style="width: 80px;">메모</th>
-        <th rowspan="3">바코드</th>
-        <th rowspan="3">입출고상태</th>
-        <th style="width: 90px;" rowspan="3">액션</th>
-      </tr>
-      <tr>
-        <th>주문일자</th>
-        <th>품목코드</th>
-        <th>사이즈</th>
-        <th>실구매가</th>
-        <th>택배현황</th>
-      </tr>
-      <tr>
-        <th>구매상태</th>
-        <th>고객사코드</th>
-        <th></th>
-        <th>현지운임</th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-if="state.tableData.loading">
-        <td colspan="17" style="padding: 80px;background-color: white">
-          <a-spin size="large"/>
-        </td>
-      </tr>
-      <template v-else v-for="(item, key) in state.tableData.showData" :key="key">
-        <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td rowspan="3" style="cursor: pointer;" @click.self="handleOrderChecked(item)">
-            <a-checkbox v-model:checked="item.checked" @click.self="handleOrderChecked(item)"></a-checkbox>
+    <div class="table-container">
+      <table class="header-table">
+        <thead style="position: sticky;top: 0; background: #7273de; z-index: 100">
+        <tr>
+          <th rowspan="3">
+            <a-checkbox v-model:checked="state.tableData.checkAll" @click.self="handleCheckAll"/>
+          </th>
+          <th style="width: 130px;">
+            주문번호
+          </th>
+          <th style="width: 130px;" rowspan="3">상품명</th>
+          <th rowspan="3">옵션이미지</th>
+          <th>상품코드</th>
+          <th style="width: 130px;">옵션명</th>
+          <th style="width: 20px;" rowspan="3">주문수량</th>
+          <th>원가</th>
+          <th style="width: 80px;">택배번호</th>
+          <th rowspan="3">수수료</th>
+          <th rowspan="3">금액</th>
+          <th rowspan="3">구매번호</th>
+          <th rowspan="3">실도착수량</th>
+          <th rowspan="3" style="width: 80px;">메모</th>
+          <th rowspan="3">바코드</th>
+          <th rowspan="3" style="width: 80px;">입출고상태</th>
+          <th style="width: 100px;" rowspan="3">수정</th>
+        </tr>
+        <tr>
+          <th>주문일자</th>
+          <th>품목코드</th>
+          <th>사이즈</th>
+          <th>실구매가</th>
+          <th>택배현황</th>
+        </tr>
+        <tr>
+          <th>구매상태</th>
+          <th>고객사코드</th>
+          <th></th>
+          <th>현지운임</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-if="state.tableData.loading">
+          <td colspan="17" style="padding: 80px;background-color: white">
+            <a-spin size="large"/>
           </td>
-          <td>{{ item.order_no }}</td><!--주문번호-->
-          <td rowspan="3">{{ item.prd_name }}</td><!--상품명-->
-          <td rowspan="3">
-            <a-image
-                :src="item.prd_image"
-                fallback="data:image/png;base64,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"
-                style="z-index: -1; width: 60px; height: 60px; border-radius: 10px"
-            />
-          </td>
-          <td>{{ item.prd_code }}</td><!--상품코드-->
-          <td>{{ item.prd_option_name }}</td><!--옵션명-->
-          <td rowspan="3">{{ item.quantity }}</td><!--주문수량-->
-          <td>{{ item.original_price }}</td><!--원가-->
-          <td>
-            <a-input
-                size="small"
-                v-if="state.editableData[item.key]"
-                v-model:value="state.editableData[item.key]['purchase_invoice_no']"
-                style="margin: -5px 0"
-            />
-            <span v-else>
-              {{ item.purchase_invoice_no }}
-            </span>
-          </td><!--택배번호-->
+        </tr>
+        <template v-else v-for="(item, key) in state.tableData.showData" :key="key">
+          <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
+            <td rowspan="3" style="cursor: pointer;" @click.self="handleOrderChecked(item)">
+              <a-checkbox v-model:checked="item.checked" @click.self="handleOrderChecked(item)"></a-checkbox>
+            </td>
+            <td>{{ item.order_no }}</td><!--주문번호-->
+            <td rowspan="3">{{ item.prd_name }}</td><!--상품명-->
+            <td rowspan="3">
+              <a-image
+                  :src="item.option_image"
+                  fallback="data:image/png;base64,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"
+                  style="z-index: -1; width: 60px; height: 60px; border-radius: 10px"
+              />
+            </td>
+            <td>{{ item.prd_code }}</td><!--상품코드-->
+            <td>{{ item.prd_option_name }}</td><!--옵션명-->
+            <td rowspan="3">{{ item.quantity }}</td><!--주문수량-->
+            <td>{{ item.original_price }}</td><!--원가-->
+            <td><!--택배번호-->
+              <a-textarea
+                  size="small"
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['purchase_invoice_no']"
+                  style="margin: -5px 0"
+              />
+              <div v-else style="width: 100px; height: 30px; overflow: auto; ">
+                {{ item.purchase_invoice_no }}
+              </div>
+            </td>
 
-          <!--수수료-->
-          <td rowspan="3">
-            <a-input-number
-                v-if="state.editableData[item.key]"
-                v-model:value="state.editableData[item.key]['charge']"
-                size="small"
-                :min="0"
-            />
-            <span v-else>
+            <!--수수료-->
+            <td rowspan="3">
+              <a-input-number
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['charge']"
+                  size="small"
+                  :min="0"
+              />
+              <span v-else>
               {{ item.charge }}
             </span>
-          </td>
+            </td>
 
-          <!--금액-->
-          <td rowspan="3">
-            <a-input-number
-                v-if="state.editableData[item.key]"
-                v-model:value="state.editableData[item.key]['total_payment_amount']"
-                size="small"
-                :min="0"
-            />
-            <span v-else>
+            <!--금액-->
+            <td rowspan="3">
+              <a-input-number
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['total_payment_amount']"
+                  size="small"
+                  :min="0"
+              />
+              <span v-else>
               {{ item.total_payment_amount }}
             </span>
-          </td>
+            </td>
 
-          <!--구매번호-->
-          <td rowspan="3">
-            <a-input
-                v-if="state.editableData[item.key]"
-                v-model:value="state.editableData[item.key]['purchase_order_no']"
-                size="small"
-            />
-            <span v-else>
+            <!--구매번호-->
+            <td rowspan="3">
+              <a-input
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['purchase_order_no']"
+                  size="small"
+              />
+              <span v-else>
               {{ item.purchase_order_no }}
             </span>
-          </td>
+            </td>
 
-          <!--실도착수량-->
-          <td rowspan="3">
-            <a-input
-                v-if="state.editableData[item.key]"
-                v-model:value="state.editableData[item.key]['arrival_quantity']"
-                size="small"
-            />
-            <span v-else>
+            <!--실도착수량-->
+            <td rowspan="3">
+              <a-input-number
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['arrival_quantity']"
+                  :min="0"
+                  :max="state.editableData[item.key]['quantity']"
+                  size="small"
+              />
+              <span v-else>
               {{ item.arrival_quantity }}
             </span>
-          </td>
+            </td>
 
-          <!--메모-->
-          <td rowspan="3">
-            <a-textarea
-                :rows="5"
-                v-if="state.editableData[item.key]"
-                v-model:value="state.editableData[item.key]['memo']"
-                size="small"
-            />
-            <span v-else>
+            <!--메모-->
+            <td rowspan="3">
+              <a-textarea
+                  :rows="5"
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['memo']"
+                  size="small"
+              />
+              <span v-else>
               {{ item.memo }}
             </span>
-          </td>
+            </td>
 
-          <!--바코드-->
-          <td rowspan="3">
-            <a-button
-                @click.prevent="openBarcodePopup(item)"
-                size="small"
-                style="z-index: 99"
-            >
-              <template #icon>
-                <ExportOutlined/>
-              </template>
-              출력
-            </a-button>
-          </td>
+            <!--바코드-->
+            <td rowspan="3">
+              <a-button
+                  @click.prevent="openBarcodePopup(item)"
+                  size="small"
+                  style="z-index: 99"
+              >
+                <template #icon>
+                  <ExportOutlined/>
+                </template>
+                출력
+              </a-button>
+            </td>
 
-          <!--입출고상태-->
-          <td rowspan="3">
-            <a-select
-                size="small"
-                v-model:value="item.shipping_status"
-                @change="updateStatus(item, 'shipping_status')"
-                style="width: 100px;">
+            <!--입출고상태-->
+            <td rowspan="3">
+              <a-select
+                  size="small"
+                  v-model:value="item.shipping_status"
+                  @change="updateStatus(item, 'shipping_status')"
+                  style="width: 100px;">
 
-              <a-select-option v-for="option in state.shippingStatus" :value="option.value">
-                {{ option.label }}
-              </a-select-option>
-            </a-select>
-          </td>
+                <a-select-option v-for="option in state.shippingStatus" :value="option.value">
+                  {{ option.label }}
+                </a-select-option>
+              </a-select>
+            </td>
 
-          <!--   액션-->
-          <td rowspan="3">
-            <div class="editable-row-operations">
+            <!--   액션-->
+            <td rowspan="3" style="width: 90px">
+              <div class="editable-row-operations">
               <span v-if="state.editableData[item.key]">
                 <a-typography-link @click="saveRow(item.key)">저장</a-typography-link>
                 <a-popconfirm title="취소 하시겠습니까?" @confirm="cancelRow(item.key)">
                   <a>취소</a>
                 </a-popconfirm>
               </span>
-              <span v-else>
+                <span v-else>
                 <a @click="editRow(item.key)">수정</a>
               </span>
-            </div>
-          </td>
-        </tr>
-        <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td>{{ moment(item.ins_date).format('YYYY-MM-DD HH:mm:ss') }}</td><!--주문일자-->
-          <!--품목코드-->
-          <td>
-            <a @click="openPrdCodePopup(item)">
-              {{ item.item_no }}
-            </a>
-          </td>
-          <td>{{ item.prd_size_option }}</td><!--사이즈-->
+              </div>
+            </td>
+          </tr>
+          <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
+            <td>{{ moment(item.ins_date).format('YYYY-MM-DD HH:mm:ss') }}</td><!--주문일자-->
+            <!--품목코드-->
+            <td>
+              <a @click="openPrdCodePopup(item)">
+                {{ item.item_no }}
+              </a>
+            </td>
+            <td>{{ item.prd_size_option }}</td><!--사이즈-->
 
-          <!--실구매가-->
-          <td>
-            <a-input-number
-                :min="0"
-                v-if="state.editableData[item.key]"
-                v-model:value="state.editableData[item.key]['purchase_price']"
-                size="small"
-            />
-            <span v-else>
+            <!--실구매가-->
+            <td>
+              <a-input-number
+                  :min="0"
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['purchase_price']"
+                  size="small"
+              />
+              <span v-else>
                 {{ item.purchase_price }}
               </span>
-          </td>
+            </td>
 
-          <!--택배현황-->
-          <td>
-            <a-input
-                v-if="state.editableData[item.key]"
-                v-model:value="state.editableData[item.key]['package_status_memo']"
-                size="small"
-            />
-            <span v-else>
+            <!--택배현황-->
+            <td>
+              <a-input
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['package_status_memo']"
+                  size="small"
+              />
+              <span v-else>
               {{ item.package_status_memo }}
             </span>
-          </td>
-        </tr>
-        <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-          <td> <!--구매관리-->
-            <a-select
-                v-model:value="item.order_status"
-                size="small"
-                @change="updateStatus(item, 'order_status')"
-                style="width: 100px;">
-              <a-select-option v-for="option in state.orderStatus" :value="option.value">
-                {{ option.label }}
-              </a-select-option>
-            </a-select>
-          </td>
-          <td class="{{}}">{{ item.barcode }}</td><!--고객사코드-->
-          <td></td>
-          <!--현지운임-->
-          <td>
-            <a-input-number
-                :min="0"
-                v-if="state.editableData[item.key]"
-                v-model:value="state.editableData[item.key]['local_shipping_fee']"
-                size="small"
-            />
-            <span v-else>
+            </td>
+          </tr>
+          <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
+            <td> <!--구매관리-->
+              <a-select
+                  v-model:value="item.order_status"
+                  size="small"
+                  @change="updateStatus(item, 'order_status')"
+                  style="width: 100px;">
+                <a-select-option v-for="option in state.orderStatus" :value="option.value">
+                  {{ option.label }}
+                </a-select-option>
+              </a-select>
+            </td>
+            <td class="{{}}">{{ item.barcode }}</td><!--고객사코드-->
+            <td></td>
+            <!--현지운임-->
+            <td>
+              <a-input-number
+                  :min="0"
+                  v-if="state.editableData[item.key]"
+                  v-model:value="state.editableData[item.key]['local_shipping_fee']"
+                  size="small"
+              />
+              <span v-else>
               {{ item.local_shipping_fee }}
             </span>
-          </td>
-          <td>
+            </td>
+            <td>
 
-          </td>
+            </td>
 
-        </tr>
-      </template>
-      </tbody>
-    </table>
-    <div class="mb15" style="display: flex;justify-content: flex-end; margin-top: 5px;">
-      <div class="right-div" style="display: flex;align-items: center;gap: 5px">
-        <a-popconfirm title="삭제하시겠습니까?" @confirm="deleteCustomOrder">
-          <a-button>삭제</a-button>
-        </a-popconfirm>
-      </div>
+          </tr>
+        </template>
+        </tbody>
+      </table>
     </div>
-
     <div style="margin-top: 10px;">
-      <a-pagination
-          v-model:current="state.pagination.current"
-          v-model:page-size="state.pagination.pageSize"
-          show-size-changer
-          @showSizeChange="onShowSizeChange"
-          :total="state.pagination.total"
-          :show-total="(total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`"
-          :page-size-options="[10, 50, 100, 500, 1000, 1500, 2000]"
-          @change="handlePageChange"
-      />
+      <div style="width: 100%; display:flex; justify-content: space-between;">
+        <div>
+          <a-pagination
+              v-model:current="state.pagination.current"
+              v-model:page-size="state.pagination.pageSize"
+              show-size-changer
+              @showSizeChange="onShowSizeChange"
+              :total="state.pagination.total"
+              :show-total="(total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`"
+              :page-size-options="[10, 50, 100, 500, 1000, 1500, 2000]"
+              @change="handlePageChange"
+          />
+        </div>
+        <div>
+          <a-popconfirm title="삭제하시겠습니까?" @confirm="deleteCustomOrder">
+            <a-button>삭제</a-button>
+          </a-popconfirm>
+        </div>
+      </div>
     </div>
   </a-card>
   <a-modal
       v-model:open="state.prdDetailModal.show"
       title="주문 상세"
       @ok="saveDetail(state.prdDetailModal.data)"
-      width="1000px"
-  >
-
+      width="1000px">
     <template #footer>
       <a-button key="close" @click="()=>{state.prdDetailModal.show=false}">닫기</a-button>
       <a-button key="saveRow" type="primary" :loading="state.indicator.saveDetail"
@@ -456,13 +452,12 @@
             </a-radio>
           </a-radio-group>
         </a-descriptions-item>
-
-        <a-descriptions-item label="택배번호">
-          <a-input v-model:value="state.prdDetailModal.selectOrderData.purchase_invoice_no"/>
+        <a-descriptions-item label="택배번호">{{
+            state.prdDetailModal.selectOrderData.purchase_invoice_no
+          }}
         </a-descriptions-item>
-
         <a-descriptions-item label="옵션이미지">
-          <a-image :src="state.prdDetailModal.selectOrderData.prd_image"
+          <a-image :src="state.prdDetailModal.selectOrderData.option_image"
                    fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCYh2zi+oLMpMzyhRcASGUqqCZ16yno6CkYGRAQMDKMwhqj/fAIcloxgHQqxAjIHBEugw5sUIsSQpBobtQPdLciLEVJYzMPBHMDBsayhILEqEO4DxG0txmrERhM29nYGBddr//5/DGRjYNRkY/l7////39v///y4Dmn+LgeHANwDrkl1AuO+pmgAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAwqADAAQAAAABAAAAwwAAAAD9b/HnAAAHlklEQVR4Ae3dP3PTWBSGcbGzM6GCKqlIBRV0dHRJFarQ0eUT8LH4BnRU0NHR0UEFVdIlFRV7TzRksomPY8uykTk/zewQfKw/9znv4yvJynLv4uLiV2dBoDiBf4qP3/ARuCRABEFAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghgg0Aj8i0JO4OzsrPv69Wv+hi2qPHr0qNvf39+iI97soRIh4f3z58/u7du3SXX7Xt7Z2enevHmzfQe+oSN2apSAPj09TSrb+XKI/f379+08+A0cNRE2ANkupk+ACNPvkSPcAAEibACyXUyfABGm3yNHuAECRNgAZLuYPgEirKlHu7u7XdyytGwHAd8jjNyng4OD7vnz51dbPT8/7z58+NB9+/bt6jU/TI+AGWHEnrx48eJ/EsSmHzx40L18+fLyzxF3ZVMjEyDCiEDjMYZZS5wiPXnyZFbJaxMhQIQRGzHvWR7XCyOCXsOmiDAi1HmPMMQjDpbpEiDCiL358eNHurW/5SnWdIBbXiDCiA38/Pnzrce2YyZ4//59F3ePLNMl4PbpiL2J0L979+7yDtHDhw8vtzzvdGnEXdvUigSIsCLAWavHp/+qM0BcXMd/q25n1vF57TYBp0a3mUzilePj4+7k5KSLb6gt6ydAhPUzXnoPR0dHl79WGTNCfBnn1uvSCJdegQhLI1vvCk+fPu2ePXt2tZOYEV6/fn31dz+shwAR1sP1cqvLntbEN9MxA9xcYjsxS1jWR4AIa2Ibzx0tc44fYX/16lV6NDFLXH+YL32jwiACRBiEbf5KcXoTIsQSpzXx4N28Ja4BQoK7rgXiydbHjx/P25TaQAJEGAguWy0+2Q8PD6/Ki4R8EVl+bzBOnZY95fq9rj9zAkTI2SxdidBHqG9+skdw43borCXO/ZcJdraPWdv22uIEiLA4q7nvvCug8WTqzQveOH26fodo7g6uFe/a17W3+nFBAkRYENRdb1vkkz1CH9cPsVy/jrhr27PqMYvENYNlHAIesRiBYwRy0V+8iXP8+/fvX11Mr7L7ECueb/r48eMqm7FuI2BGWDEG8cm+7G3NEOfmdcTQw4h9/55lhm7DekRYKQPZF2ArbXTAyu4kDYB2YxUzwg0gi/41ztHnfQG26HbGel/crVrm7tNY+/1btkOEAZ2M05r4FB7r9GbAIdxaZYrHdOsgJ/wCEQY0J74TmOKnbxxT9n3FgGGWWsVdowHtjt9Nnvf7yQM2aZU/TIAIAxrw6dOnAWtZZcoEnBpNuTuObWMEiLAx1HY0ZQJEmHJ3HNvGCBBhY6jtaMoEiJB0Z29vL6ls58vxPcO8/zfrdo5qvKO+d3Fx8Wu8zf1dW4p/cPzLly/dtv9Ts/EbcvGAHhHyfBIhZ6NSiIBTo0LNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiEC/wGgKKC4YMA4TAAAAABJRU5ErkJggg=="
                    style="width:150px;height:150px;border-radius: 5px;"/>
         </a-descriptions-item>
@@ -473,21 +468,11 @@
           :column="1"
           :labelStyle="{ width: '150px' }"
           :contentStyle="{ width: '350px' }"
-          size="small"
-      >
-
+          size="small">
         <a-descriptions-item label="주문일자">{{ state.prdDetailModal.selectOrderData.ins_date }}</a-descriptions-item>
         <a-descriptions-item label="구매상태">
-          <a-select
-              v-model:value="state.prdDetailModal.selectOrderData.order_status"
-              size="small"
-              style="width: 100px;">
-            <a-select-option v-for="option in state.orderStatus" :value="option.value">
-              {{ option.label }}
-            </a-select-option>
-          </a-select>
+          {{ state.orderStatus.find(item => item.value === state.prdDetailModal.selectOrderData.order_status).label }}
         </a-descriptions-item>
-
         <a-descriptions-item label="상품명">{{ state.prdDetailModal.selectOrderData.prd_name }}</a-descriptions-item>
         <a-descriptions-item label="옵션명">{{
             state.prdDetailModal.selectOrderData.prd_option_name
@@ -498,15 +483,13 @@
           }}
         </a-descriptions-item>
         <a-descriptions-item label="주문수량">{{ state.prdDetailModal.selectOrderData.quantity }}</a-descriptions-item>
-
         <a-descriptions-item label="실도착수량">
-          <a-input-number ref="inputRef" v-model:value="state.prdDetailModal.selectOrderData.arrival_quantity"/>
+          <a-input-number :min="0" :max="state.prdDetailModal.selectOrderData.quantity"
+                          ref="inputRef" v-model:value="state.prdDetailModal.selectOrderData.arrival_quantity"/>
         </a-descriptions-item>
-
         <a-descriptions-item label="메모">
           <a-textarea v-model:value="state.prdDetailModal.selectOrderData.memo"/>
         </a-descriptions-item>
-
         <a-descriptions-item label="입출고상태">
           <a-select
               size="small"
@@ -517,7 +500,6 @@
             </a-select-option>
           </a-select>
         </a-descriptions-item>
-
         <a-descriptions-item label="바코드">
           <a-button
               @click.prevent="openBarcodePopup(state.prdDetailModal.selectOrderData)"
@@ -529,7 +511,6 @@
             출력
           </a-button>
         </a-descriptions-item>
-
       </a-descriptions>
 
     </a-space>
@@ -541,8 +522,8 @@
   >
     <a-descriptions bordered
                     :column="1"
-                    :labelStyle="{ width: '200px' , height: '10px' }"
-                    :contentStyle="{ width: 'auto', height: '10px' }">
+                    :labelStyle="{width: '150px', height: '50px'}"
+    >
       <a-descriptions-item v-for="item in state.modifyAllModal.column">
         <template #label>
           <a-checkbox v-model:checked="item.isChecked">{{ item.label }}</a-checkbox>
@@ -570,8 +551,9 @@
           </a-select-option>
         </a-select>
 
-        <a-textarea v-else-if="item.code ==='memo'" v-model:value="item.value" @change="changeCheck(item)"></a-textarea>
-        <a-input-number v-else-if="item.inputType === 'number'" v-model:value="item.value" size="middle"
+        <a-textarea v-else-if="item.inputType === 'textarea'" v-model:value="item.value"
+                    @change="changeCheck(item)"></a-textarea>
+        <a-input-number v-else-if="item.inputType === 'number'" v-model:value="item.value" size="middle" :min="0"
                         @change="changeCheck(item)" style="width:100% "></a-input-number>
         <a-input v-else v-model:value="item.value" size="middle" @change="changeCheck(item)"></a-input>
 
@@ -588,8 +570,6 @@
   </a-modal>
 
 </template>
-
-
 <script setup>
 
 import {onMounted, reactive, ref} from 'vue'
@@ -648,6 +628,7 @@ const state = reactive({
   waitWarehouseCount: 0,
   warehousingCount: 0,
   partiallyWarehousingCount: 0,
+  partiallyShipmentCount: 0,
   shippingCount: 0,
 
   accountData: {},
@@ -716,6 +697,7 @@ const state = reactive({
         code: 'purchase_invoice_no',
         value: '',
         isChecked: false,
+        inputType: 'textarea'
       },
       {
         label: '택배현황',
@@ -755,6 +737,7 @@ const state = reactive({
         code: 'memo',
         value: '',
         isChecked: false,
+        inputType: 'textarea',
       },
       {
         label: '입출고상태',
@@ -969,13 +952,13 @@ const openBarcodePopup = async (record) => {
     state.showPopupData.prd_option_name = record.prd_option_name;
     state.showPopupData.prd_size_option = record.prd_size_option;
     const content = `
-      <div style="display: flex;justify-content: space-between;gap: 10px;">
+      <div style="display: flex;justify-content: space-between;">
           <div style="display: flex;flex-direction: column;gap: 5px;padding-top:10px; ">
-              <span style="font-size: 10pt;line-height: 2pt;font-weight: bold;">${record.prd_code}</span>
+              <span style="font-size: 8pt;line-height: 2pt;font-weight: bold;">${record.prd_code}</span>
               <span style="font-size: 7pt;line-height: 10pt;font-weight: bold;">[${record.prd_option_name} ${record.prd_size_option}]</span>
           </div>
           <div class="qr-code">
-              <img src="${res.data.qrCodeUrl}" alt="QR Code" style="width: 80px;height: 80px;">
+              <img src="${res.data.qrCodeUrl}" alt="QR Code" style="width: 70px;height: 70px;">
           </div>
       </div>
       <div style="display: flex;justify-content: center; transform: translateY(-15px);">
@@ -1076,6 +1059,7 @@ const getCountWithStatus = async () => {
     state.waitWarehouseCount = res.data.waitWarehouseCount;
     state.warehousingCount = res.data.warehousingCount;
     state.partiallyWarehousingCount = res.data.partiallyWarehousingCount;
+    state.partiallyShipmentCount = res.data.partiallyShipmentCount;
     state.shippingCount = res.data.shippingCount;
     state.indicator.count = false;
   });
@@ -1087,8 +1071,8 @@ const openPrdCodePopup = (item) => {
 
 const updateStatus = async (item, what) => {
 
-  if (what === 'shipping_status' && ['paid', 'receiptCompleted'].includes(item.order_status) && item.shipping_status !== 'shippingAddress') {
-    message.error('접수대기 와 접수완료 주문은 입출고상태를 미발송으로만 변경할 수 있습니다.');
+  if (what === 'shipping_status' && ['paid', 'receiptCompleted', 'cancel', 'complete'].includes(item.order_status) && item.shipping_status !== 'shippingAddress') {
+    message.error('접수대기,접수완료,취소,마감 주문은 입출고상태를 미발송으로만 변경할 수 있습니다.');
     item.shipping_status = 'shippingAddress';
     return false;
   }
@@ -1126,6 +1110,7 @@ const openDetailPopup = async () => {
     }
 
     state.prdDetailModal.data = res.data;
+    // 여러주문일겨우 디폴트로 첫번째 주문번호 선택
     state.prdDetailModal.selectOrderNo = state.prdDetailModal.data[0].order_no;
     state.prdDetailModal.selectOrderData = state.prdDetailModal.data.filter(item => item.order_no === state.prdDetailModal.selectOrderNo)[0];
     state.prdDetailModal.show = true;
@@ -1136,8 +1121,10 @@ const openDetailPopup = async () => {
 const saveDetail = async (orders) => {
   state.indicator.saveDetail = true;
   for (let order of orders) {
-    if (order.arrival_quantity > order.quantity) {
-      message.error('실도착수량은 주문수량보다 클 수 없습니다.');
+    if (['paid', 'receiptCompleted', 'cancel', 'complete'].includes(order.order_status)
+        && order.shipping_status !== 'shippingAddress')
+    {
+      message.error('접수대기,접수완료,취소,마감 주문은 입출고상태를 미발송으로만 변경할 수 있습니다.');
       state.indicator.saveDetail = false;
       return false;
     }
@@ -1221,8 +1208,11 @@ const saveModifyAll = () => {
 
   if (!validCheck) return false;
 
-  if ('shipping_status' in editData && ['paid', 'receiptCompleted'].includes(editData.order_status) && (editData.shipping_status !== 'shippingAddress')) {
-    message.error('접수대기 와 접수완료 주문은 입출고상태를 미발송으로만 변경할 수 있습니다.');
+  if ('shipping_status' in editData
+      && ['paid', 'receiptCompleted', 'cancel', 'complete'].includes(editData.order_status)
+      && (editData.shipping_status !== 'shippingAddress'))
+  {
+    message.error('접수대기,접수완료,취소,마감 주문은 입출고상태를 미발송으로만 변경할 수 있습니다.');
     editData.shipping_status = 'shippingAddress';
     return false;
   }
@@ -1242,11 +1232,18 @@ const saveModifyAll = () => {
       return false;
     }
     message.success(`수정되었습니다.`);
-    getTableData();
+
+    // 수정된 주문들 테이블에 반영
+    state.tableData.checkedList.forEach(item => {
+      Object.assign(state.tableData.data.filter(data => data.id === item.id)[0], editData);
+    });
+
     state.modifyAllModal.show = false;
     state.indicator.saveModifyAll = false;
     state.tableData.checkAll = false;
-    state.tableData.checkedList = [];
+    state.tableData.checkedList.forEach(item => {
+      item.checked = false;
+    });
   });
 
 }
@@ -1277,7 +1274,6 @@ const isInPattern = (num) => {
   return false;
 }
 </script>
-
 <style>
 #header .ant-picker-input input {
   text-align: center;
@@ -1289,26 +1285,31 @@ const isInPattern = (num) => {
 
 </style>
 <style scoped>
+.table-container {
+  position: relative;
+  height: 87vh;
+  overflow: scroll;
+}
+
 .header-table {
-  overflow: auto;
   width: 100%;
 }
 
 .header-table thead th, .header-table thead td {
-  padding: 10px;
+  padding: 4px;
   text-align: center;
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 1;
   background: #7273de;
 }
 
 .header-table tbody th, .header-table tbody td {
-  padding: 10px;
+  padding: 3px;
   text-align: center;
   font-size: 12px;
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.1;
   border: 1px solid #d9d9d9;
 }
 

@@ -1,7 +1,7 @@
 <template>
   <loading v-model:active="state.indicator.loading" :can-cancel="false" :is-full-page="true"/>
   <div style="display: flex; gap: 10px;height:calc(100vh)">
-    <a-card title="출고처리" style=" width: 50%; ">
+    <a-card title="출고처리" style=" width: 38%; ">
       <div style=" width: 100%">
         <a-descriptions bordered :column="1" :labelStyle="{ width: '50px' }"
                         :contentStyle="{ width: '200px',height:'50px' }" size="small">
@@ -51,7 +51,7 @@
               :loading="state.shipmentTable.loading"
               :pagination="state.beforeShipPagination"
               v-model:current="state.beforeShipPagination.current"
-              :defaultExpandAllRows="true" :scroll="{ x: 600, y: 800}"
+              :defaultExpandAllRows="true" :scroll="{ y: 800}"
           >
             <template #bodyCell="{ column, text, record }">
               <template v-if="column.key === 'barcode'">
@@ -107,7 +107,7 @@
           </a-descriptions>
           <div style="margin-top: 10px">
             <a-button style="margin-left: 5px; margin-bottom: 5px; width: 140px" type="primary"
-                      @click.prevent="downloadAllShipmentItemsExcel">
+                      @click.prevent="downloadSearchItemsExcel">
               <template #icon>
                 <ProfileOutlined/>
               </template>
@@ -155,7 +155,7 @@ import {
   ProfileOutlined,
   SearchOutlined,
   CodeSandboxOutlined,
-  UploadOutlined
+  UploadOutlined,
 } from '@ant-design/icons-vue';
 
 import {useUserApi} from "@/api/user";
@@ -177,7 +177,7 @@ const state = reactive({
       title: '바코드',
       dataIndex: 'barcode',
       key: 'barcode',
-      width: 400,
+      width: 300,
     },
     {
       title: '수량',
@@ -346,7 +346,6 @@ const getShipmentTableData = async () => {
     state.shipmentTable.loading = false;
     state.indicator.loading = false;
 
-    console.log(state.shipmentTable.data)
   })
 }
 // 스캔한 바코드를 테이플 데이타에 입력
@@ -357,12 +356,11 @@ const inputShippingData = async () => {
     return false;
   }
 
-  state.beforeShipTable.data.push({
+  state.beforeShipTable.data.unshift({
     barcode: state.beforeShipTable.barcode.trim(),
     quantity: 1,
   });
 
-  console.log(state.beforeShipTable.data)
   state.beforeShipTable.barcode = '';
 }
 
@@ -407,14 +405,12 @@ const downloadGroupItemsExcel = async (record) => {
       return false;
     }
 
-    let blob = new Blob([res], { type: "charset=utf-8" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = res.data.download_url;
-    a.download = moment(record.ins_date).format('YYYY-MM-DD-HHmm') + '.xlsx';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const link = document.createElement('a');
+    link.href = res.data.download_url;
+    link.download = moment(record.ins_date).format('YYYY-MM-DD-HHmm') + '.xlsx';
+    document.body.appendChild(link);
+    link.click(); // 模拟点击
+    document.body.removeChild(link); // 移除元素
 
     state.indicator.loading = false;
     // window.open(res.data.download_url, "_blank");
@@ -422,9 +418,9 @@ const downloadGroupItemsExcel = async (record) => {
 
 }
 
-const downloadAllShipmentItemsExcel = async () => {
+const downloadSearchItemsExcel = async () => {
   state.indicator.loading = true;
-  await useCustomOrderApi().downloadAllShipmentItemsExcel(state.shipmentTable.params).then(res => {
+  await useCustomOrderApi().downloadSearchItemsExcel(state.shipmentTable.data).then(res => {
     if (res === undefined || res.status !== "2000") {
       state.indicator.loading = false;
       message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
