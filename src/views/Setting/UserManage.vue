@@ -20,19 +20,20 @@
     </div>
 
     <a-table :dataSource="userData" :columns="tableColumns">
-
       <template #bodyCell="{ column, record }">
+
         <template v-if="column.title === '추천코드'">
           <a-button @click="copyText(record.recommend_code)">
             {{ record.recommend_code }}
             <CopyOutlined />
           </a-button>
         </template>
+
         <template v-if="column.title === 'Action'">
           <a-button type="primary" @click="userLogin(record)">로그인 하기</a-button>
         </template>
-      </template>
 
+      </template>
     </a-table>
 
   </a-card>
@@ -86,7 +87,7 @@ const tableColumns = ref([
   {
     title: '아이디',
     dataIndex: 'username',
-    width: '15%',
+    width: '13%',
   },
   {
     title: '추천코드',
@@ -96,22 +97,27 @@ const tableColumns = ref([
   {
     title: '대리점아이디',
     dataIndex: 'parent_user',
-    width: '15%',
+    width: '13%',
   },
   {
     title: '사용자명',
     dataIndex: 'name',
-    width: '15%',
+    width: '13%',
   },
   {
     title: 'Email',
     dataIndex: 'email',
-    width: '15%',
+    width: '13%',
   },
   {
     title: '휴대전화',
     dataIndex: 'phone',
-    width: '15%',
+    width: '13%',
+  },
+  {
+    title: '가입시간',
+    dataIndex: 'ins_date',
+    width: '13%',
   },
   {
     title: 'Action',
@@ -189,7 +195,21 @@ function getUserList() {
     }
 
     userData.value = res.data.userList.map((item, index) => {
-      return {...item, key: index + 1};
+      // 创建一个Date对象
+      const date = new Date(item.insDate);
+
+      // 提取年月日时分秒
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      // 格式化输出
+      const formattedCreatedAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+      return {...item, key: index + 1, ins_date: formattedCreatedAt };
     });
 
     tableLoading.value = false;
