@@ -361,7 +361,6 @@ const inputShippingData = async () => {
     quantity: 1,
   });
 
-  console.log(state.beforeShipTable.data)
   state.beforeShipTable.barcode = '';
 }
 
