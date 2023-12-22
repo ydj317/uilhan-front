@@ -48,10 +48,10 @@
               style="margin-top: 5px;"
               :columns="state.beforeShipColumns"
               :data-source="state.beforeShipTable.data"
-              :loading="state.shipmentTable.loading"
+              :loading="state.beforeShipTable.loading"
               :pagination="state.beforeShipPagination"
               v-model:current="state.beforeShipPagination.current"
-              :defaultExpandAllRows="true" :scroll="{ y: 800}"
+              :defaultExpandAllRows="true" :scroll="{ y: 700}"
           >
             <template #bodyCell="{ column, text, record }">
               <template v-if="column.key === 'barcode'">
@@ -122,7 +122,7 @@
             :loading="state.shipmentTable.loading"
             :pagination="state.shipmentPagination"
             v-model:current="state.shipmentPagination.current"
-            :defaultExpandAllRows="true" :scroll="{ x: 600, y: 600}"
+            :defaultExpandAllRows="true" :scroll="{ x: 600, y: 700}"
         >
           <a-table-column :width="160" title="출고이력">
             <template #default="{ record }">
@@ -217,11 +217,23 @@ const state = reactive({
   order_date: [moment(), moment()],
   invoiceNo: '',
   shipmentPagination: {
+    onShowSizeChange: (current, pageSize) => {
+      state.shipmentPagination.current = 1;
+      state.shipmentPagination.pageSize = pageSize;
+      getShipmentTableData();
+    },
+
+    onChange: (page, pageSize) => {
+      state.shipmentPagination.current = page;
+      state.shipmentPagination.pageSize = pageSize;
+      getShipmentTableData();
+    },
     size: 'middle',
     position: ['bottomLeft'],
-    defaultCurrent: 1,
+    current: 1,
+    pageSize: 10,
     defaultPageSize: 10,
-    pageSizeOptions: ['10', '30', '50', '100'],
+    pageSizeOptions: ['10', '50', '100', '500', '1000', '1500' , '2000'],
     total: 0,
     showSizeChanger: true,
     showQuickJumper: true,
@@ -233,10 +245,9 @@ const state = reactive({
     position: ['bottomLeft'],
     defaultCurrent: 1,
     defaultPageSize: 10,
-    pageSizeOptions: ['10', '30', '50', '100'],
+    pageSizeOptions: ['10', '30', '50', '100', '200'],
     total: 0,
     showSizeChanger: true,
-    showQuickJumper: true,
     showTotal: (total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`,
   },
 
@@ -333,7 +344,10 @@ const getUserInfoData = async () => {
 // 주문 리스트
 const getShipmentTableData = async () => {
   state.shipmentTable.loading = true;
-  await useCustomOrderApi().getShipmentGroupList(state.shipmentTable.params).then(res => {
+  let params = state.shipmentTable.params;
+  params.limit = parseInt(state.shipmentPagination.pageSize);
+  params.offset = (parseInt(state.shipmentPagination.current) - 1) * parseInt(state.shipmentPagination.pageSize);
+  await useCustomOrderApi().getShipmentGroupList(params).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       state.indicator.loading = false;
@@ -341,8 +355,8 @@ const getShipmentTableData = async () => {
       return false;
     }
 
-    state.shipmentTable.data = res.data;
-    state.shipmentPagination.total = res.data.length;
+    state.shipmentTable.data = res.data.list;
+    state.shipmentPagination.total = res.data.totalCount;
     state.shipmentTable.loading = false;
     state.indicator.loading = false;
 

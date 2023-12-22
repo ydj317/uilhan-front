@@ -66,7 +66,6 @@
             :data-source="state.tableData.data"
             :loading="state.tableData.loading"
             :pagination="state.pagination"
-            v-model:current="state.pagination.current"
             :defaultExpandAllRows="true" :scroll="{ x: 600, y: 600}"
         >
           <template #bodyCell="{ column, text, record }">
@@ -152,11 +151,23 @@ const state = reactive({
   order_date: [moment(), moment()],
   invoiceNo: '',
   pagination: {
+    onShowSizeChange: (current, pageSize) => {
+      state.pagination.current = 1;
+      state.pagination.pageSize = pageSize;
+      getTableData();
+    },
+    onChange: (page, pageSize) => {
+      state.pagination.current = page;
+      state.pagination.pageSize = pageSize;
+      getTableData();
+    },
+
+    current: 1,
+    pageSize: 10,
+    defaultPageSize: 10,
     size: 'middle',
     position: ['bottomLeft'],
-    defaultCurrent: 1,
-    defaultPageSize: 10,
-    pageSizeOptions: ['10', '30', '50', '100'],
+    pageSizeOptions: ['10', '50', '100', '500', '1000', '1500' , '2000'],
     total: 0,
     showSizeChanger: true,
     showQuickJumper: true,
@@ -249,7 +260,10 @@ const getUserInfoData = async () => {
 // 주문 리스트
 const getTableData = async () => {
   state.tableData.loading = true;
-  await useCustomOrderApi().getCustomOrderReceiptList(state.tableData.params).then(res => {
+  let params = state.tableData.params;
+  params.limit = parseInt(state.pagination.pageSize);
+  params.offset = (parseInt(state.pagination.current) - 1) * parseInt(state.pagination.pageSize);
+  await useCustomOrderApi().getCustomOrderReceiptList(params).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       state.indicator.loading = false;
@@ -257,8 +271,8 @@ const getTableData = async () => {
       return false;
     }
 
-    state.tableData.data = res.data;
-    state.pagination.total = res.data.length;
+    state.tableData.data = res.data.data;
+    state.pagination.total = res.data.totalCount;
     state.tableData.loading = false;
     state.indicator.loading = false;
   })
