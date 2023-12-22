@@ -1241,7 +1241,9 @@ const saveModifyAll = () => {
     state.modifyAllModal.show = false;
     state.indicator.saveModifyAll = false;
     state.tableData.checkAll = false;
-    state.tableData.checkedList = [];
+    state.tableData.checkedList.forEach(item => {
+      item.checked = false;
+    });
   });
 
 }
