@@ -190,7 +190,7 @@
         </thead>
         <tbody>
         <tr v-if="state.tableData.loading">
-          <td colspan="17" style="padding: 80px;background-color: white">
+          <td colspan="17" style="padding: 350px;background-color: white">
             <a-spin size="large"/>
           </td>
         </tr>
@@ -817,7 +817,7 @@ const getTableData = async () => {
       return false;
     }
 
-    state.tableData.data = res.data.data;
+    state.tableData.data = res.data.orderList;
     state.pagination.total = res.data.totalCount;
     state.tableData.loading = false;
   }).then(() => {
@@ -834,7 +834,7 @@ const downloadCustomOrderExcel = () => {
     return false;
   }
 
-  useCustomOrderApi().downloadCustomOrderExcel(state.tableData.data).then(res => {
+  useCustomOrderApi().downloadCustomOrderExcel(state.tableData.params).then(res => {
     if (res === undefined || res.status !== "2000") {
       state.indicator.download = false;
       message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
