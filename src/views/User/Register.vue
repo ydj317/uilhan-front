@@ -150,7 +150,7 @@
         </a-descriptions-item>
 
         <a-descriptions-item>
-          <span class="required"><strong>추천코드</strong></span>
+          <span class="no_required"><strong>추천코드</strong></span>
           <a-form-item name="com_name" has-feedback>
             <a-input v-model:value="formState.recommend_code" placeholder="추천코드"/>
           </a-form-item>
@@ -361,7 +361,7 @@ export default defineComponent({
       //[필수]도매 수수료
       wholesale_commission: "0",
       is_bridge_sync: false,
-      // 추천ID
+      // 추천코드
       recommend_code: ""
     });
 
