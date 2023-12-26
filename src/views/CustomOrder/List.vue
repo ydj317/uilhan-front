@@ -211,7 +211,7 @@
             <td>{{ item.prd_code }}</td><!--상품코드-->
             <td>{{ item.prd_option_name }}</td><!--옵션명-->
             <td rowspan="3">{{ item.quantity }}</td><!--주문수량-->
-            <td>{{ item.original_price }}</td><!--원가-->
+            <td>{{ parseFloat(item.original_price) }}</td><!--원가-->
             <td><!--택배번호-->
               <a-textarea
                   size="small"
@@ -231,6 +231,8 @@
                   v-model:value="state.editableData[item.key]['charge']"
                   size="small"
                   :min="0"
+                  :precision="2"
+                  :step="0.01"
               />
               <span v-else>
               {{ item.charge }}
@@ -244,9 +246,10 @@
                   v-model:value="state.editableData[item.key]['total_payment_amount']"
                   size="small"
                   :min="0"
+                  :precision="4"
               />
               <span v-else>
-              {{ item.total_payment_amount }}
+              {{ parseFloat(item.total_payment_amount) }}
             </span>
             </td>
 
@@ -349,9 +352,10 @@
                   v-if="state.editableData[item.key]"
                   v-model:value="state.editableData[item.key]['purchase_price']"
                   size="small"
+                  :precision="4"
               />
               <span v-else>
-                {{ item.purchase_price }}
+                {{ parseFloat(item.purchase_price) }}
               </span>
             </td>
 
@@ -388,9 +392,10 @@
                   v-if="state.editableData[item.key]"
                   v-model:value="state.editableData[item.key]['local_shipping_fee']"
                   size="small"
+                  :precision="4"
               />
               <span v-else>
-              {{ item.local_shipping_fee }}
+              {{ parseFloat(item.local_shipping_fee) }}
             </span>
             </td>
             <td>
@@ -551,9 +556,13 @@
           </a-select-option>
         </a-select>
 
+        <!--        textarea-->
         <a-textarea v-else-if="item.inputType === 'textarea'" v-model:value="item.value"
                     @change="changeCheck(item)"></a-textarea>
+        <!--        숫자형 input-->
         <a-input-number v-else-if="item.inputType === 'number'" v-model:value="item.value" size="middle" :min="0"
+                        :precision="item.precision"
+                        :step="item.step"
                         @change="changeCheck(item)" style="width:100% "></a-input-number>
         <a-input v-else v-model:value="item.value" size="middle" @change="changeCheck(item)"></a-input>
 
@@ -683,6 +692,7 @@ const state = reactive({
         value: '',
         isChecked: false,
         inputType: 'number',
+        precision: 4,
       },
       {
         label: '현지운임',
@@ -690,6 +700,7 @@ const state = reactive({
         value: '',
         isChecked: false,
         inputType: 'number',
+        precision: 4,
       },
       {
         label: '택배번호',
@@ -710,6 +721,8 @@ const state = reactive({
         value: '',
         isChecked: false,
         inputType: 'number',
+        precision: 2,
+        step: 0.01,
       },
       {
         label: '금액',
@@ -717,6 +730,7 @@ const state = reactive({
         value: '',
         isChecked: false,
         inputType: 'number',
+        precision: 4,
       },
       {
         label: '구매번호',
