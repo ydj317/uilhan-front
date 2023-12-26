@@ -1,7 +1,7 @@
 <template>
   <loading v-model:active="state.indicator.table" :can-cancel="false" :is-full-page="true"/>
   <div style="display: flex; gap: 10px; height: 220px;">
-    <a-card style=" width: 51%">
+    <a-card style=" width: auto">
       <div id="header">
         <a-space>
           <div>
