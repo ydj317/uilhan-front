@@ -162,6 +162,7 @@ import {useUserApi} from "@/api/user";
 import {useCustomOrderApi} from "@/api/customOrder";
 import Loading from "vue-loading-overlay";
 import Cookie from "js-cookie";
+import {cloneDeep} from "lodash";
 
 const state = reactive({
   shipmentColumns: [
@@ -344,7 +345,7 @@ const getUserInfoData = async () => {
 // 주문 리스트
 const getShipmentTableData = async () => {
   state.shipmentTable.loading = true;
-  let params = state.shipmentTable.params;
+  let params = cloneDeep(state.shipmentTable.params);
   params.limit = parseInt(state.shipmentPagination.pageSize);
   params.offset = (parseInt(state.shipmentPagination.current) - 1) * parseInt(state.shipmentPagination.pageSize);
   await useCustomOrderApi().getShipmentGroupList(params).then(res => {
@@ -419,30 +420,47 @@ const downloadGroupItemsExcel = async (record) => {
       return false;
     }
 
-    const link = document.createElement('a');
-    link.href = res.data.download_url;
-    link.download = moment(record.ins_date).format('YYYY-MM-DD-HHmm') + '.xlsx';
-    document.body.appendChild(link);
-    link.click(); // 模拟点击
-    document.body.removeChild(link); // 移除元素
-
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let timeStamp = new Date().getTime(); // 创建一个时间戳
+    let formattedDate = moment(record.ins_date).format('YYYY년 MM월 DD일 HH시 mm분');
+    let fileName = decodeURI('shipment-items' + formattedDate + '.xlsx');
+    let href = process.env.VUE_APP_API_URL + '/uploads/shipment-items.xlsx?t=' + timeStamp;
+    downloadElement.href = href;
+    downloadElement.download = fileName; // 设置下载文件名
+    document.body.appendChild(downloadElement);
     state.indicator.loading = false;
-    // window.open(res.data.download_url, "_blank");
+    downloadElement.click(); // 触发下载
+    document.body.removeChild(downloadElement); // 下载后移除元素
+    url.revokeObjectURL(href);
+
   })
 
 }
 
 const downloadSearchItemsExcel = async () => {
   state.indicator.loading = true;
-  await useCustomOrderApi().downloadSearchItemsExcel(state.shipmentTable.data).then(res => {
+  await useCustomOrderApi().downloadSearchItemsExcel(state.shipmentTable.params).then(res => {
+    console.log(res)
+
     if (res === undefined || res.status !== "2000") {
       state.indicator.loading = false;
-      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+      message.error(res.message);
       return false;
     }
 
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let timeStamp = new Date().getTime(); // 创建一个时间戳
+    let fileName = decodeURI('search-shipment-items.xlsx');
+    let href = process.env.VUE_APP_API_URL + '/uploads/search-shipment-items.xlsx?t=' + timeStamp;
+    downloadElement.href = href;
+    downloadElement.download = fileName; // 设置下载文件名
+    document.body.appendChild(downloadElement);
     state.indicator.loading = false;
-    window.open(res.data.download_url, "_blank");
+    downloadElement.click(); // 触发下载
+    document.body.removeChild(downloadElement); // 下载后移除元素
+    url.revokeObjectURL(href);
   })
 
 }

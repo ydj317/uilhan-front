@@ -842,7 +842,15 @@ const downloadCustomOrderExcel = () => {
     }
 
     state.indicator.download = false;
-    window.open(res.data.download_url, "_blank");
+
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let href = process.env.VUE_APP_API_URL + '/uploads/custom-order-list.xlsx?t=' + new Date().getTime();
+    downloadElement.href = href;
+    downloadElement.download = decodeURI('custom-order-list.xlsx'); // 下载后文件名
+    downloadElement.click(); // 点击下载
+    document.body.removeChild(downloadElement); // 下载完成移除元素
+    url.revokeObjectURL(href);
   });
 }
 

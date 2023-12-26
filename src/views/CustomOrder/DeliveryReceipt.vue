@@ -108,6 +108,7 @@ import {
 import {useUserApi} from "@/api/user";
 import {useCustomOrderApi} from "@/api/customOrder";
 import Loading from "vue-loading-overlay";
+import {cloneDeep} from "lodash";
 
 
 const state = reactive({
@@ -260,7 +261,7 @@ const getUserInfoData = async () => {
 // 주문 리스트
 const getTableData = async () => {
   state.tableData.loading = true;
-  let params = state.tableData.params;
+  let params = cloneDeep(state.tableData.params);
   params.limit = parseInt(state.pagination.pageSize);
   params.offset = (parseInt(state.pagination.current) - 1) * parseInt(state.pagination.pageSize);
   await useCustomOrderApi().getCustomOrderReceiptList(params).then(res => {
@@ -307,15 +308,21 @@ const receiptListExcelDownload = async () => {
     return false;
   }
 
-  await useCustomOrderApi().downloadCustomOrderReceiptList(state.tableData.data).then(res => {
+  await useCustomOrderApi().downloadCustomOrderReceiptList(state.tableData.params).then(res => {
     if (res === undefined || res.status !== "2000") {
       state.indicator.loading = false;
-      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+      message.error(res.message);
       return false;
     }
-
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let href = process.env.VUE_APP_API_URL + '/uploads/custom-order-receipt-management.xlsx?t=' + new Date().getTime();
+    downloadElement.href = href;
+    downloadElement.download = decodeURI('custom-order-receipt-management.xlsx'); // 下载后文件名
     state.indicator.loading = false;
-    window.open(res.data.download_url, "_blank");
+    downloadElement.click(); // 点击下载
+    document.body.removeChild(downloadElement); // 下载完成移除元素
+    url.revokeObjectURL(href);
   })
 
 }
