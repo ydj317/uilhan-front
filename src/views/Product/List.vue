@@ -1085,7 +1085,7 @@ export default defineComponent({
           message.warning("채널정보가 없습니다. 마켓계정관리에서 연동확인 후 다시 시도해주세요.");
           return false;
         }
-        url = `${channelInfo.url}/${market_prd_code}`;
+        url = `${channelInfo.url}/products/${market_prd_code}`;
       } else if (marketInfo.market_code === 'coupang') {
         if (marketInfo.front_code !== undefined) {
           market_prd_code = marketInfo.front_code
