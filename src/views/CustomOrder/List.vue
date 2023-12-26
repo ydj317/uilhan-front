@@ -156,6 +156,7 @@
           </th>
           <th style="width: 130px;">
             주문번호
+            <span class="hand-cursor" id="orderSort" @click="toggleSort"> ▼ </span>
           </th>
           <th style="width: 130px;" rowspan="3">상품명</th>
           <th rowspan="3">옵션이미지</th>
@@ -591,7 +592,6 @@ import {
   DownloadOutlined,
   UploadOutlined,
   ExportOutlined,
-  QuestionCircleOutlined,
 } from '@ant-design/icons-vue';
 import {useUserApi} from "@/api/user";
 import {useCustomOrderApi} from "@/api/customOrder";
@@ -616,6 +616,7 @@ const state = reactive({
       shipping_status: '',
       scan_package_no: '',
       scan_barcode: '',
+      order_by: 'DESC',
     },
   },
   orderStatus: [],
@@ -820,8 +821,10 @@ const getCustomOrderStatusList = async () => {
 
 
 // 주문 리스트
-const getTableData = async () => {
+const getTableData = async (sort = 'DESC') => {
   state.tableData.loading = true;
+  state.tableData.params.order_by = sort;
+  document.getElementById('orderSort').innerText = sort === 'DESC' ? '▼' : '▲';
   let params = cloneDeep(state.tableData.params);
   params.limit = parseInt(state.pagination.pageSize);
   params.offset = (parseInt(state.pagination.current) - 1) * parseInt(state.pagination.pageSize);
@@ -1270,6 +1273,12 @@ const changeCheck = (item) => {
 
 }
 
+const toggleSort = () => {
+  state.tableData.params.order_by = state.tableData.params.order_by === 'ASC' ? 'DESC' : 'ASC';
+  document.getElementById('orderSort').innerText = state.tableData.params.order_by === 'ASC' ? '▲' : '▼';
+  getTableData(state.tableData.params.order_by);
+}
+
 
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls(), getCustomOrderStatusList()])
@@ -1352,6 +1361,10 @@ const isInPattern = (num) => {
   display: flex;
   height: 30px;
   line-height: 30px;
+}
+
+.hand-cursor {
+  cursor: pointer;
 }
 
 </style>
