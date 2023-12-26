@@ -48,10 +48,10 @@
               style="margin-top: 5px;"
               :columns="state.beforeShipColumns"
               :data-source="state.beforeShipTable.data"
-              :loading="state.shipmentTable.loading"
+              :loading="state.beforeShipTable.loading"
               :pagination="state.beforeShipPagination"
               v-model:current="state.beforeShipPagination.current"
-              :defaultExpandAllRows="true" :scroll="{ y: 800}"
+              :defaultExpandAllRows="true" :scroll="{ y: 700}"
           >
             <template #bodyCell="{ column, text, record }">
               <template v-if="column.key === 'barcode'">
@@ -122,7 +122,7 @@
             :loading="state.shipmentTable.loading"
             :pagination="state.shipmentPagination"
             v-model:current="state.shipmentPagination.current"
-            :defaultExpandAllRows="true" :scroll="{ x: 600, y: 600}"
+            :defaultExpandAllRows="true" :scroll="{ x: 600, y: 700}"
         >
           <a-table-column :width="160" title="출고이력">
             <template #default="{ record }">
@@ -162,6 +162,7 @@ import {useUserApi} from "@/api/user";
 import {useCustomOrderApi} from "@/api/customOrder";
 import Loading from "vue-loading-overlay";
 import Cookie from "js-cookie";
+import {cloneDeep} from "lodash";
 
 const state = reactive({
   shipmentColumns: [
@@ -217,11 +218,23 @@ const state = reactive({
   order_date: [moment(), moment()],
   invoiceNo: '',
   shipmentPagination: {
+    onShowSizeChange: (current, pageSize) => {
+      state.shipmentPagination.current = 1;
+      state.shipmentPagination.pageSize = pageSize;
+      getShipmentTableData();
+    },
+
+    onChange: (page, pageSize) => {
+      state.shipmentPagination.current = page;
+      state.shipmentPagination.pageSize = pageSize;
+      getShipmentTableData();
+    },
     size: 'middle',
     position: ['bottomLeft'],
-    defaultCurrent: 1,
+    current: 1,
+    pageSize: 10,
     defaultPageSize: 10,
-    pageSizeOptions: ['10', '30', '50', '100'],
+    pageSizeOptions: ['10', '50', '100', '500', '1000', '1500' , '2000'],
     total: 0,
     showSizeChanger: true,
     showQuickJumper: true,
@@ -233,10 +246,9 @@ const state = reactive({
     position: ['bottomLeft'],
     defaultCurrent: 1,
     defaultPageSize: 10,
-    pageSizeOptions: ['10', '30', '50', '100'],
+    pageSizeOptions: ['10', '30', '50', '100', '200'],
     total: 0,
     showSizeChanger: true,
-    showQuickJumper: true,
     showTotal: (total, range) => `검색된 ${total} 건 중 ${range[0]} - ${range[1]} 건`,
   },
 
@@ -333,7 +345,10 @@ const getUserInfoData = async () => {
 // 주문 리스트
 const getShipmentTableData = async () => {
   state.shipmentTable.loading = true;
-  await useCustomOrderApi().getShipmentGroupList(state.shipmentTable.params).then(res => {
+  let params = cloneDeep(state.shipmentTable.params);
+  params.limit = parseInt(state.shipmentPagination.pageSize);
+  params.offset = (parseInt(state.shipmentPagination.current) - 1) * parseInt(state.shipmentPagination.pageSize);
+  await useCustomOrderApi().getShipmentGroupList(params).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       state.indicator.loading = false;
@@ -341,8 +356,8 @@ const getShipmentTableData = async () => {
       return false;
     }
 
-    state.shipmentTable.data = res.data;
-    state.shipmentPagination.total = res.data.length;
+    state.shipmentTable.data = res.data.list;
+    state.shipmentPagination.total = res.data.totalCount;
     state.shipmentTable.loading = false;
     state.indicator.loading = false;
 
@@ -405,30 +420,47 @@ const downloadGroupItemsExcel = async (record) => {
       return false;
     }
 
-    const link = document.createElement('a');
-    link.href = res.data.download_url;
-    link.download = moment(record.ins_date).format('YYYY-MM-DD-HHmm') + '.xlsx';
-    document.body.appendChild(link);
-    link.click(); // 模拟点击
-    document.body.removeChild(link); // 移除元素
-
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let timeStamp = new Date().getTime(); // 创建一个时间戳
+    let formattedDate = moment(record.ins_date).format('YYYY년 MM월 DD일 HH시 mm분');
+    let fileName = decodeURI('shipment-items' + formattedDate + '.xlsx');
+    let href = process.env.VUE_APP_API_URL + '/uploads/shipment-items.xlsx?t=' + timeStamp;
+    downloadElement.href = href;
+    downloadElement.download = fileName; // 设置下载文件名
+    document.body.appendChild(downloadElement);
     state.indicator.loading = false;
-    // window.open(res.data.download_url, "_blank");
+    downloadElement.click(); // 触发下载
+    document.body.removeChild(downloadElement); // 下载后移除元素
+    url.revokeObjectURL(href);
+
   })
 
 }
 
 const downloadSearchItemsExcel = async () => {
   state.indicator.loading = true;
-  await useCustomOrderApi().downloadSearchItemsExcel(state.shipmentTable.data).then(res => {
+  await useCustomOrderApi().downloadSearchItemsExcel(state.shipmentTable.params).then(res => {
+    console.log(res)
+
     if (res === undefined || res.status !== "2000") {
       state.indicator.loading = false;
-      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+      message.error(res.message);
       return false;
     }
 
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let timeStamp = new Date().getTime(); // 创建一个时间戳
+    let fileName = decodeURI('search-shipment-items.xlsx');
+    let href = process.env.VUE_APP_API_URL + '/uploads/search-shipment-items.xlsx?t=' + timeStamp;
+    downloadElement.href = href;
+    downloadElement.download = fileName; // 设置下载文件名
+    document.body.appendChild(downloadElement);
     state.indicator.loading = false;
-    window.open(res.data.download_url, "_blank");
+    downloadElement.click(); // 触发下载
+    document.body.removeChild(downloadElement); // 下载后移除元素
+    url.revokeObjectURL(href);
   })
 
 }

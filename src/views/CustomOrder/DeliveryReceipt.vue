@@ -66,7 +66,6 @@
             :data-source="state.tableData.data"
             :loading="state.tableData.loading"
             :pagination="state.pagination"
-            v-model:current="state.pagination.current"
             :defaultExpandAllRows="true" :scroll="{ x: 600, y: 600}"
         >
           <template #bodyCell="{ column, text, record }">
@@ -109,6 +108,7 @@ import {
 import {useUserApi} from "@/api/user";
 import {useCustomOrderApi} from "@/api/customOrder";
 import Loading from "vue-loading-overlay";
+import {cloneDeep} from "lodash";
 
 
 const state = reactive({
@@ -152,11 +152,23 @@ const state = reactive({
   order_date: [moment(), moment()],
   invoiceNo: '',
   pagination: {
+    onShowSizeChange: (current, pageSize) => {
+      state.pagination.current = 1;
+      state.pagination.pageSize = pageSize;
+      getTableData();
+    },
+    onChange: (page, pageSize) => {
+      state.pagination.current = page;
+      state.pagination.pageSize = pageSize;
+      getTableData();
+    },
+
+    current: 1,
+    pageSize: 10,
+    defaultPageSize: 10,
     size: 'middle',
     position: ['bottomLeft'],
-    defaultCurrent: 1,
-    defaultPageSize: 10,
-    pageSizeOptions: ['10', '30', '50', '100'],
+    pageSizeOptions: ['10', '50', '100', '500', '1000', '1500' , '2000'],
     total: 0,
     showSizeChanger: true,
     showQuickJumper: true,
@@ -249,7 +261,10 @@ const getUserInfoData = async () => {
 // 주문 리스트
 const getTableData = async () => {
   state.tableData.loading = true;
-  await useCustomOrderApi().getCustomOrderReceiptList(state.tableData.params).then(res => {
+  let params = cloneDeep(state.tableData.params);
+  params.limit = parseInt(state.pagination.pageSize);
+  params.offset = (parseInt(state.pagination.current) - 1) * parseInt(state.pagination.pageSize);
+  await useCustomOrderApi().getCustomOrderReceiptList(params).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       state.indicator.loading = false;
@@ -257,8 +272,8 @@ const getTableData = async () => {
       return false;
     }
 
-    state.tableData.data = res.data;
-    state.pagination.total = res.data.length;
+    state.tableData.data = res.data.data;
+    state.pagination.total = res.data.totalCount;
     state.tableData.loading = false;
     state.indicator.loading = false;
   })
@@ -293,15 +308,21 @@ const receiptListExcelDownload = async () => {
     return false;
   }
 
-  await useCustomOrderApi().downloadCustomOrderReceiptList(state.tableData.data).then(res => {
+  await useCustomOrderApi().downloadCustomOrderReceiptList(state.tableData.params).then(res => {
     if (res === undefined || res.status !== "2000") {
       state.indicator.loading = false;
-      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+      message.error(res.message);
       return false;
     }
-
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let href = process.env.VUE_APP_API_URL + '/uploads/custom-order-receipt-management.xlsx?t=' + new Date().getTime();
+    downloadElement.href = href;
+    downloadElement.download = decodeURI('custom-order-receipt-management.xlsx'); // 下载后文件名
     state.indicator.loading = false;
-    window.open(res.data.download_url, "_blank");
+    downloadElement.click(); // 点击下载
+    document.body.removeChild(downloadElement); // 下载完成移除元素
+    url.revokeObjectURL(href);
   })
 
 }

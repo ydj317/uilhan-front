@@ -64,8 +64,8 @@
           </div>
           <div>
             <a-space align="center" direction="vertical">
-              <a-button size="middle" type="primary" @click.prevent="handleSearch" class="mt15">검색</a-button>
-              <a-button size="middle" @click="getTableData" class="ml15 mt15">초기화</a-button>
+              <a-button size="middle" type="primary" @click.prevent="handleSearch">검 색</a-button>
+              <a-button size="middle" @click="getTableData">초기화</a-button>
             </a-space>
           </div>
         </a-space>
@@ -190,11 +190,11 @@
         </thead>
         <tbody>
         <tr v-if="state.tableData.loading">
-          <td colspan="17" style="padding: 80px;background-color: white">
+          <td colspan="17" style="padding: 350px;background-color: white">
             <a-spin size="large"/>
           </td>
         </tr>
-        <template v-else v-for="(item, key) in state.tableData.showData" :key="key">
+        <template v-else v-for="(item, key) in state.tableData.data" :key="key">
           <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
             <td rowspan="3" style="cursor: pointer;" @click.self="handleOrderChecked(item)">
               <a-checkbox v-model:checked="item.checked" @click.self="handleOrderChecked(item)"></a-checkbox>
@@ -595,7 +595,6 @@ const state = reactive({
     data: [],
     checkedList: [],
     checkAll: false,
-    showData: [],
     total: 0,
     loading: false,
     syncBridgeStatusLoading: false,
@@ -751,9 +750,9 @@ const state = reactive({
   },
 
   pagination: {
+    total: 0,
     current: 1,
     pageSize: 10,
-    total: 0,
   },
 
 });
@@ -761,25 +760,13 @@ const state = reactive({
 const handlePageChange = (page, pageSize) => {
   state.pagination.current = page;
   state.pagination.pageSize = pageSize;
-  state.tableData.checkAll = false;
-
-  // 전에 체크 했던거 초기화
-  state.tableData.checkedList.forEach((item, index) => {
-    state.tableData.checkedList[index].checked = false;
-  });
-  state.tableData.checkedList = [];
-
-  reloadShowData();
+  getTableData()
 }
 
 const onShowSizeChange = (current, pageSize) => {
   state.pagination.current = current;
   state.pagination.pageSize = pageSize;
-  reloadShowData();
-}
-
-const reloadShowData = () => {
-  state.tableData.showData = state.tableData.data.slice((state.pagination.current - 1) * state.pagination.pageSize, state.pagination.current * state.pagination.pageSize);
+  getTableData()
 }
 
 // 검색기간
@@ -820,16 +807,18 @@ const getCustomOrderStatusList = async () => {
 // 주문 리스트
 const getTableData = async () => {
   state.tableData.loading = true;
-  await useCustomOrderApi().getCustomOrderList(state.tableData.params).then(res => {
+  let params = cloneDeep(state.tableData.params);
+  params.limit = parseInt(state.pagination.pageSize);
+  params.offset = (parseInt(state.pagination.current) - 1) * parseInt(state.pagination.pageSize);
+  await useCustomOrderApi().getCustomOrderList(params).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       state.tableData.loading = false;
       return false;
     }
 
-    state.tableData.data = res.data;
-    state.pagination.total = res.data.length;
-    reloadShowData();
+    state.tableData.data = res.data.orderList;
+    state.pagination.total = res.data.totalCount;
     state.tableData.loading = false;
   }).then(() => {
     getCountWithStatus();
@@ -845,7 +834,7 @@ const downloadCustomOrderExcel = () => {
     return false;
   }
 
-  useCustomOrderApi().downloadCustomOrderExcel(state.tableData.data).then(res => {
+  useCustomOrderApi().downloadCustomOrderExcel(state.tableData.params).then(res => {
     if (res === undefined || res.status !== "2000") {
       state.indicator.download = false;
       message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
@@ -853,7 +842,15 @@ const downloadCustomOrderExcel = () => {
     }
 
     state.indicator.download = false;
-    window.open(res.data.download_url, "_blank");
+
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let href = process.env.VUE_APP_API_URL + '/uploads/custom-order-list.xlsx?t=' + new Date().getTime();
+    downloadElement.href = href;
+    downloadElement.download = decodeURI('custom-order-list.xlsx'); // 下载后文件名
+    downloadElement.click(); // 点击下载
+    document.body.removeChild(downloadElement); // 下载完成移除元素
+    url.revokeObjectURL(href);
   });
 }
 
@@ -1033,7 +1030,7 @@ const handleOrderChecked = (item) => {
 
 // 全选 全不选
 const handleCheckAll = (e) => {
-  state.tableData.showData.forEach(item => {
+  state.tableData.data.forEach(item => {
     item.checked = e.target.checked;
     state.tableData.checkedList = state.tableData.data.filter(item => item.checked === true)
   })
