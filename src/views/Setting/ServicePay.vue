@@ -66,8 +66,7 @@
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">무제한 / 3개월 98,800원</a-radio>
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">무제한/ 6개월 188,000원</a-radio>
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">무제한/ 1년 354,000원</a-radio>
-              <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">주문수집</a-radio>
-              <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">주문건당 / 200원</a-radio>
+              <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">주문수집 / 건당 200원</a-radio>
             </a-radio-group>
             <ul>
             </ul>

@@ -76,7 +76,4 @@
   padding-top: 10px;
   color: #999;
 }
-
 </style>
-<script setup>
-</script>
