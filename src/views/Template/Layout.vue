@@ -26,8 +26,12 @@
       <a-layout-content :style="{ margin: '20px', minHeight: '280px' }">
         <Content/>
       </a-layout-content>
+
+      <Footer />
+
     </a-layout>
   </a-layout>
+
 </template>
 
 <script setup>
@@ -39,6 +43,7 @@ import Content from "@/views/Template/Content.vue";
 import NoticePopup from "@/views/Template/NoticePopup.vue";
 import {lib} from "@/util/lib";
 import {useRouter} from "vue-router";
+import Footer from "@/views/Template/Footer.vue";
 
 const router = useRouter();
 const collapsed = ref(false)
