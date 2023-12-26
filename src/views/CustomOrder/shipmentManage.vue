@@ -269,6 +269,8 @@ const onChangeDatePicker = (value, dateString) => {
   } else {
     state.shipmentTable.params.period = '';
   }
+
+  state.shipmentPagination.current = 1;
   getShipmentTableData();
 }
 
@@ -325,6 +327,7 @@ const handleDateChange = (event) => {
     state.shipmentTable.params.order_date = [];
   }
 
+  state.shipmentPagination.current = 1;
   getShipmentTableData();
 }
 
@@ -399,6 +402,8 @@ const setShipping = async () => {
     state.indicator.loading = false;
     message.success(res.message);
     state.beforeShipTable.data = [];
+
+    state.shipmentPagination.current = 1;
     getShipmentTableData();
   })
 }

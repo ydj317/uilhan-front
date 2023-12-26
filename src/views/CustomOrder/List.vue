@@ -775,6 +775,7 @@ const onChangeDatePicker = (value, dateString) => {
 }
 
 const handleOrderStatusChange = (e) => {
+  state.pagination.current = 1;
   getTableData()
 }
 
@@ -879,6 +880,7 @@ const excelUploadCustomOrder = (res) => {
 }
 
 const handleSearch = () => {
+  state.pagination.current = 1;
   if (!state.tableData.params.order_date) {
     message.error('검색기간을 선택해주세요.');
     return false;

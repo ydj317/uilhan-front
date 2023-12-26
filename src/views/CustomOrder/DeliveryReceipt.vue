@@ -185,6 +185,7 @@ const onChangeDatePicker = (value, dateString) => {
   } else {
     state.tableData.params.period = '';
   }
+  state.pagination.current = 1;
   getTableData();
 }
 
@@ -241,6 +242,7 @@ const handleDateChange = (event) => {
     state.tableData.params.order_date = [];
   }
 
+  state.pagination.current = 1;
   getTableData();
 }
 
@@ -294,6 +296,9 @@ const handleReceiving = async () => {
     }
 
     message.success(res.message);
+    state.indicator.loading = false;
+    state.invoiceNo = '';
+    state.pagination.current = 1;
     getTableData();
 
   })
