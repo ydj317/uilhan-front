@@ -1,38 +1,33 @@
 <template>
-  <div class="center">
-    <div class="row w97 space-between">
-      <img class="w7" src="../../assets/img/logo-dark.png" alt="">
-      <div class="w15 center">Copyright © 2023.WorldLink</div>
-    </div>
+  <div class="footer">
+<!--    <div class="logo">-->
+<!--      <img src="../../assets/img/logo-dark.png" alt="">-->
+<!--    </div>-->
+    <div class="Copyright">Copyright © 2023.WorldLink</div>
   </div>
 </template>
 
-<!--<script>-->
-<!--</script>-->
+<style scoped>
 
-<!--<style scoped>-->
-<!--.footerWrap {-->
-<!--  width: 100%;-->
-<!--  background-color: #fff;-->
-<!--  height: 60px;-->
-<!--  padding-left: 30px;-->
-<!--  padding-right: 30px;-->
-<!--}-->
+.footer {
+  position: relative;
+  height: 100px;
+  background: #fff;
+}
 
-<!--.footerLeft {-->
-<!--  float: left;-->
-<!--  line-height: 60px;-->
-<!--}-->
+.footer .logo {
+  position: absolute;
+  top: 30px;
+  left: 26px;
+}
+.footer .logo img {
+  width: 150px;
+}
 
-<!--.footerCenter {-->
-<!--  float: left;-->
-<!--  border: 1px solid #fff;-->
-<!--  width: 79%;-->
-<!--}-->
+.footer .Copyright {
+  text-align: center;
+  line-height: 100px;
+  color: #999;
+}
 
-<!--.footerRight {-->
-<!--  float: right;-->
-<!--  line-height: 60px;-->
-<!--  color: #74788d;-->
-<!--}-->
-<!--</style>-->
+</style>

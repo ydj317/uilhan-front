@@ -216,6 +216,18 @@ export const menus = [{
                         ids: ["jwli"],
                         icon: ''
                     },
+                },
+                {
+                    path: "/setting/ServicePay",
+                    name: "setting_servicePay",
+                    component: () => import("@/views/Setting/ServicePay.vue"),
+                    meta: {
+                        title: "서비스 결제",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                        icon: ''
+                    },
                 }
             ]
         },
