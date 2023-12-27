@@ -9,7 +9,7 @@
             <div>사업자등록번호 : 741-87-02944</div>
             <div>통신판매업신고 : 2023-인천연수구-2438호</div>
             <div>대표자 : 양경명</div>
-            <div>TEL : 1688-5980 (추후에 삭제 예정)</div>
+            <div>TEL : 1688-5980</div>
           </div>
           <a-divider type="vertical" style="height: 160px;" />
         </div>
@@ -76,7 +76,4 @@
   padding-top: 10px;
   color: #999;
 }
-
 </style>
-<script setup>
-</script>

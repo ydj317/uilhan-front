@@ -1,14 +1,3 @@
-<style>
-.service_title { text-align: center; }
-.service_title h1 { font-size: 40px; font-weight: bold; letter-spacing: -3px; }
-.service_title h4 { font-size: 18px; color: #666; margin-top: -15px;}
-
-.service_content { text-align: center; }
-.service_content h4 {font-size: 16px; font-weight: bold;}
-.service_content div {font-size: 14px; color: #666;}
-.service_content div .price {color: red;}
-</style>
-
 <template>
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true" />
 
@@ -18,8 +7,6 @@
       <h1>월드링크 가격안내</h1>
       <h4>나에게 필요한 기능만 선택하고 저렴하게 사용하세요.</h4>
     </div>
-
-<!--    <a-divider />-->
 
     <div style="padding: 50px 100px; margin: 30px 0; background: #eee">
       <a-row :gutter="100">
@@ -36,8 +23,6 @@
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">3000건/ 월 50,000원</a-radio>
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">무제한/ 월 80,000원</a-radio>
             </a-radio-group>
-            <ul>
-            </ul>
           </a-card>
         </a-col>
         <a-col :span="8">
@@ -52,8 +37,6 @@
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">10000건/ 월 120,000원</a-radio>
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">무제한/ 월 150,000원</a-radio>
             </a-radio-group>
-            <ul>
-            </ul>
           </a-card>
         </a-col>
         <a-col :span="8">
@@ -66,23 +49,18 @@
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">무제한 / 3개월 98,800원</a-radio>
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">무제한/ 6개월 188,000원</a-radio>
               <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">무제한/ 1년 354,000원</a-radio>
-              <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">주문수집</a-radio>
-              <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">주문건당 / 200원</a-radio>
+              <a-radio style="display: flex; height: 30px; line-height: 30px;" :value="1">주문수집 / 건당 200원</a-radio>
             </a-radio-group>
-            <ul>
-            </ul>
           </a-card>
         </a-col>
       </a-row>
     </div>
 
-<!--    <a-divider />-->
-
-      <a-descriptions title="서비스 이용 기간" bordered  :labelStyle="{ width: '170px' }">
-        <a-descriptions-item label="상품등록" :span="3">2023년 00월 00일 ~ 2023년 00월 00일</a-descriptions-item>
-        <a-descriptions-item label="이미지편집" :span="3">2023년 00월 00일 ~ 2023년 00월 00일</a-descriptions-item>
-        <a-descriptions-item label="배송대행 원클릭" :span="3">2023년 00월 00일 ~ 2023년 00월 00일</a-descriptions-item>
-      </a-descriptions>
+    <a-descriptions title="서비스 이용 기간" bordered  :labelStyle="{ width: '170px' }">
+      <a-descriptions-item label="상품등록" :span="3">2023년 00월 00일 ~ 2023년 00월 00일</a-descriptions-item>
+      <a-descriptions-item label="이미지편집" :span="3">2023년 00월 00일 ~ 2023년 00월 00일</a-descriptions-item>
+      <a-descriptions-item label="배송대행 원클릭" :span="3">2023년 00월 00일 ~ 2023년 00월 00일</a-descriptions-item>
+    </a-descriptions>
 
     <a-divider />
 
@@ -130,3 +108,14 @@ import "vue-loading-overlay/dist/vue-loading.css";
 const indicator = ref(false);
 
 </script>
+
+<style scoped>
+.service_title { text-align: center; }
+.service_title h1 { font-size: 40px; font-weight: bold; letter-spacing: -3px; }
+.service_title h4 { font-size: 18px; color: #666; margin-top: -15px;}
+
+.service_content { text-align: center; }
+.service_content h4 {font-size: 16px; font-weight: bold;}
+.service_content div {font-size: 14px; color: #666;}
+.service_content div .price {color: red;}
+</style>
