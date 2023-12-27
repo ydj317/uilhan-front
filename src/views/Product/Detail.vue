@@ -148,6 +148,7 @@ export default defineComponent({
         })
 
         this.initSku();
+
         this.product.onload = true;
         this.product.loading = false;
       });
