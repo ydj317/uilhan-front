@@ -175,6 +175,11 @@ export default {
             bPush = false;
             original_sku.spec = sName;
             format_sku.push(original_sku);
+          } else if (original_sku.spec.replace(/(\s*)/g, "") === sName.replace(/(\s*)/g, "")) {
+            // 기존로직 유지 2023-12-27
+            bPush = false;
+            // 기존 sku 는 그대로 유지
+            format_sku.push(original_sku);
           }
         });
 
