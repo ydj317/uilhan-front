@@ -65,7 +65,7 @@
           <div>
             <a-space align="center" direction="vertical">
               <a-button size="middle" type="primary" @click.prevent="handleSearch">검 색</a-button>
-              <a-button size="middle" @click="getTableData">초기화</a-button>
+              <a-button size="middle" @click="resetParam">초기화</a-button>
             </a-space>
           </div>
         </a-space>
@@ -828,6 +828,8 @@ const getTableData = async (sort = 'DESC') => {
   let params = cloneDeep(state.tableData.params);
   params.limit = parseInt(state.pagination.pageSize);
   params.offset = (parseInt(state.pagination.current) - 1) * parseInt(state.pagination.pageSize);
+  console.log(params)
+  console.log(sort)
   await useCustomOrderApi().getCustomOrderList(params).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
@@ -907,6 +909,22 @@ const handleSearch = () => {
   if (moment(state.tableData.params.order_date[1]).diff(moment(state.tableData.params.order_date[0]), 'days') > 30) {
     message.error('검색기간은 30일 이상 설정할 수 없습니다.');
     return false;
+  }
+
+  getTableData();
+}
+
+const resetParam = () => {
+  state.tableData.params = {
+    order_date: [moment().subtract(7, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    userinfo: [],
+    search_type: 'order_no',
+    search_value: '',
+    order_status: '',
+    shipping_status: '',
+    scan_package_no: '',
+    scan_barcode: '',
+    order_by: 'DESC',
   }
 
   getTableData();
