@@ -925,9 +925,11 @@ const resetParam = () => {
     order_by: 'DESC',
   }
 
+  state.pagination.current = 1;
+
   getTableData();
 }
-
+ㅁㅁㅁㅁㅁㅁㅁㅁ
 const getMarketDetailUrls = async () => {
   await useMarketApi().getMarketDetailUrls({}).then((res) => {
     if (res.status !== "2000") {
