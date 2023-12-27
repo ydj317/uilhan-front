@@ -828,8 +828,6 @@ const getTableData = async (sort = 'DESC') => {
   let params = cloneDeep(state.tableData.params);
   params.limit = parseInt(state.pagination.pageSize);
   params.offset = (parseInt(state.pagination.current) - 1) * parseInt(state.pagination.pageSize);
-  console.log(params)
-  console.log(sort)
   await useCustomOrderApi().getCustomOrderList(params).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
