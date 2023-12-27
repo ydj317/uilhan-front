@@ -4,10 +4,13 @@
     <a-descriptions title="배대지 계정 연동" bordered :column="1" :labelStyle="{ width: '170px' }"
                     :contentStyle="{ width: 'auto' }">
       <a-descriptions-item label="배대지 ID:" :labelStyle="{textAlign: 'right'}">
-        <a-input v-model:value="formState.settingDatas.bind_bridge_id" size="small" style="width: 200px;" allow-clear @input="formState.settingDatas.is_bridge_sync = false"/>
+        <a-input v-model:value="formState.settingDatas.bind_bridge_id" size="small" style="width: 200px;" allow-clear @input="formState.settingDatas.is_bridge_sync = false" />
       </a-descriptions-item>
       <a-descriptions-item label="배대지 비밀번호:" :labelStyle="{textAlign: 'right'}">
-        <a-input type="password" v-model:value="formState.settingDatas.bind_bridge_password" size="small" style="width: 200px;" allow-clear @input="formState.settingDatas.is_bridge_sync = false"/>
+        <!-- 크롬 자동입력 방지 하기위하여 추가 -->
+        <a-input type="password" style="position: absolute; opacity: 1; width: 1px; height: 1px; z-index: 1;" />
+        <!-- 실제 비밀번호 입력 인풋 -->
+        <a-input type="password" v-model:value="formState.settingDatas.bind_bridge_password" size="small" style="position: relative; z-index: 2; width: 200px;" allow-clear @input="formState.settingDatas.is_bridge_sync = false" />
       </a-descriptions-item>
       <a-descriptions-item label="연동상태:" :labelStyle="{textAlign: 'right'}">
         <a-space>
@@ -51,6 +54,7 @@ function getUserInfoData() {
     }
 
     const { bridge_mb_id,is_bridge_sync } = res.data;
+
     formState.settingDatas.bind_bridge_id = bridge_mb_id
     formState.settingDatas.bind_bridge_password = ''
     formState.settingDatas.is_bridge_sync = is_bridge_sync
