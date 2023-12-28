@@ -182,7 +182,7 @@ export default {
         return false;
       }
 
-      let cont = this.product.formState.keyword;
+      let cont = this.product.item_sync_keyword;
       if (cont !== null && cont.length > 255) {
         message.warning(
           "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
@@ -636,7 +636,7 @@ export default {
         cross_border: oProduct.item_cross_border,
 
         surtax: oFormState.surtax,
-        keyword: oFormState.keyword,
+        keyword: oProduct.item_sync_keyword,
         mandatory_val: oFormState.mandatory_val,
         is_free_delivery: oFormState.item_is_free_delivery === true ? "T" : "F",
         shipping_fee: oFormState.item_shipping_fee,

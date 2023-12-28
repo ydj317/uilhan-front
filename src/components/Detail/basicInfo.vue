@@ -1,9 +1,10 @@
 <template>
-  <div id="eModelTitle_0" class="bg-white" style="padding: 20px 20px 0 20px">
+  <div id="eModelTitle_0" class="bg-white" style="padding: 20px">
     <h1><strong>기본정보</strong></h1>
 
     <div class="detail-basic">
       <a-descriptions bordered :column="1" >
+
         <a-descriptions-item label="상품명칭" v-if="product.item_is_trans === false">
           <a-input v-model:value="product.item_name" :placeholder="`상품명칭을 입력하세요.`" />
         </a-descriptions-item>
@@ -14,7 +15,10 @@
           </span>
             {{ product.item_name }}
           </a-button>
-          <a-spin :spinning="product.filter_word_validate_in_process === true">
+
+          <a-button class="ml10" v-if="use_ai" @click="replaceWithAI">AI 추천모드</a-button>
+
+          <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true">
             <a-input
               @focus="product.filter_word_status = false"
               @blur="validateFilterWord(product.item_trans_name)"
@@ -25,6 +29,7 @@
             />
           </a-spin>
         </a-descriptions-item>
+
         <a-descriptions-item label="금지어">
           <a-tag color="warning" v-if="product.filter_word_status === true">금지어 없음</a-tag >
           <a-tag v-else v-for="(filter_words, i) in product.filter_word_list"
@@ -32,6 +37,24 @@
             {{ filter_words }}
           </a-tag >
         </a-descriptions-item>
+
+        <a-descriptions-item>
+          <template #label>
+            상품태그
+            <a-tooltip>
+              <template #title>
+                <div>상품태그에는 상품 카테고리 명칭을 기입 할 수 없습니다.</div>
+              </template>
+              <QuestionCircleOutlined/>
+            </a-tooltip>
+          </template>
+          <a-form-item>
+            <a-spin :spinning="ai_loading === true">
+              <a-input v-model:value="product.item_sync_keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다."/>
+            </a-spin>
+          </a-form-item>
+        </a-descriptions-item>
+
       </a-descriptions>
 
     </div>
@@ -42,9 +65,11 @@
 import { message } from "ant-design-vue";
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
-import Cookie from "js-cookie";
+import {QuestionCircleOutlined} from '@ant-design/icons-vue';
 
 export default {
+  components: {QuestionCircleOutlined},
+
   computed: {
     ...mapState(["product"]),
   },
@@ -87,7 +112,9 @@ export default {
         },
       ],
       tempImage: require('../../assets/img/temp_image.png'),
-      is_filter_word_list: false
+      is_filter_word_list: false,
+      use_ai: false,
+      ai_loading: false
     };
   },
 
@@ -100,8 +127,6 @@ export default {
         return this.tempImage;
       }
     },
-
-    openWindow: (sUrl) => open(sUrl),
 
     /**
      * 상품명 금지어 등록 삭제
@@ -166,9 +191,53 @@ export default {
         message.success("금지어 체크완료");
       });
     },
+
+    getUserInfo() {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user/getUserInfoData", {}).then((res) => {
+        /* 등록실패여부 및 로딩제거 */
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+
+        this.use_ai = (res.data.use_ai === '1');
+      });
+
+    },
+
+    replaceWithAI() {
+      this.ai_loading = true;
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/imageInfoExtractor/getImageInfo", {
+        img_url: this.product.item_thumbnails[0].url
+      }).then((res) => {
+        /* 등록실패여부 및 로딩제거 */
+        if (res.status !== "2000") {
+          message.error(res.message);
+          this.ai_loading = false;
+          return false;
+        }
+
+        if (res.data.product_name !== undefined) {
+          this.product.item_trans_name = res.data.product_name;
+        }
+
+        if (res.data && Array.isArray(res.data.keywords)) {
+          this.product.item_sync_keyword = res.data.keywords.join(',');
+        } else {
+          this.product.item_sync_keyword = '';
+        }
+
+        this.validateFilterWord(this.product.item_trans_name)
+
+        this.ai_loading = false;
+      });
+
+    }
   },
 
   mounted() {
+    this.getUserInfo();
+
     if (this.product.item_is_trans) {
       this.product.item_trans_name = this.product.item_trans_name.substr(
         0,
