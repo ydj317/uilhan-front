@@ -59,10 +59,10 @@
       <!--left button-->
       <div>
         <!--상품삭제-->
-        <a-button style="margin-right: 10px;" @click="deletePop()">상품삭제</a-button>
+        <a-button class="mr10" @click="deletePop()">상품삭제</a-button>
 
         <!--상품삭제-->
-        <a-popconfirm @confirm="clonePrd">
+        <a-popconfirm class="mr10" @confirm="clonePrd">
           <template #title>
             <b>상품 복제 확인</b>
             <br>
@@ -72,6 +72,8 @@
           </template>
           <a-button>상품복제</a-button>
         </a-popconfirm>
+
+        <a-button v-if="this.userinfo.use_ai === '1'" @click="replaceWithAI">AI 추천모드</a-button>
       </div>
 
       <!--right button-->
@@ -727,6 +729,31 @@ export default defineComponent({
       }
 
       return list;
+    },
+
+    replaceWithAI() {
+      let list = this.getCheckList();
+      if (list === undefined || list.length === 0) {
+        message.warning("선택된 상품이 없습니다.");
+        return false;
+      }
+
+      this.deleteItems = this.prdlist.filter(item => list.includes(item.item_id));
+      this.deleteOptions = Object.values(this.deleteItems.flatMap(item => item.item_sync_market)
+          .reduce((acc, syncItem) => {
+            const key = syncItem.id;
+            if (!acc[key] && syncItem.status !== 'unsync') {
+              acc[key] = {
+                market_code: syncItem.market_code,
+                label: syncItem.seller_id,
+                value: syncItem.id
+              };
+            }
+            return acc;
+          }, {}));
+
+      this.deletePrdPop = true;
+
     },
 
     deletePop() {
