@@ -201,19 +201,19 @@ const selectOption = () => {
 
   formState.productRegisterDate = defaultDate
   if (formState.selectValue.productRegister !== '0') {
-    formState.productRegisterDate = getFormattedDate(1);
+    formState.productRegisterDate = getFormattedDate(1) + '(' + formState.selectValue.productRegister + '건)';
     formState.totalPrice += formState.productRegisterSelect[formState.selectValue.productRegister].price
   }
 
   formState.imageEditDate = defaultDate
   if (formState.selectValue.imageEdit !== '0') {
-    formState.imageEditDate = getFormattedDate(1);
+    formState.imageEditDate = getFormattedDate(1) + '(' + formState.selectValue.imageEdit + '건)';
     formState.totalPrice += formState.imageEditSelect[formState.selectValue.imageEdit].price
   }
 
   formState.bindBridgeDate = defaultDate
   if (formState.selectValue.bindBridge !== '0') {
-    formState.bindBridgeDate = getFormattedDate(formState.selectValue.bindBridge);
+    formState.bindBridgeDate = getFormattedDate(formState.selectValue.bindBridge) + '(' + formState.selectValue.bindBridge + '개월)';
     formState.totalPrice += formState.bindBridgeSelect[formState.selectValue.bindBridge].price
   }
 
