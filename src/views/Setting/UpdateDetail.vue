@@ -1,6 +1,6 @@
 <template>
   <BindBridge />
-  <a-card :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
+  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
 
     <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">
@@ -103,9 +103,18 @@
     </a-form>
 
   </a-card>
-  <Password />
-  <Account />
-  <Guide />
+
+  <div class="mt20">
+    <Password />
+  </div>
+
+  <div class="mt20">
+    <Account />
+  </div>
+
+  <div class="mt20">
+    <Guide />
+  </div>
 </template>
 
 <script setup>
