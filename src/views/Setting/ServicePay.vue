@@ -231,7 +231,12 @@ function getFormattedDate(monthOffset = 0) {
   monthOffset = Number(monthOffset)
 
   const date = new Date();
-  const targetDate = new Date(date.getFullYear(), date.getMonth() + monthOffset, date.getDate());
+  let targetDay = date.getDate();
+
+  if (monthOffset !== 0) {
+    targetDay -= 1;
+  }
+  const targetDate = new Date(date.getFullYear(), date.getMonth() + monthOffset, targetDay);
 
   const year = String(targetDate.getFullYear());
   const month = String(targetDate.getMonth() + 1).padStart(2, '0');
