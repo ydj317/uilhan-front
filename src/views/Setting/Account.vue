@@ -28,6 +28,24 @@
         </template>
         <a-button @click="onClickSyncDomeggookCategory" type="primary">동기화 실행</a-button>
       </a-descriptions-item>
+
+      <a-descriptions-item>
+        <template #label>
+          <a-space>
+            <span>AI추천모드 사용</span>
+            <a-tooltip>
+              <template #title>
+                AI 추천모드는 챗GPT 유료서비스로 충전 후 설정이 가능하고 사용함으로 설정하면 AI가 추천하는 상품명과 키워드로 상품을 등록하게 됩니다.<br>
+                챗GPT 충전 관련 문의는 관리자에게 하시기 바랍니다.
+              </template>
+              <QuestionCircleOutlined/>
+            </a-tooltip>
+          </a-space>
+        </template>
+
+        <a-switch v-model:checked="formState.settingDatas.use_ai" @change="changeUseAi" checked-children="on" un-checked-children="off" />
+      </a-descriptions-item>
+
     </a-descriptions>
   </a-card>
 </template>
@@ -46,6 +64,7 @@ const recharge = ref(0);
 const formState = reactive({
   settingDatas: {
     recharge: 0,
+    use_ai: false,
     license_remaining_days: "",
   },
   loading: false,
@@ -67,22 +86,15 @@ function onClickSyncDomeggookCategory() {
   );
 }
 
-function getRecharge() {
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
-      (res) => {
-        if (res.status !== "2000" || res.data === undefined) {
-          message.error(res.message);
-          return false;
-        }
-
-        try {
-          formState.settingDatas.recharge = res.data.recharge;
-          //product.recharge = res.data.recharge;
-        } catch (e) {
-          message.error("남은회수 호출 실패");
-        }
-      }
-  );
+function changeUseAi() {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", {
+    use_ai: formState.settingDatas.use_ai,
+  }).then((res) => {
+    if (res.status !== '2000') {
+      message.error(res.message)
+      return false;
+    }
+  });
 }
 
 function getUserInfoData() {
@@ -94,6 +106,9 @@ function getUserInfoData() {
       return false;
     }
 
+    formState.settingDatas.recharge = res.data.recharge;
+    formState.settingDatas.use_ai = (res.data.use_ai === '1');
+
     setTimeout(() => {
       formState.loading = false;
     }, 500);
@@ -103,7 +118,6 @@ function getUserInfoData() {
 
 onMounted(() => {
   getUserInfoData();
-  getRecharge();
 });
 
 </script>
