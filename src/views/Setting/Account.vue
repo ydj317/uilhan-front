@@ -46,7 +46,6 @@ const recharge = ref(0);
 const formState = reactive({
   settingDatas: {
     recharge: 0,
-    license_end_date: "",
     license_remaining_days: "",
   },
   loading: false,
@@ -93,12 +92,6 @@ function getUserInfoData() {
       message.error(res.message);
       formState.loading = false;
       return false;
-    }
-
-    const endDate = new Date(res.data.license_end_date);
-    if (new Date() < endDate) {
-      formState.settingDatas.license_remaining_days = endDate.toLocaleString()
-      formState.settingDatas.license_end_date = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24)) + '일'
     }
 
     setTimeout(() => {
