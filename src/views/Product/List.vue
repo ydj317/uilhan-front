@@ -737,6 +737,7 @@ export default defineComponent({
       let list = this.getCheckList();
       if (list === undefined || list.length === 0) {
         message.warning("선택된 상품이 없습니다.");
+        this.indicator = false;
         return false;
       }
 
