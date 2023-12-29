@@ -731,28 +731,27 @@ export default defineComponent({
       return list;
     },
 
-    replaceWithAI() {
+    async replaceWithAI() {
+      this.indicator = true;
+
       let list = this.getCheckList();
       if (list === undefined || list.length === 0) {
         message.warning("선택된 상품이 없습니다.");
         return false;
       }
 
-      this.deleteItems = this.prdlist.filter(item => list.includes(item.item_id));
-      this.deleteOptions = Object.values(this.deleteItems.flatMap(item => item.item_sync_market)
-          .reduce((acc, syncItem) => {
-            const key = syncItem.id;
-            if (!acc[key] && syncItem.status !== 'unsync') {
-              acc[key] = {
-                market_code: syncItem.market_code,
-                label: syncItem.seller_id,
-                value: syncItem.id
-              };
-            }
-            return acc;
-          }, {}));
+      await useProductApi().replaceWithAI({list}).then(res => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          this.indicator = false;
+          return false;
+        }
 
-      this.deletePrdPop = true;
+        this.indicator = false;
+        message.success('상품명이 성공적으로 업데이트 되었습니다. ');
+
+        window.location.reload()
+      });
 
     },
 

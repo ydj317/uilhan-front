@@ -18,5 +18,12 @@ export function useProductApi() {
                 data: data,
             });
         },
+        replaceWithAI: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/replaceWithAI",
+                method: "post",
+                data: data,
+            });
+        },
     }
 }
