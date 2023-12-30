@@ -143,17 +143,40 @@ export default {
       let aOptionImage = this._getOptionImage();
       forEach(this.temp_sku, (sku) => {
         let sName = sku[0].name;
+        let sPvs = sku[0].key;
+        let sPvsReverse = sku[0].key;
         if (sku.length > 1) {
-          // sName = `${sku[0].name}::${sku[1].name}`;
           let aTempName = [];
+          let aTempPvs = [];
+
           forEach(sku, (_sku) => {
             aTempName.push(_sku.name);
+            aTempPvs.push(_sku.key);
           });
           sName = aTempName.join("::");
+          sPvs = aTempPvs.join(";");
+
+          // 倒序
+          aTempPvs.reverse();
+          sPvsReverse = aTempPvs.join(";");
         }
+
         let bPush = true;
         forEach(this.product.sku, (original_sku) => {
-          if (original_sku.spec.replace(/(\s*)/g, "") === sName.replace(/(\s*)/g, "")) {
+          if (original_sku.pvs === undefined) {
+            return;
+          }
+
+          let skuPvs = original_sku.pvs.replace(/(\s*)/g, "");
+          let optionPvs = sPvs.replace(/(\s*)/g, "");
+          let optionPvsReverse = sPvsReverse.replace(/(\s*)/g, "");
+
+          if ([optionPvs, optionPvsReverse].includes(skuPvs)) {
+            bPush = false;
+            original_sku.spec = sName;
+            format_sku.push(original_sku);
+          } else if (original_sku.spec.replace(/(\s*)/g, "") === sName.replace(/(\s*)/g, "")) {
+            // 기존로직 유지 2023-12-27
             bPush = false;
             // 기존 sku 는 그대로 유지
             format_sku.push(original_sku);

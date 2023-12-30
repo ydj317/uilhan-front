@@ -216,18 +216,6 @@ export const menus = [{
                         ids: ["jwli"],
                         icon: ''
                     },
-                },
-                {
-                    path: "/setting/ServicePay",
-                    name: "setting_servicePay",
-                    component: () => import("@/views/Setting/ServicePay.vue"),
-                    meta: {
-                        title: "서비스 결제",
-                        isHide: false,
-                        roles: [],
-                        ids: ["jwli"],
-                        icon: ''
-                    },
                 }
             ]
         },
@@ -242,49 +230,15 @@ export const menus = [{
             },
             "children": [
                 {
-                    path: "/user/license",
-                    name: "user_license",
-                    component: () => import("@/views/User/License"),
-                    meta: {
-                        title: "서비스 관리",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN"],
-                        icon: '',
-                    }
-                },
-                {
-                    path: "/user/licenseForm/:id?",
-                    name: "user_licenseForm",
-                    component: () => import("../views/User/LicenseForm"),
-                    meta: {
-                        title: "서비스 추가/수정",
-                        isHide: true,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: '',
-                        active: "/user/license"
-                    }
-                },
-                {
-                    path: "/user/licensePay",
-                    name: "user_licensePay",
-                    component: () => import("@/views/User/LicensePay.vue"),
+                    path: "/user/servicePay",
+                    name: "user_servicePay",
+                    component: () => import("@/views/User/ServicePay.vue"),
                     meta: {
                         title: "서비스 결제",
                         isHide: false,
                         roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: '',
-                    }
-                },
-                {
-                    path: "/user/licenseHistory",
-                    name: "user_licenseHistory",
-                    component: () => import("@/views/User/LicenseHistory"),
-                    meta: {
-                        title: "서비스 이력",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: '',
-                    }
+                        icon: ''
+                    },
                 },
                 {
                     path: "/user/manage",

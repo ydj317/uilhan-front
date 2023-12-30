@@ -28,6 +28,7 @@
         </template>
         <a-button @click="onClickSyncDomeggookCategory" type="primary">동기화 실행</a-button>
       </a-descriptions-item>
+
     </a-descriptions>
   </a-card>
 </template>
@@ -46,7 +47,6 @@ const recharge = ref(0);
 const formState = reactive({
   settingDatas: {
     recharge: 0,
-    license_end_date: "",
     license_remaining_days: "",
   },
   loading: false,
@@ -68,24 +68,6 @@ function onClickSyncDomeggookCategory() {
   );
 }
 
-function getRecharge() {
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
-      (res) => {
-        if (res.status !== "2000" || res.data === undefined) {
-          message.error(res.message);
-          return false;
-        }
-
-        try {
-          formState.settingDatas.recharge = res.data.recharge;
-          //product.recharge = res.data.recharge;
-        } catch (e) {
-          message.error("남은회수 호출 실패");
-        }
-      }
-  );
-}
-
 function getUserInfoData() {
   formState.loading = true;
   useUserApi().getUserInfoData({}).then((res) => {
@@ -95,11 +77,7 @@ function getUserInfoData() {
       return false;
     }
 
-    const endDate = new Date(res.data.license_end_date);
-    if (new Date() < endDate) {
-      formState.settingDatas.license_remaining_days = endDate.toLocaleString()
-      formState.settingDatas.license_end_date = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24)) + '일'
-    }
+    formState.settingDatas.recharge = res.data.recharge;
 
     setTimeout(() => {
       formState.loading = false;
@@ -110,7 +88,6 @@ function getUserInfoData() {
 
 onMounted(() => {
   getUserInfoData();
-  getRecharge();
 });
 
 </script>

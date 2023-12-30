@@ -65,7 +65,7 @@
           <div>
             <a-space align="center" direction="vertical">
               <a-button size="middle" type="primary" @click.prevent="handleSearch">검 색</a-button>
-              <a-button size="middle" @click="getTableData">초기화</a-button>
+              <a-button size="middle" @click="resetParam">초기화</a-button>
             </a-space>
           </div>
         </a-space>
@@ -909,6 +909,22 @@ const handleSearch = () => {
     return false;
   }
 
+  getTableData();
+}
+
+const resetParam = () => {
+  state.tableData.params = {
+    order_date: [moment().subtract(7, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    userinfo: [],
+    search_type: 'order_no',
+    search_value: '',
+    order_status: '',
+    shipping_status: '',
+    scan_package_no: '',
+    scan_barcode: '',
+    order_by: 'DESC',
+  }
+  state.pagination.current = 1;
   getTableData();
 }
 
