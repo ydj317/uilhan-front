@@ -162,10 +162,10 @@ const initFormData = () => {
 		state.formData.outboundShippingPlaceCode = accountInfo['marketData']?.outboundShippingPlaceCode;
 		state.formData.returnCenterCode = accountInfo['marketData']?.returnCenterCode;
 
-		state.formData.jeju_add_delivery_price = accountInfo.marketData.jeju_add_delivery_price;
-		state.formData.jeju_add_delivery_price_round_trip = accountInfo.marketData.jeju_add_delivery_price_round_trip;
-		state.formData.return_delivery_price = accountInfo.marketData.return_delivery_price;
-		state.formData.return_delivery_price_round_trip = accountInfo.marketData.return_delivery_price_round_trip;
+		state.formData.jeju_add_delivery_price = accountInfo['marketData']?.jeju_add_delivery_price;
+		state.formData.jeju_add_delivery_price_round_trip = accountInfo['marketData']?.jeju_add_delivery_price_round_trip;
+		state.formData.return_delivery_price = accountInfo['marketData']?.return_delivery_price;
+		state.formData.return_delivery_price_round_trip = accountInfo['marketData']?.return_delivery_price_round_trip;
 	}
 }
 
@@ -204,7 +204,7 @@ const handleSyncMarketCheck = () => {
 };
 
 // 저장
-const handleSubmit = (e) => {
+const handleSubmit = () => {
 
 	if (state.formData.sync_market_status === false) {
 		message.error('연동확인을 먼저 해주세요.');
@@ -385,26 +385,4 @@ const goBack = () => {
 
 </script>
 <style>
-.market_form .ant-form-item {
-	margin-bottom: 0;
-}
-
-.market_form .ant-form-item-label {
-	border: 1px solid #eeeeee;
-	background-color: #fafafa;
-	width: 170px;
-	padding: 10px;
-	margin-bottom: -1px;
-}
-
-.market_form .ant-form-item-control {
-	border: 1px solid #eeeeee;
-	padding: 10px;
-	margin-left: -1px;
-	margin-bottom: -1px;
-}
-
-.market_form .ant-form-item-control:nth-last-child {
-	border-bottom: 1px solid #eeeeee;
-}
 </style>
