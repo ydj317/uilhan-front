@@ -26,146 +26,159 @@
       연동확인
     </a-button>
     <a-divider/>
+    <div v-if="state.formData.sync_market_status">
+      <h3 class="mt20">마켓정보설정</h3>
 
-    <h3 class="mt20">마켓정보설정</h3>
-
-    <a-form-item label="제주 추가 배송비">
-      <a-form-item name="jeju_add_delivery_price" label="제주 추가 배송비"
-                   :rules="[{ required: true, message: '제주 추가 배송비를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input-number v-model:value="state.formData.jeju_add_delivery_price" placeholder="제주 추가 배송비"
-                 style="width:160px" step="1000"/>
+      <a-form-item label="제주 추가 배송비">
+        <a-form-item name="jeju_add_delivery_price" label="제주 추가 배송비"
+                     :rules="[{ required: true, message: '제주 추가 배송비를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input-number v-model:value="state.formData.jeju_add_delivery_price" placeholder="제주 추가 배송비"
+                          style="width:160px" step="1000"/>
+        </a-form-item>
+        <a-form-item name="jeju_add_delivery_price_round_trip" label="제주 외 도서산간 추가 배송비"
+                     :rules="[{ required: true, message: '제주 외 도서산간 추가 배송비를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input-number v-model:value="state.formData.jeju_add_delivery_price_round_trip"
+                          placeholder="제주 외 도서산간 추가 배송비" style="width:200px" step="1000"/>
+        </a-form-item>
       </a-form-item>
-      <a-form-item name="jeju_add_delivery_price_round_trip" label="제주 외 도서산간 추가 배송비"
-                   :rules="[{ required: true, message: '제주 외 도서산간 추가 배송비를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input-number v-model:value="state.formData.jeju_add_delivery_price_round_trip"
-                 placeholder="제주 외 도서산간 추가 배송비" style="width:200px" step="1000"/>
-      </a-form-item>
-    </a-form-item>
-    <a-form-item name="return_delivery_price" label="반품배송비(편도)"
-                 :rules="[{ required: true, message: '제주 추가 배송비를 입력해 주세요.' }]">
-      <a-input-number v-model:value="state.formData.return_delivery_price" placeholder="반품배송비(편도)" style="width:160px" step="1000"/>
-    </a-form-item>
-
-    <a-form-item label="배송지 주소">
-      <a-checkbox class="mb10" v-model:checked="state.formData.delivery_address.delivery_overseaship" @change="handleDeliveryOverseaship">해외 주소지로 사용</a-checkbox>
-
-      <a-form-item :name="['delivery_address', 'zip_code']" label="우편번호"
-                   :rules="[{ required: true, message: '우편번호를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.delivery_address.zip_code" placeholder="우편번호"
-                 style="width:150px;" :disabled="!state.formData.delivery_address.delivery_overseaship"/>
-        <a-button class="ml10" v-if="!state.formData.delivery_address.delivery_overseaship" @click="execDaumPostcode(state.formData.delivery_address)">우편번호 검색</a-button>
+      <a-form-item name="return_delivery_price" label="반품배송비(편도)"
+                   :rules="[{ required: true, message: '제주 추가 배송비를 입력해 주세요.' }]">
+        <a-input-number v-model:value="state.formData.return_delivery_price" placeholder="반품배송비(편도)" style="width:160px"
+                        step="1000"/>
       </a-form-item>
 
-      <a-form-item :name="['delivery_address', 'address']" label="주소"
-                   :rules="[{ required: true, message: '주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.delivery_address.address" placeholder="주소"
-                 style="width:500px" :disabled="!state.formData.delivery_address.delivery_overseaship"/>
-      </a-form-item>
-      <a-form-item :name="['delivery_address', 'street_address']" label="도로명주소"
-                   :rules="[{ required: true, message: '도로명주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.delivery_address.street_address" placeholder="도로명주소"
-                 style="width:500px" :disabled="true"/>
-      </a-form-item>
-      <a-form-item :name="['delivery_address', 'address_detail']" label="상세주소"
-                   :rules="[{ required: true, message: '상세주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.delivery_address.address_detail" placeholder="상세주소"
-                 style="width:500px" />
-      </a-form-item>
-      <a-form-item :name="['delivery_address', 'manager_name']" label="담당자"
-                   :rules="[{ required: true, message: '담당자를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.delivery_address.manager_name" placeholder="담당자"
-                 style="width:160px" />
-      </a-form-item>
-      <a-form-item :name="['delivery_address', 'manager_tel']" label="담당자 연락처"
-                   :rules="[{ required: true, message: '담당자 연락처를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }" v-if="state.formData.delivery_address.delivery_overseaship">
-        <a-input v-model:value="state.formData.delivery_address.manager_tel" placeholder="담당자 연락처"
-                 style="width:160px" />
-      </a-form-item>
-      <a-form-item :name="['delivery_address', 'manager_tel']" label="담당자 연락처"
-                   :rules="[{ required: true, message: '담당자 연락처를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }" v-else>
-        <a-select v-model:value="state.delivery_address.tel1" style="width: 80px" @input="
+      <a-form-item label="배송지 주소">
+        <a-checkbox class="mb10" v-model:checked="state.formData.delivery_address.delivery_overseaship"
+                    @change="handleDeliveryOverseaship">해외 주소지로 사용
+        </a-checkbox>
+
+        <a-form-item :name="['delivery_address', 'zip_code']" label="우편번호"
+                     :rules="[{ required: true, message: '우편번호를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.delivery_address.zip_code" placeholder="우편번호"
+                   style="width:150px;" :disabled="!state.formData.delivery_address.delivery_overseaship"/>
+          <a-button class="ml10" v-if="!state.formData.delivery_address.delivery_overseaship"
+                    @click="execDaumPostcode(state.formData.delivery_address)">우편번호 검색
+          </a-button>
+        </a-form-item>
+
+        <a-form-item :name="['delivery_address', 'address']" label="주소"
+                     :rules="[{ required: true, message: '주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.delivery_address.address" placeholder="주소"
+                   style="width:500px" :disabled="!state.formData.delivery_address.delivery_overseaship"/>
+        </a-form-item>
+        <a-form-item :name="['delivery_address', 'street_address']" label="도로명주소"
+                     :rules="[{ required: true, message: '도로명주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.delivery_address.street_address" placeholder="도로명주소"
+                   style="width:500px" :disabled="true"/>
+        </a-form-item>
+        <a-form-item :name="['delivery_address', 'address_detail']" label="상세주소"
+                     :rules="[{ required: true, message: '상세주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.delivery_address.address_detail" placeholder="상세주소"
+                   style="width:500px"/>
+        </a-form-item>
+        <a-form-item :name="['delivery_address', 'manager_name']" label="담당자"
+                     :rules="[{ required: true, message: '담당자를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.delivery_address.manager_name" placeholder="담당자"
+                   style="width:160px"/>
+        </a-form-item>
+        <a-form-item :name="['delivery_address', 'manager_tel']" label="담당자 연락처"
+                     :rules="[{ required: true, message: '담당자 연락처를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }" v-if="state.formData.delivery_address.delivery_overseaship">
+          <a-input v-model:value="state.formData.delivery_address.manager_tel" placeholder="담당자 연락처"
+                   style="width:160px"/>
+        </a-form-item>
+        <a-form-item :name="['delivery_address', 'manager_tel']" label="담당자 연락처"
+                     :rules="[{ required: true, message: '담당자 연락처를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }" v-else>
+          <a-select v-model:value="state.delivery_address.tel1" style="width: 80px" @input="
             state.delivery_address.tel1 = state.delivery_address.tel1.replace(/[^0-9]/g, '');
             ">
-          <a-select-option value="">-선택-</a-select-option>
-          <a-select-option v-for="prefix in telPrefixs" :key="prefix" :value="prefix">{{prefix}}</a-select-option>
-        </a-select> -
-        <a-input v-model:value="state.delivery_address.tel2" style="width:80px" @input="
+            <a-select-option value="">-선택-</a-select-option>
+            <a-select-option v-for="prefix in telPrefixs" :key="prefix" :value="prefix">{{ prefix }}</a-select-option>
+          </a-select>
+          -
+          <a-input v-model:value="state.delivery_address.tel2" style="width:80px" @input="
             state.delivery_address.tel2 = state.delivery_address.tel2.replace(/[^0-9]/g, '').substring(0, 4);
-            "/> -
-        <a-input v-model:value="state.delivery_address.tel3" style="width:80px" @input="
+            "/>
+          -
+          <a-input v-model:value="state.delivery_address.tel3" style="width:80px" @input="
             state.delivery_address.tel3 = state.delivery_address.tel3.replace(/[^0-9]/g, '').substring(0, 4);
             "/>
-      </a-form-item>
-    </a-form-item>
-
-    <a-form-item label="반품/교환 주소">
-      <a-checkbox class="mb10" v-model:checked="state.formData.return_address.return_overseaship" @change="handleReturnOverseaship">해외 주소지로 사용</a-checkbox>
-
-      <a-form-item :name="['return_address', 'zip_code']" label="우편번호"
-                   :rules="[{ required: true, message: '우편번호를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.return_address.zip_code" placeholder="우편번호"
-                 style="width:150px;" :disabled="!state.formData.return_address.return_overseaship"/>
-        <a-button class="ml10" v-if="!state.formData.return_address.return_overseaship" @click="execDaumPostcode(state.formData.return_address)">우편번호 검색</a-button>
+        </a-form-item>
       </a-form-item>
 
-      <a-form-item :name="['return_address', 'address']" label="주소"
-                   :rules="[{ required: true, message: '주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.return_address.address" placeholder="주소"
-                 style="width:500px" :disabled="!state.formData.return_address.return_overseaship"/>
-      </a-form-item>
-      <a-form-item :name="['return_address', 'street_address']" label="도로명주소"
-                   :rules="[{ required: true, message: '도로명주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.return_address.street_address" placeholder="도로명주소"
-                 style="width:500px" :disabled="true"/>
-      </a-form-item>
-      <a-form-item :name="['return_address', 'address_detail']" label="상세주소"
-                   :rules="[{ required: true, message: '상세주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.return_address.address_detail" placeholder="상세주소"
-                 style="width:500px" />
-      </a-form-item>
-      <a-form-item :name="['return_address', 'manager_name']" label="담당자"
-                   :rules="[{ required: true, message: '담당자를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }">
-        <a-input v-model:value="state.formData.return_address.manager_name" placeholder="담당자"
-                 style="width:160px"/>
-      </a-form-item>
-      <a-form-item :name="['return_address', 'manager_tel']" label="담당자 연락처"
-                   :rules="[{ required: true, message: '담당자 연락처를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }" v-if="state.formData.return_address.return_overseaship">
-        <a-input v-model:value="state.formData.return_address.manager_tel" placeholder="담당자 연락처"
-                 style="width:160px" />
-      </a-form-item>
-      <a-form-item :name="['return_address', 'manager_tel']" label="담당자 연락처"
-                   :rules="[{ required: true, message: '담당자 연락처를 입력해 주세요.' }]" :label-col="{ span: 5 }"
-                   :wrapper-col="{ span: 19 }" v-else>
+      <a-form-item label="반품/교환 주소">
+        <a-checkbox class="mb10" v-model:checked="state.formData.return_address.return_overseaship"
+                    @change="handleReturnOverseaship">해외 주소지로 사용
+        </a-checkbox>
+
+        <a-form-item :name="['return_address', 'zip_code']" label="우편번호"
+                     :rules="[{ required: true, message: '우편번호를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.return_address.zip_code" placeholder="우편번호"
+                   style="width:150px;" :disabled="!state.formData.return_address.return_overseaship"/>
+          <a-button class="ml10" v-if="!state.formData.return_address.return_overseaship"
+                    @click="execDaumPostcode(state.formData.return_address)">우편번호 검색
+          </a-button>
+        </a-form-item>
+
+        <a-form-item :name="['return_address', 'address']" label="주소"
+                     :rules="[{ required: true, message: '주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.return_address.address" placeholder="주소"
+                   style="width:500px" :disabled="!state.formData.return_address.return_overseaship"/>
+        </a-form-item>
+        <a-form-item :name="['return_address', 'street_address']" label="도로명주소"
+                     :rules="[{ required: true, message: '도로명주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.return_address.street_address" placeholder="도로명주소"
+                   style="width:500px" :disabled="true"/>
+        </a-form-item>
+        <a-form-item :name="['return_address', 'address_detail']" label="상세주소"
+                     :rules="[{ required: true, message: '상세주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.return_address.address_detail" placeholder="상세주소"
+                   style="width:500px"/>
+        </a-form-item>
+        <a-form-item :name="['return_address', 'manager_name']" label="담당자"
+                     :rules="[{ required: true, message: '담당자를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }">
+          <a-input v-model:value="state.formData.return_address.manager_name" placeholder="담당자"
+                   style="width:160px"/>
+        </a-form-item>
+        <a-form-item :name="['return_address', 'manager_tel']" label="담당자 연락처"
+                     :rules="[{ required: true, message: '담당자 연락처를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }" v-if="state.formData.return_address.return_overseaship">
+          <a-input v-model:value="state.formData.return_address.manager_tel" placeholder="담당자 연락처"
+                   style="width:160px"/>
+        </a-form-item>
+        <a-form-item :name="['return_address', 'manager_tel']" label="담당자 연락처"
+                     :rules="[{ required: true, message: '담당자 연락처를 입력해 주세요.' }]" :label-col="{ span: 5 }"
+                     :wrapper-col="{ span: 19 }" v-else>
           <a-select v-model:value="state.return_address.tel1" style="width: 80px" @input="
             state.return_address.tel1 = state.return_address.tel1.replace(/[^0-9]/g, '');
             ">
             <a-select-option value="">-선택-</a-select-option>
-            <a-select-option v-for="prefix in telPrefixs" :key="prefix" :value="prefix">{{prefix}}</a-select-option>
-          </a-select> -
+            <a-select-option v-for="prefix in telPrefixs" :key="prefix" :value="prefix">{{ prefix }}</a-select-option>
+          </a-select>
+          -
           <a-input v-model:value="state.return_address.tel2" style="width:80px" @input="
             state.return_address.tel2 = state.return_address.tel2.replace(/[^0-9]/g, '').substring(0, 4);
-            "/> -
+            "/>
+          -
           <a-input v-model:value="state.return_address.tel3" style="width:80px" @input="
             state.return_address.tel3 = state.return_address.tel3.replace(/[^0-9]/g, '').substring(0, 4);
             "/>
+        </a-form-item>
       </a-form-item>
-    </a-form-item>
-
+    </div>
     <a-button class="mt15" @click="goBack">돌아가기</a-button>
     <a-button class="mt15 ml15" @click="handleSubmit" type="primary">저장</a-button>
 
@@ -197,37 +210,37 @@ const router = useRouter();
 const marketFormRef = ref(null);
 
 const telPrefixs = [
-    '010',
-    '011',
-    '016',
-    '017',
-    '018',
-    '019',
-    '0502',
-    '0505',
-    '0506',
-    '0507',
-    '02',
-    '031',
-    '032',
-    '033',
-    '041',
-    '042',
-    '043',
-    '044',
-    '051',
-    '052',
-    '053',
-    '054',
-    '055',
-    '061',
-    '062',
-    '063',
-    '064',
-    '050',
-    '060',
-    '070',
-    '080',
+  '010',
+  '011',
+  '016',
+  '017',
+  '018',
+  '019',
+  '0502',
+  '0505',
+  '0506',
+  '0507',
+  '02',
+  '031',
+  '032',
+  '033',
+  '041',
+  '042',
+  '043',
+  '044',
+  '051',
+  '052',
+  '053',
+  '054',
+  '055',
+  '061',
+  '062',
+  '063',
+  '064',
+  '050',
+  '060',
+  '070',
+  '080',
 ];
 const state = reactive({
   formData: {
@@ -314,7 +327,7 @@ const initFormData = () => {
     state.formData.delivery_address.manager_name = delivery_address?.manager_name;
     state.formData.delivery_address.manager_tel = delivery_address?.manager_tel;
     state.formData.delivery_address.delivery_overseaship = delivery_address?.delivery_overseaship;
-    if(!delivery_address?.delivery_overseaship) {
+    if (!delivery_address?.delivery_overseaship) {
       const tel = delivery_address?.manager_tel.split('-');
       state.delivery_address.tel1 = tel[0];
       state.delivery_address.tel2 = tel[1];
@@ -328,7 +341,7 @@ const initFormData = () => {
     state.formData.return_address.manager_name = return_address?.manager_name;
     state.formData.return_address.manager_tel = return_address?.manager_tel;
     state.formData.return_address.return_overseaship = return_address?.return_overseaship;
-    if(!return_address?.return_overseaship) {
+    if (!return_address?.return_overseaship) {
       const tel = return_address?.manager_tel.split('-');
       state.return_address.tel1 = tel[0];
       state.return_address.tel2 = tel[1];
@@ -376,7 +389,7 @@ const handleSubmit = () => {
     return false;
   }
 
-  if(state.formData.delivery_address.delivery_overseaship !== true) {
+  if (state.formData.delivery_address.delivery_overseaship !== true) {
     if (state.delivery_address.tel1 === '' || state.delivery_address.tel2 === '' || state.delivery_address.tel3 === '') {
       message.error('배송지 담당자 연락처를 입력해 주세요.');
       return false;
@@ -384,7 +397,7 @@ const handleSubmit = () => {
     state.formData.delivery_address.manager_tel = `${state.delivery_address.tel1}-${state.delivery_address.tel2}-${state.delivery_address.tel3}`;
   }
 
-  if(state.formData.return_address.return_overseaship !== true) {
+  if (state.formData.return_address.return_overseaship !== true) {
     if (state.return_address.tel1 === '' || state.return_address.tel2 === '' || state.return_address.tel3 === '') {
       message.error('반품/교환지 담당자 연락처를 입력해 주세요.');
       return false;
@@ -424,7 +437,7 @@ const handleReturnOverseaship = (is_return_overseaship) => {
 
 const execDaumPostcode = (obj) => {
   new daum.Postcode({
-    oncomplete: function(data) {
+    oncomplete: function (data) {
       obj.zip_code = data.zonecode
 
       // 지번 data.jibunAddress
