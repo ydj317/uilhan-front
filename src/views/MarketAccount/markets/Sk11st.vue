@@ -160,13 +160,11 @@
 					&nbsp;일 내 발송처리
 				</a-form-item>
 				<a-form-item name="send_saturday" label="토요일" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-					<a-checkbox-group v-model:value="state.formData.send_saturday">
-						<a-checkbox value="Y" name="send_saturday">발송함</a-checkbox>
-					</a-checkbox-group>
+					<a-checkbox v-model:checked="state.formData.send_saturday" value="Y">발송함</a-checkbox>
 				</a-form-item>
-				<a-checkbox-group v-model:value="state.formData.send_default_time" style="margin-top: 10px;">
-					<a-checkbox value="Y" name="send_default_time">대표 마감시간으로 설정</a-checkbox>
-				</a-checkbox-group>
+				<a-form-item name="send_default_time">
+					<a-checkbox v-model:checked="state.formData.send_default_time" value="Y" name="send_default_time">대표 마감시간으로 설정</a-checkbox>
+				</a-form-item>
 			</a-form-item>
 
 		</div>
@@ -270,11 +268,11 @@ const state = reactive({
 
 		// 발송예정일 파람들
 		send_method: '', // 발송방법
-		send_normal: '', // 일반발송
+		send_normal: '', // 몇일
 		send_today_end_time: '', // 오늘발송인경우 당일 주문마감시간 TODO 해외직구일 경우 필요 없어보임
-		send_saturday: 'N', // 토요일 발송여부
+		send_saturday: false, // 토요일 발송여부
 		send_saturday_end_time: '', // 토요일 주문마감시간 TODO 해외직구일 경우 필요 없어보임
-		send_default_time: 'N', // 대표 마감시간으로 설정
+		send_default_time: false, // 대표 마감시간으로 설정
 
 	},
 
@@ -300,7 +298,6 @@ const initFormData = () => {
 	if (Object.keys(accountInfo).length > 0) {
 		state.formData.id = accountInfo?.id;
 		state.formData.market_code = accountInfo?.marketCode;
-		state.formData.vendor_id = accountInfo['marketData']?.vendor_id;
 		state.formData.seller_id = accountInfo['marketData']?.seller_id;
 		state.formData.access_token = accountInfo['marketData']?.access_token;
 		state.formData.sync_market_status = accountInfo['marketData']?.sync_market_status;
