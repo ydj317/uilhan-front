@@ -23,9 +23,9 @@
 				<h3>마켓정보 불러오기</h3>
 			</div>
 
-			<a-form-item name="outboundShippingPlaceCode" label="출고지"
+			<a-form-item name="outbound_address_code" label="출고지"
 						 :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]">
-				<a-select v-model:value="state.formData.outboundShippingPlaceCode" placeholder="출고지를 선택해 주세요" style="width:260px;">
+				<a-select v-model:value="state.formData.outbound_address_code" placeholder="출고지를 선택해 주세요" style="width:260px;">
 					<a-select-option :value="item.outbound_address_code" v-for="(item, key) in state.outboundAddressList"
 									 :key="key">{{ item.outbound_address_name }}</a-select-option>
 				</a-select>
@@ -37,8 +37,8 @@
 				<span>{{ state.sync_outbound_address_date ?? '-' }}</span>
 			</a-form-item>
 
-			<a-form-item name="returnCenterCode" label="반품지" :rules="[{ required: true, message: '반품지를 선택해 주세요.' }]">
-				<a-select v-model:value="state.formData.returnCenterCode" placeholder="반품지를 선택해 주세요" style="width:260px;">
+			<a-form-item name="return_address_code" label="반품지" :rules="[{ required: true, message: '반품지를 선택해 주세요.' }]">
+				<a-select v-model:value="state.formData.return_address_code" placeholder="반품지를 선택해 주세요" style="width:260px;">
 					<a-select-option :value="item.return_address_code" v-for="(item, key) in state.returnAddressList"
 									 :key="key">{{ item.return_address_name }}</a-select-option>
 				</a-select>
@@ -51,6 +51,60 @@
 			</a-form-item>
 
 			<h3 class="mt20">마켓정보설정</h3>
+
+<!--			<a-form-item label="출고지">-->
+<!--				<a-form-item name="outbound_name" label="이름"-->
+<!--							 :rules="[{ required: true, message: '이름을 입력해 주세요.' }]" :label-col="{ span: 5 }"-->
+<!--							 :wrapper-col="{ span: 19 }">-->
+<!--					<a-input v-model:value="state.formData.outbound_name" placeholder="예시) 홍길동"-->
+<!--							 style="width:300px"/>-->
+<!--				</a-form-item>-->
+<!--				<a-form-item name="outbound_number" label="관련 지번 순번"-->
+<!--							 :rules="[{ required: true, message: '관련 지번 순번을 입력해 주세요.' }]" :label-col="{ span: 5 }"-->
+<!--							 :wrapper-col="{ span: 19 }">-->
+<!--					<a-input v-model:value="state.formData.outbound_number" placeholder="예시) 1776801"-->
+<!--							 style="width:300px"/>-->
+<!--				</a-form-item>-->
+<!--				<a-form-item name="outbound_address" label="상세주소"-->
+<!--							 :rules="[{ required: true, message: '상세주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"-->
+<!--							 :wrapper-col="{ span: 19 }">-->
+<!--					<a-input v-model:value="state.formData.outbound_address" placeholder="예시) 신개봉대리점"-->
+<!--							 style="width:300px"/>-->
+<!--				</a-form-item>-->
+<!--				<a-form-item name="outbound_phone" label="휴대전화번호"-->
+<!--							 :rules="[{ required: true, message: '휴대전화번호를 입력해 주세요.' }]" :label-col="{ span: 5 }"-->
+<!--							 :wrapper-col="{ span: 19 }">-->
+<!--					<a-input v-model:value="state.formData.outbound_phone" placeholder="예시) 010-1111-2222"-->
+<!--							 style="width:300px"/>-->
+<!--				</a-form-item>-->
+<!--			</a-form-item>-->
+
+<!--			<a-form-item label="반품지">-->
+<!--				<a-form-item name="return_name" label="이름"-->
+<!--							 :rules="[{ required: true, message: '이름을 입력해 주세요.' }]" :label-col="{ span: 5 }"-->
+<!--							 :wrapper-col="{ span: 19 }">-->
+<!--					<a-input v-model:value="state.formData.return_name" placeholder="예시) 홍길동"-->
+<!--							 style="width:300px"/>-->
+<!--				</a-form-item>-->
+<!--				<a-form-item name="return_number" label="관련 지번 순번"-->
+<!--							 :rules="[{ required: true, message: '관련 지번 순번을 입력해 주세요.' }]" :label-col="{ span: 5 }"-->
+<!--							 :wrapper-col="{ span: 19 }">-->
+<!--					<a-input v-model:value="state.formData.return_number" placeholder="예시) 1776801"-->
+<!--							 style="width:300px"/>-->
+<!--				</a-form-item>-->
+<!--				<a-form-item name="return_address" label="상세주소"-->
+<!--							 :rules="[{ required: true, message: '상세주소를 입력해 주세요.' }]" :label-col="{ span: 5 }"-->
+<!--							 :wrapper-col="{ span: 19 }">-->
+<!--					<a-input v-model:value="state.formData.return_address" placeholder="예시) 신개봉대리점"-->
+<!--							 style="width:300px"/>-->
+<!--				</a-form-item>-->
+<!--				<a-form-item name="return_phone" label="휴대전화번호"-->
+<!--							 :rules="[{ required: true, message: '휴대전화번호를 입력해 주세요.' }]" :label-col="{ span: 5 }"-->
+<!--							 :wrapper-col="{ span: 19 }">-->
+<!--					<a-input v-model:value="state.formData.return_phone" placeholder="예시) 010-1111-2222"-->
+<!--							 style="width:300px"/>-->
+<!--				</a-form-item>-->
+<!--			</a-form-item>-->
 
 			<a-form-item label="제주 추가 배송비">
 				<a-form-item name="jeju_add_delivery_price" label="제주 추가 배송비"
@@ -85,7 +139,7 @@
 				/>
 			</a-form-item>
 
-			<a-form-item label="발송예정일 템플릿 등록">
+			<a-form-item label="발송예정일">
 				<a-form-item name="send_method" label="발송유형"
 							 :rules="[{ required: true, message: '발송유형을 선택해 주세요.' }]" :label-col="{ span: 5 }"
 							 :wrapper-col="{ span: 19 }">
@@ -198,7 +252,6 @@ const state = reactive({
 	formData: {
 		id: '',
 		market_code: props.market_code,
-		vendor_id:'',
 		seller_id: '',
 		access_token: '',
 
@@ -255,8 +308,6 @@ const initFormData = () => {
 		// 마켓정보 불러오기
 		state.formData.return_address_code = accountInfo['marketData']?.return_address_code;
 		state.formData.outbound_address_code = accountInfo['marketData']?.outbound_address_code;
-		state.formData.outboundShippingPlaceCode = accountInfo['marketData']?.outboundShippingPlaceCode;
-		state.formData.returnCenterCode = accountInfo['marketData']?.returnCenterCode;
 
 		state.formData.jeju_add_delivery_price = accountInfo['marketData']?.jeju_add_delivery_price;
 		state.formData.jeju_add_delivery_price_round_trip = accountInfo['marketData']?.jeju_add_delivery_price_round_trip;
@@ -268,7 +319,6 @@ const initFormData = () => {
 		state.formData.send_normal = accountInfo['marketData']?.send_normal;
 		state.formData.send_saturday = accountInfo['marketData']?.send_saturday;
 		state.formData.send_default_time = accountInfo['marketData']?.send_default_time;
-
 	}
 }
 
@@ -359,16 +409,16 @@ const syncOutboundAddress = (account_id) => {
 		state.outboundAddressList = [];
 
 		if ('inOutAddress' in marketJson) {
-			if (Array.isArray(marketJson)) {
+			if (Array.isArray(marketJson['inOutAddress'])) {
 				marketJson['inOutAddress'].forEach(item => {
 					state.outboundAddressList.push({
-						outbound_address_code: item['memNo'],
+						outbound_address_code: item['addrSeq'],
 						outbound_address_name: item['addr']
 					});
 				});
 			} else {
 				state.outboundAddressList.push({
-					outbound_address_code: marketJson.inOutAddress['memNo'],
+					outbound_address_code: marketJson.inOutAddress['addrSeq'],
 					outbound_address_name: marketJson.inOutAddress['addr']
 				});
 			}
@@ -396,16 +446,16 @@ const syncReturnAddress = (account_id) => {
 		state.returnAddressList = [];
 
 		if ('inOutAddress' in marketJson) {
-			if (Array.isArray(marketJson)) {
+			if (Array.isArray(marketJson['inOutAddress'])) {
 				marketJson['inOutAddress'].forEach(item => {
 					state.returnAddressList.push({
-						return_address_code: item['memNo'],
+						return_address_code: item['addrSeq'],
 						return_address_name: item['addr']
 					});
 				});
 			} else {
 				state.returnAddressList.push({
-					return_address_code: marketJson.inOutAddress['memNo'],
+					return_address_code: marketJson.inOutAddress['addrSeq'],
 					return_address_name: marketJson.inOutAddress['addr']
 				});
 			}
@@ -426,16 +476,16 @@ const getReturnAddressList = () => {
 		state.sync_return_address_date = updDate || null;
 
 		if ('inOutAddress' in marketJson) {
-			if (Array.isArray(marketJson)) {
+			if (Array.isArray(marketJson['inOutAddress'])) {
 				marketJson['inOutAddress'].forEach(item => {
 					state.returnAddressList.push({
-						return_address_code: item['memNo'],
+						return_address_code: item['addrSeq'],
 						return_address_name: item['addr']
 					});
 				});
 			} else {
 				state.returnAddressList.push({
-					return_address_code: marketJson.inOutAddress['memNo'],
+					return_address_code: marketJson.inOutAddress['addrSeq'],
 					return_address_name: marketJson.inOutAddress['addr']
 				});
 			}
@@ -454,16 +504,16 @@ const getOutboundAddressList = () => {
 		state.sync_outbound_address_date = updDate || null;
 
 		if ('inOutAddress' in marketJson) {
-			if (Array.isArray(marketJson)) {
+			if (Array.isArray(marketJson['inOutAddress'])) {
 				marketJson['inOutAddress'].forEach(item => {
 					state.outboundAddressList.push({
-						outbound_address_code: item['memNo'],
+						outbound_address_code: item['addrSeq'],
 						outbound_address_name: item['addr']
 					});
 				});
 			} else {
 				state.outboundAddressList.push({
-					outbound_address_code: marketJson.inOutAddress['memNo'],
+					outbound_address_code: marketJson.inOutAddress['addrSeq'],
 					outbound_address_name: marketJson.inOutAddress['addr']
 				});
 			}
