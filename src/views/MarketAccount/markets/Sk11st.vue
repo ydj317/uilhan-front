@@ -31,8 +31,8 @@
 				</a-select>
 				<a-button @click="syncOutboundAddress(state.formData.id)" class="ml15"
 						  :loading="state.syncOutboundAddressLoading">업데이트</a-button>
-				<a-tag class="ml15" v-if="state.sync_outbound_address_status === 0">-</a-tag>
-				<a-tag color="#87d068" class="ml15" v-else-if="state.sync_outbound_address_status === 1">성공</a-tag>
+				<a-tag class="ml15" v-if="state.sync_outbound_address_status == 0">-</a-tag>
+				<a-tag color="#87d068" class="ml15" v-else-if="state.sync_outbound_address_status == 1">성공</a-tag>
 				<a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
 				<span>{{ state.sync_outbound_address_date ?? '-' }}</span>
 			</a-form-item>
@@ -44,8 +44,8 @@
 				</a-select>
 				<a-button @click="syncReturnAddress(state.formData.id)" class="ml15"
 						  :loading="state.syncReturnAddressLoading">업데이트</a-button>
-				<a-tag class="ml15" v-if="state.sync_return_address_status === 0">-</a-tag>
-				<a-tag color="#87d068" class="ml15" v-else-if="state.sync_return_address_status === 1">성공</a-tag>
+				<a-tag class="ml15" v-if="state.sync_return_address_status == 0">-</a-tag>
+				<a-tag color="#87d068" class="ml15" v-else-if="state.sync_return_address_status == 1">성공</a-tag>
 				<a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
 				<span>{{ state.sync_return_address_date ?? '-' }}</span>
 			</a-form-item>
@@ -438,7 +438,7 @@ const syncReturnAddress = (account_id) => {
 		const { marketJson, syncStatus, updDate } = res.data;
 
 		// 업데이트상태/날짜
-		state.sync_return_address_status = syncStatus || 0;
+		state.sync_return_address_status = syncStatus || '0';
 		state.sync_return_address_date = updDate || null;
 		state.returnAddressList = [];
 
@@ -469,7 +469,7 @@ const getReturnAddressList = () => {
 		const { marketJson, syncStatus, updDate } = res.data;
 
 		// 업데이트상태/날짜
-		state.sync_return_address_status = syncStatus || 0;
+		state.sync_return_address_status = syncStatus || '0';
 		state.sync_return_address_date = updDate || null;
 
 		if ('inOutAddress' in marketJson) {
@@ -497,7 +497,7 @@ const getOutboundAddressList = () => {
 		const { marketJson, syncStatus, updDate } = res.data;
 
 		// 업데이트상태/날짜
-		state.sync_outbound_address_status = syncStatus || 0;
+		state.sync_outbound_address_status = syncStatus || '0';
 		state.sync_outbound_address_date = updDate || null;
 
 		if ('inOutAddress' in marketJson) {
