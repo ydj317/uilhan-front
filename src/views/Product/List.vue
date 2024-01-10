@@ -78,10 +78,12 @@
 
       <!--right button-->
       <div>
-        <a-spin style="margin-right: 10px;" v-if="indicator" />
-        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
+        <a-button @click="urlPrdPop = true" type="primary" class="ml10">URL상품 업로드</a-button>
+        <a-button @click="exclPrdPop = true" type="primary" class="ml10">엑셀상품 업로드</a-button>
+        <a-spin v-if="indicator" class="ml10" />
+        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary" class="ml10">상품 다운로드</a-button>
         <!--선택상품 등록-->
-        <a-button style="margin-left: 10px;" @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
+        <a-button class="ml10" @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
       </div>
     </div>
 
@@ -191,6 +193,36 @@
 
   <!--팝업-->
   <div id="footer">
+
+    <!--URL상품 업로드-->
+    <a-modal width="800px" v-model:open="urlPrdPop" centered>
+      <template #title>
+        URL상품 업로드
+        <a-tooltip>
+          <template #title>
+            <div>토보, 티몰 상품URL을 입력하여 상품 업로드 합니다.</div>
+          </template>
+          <QuestionCircleOutlined/>
+        </a-tooltip>
+      </template>
+
+      <div>토보, 티몰 상품URL을 입력하여 상품 업로드 합니다.</div>
+
+      <a-divider />
+
+      <div>
+        <a-textarea
+            v-model:value="urlPrdValue"
+            placeholder="상품url 줄바꿈으로 구문하여 입력 부탁 합니다."
+            :auto-size="{ minRows: 5, maxRows: 5 }"
+        />
+      </div>
+
+      <template v-slot:footer>
+        <a-button type="primary" @click="urlPrdUpload()">업로드</a-button>
+        <a-button @click="urlPrdPop = false">취소</a-button>
+      </template>
+    </a-modal>
 
     <!--상품삭제-->
     <a-modal width="800px" v-model:open="deletePrdPop" centered>
@@ -310,6 +342,23 @@
       <template v-slot:footer>
         <a-button type="primary" @click="searchFailed">실패상품검색</a-button>
         <a-button type="primary" @click="closeResultPop('multi')">확인</a-button>
+      </template>
+    </a-modal>
+
+    <!--업로드결과-->
+    <a-modal width="600px" v-model:open="uploadSyncPop" centered title="업로드결과" @cancel="window.location.reload()">
+      <h3><b>총{{ uploadSyncTotal }}개 상품 / 성공 {{ uploadSyncSuccess }} / 실패 {{ uploadSyncFailed }}</b></h3>
+      <a-list v-if="uploadSyncResult.length > 0" :data-source="uploadSyncResult">
+        <template #renderItem="{ item }">
+          <a-list-item>
+            <a-card :title="item.prd_url" style="width: 100%">
+              <p>{{ item.message }}</p>
+            </a-card>
+          </a-list-item>
+        </template>
+      </a-list>
+      <template v-slot:footer>
+        <a-button type="primary" @click="window.location.reload()">확인</a-button>
       </template>
     </a-modal>
 
@@ -548,6 +597,7 @@ export default defineComponent({
       sync_status: "all",
       options: [],
       marketList: [],
+
       marketSyncPop: false,
       marketSyncResult: [],
       marketSyncSuccess: 0,
@@ -555,10 +605,22 @@ export default defineComponent({
       marketSyncTotal: 0,
       marketSyncFailedCode: "",
 
+      uploadSyncPop: false,
+      uploadSyncResult: [],
+      uploadSyncSuccess: 0,
+      uploadSyncFailed: 0,
+      uploadSyncTotal: 0,
+
       deletePrdPop: false,
       deleteCheckList: [],
       deleteOptions: [],
       deleteItems: [],
+
+      urlPrdPop: false,
+      urlPrdValue: '',
+
+      exclPrdPop: false,
+      isExclPrdUpload: false,
 
       singleSyncPop: false,
       singleDetail: [],
@@ -778,6 +840,32 @@ export default defineComponent({
           }, {}));
 
       this.deletePrdPop = true;
+
+    },
+
+    async urlPrdUpload() {
+      this.indicator = true;
+
+      await useProductApi().urlPrdUpload({"urlPrdValue": this.urlPrdValue}).then(res => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          this.indicator = false;
+          return false;
+        }
+
+        let returnData = res.data;
+
+        this.setUploadResultPopData([
+          returnData.success,
+          returnData.failed,
+          returnData.total,
+          returnData.data
+        ]);
+
+        this.indicator = false;
+        this.urlPrdPop = false;
+
+      });
 
     },
 
@@ -1041,6 +1129,14 @@ export default defineComponent({
         this.marketSyncResult = [];
         this.marketSyncPop = false;
       }
+    },
+
+    setUploadResultPopData(data) {
+        this.uploadSyncSuccess = data[0];
+        this.uploadSyncFailed = data[1];
+        this.uploadSyncTotal = data[2];
+        this.uploadSyncResult = data[3];
+        this.uploadSyncPop = true;
     },
 
     async singlePop(item) {
