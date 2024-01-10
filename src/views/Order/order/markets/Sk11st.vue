@@ -4,54 +4,29 @@
     <a-descriptions-item label="" style="background-color: white;border:none"></a-descriptions-item>
   </a-descriptions>
 
-  <a-descriptions title="결제정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
-    :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="결제일시">{{ moment(orderData.orgData.paymentDate).format('YYYY-MM-DD') }}</a-descriptions-item>
-    <a-descriptions-item label="결제수단">{{ orderData.orgData.paymentMeans }}</a-descriptions-item>
-    <a-descriptions-item label="주문 할인액">{{ orderData.orgData.orderDiscountAmount }}</a-descriptions-item>
-    <a-descriptions-item label="후불 결제 최종 결제 금액">{{ orderData.orgData.payLaterPaymentAmount }}</a-descriptions-item>
-    <a-descriptions-item label="네이버페이 적립금 최종 결제 금액">{{
-      orderData.orgData.checkoutAccumulationPaymentAmount }}</a-descriptions-item>
-    <a-descriptions-item label="일반 결제 수단 최종 결제 금액">{{ orderData.orgData.generalPaymentAmount }}</a-descriptions-item>
-    <a-descriptions-item label="네이버페이 포인트 최종 결제 금액">{{ orderData.orgData.naverMileagePaymentAmount
-    }}</a-descriptions-item>
-    <a-descriptions-item label="결제 위치 구분">{{ orderData.orgData.payLocationType }}</a-descriptions-item>
+  <a-descriptions title="결제정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }">
+    <a-descriptions-item label="결제일시">{{ moment(orderData.itemLastDate).format('YYYY-MM-DD') }}</a-descriptions-item>
+    <a-descriptions-item label="주문 할인액">{{ orderData.itemOrgData.lstTmallDscPrc }}</a-descriptions-item>
   </a-descriptions>
 
-  <a-descriptions title="주문자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
-    :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="주문자">{{ orderData.ordererName }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 번호">{{ orderData.orgData.ordererNo }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 연락처">{{ orderData.orgData.ordererTel }}</a-descriptions-item>
+  <a-descriptions title="주문자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }">
+    <a-descriptions-item label="주문자">{{ orderData.orgData.ordNm }}</a-descriptions-item>
+    <a-descriptions-item label="주문자 ID">{{ orderData.orgData.memID }}</a-descriptions-item>
+    <a-descriptions-item label="주문자 연락처">{{ orderData.orgData.ordPrtblTel }}</a-descriptions-item>
   </a-descriptions>
-
 
   <a-descriptions title="수령자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
-    :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="배송구분">{{ orderData.itemOrgData.productOrder.shippingAddress.addressType ===
-      'DOMESTIC' ? '국내배송' : '해외배송' }}</a-descriptions-item>
-    <a-descriptions-item label="수령자">{{ orderData.itemOrgData.productOrder.shippingAddress.name
-    }}</a-descriptions-item>
-    <a-descriptions-item label="수령자 연락처 1">{{ orderData.itemOrgData.productOrder.shippingAddress.tel1
-    }}</a-descriptions-item>
-    <a-descriptions-item label="수령자 연락처 2">{{ orderData.itemOrgData.productOrder.shippingAddress.tel2
-    }}</a-descriptions-item>
-    <a-descriptions-item label="우편번호">{{
-      orderData.itemOrgData.productOrder.shippingAddress.zipCode }}</a-descriptions-item>
-    <a-descriptions-item label="국가">{{ orderData.itemOrgData.productOrder.shippingAddress.country }}
-    </a-descriptions-item>
-    <a-descriptions-item label="도시">{{ orderData.itemOrgData.productOrder.shippingAddress.city }}
-    </a-descriptions-item>
-    <a-descriptions-item label="주(state)">{{ orderData.itemOrgData.productOrder.shippingAddress.state }}
-    </a-descriptions-item>
-    <a-descriptions-item label="기본 주소">{{
-      orderData.itemOrgData.productOrder.shippingAddress.baseAddress }}</a-descriptions-item>
-    <a-descriptions-item label="상세 주소">{{ orderData.itemOrgData.productOrder.shippingAddress.detailedAddress }}
+                  :contentStyle="{ width: '500px' }">
+    <a-descriptions-item label="수령자">{{ orderData.orgData.rcvrNm }}</a-descriptions-item>
+    <a-descriptions-item label="수령자 핸드폰번호">{{ orderData.orgData.rcvrPrtblNo }}</a-descriptions-item>
+    <a-descriptions-item label="수령자 전화번호">{{ orderData.orgData.rcvrTlphn }}</a-descriptions-item>
+    <a-descriptions-item label="우편번호">{{ orderData.orgData.rcvrMailNo }}</a-descriptions-item>
+    <a-descriptions-item label="기본 주소">{{ orderData.orgData.rcvrBaseAddr }}</a-descriptions-item>
+    <a-descriptions-item label="상세 주소">{{ orderData.orgData.rcvrDtlsAddr }}
     </a-descriptions-item>
 
-    <a-descriptions-item label="개인통관번호">{{ orderData.itemOrgData.productOrder.individualCustomUniqueCode }}
+    <a-descriptions-item label="개인통관번호">{{ orderData.orgData.psnCscUniqNo }}
     </a-descriptions-item>
-    <!--          <a-descriptions-item label="수령자 주소">({{ orderData.items[0].itemOrgData.productOrder.shippingAddress.zipCode}}) {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.country}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.city}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.baseAddress}} {{ orderData.items[0].itemOrgData.productOrder.shippingAddress.detailedAddress}} </a-descriptions-item>-->
   </a-descriptions>
 
   <a-descriptions title="상품 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
@@ -72,8 +47,8 @@
     <a-descriptions-item label="상품명" >{{ orderData.prdName }}</a-descriptions-item>
     <a-descriptions-item label="옵션명" >{{ orderData.prdOptionName }}</a-descriptions-item>
     <a-descriptions-item label="수량" >{{ orderData.quantity }} <span v-if="orderData.claimQuantity > 0" style="margin-left:10px;color: #DD4A68">(반품: {{ orderData.claimQuantity }})</span></a-descriptions-item>
-    <a-descriptions-item label="최종 결제 금액" >{{ orderData.itemOrgData.productOrder.totalPaymentAmount }}</a-descriptions-item>
-    <a-descriptions-item label="배송비" >{{ orderData.itemOrgData.productOrder.deliveryFeeAmount }}</a-descriptions-item>
+    <a-descriptions-item label="최종 결제 금액" >{{ orderData.totalPaymentAmount }}</a-descriptions-item>
+    <a-descriptions-item label="배송비" >{{ orderData.orgData.dlvCst }}</a-descriptions-item>
 
     <template #extra>
       <a-button @click="receiverOneOrder(orderData.id)" size="small" v-if="orderData.status === 'paid'">
@@ -101,7 +76,7 @@
                   :contentStyle="{ width: '500px' }">
     <a-descriptions-item label="택배사" >{{ orderData.courierName }}</a-descriptions-item>
     <a-descriptions-item label="운송장번호 " >{{ orderData.invoiceNumber }}</a-descriptions-item>
-    <a-descriptions-item label="배송메모" >{{ orderData.itemOrgData.productOrder.shippingMemo }}</a-descriptions-item>
+    <a-descriptions-item label="배송메모" >{{ orderData.orgData.ordDlvReqCont }}</a-descriptions-item>
   </a-descriptions>
 </template>
 
@@ -111,7 +86,6 @@ import { message } from "ant-design-vue";
 import moment from "moment";
 import { useMarketApi } from '@/api/market'
 import { useMarketOrderApi } from '@/api/order'
-
 const props = defineProps({
   orderData: {
     type: Object,
@@ -152,7 +126,6 @@ const receiverOrderApi = (ids) => {
       message.error(res.message);
       return false;
     }
-
     message.success(res.data.message);
   });
 }
