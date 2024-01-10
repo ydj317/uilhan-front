@@ -5,16 +5,6 @@
       <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status"/>
     </a-form-item>
 
-    <a-form-item name="client_id" label="clientId" @keyup="handleResetSyncStatus"
-                 :rules="[{ required: true, message: 'ClientId를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.client_id"/>
-    </a-form-item>
-
-    <a-form-item name="client_secret" label="clientSecret" @keyup="handleResetSyncStatus"
-                 :rules="[{ required: true, message: 'ClientSecret 를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.client_secret"/>
-    </a-form-item>
-
     <a-form-item name="partner_token" label="파트너 API KEY" @keyup="handleResetSyncStatus"
                  :rules="[{ required: true, message: '파트너 API KEY 를 입력해 주세요.' }]">
       <a-input v-model:value="state.formData.partner_token"/>
@@ -246,8 +236,6 @@ const state = reactive({
     id: '',
     market_code: props.market_code,
     seller_id: '',
-    client_id: '',
-    client_secret: '',
     partner_token: '',
     sync_market_status: false,
 
@@ -301,8 +289,6 @@ const initFormData = () => {
     const {id, marketCode, marketData = {}} = accountInfo;
     const {
       seller_id,
-      client_id,
-      client_secret,
       partner_token,
       return_delivery_price,
       jeju_add_delivery_price,
@@ -314,8 +300,6 @@ const initFormData = () => {
     state.formData.id = id;
     state.formData.market_code = marketCode;
     state.formData.seller_id = seller_id;
-    state.formData.client_id = client_id;
-    state.formData.client_secret = client_secret;
     state.formData.partner_token = partner_token;
 
     state.formData.return_delivery_price = return_delivery_price;
