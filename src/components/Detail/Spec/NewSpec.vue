@@ -10,7 +10,9 @@
     </div>
     <!--옵션그룹 영역-->
     <div class="body-section">
-      <SpecGroup v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :option="option" :optionIndex="optionIndex"></SpecGroup>
+      <SpecGroup v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :option="option"
+                 :optionIndex="optionIndex">
+      </SpecGroup>
     </div>
   </div>
 </template>
@@ -20,13 +22,14 @@ import { forEach, cloneDeep} from "lodash";
 import {mapState, useStore} from "vuex";
 import SpecGroup from "./SpecGroup";
 import { message } from "ant-design-vue";
-import {computed, ref} from "vue";
+import {computed} from "vue";
 
 export default {
   name: "productDetailNewSpec",
   components:{
-    SpecGroup
+    SpecGroup,
   },
+
   computed: {
     ...mapState(["product"]),
   },
@@ -39,6 +42,11 @@ export default {
 
   methods: {
     setting() {
+
+      if (!this.product || !this.product.item_option) {
+        return;
+      }
+
       if (!this._checkOptionGroup()) {
         return false;
       }
@@ -58,6 +66,8 @@ export default {
 
       //세팅후 초기화
       this.temp_item_option = cloneDeep(this.product.item_option);
+
+      this.$store.commit('setOptionApplied', true);
     },
     addSpecGroup() {
       this.product.item_option.push({
@@ -268,7 +278,6 @@ export default {
         });
       } catch(e) {
       }
-
       return check;
     },
   }

@@ -17,7 +17,7 @@
           <a-spin :spinning="product.filter_word_validate_in_process === true">
             <a-input
               @focus="product.filter_word_status = false"
-              @blur="validateFilterWord(product.item_trans_name)"
+              @blur="validateFilterWord(this.product.item_trans_name)"
               v-model:value="product.item_trans_name"
               :maxlength="max_name_length"
               :showCount="true"
@@ -92,7 +92,6 @@ export default {
   },
 
   methods: {
-
     getLogoSrc(fileName, marketCode) {
       try {
         return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
