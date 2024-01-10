@@ -150,7 +150,7 @@
           <a-button type="primary" @click="checkAllDetailImage">전체선택</a-button>
           <a-button @click="uncheckAllDetailImage">선택취소</a-button>
           <a-button @click="deleteCheckedDetailImage(false)" danger>선택삭제</a-button>
-          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
+          <a-button @click="closeAndSubmit">닫기</a-button>
         </template>
       </a-modal>
     </template>
@@ -164,6 +164,8 @@ import { AuthRequest } from "@/util/request";
 import { message } from "ant-design-vue";
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
 
+import { EventBus } from '@/router/eventBus';
+
 export default {
   name: "ImageEditorGroup",
   display: "ImageEditorGroup",
@@ -173,6 +175,12 @@ export default {
   },
 
   methods: {
+
+    closeAndSubmit() {
+      this.product.bImageEditorModule = false;
+      EventBus.emit('submit-request');
+    },
+
     // 이미지 번역
     skuTranslateImage(index, url, isTranslate) {
       this.product.isTranslate = isTranslate

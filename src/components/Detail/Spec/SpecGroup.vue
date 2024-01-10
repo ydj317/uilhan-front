@@ -72,6 +72,14 @@
                 </template>
                 <a-button type="primary" size="small">글자변경</a-button>
               </a-popover>
+
+              <!--重复词语-->
+              <div class="repeat">
+                <a-tag class="ant-tag" v-for="word in getDuplicateWords(option.data.map(item => item.name).join(' '))"
+                  :key="word" color="error" @click="removeWordFromInputs(word)">
+                  {{ word }}
+                </a-tag>
+              </div>
             </div>
           </div>
         </th>
@@ -91,11 +99,11 @@
                 <span style="margin-left: 10px;" v-if="item.img">
                   <a-image :src="item.img" style="border-radius: 5px; width: 30px; height: 30px;" :previewMask="false" />
                 </span>
-
                 <span class="ant-checkbox-inner"></span>
               </span>
             </label>
-            <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명" :disabled="product.is_sync === 'T'"/>
+            <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
+                     :disabled="product.is_sync === 'T'" @blur="handleBlur" @input="handleInputChange" />
             <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">
               {{ item.name.length }}
             </span> / 25</span>
@@ -117,7 +125,10 @@ import {cloneDeep, forEach} from "lodash";
 import {mapState, useStore} from "vuex";
 import {PlusOutlined, MinusOutlined} from '@ant-design/icons-vue';
 import {message} from "ant-design-vue";
-import {computed, ref} from "vue";
+import {computed, nextTick, mounted, unmounted } from "vue";
+import {AuthRequest} from "@/util/request";
+
+import { EventBus } from '@/router/eventBus';
 
 export default {
   name: "productDetailSpecGroup",
@@ -138,6 +149,10 @@ export default {
   },
 
   methods: {
+    //失去焦点保存
+    handleBlur() {
+        EventBus.emit('submit-request');
+    },
     handleReplaceOptionGroup() {
       if (this.option_group_find_str.trim().length === 0) {
         message.warning('변경 전 글자를 입력해주세요.');
@@ -332,8 +347,84 @@ export default {
     },
     _uniqueKey() {
       return ((1 + Math.random()) * 0x10000) | 0;
-    }
-  }
+    },
+
+    getDuplicateWords(names) {
+      // 分割为单词数组
+      let words = names.split(/\s+/);
+
+      // 找出重复的单词
+      let duplicateWords = this.findDuplicates(words);
+
+      // 找出重复的数字部分，即使它们后面跟着非数字字符
+      let duplicateNumbers = this.findDuplicateNumbers(words);
+
+      // 返回重复的单词和数字部分
+      return [...new Set([...duplicateWords, ...duplicateNumbers])];
+    },
+    findDuplicates(words) {
+      let wordCounts = {};
+      words.forEach(word => {
+        wordCounts[word] = (wordCounts[word] || 0) + 1;
+      });
+      return Object.keys(wordCounts).filter(word => wordCounts[word] > 1);
+    },
+    findDuplicateNumbers(words) {
+      let numberCounts = {};
+      words.forEach(word => {
+        const match = word.match(/\d+/);
+        if (match) {
+          const number = match[0];
+          numberCounts[number] = (numberCounts[number] || 0) + 1;
+        }
+      });
+      return Object.keys(numberCounts).filter(number => numberCounts[number] > 1);
+    },
+
+
+    // 重新计算并更新所有repeat的高度
+    adjustRepeatHeights() {
+      nextTick(() => {
+        let maxHeight = 0;
+
+        // 获取所有 repeat 元素并找出最大高度
+        const repeats = document.getElementsByClassName('repeat');
+        for (const el of repeats) {
+          maxHeight = Math.max(el.clientHeight, maxHeight);
+        }
+
+        // 设置所有 repeat 元素的高度为最大高度
+        for (const el of repeats) {
+          el.style.height = maxHeight + 'px';
+        }
+      });
+    },
+
+    handleInputChange() {
+      const repeats = document.getElementsByClassName('repeat');
+      for (const el of repeats) {
+        el.style.height = 'auto';
+      }
+      this.adjustRepeatHeights();
+    },
+
+    //点击a-tag同时删除对应的input中的name
+    removeWordFromInputs(wordToRemove) {
+      this.option.data.forEach(item => {
+        item.name = item.name.split(' ').filter(word => word !== wordToRemove).join(' ');
+      });
+
+      const repeats = document.getElementsByClassName('repeat');
+      for (const el of repeats) {
+        el.style.height = 'auto'; // 重置高度
+      }
+      this.adjustRepeatHeights();
+    },
+  },
+  mounted() {
+    this.adjustRepeatHeights();
+  },
+
 }
 
 </script>
@@ -379,7 +470,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  height: 50px;
+  min-height: 50px;
+  margin-left:10px;
 }
 
 .spec-option-name {
@@ -412,7 +504,10 @@ export default {
 }
 
 .spec-option-button {
-  margin-right: 10px;
+  margin:5px 10px 0 0;
+
+  max-width:53%;
+  text-align:right;
 }
 
 .spec-option-left {
@@ -431,4 +526,29 @@ export default {
 .spec-set-option-name-button {
   padding: 2px;
 }
+
+:where(.css-dev-only-do-not-override-1qb1s0s).ant-btn.ant-btn-sm {
+  margin-bottom:5px;
+}
+.repeat{
+  text-align: right;
+  max-width:100%;
+  //min-height:0;
+}
+:where(.css-dev-only-do-not-override-1qb1s0s).ant-tag{
+  margin: 0 0 5px 10px;
+  cursor:pointer;
+}
+
+:where(.css-dev-only-do-not-override-1qb1s0s).ant-tag-error{
+  max-width:100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ant-tag:empty {
+  display: none;
+}
+
 </style>

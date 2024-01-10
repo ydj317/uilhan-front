@@ -5,7 +5,7 @@
         <!--        <a-button type="primary" @click="textTranslateSwicth"-->
         <!--          >텍스트 번역</a-button-->
         <!--        >-->
-        <a-button type="primary" @click="submit">저장</a-button>
+        <a-button type="primary" @click="handleSaveClick">저장</a-button>
         <a-button type="primary" @click="submitSync">상품등록</a-button>
         <a-button type="primary" @click="backList">목록</a-button>
       </div>
@@ -94,6 +94,9 @@ import { message } from "ant-design-vue";
 import { useRoute } from "vue-router";
 import {useCategoryApi} from "@/api/category";
 
+import { ref} from 'vue';
+import { EventBus } from '@/router/eventBus';
+
 export default {
   computed: {
     ...mapState(["product"])
@@ -131,7 +134,24 @@ export default {
       syncSelectedRowKeys: [],
       marketSyncResult: [],
       smartStoreCategory: [],
+
+      isSaveEnabled: true, // 表示保存按钮是否可用的状态变量
     };
+  },
+
+  props: {
+    isOptionApplied: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  //其他组件调用저장方法
+  mounted() {
+    EventBus.on('submit-request', this.submit);
+  },
+  unmounted() {
+    EventBus.off('submit-request', this.submit);
   },
 
   methods: {
@@ -202,7 +222,7 @@ export default {
     async submit() {
       if (this.validateFilterProductWords() === false) return false;
 
-      this.product.loading = true;
+      // this.product.loading = true;
 
       //연동필수데이터 없는 상황
       if (this.checkMarket() === false) {
@@ -266,6 +286,23 @@ export default {
         return false;
       }
     },
+
+    //只有在点击저장按钮的时候会出现加载状态,其他组件调用的时候不出现
+    async handleSaveClick() {
+      if (!this.$store.state.isOptionApplied) {
+        message.warning('옵션정보가 변경되었습니다. 옵션적용 후 상품을 등록해 주시기 바랍니다');
+        return;
+      }
+      this.product.loading = true;
+      await this.submit();
+      this.product.loading = false;
+    },
+
+    updateSaveEnabled() {
+      // 更新保存按钮的可用状态，这里可以根据实际需求进行逻辑处理
+      this.isSaveEnabled = true; // 假设始终启用保存按钮
+    },
+
     checkSellingPrice() {
       let maxPrice = Number.NEGATIVE_INFINITY; // Initialize with the smallest possible value
       let minPrice = Number.POSITIVE_INFINITY; // Initialize with the largest possible value

@@ -72,6 +72,7 @@ import { watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {EventBus} from "@/router/eventBus";
 
 export default {
   name: "productDetailDescription",
@@ -130,6 +131,8 @@ export default {
       const afterCont = `<div id="${this.guideAfterId}" data-tid="${value}">${selectData.afterCont}</div>`;
 
       this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
+
+      EventBus.emit('submit-request');
     },
     getGuide() {
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/guide/list").then((res) => {
