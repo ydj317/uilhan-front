@@ -134,9 +134,7 @@
 <script setup>
 import {onMounted, toRefs, reactive} from 'vue'
 import {message} from "ant-design-vue";
-import {SettingOutlined} from '@ant-design/icons-vue';
 import {useMarketApi} from '@/api/market'
-import {useMarketOrderApi} from '@/api/order'
 
 const props = defineProps({
 	orderData: {
