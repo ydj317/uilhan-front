@@ -288,14 +288,14 @@ const syncOutboundAddress = (account_id) => {
     state.returnAddressList = [];
     state.outboundAddressList = [];
     marketJson?.data.forEach(item => {
-      if (item.dvpTypCd === '02' && item.useYn === 'Y') {
+      if (item.dvpTypCd === '01' && item.useYn === 'Y') {
         state.returnAddressList.push({
           return_address_code: item.dvpNo,
           return_address_name: item.dvpNm
         });
       }
 
-      if (item.dvpTypCd === '01' && item.useYn === 'Y') {
+      if (item.dvpTypCd === '02' && item.useYn === 'Y') {
         state.outboundAddressList.push({
           outbound_code: item.dvpNo,
           outbound_name: item.dvpNm
@@ -348,14 +348,14 @@ const getAccountJson = () => {
     state.sync_address_date = updDate || null;
 
     marketJson?.data.forEach(item => {
-      if (item.dvpTypCd === '01' && item.useYn === 'Y') {
+      if (item.dvpTypCd === '02' && item.useYn === 'Y') {
         state.outboundAddressList.push({
           outbound_code: item.dvpNo,
           outbound_name: item.dvpNm
         });
       }
 
-      if (item.dvpTypCd === '02' && item.useYn === 'Y') {
+      if (item.dvpTypCd === '01' && item.useYn === 'Y') {
         state.returnAddressList.push({
           return_address_code: item.dvpNo,
           return_address_name: item.dvpNm
