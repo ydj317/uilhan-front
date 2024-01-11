@@ -29,18 +29,6 @@
         <a-button @click="onClickSyncDomeggookCategory" type="primary">동기화 실행</a-button>
       </a-descriptions-item>
 
-      <a-descriptions-item v-if="isAdmin">
-        <template #label>
-          <a-space>
-            <span>자동 저장 사용</span>
-            <a-tooltip title="자동 저장은 상품등록 시 저장버튼을 클릭하지 않아도 수정된 상품정보를 실시간으로 저장하는 기능입니다.">
-              <QuestionCircleOutlined/>
-            </a-tooltip>
-          </a-space>
-        </template>
-        <a-switch v-model:checked="isAutoSaveEnabled" checked-children="On" un-checked-children="Off" />
-      </a-descriptions-item>
-
     </a-descriptions>
   </a-card>
 </template>
@@ -53,8 +41,6 @@ import Cookie from "js-cookie";
 import {message} from "ant-design-vue";
 import {useUserApi} from "@/api/user";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
-
-const isAutoSaveEnabled = ref(false);  //首次默认是关闭的
 
 const recharge = ref(0);
 

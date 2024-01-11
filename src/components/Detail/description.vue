@@ -55,10 +55,10 @@
     <!-- 상세페이지 편집기 -->
     <div style="margin-top: 10px;">
       <TEditor
-        ref="editor"
-        v-model:value="product.item_detail"
-        :productId="Number(product['item_id'])"
-        @contentUpdate="contentUpdate"
+          ref="editor"
+          v-model:value="product.item_detail"
+          :productId="Number(product['item_id'])"
+          @contentUpdate="contentUpdate"
       />
     </div>
   </div>
@@ -72,7 +72,6 @@ import { watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
-import {EventBus} from "@/router/eventBus";
 
 export default {
   name: "productDetailDescription",
@@ -131,33 +130,31 @@ export default {
       const afterCont = `<div id="${this.guideAfterId}" data-tid="${value}">${selectData.afterCont}</div>`;
 
       this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
-
-      EventBus.emit('submit-request');
     },
     getGuide() {
       AuthRequest.get(process.env.VUE_APP_API_URL + "/api/guide/list").then((res) => {
-          if (res.status !== "2000") {
-            message.error(res.message);
+            if (res.status !== "2000") {
+              message.error(res.message);
+            }
+
+            this.guideData = res.data;
+            if (this.guideData.length < 1) {
+              return true;
+            }
+
+            this.guideValue = this.guideData.find(item => item.isDefault === "1").id;
+
+            // 기존에 없을때 자동적용
+            const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
+            const match = regex.exec(this.product.item_detail);
+            if (match === null) {
+              const selectData = this.guideData.find(item => item.id === this.guideValue);
+              const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${this.guideValue}">${selectData.beforeCont}</div>`;
+              const afterCont = `<div id="${this.guideAfterId}" data-tid="${this.guideValue}">${selectData.afterCont}</div>`;
+              this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
+            }
+
           }
-
-          this.guideData = res.data;
-          if (this.guideData.length < 1) {
-            return true;
-          }
-
-          this.guideValue = this.guideData.find(item => item.isDefault === "1").id;
-
-          // 기존에 없을때 자동적용
-          const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
-          const match = regex.exec(this.product.item_detail);
-          if (match === null) {
-            const selectData = this.guideData.find(item => item.id === this.guideValue);
-            const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${this.guideValue}">${selectData.beforeCont}</div>`;
-            const afterCont = `<div id="${this.guideAfterId}" data-tid="${this.guideValue}">${selectData.afterCont}</div>`;
-            this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
-          }
-
-        }
       );
     },
     setOptionTableContent() {
@@ -299,7 +296,7 @@ export default {
       arr = arr.filter((data) => {
         try {
           return (
-            data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
+              data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
           );
         } catch (e) {
           return false;
@@ -340,7 +337,7 @@ export default {
           original_url: oImageInfo.url,
           translate_url: oImageInfo.url,
           translate_status:
-            oImageInfo.url.indexOf("https://i.tosoiot.com/") !== -1
+              oImageInfo.url.indexOf("https://i.tosoiot.com/") !== -1
         });
       });
     }
