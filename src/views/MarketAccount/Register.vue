@@ -38,6 +38,7 @@ import Smartstore from "./markets/Smartstore.vue";
 import Interpark from "./markets/Interpark.vue";
 import Lotteon from "./markets/Lotteon.vue";
 import Tmon from "./markets/Tmon.vue";
+import Sk11st from "./markets/Sk11st.vue";
 
 export default {
     data() {
@@ -52,7 +53,7 @@ export default {
     },
 
     components: {
-        Coupang, Smartstore, Interpark, Lotteon, Tmon
+        Coupang, Smartstore, Interpark, Lotteon, Tmon, Sk11st
     },
     mounted() {
         // @TODO 마켓계정 ID로 조회를 하여 로그인한 user_id와 일치하는지 확인 계정 user_id가 일치하지 않으면 접근 불가

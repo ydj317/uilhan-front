@@ -14,10 +14,10 @@
     <!--제휴사 상품연동-->
     <a-modal width="1000px" title="상품등록" v-model:open="singleSyncPop" centered>
       <a-table
-        class="tableSyncStatus"
-        :dataSource="this.product.item_sync_market"
-        :columns="SYNC_COLUMNS_CONFIG"
-        :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
+          class="tableSyncStatus"
+          :dataSource="this.product.item_sync_market"
+          :columns="SYNC_COLUMNS_CONFIG"
+          :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
       >
         <!--table body-->
         <template v-slot:bodyCell="{ text, record, index, column }">
@@ -185,9 +185,9 @@ export default {
       let cont = this.product.formState.keyword;
       if (cont !== null && cont.length > 255) {
         message.warning(
-          "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
-          cont.length +
-          ")"
+            "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
+            cont.length +
+            ")"
         );
         return false;
       }
@@ -220,8 +220,8 @@ export default {
       // 태그 제거 (사양)
       let sItemDetail = this.product.item_detail;
       sItemDetail = sItemDetail.replaceAll(
-        "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
-        ""
+          "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
+          ""
       );
       sItemDetail = sItemDetail.replaceAll("<p>", "");
       sItemDetail = sItemDetail.replaceAll("</p>", "");
@@ -495,8 +495,8 @@ export default {
       // 태그 제거 (사양)
       let sItemDetail = this.product.item_detail;
       sItemDetail = sItemDetail.replaceAll(
-        "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
-        ""
+          "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
+          ""
       );
       sItemDetail = sItemDetail.replaceAll("<p>", "");
       sItemDetail = sItemDetail.replaceAll("</p>", "");
@@ -521,7 +521,7 @@ export default {
       this.syncSelectedRowKeys = []
       for (let i = 0; i < this.product.item_sync_market.length; i++) {
         const foundItem = sycnMarkets.find(item => item.market_code === this.product.item_sync_market[i].market_code &&
-          item.market_account === this.product.item_sync_market[i].seller_id);
+            item.market_account === this.product.item_sync_market[i].seller_id);
         if (foundItem) {
           this.product.item_sync_market[i].market_id = foundItem.id;
           this.product.item_sync_market[i].status = foundItem.status;
@@ -681,7 +681,7 @@ export default {
 
       if (this.product.formState.keyword !== undefined && this.product.formState.keyword !== null) {
         faildItem = this.smartStoreCategory.filter((item) => {
-            return this.product.formState.keyword.includes(item.cate_name);
+          return this.product.formState.keyword.includes(item.cate_name);
         })
       }
 

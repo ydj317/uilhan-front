@@ -16,12 +16,12 @@
           </a-button>
           <a-spin :spinning="product.filter_word_validate_in_process === true">
             <a-input
-              @focus="product.filter_word_status = false"
-              @blur="validateFilterWord(product.item_trans_name)"
-              v-model:value="product.item_trans_name"
-              :maxlength="max_name_length"
-              :showCount="true"
-              :placeholder="`상품명칭을 입력하세요.`"
+                @focus="product.filter_word_status = false"
+                @blur="validateFilterWord(product.item_trans_name)"
+                v-model:value="product.item_trans_name"
+                :maxlength="max_name_length"
+                :showCount="true"
+                :placeholder="`상품명칭을 입력하세요.`"
             />
           </a-spin>
         </a-descriptions-item>
@@ -114,12 +114,12 @@ export default {
       }
 
       this.product.item_trans_name = this.product.item_trans_name.replaceAll(
-        sFilterWord,
-        ""
+          sFilterWord,
+          ""
       );
 
       this.product.filter_word_list =
-        this.product.filter_word_list.filter((r) => r !== sFilterWord);
+          this.product.filter_word_list.filter((r) => r !== sFilterWord);
 
       if (this.product.filter_word_list.length === 0) {
         this.product.filter_word_status = true;
@@ -171,8 +171,8 @@ export default {
   mounted() {
     if (this.product.item_is_trans) {
       this.product.item_trans_name = this.product.item_trans_name.substr(
-        0,
-        this.max_name_length
+          0,
+          this.max_name_length
       );
     }
 
