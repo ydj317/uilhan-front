@@ -12,19 +12,8 @@ export default createStore({
       methods: {}
     },
     prdlist: [],
-
-    return: {
-      isOptionApplied: false,
-    },
   },
-  mutations: {
-    setOptionApplied(state, value) {
-      state.isOptionApplied = value;
-    },
-    setOptionModified(state, value) {
-      state.isOptionModified = value;
-    },
-  },
+  mutations: {},
   actions: {},
   modules: {},
 });

@@ -4,8 +4,8 @@
     <div class="mb15">
       <div>
         <a-auto-complete v-model:value="autoCompleteValue" :options="autoCompleteOptions" style="width: 90%"
-          placeholder="검색할 카테고리를 입력하세요." @select="onAutoCompSelect" @keydown.enter="onAutoCompSearch(autoCompleteValue)"
-          :open="autoCompleteOpen" />
+                         placeholder="검색할 카테고리를 입력하세요." @select="onAutoCompSelect" @keydown.enter="onAutoCompSearch(autoCompleteValue)"
+                         :open="autoCompleteOpen" />
         <a-button class="ml10" type="primary" @click="onAutoCompSearch(autoCompleteValue)">검색</a-button>
       </div>
       <p class="mt5" style="color: #999999">도움말입니다.</p>
@@ -17,7 +17,7 @@
         <a-table-column title="마켓카테고리">
           <template #default="{ record }">
             <market-categorys ref="marketCategorysRef" :marketCode="record.market_code" :sellerId="record.seller_id"
-              :marketPrdCode="record.market_prd_code" v-model="searchCategoryValue" :key="record.seller_id">
+                              :marketPrdCode="record.market_prd_code" v-model="searchCategoryValue" :key="record.seller_id">
             </market-categorys>
           </template>
         </a-table-column>
@@ -33,8 +33,6 @@ import { useCategoryApi } from "@/api/category";
 import { useStore } from 'vuex';
 const store = useStore();
 const { product } = toRefs(store.state);
-
-import { EventBus } from '@/router/eventBus';
 
 const props = defineProps(['isShow'])
 const emit = defineEmits(['cancelDialog'])
@@ -69,8 +67,8 @@ const onAutoCompSearch = (searchText) => {
       });
 
       autoCompleteOptions.value = !searchText
-        ? []
-        : uniqueOptions
+          ? []
+          : uniqueOptions
 
       autoCompleteOpen.value = true
     })
@@ -89,8 +87,7 @@ const getMarketAccount = () => {
 };
 
 const handleOk = () => {
-  // emit("cancelDialog", false);
-  EventBus.emit('submit-request');
+  emit("cancelDialog", false);
 };
 
 const handleCancel = () => {

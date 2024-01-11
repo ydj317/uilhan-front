@@ -4,16 +4,16 @@
     <template title="번역팝업">
       <!--상품 이미지-->
       <a-modal
-        v-if="
+          v-if="
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
         "
-        :visible="
+          :visible="
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === true
         "
-        :closable="false"
-        @cancel="product.bImageEditorModule = false"
-        width="auto"
-        centered
+          :closable="false"
+          @cancel="product.bImageEditorModule = false"
+          width="auto"
+          centered
       >
         <!-- 번역 남은 회수 -->
         <div class="w100 right center">
@@ -34,17 +34,17 @@
 
       <!--SKU-->
       <a-modal
-        v-if="
+          v-if="
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === false
         "
-        :visible="
+          :visible="
           product.bImageEditorModule && product.bProductDetailsEditor === false && product.bProductImageEditor === false
         "
-        :closable="false"
-        @cancel="product.bImageEditorModule = false"
-        width="auto"
-        wrap-class-name="full-modal"
-        centered
+          :closable="false"
+          @cancel="product.bImageEditorModule = false"
+          width="auto"
+          wrap-class-name="full-modal"
+          centered
       >
         <!-- 번역 남은 회수 선택-->
         <div class="w100 right center">
@@ -80,16 +80,16 @@
 
       <!--상세페이지-->
       <a-modal
-        v-if="
+          v-if="
           product.bImageEditorModule && product.bProductDetailsEditor === true
         "
-        :visible="
+          :visible="
           product.bImageEditorModule && product.bProductDetailsEditor === true
         "
-        :closable="false"
-        @cancel="product.bImageEditorModule = false"
-        width="50%"
-        centered
+          :closable="false"
+          @cancel="product.bImageEditorModule = false"
+          width="50%"
+          centered
       >
         <!-- 번역 남은 회수 상세이미지번역-->
         <div class="w100 right center">
@@ -101,23 +101,23 @@
         <!-- 상세페이지 이미지 리스트 -->
         <a-row :gutter="15" style="max-height: 620px; overflow: scroll;overflow-x: hidden;">
           <a-col
-            v-for="(item, key) in product.aPhotoCollection"
-            :key="key"
-            class="mb15"
-            style="display: flex;justify-content: center;"
-            :xs="24" :sm="24" :md="24" :lg="12" :xl="8"
+              v-for="(item, key) in product.aPhotoCollection"
+              :key="key"
+              class="mb15"
+              style="display: flex;justify-content: center;"
+              :xs="24" :sm="24" :md="24" :lg="12" :xl="8"
           >
             <a-card hoverable style="width: 250px">
               <template #cover>
                 <a-image
-                  style="width: 250px; height: 250px"
-                  :src="item.translate_status ? item.translate_url : item.original_url"
-                  alt=""
+                    style="width: 250px; height: 250px"
+                    :src="item.translate_status ? item.translate_url : item.original_url"
+                    alt=""
                 />
                 <a-checkbox
-                  class="detailImageCheckbox"
-                  v-model:checked="item.checked"
-                  style="
+                    class="detailImageCheckbox"
+                    v-model:checked="item.checked"
+                    style="
                     position: absolute;
                     left: 0;
                     top: -3px;
@@ -150,7 +150,7 @@
           <a-button type="primary" @click="checkAllDetailImage">전체선택</a-button>
           <a-button @click="uncheckAllDetailImage">선택취소</a-button>
           <a-button @click="deleteCheckedDetailImage(false)" danger>선택삭제</a-button>
-          <a-button @click="closeAndSubmit">닫기</a-button>
+          <a-button @click="product.bImageEditorModule = false">닫기</a-button>
         </template>
       </a-modal>
     </template>
@@ -164,8 +164,6 @@ import { AuthRequest } from "@/util/request";
 import { message } from "ant-design-vue";
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
 
-import { EventBus } from '@/router/eventBus';
-
 export default {
   name: "ImageEditorGroup",
   display: "ImageEditorGroup",
@@ -175,12 +173,6 @@ export default {
   },
 
   methods: {
-
-    closeAndSubmit() {
-      this.product.bImageEditorModule = false;
-      EventBus.emit('submit-request');
-    },
-
     // 이미지 번역
     skuTranslateImage(index, url, isTranslate) {
       this.product.isTranslate = isTranslate
@@ -217,8 +209,8 @@ export default {
         Object.keys(oRequestId).map((sRequestId) => {
           this.product.sku.map((data, i) => {
             if (
-              lib.isString(data.translate_tmp_img, true) === true &&
-              data.translate_tmp_img.split("/").includes(sRequestId) === true
+                lib.isString(data.translate_tmp_img, true) === true &&
+                data.translate_tmp_img.split("/").includes(sRequestId) === true
             ) {
               this.product.sku[i].img = oRequestId[sRequestId];
               this.product.sku[i].translate_status = true;
@@ -246,8 +238,8 @@ export default {
         Object.keys(oRequestId).map((sRequestId) => {
           this.product.item_thumbnails.map((data, i) => {
             if (
-              lib.isString(data.translate_tmp_url, true) === true &&
-              data.translate_tmp_url.split("/").includes(sRequestId) === true
+                lib.isString(data.translate_tmp_url, true) === true &&
+                data.translate_tmp_url.split("/").includes(sRequestId) === true
             ) {
               this.product.item_thumbnails[i].url = oRequestId[sRequestId];
               this.product.item_thumbnails[i].translate_status = true;
@@ -297,15 +289,15 @@ export default {
             if (item.key === data.key) {
               this.product.aPhotoCollection[i].translate_status = true;
               this.product.aPhotoCollection[i].translate_url =
-                oRequestId[sRequestId];
+                  oRequestId[sRequestId];
             }
           });
 
           // 상세내용 편집기 contents 업데이트
           this.product.aBakDetailImagesTmp.map((url,index) => {
             if (
-              lib.isString(url, true) === true &&
-              url.split("/").includes(sRequestId) === true
+                lib.isString(url, true) === true &&
+                url.split("/").includes(sRequestId) === true
             ) {
               let content = window.tinymce.editors[0].getContent();
               if (content !== undefined) {
@@ -345,7 +337,7 @@ export default {
       arr = arr.filter((data) => {
         try {
           return (
-            data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
+              data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
           );
         } catch (e) {
           return false;
@@ -366,15 +358,15 @@ export default {
     deleteCheckedDetailImage(keys = false) {
       // 일괄삭제
       let aCheckedImage = this.product.aPhotoCollection.filter(
-        (data) => {
-          return data.checked === true;
-        }
+          (data) => {
+            return data.checked === true;
+          }
       );
 
       // 단일삭제
       if (keys !== false) {
         aCheckedImage = this.product.aPhotoCollection.filter(
-          (data) => data.key === keys
+            (data) => data.key === keys
         );
       }
 
@@ -433,7 +425,7 @@ export default {
 
       aDetailHtml.map((sImageTag, i) => {
         let aDelete = aCheckedImageUrl.filter(
-          (sUrl) => sImageTag.indexOf(sUrl) !== -1
+            (sUrl) => sImageTag.indexOf(sUrl) !== -1
         );
         if (lib.isArray(aDelete, true) === true) {
           delete aDetailHtml[i];
@@ -459,10 +451,10 @@ export default {
       });
 
       AuthRequest.post(
-        process.env.VUE_APP_API_URL + "/api/downloadImageZip",
-        {
-          "imageList": detailImageList
-        }
+          process.env.VUE_APP_API_URL + "/api/downloadImageZip",
+          {
+            "imageList": detailImageList
+          }
       ).then((res) => {
 
         this.product.loading = false;
@@ -504,18 +496,18 @@ export default {
     // 최초 번역 남은 회수 조회
     getRecharge() {
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
-        (res) => {
-          if (res.status !== "2000" || res.data === undefined) {
-            message.error(res.message);
-            return false;
-          }
+          (res) => {
+            if (res.status !== "2000" || res.data === undefined) {
+              message.error(res.message);
+              return false;
+            }
 
-          try {
-            this.product.recharge = res.data.recharge;
-          } catch (e) {
-            message.error("남은회수 호출 실패");
+            try {
+              this.product.recharge = res.data.recharge;
+            } catch (e) {
+              message.error("남은회수 호출 실패");
+            }
           }
-        }
       );
     }
   },
