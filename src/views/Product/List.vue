@@ -200,13 +200,13 @@
         URL상품 업로드
         <a-tooltip>
           <template #title>
-            <div>토보, 티몰 상품URL을 입력하여 상품 업로드 합니다.</div>
+            <div>토보, 티몰, 1688 상품URL을 입력하여 상품 업로드 합니다.</div>
           </template>
           <QuestionCircleOutlined/>
         </a-tooltip>
       </template>
 
-      <div>토보, 티몰 상품URL을 입력하여 상품 업로드 합니다.</div>
+      <div>토보, 티몰, 1688 상품URL을 입력하여 상품 업로드 합니다.</div>
 
       <a-divider />
 
@@ -342,23 +342,6 @@
       <template v-slot:footer>
         <a-button type="primary" @click="searchFailed">실패상품검색</a-button>
         <a-button type="primary" @click="closeResultPop('multi')">확인</a-button>
-      </template>
-    </a-modal>
-
-    <!--업로드결과-->
-    <a-modal width="600px" v-model:open="uploadSyncPop" centered title="업로드결과" @cancel="window.location.reload()">
-      <h3><b>총{{ uploadSyncTotal }}개 상품 / 성공 {{ uploadSyncSuccess }} / 실패 {{ uploadSyncFailed }}</b></h3>
-      <a-list v-if="uploadSyncResult.length > 0" :data-source="uploadSyncResult">
-        <template #renderItem="{ item }">
-          <a-list-item>
-            <a-card :title="item.prd_url" style="width: 100%">
-              <p>{{ item.message }}</p>
-            </a-card>
-          </a-list-item>
-        </template>
-      </a-list>
-      <template v-slot:footer>
-        <a-button type="primary" @click="window.location.reload()">확인</a-button>
       </template>
     </a-modal>
 
@@ -605,12 +588,6 @@ export default defineComponent({
       marketSyncTotal: 0,
       marketSyncFailedCode: "",
 
-      uploadSyncPop: false,
-      uploadSyncResult: [],
-      uploadSyncSuccess: 0,
-      uploadSyncFailed: 0,
-      uploadSyncTotal: 0,
-
       deletePrdPop: false,
       deleteCheckList: [],
       deleteOptions: [],
@@ -853,14 +830,7 @@ export default defineComponent({
           return false;
         }
 
-        let returnData = res.data;
-
-        this.setUploadResultPopData([
-          returnData.success,
-          returnData.failed,
-          returnData.total,
-          returnData.data
-        ]);
+        message.success('업로드요청 성공하였습니다.');
 
         this.indicator = false;
         this.urlPrdPop = false;
@@ -1129,14 +1099,6 @@ export default defineComponent({
         this.marketSyncResult = [];
         this.marketSyncPop = false;
       }
-    },
-
-    setUploadResultPopData(data) {
-        this.uploadSyncSuccess = data[0];
-        this.uploadSyncFailed = data[1];
-        this.uploadSyncTotal = data[2];
-        this.uploadSyncResult = data[3];
-        this.uploadSyncPop = true;
     },
 
     async singlePop(item) {
