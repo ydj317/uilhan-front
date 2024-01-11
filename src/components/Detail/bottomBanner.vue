@@ -640,6 +640,7 @@ export default {
         mandatory_val: oFormState.mandatory_val,
         is_free_delivery: oFormState.item_is_free_delivery === true ? "T" : "F",
         shipping_fee: oFormState.item_shipping_fee,
+        custom_code: oFormState.custom_code,
 
         item_cate: JSON.stringify(oProduct.item_cate),
         item_disp_cate: JSON.stringify(oProduct.item_disp_cate)

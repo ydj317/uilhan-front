@@ -141,6 +141,23 @@
             </div>
           </template>
 
+          <!--품목코드-->
+          <template v-else-if="column.key === 'code'">
+            <div class="center">
+              {{ record.code }}
+            </div>
+            <div class="center pt5">
+              <a-input
+                  class="w80"
+                  :style="
+                  record.img
+                    ? `height: 30px; text-align: center; border: 1;`
+                    : `height: 30px; text-align: center; border: 1;`
+                " v-model:value="record['barcode']"
+              />
+            </div>
+          </template>
+
           <template v-else-if="column.key === 'is_option_reference_price'">
             <div class="center">
               <label class="ant-radio-wrapper" :class="{'ant-radio-wrapper-checked': record.is_option_reference_price === 'T' }">
@@ -276,7 +293,7 @@ export default {
           width: "6%",
         },
         {
-          title: "품목코드",
+          title: "품목코드 / 바코드",
           key: "code",
           width: "12%",
         },

@@ -76,6 +76,15 @@
 
           <a-descriptions-item>
             <template #label>
+              자체상품코드
+            </template>
+            <a-form-item>
+              <a-input v-model:value="formState.custom_code" />
+            </a-form-item>
+          </a-descriptions-item>
+
+          <a-descriptions-item>
+            <template #label>
               상품태그
               <a-tooltip>
                 <template #title>
@@ -123,7 +132,8 @@ export default {
       surtax: 'N',
       mandatory: [],
       mandatory_val: '선택',
-      keyword: null,
+      keyword: '',
+      custom_code: '',
     });
 
     let settingCategoryVisible = ref(false);
@@ -180,6 +190,7 @@ export default {
     }
     this.formState.keyword = this.product.item_sync_keyword;
     this.formState.surtax = this.product.item_surtax;
+    this.formState.custom_code = this.product.item_custom_code;
 
     // 데이터 관리용
     this.product.formState = this.formState;
