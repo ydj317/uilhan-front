@@ -5,7 +5,7 @@
         <!--        <a-button type="primary" @click="textTranslateSwicth"-->
         <!--          >텍스트 번역</a-button-->
         <!--        >-->
-        <a-button type="primary" @click="submit">저장</a-button>
+        <a-button type="primary" @click="handleSaveClick">저장</a-button>
         <a-button type="primary" @click="submitSync">상품등록</a-button>
         <a-button type="primary" @click="backList">목록</a-button>
       </div>
@@ -94,6 +94,9 @@ import { message } from "ant-design-vue";
 import { useRoute } from "vue-router";
 import {useCategoryApi} from "@/api/category";
 
+import { ref} from 'vue';
+import { EventBus } from '@/router/eventBus';
+
 export default {
   computed: {
     ...mapState(["product"])
@@ -131,7 +134,24 @@ export default {
       syncSelectedRowKeys: [],
       marketSyncResult: [],
       smartStoreCategory: [],
+
+      isSaveEnabled: true,
     };
+  },
+
+  props: {
+    isOptionApplied: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  //其他组件调用저장方法
+  mounted() {
+    EventBus.on('submit-request', this.submit);
+  },
+  unmounted() {
+    EventBus.off('submit-request', this.submit);
   },
 
   methods: {
@@ -185,9 +205,9 @@ export default {
       let cont = this.product.item_sync_keyword;
       if (cont !== null && cont.length > 255) {
         message.warning(
-          "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
-          cont.length +
-          ")"
+            "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
+            cont.length +
+            ")"
         );
         return false;
       }
@@ -202,7 +222,7 @@ export default {
     async submit() {
       if (this.validateFilterProductWords() === false) return false;
 
-      this.product.loading = true;
+      // this.product.loading = true;
 
       //연동필수데이터 없는 상황
       if (this.checkMarket() === false) {
@@ -220,8 +240,8 @@ export default {
       // 태그 제거 (사양)
       let sItemDetail = this.product.item_detail;
       sItemDetail = sItemDetail.replaceAll(
-        "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
-        ""
+          "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
+          ""
       );
       sItemDetail = sItemDetail.replaceAll("<p>", "");
       sItemDetail = sItemDetail.replaceAll("</p>", "");
@@ -266,6 +286,23 @@ export default {
         return false;
       }
     },
+
+    //只有在点击저장按钮的时候会出现加载状态,其他组件调用的时候不出现
+    async handleSaveClick() {
+      if (!this.$store.state.isOptionApplied) {
+        message.warning('옵션정보가 변경되었습니다. 옵션적용 후 상품을 등록해 주시기 바랍니다');
+        return;
+      }
+      this.product.loading = true;
+      await this.submit();
+      this.product.loading = false;
+    },
+
+    updateSaveEnabled() {
+      //
+      this.isSaveEnabled = true; // 假设始终启用保存按钮
+    },
+
     checkSellingPrice() {
       let maxPrice = Number.NEGATIVE_INFINITY; // Initialize with the smallest possible value
       let minPrice = Number.POSITIVE_INFINITY; // Initialize with the largest possible value
@@ -521,7 +558,7 @@ export default {
       this.syncSelectedRowKeys = []
       for (let i = 0; i < this.product.item_sync_market.length; i++) {
         const foundItem = sycnMarkets.find(item => item.market_code === this.product.item_sync_market[i].market_code &&
-          item.market_account === this.product.item_sync_market[i].seller_id);
+            item.market_account === this.product.item_sync_market[i].seller_id);
         if (foundItem) {
           this.product.item_sync_market[i].market_id = foundItem.id;
           this.product.item_sync_market[i].status = foundItem.status;

@@ -50,7 +50,8 @@
           </template>
           <a-form-item>
             <a-spin :spinning="ai_loading === true">
-              <a-input v-model:value="product.item_sync_keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다."/>
+              <a-input v-model:value="product.item_sync_keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다."
+                       @blur="handleBlur"/>
             </a-spin>
           </a-form-item>
         </a-descriptions-item>
@@ -66,6 +67,7 @@ import { message } from "ant-design-vue";
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined} from '@ant-design/icons-vue';
+import { EventBus } from '@/router/eventBus';
 
 export default {
   components: {QuestionCircleOutlined},
@@ -119,6 +121,11 @@ export default {
   },
 
   methods: {
+
+    //失去焦点保存
+    handleBlur() {
+        EventBus.emit('submit-request');
+    },
 
     getLogoSrc(fileName, marketCode) {
       try {
@@ -201,6 +208,7 @@ export default {
         }
 
         this.use_ai = (res.data.use_ai === '1');
+        this.use_auto_save = (res.data.use_auto_save === '1');
       });
 
     },
