@@ -79,8 +79,26 @@
       <!--right button-->
       <div>
         <a-button @click="urlPrdPop = true" type="primary" class="ml10">URL상품 업로드</a-button>
-        <a-button @click="exclPrdPop = true" type="primary" class="ml10">엑셀상품 업로드</a-button>
-        <a-spin v-if="indicator" class="ml10" />
+
+        <a-upload
+            :action="uploadCustomOrderPath"
+            v-model:fileList="excelPrdFileList"
+            name="file"
+            :max-count="1"
+            :headers="excelUploadHeaders"
+            :multiple="false"
+            :showUploadList="false"
+            @change="excelUploadCustomOrder"
+            class="ml10"
+        >
+          <a-button class="custom-button" type="primary">엑셀상품 업로드</a-button>
+        </a-upload>
+
+        <a-button @click="downloadSampleExcel" class="custom-button ml10">
+          <DownloadOutlined/>
+          업로드 샘플
+        </a-button>
+
         <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary" class="ml10">상품 다운로드</a-button>
         <!--선택상품 등록-->
         <a-button class="ml10" @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
@@ -369,7 +387,7 @@ import {
   CloseCircleOutlined,
   CheckCircleOutlined,
   LinkOutlined,
-  DollarTwoTone, SearchOutlined, QuestionCircleOutlined
+  DollarTwoTone, DownloadOutlined, SearchOutlined, QuestionCircleOutlined
 } from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
@@ -382,6 +400,7 @@ export default defineComponent({
   components: {
     HistoryView,
     QuestionCircleOutlined,
+    DownloadOutlined,
     SearchOutlined,
     DollarTwoTone,
     Loading,
@@ -596,8 +615,11 @@ export default defineComponent({
       urlPrdPop: false,
       urlPrdValue: '',
 
-      exclPrdPop: false,
-      isExclPrdUpload: false,
+      excelPrdFileList: [],
+      uploadCustomOrderPath: process.env.VUE_APP_API_URL + "/api/excelPrdUpload?XDEBUG_SESSION_START=PHPSTORM",
+      excelUploadHeaders: {
+        token: Cookie.get("token")
+      },
 
       singleSyncPop: false,
       singleDetail: [],
@@ -619,6 +641,29 @@ export default defineComponent({
   },
 
   methods: {
+    downloadSampleExcel() {
+      window.open('/sampleFile/exclPrdUpload.xlsx', '_blank');
+    },
+
+    // 엑셀 업로드
+    excelUploadCustomOrder(res) {
+      if (res.file.status === 'uploading') {
+        this.indicator = true;
+        return false;
+      }
+
+      if (res.file.status === 'error') {
+        this.indicator = false;
+        message.error(res.error.message);
+        return false;
+      }
+
+      if (res.file.status === 'done') {
+        this.indicator = false;
+        message.success(res.file.response.message);
+      }
+    },
+
     initSearchParam() {
       this.market_code = "all"
       this.sync_status = "all"
