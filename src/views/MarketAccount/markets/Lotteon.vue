@@ -32,29 +32,7 @@
         <a-input v-model:value="state.formData.return_shipping_fee"  placeholder="반품배송비를 입력해 주세요." style="width: 210px; margin-right: 10px;" />
         <a-checkbox v-model:checked="state.formData.return_shipping_fee_method">초도 배송비부과</a-checkbox>
       </a-form-item>
-      <a-form-item name="add_shipping_cost_policy_code" label="추가배송비정책" :rules="[{ required: true, message: '추가배송비정책을 선택해 주세요.' }]">
-        <div style="display: flex; align-items: center;">
-          <div>
-                <a-select v-model:value="state.formData.add_shipping_cost_policy_code" placeholder="추가배송비정책을 선택해 주세요"
-                          style="width:260px;">
-                  <a-select-option :value="item.add_shipping_cost_policy_code"
-                                   v-for="(item, key) in state.addShippingCostPolicy" :key="key">{{
-                      item.add_shipping_cost_policy_name
-                    }}
-                  </a-select-option>
-                </a-select>
-          </div>
-          <div>
-            <a-button @click="getShippingCostPolicy(state.formData.id)" class="ml15"
-                      :loading="state.getShippingCostPolicyLoading">업데이트
-            </a-button>
-            <a-tag class="ml15" v-if="state.sync_shipping_status == 0">-</a-tag>
-            <a-tag color="#87d068" class="ml15" v-else-if="state.sync_shipping_status == 1">성공</a-tag>
-            <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
-            <span>{{ state.sync_shipping_date ?? '-' }}</span>
-          </div>
-        </div>
-      </a-form-item>
+
       <a-form-item label="출고지/반품지">
         <div style="display: flex; align-items: center;">
           <div>
@@ -227,7 +205,6 @@ const handleSyncMarketCheck = () => {
       state.formData.id = account_id;
       // 출고지/반품지 수집실행
       syncOutboundAddress(account_id);
-      getShippingCostPolicy(account_id);
       state.formData.sync_market_status = true
     });
   }).catch((error) => {
