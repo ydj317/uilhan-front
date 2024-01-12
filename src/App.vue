@@ -1,20 +1,19 @@
 <template>
-  <a-config-provider :getPopupContainer="getPopupContainer">
+  <a-config-provider :theme="{
+      token: {
+        colorPrimary: '#ffd117',
+      }
+    }">
     <router-view/>
   </a-config-provider>
 </template>
 
-<script>
-  export default {
-    methods: {
-      getPopupContainer(el, dialogContext) {
-        console.log('==0==')
-        console.log(el)
-        console.log(dialogContext)
-        return document.body;
-      },
-    },
-  };
+<script setup>
+import { theme } from 'ant-design-vue';
+import {onMounted} from "vue";
+onMounted(() => {
+  console.log(theme);
+})
 </script>
 
 <style scoped>

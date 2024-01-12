@@ -3,7 +3,6 @@
     <a-menu v-model:selectedKeys="state.selectedKeys"
             v-model:openKeys = "state.openKeys"
             mode="inline"
-            theme="dark"
             @openChange="onOpenChange"
     >
       <template v-for="(menu, index) in state.menuList" :key="index">
@@ -81,17 +80,21 @@ onBeforeMount(() => {
 
 <style scoped>
 .ant-menu .ant-menu-submenu {
-  font-weight: 600;
-  color: #e3e3e3;
+  font-weight: 400;
+  color: #333;
 }
 .ant-menu-item .ant-menu-title-content a {
+  font-weight: 400;
+  color: #333;
+}
+.ant-menu-item.ant-menu-item-selected a {
   font-weight: 600;
-  color: #e3e3e3;
+  color: #f5942b;
 }
 </style>
 <style>
 .ant-menu .ant-menu-submenu {
-  font-weight: 600;
-  color: #e3e3e3;
+  font-weight: 400;
+  color: #333;
 }
 </style>

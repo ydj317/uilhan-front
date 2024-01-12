@@ -7,8 +7,7 @@
           <img src="@/assets/logo.png" style="height:35px;">
       </div>
       <div class="logo" v-if="!collapsed">
-          <img src="@/assets/logo_width.png" v-if="!lib.isWorldLink()" key="logo_width" @click="goDashboard">
-          <img src="@/assets/world_link_logo_width.png" v-else key="world_link_logo_width"  @click="goDashboard">
+          <img src="@/assets/logo_width.png" key="logo_width"  @click="goDashboard">
       </div>
       <Sider/>
     </a-layout-sider>
@@ -98,6 +97,10 @@ onMounted(() => {
 
 #components-layout-custom-trigger .trigger:hover {
   color: #1890ff;
+}
+
+.ant-layout-sider {
+  background: #fff;
 }
 
 </style>
