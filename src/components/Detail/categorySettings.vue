@@ -101,7 +101,6 @@ onMounted(() => {
   getMarketAccount();
 });
 onUpdated(() => {
-  console.log('updated');
 });
 
 </script>

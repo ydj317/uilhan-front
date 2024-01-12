@@ -9,7 +9,7 @@
           <div class="spec-option-group">
             <span class="spec-font">옵션그룹{{ optionIndex + 1 }}</span>
             <a-input class="spec-option-input-size" v-model:value="option.name" size="default" placeholder="옵션그룹"
-                     :disabled="product.is_sync === 'T'"/>
+                     :disabled="product.is_sync === 'T'" @input="handleInputChange" />
             <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{
                 option.name.length
               }}</span> / 25</span>
@@ -103,7 +103,7 @@
               </span>
             </label>
             <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
-                     :disabled="product.is_sync === 'T'" @blur="handleBlur" @input="handleInputChange" />
+                     :disabled="product.is_sync === 'T'" @input="handleInputChange" />
             <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">
               {{ item.name.length }}
             </span> / 25</span>
@@ -121,11 +121,11 @@
   </div>
 </template>
 <script>
-import {cloneDeep, forEach} from "lodash";
+import {cloneDeep, forEach, debounce } from "lodash";
 import {mapState, useStore} from "vuex";
 import {PlusOutlined, MinusOutlined} from '@ant-design/icons-vue';
 import {message} from "ant-design-vue";
-import {computed, nextTick, mounted, unmounted } from "vue";
+import { nextTick, watch } from "vue";
 import {AuthRequest} from "@/util/request";
 
 import { EventBus } from '@/router/eventBus';
@@ -149,10 +149,6 @@ export default {
   },
 
   methods: {
-    //失去焦点保存							*
-    handleBlur() {
-      EventBus.emit('submit-request');
-    },
     handleReplaceOptionGroup() {
       if (this.option_group_find_str.trim().length === 0) {
         message.warning('변경 전 글자를 입력해주세요.');
@@ -406,6 +402,13 @@ export default {
         el.style.height = 'auto';
       }
       this.adjustRepeatHeights();
+
+        // 防抖处理
+        this.debouncedSubmit();
+    },
+
+    submit() {
+      EventBus.emit('submit-request');
     },
 
     //点击a-tag同时删除对应的input中的name
@@ -419,12 +422,13 @@ export default {
         el.style.height = 'auto'; // 重置高度
       }
       this.adjustRepeatHeights();
-    },
+    }
   },
   mounted() {
     this.adjustRepeatHeights();
-  },
+    this.debouncedSubmit = debounce(this.submit, 10000);  //input内容发生变化时自动调用submit方法,延迟为10 秒
 
+  },
 }
 
 </script>

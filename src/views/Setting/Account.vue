@@ -57,8 +57,6 @@
         </template>
         <a-switch v-model:checked="formState.settingDatas.use_auto_save" @change="changeUseAutoSave" checked-children="on" un-checked-children="off" />
       </a-descriptions-item>
-
-
     </a-descriptions>
   </a-card>
 </template>
@@ -71,6 +69,8 @@ import Cookie from "js-cookie";
 import {message} from "ant-design-vue";
 import {useUserApi} from "@/api/user";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+
+import { EventBus } from '@/router/eventBus';
 
 const recharge = ref(0);
 
