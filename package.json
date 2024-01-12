@@ -10,7 +10,7 @@
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
     "@tinymce/tinymce-vue": "^4.0.7",
-    "ant-design-vue": "^4.0.7",
+    "ant-design-vue": "^4.1.0",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "echarts": "^5.4.2",
