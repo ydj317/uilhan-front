@@ -12,7 +12,7 @@
     </h1>
 
     <!--상단 버튼-->
-    <div id="eModelTitle_1_header" class="mb20 space-between">
+    <div class="mb10 mt20 space-between">
       <a-upload
         name="file"
         :headers="HEADER"

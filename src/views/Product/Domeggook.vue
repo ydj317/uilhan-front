@@ -181,7 +181,6 @@
           <div style="text-align: center">
             <a-button
               type="primary"
-              danger
               @click="
                 onClickSyncProduct(
                   dataOfProductListRowSelection,

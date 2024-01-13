@@ -8,12 +8,12 @@
 <!--            텍스트 번역-->
 <!--          </a-button>-->
           <a-button @click="setNavigation('eModelTitle_' + i)" v-for="(name, i) in label">
-            <AppstoreTwoTone v-if="name === '기본 정보'"/>
-            <PictureTwoTone v-if="name === '대표 이미지'" />
-            <SettingTwoTone v-if="name === '옵션설정'" />
-            <TagsTwoTone v-if="name === '옵션정보'" />
-            <SlidersTwoTone v-if="name === '배송설정'" />
-            <BuildTwoTone v-if="name === '상세페이지'" />
+            <AppstoreOutlined v-if="name === '기본 정보'"/>
+            <PictureOutlined v-if="name === '대표 이미지'" />
+            <SettingOutlined v-if="name === '옵션설정'" />
+            <TagsOutlined v-if="name === '옵션정보'" />
+            <SlidersOutlined v-if="name === '배송설정'" />
+            <BuildOutlined v-if="name === '상세페이지'" />
             {{ name }}
           </a-button>
         </div>
@@ -21,33 +21,32 @@
     </div>
   </div>
 </template>
-
 <script>
 import {
-  FileWordTwoTone,
-  AppstoreTwoTone,
-  PictureTwoTone,
-  SettingTwoTone,
-  TagsTwoTone,
-  BankTwoTone,
-  SlidersTwoTone,
-  ProjectTwoTone,
-  BuildTwoTone,
+  FileWordOutlined,
+  PicCenterOutlined,
+  PictureOutlined,
+  SettingOutlined,
+  TagsOutlined,
+  BankOutlined,
+  SlidersOutlined,
+  ProjectOutlined,
+  BuildOutlined,
 } from '@ant-design/icons-vue';
 import {mapState} from 'vuex';
 import { message } from "ant-design-vue";
 
 export default {
   components: {
-    FileWordTwoTone,
-    AppstoreTwoTone,
-    PictureTwoTone,
-    SettingTwoTone,
-    TagsTwoTone,
-    BankTwoTone,
-    SlidersTwoTone,
-    ProjectTwoTone,
-    BuildTwoTone,
+    FileWordOutlined,
+    PicCenterOutlined,
+    PictureOutlined,
+    SettingOutlined,
+    TagsOutlined,
+    BankOutlined,
+    SlidersOutlined,
+    ProjectOutlined,
+    BuildOutlined,
   },
 
   computed: {
@@ -55,10 +54,9 @@ export default {
       'product'
     ])
   },
-
   data() {
     return {
-      test: '<AppstoreTwoTone v-if="name === \'기본 정보\'" twoToneColor="red" />',
+      test: '<AppstoreOutlined v-if="name === \'기본 정보\'" twoToneColor="red" />',
       label: [
         '기본 정보',
         '대표 이미지',

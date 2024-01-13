@@ -22,7 +22,7 @@
     </div>
 
     <!--검색-->
-    <a-card :bordered="false" hoverable title="금지어 관리">
+    <a-card :bordered="false" title="금지어 관리">
       <div class="mt5">
         <!--셀렉박스-->
         <a-select
@@ -50,7 +50,7 @@
     </a-card>
 
     <!--리스트-->
-    <a-card :bordered="false" hoverable class="mt20">
+    <a-card :bordered="false" class="mt20">
       <div id="FilterProductWordsBody">
         <!--선택검색-->
         <div
@@ -77,16 +77,9 @@
           </div>
           <!--금지어 추가 버튼-->
           <div>
-            <a-button
-              @click="showModal"
-              style="width: 100px; background-color: #2db7f5; border: none"
-              type="primary"
-            >추가</a-button
-            >
+            <a-button type="primary" danger @click="deleteApi(checkedId, checkedId.value)" class="ml10">선택삭제</a-button>
+            <a-button @click="showModal" type="primary" class="ml10">금지어 추가</a-button>
           </div>
-        </div>
-        <div>
-          <a-tag color="#2db7f5" class="w100"></a-tag>
         </div>
         <a-table
           :bordered="false"
@@ -94,6 +87,7 @@
           :data-source="dataSource"
           :row-selection="rowSelection"
           :pagination="{ hideOnSinglePage: true, disabled: true, pageSize: pageSize }"
+          class="mt20"
         >
           <!--head-->
           <template #headerCell="{ column }">
@@ -113,12 +107,6 @@
                 :hidden="searchViewType === 'admin' && isAdmin !== 1"
                 style="text-align: center"
               >
-                <a-button
-                  type="primary"
-                  danger
-                  @click="deleteApi(checkedId, checkedId.value)"
-                >선택삭제</a-button
-                >
               </div>
             </template>
           </template>
@@ -141,13 +129,8 @@
             </template>
             <!--삭제버튼-->
             <template v-if="column.key === 'delete'">
-              <div
-                v-if="searchViewType !== 'admin' || isAdmin === 1"
-                style="text-align: center"
-              >
-                <a-button ghost danger @click="deleteApi([record.id], record.id)"
-                >단일삭제</a-button
-                >
+              <div v-if="searchViewType !== 'admin' || isAdmin === 1" style="text-align: center">
+                <a-button ghost danger @click="deleteApi([record.id], record.id)">삭제</a-button>
               </div>
               <div v-else style="text-align: center"></div>
             </template>

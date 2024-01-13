@@ -29,7 +29,7 @@
                     <div v-for="(item, cateKey) in product.item_cate" :key="cateKey">
                       <div v-if="cateKey == market.market_code + '|' + market.seller_id">
 
-                        <a-tag color="#108ee9">표준</a-tag>: {{ item.categoryNames }}
+                        <a-tag color="#ffd117">표준</a-tag>: {{ item.categoryNames }}
                         <CloseCircleTwoTone two-tone-color="#eb2f96" style="cursor: pointer;"
                                             @click="removeCategory(cateKey)" v-if="market.market_prd_code === ''"/>
                       </div>

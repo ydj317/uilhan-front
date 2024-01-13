@@ -638,7 +638,7 @@ export default {
   border-radius: 100%;
 }
 .ant-radio-wrapper.ant-radio-wrapper-checked {
-  border: 1px solid #4096ff;
+  border: 1px solid #ffd117;
 }
 
 .ant-radio-inner {
@@ -662,7 +662,7 @@ export default {
   border-radius: 100%;
 }
 .ant-radio.ant-radio-checked {
-  background: #4096ff;
+  background: #ffd117;
 }
 
 .top_button_container {
