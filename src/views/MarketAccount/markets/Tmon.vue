@@ -317,6 +317,8 @@ const initFormData = () => {
       state.delivery_address.tel1 = tel[0];
       state.delivery_address.tel2 = tel[1];
       state.delivery_address.tel3 = tel[2];
+    } else {
+      state.formData.delivery_address.street_address_rule = [];
     }
 
     state.formData.return_address.zip_code = return_address?.zip_code;
@@ -331,6 +333,8 @@ const initFormData = () => {
       state.return_address.tel1 = tel[0];
       state.return_address.tel2 = tel[1];
       state.return_address.tel3 = tel[2];
+    } else {
+      state.formData.return_address.street_address_rule = [];
     }
 
     state.formData.sync_market_status = sync_market_status;
