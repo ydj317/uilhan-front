@@ -94,7 +94,8 @@ export default defineComponent({
 
   data() {
     return {
-      userInfo: null
+      userInfo: null,
+      productWatchCount: 0
     };
   },
 
@@ -226,22 +227,23 @@ export default defineComponent({
     handleUserInfoUpdate(data) {
       this.userInfo = data;
     },
+  },
 
-    watch: {
-      product(newProduct) {
-        // 当 product 状态发生变化时，执行
-        console.log(this.userInfo);
-        console.log(this.userInfo.use_auto_save);
-        if (newProduct.onload) {
-          // 检查 userInfo 中的 use_auto_save
-          if (this.userInfo && this.userInfo.use_auto_save === '1') {
-            console.log('use_auto_save is 1');
-          }
+  watch: {
+    'product': {
+      handler(newVal, oldVal) {
+        this.productWatchCount++;
+        if (this.productWatchCount > 10) {
+          console.log(newVal);
+          console.log('页面加载完成');
         }
       },
-      deep:true
-    }
+      deep: true, // 深度监听，如果 product 是对象或数组，需要设置为 true
+      immediate: false, // 立即执行一次
+    },
   },
+
+
   mounted() {
     this.getProduct();
   },
