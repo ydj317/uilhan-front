@@ -166,7 +166,7 @@ export default defineComponent({
       }
 
       message.success('자동 저장 성공')
-    }, 1000, {
+    }, 5000, {
       leading: false
     }),
 
