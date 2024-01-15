@@ -151,8 +151,8 @@
                   class="w80"
                   :style="
                   record.img
-                    ? `height: 30px; text-align: center; border: 1;`
-                    : `height: 30px; text-align: center; border: 1;`
+                    ? `height: 30px; text-align: center; border: none;`
+                    : `height: 30px; text-align: center; border: none;`
                 " v-model:value="record['barcode']"
               />
             </div>

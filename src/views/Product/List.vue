@@ -76,6 +76,25 @@
 
       <!--right button-->
       <div>
+        <a-upload
+            :action="uploadProductPath"
+            v-model:fileList="fileList"
+            name="file"
+            :max-count="1"
+            :headers="headers"
+            :multiple="false"
+            :showUploadList="false"
+            @change="addExcelProduct"
+        >
+          <a-spin style="margin-right: 10px;" v-if="uploadProductIndicator" />
+          <a-button class="custom-button" style="margin-right: 5px;" type="primary">
+            상품 업로드
+            <template #icon>
+              <UploadOutlined/>
+            </template>
+          </a-button>
+        </a-upload>
+
         <a-spin style="margin-right: 10px;" v-if="indicator" />
         <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
         <!--선택상품 등록-->
@@ -317,7 +336,7 @@
 </template>
 
 <script>
-import {defineComponent} from "vue";
+import {defineComponent, reactive} from "vue";
 import {AuthRequest} from "@/util/request";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
@@ -335,7 +354,7 @@ import {
   CloseCircleOutlined,
   CheckCircleOutlined,
   LinkOutlined,
-  DollarTwoTone, SearchOutlined, QuestionCircleOutlined
+  DollarTwoTone, SearchOutlined, QuestionCircleOutlined, UploadOutlined
 } from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
@@ -346,6 +365,7 @@ import {useUserApi} from "@/api/user";
 
 export default defineComponent({
   components: {
+    UploadOutlined,
     HistoryView,
     QuestionCircleOutlined,
     SearchOutlined,
@@ -572,7 +592,12 @@ export default defineComponent({
       smartStoreCategory: [],
       userinfo: {},
       haveDownloadProductPermission: false,
-
+      fileList: [],
+      headers: reactive({
+        token: Cookie.get("token")
+      }),
+      uploadProductPath: process.env.VUE_APP_API_URL + "/api/product/excelUpload" + '?XDEBUG_SESSION_START=PHPSTORM',
+      uploadProductIndicator : false,
       simpleImage
     };
   },
@@ -1126,6 +1151,28 @@ export default defineComponent({
     showHistory(param) {
       this.historyData = param;
       this.historyVisible = true;
+    },
+
+    // 상품 엑셀 업로드 (큐텐)
+    async addExcelProduct(res) {
+      // 업로드중
+      if (res.file.status === 'uploading') {
+        this.uploadProductIndicator = true;
+        return false;
+      }
+
+      // 실패
+      if (res.file.status === 'error') {
+        this.uploadProductIndicator = false;
+        message.error(res.error.message);
+        return false;
+      }
+
+      // 성공
+      if (res.file.status === 'done') {
+        this.uploadProductIndicator = false;
+        message.success(res.file.response.message);
+      }
     },
 
 
