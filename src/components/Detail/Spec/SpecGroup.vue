@@ -8,7 +8,7 @@
         <th style="background-color: #ebeff0;">
           <div class="spec-option-group">
             <span class="spec-font">옵션그룹{{ optionIndex + 1 }}</span>
-            <a-input class="spec-option-input-size" v-model:value="option.name" size="default" placeholder="옵션그룹"
+            <a-input class="spec-option-input-size spec-checkbox2" v-model:value="option.name" size="default" placeholder="옵션그룹"
                      :disabled="product.is_sync === 'T'"/>
             <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{
                 option.name.length
@@ -85,6 +85,7 @@
             <label class="ant-checkbox-wrapper spec-checkbox"
                    :class="{'ant-checkbox-wrapper-checked': selectedRows.indexOf(item.key) !== -1}">
               <span class="ant-checkbox" :class="{'ant-checkbox-checked': selectedRows.indexOf(item.key) !== -1}">
+
                 <input type="checkbox" class="ant-checkbox-input" v-model="selectedRows" :value="item.key"
                        @change="updateSelectAll" :disabled="product.is_sync === 'T'">
 
@@ -431,4 +432,57 @@ export default {
 .spec-set-option-name-button {
   padding: 2px;
 }
+
+/* 根据类名 .ant-checkbox-input 选择元素 */
+.ant-checkbox-input {
+  position: relative;
+  cursor: pointer;
+  left: 1px;
+}
+
+/* 为 .ant-checkbox-input 添加伪元素 ::before */
+.ant-checkbox-input::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px; /* 设置 checkbox 的宽度 */
+  height: 16px; /* 设置 checkbox 的高度 */
+  border: 1px solid #d9d9d9; /* 设置 checkbox 的边框颜色 */
+  background-color: #fff; /* 设置未选中时的背景色 */
+  border-radius: 4px; /* 设置 checkbox 圆角 */
+  transition: background-color 0.3s ease; /* 添加过渡效果 */
+}
+
+/* 在伪元素中使用 ::before 画一个对号 */
+.ant-checkbox-input::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg); /* 旋转45度形成对号 */
+  margin-top: -1px;
+  width: 6px; /* 对号的宽度 */
+  height: 9px; /* 对号的高度 */
+  border: 2px solid #fff; /* 对号的颜色 */
+  border-top: none; /* 去掉对号的上边框 */
+  border-left: none; /* 去掉对号的左边框 */
+  z-index: 10;
+}
+
+/* 当 checkbox 选中时修改背景色 */
+.ant-checkbox-input:checked::before {
+  background-color: #ffd117; /* 设置选中时的背景色 */
+  border-color: #ffd117; /* 设置选中时的边框颜色 */
+}
+
+/* 当 checkbox 被禁用时修改样式 */
+.ant-checkbox-input:disabled::before {
+  background-color: #ccc; /* 设置禁用时的背景色 */
+  border-color: #ccc; /* 设置禁用时的边框颜色 */
+  cursor: not-allowed;
+}
+
+
 </style>

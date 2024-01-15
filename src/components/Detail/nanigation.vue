@@ -23,7 +23,7 @@
 </template>
 <script>
 import {
-  FileWordOutlined,
+  AppstoreOutlined,
   PicCenterOutlined,
   PictureOutlined,
   SettingOutlined,
@@ -38,7 +38,7 @@ import { message } from "ant-design-vue";
 
 export default {
   components: {
-    FileWordOutlined,
+    AppstoreOutlined,
     PicCenterOutlined,
     PictureOutlined,
     SettingOutlined,
