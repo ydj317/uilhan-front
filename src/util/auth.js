@@ -16,6 +16,7 @@ export function isLogin() {
   let token = Cookie.get('token');
   let roles = Cookie.get('member_roles');
   let name = Cookie.get('member_name');
+  // let status = Cookie.get('member_switch_status');
   if (token === undefined || token === 'null' || token === 'undefined') {
     return false;
   }

@@ -46,6 +46,17 @@
         <a-switch v-model:checked="formState.settingDatas.use_ai" @change="changeUseAi" checked-children="on" un-checked-children="off" />
       </a-descriptions-item>
 
+      <a-descriptions-item>
+        <template #label>
+          <a-space>
+            <span>자동 저장 사용</span>
+            <a-tooltip title="자동 저장은 상품등록 시 저장버튼을 클릭하지 않아도 수정된 상품정보를 실시간으로 저장하는 기능입니다.">
+              <QuestionCircleOutlined/>
+            </a-tooltip>
+          </a-space>
+        </template>
+        <a-switch v-model:checked="formState.settingDatas.use_auto_save" @change="changeUseAutoSave" checked-children="on" un-checked-children="off" />
+      </a-descriptions-item>
     </a-descriptions>
   </a-card>
 </template>
@@ -59,12 +70,14 @@ import {message} from "ant-design-vue";
 import {useUserApi} from "@/api/user";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 
+
 const recharge = ref(0);
 
 const formState = reactive({
   settingDatas: {
     recharge: 0,
     use_ai: false,
+    use_auto_save: false,
     license_remaining_days: "",
   },
   loading: false,
@@ -97,6 +110,17 @@ function changeUseAi() {
   });
 }
 
+function changeUseAutoSave() {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", {
+    use_auto_save: formState.settingDatas.use_auto_save,
+  }).then((res) => {
+    if (res.status !== '2000') {
+      message.error(res.message)
+      return false;
+    }
+  });
+}
+
 function getUserInfoData() {
   formState.loading = true;
   useUserApi().getUserInfoData({}).then((res) => {
@@ -108,6 +132,7 @@ function getUserInfoData() {
 
     formState.settingDatas.recharge = res.data.recharge;
     formState.settingDatas.use_ai = (res.data.use_ai === '1');
+    formState.settingDatas.use_auto_save = (res.data.use_auto_save === '1');
 
     setTimeout(() => {
       formState.loading = false;

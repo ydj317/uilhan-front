@@ -20,7 +20,7 @@ import { forEach, cloneDeep} from "lodash";
 import {mapState, useStore} from "vuex";
 import SpecGroup from "./SpecGroup";
 import { message } from "ant-design-vue";
-import {computed, ref} from "vue";
+import {computed,ref} from "vue";
 
 export default {
   name: "productDetailNewSpec",
@@ -39,6 +39,10 @@ export default {
 
   methods: {
     setting() {
+      if (!this.product || !this.product.item_option) {
+        return;
+      }
+
       if (!this._checkOptionGroup()) {
         return false;
       }
@@ -58,6 +62,8 @@ export default {
 
       //세팅후 초기화
       this.temp_item_option = cloneDeep(this.product.item_option);
+
+      this.$store.commit('setOptionApplied', true);
     },
     addSpecGroup() {
       this.product.item_option.push({

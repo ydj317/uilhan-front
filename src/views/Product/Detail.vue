@@ -10,7 +10,7 @@
     <Navigation></Navigation>
 
     <!--기본 정보-->
-    <BasicInfo></BasicInfo>
+    <BasicInfo @userinfo-updated="handleUserInfoUpdate"></BasicInfo>
 
     <MarketData> </MarketData>
 
@@ -43,7 +43,7 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import "../../assets/css/global.css";
 
 import { lib } from "@/util/lib";
-import { mapState } from "vuex";
+import { mapState, createNamespacedHelpers } from "vuex";
 import { useRoute } from "vue-router";
 import { AuthRequest } from "@/util/request";
 import { defineAsyncComponent, defineComponent, ref } from "vue";
@@ -57,6 +57,7 @@ import Sku from "@/components/Detail/Sku";
 import NewSpec from "@/components/Detail/Spec/NewSpec";
 
 import MarketData from "@/components/Detail/MarketData";
+import {throttle} from "lodash";
 // const Sku = defineComponent(() => import('@/components/Detail/Sku'))
 // const NewSpec = defineComponent(() => import('@/components/Detail/Spec/NewSpec'))
 
@@ -92,8 +93,17 @@ export default defineComponent({
     ImageEditorGroup,
   },
 
+  data() {
+    return {
+      useAutoSave: false,
+      productWatchCount: 0
+    };
+  },
+
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: state => state.product
+    }),
   },
 
   setup() {
@@ -104,6 +114,62 @@ export default defineComponent({
   },
 
   methods: {
+
+    getForm(oForm) {
+      let oProduct = this.product;
+      let oFormState = oProduct.formState;
+
+      oForm = this.setForm(oForm, {
+        id: oProduct["item_id"],
+        sku: JSON.stringify(oProduct.sku),
+        info: oProduct.item_info,
+        name: oProduct.item_name,
+        spec: JSON.stringify(oProduct.item_option),
+        stock: oProduct["item_stock"],
+        image: JSON.stringify(oProduct.item_thumbnails),
+        detail: oProduct.item_detail,
+        trans_name: oProduct.item_trans_name,
+        trans_status: oProduct.item_is_trans,
+        cross_border: oProduct.item_cross_border,
+
+        surtax: oFormState.surtax,
+        keyword: oProduct.item_sync_keyword,
+        mandatory_val: oFormState.mandatory_val,
+        is_free_delivery: oFormState.item_is_free_delivery === true ? "T" : "F",
+        shipping_fee: oFormState.item_shipping_fee,
+
+        item_cate: JSON.stringify(oProduct.item_cate),
+        item_disp_cate: JSON.stringify(oProduct.item_disp_cate)
+      });
+
+      return oForm;
+    },
+
+    setForm(oForm, oFormData) {
+      Object.keys(oFormData).map((sField) => {
+        oForm.append(sField, oFormData[sField]);
+      });
+
+      return oForm;
+    },
+
+    autoSave: throttle(async function() {
+      message.success('자동 저장중...')
+
+      let oForm = new FormData();
+      oForm = this.getForm(oForm);
+
+      const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm);
+      if (res.status === undefined || res.status !== "2000") {
+        message.error(res.message);
+        return false;
+      }
+
+      message.success('자동 저장 성공')
+    }, 5000, {
+      leading: false
+    }),
+
     getProduct() {
       const route = useRoute();
       let path = route.path.split("/", 4);
@@ -129,7 +195,7 @@ export default defineComponent({
           return false;
         }
 
-        this.$store.state.product = Object.assign(this.product, res.data);
+        this.$store.state.product = Object.assign(this.product, res.data); //vueX
         if (Array.isArray(this.product.item_cate) && this.product.item_cate.length === 0){
           this.product.item_cate = {};
         }
@@ -215,7 +281,24 @@ export default defineComponent({
       }
     },
 
+    handleUserInfoUpdate(data) {
+      this.useAutoSave = data.use_auto_save;
+    },
   },
+
+  watch: {
+    'product': {
+      handler() {
+        this.productWatchCount++;
+        if (this.productWatchCount > 10 && this.useAutoSave) {
+          this.autoSave()
+        }
+      },
+      deep: true, // 深度监听，如果 product 是对象或数组，需要设置为 true
+      immediate: false, // 立即执行一次
+    },
+  },
+
 
   mounted() {
     this.getProduct();

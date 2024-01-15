@@ -131,7 +131,15 @@ export default {
       syncSelectedRowKeys: [],
       marketSyncResult: [],
       smartStoreCategory: [],
+
     };
+  },
+
+  props: {
+    isOptionApplied: {
+      type: Boolean,
+      default: false
+    }
   },
 
   methods: {
@@ -185,9 +193,9 @@ export default {
       let cont = this.product.item_sync_keyword;
       if (cont !== null && cont.length > 255) {
         message.warning(
-          "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
-          cont.length +
-          ")"
+            "키워드는 최대 (255)자내로 입력하시길 바랍니다.\n현재입력수(" +
+            cont.length +
+            ")"
         );
         return false;
       }
@@ -220,8 +228,8 @@ export default {
       // 태그 제거 (사양)
       let sItemDetail = this.product.item_detail;
       sItemDetail = sItemDetail.replaceAll(
-        "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
-        ""
+          "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
+          ""
       );
       sItemDetail = sItemDetail.replaceAll("<p>", "");
       sItemDetail = sItemDetail.replaceAll("</p>", "");
@@ -266,6 +274,12 @@ export default {
         return false;
       }
     },
+
+    updateSaveEnabled() {
+      //
+      this.isSaveEnabled = true; // 假设始终启用保存按钮
+    },
+
     checkSellingPrice() {
       let maxPrice = Number.NEGATIVE_INFINITY; // Initialize with the smallest possible value
       let minPrice = Number.POSITIVE_INFINITY; // Initialize with the largest possible value
@@ -521,7 +535,7 @@ export default {
       this.syncSelectedRowKeys = []
       for (let i = 0; i < this.product.item_sync_market.length; i++) {
         const foundItem = sycnMarkets.find(item => item.market_code === this.product.item_sync_market[i].market_code &&
-          item.market_account === this.product.item_sync_market[i].seller_id);
+            item.market_account === this.product.item_sync_market[i].seller_id);
         if (foundItem) {
           this.product.item_sync_market[i].market_id = foundItem.id;
           this.product.item_sync_market[i].status = foundItem.status;
