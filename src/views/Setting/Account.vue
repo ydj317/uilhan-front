@@ -70,7 +70,6 @@ import {message} from "ant-design-vue";
 import {useUserApi} from "@/api/user";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 
-import { EventBus } from '@/router/eventBus';
 
 const recharge = ref(0);
 

@@ -34,8 +34,6 @@ import { useStore } from 'vuex';
 const store = useStore();
 const { product } = toRefs(store.state);
 
-import { EventBus } from '@/router/eventBus';
-
 const props = defineProps(['isShow'])
 const emit = defineEmits(['cancelDialog'])
 
@@ -89,8 +87,7 @@ const getMarketAccount = () => {
 };
 
 const handleOk = () => {
-  // emit("cancelDialog", false);
-  EventBus.emit('submit-request');
+  emit("cancelDialog", false);
 };
 
 const handleCancel = () => {

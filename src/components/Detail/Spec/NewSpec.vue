@@ -10,9 +10,7 @@
     </div>
     <!--옵션그룹 영역-->
     <div class="body-section">
-      <SpecGroup v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :option="option"
-                 :optionIndex="optionIndex">
-      </SpecGroup>
+      <SpecGroup v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :option="option" :optionIndex="optionIndex"></SpecGroup>
     </div>
   </div>
 </template>

@@ -20,13 +20,12 @@
 
           <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true">
             <a-input
-              @focus="product.filter_word_status = false"
-              @blur="handleBlur"
-              @input="handleInputChange"
-              v-model:value="product.item_trans_name"
-              :maxlength="max_name_length"
-              :showCount="true"
-              :placeholder="`상품명칭을 입력하세요.`"
+                @focus="product.filter_word_status = false"
+                @blur="validateFilterWord(product.item_trans_name)"
+                v-model:value="product.item_trans_name"
+                :maxlength="max_name_length"
+                :showCount="true"
+                :placeholder="`상품명칭을 입력하세요.`"
             />
           </a-spin>
         </a-descriptions-item>
@@ -52,7 +51,7 @@
           <a-form-item>
             <a-spin :spinning="ai_loading === true">
               <a-input v-model:value="product.item_sync_keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다."
-                       @input="handleInputChange"/>
+                       />
             </a-spin>
           </a-form-item>
         </a-descriptions-item>
@@ -68,8 +67,6 @@ import { message } from "ant-design-vue";
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined} from '@ant-design/icons-vue';
-import { EventBus } from '@/router/eventBus';
-import {debounce} from "lodash";
 
 export default {
   components: {QuestionCircleOutlined},
@@ -123,11 +120,6 @@ export default {
   },
 
   methods: {
-    //事件处理validateFilterWord是异步的，在其完成后调用handleInputChange
-    async handleBlur() {
-      await this.validateFilterWord(this.product.item_trans_name);
-      this.handleInputChange(); // 执行输入改变的逻辑
-    },
 
     getLogoSrc(fileName, marketCode) {
       try {
@@ -148,12 +140,12 @@ export default {
       }
 
       this.product.item_trans_name = this.product.item_trans_name.replaceAll(
-        sFilterWord,
-        ""
+          sFilterWord,
+          ""
       );
 
       this.product.filter_word_list =
-        this.product.filter_word_list.filter((r) => r !== sFilterWord);
+          this.product.filter_word_list.filter((r) => r !== sFilterWord);
 
       if (this.product.filter_word_list.length === 0) {
         this.product.filter_word_status = true;
@@ -211,6 +203,12 @@ export default {
 
         this.use_ai = (res.data.use_ai === '1');
         this.use_auto_save = (res.data.use_auto_save === '1');
+
+
+        // 发射一个事件，携带数据
+        this.$emit('userinfo-updated', {
+          use_auto_save: this.use_auto_save
+        });
       });
 
     },
@@ -244,14 +242,7 @@ export default {
         message.success('상품명과 키워드가 성공적으로 업데이트 되었습니다. ');
       });
 
-    },
-
-    handleInputChange() {
-      this.debouncedSubmit();
-    },
-    submit() {
-      EventBus.emit('submit-request');
-    },
+    }
   },
 
   mounted() {
@@ -259,8 +250,8 @@ export default {
 
     if (this.product.item_is_trans) {
       this.product.item_trans_name = this.product.item_trans_name.substr(
-        0,
-        this.max_name_length
+          0,
+          this.max_name_length
       );
     }
 
@@ -274,8 +265,6 @@ export default {
     if (this.product.item_is_trans === true) {
       this.validateFilterWord(this.product.item_trans_name);
     }
-
-    this.debouncedSubmit = debounce(this.submit, 10000);
   },
 };
 </script>

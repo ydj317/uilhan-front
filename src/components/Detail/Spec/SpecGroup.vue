@@ -9,7 +9,7 @@
           <div class="spec-option-group">
             <span class="spec-font">옵션그룹{{ optionIndex + 1 }}</span>
             <a-input class="spec-option-input-size" v-model:value="option.name" size="default" placeholder="옵션그룹"
-                     :disabled="product.is_sync === 'T'" @input="handleInputChange" />
+                     :disabled="product.is_sync === 'T'" />
             <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{
                 option.name.length
               }}</span> / 25</span>
@@ -127,8 +127,6 @@ import {PlusOutlined, MinusOutlined} from '@ant-design/icons-vue';
 import {message} from "ant-design-vue";
 import { nextTick, watch } from "vue";
 import {AuthRequest} from "@/util/request";
-
-import { EventBus } from '@/router/eventBus';
 
 export default {
   name: "productDetailSpecGroup",
@@ -403,13 +401,9 @@ export default {
       }
       this.adjustRepeatHeights();
 
-        // 防抖处理
-        this.debouncedSubmit();
     },
 
-    submit() {
-      EventBus.emit('submit-request');
-    },
+
 
     //点击a-tag同时删除对应的input中的name
     removeWordFromInputs(wordToRemove) {
@@ -426,8 +420,6 @@ export default {
   },
   mounted() {
     this.adjustRepeatHeights();
-    this.debouncedSubmit = debounce(this.submit, 10000);  //input内容发生变化时自动调用submit方法,延迟为10 秒
-
   },
 }
 

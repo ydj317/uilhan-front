@@ -34,10 +34,6 @@ export function isLogin() {
     return false;
   }
 
-  // if (status !== 0 || status !==1){
-  //   return false;
-  // }
-
   return true;
 }
 
@@ -46,12 +42,10 @@ export function cookieInit() {
   Cookie.remove('member_name');
   Cookie.remove('member_roles');
   Cookie.remove('ch-session');
-
-  Cookie.remove('member_switch_status');
 }
 
 export function getUserInfo() {
-  return {member_name: Cookie.get('member_name'), member_roles: Cookie.get('member_roles'),member_switch_status: Cookie.get('member_switch_status')};
+  return {member_name: Cookie.get('member_name'), member_roles: Cookie.get('member_roles')};
 }
 
 // export function setLoginCookie() {

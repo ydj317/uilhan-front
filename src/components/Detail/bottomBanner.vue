@@ -5,7 +5,7 @@
         <!--        <a-button type="primary" @click="textTranslateSwicth"-->
         <!--          >텍스트 번역</a-button-->
         <!--        >-->
-        <a-button type="primary" @click="handleSaveClick">저장</a-button>
+        <a-button type="primary" @click="submit">저장</a-button>
         <a-button type="primary" @click="submitSync">상품등록</a-button>
         <a-button type="primary" @click="backList">목록</a-button>
       </div>
@@ -94,9 +94,6 @@ import { message } from "ant-design-vue";
 import { useRoute } from "vue-router";
 import {useCategoryApi} from "@/api/category";
 
-import { ref} from 'vue';
-import { EventBus } from '@/router/eventBus';
-
 export default {
   computed: {
     ...mapState(["product"])
@@ -135,7 +132,6 @@ export default {
       marketSyncResult: [],
       smartStoreCategory: [],
 
-      isSaveEnabled: true,
     };
   },
 
@@ -144,14 +140,6 @@ export default {
       type: Boolean,
       default: false
     }
-  },
-
-  //其他组件调用저장方法
-  mounted() {
-    EventBus.on('submit-request', this.submit);
-  },
-  unmounted() {
-    EventBus.off('submit-request', this.submit);
   },
 
   methods: {
@@ -222,7 +210,7 @@ export default {
     async submit() {
       if (this.validateFilterProductWords() === false) return false;
 
-      // this.product.loading = true;
+      this.product.loading = true;
 
       //연동필수데이터 없는 상황
       if (this.checkMarket() === false) {
@@ -285,17 +273,6 @@ export default {
         message.error("저장에 실패 하였습니다.");
         return false;
       }
-    },
-
-    //只有在点击저장按钮的时候会出现加载状态,其他组件调用的时候不出现
-    async handleSaveClick() {
-      if (!this.$store.state.isOptionApplied) {
-        message.warning('옵션정보가 변경되었습니다. 옵션적용 후 상품을 등록해 주시기 바랍니다');
-        return;
-      }
-      this.product.loading = true;
-      await this.submit();
-      this.product.loading = false;
     },
 
     updateSaveEnabled() {

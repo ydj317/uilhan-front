@@ -10,7 +10,7 @@
     <Navigation></Navigation>
 
     <!--기본 정보-->
-    <BasicInfo></BasicInfo>
+    <BasicInfo @userinfo-updated="handleUserInfoUpdate"></BasicInfo>
 
     <MarketData> </MarketData>
 
@@ -43,7 +43,7 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import "../../assets/css/global.css";
 
 import { lib } from "@/util/lib";
-import { mapState } from "vuex";
+import { mapState, createNamespacedHelpers } from "vuex";
 import { useRoute } from "vue-router";
 import { AuthRequest } from "@/util/request";
 import { defineAsyncComponent, defineComponent, ref } from "vue";
@@ -92,8 +92,16 @@ export default defineComponent({
     ImageEditorGroup,
   },
 
+  data() {
+    return {
+      userInfo: null
+    };
+  },
+
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: state => state.product
+    }),
   },
 
   setup() {
@@ -129,7 +137,7 @@ export default defineComponent({
           return false;
         }
 
-        this.$store.state.product = Object.assign(this.product, res.data);
+        this.$store.state.product = Object.assign(this.product, res.data); //vueX
         if (Array.isArray(this.product.item_cate) && this.product.item_cate.length === 0){
           this.product.item_cate = {};
         }
@@ -215,8 +223,25 @@ export default defineComponent({
       }
     },
 
-  },
+    handleUserInfoUpdate(data) {
+      this.userInfo = data;
+    },
 
+    watch: {
+      product(newProduct) {
+        // 当 product 状态发生变化时，执行
+        console.log(this.userInfo);
+        console.log(this.userInfo.use_auto_save);
+        if (newProduct.onload) {
+          // 检查 userInfo 中的 use_auto_save
+          if (this.userInfo && this.userInfo.use_auto_save === '1') {
+            console.log('use_auto_save is 1');
+          }
+        }
+      },
+      deep:true
+    }
+  },
   mounted() {
     this.getProduct();
   },

@@ -241,8 +241,6 @@ import {message} from "ant-design-vue";
 import {computed, reactive, ref} from "vue";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 
-import { EventBus } from '@/router/eventBus';
-
 export default {
   name: "productDetailSku",
   components: {QuestionCircleOutlined},
@@ -342,7 +340,6 @@ export default {
       if (this.setting_price_type === 'min_price') {
         this.setSkuPriceMin();
       }
-      EventBus.emit('submit-request');
     },
 
     setSkuPriceMin() {
@@ -391,8 +388,6 @@ export default {
           this.product.sku[index].is_option_reference_price = "F";
         }
       });
-
-      EventBus.emit('submit-request');
     },
     /**
      * 새로운 품목 구매원가 입력 (CN)
