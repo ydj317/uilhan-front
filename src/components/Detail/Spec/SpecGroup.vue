@@ -576,8 +576,7 @@ text-align:right;
 }
 
 
-
-:where(.css-dev-only-do-not-override-1qb1s0s).ant-btn.ant-btn-sm {
+.ant-btn.ant-btn-sm {
 margin-bottom:5px;
 }
 .repeat{
@@ -585,12 +584,12 @@ margin-bottom:5px;
   max-width:100%;
 //min-height:0;
 }
-:where(.css-dev-only-do-not-override-1qb1s0s).ant-tag{
+.ant-tag{
   margin: 0 0 5px 10px;
   cursor:pointer;
 }
 
-:where(.css-dev-only-do-not-override-1qb1s0s).ant-tag-error{
+.ant-tag-error{
   max-width:100%;
   overflow: hidden;
   white-space: nowrap;
