@@ -20,14 +20,15 @@
     <!--상품 이미지-->
     <ImageUpload></ImageUpload>
 
-    <!--New Spec-->
-    <NewSpec></NewSpec>
 
     <!--Spec-->
     <!--<Spec></Spec>-->
 
     <!--Sku-->
     <Sku></Sku>
+
+    <!--New Spec-->
+    <NewSpec></NewSpec>
 
     <!--상세페이지-->
     <Description></Description>
@@ -214,6 +215,22 @@ export default defineComponent({
         })
 
         this.initSku();
+
+        this.product.use_pvs = [];
+        for (const skuItem of this.product.sku) {
+          if (skuItem.pvs.includes(';')) {
+            // 如果包含分号，按分号分割字符串并循环插入数组
+            const valuesArray = skuItem.pvs.split(';');
+            for (const value of valuesArray) {
+              this.product.use_pvs.push(value);
+            }
+          } else {
+            // 如果不包含分号，直接插入数组
+            this.product.use_pvs.push(skuItem.pvs);
+          }
+        }
+
+        this.product.select_pvs = [1,2];
 
         this.product.onload = true;
         this.product.loading = false;

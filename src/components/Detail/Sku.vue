@@ -13,18 +13,19 @@
         <a-button @click="deleteSku" :disabled="product.is_sync === 'T'">품목삭제</a-button>
         <a-divider type="vertical"></a-divider>
         <div style="display: flex;gap: 5px">
+          <a-input-group compact>
           <a-select v-model:value="setting_price_type">
-            <a-select-option value="min_price">최저 옵션가 기준 50%</a-select-option>
+            <a-select-option value="min_price">옵션가 기준 50%</a-select-option>
           </a-select>
-          <a-button @click="settingSkuPrice">
-            적용
-            <a-tooltip>
-              <template #title>
-                <div>스마트스토어 옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 비활성화 합니다.</div>
-              </template>
-              <QuestionCircleOutlined/>
-            </a-tooltip>
-          </a-button>
+          <a-button type="primary" @click="settingSkuPrice">적용</a-button>
+          </a-input-group>
+
+          <a-tooltip class="ml5">
+            <template #title>
+              <div>옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 비활성화 합니다.</div>
+            </template>
+            <QuestionCircleOutlined/>
+          </a-tooltip>
         </div>
       </div>
 
@@ -378,6 +379,24 @@ export default {
           }
         }
       }
+
+      this.product.use_pvs = [];
+      for (const skuItem of this.product.sku) {
+        if (skuItem.pvs.includes(';')) {
+          // 如果包含分号，按分号分割字符串并循环插入数组
+          const valuesArray = skuItem.pvs.split(';');
+          for (const value of valuesArray) {
+            this.product.use_pvs.push(value);
+          }
+        } else {
+          // 如果不包含分号，直接插入数组
+          this.product.use_pvs.push(skuItem.pvs);
+        }
+      }
+
+      console.log('==0==')
+      console.log(this.product)
+
     },
 
     setIsOptionReferencePrice(key) {
@@ -673,7 +692,6 @@ export default {
 }
 
 .top_button_left_item {
-  width: 180px;
   display: flex;
   justify-content: space-between;
 }

@@ -89,7 +89,7 @@
       <tbody>
       <tr v-for="(item, index) in option.data" :key="item.key">
         <td>
-          <div class="spec-option-name">
+          <div class="spec-option-name" >
             <label class="ant-checkbox-wrapper spec-checkbox"
                    :class="{'ant-checkbox-wrapper-checked': selectedRows.indexOf(item.key) !== -1}">
               <span class="ant-checkbox" :class="{'ant-checkbox-checked': selectedRows.indexOf(item.key) !== -1}">
@@ -97,14 +97,15 @@
                 <input type="checkbox" class="ant-checkbox-input" v-model="selectedRows" :value="item.key"
                        @change="updateSelectAll" :disabled="product.is_sync === 'T'">
 
-                <span style="margin-left: 10px;" v-if="item.img">
-                  <a-image :src="item.img" style="border-radius: 5px; width: 30px; height: 30px;" :previewMask="false" />
+                <span class="option-image" v-if="item.img">
+                  <div class="option-image-large"><img :src="item.img" /></div>
+                  <img class="option-image-small" :src="item.img" />
                 </span>
 
                 <span class="ant-checkbox-inner"></span>
               </span>
             </label>
-            <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
+            <a-input class="input-size" v-model:value="item.name" size="default" :style="product.use_pvs.includes(item.key) ? '' : 'background: #ebeff0;'" placeholder="옵션명"
                      :disabled="product.is_sync === 'T'" @input="handleInputChange" />
             <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">
               {{ item.name.length }}
@@ -598,6 +599,33 @@ margin-bottom:5px;
 
 .ant-tag:empty {
   display: none;
+}
+
+.option-image {
+  margin-left: 10px;
+}
+
+.option-image-large {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+
+.option-image-large img {
+  border-radius: 5px; width: 500px; height: 500px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background: #fff;
+}
+
+.option-image:hover .option-image-large {
+  display: block;
+}
+
+.option-image-small {
+  border-radius: 5px; width: 30px; height: 30px;
 }
 
 </style>
