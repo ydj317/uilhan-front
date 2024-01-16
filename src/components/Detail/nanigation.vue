@@ -10,8 +10,8 @@
           <a-button @click="setNavigation('eModelTitle_' + i)" v-for="(name, i) in label">
             <AppstoreOutlined v-if="name === '기본 정보'"/>
             <PictureOutlined v-if="name === '대표 이미지'" />
-            <SettingOutlined v-if="name === '옵션설정'" />
             <TagsOutlined v-if="name === '옵션정보'" />
+            <SettingOutlined v-if="name === '옵션설정'" />
             <SlidersOutlined v-if="name === '배송설정'" />
             <BuildOutlined v-if="name === '상세페이지'" />
             {{ name }}
@@ -60,8 +60,8 @@ export default {
       label: [
         '기본 정보',
         '대표 이미지',
-        '옵션설정',
         '옵션정보',
+        '옵션설정',
         // '배송설정',
         '상세페이지',
       ],
