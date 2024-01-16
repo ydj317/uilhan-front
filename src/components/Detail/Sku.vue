@@ -458,6 +458,33 @@ export default {
       this.product.sku = this.product.sku.filter(
           (data) => data.checked !== true
       );
+
+      const use_pvs = [];
+      for (const skuItem of this.product.sku) {
+        if (skuItem.pvs.includes(';')) {
+          // 如果包含分号，按分号分割字符串并循环插入数组
+          const valuesArray = skuItem.pvs.split(';');
+          for (const value of valuesArray) {
+            use_pvs.push(value);
+          }
+        } else {
+          // 如果不包含分号，直接插入数组
+          use_pvs.push(skuItem.pvs);
+        }
+      }
+
+      if (!Array.isArray(use_pvs) || use_pvs.length === 0) {
+        return false;
+      }
+
+      // 使用 filter 过滤 item_option
+      this.product.item_option = this.product.item_option.map(item => {
+        // 过滤掉 data 中 key 包含在 use_pvs 中的项
+        item.data = item.data.filter(dataItem => use_pvs.includes(dataItem.key));
+
+        // 过滤掉 data 数组为空的项
+        return item.data.length > 0 ? item : null;
+      }).filter(Boolean);
     },
 
     // 일괄적용
