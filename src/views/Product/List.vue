@@ -77,6 +77,7 @@
       <!--right button-->
       <div>
         <a-upload
+            v-if="haveDownloadProductPermission"
             :action="uploadProductPath"
             v-model:fileList="fileList"
             name="file"
@@ -1157,20 +1158,20 @@ export default defineComponent({
     async addExcelProduct(res) {
       // 업로드중
       if (res.file.status === 'uploading') {
-        this.uploadProductIndicator = true;
+        this.indicator = true;
         return false;
       }
 
       // 실패
       if (res.file.status === 'error') {
-        this.uploadProductIndicator = false;
+        this.indicator = false;
         message.error(res.error.message);
         return false;
       }
 
       // 성공
       if (res.file.status === 'done') {
-        this.uploadProductIndicator = false;
+        this.indicator = false;
         message.success(res.file.response.message);
       }
     },
