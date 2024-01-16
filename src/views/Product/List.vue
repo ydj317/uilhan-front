@@ -76,6 +76,7 @@
 
       <!--right button-->
       <div>
+        <span v-if="!lib.isWorldLink()">
         <a-button @click="urlPrdPop = true" type="primary" class="ml10">URL상품 업로드</a-button>
 
         <a-upload
@@ -96,6 +97,7 @@
           <DownloadOutlined/>
           업로드 샘플
         </a-button>
+        </span>
 
         <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary" class="ml10">상품 다운로드</a-button>
         <!--선택상품 등록-->
@@ -418,6 +420,7 @@ export default defineComponent({
 
   data() {
     return {
+      lib,
       SEARCH_BUTTON_CONFIG: [
         {
           options: [
