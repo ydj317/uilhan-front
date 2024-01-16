@@ -459,6 +459,21 @@ export default {
           (data) => data.checked !== true
       );
 
+      const hasTrueOption = this.product.sku.some(skuItem => skuItem.is_option_reference_price === 'T');
+
+      if (!hasTrueOption) {
+        let index = 0;
+        for (const skuItem of this.product.sku) {
+          // 첨의 품목 skuItem만 T로 변경
+          skuItem.is_option_reference_price = 'F';
+          if (index === 0) {
+            skuItem.is_option_reference_price = 'T';
+          }
+
+          index++;
+        }
+      }
+
       const use_pvs = [];
       for (const skuItem of this.product.sku) {
         if (skuItem.pvs.includes(';')) {
