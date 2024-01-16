@@ -105,7 +105,7 @@
                 <span class="ant-checkbox-inner"></span>
               </span>
             </label>
-            <a-input class="input-size" v-model:value="item.name" size="default" :style="product.use_pvs.includes(item.key) ? '' : 'background: #ebeff0;'" placeholder="옵션명"
+            <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
                      :disabled="product.is_sync === 'T'" @input="handleInputChange" />
             <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">
               {{ item.name.length }}

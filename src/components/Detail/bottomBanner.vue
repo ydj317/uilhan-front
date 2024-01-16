@@ -281,23 +281,19 @@ export default {
     },
 
     checkSellingPrice() {
-      let maxPrice = Number.NEGATIVE_INFINITY; // Initialize with the smallest possible value
-      let minPrice = Number.POSITIVE_INFINITY; // Initialize with the largest possible value
-      for (const skuItem of this.product.sku) {
-        const { selling_price } = skuItem;
-        if (selling_price > maxPrice) {
-          maxPrice = selling_price;
-        }
-        if (selling_price < minPrice) {
-          minPrice = selling_price;
-        }
+      if (!Array.isArray(this.product.sku) || this.product.sku.length === 0) {
+        return false;
       }
 
-      // this.product.sku에서 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 경고창 띄우기
+      // 获取相应的 selling_price 值
+      const objWithT = this.product.sku.find(obj => obj.is_option_reference_price === 'T');
+      const targetPrice = objWithT ? objWithT.selling_price : this.product.sku[0].selling_price;
+
+      // this.product.sku에서 selling_price가 targetPrice 보다 50%이상이거나 50%이하일때 경고창 띄우기
       for (const skuItem of this.product.sku) {
         const { selling_price } = skuItem;
-        // 경고창 띄운 후에도 selling_price가 minPrice 보다 50%이상이거나 50%이하일때 this.product.sku 에서 삭제
-        if (selling_price > minPrice * 1.5 || selling_price < minPrice * 0.5) {
+        // 경고창 띄운 후에도 selling_price가 targetPrice 보다 50%이상이거나 50%이하일때 this.product.sku 에서 삭제
+        if (selling_price > targetPrice * 1.5 || selling_price < targetPrice * 0.5) {
           console.log(`주문옵션(${skuItem.spec}) 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능합니다.`);
 
           // this.product.sku에서 삭제
@@ -311,13 +307,39 @@ export default {
       if (!hasTrueOption) {
         for (const skuItem of this.product.sku) {
           // 제일 처음의 skuItem만 T로 변경
-
-          if (skuItem.selling_price === minPrice) {
+          skuItem.is_option_reference_price = 'F';
+          if (skuItem.selling_price === targetPrice) {
             skuItem.is_option_reference_price = 'T';
-            break;
           }
         }
       }
+
+      const use_pvs = [];
+      for (const skuItem of this.product.sku) {
+        if (skuItem.pvs.includes(';')) {
+          // 如果包含分号，按分号分割字符串并循环插入数组
+          const valuesArray = skuItem.pvs.split(';');
+          for (const value of valuesArray) {
+            use_pvs.push(value);
+          }
+        } else {
+          // 如果不包含分号，直接插入数组
+          use_pvs.push(skuItem.pvs);
+        }
+      }
+
+      if (!Array.isArray(use_pvs) || use_pvs.length === 0) {
+        return false;
+      }
+
+      // 使用 filter 过滤 item_option
+      this.product.item_option = this.product.item_option.map(item => {
+        // 过滤掉 data 中 key 包含在 use_pvs 中的项
+        item.data = item.data.filter(dataItem => use_pvs.includes(dataItem.key));
+
+        // 过滤掉 data 数组为空的项
+        return item.data.length > 0 ? item : null;
+      }).filter(Boolean);
 
       return true;
     },
