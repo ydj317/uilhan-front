@@ -49,10 +49,9 @@ export default {
       this._setSku();
 
       forEach(this.product.sku, (item, index) => {
+        this.product.sku[index].is_option_reference_price = "F";
         if (index === 0) {
           this.product.sku[index].is_option_reference_price = "T";
-        } else {
-          this.product.sku[index].is_option_reference_price = "F";
         }
       });
 
@@ -123,6 +122,9 @@ export default {
     },
     _getSku(aOptions) {
       this.temp_sku = [];
+      if (aOptions.length < 1) {
+        return false;
+      }
 
       if (aOptions.length === 1) {
         forEach(aOptions[0].data, (val, key) => {
@@ -137,6 +139,22 @@ export default {
           });
         });
       }
+
+      this._generateCombinations(aOptions);
+
+    },
+    _generateCombinations(aOptions, currentCombination = [], currentIndex = 0) {
+      if (currentIndex === aOptions.length) {
+        // 如果当前索引已经达到数组长度，将当前组合加入结果数组
+        this.temp_sku.push([...currentCombination]);
+        return;
+      }
+
+      // 遍历当前层的数据
+      forEach(aOptions[currentIndex].data, (value, key) => {
+        // 递归调用生成下一层的组合
+        this._generateCombinations(aOptions, [...currentCombination, value], currentIndex + 1);
+      });
     },
     _setSku() {
       let format_sku = [];
