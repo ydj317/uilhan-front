@@ -110,6 +110,15 @@ export class lib {
     return worldlinkhosts.includes(currentHost.hostname);
   }
 
+  static isXPlan() {
+    const currentHost = window.location
+    const worldlinkhosts = [
+      'www.x-planlab.com',
+      'x-planlab.com',
+    ]
+    return worldlinkhosts.includes(currentHost.hostname);
+  }
+
   static getOraginalImageUrlToString(
     sImageUrl = "",
     aImageExtensionName = [".jpg", ".jpeg", ".bmp", ".png", ".gif"]

@@ -76,7 +76,7 @@
 
       <!--right button-->
       <div>
-        <span v-if="!lib.isWorldLink()">
+        <span v-if="lib.isXPlan()">
         <a-button @click="urlPrdPop = true" type="primary" class="ml10">URL상품 업로드</a-button>
 
         <a-upload
@@ -99,7 +99,6 @@
         </a-button>
         </span>
 
-        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary" class="ml10">상품 다운로드</a-button>
         <a-upload
             v-if="haveDownloadProductPermission"
             :action="uploadProductPath"

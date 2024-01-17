@@ -230,7 +230,7 @@
                 @blur="handlerCustomPrice(column.key, index)"
                 v-model:value="record[column.key]"
             />
-            <div v-if="this.showSellingPriceCn"
+            <div v-if="isManager"
                  :style="`text-align: center; border: none;`"
             >
               <div v-if="record.selling_price_cn > 0">
@@ -343,7 +343,6 @@ export default {
         pageSizeOptions: ["5", "10", "15", "20"],
         onShowSizeChange: (current, pageSize) => (this.pageSize = pageSize),
       },
-      showSellingPriceCn: false,
     };
   },
 
@@ -640,6 +639,10 @@ export default {
         this.product.sku[i].expected_return = Number(expected_return);
       });
     },
+
+    isManager() {
+      return ['jwli', 'irunkorea_02', 'haeju'].includes(lib.getCookie("member_name"));
+    }
   },
 
   mounted() {
@@ -649,10 +652,6 @@ export default {
     //예상수익
     this.handleShippingFeeChange(this.formState.item_shipping_fee);
     this.setExpectedReturn();
-
-    if (['jwli', 'irunkorea_02', 'haeju'].includes(lib.getCookie("member_name"))) {
-      this.showSellingPriceCn = true;
-    }
   },
 };
 </script>
