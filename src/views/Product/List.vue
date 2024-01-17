@@ -597,7 +597,7 @@ export default defineComponent({
       headers: reactive({
         token: Cookie.get("token")
       }),
-      uploadProductPath: process.env.VUE_APP_API_URL + "/api/product/excelUpload" + '?XDEBUG_SESSION_START=PHPSTORM',
+      uploadProductPath: process.env.VUE_APP_API_URL + "/api/product/excelUpload",
       uploadProductIndicator : false,
       simpleImage
     };
@@ -1191,17 +1191,17 @@ export default defineComponent({
           this.indicator = false;
           return false;
         }
-        let blob = new Blob([res], { type: "charset=utf-8" });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = res.data.download_url;
-        a.download = 'product-all-download.xlsx'; // 파일 이름을 설정합니다.
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
 
-        window.open(res.data.download_url, "_blank");
-        this.indicator = false;
+
+        let downloadElement = document.createElement("a");
+        let url = window.URL || window.webkitURL || window.moxURL;
+        let href = process.env.VUE_APP_API_URL + `/uploads/product-list-all.xlsx?t=` + new Date().getTime();
+        downloadElement.href = href;
+        downloadElement.download = decodeURI('product-list-all.xlsx');
+        this.indicator = false;// 下载后文件名
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        url.revokeObjectURL(href);
       });
     },
 

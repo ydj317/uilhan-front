@@ -148,7 +148,7 @@
             </div>
             <div class="center pt5">
               <a-input
-                  class="w80"
+                  class="w90"
                   :style="
                   record.img
                     ? `height: 30px; text-align: center; border: none;`
@@ -230,6 +230,13 @@
                 @blur="handlerCustomPrice(column.key, index)"
                 v-model:value="record[column.key]"
             />
+            <div v-if="this.showSellingPriceCn"
+                 :style="`text-align: center; border: none;`"
+            >
+              <div v-if="record.selling_price_cn > 0">
+                <sub><span style="color: #999999">{{ record.selling_price_cn }}위안</span></sub>
+              </div>
+            </div>
           </template>
           <!--보여주기-->
           <template v-else>
@@ -336,6 +343,7 @@ export default {
         pageSizeOptions: ["5", "10", "15", "20"],
         onShowSizeChange: (current, pageSize) => (this.pageSize = pageSize),
       },
+      showSellingPriceCn: false,
     };
   },
 
@@ -642,6 +650,9 @@ export default {
     this.handleShippingFeeChange(this.formState.item_shipping_fee);
     this.setExpectedReturn();
 
+    if (['jwli', 'irunkorea_02', 'haeju'].includes(lib.getCookie("member_name"))) {
+      this.showSellingPriceCn = true;
+    }
   },
 };
 </script>
