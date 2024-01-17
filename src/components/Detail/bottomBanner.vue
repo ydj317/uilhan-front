@@ -14,10 +14,10 @@
     <!--제휴사 상품연동-->
     <a-modal width="1000px" title="상품등록" v-model:open="singleSyncPop" centered>
       <a-table
-        class="tableSyncStatus"
-        :dataSource="this.product.item_sync_market"
-        :columns="SYNC_COLUMNS_CONFIG"
-        :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
+          class="tableSyncStatus"
+          :dataSource="this.product.item_sync_market"
+          :columns="SYNC_COLUMNS_CONFIG"
+          :row-selection="{ selectedRowKeys: syncSelectedRowKeys, onChange: onSyncSelectChange }"
       >
         <!--table body-->
         <template v-slot:bodyCell="{ text, record, index, column }">
@@ -531,8 +531,8 @@ export default {
       // 태그 제거 (사양)
       let sItemDetail = this.product.item_detail;
       sItemDetail = sItemDetail.replaceAll(
-        "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
-        ""
+          "<p style=\"display: flex; flex-flow: column nowrap; align-items: center;\">",
+          ""
       );
       sItemDetail = sItemDetail.replaceAll("<p>", "");
       sItemDetail = sItemDetail.replaceAll("</p>", "");
@@ -716,7 +716,7 @@ export default {
 
       if (this.product.formState.keyword !== undefined && this.product.formState.keyword !== null) {
         faildItem = this.smartStoreCategory.filter((item) => {
-            return this.product.formState.keyword.includes(item.cate_name);
+          return this.product.formState.keyword.includes(item.cate_name);
         })
       }
 

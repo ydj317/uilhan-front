@@ -122,7 +122,7 @@ import { AuthRequest } from "@/util/request";
 import {
   CopyOutlined
 } from "@ant-design/icons-vue";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive } from "vue";
 import router from "@/router";
 import { message } from "ant-design-vue";
 import {useUserApi} from "@/api/user";

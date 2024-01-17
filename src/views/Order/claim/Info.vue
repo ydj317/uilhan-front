@@ -13,6 +13,7 @@ import { useMarketOrderApi } from '@/api/order'
 import { message } from "ant-design-vue";
 import Coupang from "./markets/Coupang.vue";
 import Smartstore from "./markets/SmartStore.vue";
+import Sk11st from "@/views/Order/order/markets/Sk11st.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -23,7 +24,7 @@ const state = reactive({
 });
 
 const markets = {
-  Coupang, Smartstore
+  Coupang, Smartstore, Sk11st
 }
 
 let marketCode = ref('')

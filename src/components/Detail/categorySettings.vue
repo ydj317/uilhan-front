@@ -17,7 +17,7 @@
         <a-table-column title="마켓카테고리">
           <template #default="{ record }">
             <market-categorys ref="marketCategorysRef" :marketCode="record.market_code" :sellerId="record.seller_id"
-              :marketPrdCode="record.market_prd_code" v-model="searchCategoryValue" :key="record.seller_id">
+                              :marketPrdCode="record.market_prd_code" v-model="searchCategoryValue" :key="record.seller_id">
             </market-categorys>
           </template>
         </a-table-column>
