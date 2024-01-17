@@ -76,10 +76,53 @@
 
       <!--right button-->
       <div>
+        <span v-if="lib.isXPlan()">
+        <a-button @click="urlPrdPop = true" type="primary" class="ml10">URL상품 업로드</a-button>
+
+        <a-upload
+            :action="uploadCustomOrderPath"
+            v-model:fileList="excelPrdFileList"
+            name="file"
+            :max-count="1"
+            :headers="excelUploadHeaders"
+            :multiple="false"
+            :showUploadList="false"
+            @change="excelUploadCustomOrder"
+            class="ml10"
+        >
+          <a-button class="custom-button" type="primary">엑셀상품 업로드</a-button>
+        </a-upload>
+
+        <a-button @click="downloadSampleExcel" class="custom-button ml10">
+          <DownloadOutlined/>
+          업로드 샘플
+        </a-button>
+        </span>
+
+        <a-upload
+            v-if="haveDownloadProductPermission"
+            :action="uploadProductPath"
+            v-model:fileList="fileList"
+            name="file"
+            :max-count="1"
+            :headers="headers"
+            :multiple="false"
+            :showUploadList="false"
+            @change="addExcelProduct"
+        >
+          <a-spin style="margin-right: 10px;" v-if="uploadProductIndicator" />
+          <a-button class="custom-button" style="margin-right: 5px;" type="primary">
+            상품 업로드
+            <template #icon>
+              <UploadOutlined/>
+            </template>
+          </a-button>
+        </a-upload>
+
         <a-spin style="margin-right: 10px;" v-if="indicator" />
         <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
         <!--선택상품 등록-->
-        <a-button style="margin-left: 10px;" @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
+        <a-button class="ml10" @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
       </div>
     </div>
 
@@ -189,6 +232,36 @@
 
   <!--팝업-->
   <div id="footer">
+
+    <!--URL상품 업로드-->
+    <a-modal width="800px" v-model:open="urlPrdPop" centered>
+      <template #title>
+        URL상품 업로드
+        <a-tooltip>
+          <template #title>
+            <div>토보, 티몰, 1688 상품URL을 입력하여 상품 업로드 합니다.</div>
+          </template>
+          <QuestionCircleOutlined/>
+        </a-tooltip>
+      </template>
+
+      <div>토보, 티몰, 1688 상품URL을 입력하여 상품 업로드 합니다.</div>
+
+      <a-divider />
+
+      <div>
+        <a-textarea
+            v-model:value="urlPrdValue"
+            placeholder="상품url 줄바꿈으로 구문하여 입력 부탁 합니다."
+            :auto-size="{ minRows: 5, maxRows: 5 }"
+        />
+      </div>
+
+      <template v-slot:footer>
+        <a-button type="primary" @click="urlPrdUpload()">업로드</a-button>
+        <a-button @click="urlPrdPop = false">취소</a-button>
+      </template>
+    </a-modal>
 
     <!--상품삭제-->
     <a-modal width="800px" v-model:open="deletePrdPop" centered>
@@ -317,7 +390,7 @@
 </template>
 
 <script>
-import {defineComponent} from "vue";
+import {defineComponent, reactive} from "vue";
 import {AuthRequest} from "@/util/request";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
@@ -335,7 +408,7 @@ import {
   CloseCircleOutlined,
   CheckCircleOutlined,
   LinkOutlined,
-  DollarTwoTone, SearchOutlined, QuestionCircleOutlined
+  DollarTwoTone, DownloadOutlined, SearchOutlined, QuestionCircleOutlined, UploadOutlined
 } from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
@@ -346,8 +419,10 @@ import {useUserApi} from "@/api/user";
 
 export default defineComponent({
   components: {
+    UploadOutlined,
     HistoryView,
     QuestionCircleOutlined,
+    DownloadOutlined,
     SearchOutlined,
     DollarTwoTone,
     Loading,
@@ -367,6 +442,7 @@ export default defineComponent({
 
   data() {
     return {
+      lib,
       SEARCH_BUTTON_CONFIG: [
         {
           options: [
@@ -558,6 +634,15 @@ export default defineComponent({
       deleteOptions: [],
       deleteItems: [],
 
+      urlPrdPop: false,
+      urlPrdValue: '',
+
+      excelPrdFileList: [],
+      uploadCustomOrderPath: process.env.VUE_APP_API_URL + "/api/excelPrdUpload?XDEBUG_SESSION_START=PHPSTORM",
+      excelUploadHeaders: {
+        token: Cookie.get("token")
+      },
+
       singleSyncPop: false,
       singleDetail: [],
       checkedList: [],
@@ -572,12 +657,40 @@ export default defineComponent({
       smartStoreCategory: [],
       userinfo: {},
       haveDownloadProductPermission: false,
-
+      fileList: [],
+      headers: reactive({
+        token: Cookie.get("token")
+      }),
+      uploadProductPath: process.env.VUE_APP_API_URL + "/api/product/excelUpload",
+      uploadProductIndicator : false,
       simpleImage
     };
   },
 
   methods: {
+    downloadSampleExcel() {
+      window.open('/sampleFile/exclPrdUpload.xlsx', '_blank');
+    },
+
+    // 엑셀 업로드
+    excelUploadCustomOrder(res) {
+      if (res.file.status === 'uploading') {
+        this.indicator = true;
+        return false;
+      }
+
+      if (res.file.status === 'error') {
+        this.indicator = false;
+        message.error(res.error.message);
+        return false;
+      }
+
+      if (res.file.status === 'done') {
+        this.indicator = false;
+        message.success(res.file.response.message);
+      }
+    },
+
     initSearchParam() {
       this.market_code = "all"
       this.sync_status = "all"
@@ -751,6 +864,25 @@ export default defineComponent({
           }, {}));
 
       this.deletePrdPop = true;
+
+    },
+
+    async urlPrdUpload() {
+      this.indicator = true;
+
+      await useProductApi().urlPrdUpload({"urlPrdValue": this.urlPrdValue}).then(res => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          this.indicator = false;
+          return false;
+        }
+
+        message.success('업로드요청 성공하였습니다.');
+
+        this.indicator = false;
+        this.urlPrdPop = false;
+
+      });
 
     },
 
@@ -1128,6 +1260,28 @@ export default defineComponent({
       this.historyVisible = true;
     },
 
+    // 상품 엑셀 업로드 (큐텐)
+    async addExcelProduct(res) {
+      // 업로드중
+      if (res.file.status === 'uploading') {
+        this.indicator = true;
+        return false;
+      }
+
+      // 실패
+      if (res.file.status === 'error') {
+        this.indicator = false;
+        message.error(res.error.message);
+        return false;
+      }
+
+      // 성공
+      if (res.file.status === 'done') {
+        this.indicator = false;
+        message.success(res.file.response.message);
+      }
+    },
+
 
     async productExcelDown() {
       this.indicator = true;
@@ -1143,17 +1297,17 @@ export default defineComponent({
           this.indicator = false;
           return false;
         }
-        let blob = new Blob([res], { type: "charset=utf-8" });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = res.data.download_url;
-        a.download = 'product-all-download.xlsx'; // 파일 이름을 설정합니다.
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
 
-        window.open(res.data.download_url, "_blank");
-        this.indicator = false;
+
+        let downloadElement = document.createElement("a");
+        let url = window.URL || window.webkitURL || window.moxURL;
+        let href = process.env.VUE_APP_API_URL + `/uploads/product-list-all.xlsx?t=` + new Date().getTime();
+        downloadElement.href = href;
+        downloadElement.download = decodeURI('product-list-all.xlsx');
+        this.indicator = false;// 下载后文件名
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        url.revokeObjectURL(href);
       });
     },
 

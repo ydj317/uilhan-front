@@ -141,6 +141,23 @@
             </div>
           </template>
 
+          <!--품목코드-->
+          <template v-else-if="column.key === 'code'">
+            <div class="center">
+              {{ record.code }}
+            </div>
+            <div class="center pt5">
+              <a-input
+                  class="w90"
+                  :style="
+                  record.img
+                    ? `height: 30px; text-align: center; border: none;`
+                    : `height: 30px; text-align: center; border: none;`
+                " v-model:value="record['barcode']"
+              />
+            </div>
+          </template>
+
           <template v-else-if="column.key === 'is_option_reference_price'">
             <div class="center">
               <label class="ant-radio-wrapper" :class="{'ant-radio-wrapper-checked': record.is_option_reference_price === 'T' }">
@@ -213,6 +230,13 @@
                 @blur="handlerCustomPrice(column.key, index)"
                 v-model:value="record[column.key]"
             />
+            <div v-if="isManager"
+                 :style="`text-align: center; border: none;`"
+            >
+              <div v-if="record.selling_price_cn > 0">
+                <sub><span style="color: #999999">{{ record.selling_price_cn }}위안</span></sub>
+              </div>
+            </div>
           </template>
           <!--보여주기-->
           <template v-else>
@@ -276,7 +300,7 @@ export default {
           width: "6%",
         },
         {
-          title: "품목코드",
+          title: "품목코드 / 바코드",
           key: "code",
           width: "12%",
         },
@@ -615,6 +639,10 @@ export default {
         this.product.sku[i].expected_return = Number(expected_return);
       });
     },
+
+    isManager() {
+      return ['jwli', 'irunkorea_02', 'haeju'].includes(lib.getCookie("member_name"));
+    }
   },
 
   mounted() {
@@ -624,7 +652,6 @@ export default {
     //예상수익
     this.handleShippingFeeChange(this.formState.item_shipping_fee);
     this.setExpectedReturn();
-
   },
 };
 </script>
