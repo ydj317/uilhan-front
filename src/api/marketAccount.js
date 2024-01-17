@@ -45,6 +45,15 @@ export function useMarketAccountApi() {
             });
         },
 
+        // access_token 생성
+        syncMarketGetToken: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/ㅊ",
+                method: "POST",
+                data,
+            });
+        },
+
         // 스마트스토어 계정 채널 정보 조회
         syncSellerChannels: (data) => {
             return AuthRequest({
