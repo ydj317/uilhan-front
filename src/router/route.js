@@ -241,6 +241,17 @@ export const menus = [{
                     },
                 },
                 {
+                    path: "/user/servicePayAi",
+                    name: "user_servicePayAi",
+                    component: () => import("@/views/User/ServicePayAi.vue"),
+                    meta: {
+                        title: "AI 서비스 결제",
+                        isHide: false,
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
+                        icon: ''
+                    },
+                },
+                {
                     path: "/user/manage",
                     name: "user_manage",
                     component: () => import("@/views/User/Manage"),
