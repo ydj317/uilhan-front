@@ -110,6 +110,15 @@ export class lib {
     return worldlinkhosts.includes(currentHost.hostname);
   }
 
+  static isXPlan() {
+    const currentHost = window.location
+    const worldlinkhosts = [
+      'www.x-planlab.com',
+      'x-planlab.com',
+    ]
+    return worldlinkhosts.includes(currentHost.hostname);
+  }
+
   static getOraginalImageUrlToString(
     sImageUrl = "",
     aImageExtensionName = [".jpg", ".jpeg", ".bmp", ".png", ".gif"]
@@ -146,5 +155,26 @@ export class lib {
     sTranslateImageUrl = "https://i.tosoiot.com/"
   ) {
     return sImageUrl.indexOf(sTranslateImageUrl) === -1;
+  }
+
+  static getCookie(sName) {
+    // 获取浏览器中的所有 Cookie
+    const allCookies = document.cookie;
+    // 将 Cookie 字符串解析为键值对对象
+    const cookieArray = allCookies.split(';');
+    const cookies = {};
+    for (let i = 0; i < cookieArray.length; i++) {
+      const cookie = cookieArray[i].trim().split('=');
+      const cookieName = cookie[0];
+      const cookieValue = cookie[1];
+      cookies[cookieName] = cookieValue;
+    }
+    // 获取 member_name 的值
+    const data = cookies[sName];
+    if (data) {
+      return data;
+    } else {
+      return 'undefined';
+    }
   }
 }

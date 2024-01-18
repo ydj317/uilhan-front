@@ -101,6 +101,8 @@ export default {
       surtax: 'N',
       mandatory: [],
       mandatory_val: '선택',
+      keyword: '',
+      custom_code: '',
     });
 
     let settingCategoryVisible = ref(false);
@@ -153,6 +155,7 @@ export default {
     this.formState.mandatory_val = this.product.item_mandatory ? this.product.item_mandatory : '선택';
 
     this.formState.surtax = this.product.item_surtax;
+    this.formState.custom_code = this.product.item_custom_code;
 
     // 데이터 관리용
     this.product.formState = this.formState;

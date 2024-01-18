@@ -78,6 +78,7 @@
 
       <!--right button-->
       <div>
+        <span v-if="lib.isXPlan()">
         <a-button @click="urlPrdPop = true" type="primary" class="ml10">URL상품 업로드</a-button>
 
         <a-upload
@@ -98,8 +99,30 @@
           <DownloadOutlined/>
           업로드 샘플
         </a-button>
+        </span>
 
-        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary" class="ml10">상품 다운로드</a-button>
+        <a-upload
+            v-if="haveDownloadProductPermission"
+            :action="uploadProductPath"
+            v-model:fileList="fileList"
+            name="file"
+            :max-count="1"
+            :headers="headers"
+            :multiple="false"
+            :showUploadList="false"
+            @change="addExcelProduct"
+        >
+          <a-spin style="margin-right: 10px;" v-if="uploadProductIndicator" />
+          <a-button class="custom-button" style="margin-right: 5px;" type="primary">
+            상품 업로드
+            <template #icon>
+              <UploadOutlined/>
+            </template>
+          </a-button>
+        </a-upload>
+
+        <a-spin style="margin-right: 10px;" v-if="indicator" />
+        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
         <!--선택상품 등록-->
         <a-button class="ml10" @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
       </div>
@@ -369,7 +392,7 @@
 </template>
 
 <script>
-import {defineComponent} from "vue";
+import {defineComponent, reactive} from "vue";
 import {AuthRequest} from "@/util/request";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
@@ -387,7 +410,7 @@ import {
   CloseCircleOutlined,
   CheckCircleOutlined,
   LinkOutlined,
-  DollarTwoTone, DownloadOutlined, SearchOutlined, QuestionCircleOutlined
+  DollarTwoTone, DownloadOutlined, SearchOutlined, QuestionCircleOutlined, UploadOutlined
 } from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
@@ -398,6 +421,7 @@ import {useUserApi} from "@/api/user";
 
 export default defineComponent({
   components: {
+    UploadOutlined,
     HistoryView,
     QuestionCircleOutlined,
     DownloadOutlined,
@@ -420,6 +444,7 @@ export default defineComponent({
 
   data() {
     return {
+      lib,
       SEARCH_BUTTON_CONFIG: [
         {
           options: [
@@ -599,7 +624,6 @@ export default defineComponent({
       sync_status: "all",
       options: [],
       marketList: [],
-
       marketSyncPop: false,
       marketSyncResult: [],
       marketSyncSuccess: 0,
@@ -635,7 +659,12 @@ export default defineComponent({
       smartStoreCategory: [],
       userinfo: {},
       haveDownloadProductPermission: false,
-
+      fileList: [],
+      headers: reactive({
+        token: Cookie.get("token")
+      }),
+      uploadProductPath: process.env.VUE_APP_API_URL + "/api/product/excelUpload",
+      uploadProductIndicator : false,
       simpleImage
     };
   },
@@ -1258,6 +1287,28 @@ export default defineComponent({
       this.historyVisible = true;
     },
 
+    // 상품 엑셀 업로드 (큐텐)
+    async addExcelProduct(res) {
+      // 업로드중
+      if (res.file.status === 'uploading') {
+        this.indicator = true;
+        return false;
+      }
+
+      // 실패
+      if (res.file.status === 'error') {
+        this.indicator = false;
+        message.error(res.error.message);
+        return false;
+      }
+
+      // 성공
+      if (res.file.status === 'done') {
+        this.indicator = false;
+        message.success(res.file.response.message);
+      }
+    },
+
 
     async productExcelDown() {
       this.indicator = true;
@@ -1273,17 +1324,17 @@ export default defineComponent({
           this.indicator = false;
           return false;
         }
-        let blob = new Blob([res], { type: "charset=utf-8" });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = res.data.download_url;
-        a.download = 'product-all-download.xlsx'; // 파일 이름을 설정합니다.
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
 
-        window.open(res.data.download_url, "_blank");
-        this.indicator = false;
+
+        let downloadElement = document.createElement("a");
+        let url = window.URL || window.webkitURL || window.moxURL;
+        let href = process.env.VUE_APP_API_URL + `/uploads/product-list-all.xlsx?t=` + new Date().getTime();
+        downloadElement.href = href;
+        downloadElement.download = decodeURI('product-list-all.xlsx');
+        this.indicator = false;// 下载后文件名
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        url.revokeObjectURL(href);
       });
     },
 
