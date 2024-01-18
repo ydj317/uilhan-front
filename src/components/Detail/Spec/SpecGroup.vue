@@ -367,7 +367,7 @@ export default {
       return this.processSpecialDuplicates(duplicates);
     },
     isValidWord(word) {
-      // 有效单词检查：允许字母、数字、韩文、中文以及括号和特殊格式
+      //有效单词检查：允许字母、数字、韩文、中文以及括号和特殊格式
       return /^[\[\]a-zA-Z0-9가-힣\u4e00-\u9fa5]+$/g.test(word) || /^\d+\.\d+X\d+$/g.test(word);
     },
     findDuplicates(words) {
