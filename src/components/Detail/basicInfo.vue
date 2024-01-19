@@ -231,6 +231,7 @@ export default {
 
         if (res.data && Array.isArray(res.data.keywords)) {
           this.product.item_sync_keyword = res.data.keywords.join(',');
+          this.product.item_trans_name += ' ' + this.product.item_sync_keyword
         } else {
           this.product.item_sync_keyword = '';
         }
