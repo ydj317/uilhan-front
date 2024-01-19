@@ -1,4 +1,5 @@
 const { defineConfig } = require("@vue/cli-service");
+const CompressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
 let configureWebpack = {
   resolve: {
@@ -13,6 +14,18 @@ let configureWebpack = {
       'components': path.resolve('./src/components'),
     },
   },
+  plugins: [
+    // CompressionPlugin을 추가합니다.
+    new CompressionPlugin(
+        {
+          filename: '[path][base].gz',
+          algorithm: 'gzip',
+          test: /\.js$|\.css$|\.html$/,
+          threshold: 10240,
+          minRatio: 0.8,
+        }
+    ),
+  ],
 };
 if (process.env.VUE_APP_HOST !== 'F') {
   configureWebpack.devServer = {
