@@ -346,17 +346,30 @@ export default {
     },
 
     getDuplicateWords(names) {
-      // 分割为单词数组
-      let words = names.split(/\s+/);
+      // 分割字符串为单词，特别处理括号内的内容和特殊格式如 "1.5X2"
+      let words = names.split(/[\s,]+/)
+          .flatMap(word => {
+            // 处理特殊格式
+            if (/\d+\.\d+X\d+/.test(word)) {
+              return [word];
+            }
+            // 分割括号内的单词，保留括号
+            if (word.startsWith('[') && word.endsWith(']')) {
+              return word.slice(1, -1).split(/\s+/).map(w => `[${w}]`);
+            }
+            return word;
+          })
+          .filter(word => this.isValidWord(word));
 
-      // 找出重复的单词
-      let duplicateWords = this.findDuplicates(words);
+      // 获取重复的单词或数字
+      let duplicates = this.findDuplicates(words);
 
-      // 找出重复的数字部分，即使它们后面跟着非数字字符
-      let duplicateNumbers = this.findDuplicateNumbers(words);
-
-      // 返回重复的单词和数字部分
-      return [...new Set([...duplicateWords, ...duplicateNumbers])];
+      // 特殊处理
+      return this.processSpecialDuplicates(duplicates);
+    },
+    isValidWord(word) {
+      //有效单词检查：允许字母、数字、韩文、中文以及括号和特殊格式
+      return /^[\[\]a-zA-Z0-9가-힣\u4e00-\u9fa5]+$/g.test(word) || /^\d+\.\d+X\d+$/g.test(word);
     },
     findDuplicates(words) {
       let wordCounts = {};
@@ -365,16 +378,8 @@ export default {
       });
       return Object.keys(wordCounts).filter(word => wordCounts[word] > 1);
     },
-    findDuplicateNumbers(words) {
-      let numberCounts = {};
-      words.forEach(word => {
-        const match = word.match(/\d+/);
-        if (match) {
-          const number = match[0];
-          numberCounts[number] = (numberCounts[number] || 0) + 1;
-        }
-      });
-      return Object.keys(numberCounts).filter(number => numberCounts[number] > 1);
+    processSpecialDuplicates(duplicates) {
+      return duplicates;
     },
 
 
