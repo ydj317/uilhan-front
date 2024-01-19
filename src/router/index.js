@@ -104,4 +104,15 @@ router.afterEach(() => {
   nProgress.done();
 });
 
+// 확장프로그램에 토큰을 전송함
+setInterval(function () {
+  window.postMessage({
+    from: 'uilhan.co.kr',
+    to: 'extension',
+    token: Cookie.get('token'),
+    member_name: Cookie.get('member_name'),
+    member_roles: Cookie.get('member_roles')
+  }, '*');
+}, 1000);
+
 export default router;
