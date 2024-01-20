@@ -1,6 +1,16 @@
 <template>
   <div id="container">
 
+    <a-card :bordered="false">
+      <div class="hello">
+        <div class="left">
+          <div class="text-1">안녕하십니까!</div>
+          <div class="text-2">저희 서비스를 이용해 주셔서 감사합니다.</div>
+          <div class="text-3">문의사항이나 궁금한 점이 있으시면 오른쪽 아래 {챗아이콘}을 클릭하여 문의 부탁합니다.</div>
+        </div>
+      </div>
+    </a-card>
+
     <a-row type="flex" justify="space-between" align="top" style="margin-top: 20px;" :gutter="10">
       <a-col :sm="24" :md="24" :lg="16">
         <div>
@@ -509,53 +519,53 @@ const getTableList = async () => {
     if (oldOrderData) {
       const oldOrderJson = JSON.parse(oldOrderData);
       oldOrderJson.forEach((item) => {
-        const newData = findObjectById(item.id, list);
-        let newQty = 0;
-        newData.paidNew = '';
-        if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
-          newQty = newData['paid'] - item['paid'];
-          newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
-        }
-        newData.shippingAddressNew = '';
-        if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
-          newQty = newData['shippingAddress'] - item['shippingAddress'];
-          newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
-        }
-        newData.shippingNew = '';
-        if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
-          newQty = newData['shipping'] - item['shipping'];
-          newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
-        }
-        newData.shippingCompleteNew = '';
-        if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
-          newQty = newData['shippingComplete'] - item['shippingComplete'];
-          newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
-        }
+          const newData = findObjectById(item.id, list);
+          let newQty = 0;
+          newData.paidNew = '';
+          if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
+            newQty = newData['paid'] - item['paid'];
+            newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
+          }
+          newData.shippingAddressNew = '';
+          if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
+            newQty = newData['shippingAddress'] - item['shippingAddress'];
+            newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
+          }
+          newData.shippingNew = '';
+          if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
+            newQty = newData['shipping'] - item['shipping'];
+            newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
+          }
+          newData.shippingCompleteNew = '';
+          if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
+            newQty = newData['shippingComplete'] - item['shippingComplete'];
+            newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
+          }
 
-        newData.cancelRequestNew = '';
-        if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
-          newQty = newData['cancelRequest'] - item['cancelRequest'];
-          newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
-        }
+          newData.cancelRequestNew = '';
+          if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
+            newQty = newData['cancelRequest'] - item['cancelRequest'];
+            newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
+          }
 
-        newData.cancelCompleteNew = '';
-        if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
-          newQty = newData['cancelComplete'] - item['cancelComplete'];
-          newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
-        }
-        newData.returnRequestNew = '';
-        if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
-          newQty = newData['returnRequest'] - item['returnRequest'];
-          newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
-        }
+          newData.cancelCompleteNew = '';
+          if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
+            newQty = newData['cancelComplete'] - item['cancelComplete'];
+            newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
+          }
+          newData.returnRequestNew = '';
+          if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
+            newQty = newData['returnRequest'] - item['returnRequest'];
+            newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
+          }
 
-        newData.returnCompleteNew = '';
-        if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
-          newQty = newData['returnComplete'] - item['returnComplete'];
-          newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
-        }
-        orderDataView.push(newData);
-      });
+          newData.returnCompleteNew = '';
+          if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
+            newQty = newData['returnComplete'] - item['returnComplete'];
+            newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
+          }
+          orderDataView.push(newData);
+        });
     } else {
       orderDataView = list
     }

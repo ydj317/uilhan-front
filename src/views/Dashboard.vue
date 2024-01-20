@@ -158,63 +158,57 @@
       </a-card>
   </div>
 
-  <a-card :loading="dailySaleLoading" :bordered="false" title="매출현황" class="mt10">
-    <template #extra>
-      <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList"
-                     size="small">
-        <a-radio-button value="1week">일주일</a-radio-button>
-        <a-radio-button value="1month">1개월</a-radio-button>
-        <a-radio-button value="3month">3개월</a-radio-button>
-      </a-radio-group>
-    </template>
-    <a-radio-group v-model:value="state.dailyData.params.type" @change="getSaleList" size="small">
-      <a-radio-button value="amount">판매 금액</a-radio-button>
-      <a-radio-button value="quantity">판매 수량</a-radio-button>
-      <a-radio-button value="count">판매 건수</a-radio-button>
-    </a-radio-group>
-    <div class="dailySale" style="min-width: 460px;">
-      <e-charts :option="dailySaleChart" autoresize/>
-    </div>
-  </a-card>
-
   <!--데이타 도표-->
   <a-row class="chart_area" :gutter="20">
     <a-col :span="8">
       <div class="box">
-        <div class="title" v-if="!dailySaleLoading">마켓별 유입현황</div>
-        <div class="content" style="height: 100px;">
-        <a-card :loading="dailySaleLoading" :body-style="{background: '#fff', border: 'none'}" style="border: none">
-          <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList" size="small">
-            <a-radio-button value="1week">일주일</a-radio-button>
-            <a-radio-button value="1month">1개월</a-radio-button>
-            <a-radio-button value="3month">3개월</a-radio-button>
-          </a-radio-group>
-          <a-radio-group v-model:value="state.dailyData.params.type" @change="getSaleList" size="small">
-            <a-radio-button value="amount">판매 금액</a-radio-button>
-            <a-radio-button value="quantity">판매 수량</a-radio-button>
-            <a-radio-button value="count">판매 건수</a-radio-button>
-          </a-radio-group>
-          <div class="dailySale" style="min-width: 460px;">
-            <e-charts :option="dailySaleChart" autoresize/>
-          </div>
-        </a-card>
+        <div class="title">마켓별 유입현황</div>
+        <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
+          <img src="@/assets/img/chart1.jpg" alt="">
         </div>
       </div>
     </a-col>
     <a-col :span="8">
       <div class="box">
         <div class="title">알바생 업로드현황</div>
-        <div class="content"></div>
+        <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
+          <img src="@/assets/img/chart2.jpg" alt="">
+        </div>
       </div>
     </a-col>
     <a-col :span="8">
-      <div class="box">
-        <div class="title">매출현황</div>
-        <div class="content"></div>
+      <div class="box" style="background: #f9f9f9;">
+        <div class="title" v-if="!dailySaleLoading">매출현황</div>
+        <div class="content">
+          <a-card :loading="dailySaleLoading" :body-style="{background: '#f9f9f9'}" style=" border: none">
+            <div class="mt10">
+              <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList('')" size="small">
+                <a-radio-button value="1week">일주일</a-radio-button>
+                <a-radio-button value="1month">1개월</a-radio-button>
+                <a-radio-button value="3month">3개월</a-radio-button>
+              </a-radio-group>
+            </div>
+            <div class="mt30">
+              <div>
+                <a-button size="small" :type="state.dailyData.params.type === 'amount' ? 'primary' : 'default'" :style="state.dailyData.params.type === 'amount' ? 'background: #fff' : ''" :ghost="state.dailyData.params.type === 'amount'" @click="getSaleList('amount')">판매 금액</a-button>
+              </div>
+              <div class="mt10">
+                <a-button size="small" :type="state.dailyData.params.type === 'quantity' ? 'primary' : 'default'"  @click="getSaleList('quantity')">판매 수량</a-button><br>
+              </div>
+              <div class="mt10">
+                <a-button size="small" :type="state.dailyData.params.type === 'count' ? 'primary' : 'default'"  @click="getSaleList('count')">판매 건수</a-button>
+              </div>
+            </div>
+            <div class="dailySale" style="min-width: 460px;">
+              <e-charts :option="dailySaleChart" autoresize/>
+            </div>
+          </a-card>
+        </div>
       </div>
     </a-col>
   </a-row>
 
+  <div style="height: 100px;"></div>
 </template>
 
 <script setup>
@@ -413,8 +407,11 @@ async function getBoard() {
 }
 
 
-const getSaleList = async () => {
+const getSaleList = async (value) => {
   dailySaleLoading.value = true;
+  if (value !== '') {
+    state.dailyData.params.type = value
+  }
   await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/dailySale", state.dailyData).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
@@ -434,7 +431,7 @@ onMounted(() => {
   //getOrder();
   Promise.all([getBoard(), getTableList().then(() => {
     handleBeforeUnload();
-  }), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
+  }), getSaleList(''), getMarketAdminUrls(), getHeaderCount()])
       .catch((e) => {
         message.error(e.message)
         return false;
@@ -782,9 +779,10 @@ onBeforeUnmount(() => {
 
 .chart_area .box {
   position: relative;
-  background: #f9f9f9;
+  background: #f0f0f0;
   border-radius: 20px;
-  height: 210px;
+  height: 240px;
+  overflow: hidden;
 }
 
 .chart_area .title {
@@ -798,6 +796,23 @@ onBeforeUnmount(() => {
 
 .table .ant-table-summary td {
   border-bottom: none;
+}
+
+.chart_area .content {
+  position: relative;
+}
+.dailySale {
+  position: absolute;
+  top: 20px;
+  right: -20px;
+  width: 400px;
+}
+.dailySale .echarts {
+  transform: scale(0.95);
+  transform-origin: center center;
+  transition: transform 0.3s ease; /* 변환에 애니메이션 적용 */
+  width: 100%;
+  height: 250px;
 }
 
 </style>
