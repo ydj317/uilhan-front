@@ -36,17 +36,6 @@ export const menus = [{
             }
         },
         {
-            path: "/dashboard_bak",
-            name: "dashboard_bak",
-            component: () => import("@/views/Dashboard_bak.vue"),
-            meta: {
-                title: "대시보드_bak",
-                isHide: false,
-                roles: ["ROLE_USER"],
-                icon: DashboardOutlined
-            }
-        },
-        {
             path: "/product",
             name: "product",
             component: () => import("@/views/Product/List"),
