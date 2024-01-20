@@ -14,7 +14,7 @@
       </template>
     </div>
 
-    <div v-if="expand">
+    <div v-if="expand" class="mt20">
       <!--선택버튼 (상품수집마켓, 번역)-->
       <div style="display: flex;flex-direction: column;justify-content:center;border-top: 1px solid #eeeeee">
         <div v-for="CONFIG in SEARCH_BUTTON_CONFIG"
