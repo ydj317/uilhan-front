@@ -804,14 +804,14 @@ onBeforeUnmount(() => {
 .dailySale {
   position: absolute;
   top: 20px;
-  right: -20px;
+  right: -80px;
   width: 400px;
 }
 .dailySale .echarts {
   transform: scale(0.95);
   transform-origin: center center;
-  transition: transform 0.3s ease; /* 변환에 애니메이션 적용 */
-  width: 100%;
+  transition: transform 0.3s ease;
+  width: 80%;
   height: 250px;
 }
 
