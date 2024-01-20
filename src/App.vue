@@ -2,7 +2,7 @@
   <a-config-provider :theme="{
       token: {
         colorPrimary: '#ffd117',
-        colorPrimaryBg: '#ffd117'
+        //colorPrimaryBg: '#ffd117',
       },
     }">
     <router-view/>
