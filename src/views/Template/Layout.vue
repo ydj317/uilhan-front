@@ -2,6 +2,7 @@
   <notice-popup />
 
   <a-layout style="min-height: 100vh;">
+    <a-layout>
     <a-layout-sider v-model:collapsed="collapsed" collapsible :trigger="null" style="border-right: 1px solid #eeeeee">
       <div class="logo" v-if="collapsed">
           <img src="@/assets/logo_icon.png" style="height:35px;">
@@ -20,17 +21,17 @@
     </a-layout-sider>
     <a-layout style="background-color: white">
       <a-layout-header style="background: #fff; padding: 0;display: flex; width: 100%;" id="components-layout-custom-trigger">
-
-
         <Header style="flex: 1; justify-content: end;"/>
       </a-layout-header>
       <a-layout-content :style="{ margin: '20px', minHeight: '280px' }">
         <Content/>
       </a-layout-content>
 
-      <Footer />
-
     </a-layout>
+    </a-layout>
+    <a-layout-footer>
+      <Footer />
+    </a-layout-footer>
   </a-layout>
 
 </template>

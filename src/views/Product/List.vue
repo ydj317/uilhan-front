@@ -3,14 +3,25 @@
 
   <!--검색-->
 
-    <div id="header" style="padding:0 30px;">
+  <div id="header" style="padding:0 30px;">
+    <div style="display: flex; justify-content: space-between" @click="expand = !expand">
       <h1 style="font-size: 18px;">상품관리</h1>
+      <template v-if="expand">
+        <UpOutlined/>
+      </template>
+      <template v-else>
+        <DownOutlined/>
+      </template>
+    </div>
+
+    <div v-if="expand">
       <!--선택버튼 (상품수집마켓, 번역)-->
       <div style="display: flex;flex-direction: column;justify-content:center;border-top: 1px solid #eeeeee">
-        <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" style="display: flex;flex-direction: row;align-items:center;border-bottom: 1px solid #eeeeee;height: 50px;">
+        <div v-for="CONFIG in SEARCH_BUTTON_CONFIG"
+             style="display: flex;flex-direction: row;align-items:center;border-bottom: 1px solid #eeeeee;height: 50px;">
           <h1 style="width: 120px;margin-top: 6px;">{{ CONFIG.label }}</h1>
-          <a-radio-group v-model:value="this[CONFIG.key]"  style="">
-            <a-radio v-for="options in CONFIG.options"  :value="options.value">
+          <a-radio-group v-model:value="this[CONFIG.key]" style="">
+            <a-radio v-for="options in CONFIG.options" :value="options.value">
               {{ options.label }}
             </a-radio>
           </a-radio-group>
@@ -49,17 +60,19 @@
 
       </div>
     </div>
+  </div>
 
 
   <!--상품 리스트-->
-  <a-card :bordered="false" :loading="listLoading">
+  <a-card :bordered="true" style="border: none" :loading="listLoading" class="mt20">
     <!--top-->
     <div id="content-header" class="row space-between">
       <!--left button-->
       <div>
         <!--상품삭제-->
         <a-button class="mr10 button-blue" size="small" @click="deletePop()"
-        >상품삭제</a-button>
+        >상품삭제
+        </a-button>
 
         <!--상품삭제-->
         <a-popconfirm class="mr10 button-blue" @confirm="clonePrd">
@@ -73,7 +86,8 @@
           <a-button size="small">상품복사</a-button>
         </a-popconfirm>
 
-        <a-button v-if="this.userinfo.use_ai === '1'" @click="replaceWithAI" class="button-blue" size="small">AI 추천모드</a-button>
+        <a-button v-if="this.userinfo.use_ai === '1'" @click="replaceWithAI" class="button-blue" size="small">AI 추천모드
+        </a-button>
       </div>
 
       <!--right button-->
@@ -121,7 +135,8 @@
         </a-upload>
 
         <a-spin style="margin-right: 10px;" v-if="indicator"/>
-        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" class="button-blue" size="small">상품 다운로드
+        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" class="button-blue"
+                  size="small">상품 다운로드
         </a-button>
         <!--선택상품 등록-->
         <a-button class="ml10 button-blue" @click="MarketListPop(record)" size="small">선택상품 등록</a-button>
@@ -186,30 +201,30 @@
           </template>
 
           <!--상품등록(수정)일-->
-<!--          <template v-if="column.key === 'item_ins'">-->
-<!--            <div>{{ record.item_ins.slice(0, 16) }}</div>-->
-<!--            <div v-if="record.item_upd !== null" class="item-upd">-->
-<!--              ( {{ record.item_upd.slice(0, 16) }} )-->
-<!--            </div>-->
-<!--          </template>-->
+          <!--          <template v-if="column.key === 'item_ins'">-->
+          <!--            <div>{{ record.item_ins.slice(0, 16) }}</div>-->
+          <!--            <div v-if="record.item_upd !== null" class="item-upd">-->
+          <!--              ( {{ record.item_upd.slice(0, 16) }} )-->
+          <!--            </div>-->
+          <!--          </template>-->
 
           <!--등록상태-->
-<!--          <template v-if="column.key === 'item_status'">-->
+          <!--          <template v-if="column.key === 'item_status'">-->
 
-<!--            <span v-if="record.item_sync_date">-->
-<!--              &lt;!&ndash;연동성공&ndash;&gt;-->
-<!--              <a-tag color="success" v-if="record.item_sync_status">연동성공</a-tag>-->
-<!--              &lt;!&ndash;연동실패&ndash;&gt;-->
-<!--              <a-tooltip v-if="record.item_sync_status === false">-->
-<!--                <template #title>{{ record.item_sync_result }}</template>-->
-<!--                <a-tag color="error">연동실패</a-tag>-->
-<!--              </a-tooltip>-->
-<!--            </span>-->
-<!--            <span v-else>-->
-<!--              &lt;!&ndash;연동대기&ndash;&gt;-->
-<!--              <a-tag color="default">연동대기</a-tag>-->
-<!--            </span>-->
-<!--          </template>-->
+          <!--            <span v-if="record.item_sync_date">-->
+          <!--              &lt;!&ndash;연동성공&ndash;&gt;-->
+          <!--              <a-tag color="success" v-if="record.item_sync_status">연동성공</a-tag>-->
+          <!--              &lt;!&ndash;연동실패&ndash;&gt;-->
+          <!--              <a-tooltip v-if="record.item_sync_status === false">-->
+          <!--                <template #title>{{ record.item_sync_result }}</template>-->
+          <!--                <a-tag color="error">연동실패</a-tag>-->
+          <!--              </a-tooltip>-->
+          <!--            </span>-->
+          <!--            <span v-else>-->
+          <!--              &lt;!&ndash;연동대기&ndash;&gt;-->
+          <!--              <a-tag color="default">연동대기</a-tag>-->
+          <!--            </span>-->
+          <!--          </template>-->
 
           <!--제휴사연동-->
           <template v-if="column.key === 'item_sync_status'">
@@ -415,7 +430,7 @@ import {
   CloseCircleOutlined,
   CheckCircleOutlined,
   LinkOutlined,
-  DollarTwoTone, DownloadOutlined, SearchOutlined, QuestionCircleOutlined, UploadOutlined
+  DollarTwoTone, DownloadOutlined, SearchOutlined, QuestionCircleOutlined, UploadOutlined, UpOutlined, DownOutlined
 } from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
@@ -438,7 +453,9 @@ export default defineComponent({
     ClockCircleOutlined,
     CloseCircleOutlined,
     CheckCircleOutlined,
-    LinkOutlined
+    LinkOutlined,
+    UpOutlined,
+    DownOutlined
   },
 
   computed: {
@@ -658,7 +675,8 @@ export default defineComponent({
       }),
       uploadProductPath: process.env.VUE_APP_API_URL + "/api/product/excelUpload",
       uploadProductIndicator: false,
-      simpleImage
+      simpleImage,
+      expand: false,
     };
   },
 
@@ -1453,6 +1471,7 @@ export default defineComponent({
   border-color: #2171e2;
   color: #2171e2;
 }
+
 .button-blue:hover {
   background-color: #2171e2;
   border-color: #2171e2;
@@ -1464,6 +1483,7 @@ export default defineComponent({
   border-color: #2171e2;
   color: #ffffff;
 }
+
 .primary-button-blue:hover {
   background-color: #387dde;
   border-color: #2171e2;
@@ -1475,6 +1495,7 @@ export default defineComponent({
   border-color: #ffd117;
   color: #000000;
 }
+
 .primary-button-yellow:hover {
   background-color: #ffda47;
   border-color: #ffd117;
