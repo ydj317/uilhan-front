@@ -14,7 +14,7 @@ import {
     FileExcelOutlined, NotificationOutlined,
     ShoppingOutlined,
     BarcodeOutlined,
-    KeyOutlined
+    KeyOutlined, LayoutOutlined, ShoppingCartOutlined, BellOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -32,7 +32,7 @@ export const menus = [{
                 title: "대시보드",
                 isHide: false,
                 roles: ["ROLE_USER"],
-                icon: DashboardOutlined
+                icon: LayoutOutlined
             }
         },
         {
@@ -54,7 +54,7 @@ export const menus = [{
                 title: "상품상세",
                 isHide: true,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: PayCircleOutlined,
+                icon: ShoppingCartOutlined,
                 active: "/product"
             },
         },
@@ -93,73 +93,73 @@ export const menus = [{
                 active: "/order/list"
             },
         },
-        {
-            path: "/market/accounts/list",
-            name: "market_accounts_list",
-            component: () => import("@/views/MarketAccount/List.vue"),
-            meta: {
-                title: "마켓연동",
-                isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: ShoppingOutlined,
-            },
-        },
-        {
-            path: "/market/accounts/register/:id?",
-            name: "market_accounts_register",
-            component: () => import("@/views/MarketAccount/Register.vue"),
-            meta: {
-                title: "마켓연동관리-등록/수정",
-                isHide: true,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: ShoppingOutlined,
-            },
-        },
-        {
-            path: "/board/list",
-            name: "board_list",
-            component: () => import("@/views/Board/List.vue"),
-            meta: {
-                title: "게시글관리",
-                isHide: false,
-                roles: ["ROLE_ADMIN"],
-                icon: ProfileOutlined,
-            },
-        },
-        {
-            path: "/board/form/:id?",
-            name: "board_form",
-            component: () => import("@/views/Board/Form.vue"),
-            meta: {
-                title: "게시글 추가/수정",
-                isHide: true,
-                roles: ["ROLE_ADMIN"],
-                icon: '',
-                active: "/board/list"
-            },
-        },
-        {
-            path: "/board/view/:id?",
-            name: "board_view",
-            component: () => import("@/views/Board/View.vue"),
-            meta: {
-                title: "게시글 보기",
-                isHide: true,
-                roles: ["ROLE_ADMIN"],
-                icon: '',
-                active: "/board/list"
-            },
-        },
+        // {
+        //     path: "/board/list",
+        //     name: "board_list",
+        //     component: () => import("@/views/Board/List.vue"),
+        //     meta: {
+        //         title: "게시글관리",
+        //         isHide: false,
+        //         roles: ["ROLE_ADMIN"],
+        //         icon: ProfileOutlined,
+        //     },
+        // },
+        // {
+        //     path: "/board/form/:id?",
+        //     name: "board_form",
+        //     component: () => import("@/views/Board/Form.vue"),
+        //     meta: {
+        //         title: "게시글 추가/수정",
+        //         isHide: true,
+        //         roles: ["ROLE_ADMIN"],
+        //         icon: '',
+        //         active: "/board/list"
+        //     },
+        // },
+        // {
+        //     path: "/board/view/:id?",
+        //     name: "board_view",
+        //     component: () => import("@/views/Board/View.vue"),
+        //     meta: {
+        //         title: "게시글 보기",
+        //         isHide: true,
+        //         roles: ["ROLE_ADMIN"],
+        //         icon: '',
+        //         active: "/board/list"
+        //     },
+        // },
         {
             path: "/setting",
             name: "setting",
             meta: {
-                title: "기타설정",
+                title: "설정",
                 isHide: false,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: SettingOutlined
             },
             "children": [
+                {
+                    path: "/market/accounts/list",
+                    name: "market_accounts_list",
+                    component: () => import("@/views/MarketAccount/List.vue"),
+                    meta: {
+                        title: "마켓연동",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: ShoppingOutlined,
+                    },
+                },
+                {
+                    path: "/market/accounts/register/:id?",
+                    name: "market_accounts_register",
+                    component: () => import("@/views/MarketAccount/Register.vue"),
+                    meta: {
+                        title: "마켓연동관리-등록/수정",
+                        isHide: true,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: ShoppingOutlined,
+                    },
+                },
                 {
                     path: "/setting/updateDetail",
                     name: "setting_updateDetail",
@@ -219,51 +219,51 @@ export const menus = [{
                 }
             ]
         },
-        {
-            path: "/user",
-            name: "user",
-            meta: {
-                title: "서비스 관리",
-                isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: MoneyCollectOutlined
-            },
-            "children": [
-                {
-                    path: "/user/servicePay",
-                    name: "user_servicePay",
-                    component: () => import("@/views/User/ServicePay.vue"),
-                    meta: {
-                        title: "서비스 결제",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: ''
-                    },
-                },
-                {
-                    path: "/user/servicePayAi",
-                    name: "user_servicePayAi",
-                    component: () => import("@/views/User/ServicePayAi.vue"),
-                    meta: {
-                        title: "AI 서비스 결제",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: ''
-                    },
-                },
-                {
-                    path: "/user/manage",
-                    name: "user_manage",
-                    component: () => import("@/views/User/Manage"),
-                    meta: {
-                        title: "이미지 번역 회수",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN"],
-                        icon: '',
-                    }
-                },
-            ]
-        },
+        // {
+        //     path: "/user",
+        //     name: "user",
+        //     meta: {
+        //         title: "서비스 관리",
+        //         isHide: false,
+        //         roles: ["ROLE_ADMIN", "ROLE_USER"],
+        //         icon: MoneyCollectOutlined
+        //     },
+        //     "children": [
+        //         {
+        //             path: "/user/servicePay",
+        //             name: "user_servicePay",
+        //             component: () => import("@/views/User/ServicePay.vue"),
+        //             meta: {
+        //                 title: "서비스 결제",
+        //                 isHide: false,
+        //                 roles: ["ROLE_ADMIN", "ROLE_USER"],
+        //                 icon: ''
+        //             },
+        //         },
+        //         {
+        //             path: "/user/servicePayAi",
+        //             name: "user_servicePayAi",
+        //             component: () => import("@/views/User/ServicePayAi.vue"),
+        //             meta: {
+        //                 title: "AI 서비스 결제",
+        //                 isHide: false,
+        //                 roles: ["ROLE_ADMIN", "ROLE_USER"],
+        //                 icon: ''
+        //             },
+        //         },
+        //         {
+        //             path: "/user/manage",
+        //             name: "user_manage",
+        //             component: () => import("@/views/User/Manage"),
+        //             meta: {
+        //                 title: "이미지 번역 회수",
+        //                 isHide: false,
+        //                 roles: ["ROLE_ADMIN"],
+        //                 icon: '',
+        //             }
+        //         },
+        //     ]
+        // },
         {
             path: "/board/notice",
             name: "board_notice",
@@ -272,7 +272,7 @@ export const menus = [{
                 title: "공지사항",
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: NotificationOutlined,
+                icon: BellOutlined,
             },
         },
         {
@@ -319,100 +319,100 @@ export const menus = [{
                 },
             ]
         },
-        {
-            path: "/product/domeggook",
-            name: "prd_domeggook",
-            component: () => import("@/views/Product/Domeggook"),
-            meta: {
-                title: "도매꾹",
-                isHide: false,
-                roles: [],
-                ids: ["jwli", "haeju"],
-                icon: AppstoreOutlined,
-            },
-        },
-        {
-            path: "/product/vvic",
-            name: "product_vvic",
-            component: () => import("@/views/Product/VvicList.vue"),
-            meta: {
-                title: "Vvic 상품관리",
-                isHide: false,
-                roles: [],
-                ids: ["jwli", "irunkorea", "haeju"],
-                icon: GiftOutlined,
-            },
-        },
-        {
-            path: "/customOrder",
-            name: "custom_order",
-            meta: {
-                title: "구매입출고관리",
-                isHide: false,
-                roles: [],
-                ids: ["irunkorea", "jwli", "haeju"],
-                icon: BarcodeOutlined
-            },
-            "children": [
-                {
-                    path: "/customOrder/list",
-                    component: () => import("@/views/CustomOrder/List.vue"),
-                    name: "custom_order_list",
-                    meta: {
-                        title: "구매관리",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
-                {
-                    path: "/customOrder/DeliveryReceipt",
-                    component: () => import("@/views/CustomOrder/DeliveryReceipt.vue"),
-                    name: "custom_order_delivery_receipt",
-                    meta: {
-                        title: "택배입고관리",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
-                {
-                    path: "/customOrder/shipmentManage",
-                    component: () => import("@/views/CustomOrder/shipmentManage.vue"),
-                    name: "custom_order_shipment_manage",
-                    meta: {
-                        title: "출고관리",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
-            ]
-        },
-        {
-            path: "/excel",
-            name: "excel",
-            component: () => import("@/components/Tools/excelConvertTools.vue"),
-            meta: {
-                title: "엑셀 컨버터 툴",
-                isHide: false,
-                ids: ["jwli", "irunkorea"],
-                roles: [],
-                icon: FileExcelOutlined,
-            },
-        },
-        {
-            path: "/excel2",
-            name: "excel2",
-            component: () => import("@/components/Tools/excelConvertTools2.vue"),
-            meta: {
-                title: "엑셀 컨버터 툴2",
-                isHide: false,
-                ids: ["jwli", "irunkorea"],
-                roles: [],
-                icon: FileExcelOutlined,
-            },
-        },
+        // {
+        //     path: "/product/domeggook",
+        //     name: "prd_domeggook",
+        //     component: () => import("@/views/Product/Domeggook"),
+        //     meta: {
+        //         title: "도매꾹",
+        //         isHide: false,
+        //         roles: [],
+        //         ids: ["jwli", "haeju"],
+        //         icon: AppstoreOutlined,
+        //     },
+        // },
+        // {
+        //     path: "/product/vvic",
+        //     name: "product_vvic",
+        //     component: () => import("@/views/Product/VvicList.vue"),
+        //     meta: {
+        //         title: "Vvic 상품관리",
+        //         isHide: false,
+        //         roles: [],
+        //         ids: ["jwli", "irunkorea", "haeju"],
+        //         icon: GiftOutlined,
+        //     },
+        // },
+        // {
+        //     path: "/customOrder",
+        //     name: "custom_order",
+        //     meta: {
+        //         title: "구매입출고관리",
+        //         isHide: false,
+        //         roles: [],
+        //         ids: ["irunkorea", "jwli", "haeju"],
+        //         icon: BarcodeOutlined
+        //     },
+        //     "children": [
+        //         {
+        //             path: "/customOrder/list",
+        //             component: () => import("@/views/CustomOrder/List.vue"),
+        //             name: "custom_order_list",
+        //             meta: {
+        //                 title: "구매관리",
+        //                 isHide: false,
+        //                 roles: ["ROLE_USER", "ROLE_ADMIN"],
+        //                 icon: '',
+        //             },
+        //         },
+        //         {
+        //             path: "/customOrder/DeliveryReceipt",
+        //             component: () => import("@/views/CustomOrder/DeliveryReceipt.vue"),
+        //             name: "custom_order_delivery_receipt",
+        //             meta: {
+        //                 title: "택배입고관리",
+        //                 isHide: false,
+        //                 roles: ["ROLE_USER", "ROLE_ADMIN"],
+        //                 icon: '',
+        //             },
+        //         },
+        //         {
+        //             path: "/customOrder/shipmentManage",
+        //             component: () => import("@/views/CustomOrder/shipmentManage.vue"),
+        //             name: "custom_order_shipment_manage",
+        //             meta: {
+        //                 title: "출고관리",
+        //                 isHide: false,
+        //                 roles: ["ROLE_USER", "ROLE_ADMIN"],
+        //                 icon: '',
+        //             },
+        //         },
+        //     ]
+        // },
+        // {
+        //     path: "/excel",
+        //     name: "excel",
+        //     component: () => import("@/components/Tools/excelConvertTools.vue"),
+        //     meta: {
+        //         title: "엑셀 컨버터 툴",
+        //         isHide: false,
+        //         ids: ["jwli", "irunkorea"],
+        //         roles: [],
+        //         icon: FileExcelOutlined,
+        //     },
+        // },
+        // {
+        //     path: "/excel2",
+        //     name: "excel2",
+        //     component: () => import("@/components/Tools/excelConvertTools2.vue"),
+        //     meta: {
+        //         title: "엑셀 컨버터 툴2",
+        //         isHide: false,
+        //         ids: ["jwli", "irunkorea"],
+        //         roles: [],
+        //         icon: FileExcelOutlined,
+        //     },
+        // },
     ]
 }]
 

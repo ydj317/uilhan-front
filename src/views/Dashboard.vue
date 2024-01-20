@@ -1,245 +1,214 @@
 <template>
-  <div id="container">
 
-    <a-card :bordered="false">
-      <div class="hello">
-        <div class="left">
-          <div class="text-1">안녕하십니까!</div>
-          <div class="text-2">저희 서비스를 이용해 주셔서 감사합니다.</div>
-          <div class="text-3">문의사항이나 궁금한 점이 있으시면 오른쪽 아래 {챗아이콘}을 클릭하여 문의 부탁합니다.</div>
+  <!--인사말-->
+  <div class="hello_area">
+    안녕하세요  yuil님,
+  </div>
+
+  <!--배너, 수집현황, 월통계, 공지사항-->
+  <a-row :gutter="20">
+    <a-col :span="6">
+      <div class="dashboard_img1">
+        <img src="@/assets/img/dashboard_img1.jpg" alt="">
+      </div>
+    </a-col>
+    <a-col :span="6">
+      <div class="data_count1">
+        <div class="collect">
+          <div class="title">수집</div>
+          <div class="name"><span class="point">35</span> / 76</div>
+        </div>
+        <div class="upload">
+          <div class="title">업로드</div>
+          <div class="name"><span class="point">109</span> / 120</div>
         </div>
       </div>
-    </a-card>
-
-    <a-row type="flex" justify="space-between" align="top" style="margin-top: 20px;" :gutter="10">
-      <a-col :sm="24" :md="24" :lg="16">
-        <div>
-          <a-row :gutter="10">
-            <a-col :span="8">
-              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center;cursor: pointer" @click="goLinkPage('/market/accounts/list')">
-                <a-statistic
-                    :value="state.headerCount.marketTotal"
-                    :value-style="{ color: '#3f8600' }"
-                    style="margin-right: 50px"
-                >
-                  <template #title>
-                    <h3>마켓 연동</h3>
-                  </template>
-                </a-statistic>
-                <div
-                    style="position:absolute;right:20px;top:20px;display: flex; justify-content: center; align-items: center;">
-                  <div
-                      style="width: 80px; height: 80px; border-radius: 50%; background-color: rgba(199,236,208,0.5); display: flex; justify-content: center; align-items: center;">
-                    <shopping-cart-outlined :style="{fontSize: '32px',color:'#17802c'}"/>
-                  </div>
-                </div>
-              </a-card>
-            </a-col>
-            <a-col :span="8">
-              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center;cursor: pointer" @click="goLinkPage('/product')">
-                <a-statistic
-                    :value="state.headerCount.productTotal"
-                    class="demo-class"
-                    :value-style="{ color: '#cf1322' }"
-                >
-                  <template #title>
-                    <h3>업로드 상품수</h3>
-                  </template>
-                </a-statistic>
-                <div
-                    style="position:absolute;right:20px;top:20px;display: flex; justify-content: center; align-items: center;">
-                  <div
-                      style="width: 80px; height: 80px; border-radius: 50%; background-color: rgba(236,199,205,0.5); display: flex; justify-content: center; align-items: center;">
-                    <upload-outlined :style="{fontSize: '32px',color:'#ce1948'}"/>
-                  </div>
-                </div>
-              </a-card>
-            </a-col>
-            <a-col :span="8">
-              <a-card style="position: relative;display: flex;justify-content: start;justify-items: center;cursor: pointer" @click="goLinkPage('/order/list')">
-                <a-statistic
-                    :value="state.headerCount.orderTotal"
-                    class="demo-class"
-                    :value-style="{ color: '#1332cf' }"
-                >
-                  <template #title>
-                    <h3>주문</h3>
-                  </template>
-                </a-statistic>
-                <div
-                    style="position:absolute;right:20px;top:20px;display: flex; justify-content: center; align-items: center;">
-                  <div
-                      style="width: 80px; height: 80px; border-radius: 50%; background-color: rgba(199,208,236,0.5); display: flex; justify-content: center; align-items: center;">
-                    <shopping-outlined :style="{fontSize: '32px',color:'#2144b4'}"/>
-                  </div>
-                </div>
-              </a-card>
-            </a-col>
-          </a-row>
+    </a-col>
+    <a-col :span="6">
+      <div class="data_count2">
+        <div class="title">이번달 합계</div>
+        <div class="data_area">
+          <div class="collect">
+            <div class="point">35</div>
+            <div class="name">수집</div>
+          </div>
+          <div class="upload">
+            <div class="point">109</div>
+            <div class="name">업로드</div>
+          </div>
         </div>
-        <a-card :loading="orderLoading" :bordered="false" title="주문현황" class="mt10 mb10">
-          <template #extra>
-            <a-tooltip>
-              <template #title>
-                <div>자동수집 체크박스를 클릭해주시면 실시간 주문현황을 확인 할수 있어요</div>
-              </template>
-              <QuestionCircleOutlined/>
-            </a-tooltip>
-            <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
-          </template>
-          <a-table :data-source="account.orderData.data" :pagination="false" size="small" summary>
-            <a-table-column title="판매처" dataIndex="manage" key="manage">
-              <template #default="{ record }">
-                <div style="cursor: pointer;display: flex;align-items: center"
-                     @click="openMarketAdminPage(record.market_code)">
-                  <img :src="getLogoSrc('market-logo', record.market_code)" alt=""
-                       style="width: 18px;border-radius: 50%;" class="mr10">{{ record.seller_id }}
-                </div>
-              </template>
-            </a-table-column>
-            <a-table-column title="결제완료" dataIndex="paid" key="paid" align="center">
-              <template #default="{ record }">
-                <span class="highlight" v-if="record.paidNew">{{ record.paidNew }}</span>
-                <span style="color: #000000D9;" v-if="!record.paidNew">{{ record.paid }}</span>
-              </template>
-            </a-table-column>
-            <a-table-column title="배송준비중" dataIndex="shippingAddress" key="shippingAddress" align="center">
-              <template #default="{ record }">
-                <span class="highlight" v-if="record.shippingAddressNew">{{ record.shippingAddressNew }}</span>
-                <span style="color: #000000D9;" v-if="!record.shippingAddressNew">{{ record.shippingAddress }}</span>
-              </template>
-            </a-table-column>
-            <a-table-column title="배송중" dataIndex="shipping" key="shipping" align="center">
-              <template #default="{ record }">
-                <span class="highlight" v-if="record.shippingNew">{{ record.shippingNew }}</span>
-                <span style="color: #000000D9;" v-if="!record.shippingNew">{{ record.shipping }}</span>
-              </template>
-            </a-table-column>
-            <a-table-column title="배송완료" dataIndex="shippingComplete" key="shippingComplete" align="center">
-              <template #default="{ record }">
-                <span class="highlight" v-if="record.shippingCompleteNew">{{ record.shippingCompleteNew }}</span>
-                <span style="color: #000000D9;" v-if="!record.shippingCompleteNew">{{ record.shippingComplete }}</span>
-              </template>
-            </a-table-column>
-            <a-table-column title="취소요청" dataIndex="cancelRequest" key="cancelRequest" align="center">
-              <template #default="{ record }">
-                <span class="highlight" v-if="record.cancelRequestNew">{{ record.cancelRequestNew }}</span>
-                <span style="color: #000000D9;" v-if="!record.cancelRequestNew">{{ record.cancelRequest }}</span>
-              </template>
-            </a-table-column>
-            <a-table-column title="취소완료" dataIndex="cancelComplete" key="cancelComplete" align="center">
-              <template #default="{ record }">
-                <span class="highlight" v-if="record.cancelCompleteNew">{{ record.cancelCompleteNew }}</span>
-                <span style="color: #000000D9;" v-if="!record.cancelCompleteNew">{{ record.cancelComplete }}</span>
-              </template>
-            </a-table-column>
-            <a-table-column title="반품요청" dataIndex="returnRequest" key="returnRequest" align="center">
-              <template #default="{ record }">
-                <span class="highlight" v-if="record.returnRequestNew">{{ record.returnRequestNew }}</span>
-                <span style="color: #000000D9;" v-if="!record.returnRequestNew">{{ record.returnRequest }}</span>
-              </template>
-            </a-table-column>
-            <a-table-column title="반품완료" dataIndex="returnComplete" key="returnComplete" align="center">
-              <template #default="{ record }">
-                <span class="highlight" v-if="record.returnCompleteNew">{{ record.returnCompleteNew }}</span>
-                <span style="color: #000000D9;" v-if="!record.returnCompleteNew">{{ record.returnComplete }}</span>
-              </template>
-            </a-table-column>
-            <template #summary>
-              <a-table-summary-row>
-                <a-table-summary-cell>합계</a-table-summary-cell>
-                <a-table-summary-cell align="center">
-                  <a-typography-text>{{ account.orderData.totalPaid }}</a-typography-text>
-                </a-table-summary-cell>
-                <a-table-summary-cell align="center">
-                  <a-typography-text>{{ account.orderData.totalShippingAddress }}</a-typography-text>
-                </a-table-summary-cell>
-                <a-table-summary-cell align="center">
-                  <a-typography-text>{{ account.orderData.totalShipping }}</a-typography-text>
-                </a-table-summary-cell>
-                <a-table-summary-cell align="center">
-                  <a-typography-text>{{ account.orderData.totalShippingComplete }}</a-typography-text>
-                </a-table-summary-cell>
-                <a-table-summary-cell align="center">
-                  <a-typography-text>{{ account.orderData.totalCancelRequest }}</a-typography-text>
-                </a-table-summary-cell>
-                <a-table-summary-cell align="center">
-                  <a-typography-text>{{ account.orderData.totalCancelComplete }}</a-typography-text>
-                </a-table-summary-cell>
-                <a-table-summary-cell align="center">
-                  <a-typography-text>{{ account.orderData.totalReturnRequest }}</a-typography-text>
-                </a-table-summary-cell>
-                <a-table-summary-cell align="center">
-                  <a-typography-text>{{ account.orderData.totalReturnComplete }}</a-typography-text>
-                </a-table-summary-cell>
-              </a-table-summary-row>
+      </div>
+    </a-col>
+    <a-col :span="6">
+      <div class="notice">
+        <a href="##" class="more">more</a>
+        <div class="title">공지사항</div>
+        <ul class="list">
+          <li><a href="##">[유일공지] 배송지연안내</a></li>
+          <li><a href="##">[유일공지] 송장번호오류안내</a></li>
+          <li><a href="##">[유일공지] 마켓연동안내</a></li>
+          <li><a href="##">[유일공지] 마켓연동안내</a></li>
+          <li><a href="##">[유일공지] 마켓연동안내</a></li>
+        </ul>
+      </div>
+    </a-col>
+  </a-row>
+
+  <!--주문현황-->
+  <div class="stats_area">
+    <div class="title">
+      주문현황
+      <a-tooltip>
+        <template #title>
+          <div>자동수집 체크박스를 클릭해주시면 실시간 주문현황을 확인 할수 있어요</div>
+        </template>
+        <QuestionCircleOutlined/>
+      </a-tooltip>
+      <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
+    </div>
+    <a-card :loading="orderLoading" :bodyStyle="orderLoading ? {overflow: 'hidden'} : {padding: 0, overflow: 'hidden'}">
+        <a-table :data-source="account.orderData.data" :pagination="false" class="table">
+          <a-table-column title="판매처" dataIndex="manage" key="manage" :align="'center'">
+            <template #default="{ record }">
+              <div style="cursor: pointer;display: flex; align-items: center"
+                   @click="openMarketAdminPage(record.market_code)">
+                <img :src="getLogoSrc('market-logo', record.market_code)" alt=""
+                     style="width: 18px;border-radius: 50%;" class="mr10">{{ record.seller_id }}
+              </div>
             </template>
-          </a-table>
-        </a-card>
-      </a-col>
-      <a-col :sm="24" :md="24" :lg="8">
-        <a-card :bordered="true" title="공지사항" :loading="boardLoading">
-          <!-- more -->
-          <template #extra>
-            <router-link to="/board/notice">more</router-link>
+          </a-table-column>
+          <a-table-column title="결제완료" dataIndex="paid" key="paid" :align="'center'">
+            <template #default="{ record }">
+              <span class="highlight" v-if="record.paidNew">{{ record.paidNew }}</span>
+              <span style="color: #000000D9;" v-if="!record.paidNew">{{ record.paid }}</span>
+            </template>
+          </a-table-column>
+          <a-table-column title="배송준비중" dataIndex="shippingAddress" key="shippingAddress" align="center">
+            <template #default="{ record }">
+              <span class="highlight" v-if="record.shippingAddressNew">{{ record.shippingAddressNew }}</span>
+              <span style="color: #000000D9;" v-if="!record.shippingAddressNew">{{ record.shippingAddress }}</span>
+            </template>
+          </a-table-column>
+          <a-table-column title="배송중" dataIndex="shipping" key="shipping" :align="'center'">
+            <template #default="{ record }">
+              <span class="highlight" v-if="record.shippingNew">{{ record.shippingNew }}</span>
+              <span style="color: #000000D9;" v-if="!record.shippingNew">{{ record.shipping }}</span>
+            </template>
+          </a-table-column>
+          <a-table-column title="배송완료" dataIndex="shippingComplete" key="shippingComplete" :align="'center'">
+            <template #default="{ record }">
+              <span class="highlight" v-if="record.shippingCompleteNew">{{ record.shippingCompleteNew }}</span>
+              <span style="color: #000000D9;" v-if="!record.shippingCompleteNew">{{ record.shippingComplete }}</span>
+            </template>
+          </a-table-column>
+          <a-table-column title="취소요청" dataIndex="cancelRequest" key="cancelRequest" :align="'center'">
+            <template #default="{ record }">
+              <span class="highlight" v-if="record.cancelRequestNew">{{ record.cancelRequestNew }}</span>
+              <span style="color: #000000D9;" v-if="!record.cancelRequestNew">{{ record.cancelRequest }}</span>
+            </template>
+          </a-table-column>
+          <a-table-column title="취소완료" dataIndex="cancelComplete" key="cancelComplete" :align="'center'">
+            <template #default="{ record }">
+              <span class="highlight" v-if="record.cancelCompleteNew">{{ record.cancelCompleteNew }}</span>
+              <span style="color: #000000D9;" v-if="!record.cancelCompleteNew">{{ record.cancelComplete }}</span>
+            </template>
+          </a-table-column>
+          <a-table-column title="반품요청" dataIndex="returnRequest" key="returnRequest" :align="'center'">
+            <template #default="{ record }">
+              <span class="highlight" v-if="record.returnRequestNew">{{ record.returnRequestNew }}</span>
+              <span style="color: #000000D9;" v-if="!record.returnRequestNew">{{ record.returnRequest }}</span>
+            </template>
+          </a-table-column>
+          <a-table-column title="반품완료" dataIndex="returnComplete" key="returnComplete" :align="'center'">
+            <template #default="{ record }">
+              <span class="highlight" v-if="record.returnCompleteNew">{{ record.returnCompleteNew }}</span>
+              <span style="color: #000000D9;" v-if="!record.returnCompleteNew">{{ record.returnComplete }}</span>
+            </template>
+          </a-table-column>
+          <template #summary>
+            <a-table-summary-row>
+              <a-table-summary-cell>합계</a-table-summary-cell>
+              <a-table-summary-cell align="center">
+                <a-typography-text>{{ account.orderData.totalPaid }}</a-typography-text>
+              </a-table-summary-cell>
+              <a-table-summary-cell align="center">
+                <a-typography-text>{{ account.orderData.totalShippingAddress }}</a-typography-text>
+              </a-table-summary-cell>
+              <a-table-summary-cell align="center">
+                <a-typography-text>{{ account.orderData.totalShipping }}</a-typography-text>
+              </a-table-summary-cell>
+              <a-table-summary-cell align="center">
+                <a-typography-text>{{ account.orderData.totalShippingComplete }}</a-typography-text>
+              </a-table-summary-cell>
+              <a-table-summary-cell align="center">
+                <a-typography-text>{{ account.orderData.totalCancelRequest }}</a-typography-text>
+              </a-table-summary-cell>
+              <a-table-summary-cell align="center">
+                <a-typography-text>{{ account.orderData.totalCancelComplete }}</a-typography-text>
+              </a-table-summary-cell>
+              <a-table-summary-cell align="center">
+                <a-typography-text>{{ account.orderData.totalReturnRequest }}</a-typography-text>
+              </a-table-summary-cell>
+              <a-table-summary-cell align="center">
+                <a-typography-text>{{ account.orderData.totalReturnComplete }}</a-typography-text>
+              </a-table-summary-cell>
+            </a-table-summary-row>
           </template>
-          <a-list>
-            <a-list-item v-for="(item,index) in boardData" :key="index">
-              <router-link :to="`/board/notice/view/${item.id}`">
-                {{ item.title }}
-              </router-link>
-            </a-list-item>
-          </a-list>
-        </a-card>
-        <a-card :loading="dailySaleLoading" :bordered="false" title="매출현황" class="mt10">
-          <template #extra>
-            <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList"
-                           size="small">
-              <a-radio-button value="1week">일주일</a-radio-button>
-              <a-radio-button value="1month">1개월</a-radio-button>
-              <a-radio-button value="3month">3개월</a-radio-button>
-            </a-radio-group>
-          </template>
-          <a-radio-group v-model:value="state.dailyData.params.type" @change="getSaleList" size="small">
-            <a-radio-button value="amount">판매 금액</a-radio-button>
-            <a-radio-button value="quantity">판매 수량</a-radio-button>
-            <a-radio-button value="count">판매 건수</a-radio-button>
-          </a-radio-group>
-          <div class="dailySale" style="min-width: 460px;">
-            <e-charts :option="dailySaleChart" autoresize/>
-          </div>
-        </a-card>
-        <a-card :loading="productLoading" :bordered="false" title="수집가능 마켓" class="mt10">
-          <div class="getMarketLogo">
-            <a href="https://www.taobao.com/" target="_blank">
-              <a-tag class="logo-tag">
-                <img :src="getLogoSrc('get-logo', 'taobao')" alt=""> <span>타오바오</span>
-              </a-tag>
-            </a>
-
-            <a href="https://www.tmall.com/" target="_blank">
-              <a-tag class="logo-tag">
-                <img :src="getLogoSrc('get-logo', 'tmall')" alt=""> <span>티몰</span>
-              </a-tag>
-            </a>
-
-            <a href="https://p4psearch.1688.com/" target="_blank">
-              <a-tag class="logo-tag">
-                <img :src="getLogoSrc('get-logo', 'alibaba')" alt=""> <span>알리바바</span>
-              </a-tag>
-            </a>
-
-            <a href="https://www.aliexpress.com/" target="_blank">
-              <a-tag class="logo-tag">
-                <img :src="getLogoSrc('get-logo', 'aliexpress')" alt=""> <span>알리익스프레스</span>
-              </a-tag>
-            </a>
-          </div>
-        </a-card>
-
-      </a-col>
-    </a-row>
+        </a-table>
+      </a-card>
   </div>
+
+  <!--데이타 도표-->
+  <a-row class="chart_area" :gutter="20">
+    <a-col :span="8">
+      <div class="box">
+        <div class="title">마켓별 유입현황</div>
+        <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
+          <img src="@/assets/img/chart1.jpg" alt="">
+        </div>
+      </div>
+    </a-col>
+    <a-col :span="8">
+      <div class="box">
+        <div class="title">알바생 업로드현황</div>
+        <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
+          <img src="@/assets/img/chart2.jpg" alt="">
+        </div>
+      </div>
+    </a-col>
+    <a-col :span="8">
+      <div class="box" style="background: #f9f9f9;">
+        <div class="title" v-if="!dailySaleLoading">매출현황</div>
+        <div class="content">
+          <a-card :loading="dailySaleLoading" :body-style="{background: '#f9f9f9'}" style=" border: none">
+            <div class="mt10">
+              <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList('')" size="small">
+                <a-radio-button value="1week">일주일</a-radio-button>
+                <a-radio-button value="1month">1개월</a-radio-button>
+                <a-radio-button value="3month">3개월</a-radio-button>
+              </a-radio-group>
+            </div>
+            <div class="mt30">
+              <div>
+                <a-button size="small" :type="state.dailyData.params.type === 'amount' ? 'primary' : 'default'" :style="state.dailyData.params.type === 'amount' ? 'background: #fff' : ''" :ghost="state.dailyData.params.type === 'amount'" @click="getSaleList('amount')">판매 금액</a-button>
+              </div>
+              <div class="mt10">
+                <a-button size="small" :type="state.dailyData.params.type === 'quantity' ? 'primary' : 'default'"  @click="getSaleList('quantity')">판매 수량</a-button><br>
+              </div>
+              <div class="mt10">
+                <a-button size="small" :type="state.dailyData.params.type === 'count' ? 'primary' : 'default'"  @click="getSaleList('count')">판매 건수</a-button>
+              </div>
+            </div>
+            <div class="dailySale" style="min-width: 460px;">
+              <e-charts :option="dailySaleChart" autoresize/>
+            </div>
+          </a-card>
+        </div>
+      </div>
+    </a-col>
+  </a-row>
+
+  <div style="height: 100px;"></div>
 </template>
 
 <script setup>
@@ -438,8 +407,11 @@ async function getBoard() {
 }
 
 
-const getSaleList = async () => {
+const getSaleList = async (value) => {
   dailySaleLoading.value = true;
+  if (value !== '') {
+    state.dailyData.params.type = value
+  }
   await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/dailySale", state.dailyData).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
@@ -459,7 +431,7 @@ onMounted(() => {
   //getOrder();
   Promise.all([getBoard(), getTableList().then(() => {
     handleBeforeUnload();
-  }), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
+  }), getSaleList(''), getMarketAdminUrls(), getHeaderCount()])
       .catch((e) => {
         message.error(e.message)
         return false;
@@ -519,53 +491,53 @@ const getTableList = async () => {
     if (oldOrderData) {
       const oldOrderJson = JSON.parse(oldOrderData);
       oldOrderJson.forEach((item) => {
-          const newData = findObjectById(item.id, list);
-          let newQty = 0;
-          newData.paidNew = '';
-          if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
-            newQty = newData['paid'] - item['paid'];
-            newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
-          }
-          newData.shippingAddressNew = '';
-          if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
-            newQty = newData['shippingAddress'] - item['shippingAddress'];
-            newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
-          }
-          newData.shippingNew = '';
-          if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
-            newQty = newData['shipping'] - item['shipping'];
-            newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
-          }
-          newData.shippingCompleteNew = '';
-          if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
-            newQty = newData['shippingComplete'] - item['shippingComplete'];
-            newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
-          }
+        const newData = findObjectById(item.id, list);
+        let newQty = 0;
+        newData.paidNew = '';
+        if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
+          newQty = newData['paid'] - item['paid'];
+          newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
+        }
+        newData.shippingAddressNew = '';
+        if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
+          newQty = newData['shippingAddress'] - item['shippingAddress'];
+          newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
+        }
+        newData.shippingNew = '';
+        if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
+          newQty = newData['shipping'] - item['shipping'];
+          newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
+        }
+        newData.shippingCompleteNew = '';
+        if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
+          newQty = newData['shippingComplete'] - item['shippingComplete'];
+          newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
+        }
 
-          newData.cancelRequestNew = '';
-          if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
-            newQty = newData['cancelRequest'] - item['cancelRequest'];
-            newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
-          }
+        newData.cancelRequestNew = '';
+        if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
+          newQty = newData['cancelRequest'] - item['cancelRequest'];
+          newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
+        }
 
-          newData.cancelCompleteNew = '';
-          if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
-            newQty = newData['cancelComplete'] - item['cancelComplete'];
-            newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
-          }
-          newData.returnRequestNew = '';
-          if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
-            newQty = newData['returnRequest'] - item['returnRequest'];
-            newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
-          }
+        newData.cancelCompleteNew = '';
+        if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
+          newQty = newData['cancelComplete'] - item['cancelComplete'];
+          newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
+        }
+        newData.returnRequestNew = '';
+        if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
+          newQty = newData['returnRequest'] - item['returnRequest'];
+          newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
+        }
 
-          newData.returnCompleteNew = '';
-          if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
-            newQty = newData['returnComplete'] - item['returnComplete'];
-            newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
-          }
-          orderDataView.push(newData);
-        });
+        newData.returnCompleteNew = '';
+        if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
+          newQty = newData['returnComplete'] - item['returnComplete'];
+          newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
+        }
+        orderDataView.push(newData);
+      });
     } else {
       orderDataView = list
     }
@@ -653,122 +625,194 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<!--hello-->
 <style scoped>
-.hello {
-  display: flex;
-  justify-content: space-between;
+
+.hello_area {
+  font-size: 24px;
+  margin-bottom: 20px;
 }
 
-.hello .left {
-  display: flex;
-  flex-direction: column;
-  font-family: Nunito, sans-serif;
+.dashboard_img1 {
+  height: 190px;
 }
 
-.hello .left .text-1 {
-  font-size: 22px;
-  color: #333;
+.dashboard_img1 img {
+  width: 100%;
+  height: 190px;
+  border-radius: 20px;
+}
+
+.data_count1 .collect, .data_count1 .upload {
+  background: #ffd117;
+  border-radius: 20px;
+  height: 90px;
+  padding: 0 32px;
+  display: flex; /* 使用 Flexbox 布局 */
+  justify-content: space-between; /* 左右对齐，两个子元素分别位于容器的两侧 */
+  align-items: center; /* 垂直居中对齐，可选 */
+}
+
+.data_count1 .title {
+  font-size: 18px;
   font-weight: bold;
 }
 
-.hello .left .text-2 {
-  font-size: 20px;
-  color: #333;
-  padding-top: 10px;
-}
-
-.hello .left .text-3 {
+.data_count1 .name {
   font-size: 14px;
-  color: #999;
 }
 
-.hello .right {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  color: #999;
+.data_count1 .point {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.data_count1 .collect .point {
+  color: #ff6700;
+}
+
+.data_count1 .upload .point {
+  color: #2071e1;
+}
+
+.data_count1 .upload {
+  margin-top: 10px;
+}
+
+.data_count2 {
+  background: #f0f0f0;
+  border-radius: 20px;
+  height: 190px;
+  padding: 32px;
+}
+
+.data_count2 .title {
+  font-size: 18px;
+  font-weight: bold;
+  padding-bottom: 35px;
+}
+
+.data_count2 .data_area {
+  display: flex; /* 使用 Flexbox 布局 */
+  justify-content: space-between; /* 左右对齐，两个子元素分别位于容器的两侧 */
+}
+
+.data_count2 .data_area>div {
+  width: 30%;
   text-align: center;
 }
 
-.hello .right > div {
-  width: 80px;
-  border-left: 1px solid #eee;
-}
-
-.hello .right > div:first-child {
-  border: none;
-}
-
-.hello .right > div div:first-child {
-  color: #333;
+.data_count2 .point {
+  font-size: 48px;
   font-weight: bold;
 }
-</style>
 
-<!--row 2-->
-<style scoped>
-.row1-content {
+.data_count2 .name {
+  font-size: 14px;
+}
+
+
+.data_count2 .collect .point {
+  color: #ff6700;
+}
+
+.data_count2 .upload .point {
+  color: #2071e1;
+}
+
+.notice {
   position: relative;
-  height: 220px;
+  border: 2px solid #f9f9f9;
+  border-radius: 20px;
+  padding: 32px 32px 10px 32px;
+  height: 190px;
+}
+
+.notice .more {
+  position: absolute;
+  top: 35px;
+  right: 35px;
+  display: block;
+  font-size: 12px;
+  color: #ff6700;
+}
+
+.notice .title {
+  font-size: 18px;
+  font-weight: bold;
+  padding-bottom: 20px;
+}
+
+.notice .list {
+  height: 100px;
   overflow: hidden;
-  width: 100%;
 }
 
-.getMarketLogo .logo-tag {
-  padding: 5px 10px 8px;
-  margin-right: 10px;
-  margin-bottom: 10px;
+.notice .list li {
+  list-style-type: none;
+  white-space: nowrap; /* 防止文本换行 */
+  overflow: hidden;    /* 隐藏溢出的文本 */
+  text-overflow: ellipsis; /* 使用省略号来表示被省略的文本 */
+}
+.notice .list li a {
+  font-size: 14px;
+  line-height: 26px;
+  color: #828282;
 }
 
-.getMarketLogo img {
-  width: 16px;
-  height: 16px;
+.notice .list li a:hover {
+  color: #ff6700;
 }
 
-.getMarketLogo span {
-  padding-left: 5px;
+.stats_area {
+  margin-top: 40px;
 }
 
-.sendMarketLogo .logo-tag {
-  padding: 2px 10px 5px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  background: #fff;
+.stats_area .title {
+  font-size: 18px;
+  font-weight: bold;
+  padding-bottom: 10px;
 }
 
-.sendMarketLogo img {
-  width: 16px;
-  height: 16px;
+.chart_area {
+  margin-top: 40px;
 }
 
-.sendMarketLogo span {
-  padding-left: 5px;
+.chart_area .box {
+  position: relative;
+  background: #f0f0f0;
+  border-radius: 20px;
+  height: 240px;
+  overflow: hidden;
 }
 
-.highlight {
-  animation: blink 1s infinite;
+.chart_area .title {
+  position: absolute;
+  top: 32px;
+  left: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 1;
 }
 
-@keyframes blink {
-  0%, 100% {
-    color: red;
-    opacity: 1;
-  }
-  50% {
-    color: red;
-    opacity: 0;
-  }
+.table .ant-table-summary td {
+  border-bottom: none;
 }
-</style>
 
-<style>
+.chart_area .content {
+  position: relative;
+}
+.dailySale {
+  position: absolute;
+  top: 20px;
+  right: -80px;
+  width: 400px;
+}
 .dailySale .echarts {
   transform: scale(0.95);
   transform-origin: center center;
-  transition: transform 0.3s ease; /* 변환에 애니메이션 적용 */
-  width: 100%;
-  height: 300px;
-  max-width: 490px;
+  transition: transform 0.3s ease;
+  width: 80%;
+  height: 250px;
 }
+
 </style>

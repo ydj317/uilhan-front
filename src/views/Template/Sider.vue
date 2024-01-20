@@ -3,6 +3,7 @@
     <a-menu v-model:selectedKeys="state.selectedKeys"
             v-model:openKeys = "state.openKeys"
             mode="inline"
+            style="border: none;"
             @openChange="onOpenChange"
     >
       <template v-for="(menu, index) in state.menuList" :key="index">
@@ -78,23 +79,28 @@ onBeforeMount(() => {
 
 </script>
 
-<style scoped>
-.ant-menu .ant-menu-submenu {
-  font-weight: 400;
-  color: #333;
-}
-.ant-menu-item .ant-menu-title-content a {
-  font-weight: 400;
-  color: #333;
-}
-.ant-menu-item.ant-menu-item-selected a {
-  font-weight: 600;
-  color: #f5942b;
-}
-</style>
 <style>
-.ant-menu .ant-menu-submenu {
+.ant-menu .ant-menu-item .ant-menu-submenu-title .ant-menu-title-content,
+.ant-menu .ant-menu-submenu .ant-menu-submenu-title .ant-menu-item-icon,
+.ant-menu .ant-menu-item .ant-menu-title-content,
+.ant-menu .ant-menu-submenu .ant-menu-title-content{
   font-weight: 400;
-  color: #333;
+  color: #828282;
 }
+
+.ant-menu .ant-menu-item.ant-menu-item-selected{
+  background-color: #ffd117;
+}
+.ant-menu .ant-menu-item.ant-menu-item-selected a,
+.ant-menu .ant-menu-item.ant-menu-item-selected .ant-menu-item-icon{
+  font-weight: 600;
+  color: #000000;
+}
+
+.ant-menu .ant-menu-item .ant-menu-item-icon {
+  color: #828282;
+}
+
+
+
 </style>

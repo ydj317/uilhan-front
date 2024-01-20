@@ -1,34 +1,37 @@
 <template>
   <notice-popup />
 
-  <a-layout style="min-height: 1080px;">
-    <a-layout-sider v-model:collapsed="collapsed" collapsible :trigger="null">
+  <a-layout style="min-height: 100vh;">
+    <a-layout>
+    <a-layout-sider v-model:collapsed="collapsed" collapsible :trigger="null" style="border-right: 1px solid #eeeeee">
       <div class="logo" v-if="collapsed">
-          <img src="@/assets/logo.png" style="height:35px;">
+          <img src="@/assets/logo_icon.png" style="height:35px;">
       </div>
       <div class="logo" v-if="!collapsed">
-          <img src="@/assets/logo_width.png" key="logo_width"  @click="goDashboard">
+          <img src="@/assets/logo_width.png" key="logo_width" style="height:35px;" @click="goDashboard">
+      </div>
+      <div
+          style="position: absolute;top: 18px;border-radius: 50%;padding: 4px 5px 5px 5px;background-color: white;"
+          :style="collapsed ? 'right: -16px;' : 'right: 25px;'"
+      >
+        <img src="@/assets/img/collapsed_open.png" alt="열기" @click="() => (collapsed = !collapsed)" v-if="collapsed">
+        <img src="@/assets/img/collapsed_close.png" alt="닫기" @click="() => (collapsed = !collapsed)" v-else>
       </div>
       <Sider/>
     </a-layout-sider>
-    <a-layout>
+    <a-layout style="background-color: white">
       <a-layout-header style="background: #fff; padding: 0;display: flex; width: 100%;" id="components-layout-custom-trigger">
-        <menu-unfold-outlined
-            v-if="collapsed"
-            class="trigger"
-            @click="() => (collapsed = !collapsed)"
-        />
-        <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)"/>
-
         <Header style="flex: 1; justify-content: end;"/>
       </a-layout-header>
       <a-layout-content :style="{ margin: '20px', minHeight: '280px' }">
         <Content/>
       </a-layout-content>
 
-      <Footer />
-
     </a-layout>
+    </a-layout>
+    <a-layout-footer>
+      <Footer />
+    </a-layout-footer>
   </a-layout>
 
 </template>
