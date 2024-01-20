@@ -310,6 +310,7 @@
             <!--입출고상태-->
             <td rowspan="3">
               <a-select
+                  :disabled="item.order_status === 'complete'"
                   size="small"
                   v-model:value="item.shipping_status"
                   @change="updateStatus(item, 'shipping_status')"
@@ -323,7 +324,7 @@
 
             <!--   액션-->
             <td rowspan="3" style="width: 90px">
-              <div class="editable-row-operations">
+              <div v-if="!(item.order_status === 'complete' || item.shipping_status === 'shipping')" class="editable-row-operations">
               <span v-if="state.editableData[item.key]">
                 <a-typography-link @click="saveRow(item.key)">저장</a-typography-link>
                 <a-popconfirm title="취소 하시겠습니까?" @confirm="cancelRow(item.key)">
@@ -373,8 +374,10 @@
             </td>
           </tr>
           <tr :class="isInPattern(key+1) ? 'bg-blue' : 'bg-white'">
-            <td> <!--구매관리-->
+            <!--구매상태-->
+            <td>
               <a-select
+                  :disabled="item.order_status === 'complete' || item.shipping_status === 'shipping'"
                   v-model:value="item.order_status"
                   size="small"
                   @change="updateStatus(item, 'order_status')"
@@ -430,6 +433,7 @@
       </div>
     </div>
   </a-card>
+<!--  스캔후 주문상세 팝업-->
   <a-modal
       v-model:open="state.prdDetailModal.show"
       title="주문 상세"
@@ -491,14 +495,18 @@
         <a-descriptions-item label="주문수량">{{ state.prdDetailModal.selectOrderData.quantity }}</a-descriptions-item>
         <a-descriptions-item label="실도착수량">
           <a-input-number :min="0" :max="state.prdDetailModal.selectOrderData.quantity"
+                          :disabled="state.prdDetailModal.selectOrderData.disabled"
                           ref="inputRef" v-model:value="state.prdDetailModal.selectOrderData.arrival_quantity"/>
         </a-descriptions-item>
         <a-descriptions-item label="메모">
-          <a-textarea v-model:value="state.prdDetailModal.selectOrderData.memo"/>
+          <a-textarea :disabled="state.prdDetailModal.selectOrderData.disabled"
+                      v-model:value="state.prdDetailModal.selectOrderData.memo"/>
         </a-descriptions-item>
         <a-descriptions-item label="입출고상태">
           <a-select
+              :disabled="state.prdDetailModal.selectOrderData.order_status === 'complete'"
               size="small"
+              @change="changeScanPopupStatus(state.prdDetailModal.selectOrderData)"
               v-model:value="state.prdDetailModal.selectOrderData.shipping_status"
               style="width: 100px;">
             <a-select-option v-for="option in state.shippingStatus" :value="option.value">
@@ -521,6 +529,7 @@
 
     </a-space>
   </a-modal>
+<!--  일괄수정 팝업-->
   <a-modal
       v-model:open="state.modifyAllModal.show"
       title="일괄수정"
@@ -585,7 +594,7 @@
 import {onMounted, reactive, ref} from 'vue'
 import {useMarketApi} from '@/api/market'
 import moment from "moment";
-import {message} from 'ant-design-vue'
+import {message, Modal} from 'ant-design-vue'
 import "vue-loading-overlay/dist/vue-loading.css";
 
 import {
@@ -836,6 +845,10 @@ const getTableData = async (sort = 'DESC') => {
     }
 
     state.tableData.data = res.data.orderList;
+    state.tableData.data.forEach((item) => {
+      item.shipping_status_previous = item.shipping_status;
+      item.order_status_previous = item.shipping_status;
+    });
     state.pagination.total = res.data.totalCount;
     state.tableData.loading = false;
   }).then(() => {
@@ -1109,19 +1122,48 @@ const updateStatus = async (item, what) => {
     return false;
   }
 
-  const sendData = {
-    id: item.id,
-    [what]: item[what],
+  // 출고완료일때 컴펌창
+  if (what === 'shipping_status' && item.shipping_status_previous === 'shipping') {
+    Modal.confirm({
+      title: `출고완료 주문 [${item.order_no}]을 [${state.shippingStatusData[item.shipping_status]}] 상태로 변경하시겠습니까?`,
+      async onOk() {
+        const sendData = [{
+          id: item.id,
+          [what]: item[what],
+        }];
+
+        await useCustomOrderApi().updateCustomOrder(sendData).then(res => {
+          if (res.status !== "2000") {
+            message.error(res.message);
+            return false;
+          }
+          message.success(`수정되었습니다.`);
+          item.shipping_status_previous = item.shipping_status;
+          getCountWithStatus();
+        });
+      },
+      onCancel() {
+        item.shipping_status = item.shipping_status_previous;
+        message.success(`취소되였습니다.`);
+      },
+    });
+  } else {
+    const sendData = [{
+      id: item.id,
+      [what]: item[what],
+    }]
+
+    await useCustomOrderApi().updateCustomOrder(sendData).then(res => {
+      if (res.status !== "2000") {
+        message.error(res.message);
+        return false;
+      }
+      message.success(`수정되었습니다.`);
+      item.shipping_status_previous = item.shipping_status;
+      getCountWithStatus();
+    });
   }
 
-  await useCustomOrderApi().updateCustomOrder([sendData]).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-    message.success(`수정되었습니다.`);
-    getCountWithStatus();
-  });
 }
 
 const openDetailPopup = async () => {
@@ -1142,6 +1184,15 @@ const openDetailPopup = async () => {
     }
 
     state.prdDetailModal.data = res.data;
+    // 구매상태 = 마감 인것과  입출고 상태 = 출고완료이면 팝업창 띄우지 않음
+    // state.prdDetailModal.data = res.data.filter(item => item.order_status !== 'complete');
+    // state.prdDetailModal.data = state.prdDetailModal.data.filter(item => item.shipping_status !== 'shipping');
+
+    state.prdDetailModal.data.forEach(item => {
+      item.disabled = item.shipping_status === 'shipping' || item.order_status === 'complete';
+      item.shipping_status_previous = item.shipping_status;
+    });
+
     // 여러주문일겨우 디폴트로 첫번째 주문번호 선택
     state.prdDetailModal.selectOrderNo = state.prdDetailModal.data[0].order_no;
     state.prdDetailModal.selectOrderData = state.prdDetailModal.data.filter(item => item.order_no === state.prdDetailModal.selectOrderNo)[0];
@@ -1185,6 +1236,15 @@ const handleOrderNoChange = (e) => {
 
 // 일괄수정
 const openModifyAllPopup = () => {
+  if (state.tableData.checkedList.filter(item => item.order_status === 'complete').length > 0) {
+    message.error('구매상태가 [마감]인 주문은 수정할수 없습니다.');
+    return false;
+  }
+
+  if (state.tableData.checkedList.filter(item => item.shipping_status === 'shipping').length > 0) {
+    message.error('입출고상태가 [출고완료]인 주문은 수정할수 없습니다.');
+    return false;
+  }
   // 팝업창 값 초기화
   state.modifyAllModal.column.forEach(item => {
     item.isChecked = false;
@@ -1295,6 +1355,28 @@ const toggleSort = () => {
   getTableData(state.tableData.params.order_by);
 }
 
+const changeScanPopupStatus = (item) => {
+  if (item.order_status === 'complete') {
+    item.disabled = false;
+  } else {
+    // 출고완료 에서 다른 상태일때 컴펌창 띄움
+    if (item.shipping_status_previous === 'shipping') {
+    Modal.confirm({
+      title: `출고완료 주문 [${item.order_no}]을 [${state.shippingStatusData[item.shipping_status]}] 상태로 변경하시겠습니까?`,
+        async onOk() {
+        item.shipping_status_previous = item.shipping_status;
+      },
+      onCancel() {
+        item.shipping_status = item.shipping_status_previous;
+      },
+    });
+    }
+    item.shipping_status_previous = item.shipping_status;
+    // 출고완료일때만 disabled
+    item.disabled = item.shipping_status === 'shipping';
+
+  }
+}
 
 onMounted(async () => {
   await Promise.all([getUserInfoData(), getMarketDetailUrls(), getCustomOrderStatusList()])
