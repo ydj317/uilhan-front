@@ -34,7 +34,7 @@
 
       <a-col :span="3">
           <div class="logo">
-            <img src="../../assets/img/logo-dark.png" alt="">
+            <img src="@/assets/logo_icon.png" alt="" style="width: 70px;">
           </div>
       </a-col>
     </a-row>

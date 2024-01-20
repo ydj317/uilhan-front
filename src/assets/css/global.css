@@ -1752,3 +1752,7 @@ body,
 .plrb98 {padding: 0 98px 98px 98px !important;}
 .plrb99 {padding: 0 99px 99px 99px !important;}
 .plrb100 {padding: 0 100px 100px 100px !important;}
+
+.ant-btn-primary {
+    color: #000000;
+}

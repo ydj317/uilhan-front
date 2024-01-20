@@ -9,7 +9,10 @@
       <div class="logo" v-if="!collapsed">
           <img src="@/assets/logo_width.png" key="logo_width" style="height:35px;" @click="goDashboard">
       </div>
-      <div style="position: absolute;top: 25px;right: -5px">
+      <div
+          style="position: absolute;top: 18px;border-radius: 50%;padding: 4px 5px 5px 5px;background-color: white;"
+          :style="collapsed ? 'right: -16px;' : 'right: 25px;'"
+      >
         <img src="@/assets/img/collapsed_open.png" alt="열기" @click="() => (collapsed = !collapsed)" v-if="collapsed">
         <img src="@/assets/img/collapsed_close.png" alt="닫기" @click="() => (collapsed = !collapsed)" v-else>
       </div>

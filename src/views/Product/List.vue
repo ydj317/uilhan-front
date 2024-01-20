@@ -2,42 +2,41 @@
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
 
   <!--검색-->
-  <a-card :bordered="false" title="상품관리" :style="{ marginBottom: '20px' }">
-    <div id="header">
+
+    <div id="header" style="padding:0 30px;">
+      <h1 style="font-size: 18px;">상품관리</h1>
       <!--선택버튼 (상품수집마켓, 번역)-->
-      <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
-        <h1>{{ CONFIG.label }}</h1>
-        <a-radio-group v-model:value="this[CONFIG.key]" :class="CONFIG.group_class" button-style="solid">
-          <a-radio-button v-for="options in CONFIG.options" :class="CONFIG.key" :value="options.value">
-            {{ options.label }}
-          </a-radio-button>
-        </a-radio-group>
+      <div style="display: flex;flex-direction: column;justify-content:center;border-top: 1px solid #eeeeee">
+        <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" style="display: flex;flex-direction: row;align-items:center;border-bottom: 1px solid #eeeeee;height: 50px;">
+          <h1 style="width: 120px;margin-top: 6px;">{{ CONFIG.label }}</h1>
+          <a-radio-group v-model:value="this[CONFIG.key]"  style="">
+            <a-radio v-for="options in CONFIG.options"  :value="options.value">
+              {{ options.label }}
+            </a-radio>
+          </a-radio-group>
+        </div>
       </div>
 
       <!--검색기간-->
       <div>
-        <div class="inline-block mr17 mt10">
-          <h1>검색기간</h1>
-          <a-input-group compact>
-            <a-select v-model:value="date_type" style="width: 150px;">
-              <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
-            </a-select>
-            <a-range-picker v-model:value="date" format="YYYY-MM-DD" @change="onChangeDatePicker"
-                            style="width: 300px;"/>
-          </a-input-group>
+        <div class=" mr17 mt10" style="display: flex;height:50px;">
+          <h1 style="width: 120px;margin-top: 6px;">검색기간</h1>
+          <a-select v-model:value="date_type" style="width: 150px;height:33px;" class="mr10">
+            <a-select-option v-for="data in SEARCH_DATE_CONFIG" :value="data.key">{{ data.label }}</a-select-option>
+          </a-select>
+          <a-range-picker v-model:value="date" format="YYYY-MM-DD" @change="onChangeDatePicker"
+                          style="width: 300px;height:33px;"/>
         </div>
 
         <!--검색입력창-->
-        <div class="inline-block mt10">
-          <h1>검색어</h1>
-          <a-input-group compact>
-            <a-select v-model:value="search_key" style="width: 150px;">
-              <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">
-                {{ config.label }}
-              </a-select-option>
-            </a-select>
-            <a-input v-model:value="search_value" placeholder="검색어" style="width: 300px;"/>
-          </a-input-group>
+        <div class="mt10" style="display: flex;height:50px;border-bottom: 1px solid #eeeeee">
+          <h1 style="width: 120px;margin-top: 6px;">검색어</h1>
+          <a-select v-model:value="search_key" style="width: 150px;height:33px;" class="mr10">
+            <a-select-option v-for="config in SEARCH_KEYWORD_CONFIG" :value="config.key">
+              {{ config.label }}
+            </a-select-option>
+          </a-select>
+          <a-input v-model:value="search_value" placeholder="검색어" style="width: 300px;height:33px;"/>
         </div>
 
         <div class="mt25" style="text-align: center;">
@@ -45,12 +44,12 @@
             <SearchOutlined/>
             검색
           </a-button>
-          <a-button class="ml10" @click="initSearchParam()" style="width: 100px; border-color: #d9d9d9" >초기화</a-button>
+          <a-button class="ml10" @click="initSearchParam()" style="width: 100px; border-color: #d9d9d9">초기화</a-button>
         </div>
 
       </div>
     </div>
-  </a-card>
+
 
   <!--상품 리스트-->
   <a-card :bordered="false" :loading="listLoading">
@@ -59,27 +58,27 @@
       <!--left button-->
       <div>
         <!--상품삭제-->
-        <a-button class="mr10" @click="deletePop()">상품삭제</a-button>
+        <a-button class="mr10 button-blue" size="small" @click="deletePop()"
+        >상품삭제</a-button>
 
         <!--상품삭제-->
-        <a-popconfirm class="mr10" @confirm="clonePrd">
+        <a-popconfirm class="mr10 button-blue" @confirm="clonePrd">
           <template #title>
-            <b>상품 복제 확인</b>
+            <b>상품 복사 확인</b>
             <br>
-            <span>선택한 상품을 복제하시겠습니다?</span>
+            <span>선택한 상품을 복사하시겠습니다?</span>
             <br>
-            <span style="font-size: 12px; color: #999;">*복제 된 상품은 최상단으로 이동합니다.</span>
+            <span style="font-size: 12px; color: #999;">*복사 된 상품은 최상단으로 이동합니다.</span>
           </template>
-          <a-button>상품복제</a-button>
+          <a-button size="small">상품복사</a-button>
         </a-popconfirm>
 
-        <a-button v-if="this.userinfo.use_ai === '1'" @click="replaceWithAI">AI 추천모드</a-button>
+        <a-button v-if="this.userinfo.use_ai === '1'" @click="replaceWithAI" class="button-blue" size="small">AI 추천모드</a-button>
       </div>
 
       <!--right button-->
       <div>
-        <span v-if="lib.isXPlan()">
-        <a-button @click="urlPrdPop = true" type="primary" class="ml10">URL상품 업로드</a-button>
+        <a-button @click="urlPrdPop = true" class="ml10 button-blue" size="small">URL상품 업로드</a-button>
 
         <a-upload
             :action="uploadCustomOrderPath"
@@ -90,16 +89,15 @@
             :multiple="false"
             :showUploadList="false"
             @change="excelUploadCustomOrder"
-            class="ml10"
+            class="ml10 button-blue"
         >
-          <a-button class="custom-button" type="primary">엑셀상품 업로드</a-button>
+          <a-button class="custom-button button-blue" size="small">엑셀상품 업로드</a-button>
         </a-upload>
 
-        <a-button @click="downloadSampleExcel" class="custom-button ml10">
+        <a-button @click="downloadSampleExcel" class="custom-button ml10 button-blue" size="small">
           <DownloadOutlined/>
           업로드 샘플
         </a-button>
-        </span>
 
         <a-upload
             v-if="haveDownloadProductPermission"
@@ -111,9 +109,10 @@
             :multiple="false"
             :showUploadList="false"
             @change="addExcelProduct"
+            class="ml10"
         >
-          <a-spin style="margin-right: 10px;" v-if="uploadProductIndicator" />
-          <a-button class="custom-button" style="margin-right: 5px;" type="primary">
+          <a-spin style="margin-right: 10px;" v-if="uploadProductIndicator"/>
+          <a-button class="button-blue mr10" size="small">
             상품 업로드
             <template #icon>
               <UploadOutlined/>
@@ -121,10 +120,11 @@
           </a-button>
         </a-upload>
 
-        <a-spin style="margin-right: 10px;" v-if="indicator" />
-        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" type="primary">상품 다운로드</a-button>
+        <a-spin style="margin-right: 10px;" v-if="indicator"/>
+        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" class="button-blue" size="small">상품 다운로드
+        </a-button>
         <!--선택상품 등록-->
-        <a-button class="ml10" @click="MarketListPop(record)" type="primary">선택상품 등록</a-button>
+        <a-button class="ml10 button-blue" @click="MarketListPop(record)" size="small">선택상품 등록</a-button>
       </div>
     </div>
 
@@ -143,7 +143,7 @@
 
           <!--사진-->
           <template v-if="column.key === 'item_thumb'">
-            <a-image :src="record.item_thumb[0]" style="width: 50px; height: 50px;"/>
+            <a-image :src="record.item_thumb[0]" style="width: 50px; height: 50px;border-radius: 5px"/>
           </template>
 
           <!--상품코드-->
@@ -186,30 +186,30 @@
           </template>
 
           <!--상품등록(수정)일-->
-          <template v-if="column.key === 'item_ins'">
-            <div>{{ record.item_ins.slice(0, 16) }}</div>
-            <div v-if="record.item_upd !== null" class="item-upd">
-              ( {{ record.item_upd.slice(0, 16) }} )
-            </div>
-          </template>
+<!--          <template v-if="column.key === 'item_ins'">-->
+<!--            <div>{{ record.item_ins.slice(0, 16) }}</div>-->
+<!--            <div v-if="record.item_upd !== null" class="item-upd">-->
+<!--              ( {{ record.item_upd.slice(0, 16) }} )-->
+<!--            </div>-->
+<!--          </template>-->
 
           <!--등록상태-->
-          <template v-if="column.key === 'item_status'">
+<!--          <template v-if="column.key === 'item_status'">-->
 
-            <span v-if="record.item_sync_date">
-              <!--연동성공-->
-              <a-tag color="success" v-if="record.item_sync_status">연동성공</a-tag>
-              <!--연동실패-->
-              <a-tooltip v-if="record.item_sync_status === false">
-                <template #title>{{ record.item_sync_result }}</template>
-                <a-tag color="error">연동실패</a-tag>
-              </a-tooltip>
-            </span>
-            <span v-else>
-              <!--연동대기-->
-              <a-tag color="default">연동대기</a-tag>
-            </span>
-          </template>
+<!--            <span v-if="record.item_sync_date">-->
+<!--              &lt;!&ndash;연동성공&ndash;&gt;-->
+<!--              <a-tag color="success" v-if="record.item_sync_status">연동성공</a-tag>-->
+<!--              &lt;!&ndash;연동실패&ndash;&gt;-->
+<!--              <a-tooltip v-if="record.item_sync_status === false">-->
+<!--                <template #title>{{ record.item_sync_result }}</template>-->
+<!--                <a-tag color="error">연동실패</a-tag>-->
+<!--              </a-tooltip>-->
+<!--            </span>-->
+<!--            <span v-else>-->
+<!--              &lt;!&ndash;연동대기&ndash;&gt;-->
+<!--              <a-tag color="default">연동대기</a-tag>-->
+<!--            </span>-->
+<!--          </template>-->
 
           <!--제휴사연동-->
           <template v-if="column.key === 'item_sync_status'">
@@ -220,7 +220,7 @@
                   히스토리
                 </a-button>
                 <a-divider/>
-                <a-button @click="singlePop(record)" type="primary" shape="round">등록관리</a-button>
+                <a-button @click="singlePop(record)" size="small" class="primary-button-yellow">등록관리</a-button>
               </a-space>
             </div>
           </template>
@@ -241,15 +241,15 @@
         URL상품 업로드
         <a-tooltip>
           <template #title>
-            <div>토보, 티몰, 1688 상품URL을 입력하여 상품 업로드 합니다.</div>
+            <div>타오바오, 티몰, 1688 상품URL을 입력하여 상품 업로드 합니다.</div>
           </template>
           <QuestionCircleOutlined/>
         </a-tooltip>
       </template>
 
-      <div>토보, 티몰, 1688 상품URL을 입력하여 상품 업로드 합니다.</div>
+      <div>타오바오, 티몰, 1688 상품URL을 입력하여 상품 업로드 합니다.</div>
 
-      <a-divider />
+      <a-divider/>
 
       <div>
         <a-textarea
@@ -280,17 +280,21 @@
       <div class="space-between">
         <div>선택한 상품의 삭제할 오픈마켓을 선택해주세요.<br>11번가 / 롯데온 / 위메프는 상품 삭제를 지원하지안아 "판매중지" 상태로 변경됩니다.</div>
         <div>
-          <a-button style="margin-right: 10px;" @click="deleteCheckList = deleteOptions.map(option => option.value)">전체선택</a-button>
+          <a-button style="margin-right: 10px;" @click="deleteCheckList = deleteOptions.map(option => option.value)">
+            전체선택
+          </a-button>
           <a-button @click="deleteCheckList = []">전체해제</a-button>
         </div>
       </div>
 
-      <a-divider />
+      <a-divider/>
 
       <div v-if="deleteOptions.length > 0">
         <a-checkbox-group v-model:value="deleteCheckList">
-          <a-checkbox v-for="option in deleteOptions" :key="option.value" :value="option.value" style="background: #e1ecfe; padding: 5px 8px 8px 12px; border-radius: 3px; margin: 5px 10px 5px 0;">
-            <img :src="getLogoSrc('market-logo', option.market_code)" alt="" style="width: 16px; height: 16px; margin-right: 5px;">
+          <a-checkbox v-for="option in deleteOptions" :key="option.value" :value="option.value"
+                      style="background: #e1ecfe; padding: 5px 8px 8px 12px; border-radius: 3px; margin: 5px 10px 5px 0;">
+            <img :src="getLogoSrc('market-logo', option.market_code)" alt=""
+                 style="width: 16px; height: 16px; margin-right: 5px;">
             {{ option.label }}
           </a-checkbox>
         </a-checkbox-group>
@@ -401,7 +405,8 @@ import Cookie from "js-cookie";
 import MarketList from "@/components/List/MarketList";
 import {useMarketApi} from "@/api/market";
 
-import { Empty } from 'ant-design-vue';
+import {Empty} from 'ant-design-vue';
+
 const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 
 import {mapState} from "vuex";
@@ -548,18 +553,6 @@ export default defineComponent({
           align: "center"
         },
         {
-          title: "상품등록(수정)일",
-          key: "item_ins",
-          width: "10%",
-          align: "center"
-        },
-        {
-          title: "등록상태",
-          key: "item_status",
-          width: "8%",
-          align: "center"
-        },
-        {
           title: "마켓등록",
           key: "item_sync_status",
           width: "8%",
@@ -664,7 +657,7 @@ export default defineComponent({
         token: Cookie.get("token")
       }),
       uploadProductPath: process.env.VUE_APP_API_URL + "/api/product/excelUpload",
-      uploadProductIndicator : false,
+      uploadProductIndicator: false,
       simpleImage
     };
   },
@@ -1082,18 +1075,18 @@ export default defineComponent({
       const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
 
       let faildItem = [];
-      if(smartstoreAccounts.length === 0) {
+      if (smartstoreAccounts.length === 0) {
         return true;
       }
 
       if (this.singleDetail.item_sync_keyword !== undefined && this.singleDetail.item_sync_keyword !== null) {
         faildItem = this.smartStoreCategory.filter((item) => {
-            return this.singleDetail.item_sync_keyword.includes(item.cate_name);
+          return this.singleDetail.item_sync_keyword.includes(item.cate_name);
 
         })
       }
 
-      if(faildItem.length > 0) {
+      if (faildItem.length > 0) {
         message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
         return false;
       }
@@ -1111,7 +1104,7 @@ export default defineComponent({
       }
 
       const checkSmartStore = this.checkSmartStoreCategory(accountList);
-      if(checkSmartStore === false) {
+      if (checkSmartStore === false) {
         return false
       }
 
@@ -1269,7 +1262,7 @@ export default defineComponent({
 
     async getSmartstoreCategory() {
       await useCategoryApi().getSmartstoreCategory({}).then((res) => {
-        if(res.status !== '2000'){
+        if (res.status !== '2000') {
           message.error(res.message);
           return false;
         }
@@ -1454,6 +1447,38 @@ export default defineComponent({
 #footer h3 {
   font-size: 15px !important;
   font-weight: 600;
+}
+
+.button-blue {
+  border-color: #2171e2;
+  color: #2171e2;
+}
+.button-blue:hover {
+  background-color: #2171e2;
+  border-color: #2171e2;
+  color: #ffffff;
+}
+
+.primary-button-blue {
+  background-color: #2171e2;
+  border-color: #2171e2;
+  color: #ffffff;
+}
+.primary-button-blue:hover {
+  background-color: #387dde;
+  border-color: #2171e2;
+  color: #ffffff;
+}
+
+.primary-button-yellow {
+  background-color: #ffd117;
+  border-color: #ffd117;
+  color: #000000;
+}
+.primary-button-yellow:hover {
+  background-color: #ffda47;
+  border-color: #ffd117;
+  color: #000000;
 }
 </style>
 
