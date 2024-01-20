@@ -112,6 +112,11 @@
         </a-popconfirm>
       </div>
       <div class="right-div" style="display: flex;align-items: center;gap: 5px">
+        <a-select style="margin-right: 5px;" v-model:value="state.charge">
+          <a-select-option v-for="option in state.chargeOption" :value="option.value">
+            수수료 : {{ option.label }}
+          </a-select-option>
+        </a-select>
         <!--상품삭제-->
         <a-button style="margin-right: 5px;" @click="downloadCustomOrderExcel" type="primary">
           주문 다운로드
@@ -355,6 +360,7 @@
                   v-model:value="state.editableData[item.key]['purchase_price']"
                   size="small"
                   :precision="4"
+                  @change="calculateFees(state.editableData[item.key])"
               />
               <span v-else>
                 {{ parseFloat(item.purchase_price) }}
@@ -397,6 +403,7 @@
                   v-model:value="state.editableData[item.key]['local_shipping_fee']"
                   size="small"
                   :precision="4"
+                  @change="calculateFees(state.editableData[item.key])"
               />
               <span v-else>
               {{ parseFloat(item.local_shipping_fee) }}
@@ -770,7 +777,6 @@ const state = reactive({
         inputType: 'select',
       },
     ],
-
   },
 
   pagination: {
@@ -778,6 +784,13 @@ const state = reactive({
     current: 1,
     pageSize: 10,
   },
+
+  charge :0.03,
+  chargeOption: [
+    { label: '3%', value: 0.03 },
+    { label: '5%', value: 0.05 },
+    { label: '10%', value: 0.1 },
+  ],
 
 });
 
@@ -1376,6 +1389,13 @@ const changeScanPopupStatus = (item) => {
     item.disabled = item.shipping_status === 'shipping';
 
   }
+}
+
+const calculateFees = (item) => {
+  // 수수료 금액 =  （실구매가  주문수량 + 현지운임）x 수수료
+  item.charge = (parseFloat(item.purchase_price) * parseInt(item.quantity) + parseFloat(item.local_shipping_fee)) * state.charge;
+  // 금액 = 구매가 X 주문수량 + 현지운임 + 수수료 금액
+  item.total_payment_amount = parseFloat(item.purchase_price) * parseInt(item.quantity) + parseFloat(item.local_shipping_fee) + parseFloat(item.charge);
 }
 
 onMounted(async () => {
