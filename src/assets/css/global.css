@@ -46,6 +46,10 @@ body,
 .bg-00a7e1 {background-color: #00a7e1 !important;}
 .bg-3051d3 {background-color: #3051d3 !important;}
 
+.primary-color {color: #ffdb41 !important;}
+.primary-bg-color {background-color: #ffdb41 !important;}
+.secondary-color {color: #eeeeee !important;}
+.secondary-bg-color {background-color: #eeeeee !important;}
 
 /* ----------------------------------------------------- display ---------------------------------------------------- */
 .block {display: block !important;}

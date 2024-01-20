@@ -2,16 +2,10 @@
   <div class="login-bg"></div>
 
   <div id="userRegister">
-    <div class="header">
-      <div class="icon">
-        <img src="@/assets/img/logo-light.png" v-if="!lib.isWorldLink()" key="logo-light">
-        <img src="@/assets/img/logo-light-worldlink.png" v-else key="logo-light-worldlink">
-      </div>
-      <!--      <div class="tip">-->
-      <!--        <h5>저희 릴라켓플러스 이용해주셔서 감사합니다!</h5>-->
-      <!--      </div>-->
-    </div>
     <div class="item">
+      <div style="display: flex;justify-content: center;width: 100%">
+        <img src="@/assets/logo_icon.png"  key="logo-light">
+      </div>
       <div>
         <h5>회원 기본정보</h5>
       </div>
@@ -264,7 +258,9 @@
 
         <a-form-item class="buttons">
           <a-button type="primary" html-type="submit"
-                    :disabled="formState.is_bridge_sync === true && bridge_sync_pass !== true">회원가입
+                    :disabled="formState.is_bridge_sync === true && bridge_sync_pass !== true"
+                    style="font-weight: bold;color: black"
+          >회원가입
           </a-button>
           <a-button class="init" type="link" :href="'/user/login'">
             <UserOutlined/>
@@ -907,7 +903,7 @@ export default defineComponent({
 </script>
 
 <!--container-->
-<style>
+<style scoped>
 /*::-webkit-scrollbar {*/
 /*  width: 0 !important;*/
 /*}*/
@@ -915,22 +911,9 @@ export default defineComponent({
 .login-bg {
   position: fixed;
   width: 100%;
-  height: 1500px;
+  height: 100vh;
   overflow-y: hidden;
-  background: url(../../assets/img/bg8.jpg) no-repeat top center;
-  background-size: 100%;
-  filter: blur(0px);
-}
-
-.login-bg::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
-  z-index: -1;
+  background: #ffdb41;
 }
 
 #userRegister .init {
@@ -946,41 +929,6 @@ export default defineComponent({
   width: 100%;
   /*position: fixed;*/
   /*overflow-y: hidden;*/
-
-  --uim-primary-opacity: 1;
-  --uim-secondary-opacity: 0.70;
-  --uim-tertiary-opacity: 0.50;
-  --uim-quaternary-opacity: 0.25;
-  --uim-quinary-opacity: 0;
-
-  --blue: #3051D3;
-  --indigo: #564ab1;
-  --purple: #6f42c1;
-  --pink: #e83e8c;
-  --red: #F06543;
-  --orange: #f1734f;
-  --yellow: #e4cc37;
-  --green: #3ddc97;
-  --teal: #008080;
-  --cyan: #00A7E1;
-  --white: #fff;
-  --gray: #7c8a96;
-  --gray-dark: #343a40;
-  --primary: #3051D3;
-  --secondary: #7c8a96;
-  --success: #3ddc97;
-  --info: #00A7E1;
-  --warning: #e4cc37;
-  --danger: #F06543;
-  --light: #eff2f7;
-  --dark: #343a40;
-  --breakpoint-xs: 0;
-  --breakpoint-sm: 576px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 992px;
-  --breakpoint-xl: 1200px;
-  --font-family-sans-serif: "Nunito", sans-serif;
-  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 #userRegister .header {
@@ -996,10 +944,6 @@ export default defineComponent({
 
 #userRegister .icon {
   z-index: 1;
-}
-
-#userRegister .icon img {
-  width: 300px;
 }
 
 #userRegister .tip {
@@ -1018,10 +962,11 @@ export default defineComponent({
 <!--item-->
 <style>
 #userRegister .item {
-  width: 736px;
+  width: 1080px;
   margin-top: 80px;
+  margin-bottom: 80px;
   background-color: white;
-  padding: 24px;
+  padding: 60px;
   border-radius: 30px;
   z-index: 1;
 }
