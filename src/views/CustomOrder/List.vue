@@ -1396,6 +1396,9 @@ const calculateFees = (item) => {
   item.charge = (parseFloat(item.purchase_price) * parseInt(item.quantity) + parseFloat(item.local_shipping_fee)) * state.charge;
   // 금액 = 구매가 X 주문수량 + 현지운임 + 수수료 금액
   item.total_payment_amount = parseFloat(item.purchase_price) * parseInt(item.quantity) + parseFloat(item.local_shipping_fee) + parseFloat(item.charge);
+
+  item.charge = item.charge.toFixed(2);
+  item.total_payment_amount = item.total_payment_amount.toFixed(2);
 }
 
 onMounted(async () => {
