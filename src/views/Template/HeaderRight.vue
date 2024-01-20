@@ -1,7 +1,7 @@
 <template>
   <div id="Header" class="pr20">
     <div class="h60 right center">
-      <a-space>
+      <a-space size="small">
         <div>
           <div v-if="rateLoading">
             <a-spin />
@@ -21,12 +21,14 @@
           <a-button type="link" size="small" @click="worldLinkGuide">가이드북</a-button>
         </div>
         <div>
-          <a-button type="link" @click.prevent="extensionDown" size="small">크롬 확장 프로그램</a-button>
+          <a-button type="link" @click.prevent="extensionDown" size="small">크롬 확장 프로그램
+            <DownloadOutlined />
+          </a-button>
           <a-spin v-if="indicator"/>
         </div>
         <div id="setting" class="">
-          <div class="center pointer" @click="settingVisible">
-            <img src="../../assets/img/user.png" width="20" height="20" style="border-radius: 50px;" alt="">
+          <div class="center pointer" @click="settingVisible" style="display: flex;align-items: center;">
+            <img src="@/assets/img/child_icon.png" width="16" height="16" style="border-radius: 50px;margin-top: 3px;" alt="">
             <h3 class="m10">{{ user_name }}</h3>
           </div>
           <a-select class="absolute" v-if="setting_visible" :default-open="true" :autofocus="true" ref="select"
@@ -71,7 +73,7 @@
 </template>
 
 <script>
-import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined} from "@ant-design/icons-vue";
+import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined} from "@ant-design/icons-vue";
 import {AuthRequest} from "@/util/request";
 import Cookie from "js-cookie";
 import {cookieInit} from "@/util/auth";
@@ -86,6 +88,7 @@ export default {
     UserOutlined,
     SettingOutlined,
     LogoutOutlined,
+    DownloadOutlined
   },
 
   computed: {
