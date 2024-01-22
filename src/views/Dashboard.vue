@@ -2,7 +2,7 @@
 
   <!--인사말-->
   <div class="hello_area">
-    안녕하세요  yuil님,
+    안녕하세요  {{ account.userName }}님,
   </div>
 
   <!--배너, 수집현황, 월통계, 공지사항-->
@@ -41,14 +41,13 @@
     </a-col>
     <a-col :span="6">
       <div class="notice">
-        <a href="##" class="more">more</a>
+        <a href="/board/notice" class="more">more</a>
         <div class="title">공지사항</div>
-        <ul class="list">
-          <li><a href="##">[유일공지] 배송지연안내</a></li>
-          <li><a href="##">[유일공지] 송장번호오류안내</a></li>
-          <li><a href="##">[유일공지] 마켓연동안내</a></li>
-          <li><a href="##">[유일공지] 마켓연동안내</a></li>
-          <li><a href="##">[유일공지] 마켓연동안내</a></li>
+        <div v-if="boardData.length === 0" style="display: flex;align-items: center;color: #939393">
+          등록된 공지사항이 없습니다.
+        </div>
+        <ul v-else class="list">
+          <li v-for="(notice,key) in boardData"><a :href="`/board/notice/view/${notice.id}`">[유일공지] {{ notice.title }}</a></li>
         </ul>
       </div>
     </a-col>
@@ -56,7 +55,8 @@
 
   <!--주문현황-->
   <div class="stats_area">
-    <div class="title">
+    <div class="title" style="display: flex;justify-content: space-between">
+      <div>
       주문현황
       <a-tooltip>
         <template #title>
@@ -64,6 +64,7 @@
         </template>
         <QuestionCircleOutlined/>
       </a-tooltip>
+      </div>
       <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
     </div>
     <a-card :loading="orderLoading" :bodyStyle="orderLoading ? {overflow: 'hidden'} : {padding: 0, overflow: 'hidden'}">
@@ -158,57 +159,59 @@
       </a-card>
   </div>
 
-  <!--데이타 도표-->
   <a-row class="chart_area" :gutter="20">
     <a-col :span="8">
-      <div class="box">
-        <div class="title">마켓별 유입현황</div>
-        <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
-          <img src="@/assets/img/chart1.jpg" alt="">
+      <a-card :bordered="false" style="background-color: #f0f0f0;height: 370px;" :body-style="{padding:20}">
+        <template #title>
+          <p style="font-size: 20px;font-weight: bold;margin: 20px 0;">마켓별 유입현황</p>
+        </template>
+        <div class="box">
+          <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
+            <e-charts :option="radarChartOption"/>
+          </div>
         </div>
-      </div>
+      </a-card>
     </a-col>
     <a-col :span="8">
-      <div class="box">
-        <div class="title">알바생 업로드현황</div>
-        <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
-          <img src="@/assets/img/chart2.jpg" alt="">
+      <a-card :bordered="false" style="background-color: #f0f0f0;height: 370px;" :body-style="{padding:20}">
+        <template #title>
+          <p style="font-size: 20px;font-weight: bold;margin: 20px 0;">직원 업로드현황</p>
+        </template>
+        <template #extra>
+          <div style="display: flex;gap: 3px">
+          <a-button size="small" style="background-color: #3377e4;color: white">일별</a-button>
+          <a-button size="small">주별</a-button>
+          </div>
+        </template>
+        <div class="box">
+          <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
+            <e-charts :option="pieChartOption"/>
+          </div>
         </div>
-      </div>
+      </a-card>
     </a-col>
     <a-col :span="8">
-      <div class="box" style="background: #f9f9f9;">
-        <div class="title" v-if="!dailySaleLoading">매출현황</div>
-        <div class="content">
-          <a-card :loading="dailySaleLoading" :body-style="{background: '#f9f9f9'}" style=" border: none">
-            <div class="mt10">
-              <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList('')" size="small">
-                <a-radio-button value="1week">일주일</a-radio-button>
-                <a-radio-button value="1month">1개월</a-radio-button>
-                <a-radio-button value="3month">3개월</a-radio-button>
-              </a-radio-group>
-            </div>
-            <div class="mt30">
-              <div>
-                <a-button size="small" :type="state.dailyData.params.type === 'amount' ? 'primary' : 'default'" :style="state.dailyData.params.type === 'amount' ? 'background: #fff' : ''" :ghost="state.dailyData.params.type === 'amount'" @click="getSaleList('amount')">판매 금액</a-button>
-              </div>
-              <div class="mt10">
-                <a-button size="small" :type="state.dailyData.params.type === 'quantity' ? 'primary' : 'default'"  @click="getSaleList('quantity')">판매 수량</a-button><br>
-              </div>
-              <div class="mt10">
-                <a-button size="small" :type="state.dailyData.params.type === 'count' ? 'primary' : 'default'"  @click="getSaleList('count')">판매 건수</a-button>
-              </div>
-            </div>
-            <div class="dailySale" style="min-width: 460px;">
-              <e-charts :option="dailySaleChart" autoresize/>
-            </div>
-          </a-card>
+      <a-card :bordered="false" :loading="dailySaleLoading" style="background-color: #f0f0f0;height: 370px;overflow: hidden" :body-style="{padding:20}">
+        <template #title>
+          <p style="font-size: 20px;font-weight: bold;margin: 20px 0;">매출현황</p>
+        </template>
+        <template #extra>
+          <div style="display: flex;gap: 3px">
+            <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList('')" size="small">
+              <a-radio-button value="1week">일주일</a-radio-button>
+              <a-radio-button value="1month">1개월</a-radio-button>
+              <a-radio-button value="3month">3개월</a-radio-button>
+            </a-radio-group>
+          </div>
+        </template>
+        <div class="box">
+          <div class="content" style="height: 240px; position: relative;bottom:0;margin-top: 50px;overflow: hidden">
+            <e-charts :option="barChartOption" style="position: absolute;bottom: 0 !important;"/>
+          </div>
         </div>
-      </div>
+      </a-card>
     </a-col>
   </a-row>
-
-  <div style="height: 100px;"></div>
 </template>
 
 <script setup>
@@ -220,6 +223,9 @@ import {useMarketOrderApi} from "@/api/order";
 import {useMarketApi} from '@/api/market';
 import {QuestionCircleOutlined, ShoppingCartOutlined, UploadOutlined, ShoppingOutlined} from "@ant-design/icons-vue";
 import {useRouter} from "vue-router";
+import Cookie from "js-cookie";
+import dayjs from "dayjs";
+import moment from "moment";
 
 const router = useRouter();
 
@@ -373,6 +379,7 @@ const account = reactive({
   marketList: [],
   rowData: {},
   isModalVisible: false,
+  userName: Cookie.get("member_name")
 });
 
 const goLinkPage = (path) => {
@@ -619,12 +626,169 @@ const handleAutoCollectChange = (e) => {
   }
 }
 
+const barChartOption = {
+  legend: {
+    orient: 'horizontal',
+    data: ['판매금액', '판매건수', '판매수량'],
+    left: 'right',
+    top: 'top',
+    selectedMode: 'single'
+  },
+  xAxis: {
+    type: 'time',
+    data: ['2024-01-21', '2024-01-22', '2024-01-23', '2024-01-24', '2024-01-25', '2024-01-26', '2024-01-27'],
+    axisLabel: {
+      formatter: function (value) {
+        return dayjs(value).format('MM-DD');
+      },
+    },
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      data: [
+          ['2024-01-21', 120],
+          ['2024-01-22', 200],
+          ['2024-01-23', 150],
+          ['2024-01-24', 80],
+          ['2024-01-25', 70],
+          ['2024-01-26', 110],
+          ['2024-01-27', 130],
+      ],
+      type: 'bar',
+      name: '판매금액'
+    },
+    {
+      data: [
+        ['2024-01-21', 1],
+        ['2024-01-22', 8],
+        ['2024-01-23', 0],
+        ['2024-01-24', 12],
+        ['2024-01-25', 6],
+        ['2024-01-26', 8],
+        ['2024-01-27', 3]
+      ],
+      type: 'bar',
+      name: '판매건수'
+    },
+    {
+      data: [
+          ['2024-01-21', 10],
+          ['2024-01-22', 20],
+          ['2024-01-23', 80],
+          ['2024-01-24', 20],
+          ['2024-01-25', 70],
+          ['2024-01-26', 40],
+          ['2024-01-27', 20]
+      ],
+      type: 'bar',
+      name: '판매수량'
+    },
+  ]
+};
+
+const radarChartOption = {
+  legend: {
+    orient: 'vertical',
+    data: ['상품1', '상품2', '상품3'],
+    left: 'left',
+    top: 'bottom'
+  },
+  radar: {
+    // shape: 'circle',
+    indicator: [
+      { name: '스마트스토어'},
+      { name: '지마켓'},
+      { name: '옥션'},
+      { name: '11번가'},
+      { name: '쿠팡'},
+      { name: '큐텐'},
+      { name: '인터파크'},
+    ]
+  },
+  series: [
+    {
+      name: 'Budget vs spending',
+      type: 'radar',
+      data: [
+        {
+          value: [4200, 3000, 20000, 35000, 50000, 18000],
+          name: '상품1'
+        },
+        {
+          value: [5000, 14000, 28000, 26000, 42000, 21000],
+          name: '상품2'
+        },
+        {
+          value: [6000, 12000, 25000, 20000, 40000, 18000],
+          name: '상품3'
+        }
+      ]
+    }
+  ]
+};
+
+const pieChartOption = {
+
+  tooltip: {
+    trigger: 'item'
+  },
+  legend: {
+    orient: 'vertical',
+    left: 'left',
+    top: 'bottom',
+  },
+  series: [
+    {
+      name: '업로드 현황',
+      type: 'pie',
+      radius: '50%',
+      data: [
+        { value: 1048, name: '직원1' },
+        { value: 735, name: '직원2' },
+        { value: 580, name: '직원3' },
+        { value: 484, name: '직원4' },
+        { value: 300, name: '직원5' }
+      ],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
+    }
+  ]
+};
+
 onBeforeUnmount(() => {
   clearInterval(intervalId);
   handleBeforeUnload();
 });
 </script>
 
+<style>
+.ant-col .ant-radio-button-wrapper.ant-radio-button-wrapper-checked{
+  background-color: #3377e4;
+  color: #fff;
+  border-color: #3377e4;
+}
+.ant-col .ant-radio-button-wrapper.ant-radio-button-wrapper-checked span{
+  color: #fff;
+}
+
+.ant-col .ant-radio-button-wrapper.ant-radio-button-wrapper-checked span:hover{
+  color: #fff;
+}
+.ant-col .ant-radio-button-wrapper span:hover{
+  color: #3377e4;
+}
+.ant-col .ant-radio-button-wrapper:hover{
+  color: #3377e4;
+}
+</style>
 <style scoped>
 
 .hello_area {
@@ -780,8 +944,6 @@ onBeforeUnmount(() => {
 .chart_area .box {
   position: relative;
   background: #f0f0f0;
-  border-radius: 20px;
-  height: 240px;
   overflow: hidden;
 }
 
@@ -802,11 +964,9 @@ onBeforeUnmount(() => {
   position: relative;
 }
 .dailySale {
-  position: absolute;
-  top: 20px;
-  right: -80px;
   width: 400px;
 }
+
 .dailySale .echarts {
   transform: scale(0.95);
   transform-origin: center center;

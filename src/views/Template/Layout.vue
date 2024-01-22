@@ -55,7 +55,7 @@ const goDashboard = () => {
 
 // watch currentRoute
 router.afterEach((to, from) => {
-  const site = lib.isWorldLink() ? `월드링크` : 'X-PLAN';
+  const site = lib.isWorldLink() ? `월드링크` : '유일';
 
   const title = !to.meta.title ? '' : to.meta.title;
   document.title = site + ' - ' + title;
@@ -63,7 +63,7 @@ router.afterEach((to, from) => {
 
 onMounted(() => {
   // window title
-  const site = lib.isWorldLink() ? `월드링크` : 'X-PLAN';
+  const site = lib.isWorldLink() ? `월드링크` : '유일';
   document.title = site + ' - ' + router.currentRoute.value.meta.title;
 })
 </script>
