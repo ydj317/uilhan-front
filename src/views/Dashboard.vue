@@ -200,7 +200,6 @@
             <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList('')" size="small">
               <a-radio-button value="1week">일주일</a-radio-button>
               <a-radio-button value="1month">1개월</a-radio-button>
-              <a-radio-button value="3month">3개월</a-radio-button>
             </a-radio-group>
           </div>
         </template>
