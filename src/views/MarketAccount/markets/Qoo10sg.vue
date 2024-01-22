@@ -42,6 +42,21 @@
 				<a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
 				<span>{{ state.sync_shipping_fee_info_date ?? '-' }}</span>
 			</a-form-item>
+
+			<h3 class="mt20">마켓정보설정</h3>
+
+			<a-form-item label="A/S 정보">
+				<a-form-item name="seller_phone" label="전화번호"
+							 :wrapper-col="{ span: 19 }">
+					<a-input v-model:value="state.formData.seller_phone" placeholder="전화번호"
+							 style="width:200px"/>
+				</a-form-item>
+				<a-form-item name="seller_email" label="이메일"
+							 :wrapper-col="{ span: 19 }">
+					<a-input v-model:value="state.formData.seller_email"
+							 placeholder="이메일" style="width:200px"/>
+				</a-form-item>
+			</a-form-item>
 		</div>
 
 		<a-button class="mt15" @click="goBack">돌아가기</a-button>
@@ -87,6 +102,10 @@ const state = reactive({
 
 		// 마켓정보 불러오기
 		shipping_fee_code: null,
+
+		// 마켓설정
+		seller_phone: '',
+		seller_email: '',
 	},
 
 	syncCheckLoading: false,
@@ -114,7 +133,10 @@ const initFormData = () => {
 		// 마켓정보 불러오기
 		state.formData.shipping_fee_code = accountInfo['marketData']?.shipping_fee_code;
 
-		console.log(state.formData)
+		// 마켓설정
+		state.formData.seller_phone = accountInfo['marketData']?.seller_phone;
+		state.formData.seller_email = accountInfo['marketData']?.seller_email;
+
 	}
 }
 
@@ -201,10 +223,12 @@ const syncShippingFeeInfo = (account_id) => {
 
 		if ('ResultObject' in marketJson) {
 			marketJson['ResultObject'].forEach(item => {
-				state.shippingFeeInfoList.push({
-					shipping_fee_code: item['ShippingNo'],
-					shipping_fee_name: item['ShippingName']
-				});
+				if (item['Oversea'] === 'Y') {
+					state.shippingFeeInfoList.push({
+						shipping_fee_code: item['ShippingNo'],
+						shipping_fee_name: item['ShippingName']
+					});
+				}
 			});
 		}
 
@@ -223,10 +247,12 @@ const getShippingFeeInfoList = () => {
 
 		if ('ResultObject' in marketJson) {
 			marketJson['ResultObject'].forEach(item => {
-				state.shippingFeeInfoList.push({
-					shipping_fee_code: item['ShippingNo'],
-					shipping_fee_name: item['ShippingName']
-				});
+				if (item['Oversea'] === 'Y') {
+					state.shippingFeeInfoList.push({
+						shipping_fee_code: item['ShippingNo'],
+						shipping_fee_name: item['ShippingName']
+					});
+				}
 			});
 		}
 	});

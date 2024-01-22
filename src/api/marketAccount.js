@@ -48,7 +48,7 @@ export function useMarketAccountApi() {
         // access_token 생성
         syncMarketGetToken: (data) => {
             return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/market/ㅊ",
+                url: process.env.VUE_APP_API_URL + "/api/market/syncMarketGetToken",
                 method: "POST",
                 data,
             });
