@@ -1,6 +1,6 @@
 <template>
   <div class="footer" style="display: flex;justify-content: start;width: 100%;">
-    <div style="width: 150px;"></div>
+    <div style="width: 400px;"></div>
     <div style="display: flex;flex-direction: column;gap: 10px;">
       <div style="font-size: 20px;font-weight: bold;color: black" class="mb30">해주국제무역상사(주)</div>
       <div style="display: flex;flex-direction: row;gap: 80px;font-weight: bold">

@@ -58,14 +58,16 @@
     <div class="title" style="display: flex;justify-content: space-between">
       <div>
       주문현황
-      <a-tooltip>
-        <template #title>
-          <div>자동수집 체크박스를 클릭해주시면 실시간 주문현황을 확인 할수 있어요</div>
-        </template>
-        <QuestionCircleOutlined/>
-      </a-tooltip>
       </div>
-      <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
+      <div>
+        <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
+        <a-tooltip>
+          <template #title>
+            <div>자동수집을 체크하면 실시간 주문현황을 확인할 수 있습니다.</div>
+          </template>
+          <QuestionCircleOutlined />
+        </a-tooltip>
+      </div>
     </div>
     <a-card :loading="orderLoading" :bodyStyle="orderLoading ? {overflow: 'hidden'} : {padding: 0, overflow: 'hidden'}">
         <a-table :data-source="account.orderData.data" :pagination="false" class="table">
@@ -204,7 +206,7 @@
           </div>
         </template>
         <div class="box">
-          <div class="content" style="height: 240px; position: relative;bottom:0;margin-top: 50px;overflow: hidden">
+          <div class="content" style="height: 290px; position: relative;bottom:0;margin-top: 0;overflow: hidden">
             <e-charts :option="barChartOption" style="position: absolute;bottom: 0 !important;"/>
           </div>
         </div>
@@ -214,7 +216,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, reactive, onBeforeUnmount, watch} from "vue";
+import {ref, onMounted, reactive, onBeforeUnmount, watch, computed} from "vue";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
 import ECharts from 'vue-echarts';
@@ -225,6 +227,7 @@ import {useRouter} from "vue-router";
 import Cookie from "js-cookie";
 import dayjs from "dayjs";
 import moment from "moment";
+import {forEach} from "lodash";
 
 const router = useRouter();
 
@@ -262,100 +265,6 @@ const marketSellerUrl = {
   "interpark": 'https://seller.interpark.com/login/loginForm.do',
 }
 const boardData = ref([]);
-
-const productChartData = ref([]);
-const productChart = ref({
-  tooltip: {
-    trigger: "item"
-  },
-  series: [
-    {
-      type: "pie",
-      radius: ["40%", "70%"],
-      avoidLabelOverlap: false,
-      itemStyle: {
-        borderRadius: 10,
-        borderColor: "#fff",
-        borderWidth: 2
-      },
-      label: {
-        fontSize: 15
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 17,
-          fontWeight: "bold"
-        }
-      },
-      labelLine: {
-        show: true,
-        lineStyle: {
-          width: 3
-        }
-      },
-      data: productChartData
-    }
-  ]
-});
-
-const dailySaleChartData = ref([]);
-const dailySaleDaysData = ref([]);
-const dailySaleChart = ref({
-  tooltip: {
-    trigger: "axis",
-  },
-  xAxis: {
-    type: "category",
-    data: dailySaleDaysData,
-  },
-  yAxis: {
-    type: "value",
-  },
-  series: [
-    {
-      name: "값:",
-      type: "bar",
-      data: dailySaleChartData,
-    },
-  ],
-});
-
-const orderChartData = ref([]);
-const orderChart = ref({
-  tooltip: {
-    trigger: "item"
-  },
-  series: [
-    {
-      type: "pie",
-      radius: ["40%", "70%"],
-      avoidLabelOverlap: false,
-      itemStyle: {
-        borderRadius: 10,
-        borderColor: "#fff",
-        borderWidth: 2
-      },
-      label: {
-        fontSize: 15
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 17,
-          fontWeight: "bold"
-        }
-      },
-      labelLine: {
-        show: true,
-        lineStyle: {
-          width: 3
-        }
-      },
-      data: orderChartData
-    }
-  ]
-});
 
 const account = reactive({
   orderData: {
@@ -412,7 +321,6 @@ async function getBoard() {
   );
 }
 
-
 const getSaleList = async (value) => {
   dailySaleLoading.value = true;
   if (value !== '') {
@@ -423,8 +331,37 @@ const getSaleList = async (value) => {
       message.error(res.message);
       return false;
     }
-    dailySaleDaysData.value = res.data.days;
-    dailySaleChartData.value = res.data.sales;
+
+    for (const item in res.data) {
+
+      let seriesName = '';
+      if(item === 'amount') {
+        seriesName = '판매금액';
+      } else if(item === 'count') {
+        seriesName = '판매건수';
+      } else if(item === 'quantity') {
+        seriesName = '판매수량';
+      }
+
+      const seriesData = [];
+      barChartxAxisData.value.forEach((date) => {
+        const keys = Object.keys(res.data[item])[0]
+        if(dayjs(date).isSame(dayjs(keys))) {
+          seriesData.push([date, res.data[item][date]]);
+        } else {
+          seriesData.push([date, 0]);
+        }
+      })
+
+      const series = {
+        data: seriesData,
+        type: 'bar',
+        name: seriesName
+      }
+
+      barChartSeriesData.value.push(series);
+    }
+
   }).catch((e) => {
     message.error(e.message);
     return false
@@ -625,17 +562,38 @@ const handleAutoCollectChange = (e) => {
   }
 }
 
+const barChartxAxisData = computed(() => {
+  const xAxisData = [];
+  const period = state.dailyData.params.period;
+  if (period === '1week') {
+    for (let i = 0; i < 7; i++) {
+      xAxisData.push(dayjs().subtract(i, 'day').format('YYYY-MM-DD'));
+    }
+  } else if (period === '1month') {
+    for (let i = 0; i < 30; i++) {
+      xAxisData.push(dayjs().subtract(i, 'day').format('YYYY-MM-DD'));
+    }
+  }
+  return xAxisData.reverse();
+})
+const barChartSeriesData = ref([]);
 const barChartOption = {
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
+    }
+  },
   legend: {
     orient: 'horizontal',
     data: ['판매금액', '판매건수', '판매수량'],
-    left: 'right',
+    left: 'left',
     top: 'top',
     selectedMode: 'single'
   },
   xAxis: {
     type: 'time',
-    data: ['2024-01-21', '2024-01-22', '2024-01-23', '2024-01-24', '2024-01-25', '2024-01-26', '2024-01-27'],
+    data: barChartxAxisData.value,
     axisLabel: {
       formatter: function (value) {
         return dayjs(value).format('MM-DD');
@@ -645,47 +603,7 @@ const barChartOption = {
   yAxis: {
     type: 'value'
   },
-  series: [
-    {
-      data: [
-          ['2024-01-21', 120],
-          ['2024-01-22', 200],
-          ['2024-01-23', 150],
-          ['2024-01-24', 80],
-          ['2024-01-25', 70],
-          ['2024-01-26', 110],
-          ['2024-01-27', 130],
-      ],
-      type: 'bar',
-      name: '판매금액'
-    },
-    {
-      data: [
-        ['2024-01-21', 1],
-        ['2024-01-22', 8],
-        ['2024-01-23', 0],
-        ['2024-01-24', 12],
-        ['2024-01-25', 6],
-        ['2024-01-26', 8],
-        ['2024-01-27', 3]
-      ],
-      type: 'bar',
-      name: '판매건수'
-    },
-    {
-      data: [
-          ['2024-01-21', 10],
-          ['2024-01-22', 20],
-          ['2024-01-23', 80],
-          ['2024-01-24', 20],
-          ['2024-01-25', 70],
-          ['2024-01-26', 40],
-          ['2024-01-27', 20]
-      ],
-      type: 'bar',
-      name: '판매수량'
-    },
-  ]
+  series: barChartSeriesData.value
 };
 
 const radarChartOption = {
@@ -745,8 +663,8 @@ const pieChartOption = {
       type: 'pie',
       radius: '50%',
       data: [
-        { value: 1048, name: '직원1' },
-        { value: 735, name: '직원2' },
+        { value: 1048, name: 'admin' },
+        { value: 735, name: 'user_iweou' },
         { value: 580, name: '직원3' },
         { value: 484, name: '직원4' },
         { value: 300, name: '직원5' }
