@@ -7,11 +7,14 @@
         <img style="margin: 50px" src="../../assets/logo_icon.png" key="logo-light" alt="">
         <div style="display: flex;flex-direction: column;width: 100%;">
             <a-input v-model:value="formState.username" placeholder="아이디" class="user-name" ></a-input>
-            <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password"></a-input-password>
+            <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password" style="background-color: rgb(232, 240, 254)"></a-input-password>
         </div>
         <div style="display: flex;justify-content: space-between;font-size: 12px;align-items: center;width: 100%;margin-top: 5px">
           <a-checkbox v-model:checked="checked" style="font-size: 12px;">아이디 저장하기</a-checkbox>
-          <a-switch v-model:checked="checked" size="small" style="color: #1a1a1a" checked-children="관리자" un-checked-children="알바생"/>
+          <div style="display: flex;gap: 5px;align-items: center">
+          <span>관리자</span>
+          <a-switch v-model:checked="checked" size="small" style="color: #1a1a1a"/>
+          </div>
         </div>
         <div style="display: flex;justify-content: center;width: 100%;margin-top: 20px;">
           <a-button type="primary" html-type="submit" class="loginButton" @click="handleFinish" style="width: 100%;height: 43px;font-size: 16px;font-weight: bold;color: #1a1a1a">
