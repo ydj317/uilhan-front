@@ -29,6 +29,7 @@ export function useAccountJsonApi() {
             });
         },
 
+        // 배송정책 수집
         getShippingCostPolicy: (data) => {
             return AuthRequest({
                 url: process.env.VUE_APP_API_URL + "/api/sync/shippingCostPolicy",
