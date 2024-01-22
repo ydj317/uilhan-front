@@ -1234,8 +1234,12 @@ const saveDetail = async (orders) => {
     }
 
     for (let order of orders) {
-      Object.assign(state.tableData.data.filter(item => order.id === item.key)[0], order);
+      // state.tableData.data 에 있으면 반영
+      if (state.tableData.data.filter(item => order.id === item.key).length > 0){
+        Object.assign(state.tableData.data.filter(item => order.id === item.key)[0], order);
+      }
     }
+
     message.success(`수정되었습니다.`);
     state.indicator.saveDetail = false;
     state.prdDetailModal.show = false;
