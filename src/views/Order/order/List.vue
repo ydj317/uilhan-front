@@ -61,7 +61,7 @@
           <a-space>
             <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
                            @change="handleStatusChange">
-              <a-radio-button value="">전체</a-radio-button>
+              <a-radio-button value="" style="color: black">전체</a-radio-button>
             </a-radio-group>
             <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
                            @change="handleStatusChange">
@@ -677,5 +677,8 @@ onMounted(async () => {
 <style>
 #header .ant-picker-input input {
   text-align: center;
+}
+.ant-radio-group .ant-radio-button-wrapper-checked span{
+  color: #000;
 }
 </style>

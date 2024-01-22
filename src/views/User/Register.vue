@@ -246,15 +246,15 @@
           </a-checkbox>
         </div>
 
-        <div class="foorterSetting">
-          <a-checkbox v-model:checked="formState.is_bridge_sync">
-            배대지 동시가입
-          </a-checkbox>
-          <a-button type="primary" size="small" @click.prevent="bridgeSyncCheck"
-                    :disabled="formState.is_bridge_sync === false">중복확인
-          </a-button>
-          <div style="color: #999999">배대지 아이디가 있을경우 동시가입 체크 해제후 가입해주시고 계정관리에서 바인딩해 주세요.</div>
-        </div>
+<!--        <div class="foorterSetting">-->
+<!--          <a-checkbox v-model:checked="formState.is_bridge_sync">-->
+<!--            배대지 동시가입-->
+<!--          </a-checkbox>-->
+<!--          <a-button type="primary" size="small" @click.prevent="bridgeSyncCheck"-->
+<!--                    :disabled="formState.is_bridge_sync === false">중복확인-->
+<!--          </a-button>-->
+<!--          <div style="color: #999999">배대지 아이디가 있을경우 동시가입 체크 해제후 가입해주시고 계정관리에서 바인딩해 주세요.</div>-->
+<!--        </div>-->
 
         <a-form-item class="buttons">
           <a-button type="primary" html-type="submit"

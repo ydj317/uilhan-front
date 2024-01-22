@@ -2,7 +2,7 @@
 
   <!--인사말-->
   <div class="hello_area">
-    안녕하세요  yuil님,
+    안녕하세요  {{ account.userName }}님,
   </div>
 
   <!--배너, 수집현황, 월통계, 공지사항-->
@@ -41,14 +41,13 @@
     </a-col>
     <a-col :span="6">
       <div class="notice">
-        <a href="##" class="more">more</a>
+        <a href="/board/notice" class="more">more</a>
         <div class="title">공지사항</div>
-        <ul class="list">
-          <li><a href="##">[유일공지] 배송지연안내</a></li>
-          <li><a href="##">[유일공지] 송장번호오류안내</a></li>
-          <li><a href="##">[유일공지] 마켓연동안내</a></li>
-          <li><a href="##">[유일공지] 마켓연동안내</a></li>
-          <li><a href="##">[유일공지] 마켓연동안내</a></li>
+        <div v-if="boardData.length === 0" style="display: flex;align-items: center;color: #939393">
+          등록된 공지사항이 없습니다.
+        </div>
+        <ul v-else class="list">
+          <li v-for="(notice,key) in boardData"><a :href="`/board/notice/view/${notice.id}`">[유일공지] {{ notice.title }}</a></li>
         </ul>
       </div>
     </a-col>
@@ -56,7 +55,8 @@
 
   <!--주문현황-->
   <div class="stats_area">
-    <div class="title">
+    <div class="title" style="display: flex;justify-content: space-between">
+      <div>
       주문현황
       <a-tooltip>
         <template #title>
@@ -64,6 +64,7 @@
         </template>
         <QuestionCircleOutlined/>
       </a-tooltip>
+      </div>
       <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
     </div>
     <a-card :loading="orderLoading" :bodyStyle="orderLoading ? {overflow: 'hidden'} : {padding: 0, overflow: 'hidden'}">
@@ -220,6 +221,7 @@ import {useMarketOrderApi} from "@/api/order";
 import {useMarketApi} from '@/api/market';
 import {QuestionCircleOutlined, ShoppingCartOutlined, UploadOutlined, ShoppingOutlined} from "@ant-design/icons-vue";
 import {useRouter} from "vue-router";
+import Cookie from "js-cookie";
 
 const router = useRouter();
 
@@ -373,6 +375,7 @@ const account = reactive({
   marketList: [],
   rowData: {},
   isModalVisible: false,
+  userName: Cookie.get("member_name")
 });
 
 const goLinkPage = (path) => {

@@ -580,7 +580,7 @@ export default defineComponent({
         total: 0,
         current: 1,
         pageSize: 10,
-        showTotal: () => `전체 상품 건수 ${this.totalCount} / 검색 상품 건수 ${this.searchCount}`,
+        showTotal: () => `[전체 ${this.totalCount}개] / 검색결과 ${this.searchCount}개`,
         showSizeChanger: true,
         pageSizeOptions: ["10", "20", "50", "100"],
         onChange: page => {
@@ -676,7 +676,7 @@ export default defineComponent({
       uploadProductPath: process.env.VUE_APP_API_URL + "/api/product/excelUpload",
       uploadProductIndicator: false,
       simpleImage,
-      expand: false,
+      expand: true,
     };
   },
 
@@ -1502,4 +1502,10 @@ export default defineComponent({
   color: #000000;
 }
 </style>
-
+<style>
+.ant-pagination .ant-pagination-item.ant-pagination-item-active a {
+  background-color: #ffda47;
+  border-color: #ffda47;
+  color: #000000;
+}
+</style>

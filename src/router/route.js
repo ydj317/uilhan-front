@@ -93,41 +93,6 @@ export const menus = [{
                 active: "/order/list"
             },
         },
-        // {
-        //     path: "/board/list",
-        //     name: "board_list",
-        //     component: () => import("@/views/Board/List.vue"),
-        //     meta: {
-        //         title: "게시글관리",
-        //         isHide: false,
-        //         roles: ["ROLE_ADMIN"],
-        //         icon: ProfileOutlined,
-        //     },
-        // },
-        // {
-        //     path: "/board/form/:id?",
-        //     name: "board_form",
-        //     component: () => import("@/views/Board/Form.vue"),
-        //     meta: {
-        //         title: "게시글 추가/수정",
-        //         isHide: true,
-        //         roles: ["ROLE_ADMIN"],
-        //         icon: '',
-        //         active: "/board/list"
-        //     },
-        // },
-        // {
-        //     path: "/board/view/:id?",
-        //     name: "board_view",
-        //     component: () => import("@/views/Board/View.vue"),
-        //     meta: {
-        //         title: "게시글 보기",
-        //         isHide: true,
-        //         roles: ["ROLE_ADMIN"],
-        //         icon: '',
-        //         active: "/board/list"
-        //     },
-        // },
         {
             path: "/setting",
             name: "setting",
@@ -264,6 +229,41 @@ export const menus = [{
         //         },
         //     ]
         // },
+        {
+            path: "/board/list",
+            name: "board_list",
+            component: () => import("@/views/Board/List.vue"),
+            meta: {
+                title: "게시글관리",
+                isHide: false,
+                roles: ["ROLE_ADMIN"],
+                icon: ProfileOutlined,
+            },
+        },
+        {
+            path: "/board/form/:id?",
+            name: "board_form",
+            component: () => import("@/views/Board/Form.vue"),
+            meta: {
+                title: "게시글 추가/수정",
+                isHide: true,
+                roles: ["ROLE_ADMIN"],
+                icon: '',
+                active: "/board/list"
+            },
+        },
+        {
+            path: "/board/view/:id?",
+            name: "board_view",
+            component: () => import("@/views/Board/View.vue"),
+            meta: {
+                title: "게시글 보기",
+                isHide: true,
+                roles: ["ROLE_ADMIN"],
+                icon: '',
+                active: "/board/list"
+            },
+        },
         {
             path: "/board/notice",
             name: "board_notice",
