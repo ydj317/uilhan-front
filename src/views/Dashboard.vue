@@ -161,7 +161,7 @@
 
   <a-row class="chart_area" :gutter="20">
     <a-col :span="8">
-      <a-card :bordered="false" style="background-color: #f0f0f0;height: 370px;" :body-style="{padding:20}">
+      <a-card style="background-color: #f0f0f0;height: 370px;" :body-style="{padding:20}">
         <template #title>
           <p style="font-size: 20px;font-weight: bold;margin: 20px 0;">마켓별 유입현황</p>
         </template>
@@ -173,7 +173,7 @@
       </a-card>
     </a-col>
     <a-col :span="8">
-      <a-card :bordered="false" style="background-color: #f0f0f0;height: 370px;" :body-style="{padding:20}">
+      <a-card style="background-color: #f0f0f0;height: 370px;" :body-style="{padding:20}">
         <template #title>
           <p style="font-size: 20px;font-weight: bold;margin: 20px 0;">직원 업로드현황</p>
         </template>
@@ -191,7 +191,7 @@
       </a-card>
     </a-col>
     <a-col :span="8">
-      <a-card :bordered="false" :loading="dailySaleLoading" style="background-color: #f0f0f0;height: 370px;overflow: hidden" :body-style="{padding:20}">
+      <a-card :loading="dailySaleLoading" style="background-color: #f0f0f0;height: 370px;overflow: hidden" :body-style="{padding:20}">
         <template #title>
           <p style="font-size: 20px;font-weight: bold;margin: 20px 0;">매출현황</p>
         </template>
