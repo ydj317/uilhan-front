@@ -82,7 +82,7 @@
           </a-table-column>
           <a-table-column title="결제완료" dataIndex="paid" key="paid" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.paidNew">{{ record.paidNew }}</span>
+              <span class="highlight" v-if="record?.paidNew">{{ record?.paidNew }}</span>
               <span style="color: #000000D9;" v-if="!record.paidNew">{{ record.paid }}</span>
             </template>
           </a-table-column>
@@ -199,7 +199,7 @@
         </template>
         <template #extra>
           <div style="display: flex;gap: 3px">
-            <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="getSaleList('')" size="small">
+            <a-radio-group v-model:value="state.dailyData.params.period" class="right" @change="handleSaleChange" size="small">
               <a-radio-button value="1week">일주일</a-radio-button>
               <a-radio-button value="1month">1개월</a-radio-button>
             </a-radio-group>
@@ -207,7 +207,7 @@
         </template>
         <div class="box">
           <div class="content" style="height: 290px; position: relative;bottom:0;margin-top: 0;overflow: hidden">
-            <e-charts :option="barChartOption" style="position: absolute;bottom: 0 !important;"/>
+            <e-charts ref="barChartOptionRef" :option="barChartOption" style="position: absolute;bottom: 0 !important;"/>
           </div>
         </div>
       </a-card>
@@ -321,11 +321,14 @@ async function getBoard() {
   );
 }
 
-const getSaleList = async (value) => {
+const handleSaleChange = () => {
+  barChartSeriesData.value = [];
+  getSaleList();
+}
+const getSaleList = async () => {
+
   dailySaleLoading.value = true;
-  if (value !== '') {
-    state.dailyData.params.type = value
-  }
+
   await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/dailySale", state.dailyData).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
@@ -361,7 +364,7 @@ const getSaleList = async (value) => {
 
       barChartSeriesData.value.push(series);
     }
-
+    barChartOption.value.series = barChartSeriesData.value;
   }).catch((e) => {
     message.error(e.message);
     return false
@@ -374,7 +377,7 @@ onMounted(() => {
   //getOrder();
   Promise.all([getBoard(), getTableList().then(() => {
     handleBeforeUnload();
-  }), getSaleList(''), getMarketAdminUrls(), getHeaderCount()])
+  }), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
       .catch((e) => {
         message.error(e.message)
         return false;
@@ -576,8 +579,13 @@ const barChartxAxisData = computed(() => {
   }
   return xAxisData.reverse();
 })
+const barChartOptionRef = ref(null);
+const resetBarChartOption = () => {
+  barChartOptionRef.value.clear();
+  barChartOptionRef.value.setOption(barChartOption);
+}
 const barChartSeriesData = ref([]);
-const barChartOption = {
+const barChartOption = ref({
   tooltip: {
     trigger: 'axis',
     axisPointer: {
@@ -604,7 +612,7 @@ const barChartOption = {
     type: 'value'
   },
   series: barChartSeriesData.value
-};
+});
 
 const radarChartOption = {
   legend: {

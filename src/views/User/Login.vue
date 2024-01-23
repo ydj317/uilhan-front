@@ -7,7 +7,7 @@
         <img style="margin: 50px" src="../../assets/logo_icon.png" key="logo-light" alt="">
         <div style="display: flex;flex-direction: column;width: 100%;">
             <a-input v-model:value="formState.username" placeholder="아이디" class="user-name" ></a-input>
-            <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password" style="background-color: rgb(232, 240, 254)"></a-input-password>
+            <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password"></a-input-password>
         </div>
         <div style="display: flex;justify-content: space-between;font-size: 12px;align-items: center;width: 100%;margin-top: 5px">
           <a-checkbox v-model:checked="checked" style="font-size: 12px;">아이디 저장하기</a-checkbox>
@@ -213,6 +213,10 @@ export default defineComponent({
   height: 43px;font-size: 16px;
   border-radius: 0 0 5px 5px;
 }
+.user-password:focus{
+  background-color: white;
+}
+
 .item_form {
   display: flex;
   flex-direction: column;
@@ -220,5 +224,25 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   margin-top: 37px;
+}
+
+
+</style>
+
+<style>
+.user-password.ant-input-affix-wrapper {
+  padding: 0;
+}
+.user-password.ant-input-affix-wrapper .ant-input {
+  padding: 4px 11px !important;
+  border-radius: 3px;
+}
+.user-password.ant-input-affix-wrapper span {
+  padding: 4px 11px;
+}
+.user-password.ant-input-affix-wrapper .ant-input-suffix {
+  position: absolute;
+  right: 0;
+  top: 5px;
 }
 </style>
