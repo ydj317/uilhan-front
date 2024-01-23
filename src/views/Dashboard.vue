@@ -47,7 +47,7 @@
           등록된 공지사항이 없습니다.
         </div>
         <ul v-else class="list">
-          <li v-for="(notice,key) in boardData"><a :href="`/board/notice/view/${notice.id}`">{ notice.title }}</a></li>
+          <li v-for="(notice,key) in boardData"><a :href="`/board/notice/view/${notice.id}`">{{ notice.title }}</a></li>
         </ul>
       </div>
     </a-col>
