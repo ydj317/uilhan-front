@@ -20,12 +20,12 @@
 <!--        <div>-->
 <!--          <a-button type="link" size="small" @click="worldLinkGuide">가이드북</a-button>-->
 <!--        </div>-->
-<!--        <div>-->
-<!--          <a-button type="link" @click.prevent="extensionDown" size="small">크롬 확장 프로그램-->
-<!--            <DownloadOutlined />-->
-<!--          </a-button>-->
-<!--          <a-spin v-if="indicator"/>-->
-<!--        </div>-->
+        <div>
+          <a-button type="link" @click.prevent="extensionDown" size="small">크롬 확장 프로그램
+            <DownloadOutlined />
+          </a-button>
+          <a-spin v-if="indicator"/>
+        </div>
         <div id="setting" class="">
           <div class="center pointer" @click="settingVisible" style="display: flex;align-items: center;">
             <img src="@/assets/img/child_icon.png" width="16" height="16" style="border-radius: 50px;margin-top: 3px;" alt="">
