@@ -184,51 +184,53 @@ export const menus = [{
                 }
             ]
         },
-        // {
-        //     path: "/user",
-        //     name: "user",
-        //     meta: {
-        //         title: "서비스 관리",
-        //         isHide: false,
-        //         roles: ["ROLE_ADMIN", "ROLE_USER"],
-        //         icon: MoneyCollectOutlined
-        //     },
-        //     "children": [
-        //         {
-        //             path: "/user/servicePay",
-        //             name: "user_servicePay",
-        //             component: () => import("@/views/User/ServicePay.vue"),
-        //             meta: {
-        //                 title: "서비스 결제",
-        //                 isHide: false,
-        //                 roles: ["ROLE_ADMIN", "ROLE_USER"],
-        //                 icon: ''
-        //             },
-        //         },
-        //         {
-        //             path: "/user/servicePayAi",
-        //             name: "user_servicePayAi",
-        //             component: () => import("@/views/User/ServicePayAi.vue"),
-        //             meta: {
-        //                 title: "AI 서비스 결제",
-        //                 isHide: false,
-        //                 roles: ["ROLE_ADMIN", "ROLE_USER"],
-        //                 icon: ''
-        //             },
-        //         },
-        //         {
-        //             path: "/user/manage",
-        //             name: "user_manage",
-        //             component: () => import("@/views/User/Manage"),
-        //             meta: {
-        //                 title: "이미지 번역 회수",
-        //                 isHide: false,
-        //                 roles: ["ROLE_ADMIN"],
-        //                 icon: '',
-        //             }
-        //         },
-        //     ]
-        // },
+        {
+            path: "/user",
+            name: "user",
+            meta: {
+                title: "서비스 관리",
+                isHide: false,
+                roles: ["ROLE_ADMIN"],
+                icon: MoneyCollectOutlined,
+                ids: ["jwli"],
+            },
+            "children": [
+                // {
+                //     path: "/user/servicePay",
+                //     name: "user_servicePay",
+                //     component: () => import("@/views/User/ServicePay.vue"),
+                //     meta: {
+                //         title: "서비스 결제",
+                //         isHide: false,
+                //         roles: ["ROLE_ADMIN", "ROLE_USER"],
+                //         icon: ''
+                //     },
+                // },
+                // {
+                //     path: "/user/servicePayAi",
+                //     name: "user_servicePayAi",
+                //     component: () => import("@/views/User/ServicePayAi.vue"),
+                //     meta: {
+                //         title: "AI 서비스 결제",
+                //         isHide: false,
+                //         roles: ["ROLE_ADMIN", "ROLE_USER"],
+                //         icon: ''
+                //     },
+                // },
+                {
+                    path: "/user/manage",
+                    name: "user_manage",
+                    component: () => import("@/views/User/Manage"),
+                    meta: {
+                        title: "이미지 번역 회수",
+                        isHide: false,
+                        roles: ["ROLE_ADMIN"],
+                        icon: '',
+                        ids: ["jwli"],
+                    }
+                },
+            ]
+        },
         {
             path: "/board/list",
             name: "board_list",
