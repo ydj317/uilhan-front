@@ -165,7 +165,7 @@ export default {
           return false;
         }
 
-        let fileName = "WorldLinkExtension.zip";
+        let fileName = "UilExtension.zip";
         let blob = new Blob([response], {type: "charset=utf-8"});
         let downloadElement = document.createElement("a");
         let url = window.URL || window.webkitURL || window.moxURL;
