@@ -112,32 +112,31 @@
           <DownloadOutlined/>
           업로드 샘플
         </a-button>
+<!--        <a-upload-->
+<!--            v-if="haveDownloadProductPermission"-->
+<!--            :action="uploadProductPath"-->
+<!--            v-model:fileList="fileList"-->
+<!--            name="file"-->
+<!--            :max-count="1"-->
+<!--            :headers="headers"-->
+<!--            :multiple="false"-->
+<!--            :showUploadList="false"-->
+<!--            @change="addExcelProduct"-->
+<!--            class="ml10"-->
+<!--        >-->
+<!--          <a-spin style="margin-right: 10px;" v-if="uploadProductIndicator"/>-->
+<!--          <a-button class="button-blue mr10" size="small">-->
+<!--            상품 업로드-->
+<!--            <template #icon>-->
+<!--              <UploadOutlined/>-->
+<!--            </template>-->
+<!--          </a-button>-->
+<!--        </a-upload>-->
 
-        <a-upload
-            v-if="haveDownloadProductPermission"
-            :action="uploadProductPath"
-            v-model:fileList="fileList"
-            name="file"
-            :max-count="1"
-            :headers="headers"
-            :multiple="false"
-            :showUploadList="false"
-            @change="addExcelProduct"
-            class="ml10"
-        >
-          <a-spin style="margin-right: 10px;" v-if="uploadProductIndicator"/>
-          <a-button class="button-blue mr10" size="small">
-            상품 업로드
-            <template #icon>
-              <UploadOutlined/>
-            </template>
-          </a-button>
-        </a-upload>
-
-        <a-spin style="margin-right: 10px;" v-if="indicator"/>
-        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" class="button-blue"
-                  size="small">상품 다운로드
-        </a-button>
+<!--        <a-spin style="margin-right: 10px;" v-if="indicator"/>-->
+<!--        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" class="button-blue"-->
+<!--                  size="small">상품 다운로드-->
+<!--        </a-button>-->
         <!--선택상품 등록-->
         <a-button class="ml10 button-blue" @click="MarketListPop(record)" size="small">선택상품 등록</a-button>
       </div>

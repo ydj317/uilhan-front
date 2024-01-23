@@ -170,18 +170,7 @@ export const menus = [{
                         active: "/setting/template"
                     }
                 },
-                {
-                    path: "/setting/UserManage",
-                    name: "setting_userManage",
-                    component: () => import("@/views/Setting/UserManage.vue"),
-                    meta: {
-                        title: "고객 계정관리",
-                        isHide: false,
-                        roles: [],
-                        ids: ["jwli"],
-                        icon: ''
-                    },
-                }
+
             ]
         },
         {
@@ -218,6 +207,18 @@ export const menus = [{
                 //     },
                 // },
                 {
+                    path: "/setting/UserManage",
+                    name: "setting_userManage",
+                    component: () => import("@/views/Setting/UserManage.vue"),
+                    meta: {
+                        title: "고객 계정관리",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                        icon: ''
+                    },
+                },
+                {
                     path: "/user/manage",
                     name: "user_manage",
                     component: () => import("@/views/User/Manage"),
@@ -229,42 +230,43 @@ export const menus = [{
                         ids: ["jwli"],
                     }
                 },
+                {
+                    path: "/board/list",
+                    name: "board_list",
+                    component: () => import("@/views/Board/List.vue"),
+                    meta: {
+                        title: "게시글관리",
+                        isHide: false,
+                        roles: ["ROLE_ADMIN"],
+                        icon: ProfileOutlined,
+                    },
+                },
+                {
+                    path: "/board/form/:id?",
+                    name: "board_form",
+                    component: () => import("@/views/Board/Form.vue"),
+                    meta: {
+                        title: "게시글 추가/수정",
+                        isHide: true,
+                        roles: ["ROLE_ADMIN"],
+                        icon: '',
+                        active: "/board/list"
+                    },
+                },
+                {
+                    path: "/board/view/:id?",
+                    name: "board_view",
+                    component: () => import("@/views/Board/View.vue"),
+                    meta: {
+                        title: "게시글 보기",
+                        isHide: true,
+                        roles: ["ROLE_ADMIN"],
+                        icon: '',
+                        active: "/board/list"
+                    },
+                },
+
             ]
-        },
-        {
-            path: "/board/list",
-            name: "board_list",
-            component: () => import("@/views/Board/List.vue"),
-            meta: {
-                title: "게시글관리",
-                isHide: false,
-                roles: ["ROLE_ADMIN"],
-                icon: ProfileOutlined,
-            },
-        },
-        {
-            path: "/board/form/:id?",
-            name: "board_form",
-            component: () => import("@/views/Board/Form.vue"),
-            meta: {
-                title: "게시글 추가/수정",
-                isHide: true,
-                roles: ["ROLE_ADMIN"],
-                icon: '',
-                active: "/board/list"
-            },
-        },
-        {
-            path: "/board/view/:id?",
-            name: "board_view",
-            component: () => import("@/views/Board/View.vue"),
-            meta: {
-                title: "게시글 보기",
-                isHide: true,
-                roles: ["ROLE_ADMIN"],
-                icon: '',
-                active: "/board/list"
-            },
         },
         {
             path: "/board/notice",
