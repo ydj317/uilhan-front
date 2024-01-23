@@ -231,7 +231,8 @@ export default {
 
         if (res.data && Array.isArray(res.data.keywords)) {
           this.product.item_sync_keyword = res.data.keywords.join(',');
-          this.product.item_trans_name += ' ' + this.product.item_sync_keyword
+          let prd_name_keyword = res.data.keywords.join(',');
+          this.product.item_trans_name += ' ' + prd_name_keyword.replace(/,/g, ' ')
         } else {
           this.product.item_sync_keyword = '';
         }
