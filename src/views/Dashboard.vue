@@ -181,8 +181,10 @@
         </template>
         <template #extra>
           <div style="display: flex;gap: 3px">
-          <a-button size="small" style="background-color: #3377e4;color: white">일별</a-button>
-          <a-button size="small">주별</a-button>
+          <a-radio-group class="right" size="small" v-model:value="pieChartOtion">
+            <a-radio-button value="day">일별</a-radio-button>
+            <a-radio-button value="week">주별</a-radio-button>
+          </a-radio-group>
           </div>
         </template>
         <div class="box">
@@ -655,6 +657,7 @@ const radarChartOption = {
   ]
 };
 
+const pieChartOtion = ref('day')
 const pieChartOption = {
 
   tooltip: {

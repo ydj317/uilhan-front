@@ -47,12 +47,19 @@ const pagination = ref({
 /** 테이블 헤드 */
 const table_columns = computed(() => {
   return [
-    {title: 'ID', dataIndex: 'id', width: 50},
+    {title: 'No', dataIndex: 'No', width: 50},
     {title: '제목', dataIndex: 'title',},
     {title: '시간', dataIndex: 'insDate', width: '20%'},
     {title: '보기', key: 'action', fixed: 'right', width: 100, align: 'center',},
   ]
-})
+});
+
+const totalLength = computed(() => state.tableData.data.length);
+
+// DESC索引
+const formatDescendIndex = (index) => {
+  return totalLength.value - index;
+};
 
 /**
  * 게시판 리스트
@@ -111,15 +118,17 @@ onMounted(() => {
     <a-table :data-source="state.tableData.data" :loading="state.tableData.loading" :rowSelection="rowSelection"
              :pagination="false" :defaultExpandAllRows="true" size="small" class="mt15"
     >
-      <a-table-column title="ID" dataIndex="id" key="id" />
+      <a-table-column title="No." dataIndex="No" key="No">
+        <template #default="{ index }">
+          {{ formatDescendIndex(index) }}
+        </template>
+      </a-table-column>
       <a-table-column title="제목" dataIndex="title" key="title" />
       <a-table-column title="시간" dataIndex="insDate" key="insDate" />
       <a-table-column title="보기" dataIndex="controller" key="controller">
         <template #default="{ record }">
         <router-link :to="`/board/notice/view/${record.id}`">
-          <a-button type="primary" size="small">
-            <template #icon><eye-outlined/></template>
-          </a-button>
+          <a-button type="primary" size="small">상세보기</a-button>
         </router-link>
         </template>
       </a-table-column>

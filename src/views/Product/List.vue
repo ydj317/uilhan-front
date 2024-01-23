@@ -75,11 +75,15 @@
         </a-button>
 
         <!--상품삭제-->
-        <a-popconfirm class="mr10 button-blue" @confirm="clonePrd">
+        <a-popconfirm class="mr10 button-blue" :open="copyPrdVisible" @confirm="clonePrd()" @openChange="handleCopyPrdVisibleChange"
+                      @cancel="clonePrdCancel"
+                      ok-text="확인"
+                      cancel-text="취소"
+        >
           <template #title>
             <b>상품 복사 확인</b>
             <br>
-            <span>선택한 상품을 복사하시겠습니다?</span>
+            <span>선택한 상품을 복사하시겠습니까?</span>
             <br>
             <span style="font-size: 12px; color: #999;">*복사 된 상품은 최상단으로 이동합니다.</span>
           </template>
@@ -285,14 +289,14 @@
         등록상품 삭제하기
         <a-tooltip>
           <template #title>
-            <div>전체삭제 할 경우 리스트에서 상품이 삭제됩니다.</div>
+            <div>전체 삭제할 경우 리스트에서 상품이 삭제됩니다.</div>
           </template>
           <QuestionCircleOutlined/>
         </a-tooltip>
       </template>
 
       <div class="space-between">
-        <div>선택한 상품의 삭제할 오픈마켓을 선택해주세요.<br>11번가 / 롯데온 / 위메프는 상품 삭제를 지원하지안아 "판매중지" 상태로 변경됩니다.</div>
+        <div>선택한 상품의 삭제할 오픈마켓을 선택해 주세요.<br>11번가 / 롯데온 / 위메프는 상품 삭제를 지원하지 않아 "판매중지" 상태로 변경됩니다.</div>
         <div>
           <a-button style="margin-right: 10px;" @click="deleteCheckList = deleteOptions.map(option => option.value)">
             전체선택
@@ -317,7 +321,7 @@
       <div style="color: red;" v-else>
         <a-empty>
           <template #description>
-            <span>연동된 마켓이 없습니다. 리스트에서 상품을 삭제 하기겠습니까?</span>
+            <span>연동된 마켓이 없습니다. 리스트에서 상품을 삭제하시겠습니까?</span>
           </template>
         </a-empty>
       </div>
@@ -676,6 +680,8 @@ export default defineComponent({
       uploadProductIndicator: false,
       simpleImage,
       expand: true,
+      copyPrdVisible: false,
+      copyPrdCondition: true,
     };
   },
 
@@ -707,9 +713,15 @@ export default defineComponent({
       this.market_code = "all"
       this.sync_status = "all"
       this.date_type = "insert_date"
-      this.date = []
+      this.date = this.getDefaultDateRange()
       this.search_key = "item_code"
       this.search_value = ""
+    },
+
+    getDefaultDateRange() {
+      const endDate = moment(); // 当前日期
+      const startDate = moment().subtract(3, 'months');
+      return [startDate, endDate];
     },
 
     onPrdSelectChange(prdSelectedRowKeys) {
@@ -745,6 +757,11 @@ export default defineComponent({
     },
 
     MarketListPop() {
+      const prdCheckedList = this.getCheckList();
+      if (prdCheckedList === undefined || prdCheckedList.length === 0) {
+        message.warning("선택된 상품이 없습니다.");
+        return false;
+      }
       this.relaket.data = this;
       this.MarketListVisible = true;
     },
@@ -955,12 +972,9 @@ export default defineComponent({
     },
 
     clonePrd() {
-      let list = this.getCheckList();
-      if (list === undefined || list.length === 0) {
-        message.warning("선택된 상품이 없습니다.");
-        return false;
-      }
-
+      this.copyPrdVisible = true
+      if(this.copyPrdCondition === false) return;
+      const list = this.getCheckList();
       AuthRequest.post(process.env.VUE_APP_API_URL + '/api/clone', list).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
@@ -969,6 +983,26 @@ export default defineComponent({
 
         window.location.reload()
       });
+    },
+    clonePrdCancel(){
+      this.copyPrdVisible = false;
+    },
+
+    handleCopyPrdVisibleChange(bool){
+      if (!bool) {
+        this.copyPrdVisible = false
+        return;
+      }
+      const prdCheckedList = this.getCheckList();
+
+      if (prdCheckedList === undefined || prdCheckedList.length === 0) {
+        message.warning("선택된 상품이 없습니다.");
+        this.copyPrdCondition = false
+        return false;
+      } else {
+        this.copyPrdVisible = true
+      }
+
     },
 
     excelDown() {
