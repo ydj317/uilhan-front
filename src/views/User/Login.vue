@@ -1,7 +1,9 @@
 <template>
   <loading v-model:active="loading" :can-cancel="false" :is-full-page="true"/>
   <div class="container" style="display: flex;height: 100vh">
-    <div class="login-bg"></div>
+    <div class="login-bg">
+      <img style="margin: 50px" src="../../assets/logo_white.png" key="logo-white" alt="">
+    </div>
     <div class="login-form">
       <div style="display: flex;flex-direction: column; justify-content: center;align-items: center;width: 362px;">
         <img style="margin: 50px" src="../../assets/logo_icon.png" key="logo-light" alt="">
@@ -190,14 +192,21 @@ export default defineComponent({
 }
 
 .login-bg {
-  flex: 5;
+  flex: 6;
   height: 100%;
   width: 100%;
   background-color: #ffdb41;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-bg>img{
+  width:15%;
 }
 
 .login-form {
-  flex: 2;
+  flex: 4;
   display: flex;
   flex-direction: column;
   justify-content: center;
