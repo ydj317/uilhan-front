@@ -14,7 +14,7 @@
 			<a-input v-model:value="state.formData.api_token" placeholder="API 인증키를 입력해주세요."/>
 		</a-form-item>
 
-		<a-input type="hidden" name="access_token" :value="state.formData.access_token" />
+		<a-input type="hidden" name="access_token" v-model:value="state.formData.access_token" />
 
 		<a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
 			<template #icon v-if="state.formData.sync_market_status">
@@ -30,7 +30,7 @@
 				<h3>마켓정보 불러오기</h3>
 			</div>
 
-			<a-form-item name="shipping_fee_code" label="배송비 정보" :rules="[{ required: true, message: '배송비 정보를 선택해 주세요.' }]">
+			<a-form-item name="shipping_fee_code" label="배송비 정보">
 				<a-select v-model:value="state.formData.shipping_fee_code" placeholder="배송비 정보를 선택해 주세요" style="width:260px;">
 					<a-select-option :value="item.shipping_fee_code" v-for="(item, key) in state.shippingFeeInfoList"
 									 :key="key">{{ item.shipping_fee_name }}</a-select-option>
@@ -57,6 +57,25 @@
 							 placeholder="이메일" style="width:200px"/>
 				</a-form-item>
 			</a-form-item>
+
+			<a-form-item name="is_real_rate">
+				<template #label>
+					<span>환율 설정</span>
+					<a-tooltip class="ml10">
+						<template #title>
+							<p>설정된 환율 값으로 판매금액이 설정됩니다.</p>
+						</template>
+						<QuestionCircleOutlined/>
+					</a-tooltip>
+				</template>
+				<a-radio-group v-model:value="state.formData.rate.is_real_rate">
+					<a-radio :value="true">실시간 환율</a-radio>
+					<a-radio :value="false">직접 입력 환율</a-radio>
+				</a-radio-group>
+				<a-input-number v-model:value.number="state.formData.rate.rate_value"
+								:disabled="state.formData.rate.is_real_rate"
+								:min="0" :max="999" size="small" name="rate_value"/>
+			</a-form-item>
 		</div>
 
 		<a-button class="mt15" @click="goBack">돌아가기</a-button>
@@ -70,9 +89,8 @@ import {reactive, onMounted, ref} from "vue";
 import {message} from "ant-design-vue";
 import {useMarketAccountApi} from '@/api/marketAccount';
 import {useAccountJsonApi} from '@/api/accountJson';
-import {CheckCircleOutlined} from '@ant-design/icons-vue';
+import {CheckCircleOutlined, QuestionCircleOutlined} from '@ant-design/icons-vue';
 import {useRouter} from 'vue-router';
-import SelectElement from '@/views/MarketAccount/components/SelectElement.vue'
 
 const props = defineProps({
 	market_code: {
@@ -106,6 +124,10 @@ const state = reactive({
 		// 마켓설정
 		seller_phone: '',
 		seller_email: '',
+		rate: {
+			is_real_rate: true,
+			rate_value: ''
+		}
 	},
 
 	syncCheckLoading: false,
@@ -136,7 +158,8 @@ const initFormData = () => {
 		// 마켓설정
 		state.formData.seller_phone = accountInfo['marketData']?.seller_phone;
 		state.formData.seller_email = accountInfo['marketData']?.seller_email;
-
+		state.formData.rate.is_real_rate = accountInfo['marketData']?.rate?.is_real_rate;
+		state.formData.rate.rate_value = state.formData.rate.is_real_rate === true ? '' : accountInfo['marketData']?.rate?.rate_value;
 	}
 }
 
@@ -156,10 +179,11 @@ const handleSyncMarketCheck = () => {
 
 			state.syncCheckLoading = false;
 
-			const { account_id } = res.data;
+			const { account_id, access_token } = res.data;
 			message.success(res?.message);
 
 			state.formData.id = account_id;
+			state.formData.access_token = access_token;
 
 			syncShippingFeeInfo(account_id);
 
@@ -177,6 +201,11 @@ const handleSubmit = () => {
 
 	if (state.formData.sync_market_status === false) {
 		message.error('인증키 가져오기를 먼저 해주세요.');
+		return false;
+	}
+
+	if (!state.formData.rate.is_real_rate && state.formData.rate.rate_value === '') {
+		message.error('환율을 입력해 주세요.');
 		return false;
 	}
 
@@ -223,7 +252,7 @@ const syncShippingFeeInfo = (account_id) => {
 
 		if ('ResultObject' in marketJson) {
 			marketJson['ResultObject'].forEach(item => {
-				if (item['Oversea'] === 'Y') {
+				if (item['Oversea'] === 'N') {
 					state.shippingFeeInfoList.push({
 						shipping_fee_code: item['ShippingNo'],
 						shipping_fee_name: item['ShippingName']
@@ -247,7 +276,7 @@ const getShippingFeeInfoList = () => {
 
 		if ('ResultObject' in marketJson) {
 			marketJson['ResultObject'].forEach(item => {
-				if (item['Oversea'] === 'Y') {
+				if (item['Oversea'] === 'N') {
 					state.shippingFeeInfoList.push({
 						shipping_fee_code: item['ShippingNo'],
 						shipping_fee_name: item['ShippingName']
