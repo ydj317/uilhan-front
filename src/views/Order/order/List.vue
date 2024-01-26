@@ -241,7 +241,7 @@
               </div>
 
               <div style="text-align: right;">
-                <a-button size="small" v-if="record.status === 'shippingAddress' || record.status === 'paid' && record.marketCode === 'sk11st'"
+                <a-button size="small" v-if="(record.status === 'shippingAddress' || record.status === 'paid') && record.marketCode === 'sk11st'"
                           @click.prevent="openDelayForm(record)">발송지연
                 </a-button>
               </div>
@@ -265,8 +265,8 @@
       </a-table-column>
     </a-table>
   </a-card>
-  <HistoryView :open="historyVisible" @close="historyVisible = false" :historyData="historyData"/>
-  <BridgeFormView :open.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData"
+  <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData"/>
+  <BridgeFormView :visible.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData"
                   @update="getTableData" :key="bridgeFormData.type"/>
 
   <div>
@@ -278,11 +278,11 @@
         :maskClosable="false"
     >
       <div v-if="state.delayGuideData.formData.order_data.marketCode === 'sk11st'">
-        <a-form class="market_form" >
-          <a-form-item name="send_day" label="예상배송일">
-            <a-date-picker :disabledDate="delayDisabledDate" v-model:value="state.delayGuideData.formData.send_day" />
+        <a-form ref="delayFormRef" :model="state.delayGuideData.formData" class="market_form" >
+          <a-form-item name="send_day" label="예상배송일" :rules="[{ required: true, message: '예상배송일을 선택해주세요.'}]">
+            <a-date-picker :disabledDate="delayDisabledDate" v-model:value="state.delayGuideData.formData.send_day"  />
           </a-form-item>
-          <a-form-item name="delay_reason" label="배송지연사유">
+          <a-form-item name="delay_reason" label="배송지연사유" :rules="[{ required: true, message: '배송지연사유를 선택해주세요.'}]" >
             <a-select v-model:value="state.delayGuideData.formData.delay_reason">
               <a-select-option value="01">단기 재고 부족</a-select-option>
               <a-select-option value="02">주문폭주로 인한 작업지연</a-select-option>
@@ -291,8 +291,8 @@
               <a-select-option value="05">기타</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item name="detail_reason" label="상세사유">
-            <a-textarea :auto-size="{ minRows: 4 }"  v-model:value="state.delayGuideData.formData.detail_reason" placeholder="상세사유를 입력해주세요."/>
+          <a-form-item name="detail_reason" label="상세사유" :rules="[{ required: true, min:20, max:300, message: '상세사유 값은 20~300Byte 사이로 입력해 주세요.'}]">
+            <a-textarea show-count :maxlength="300" :auto-size="{ minRows: 4 }"  v-model:value="state.delayGuideData.formData.detail_reason" placeholder="상세사유를 입력해주세요."/>
           </a-form-item>
         </a-form>
       </div>
@@ -367,6 +367,8 @@ const state = reactive({
     showModal: false,
   },
 });
+
+const delayFormRef = ref(null);
 
 // 검색기간
 const onChangeDatePicker = (value, dateString) => {
@@ -560,24 +562,29 @@ const openDelayForm = (orderData) => {
 }
 
 const delayDisabledDate = (current) => {
-  // 지나간 날짜는 선택불가
-  return current && current < moment().subtract(1, 'days');
+  // 지나간 날짜는와 미래 30일 이후의 날자 선택불가
+  return current && (current < moment().subtract(1, 'days') || current > moment().add(30, 'days'));
 }
 
 // 배송지연 안내
 const sendDelayGuide = () => {
-  useMarketOrderApi().sendDelayGuide(toRaw(state.delayGuideData.formData)).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
-      state.delayGuideData.showModal = false;
-      return false;
-    }
+  delayFormRef.value.validate().then(() => {
+    useMarketOrderApi().sendDelayGuide(toRaw(state.delayGuideData.formData)).then(res => {
+      if (res.status !== "2000") {
+        message.error(res.message);
+        state.delayGuideData.showModal = false;
+        return false;
+      }
 
-    message.success(res.message === '' ? '발송지연안내 성공 하었습니다.' : res.data.message);
-    resetDelayData();
-  }).finally(() => {
-    getTableData();
+      message.success(res.message === '' ? '발송지연안내 성공 하었습니다.' : res.data.message);
+      resetDelayData();
+    }).finally(() => {
+      getTableData();
+    });
+  }).catch(() => {
+    message.error('필수항목을 입력해주세요.');
   });
+
 }
 
 const resetDelayData = () => {
