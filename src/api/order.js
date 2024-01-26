@@ -95,5 +95,14 @@ export function useMarketOrderApi() {
                 data: data,
             });
         },
+
+        // 배송지연 안내 발송처리
+        sendDelayGuide: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/order/sendDelayGuide",
+                method: "post",
+                data: data,
+            });
+        }
     }
 }
