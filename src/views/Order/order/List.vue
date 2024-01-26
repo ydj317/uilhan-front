@@ -270,14 +270,20 @@
                   @update="getTableData" :key="bridgeFormData.type"/>
 
   <div>
-    <a-modal v-model:open="state.delayGuideData.showModal" :title="state.delayGuideData.title" @ok="sendDelayGuide">
-      <div v-if="state.delayGuideData.orderData.marketCode === 'sk11st'">
+    <a-modal
+        v-model:open="state.delayGuideData.showModal"
+        :title="state.delayGuideData.title"
+        @ok="sendDelayGuide"
+        :closable="true"
+        :maskClosable="false"
+    >
+      <div v-if="state.delayGuideData.formData.order_data.marketCode === 'sk11st'">
         <a-form class="market_form" >
-          <a-form-item name="seller_id" label="예상배송일">
-            <a-date-picker :disabledDate="delayDisabledDate" v-model:value="state.delayGuideData.delaySendDate" />
+          <a-form-item name="send_day" label="예상배송일">
+            <a-date-picker :disabledDate="delayDisabledDate" v-model:value="state.delayGuideData.formData.send_day" />
           </a-form-item>
-          <a-form-item label="배송지연사유">
-            <a-select v-model:value="state.delayGuideData.delayReason">
+          <a-form-item name="delay_reason" label="배송지연사유">
+            <a-select v-model:value="state.delayGuideData.formData.delay_reason">
               <a-select-option value="01">단기 재고 부족</a-select-option>
               <a-select-option value="02">주문폭주로 인한 작업지연</a-select-option>
               <a-select-option value="03">주문제작 시간이 필요</a-select-option>
@@ -285,8 +291,8 @@
               <a-select-option value="05">기타</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item label="상세사유">
-            <a-textarea :auto-size="{ minRows: 4 }"  v-model:value="state.delayGuideData.detailReason" placeholder="상세사유를 입력해주세요."/>
+          <a-form-item name="detail_reason" label="상세사유">
+            <a-textarea :auto-size="{ minRows: 4 }"  v-model:value="state.delayGuideData.formData.detail_reason" placeholder="상세사유를 입력해주세요."/>
           </a-form-item>
         </a-form>
       </div>
@@ -295,7 +301,6 @@
         <a-button key="back" @click="resetDelayData">닫기</a-button>
         <a-button key="submit" type="primary" :loading="state.delayGuideData.loading" @click="sendDelayGuide">확인</a-button>
       </template>
-
     </a-modal>
   </div>
 
@@ -303,7 +308,7 @@
 
 <script setup>
 
-import {onMounted, reactive, ref} from 'vue'
+import {onMounted, reactive, ref, toRaw} from 'vue'
 import {useMarketAccountApi} from "@/api/marketAccount";
 import {useMarketOrderApi} from '@/api/order'
 import {useMarketApi} from '@/api/market'
@@ -351,13 +356,15 @@ const state = reactive({
   is_bridge_sync: false,
 
   delayGuideData: {
+    formData : {
+      order_data: {},
+      send_day: moment(),
+      delay_reason: '01',
+      detail_reason: '',
+    },
     title: '발송지연 안내',
-    orderData: {},
     loading : false,
     showModal: false,
-    delaySendDate: moment(),
-    delayReason: '01',
-    detailReason: '',
   },
 });
 
@@ -541,7 +548,7 @@ const deliveryOrder = (id) => {
 }
 
 const openDelayForm = (orderData) => {
-  state.delayGuideData.orderData = orderData;
+  state.delayGuideData.formData.order_data = orderData;
   // 타이틀 설정
   if (orderData.marketCode === 'sk11st') {
     state.delayGuideData.title = '[11번가 발송지연안내 처리]';
@@ -559,20 +566,15 @@ const delayDisabledDate = (current) => {
 
 // 배송지연 안내
 const sendDelayGuide = () => {
-  console.log(state.delayGuideData.orderData)
-
-  useMarketOrderApi().sendDelayGuide({
-    order : record,
-    delaySendDate: state.delayGuideData.delaySendDate.format('YYYY-MM-DD'),
-    delayReason: state.delayGuideData.delayReason,
-    detailReason: state.delayGuideData.detailReason,
-  }).then(res => {
+  useMarketOrderApi().sendDelayGuide(toRaw(state.delayGuideData.formData)).then(res => {
     if (res.status !== "2000") {
-      message.error(res.data.message);
+      message.error(res.message);
+      state.delayGuideData.showModal = false;
       return false;
     }
 
-    message.success(res.data.message === '' ? '발송지연안내 성공 하었습니다.' : res.data.message);
+    message.success(res.message === '' ? '발송지연안내 성공 하었습니다.' : res.data.message);
+    resetDelayData();
   }).finally(() => {
     getTableData();
   });
@@ -580,11 +582,11 @@ const sendDelayGuide = () => {
 
 const resetDelayData = () => {
   state.delayGuideData.showModal = false;
-  state.delayGuideData = {
-    orderData: {},
-    delaySendDate: moment(),
-    delayReason: '01',
-    detailReason: '',
+  state.delayGuideData.formData = {
+    order_data: {},
+    send_day: moment(),
+    delay_reason: '01',
+    detail_reason: '',
   };
 }
 
