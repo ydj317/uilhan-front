@@ -1,20 +1,14 @@
 import {
     GiftOutlined,
     CalendarOutlined,
-    PayCircleOutlined,
-    FileTextOutlined,
-    ApiOutlined,
     SettingOutlined,
-    GroupOutlined,
-    AppstoreOutlined,
     MoneyCollectOutlined,
-    CloseCircleOutlined,
     ProfileOutlined,
-    DashboardOutlined,
-    FileExcelOutlined, NotificationOutlined,
     ShoppingOutlined,
-    BarcodeOutlined,
-    KeyOutlined, LayoutOutlined, ShoppingCartOutlined, BellOutlined
+    LayoutOutlined,
+    ShoppingCartOutlined,
+    BellOutlined,
+    RobotOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -190,17 +184,6 @@ export const menus = [{
                 //     component: () => import("@/views/User/ServicePay.vue"),
                 //     meta: {
                 //         title: "서비스 결제",
-                //         isHide: false,
-                //         roles: ["ROLE_ADMIN", "ROLE_USER"],
-                //         icon: ''
-                //     },
-                // },
-                // {
-                //     path: "/user/servicePayAi",
-                //     name: "user_servicePayAi",
-                //     component: () => import("@/views/User/ServicePayAi.vue"),
-                //     meta: {
-                //         title: "AI 서비스 결제",
                 //         isHide: false,
                 //         roles: ["ROLE_ADMIN", "ROLE_USER"],
                 //         icon: ''
@@ -417,6 +400,17 @@ export const menus = [{
         //         icon: FileExcelOutlined,
         //     },
         // },
+        {
+            path: "/user/servicePayAi",
+            name: "user_servicePayAi",
+            component: () => import("@/views/User/ServicePayAi.vue"),
+            meta: {
+                title: "️AI 서비스 결제",
+                isHide: false,
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                icon: RobotOutlined
+            },
+        },
     ]
 }]
 
