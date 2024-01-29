@@ -9,7 +9,7 @@
         <a-col :span="8"><span class="s-icon"><CheckOutlined /></span>무제한 상품 수집 / 등록 / 관리</a-col>
         <a-col :span="8"><span class="s-icon"><CheckOutlined /></span>직원 전용 계정 생성 및 관리</a-col>
         <a-col :span="8"><span class="s-icon"><CheckOutlined /></span>배송대행지</a-col>
-        <a-col :span="8"><span class="s-icon"><CheckOutlined /></span>하루 100개 자동 상세피이지 / 옵션이미지 번역</a-col>
+        <a-col :span="8"><span class="s-icon"><CheckOutlined /></span>하루 100개 자동 상세페이지 / 옵션이미지 번역</a-col>
         <a-col :span="8"><span class="s-icon"><CheckOutlined /></span>하루 100개 GPT 상품명 추천</a-col>
         <a-col :span="8"><span class="s-icon"><CheckOutlined /></span>주문관리</a-col>
       </a-row>
