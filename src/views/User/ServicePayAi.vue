@@ -22,7 +22,8 @@
           <div class="s-content">
             <div class="s-day">{{ data.serviceDay }}개월</div>
             <div class="s-sail"><div v-show="data.sailValue"><span>{{ data.sailValue }}% 할인</span> 할부 결제 가능</div></div>
-            <div class="s-price" :style="data.isBest ? 'color: #fe3a2f;' : ''">₩ {{ data.servicePrice.toLocaleString() }} / 월</div>
+            <div class="s-price" :style="data.isBest ? 'color: #fe3a2f;' : ''">₩ {{ data.servicePrice }} / 월</div>
+            <div class="introduction" v-show="data.introduction">{{data.introduction}}</div>
             <div><a-button class="s-button" size="large" @click="serviceBuy(data)">결제하기</a-button></div>
           </div>
         </a-card>
@@ -49,39 +50,40 @@ const payList = ref([
   {
     serviceDay: 1,
     sailValue: 0,
-    servicePrice: 250000,
-    isBest: false
+    servicePrice: '25만원',
+    isBest: false,
+    introduction: '30일 사용후 결제가능 (미결제시 서비스 중단)'
   },
-  {
-    serviceDay: 3,
-    sailValue: 20,
-    servicePrice: 200000,
-    isBest: false
-  },
-  {
-    serviceDay: 6,
-    sailValue: 33,
-    servicePrice: 167000,
-    isBest: true
-  },
-  {
-    serviceDay: 0,
-    sailValue: 0,
-    servicePrice: 0,
-    isBest: false
-  },
-  {
-    serviceDay: 0,
-    sailValue: 0,
-    servicePrice: 0,
-    isBest: false
-  },
-  {
-    serviceDay: 12,
-    sailValue: 44,
-    servicePrice: 140000,
-    isBest: true
-  },
+  // {
+  //   serviceDay: 3,
+  //   sailValue: 20,
+  //   servicePrice: 200000,
+  //   isBest: false
+  // },
+  // {
+  //   serviceDay: 6,
+  //   sailValue: 33,
+  //   servicePrice: 167000,
+  //   isBest: true
+  // },
+  // {
+  //   serviceDay: 0,
+  //   sailValue: 0,
+  //   servicePrice: 0,
+  //   isBest: false
+  // },
+  // {
+  //   serviceDay: 0,
+  //   sailValue: 0,
+  //   servicePrice: 0,
+  //   isBest: false
+  // },
+  // {
+  //   serviceDay: 12,
+  //   sailValue: 44,
+  //   servicePrice: 140000,
+  //   isBest: true
+  // },
 ]);
 
 // 결제버튼
@@ -140,10 +142,15 @@ const serviceBuy = (data) => {
 }
 
 .s-service-pay .s-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;
+  //position: absolute;
+  //top: 50%;
+  //left: 50%;
+  //transform: translate(-50%, -50%);
 }
 
 .s-service-pay .s-day {
@@ -153,7 +160,6 @@ const serviceBuy = (data) => {
 
 .s-service-pay .s-sail {
   font-size: 14px;
-  height: 25px;
 }
 .s-service-pay .s-sail span {
   color: #fe3a2f;
@@ -171,6 +177,10 @@ const serviceBuy = (data) => {
   padding: 0 25px;
   margin-top: 30px;
   border: none;
+}
+
+.s-service-pay .introduction {
+  color: #939393;
 }
 
 </style>
