@@ -177,7 +177,7 @@
           <!--상품명-->
           <template v-if="column.key === 'item_name'">
             <div class="item-name">
-              <a :href="`/product/detail/${record.item_id}`">
+              <a href="javascript:void(0)" @click="openDetailPopup(record.item_id)">
                 {{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}
               </a>
               <div class="cantent">
@@ -247,6 +247,7 @@
       </a-table>
     </div>
 
+    <DetailPopup :visible="detailPopupVisible" @update:visible="detailPopupVisible = false" :prdId="prdId"/>
     <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData"/>
   </a-card>
 
@@ -441,9 +442,11 @@ import HistoryView from "@/components/HistoryView.vue";
 import {useCategoryApi} from "@/api/category";
 import {useProductApi} from "@/api/product";
 import {useUserApi} from "@/api/user";
+import DetailPopup from "@/views/Product/DetailPopup.vue";
 
 export default defineComponent({
   components: {
+    DetailPopup,
     UploadOutlined,
     HistoryView,
     QuestionCircleOutlined,
@@ -682,6 +685,9 @@ export default defineComponent({
       expand: true,
       copyPrdVisible: false,
       copyPrdCondition: true,
+
+      detailPopupVisible: false,
+      prdId: "",
     };
   },
 
@@ -1399,6 +1405,11 @@ export default defineComponent({
         message.error(error.message);
         return false;
       }
+    },
+    openDetailPopup(prdId) {
+      console.log(prdId);
+      this.detailPopupVisible = true;
+      this.prdId = prdId;
     },
   },
 
