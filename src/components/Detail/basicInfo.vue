@@ -1,6 +1,6 @@
 <template>
   <div id="eModelTitle_0" class="bg-white" style="padding: 20px">
-    <h1><strong>기본정보</strong></h1>
+    <h3><strong>기본정보</strong></h3>
 
     <div class="detail-basic">
       <a-descriptions bordered :column="1" >
@@ -37,7 +37,13 @@
             {{ filter_words }}
           </a-tag >
         </a-descriptions-item>
-
+        <a-descriptions-item label="연관키워드">
+          <a-tag>기타</a-tag>
+          <a-tag color="error">플레이트</a-tag>
+          <a-tag color="success">플레이트</a-tag>
+          <a-tag color="processing">잠금</a-tag>
+          <a-tag color="default" >DIY</a-tag>
+        </a-descriptions-item>
         <a-descriptions-item>
           <template #label>
             상품태그

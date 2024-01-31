@@ -1,6 +1,9 @@
 <template>
-  <div id="eModelTitle_3" class="mt20 p20 bg-white">
-    <h1><strong>옵션정보</strong></h1>
+  <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
+    <a-spin v-if="product.loading" size="large"/>
+  </div>
+  <div v-else id="eModelTitle_3" class="mt20 p20 bg-white">
+    <h3><strong>옵션정보</strong></h3>
     <!--sku 상단 버튼-->
     <div class="top_button_container" style="display: flex;justify-content: space-between;">
       <!--sku 상단 left 버튼-->
@@ -263,10 +266,10 @@ import {mapState, useStore} from "vuex";
 import {lib} from "@/util/lib";
 import {forEach} from "lodash";
 import {message} from "ant-design-vue";
-import {computed, reactive, ref} from "vue";
+import {computed, reactive, ref, defineComponent} from "vue";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 
-export default {
+export default defineComponent({
   name: "productDetailSku",
   components: {QuestionCircleOutlined},
 
@@ -348,15 +351,12 @@ export default {
   },
 
   setup() {
-    const store = useStore()
-    const aProduct = computed(() => store.state.product)
     const formState = reactive({
       item_is_free_delivery: false,
       item_shipping_fee: '',
       original_item_skus: [],
     });
     return {
-      aProduct,
       formState,
     }
   },
@@ -663,7 +663,7 @@ export default {
     // 전체 마진자동셋팅
     shippingFeeInit() {
       this.formState.item_shipping_fee = this.product.item_shipping_fee || 0;
-      this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T' ? true : false;
+      this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T';
       if (!this.formState.item_is_free_delivery) {
         this.formState.shipping_fee_ko = this.product.item_shipping_fee;
       }
@@ -707,14 +707,13 @@ export default {
   },
 
   mounted() {
-
     this.css();
     this.shippingFeeInit();
     //예상수익
     this.handleShippingFeeChange(this.formState.item_shipping_fee);
     this.setExpectedReturn();
   },
-};
+});
 </script>
 
 <style scoped>

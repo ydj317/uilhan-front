@@ -687,7 +687,7 @@ export default defineComponent({
       copyPrdCondition: true,
 
       detailPopupVisible: false,
-      prdId: "",
+      prdId: 0,
     };
   },
 
@@ -1407,7 +1407,6 @@ export default defineComponent({
       }
     },
     openDetailPopup(prdId) {
-      console.log(prdId);
       this.detailPopupVisible = true;
       this.prdId = prdId;
     },

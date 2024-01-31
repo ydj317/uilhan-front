@@ -2,7 +2,7 @@
   <div id="eModelTitle_4" class="mt20 p20 bg-white">
     <!--title-->
     <div style="display: flex; justify-content: space-between;">
-      <h1><strong>상세페이지</strong></h1>
+      <h3><strong>상세페이지</strong></h3>
       <div class="editorToolbar">
         <a-space>
           <span>옵션 테이블</span>
@@ -205,7 +205,9 @@ export default {
       watchEffect(() => {
         this.product.sku.map(item => item.img);
         //변경될 경우 테이블 업데이트
-        this.setOptionTable();
+        this.$nextTick(() => {
+          this.setOptionTable();
+        });
       });
     },
     setOptionTable() {

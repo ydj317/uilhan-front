@@ -1,7 +1,7 @@
 <template>
   <!--편집기-->
   <div id="xiangJi">
-    <a-modal class="xiangJi" v-if="product.xiangjiVisible" :visible="product.xiangjiVisible" :closable="false"
+    <a-modal class="xiangJi" v-if="product.xiangjiVisible" :open="product.xiangjiVisible" :closable="false"
       :cancel-button-props="{ ghost: true, disabled: true }" :footer="null">
       <!-- 模板HTML 不可修改 -->
       <div id="app">
@@ -55,7 +55,7 @@ export default {
       let self = this;
       window.addEventListener("message", function (e) {
         if (e.origin === 'https://www.xiangjifanyi.com') {
-          let content = window.tinymce.editors[0].getContent();
+          // let content = window?.tinymce?.editors[0]?.getContent();
           const { name, all } = e.data;
           if (name === "XJ_IMAGE_EDITOR_URL") {
             // 편집완료후 데이터 업데이트
@@ -91,7 +91,6 @@ export default {
         ).then((res) => {
           if (res.status !== "2000") {
             message.error(res.message);
-            this.product.loading = false;
             return false;
           }
 
@@ -99,7 +98,6 @@ export default {
             message.error(
               "번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다."
             );
-            this.product.loading = false;
             return false;
           }
 
@@ -113,6 +111,8 @@ export default {
           });
 
           xiangjiCallback(oTranslateInfo);
+        }).finally(() => {
+          this.product.loading = false;
         });
       };
     },
@@ -142,7 +142,7 @@ export default {
           // 이미지 편집기 열기
           this.product.xiangjiVisible = true;
           // // loading 제거
-          // this.product.loading = false;
+          this.product.loading = false;
 
           this.product.xiangjiCallback = xiangjiCallback;
         } catch (e) {

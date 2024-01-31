@@ -1,9 +1,32 @@
 <template>
-  <div>
-DetailInfoTab
+
+  <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
+    <a-spin v-if="product.loading" size="large"/>
   </div>
+  <div v-show="!product.loading">
+    <!--상세페이지-->
+    <Description></Description>
+  </div>
+
 </template>
 
-<script setup>
+<script>
+import { defineComponent } from "vue";
+import Description from "@/components/Detail/description.vue";
+import {mapState} from "vuex";
 
+export default defineComponent({
+  components: {Description},
+
+  computed: {
+    ...mapState({
+      product: state => state.product
+    }),
+  },
+
+  methods: {
+
+  },
+
+})
 </script>

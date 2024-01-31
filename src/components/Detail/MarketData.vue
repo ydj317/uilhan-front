@@ -1,6 +1,6 @@
 <template>
   <div class="plrb20 bg-white" style="padding: 20px;">
-    <h1><strong>카테고리</strong></h1>
+    <h3><strong>카테고리</strong></h3>
 
     <!--title-->
     <div>

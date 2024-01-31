@@ -433,11 +433,7 @@ export default {
 </script>
 <style lang="css" scoped>
 .spec-box {
-  margin-top: 5px;
-  margin-right: 5px;
-  margin-left: 5px;
-  width: 50%;
-  min-width: 580px;
+  width: 100%;
 }
 
 .spec-box table {
