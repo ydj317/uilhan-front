@@ -31,7 +31,9 @@ export default {
   },
 
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: (state) => state.product.detail,
+    }),
   },
 
   methods: {

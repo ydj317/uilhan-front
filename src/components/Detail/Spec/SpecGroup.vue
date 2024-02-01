@@ -133,7 +133,9 @@ import { nextTick, watch } from "vue";
 export default {
   name: "productDetailSpecGroup",
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: state => state.product.detail
+    }),
   },
   props: ['option', 'optionIndex'],
   components: {PlusOutlined, MinusOutlined},

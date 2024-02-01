@@ -1,5 +1,8 @@
 <template>
-  <div id="eModelTitle_4" class="mt20 p20 bg-white">
+  <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
+    <a-spin v-if="product.loading" size="large"/>
+  </div>
+  <div v-show="!product.loading" id="eModelTitle_4" class="mt20 p20 bg-white">
     <!--title-->
     <div style="display: flex; justify-content: space-between;">
       <h3><strong>상세페이지</strong></h3>
@@ -83,7 +86,9 @@ export default {
   },
 
   computed: {
-    ...mapState(["product"])
+    ...mapState({
+      product: (state) => state.product.detail,
+    })
   },
 
   data() {
@@ -200,14 +205,15 @@ export default {
       // if (match[1] === `${this.optionTableId}_4`) {
       //   this.selectOptionValue = "table_four_column";
       // }
-
       //품목 이미지, 품목명 변경에 따라 액션
       watchEffect(() => {
-        this.product.sku.map(item => item.img);
-        //변경될 경우 테이블 업데이트
-        this.$nextTick(() => {
-          this.setOptionTable();
-        });
+        if(this.product.loading !== true){
+          this.product.sku.map(item => item.img);
+          //변경될 경우 테이블 업데이트
+          this.$nextTick(() => {
+            this.setOptionTable();
+          });
+        }
       });
     },
     setOptionTable() {
@@ -345,9 +351,6 @@ export default {
         });
       });
     }
-  }
+  },
 };
 </script>
-
-<style scoped>
-</style>

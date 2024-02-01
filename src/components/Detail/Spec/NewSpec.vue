@@ -31,7 +31,9 @@ export default {
     SpecGroup
   },
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: state => state.product.detail
+    }),
   },
   data() {
     return {

@@ -70,10 +70,10 @@
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
-            <a-checkbox v-model:checked="formState.item_is_free_delivery" @change="handleShippingFeeDeliveryChange">
+            <a-checkbox v-model:checked="product.item_is_free_delivery" @change="handleShippingFeeDeliveryChange">
               무료 배송
             </a-checkbox>
-            <a-input-number v-model:value.number="formState.item_shipping_fee" placeholder="배송비 입력" :step="1000"
+            <a-input-number v-model:value.number="product.item_shipping_fee" placeholder="배송비 입력" :step="1000"
                             :min="0" style="width: 80px" @change="handleShippingFeeChange"/>
           </a-space>
         </div>
@@ -274,7 +274,9 @@ export default defineComponent({
   components: {QuestionCircleOutlined},
 
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: (state) => state.product.detail,
+    }),
   },
 
   data() {
@@ -350,16 +352,6 @@ export default defineComponent({
     };
   },
 
-  setup() {
-    const formState = reactive({
-      item_is_free_delivery: false,
-      item_shipping_fee: '',
-      original_item_skus: [],
-    });
-    return {
-      formState,
-    }
-  },
   methods: {
     settingSkuPrice() {
       if (!Array.isArray(this.product.sku) || this.product.sku.length === 0) {
@@ -660,38 +652,18 @@ export default defineComponent({
       });
     },
 
-    // 전체 마진자동셋팅
-    shippingFeeInit() {
-      this.formState.item_shipping_fee = this.product.item_shipping_fee || 0;
-      this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T';
-      if (!this.formState.item_is_free_delivery) {
-        this.formState.shipping_fee_ko = this.product.item_shipping_fee;
-      }
-    },
-
-    sellingPriceInit() {
-      this.product.sku.map((data, i) => {
-        this.product.sku[i].original_selling_price = Number(data.selling_price);
-      });
-    },
-
     handleShippingFeeChange(val) {
       this.product.sku.map((data, i) => {
         this.product.sku[i].shipping_fee_ko = val;
       });
-
-      this.formState.item_shipping_fee = val;
-      this.product.formState.item_shipping_fee = val;
-      this.product.formState.item_is_free_delivery = this.formState.item_is_free_delivery;
     },
 
     handleShippingFeeDeliveryChange() {
-      if (this.formState.item_is_free_delivery) {
+      if (this.product.item_is_free_delivery) {
         message.warn('배송비가 판매가에 적용됩니다.');
       } else {
         message.warn('배송비가 운임에 적용됩니다.');
       }
-      this.product.formState.item_is_free_delivery = this.formState.item_is_free_delivery;
     },
 
     setExpectedReturn() {
@@ -700,7 +672,10 @@ export default defineComponent({
         this.product.sku[i].expected_return = Number(expected_return);
       });
     },
+  // 전체 마진자동셋팅
+    shippingFeeInit() {
 
+    },
     isManager() {
       return ['jwli', 'irunkorea_02', 'haeju'].includes(lib.getCookie("member_name"));
     }
@@ -710,7 +685,7 @@ export default defineComponent({
     this.css();
     this.shippingFeeInit();
     //예상수익
-    this.handleShippingFeeChange(this.formState.item_shipping_fee);
+    this.handleShippingFeeChange(this.product.item_shipping_fee);
     this.setExpectedReturn();
   },
 });

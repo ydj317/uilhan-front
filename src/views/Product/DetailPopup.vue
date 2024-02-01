@@ -3,7 +3,7 @@
     <a-tabs v-model:activeKey="activeKey"
             :tabBarGutter="30"
     >
-      <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange">
+      <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange" :forceRender="true">
         <template #tab>
           <div style="display: flex;gap: 3px">
             <span>
@@ -12,9 +12,9 @@
             {{pane.tab}}
           </div>
         </template>
-          <keep-alive>
-            <component :is="pane.component" v-if="activeKey === pane.key" style="height: 700px;overflow-y: scroll" />
-          </keep-alive>
+        <keep-alive>
+          <component :is="pane.component" v-show="activeKey === pane.key" style="height: 700px;overflow-y: scroll" />
+        </keep-alive>
       </a-tab-pane>
     </a-tabs>
     <template #footer>
@@ -98,7 +98,7 @@
 
 <script>
 
-import {computed, defineAsyncComponent, defineComponent, ref} from "vue";
+import { defineComponent, ref } from "vue";
 import { AndroidOutlined,PictureOutlined,ProfileOutlined } from '@ant-design/icons-vue';
 import DefaultTab from "@/views/Product/Tab/DefaultTab.vue";
 import ThumbnailTab from "@/views/Product/Tab/ThumbnailTab.vue";
@@ -107,9 +107,10 @@ import DetailInfoTab from "@/views/Product/Tab/DetailInfoTab.vue";
 import {lib} from "@/util/lib";
 import {message} from "ant-design-vue";
 import {AuthRequest} from "@/util/request";
-import {mapActions, mapState, useStore} from "vuex";
+import { mapState} from "vuex";
 import {throttle} from "lodash";
 import {useCategoryApi} from "@/api/category";
+import {useUserApi} from "@/api/user";
 // const OptionTab = defineAsyncComponent(() => import('@/views/Product/Tab/OptionTab.vue'));
 // const ThumbnailTab = defineAsyncComponent(() => import('@/views/Product/Tab/ThumbnailTab.vue'));
 // const DetailInfoTab = defineAsyncComponent(() => import('@/views/Product/Tab/DetailInfoTab.vue'));
@@ -192,7 +193,7 @@ export default defineComponent({
 
   computed: {
     ...mapState({
-      product: state => state.product
+      product: state => state.product.detail
     }),
   },
 
@@ -207,12 +208,10 @@ export default defineComponent({
     }
   },
   emits: ['update:visible'],
-  setup(props) {
+  setup() {
     const activeKey = ref('1');
-    const store = useStore();
     return {
       activeKey,
-      store
     };
   },
 
@@ -259,56 +258,6 @@ export default defineComponent({
       }
     },
 
-    // async getProduct() {
-    //   // props prdId
-    //   let id = this.prdId;
-    //   if (!lib.isNumeric(id)) {
-    //     message.warning("상품번호가 잘못되었습니다.");
-    //     await router.push("/product");
-    //     return false;
-    //   }
-    //
-    //   await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prd", {
-    //     params: { prduct_idx: id },
-    //   }).then((res) => {
-    //     if (
-    //         lib.isEmpty(res) ||
-    //         res.status !== "2000" ||
-    //         lib.isEmpty(res.data)
-    //     ) {
-    //       message.success(res.message);
-    //       router.push("/product");
-    //       this.product.loading = false;
-    //       return false;
-    //     }
-    //
-    //     this.$store.state.product = Object.assign(this.product, res.data); //vueX
-    //     if (Array.isArray(this.product.item_cate) && this.product.item_cate.length === 0){
-    //       this.product.item_cate = {};
-    //     }
-    //
-    //     if ((Array.isArray(this.product.item_disp_cate) && this.product.item_disp_cate.length === 0) || lib.isEmpty(this.product.item_disp_cate)){
-    //       this.product.item_disp_cate = {};
-    //     }
-    //
-    //     // 상품 전송여부 판단
-    //     this.product.is_sync = "F";
-    //     this.product.item_sync_market.forEach(item => {
-    //       if (item.status !== "unsync") {
-    //         this.product.is_sync = "T";
-    //         return false;
-    //       }
-    //     })
-    //
-    //     this.initSku();
-    //
-    //     this.product.select_pvs = [1,2];
-    //
-    //     this.product.onload = true;
-    //     this.product.loading = false;
-    //   });
-    // },
-
     skuLongName() {
       let aLongerSkuName = this.product.sku.filter(
           (data) => data.spec.length > 20
@@ -326,7 +275,6 @@ export default defineComponent({
       });
     },
 
-
     initSku() {
       this.product.toLang = "ko";
       this.skuLongName();
@@ -340,10 +288,6 @@ export default defineComponent({
       if (lib.isEmpty(this.product["item_upd"])) {
         this.product.is_modify = "F";
       }
-    },
-
-    handleUserInfoUpdate(data) {
-      this.useAutoSave = data.use_auto_save;
     },
 
     handleTabChange(key) {
@@ -379,7 +323,6 @@ export default defineComponent({
 
     getForm(oForm) {
       let oProduct = this.product;
-      let oFormState = oProduct.formState;
 
       oForm = this.setForm(oForm, {
         id: oProduct["item_id"],
@@ -394,12 +337,12 @@ export default defineComponent({
         trans_status: oProduct.item_is_trans,
         cross_border: oProduct.item_cross_border,
 
-        surtax: oFormState.surtax,
+        surtax: 'N',
         keyword: oProduct.item_sync_keyword,
-        mandatory_val: oFormState.mandatory_val,
-        is_free_delivery: oFormState.item_is_free_delivery === true ? "T" : "F",
-        shipping_fee: oFormState.item_shipping_fee,
-        custom_code: oFormState.custom_code,
+        mandatory_val: oProduct.item_mandatory,
+        is_free_delivery: oProduct.item_is_free_delivery === true ? "T" : "F",
+        shipping_fee: oProduct.item_shipping_fee,
+        custom_code: oProduct.custom_code,
 
         item_cate: JSON.stringify(oProduct.item_cate),
         item_disp_cate: JSON.stringify(oProduct.item_disp_cate)
@@ -668,8 +611,8 @@ export default defineComponent({
      */
     checkMarket() {
 
-      let isFree = this.product.formState.item_is_free_delivery;
-      let shippingFee = this.product.formState.item_shipping_fee;
+      let isFree = this.product.item_is_free_delivery;
+      let shippingFee = this.product.item_shipping_fee;
       if (isFree === false && shippingFee < 100) {
         message.warning("무료배송이 아닌경우 배송비를 입력해 주세요");
         return false;
@@ -680,7 +623,7 @@ export default defineComponent({
         return false;
       }
 
-      let mandatoryVal = this.product.formState.mandatory_val;
+      let mandatoryVal = this.product.item_mandatory;
       if (mandatoryVal === "선택") {
         message.warning("상품고시정보를 선택해 주세요");
         return false;
@@ -747,9 +690,9 @@ export default defineComponent({
         let aTempItemThumbnails = res.data.item_thumb || [];
         this.product.item_detail = res.data.item_detail;
 
-        for (let i = 0; i < this.product.sku.length; i++) {
-          this.product.sku[i].checked = false;
-        }
+        this.product.sku.every((item, index) => {
+          item.checked = false;
+        });
 
         let aItemThumbnails = [];
         for (let i = 0; i < aTempItemThumbnails.length; i++) {
@@ -762,10 +705,13 @@ export default defineComponent({
         }
         this.product.item_thumbnails = aItemThumbnails;
 
+
         message.success("저장 성공");
         this.product.loading = false;
         this.$emit('update:visible');
+
       } catch (e) {
+        console.error(e);
         message.error("저장에 실패 하였습니다.");
         return false;
       }
@@ -899,7 +845,16 @@ export default defineComponent({
         return false;
       }
     },
+    async getUserInfoData() {
+      useUserApi().getUserInfoData().then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
 
+        this.useAutoSave = res.data.use_auto_save === '1';
+      });
+    },
     onCancel() {
       console.log('cancel!');
       this.$emit('update:visible');
@@ -909,14 +864,13 @@ export default defineComponent({
     //   console.log('submit!');
     //   //this.$emit('update:visible');
     // },
-    ...mapActions(["getProduct"]),
   },
 
   watch: {
     'product': {
       handler() {
         this.productWatchCount++;
-        if (this.productWatchCount > 10 && this.useAutoSave) {
+        if (this.productWatchCount > 6 && this.useAutoSave) {
           this.autoSave()
         }
       },
@@ -925,11 +879,7 @@ export default defineComponent({
     },
     prdId: {
       async handler() {
-
-          await this.getProduct(this.prdId);
-
-        // await this.getProduct();
-        // console.log(this.product);
+        this.$store.dispatch('product/getDetail', this.prdId);
       },
       flush: 'post',
     }
@@ -937,6 +887,7 @@ export default defineComponent({
 
   beforeMount() {
     this.getSmartstoreCategory();
+    this.getUserInfoData();
   },
 });
 

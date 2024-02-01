@@ -20,7 +20,7 @@ export default defineComponent({
 
   computed: {
     ...mapState({
-      product: state => state.product
+      product: state => state.product.detail
     }),
   },
 

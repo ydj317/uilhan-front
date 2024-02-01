@@ -78,7 +78,9 @@ export default {
   components: {QuestionCircleOutlined},
 
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: (state) => state.product.detail,
+    }),
   },
 
   data() {
@@ -209,14 +211,7 @@ export default {
 
         this.use_ai = (res.data.use_ai === '1');
         this.use_auto_save = (res.data.use_auto_save === '1');
-
-
-        // 发射一个事件，携带数据
-        this.$emit('userinfo-updated', {
-          use_auto_save: this.use_auto_save
-        });
       });
-
     },
 
     replaceWithAI() {

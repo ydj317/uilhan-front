@@ -4,7 +4,7 @@
     <a-spin v-if="product.loading" size="large"/>
   </div>
   <div v-else>
-  <BasicInfo @userinfo-updated="handleUserInfoUpdate"></BasicInfo>
+  <BasicInfo></BasicInfo>
   <MarketData> </MarketData>
   </div>
 
@@ -29,15 +29,8 @@ export default defineComponent({
 
   computed: {
     ...mapState({
-      product: state => state.product
+      product: state => state.product.detail
     }),
   },
-
-  methods: {
-    handleUserInfoUpdate(data) {
-      this.useAutoSave = data.use_auto_save;
-    },
-  },
-
 })
 </script>

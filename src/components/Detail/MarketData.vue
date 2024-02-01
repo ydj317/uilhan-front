@@ -57,7 +57,7 @@
 
           <a-descriptions-item label="상품고시">
             <a-form-item>
-              <a-select v-model:value="formState.mandatory_val" placeholder="상품고시 선택해주세요.">
+              <a-select v-model:value="product.item_mandatory" placeholder="상품고시 선택해주세요.">
                 <a-select-option value="선택">선택</a-select-option>
                 <a-select-option v-for="(item, key) in formState.mandatory" :key="key" :value="item.value">{{
                     item.label
@@ -86,9 +86,9 @@ export default {
   components: {CategorySettings, CloseCircleTwoTone},
 
   computed: {
-    ...mapState([
-      'product',
-    ])
+    ...mapState({
+      product: (state) => state.product.detail,
+    })
   },
 
   setup() {
@@ -152,14 +152,14 @@ export default {
 
     // this.formState.mandatory_val = this.product;
 
-    this.formState.mandatory_val = this.product.item_mandatory ? this.product.item_mandatory : '선택';
-
-    this.formState.surtax = this.product.item_surtax;
-    this.formState.custom_code = this.product.item_custom_code;
+    // this.formState.mandatory_val = this.product.item_mandatory ? this.product.item_mandatory : '선택';
+    //
+    // this.formState.surtax = this.product.item_surtax;
+    // this.formState.custom_code = this.product.item_custom_code;
 
     // 데이터 관리용
-    this.product.formState = this.formState;
-  }
+    //this.product.formState = this.formState;
+  },
 }
 
 </script>

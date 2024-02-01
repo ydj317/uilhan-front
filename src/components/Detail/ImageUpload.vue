@@ -46,7 +46,7 @@
             <div
                 class="eModelTitle_1_conent_group"
                 key="all"
-                style="border:1px dashed #cccccc;display: flex;justify-content: center;align-items: center;"
+                style="border:1px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 150px;"
             >
               <a-upload
                   name="file"
@@ -104,7 +104,9 @@ export default {
   },
 
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: (state) => state.product.detail,
+    }),
   },
 
   data() {
@@ -161,7 +163,7 @@ export default {
       this.translatePopup(index,checkedImage)
     },
     translatePopup(index, element) {
-
+      this.product.xiangjiVisible = true;
       this.product.aPhotoCollection = [
         {
           msg: "",

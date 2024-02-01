@@ -24,14 +24,14 @@
 </template>
 
 <script setup>
-import { onMounted, onUpdated, ref, toRefs, watchEffect } from "vue";
+import {computed, onMounted, onUpdated, ref, toRefs, watchEffect} from "vue";
 import { useCategoryApi } from "@/api/category";
 import { useStore } from 'vuex';
 import { LoadingOutlined } from '@ant-design/icons-vue';
 import MarketDisplayCategorys from './MarketDisplayCategorys.vue'
 import {message} from "ant-design-vue";
-const store = useStore();
-const { product } = toRefs(store.state);
+const store = useStore()
+const product = computed(() => store.state.product.detail)
 
 const props = defineProps(['marketCode', 'sellerId', 'modelValue', 'marketPrdCode'])
 const { marketCode, sellerId, modelValue, marketPrdCode } = toRefs(props)
