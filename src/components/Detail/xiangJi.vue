@@ -167,7 +167,7 @@ export default {
 <style>
 .logo-hide {
   position: absolute;
-  top: 30px;
+  top: 29px;
   left: 30px;
   background: #fff;
   width: 110px;
@@ -177,7 +177,7 @@ export default {
 .close-btn {
   padding: 4px 20px 6px;
   position: absolute;
-  top: 36px;
+  top: 32px;
   right: 130px;
   background: #2055f3;
   border-radius: 20px;

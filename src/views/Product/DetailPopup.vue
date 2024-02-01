@@ -13,7 +13,9 @@
           </div>
         </template>
         <keep-alive>
+          <div>
           <component :is="pane.component" v-show="activeKey === pane.key" style="height: 700px;overflow-y: scroll" />
+          </div>
         </keep-alive>
       </a-tab-pane>
     </a-tabs>
@@ -117,14 +119,7 @@ import {useUserApi} from "@/api/user";
 
 
 export default defineComponent({
-  name: "productDetail",
-
-  components: {
-    DefaultTab,
-    ThumbnailTab,
-    OptionTab,
-    DetailInfoTab,
-  },
+  name: "productDetailPopup",
 
   data() {
     return {
@@ -156,8 +151,6 @@ export default defineComponent({
       ],
       useAutoSave: false,
       productWatchCount: 0,
-      visible: this.visible,
-      prdId: this.prdId,
 
       SYNC_COLUMNS_CONFIG: [
         {

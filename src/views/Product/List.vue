@@ -465,9 +465,9 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState([
-      "relaket",
-    ])
+    ...mapState({
+      marketAccount: (state) => state.marketAccount,
+    })
   },
 
   data() {
@@ -590,13 +590,13 @@ export default defineComponent({
         showSizeChanger: true,
         pageSizeOptions: ["10", "20", "50", "100"],
         onChange: page => {
-          sessionStorage.relaket_page = page;
+          sessionStorage.marketAccount_page = page;
           this.pageNum = page;
           this.pagination.current = page;
           this.getList();
         },
         onShowSizeChange: (current, pageSize) => {
-          sessionStorage.relaket_limit = pageSize;
+          sessionStorage.marketAccount_limit = pageSize;
           this.limit = pageSize;
           this.getList();
         }
@@ -768,7 +768,7 @@ export default defineComponent({
         message.warning("선택된 상품이 없습니다.");
         return false;
       }
-      this.relaket.data = this;
+      this.marketAccount.data = this;
       this.MarketListVisible = true;
     },
 
@@ -842,8 +842,8 @@ export default defineComponent({
       let iPage = parseInt(this.pageNum) || 1;
 
       if (sType === "reload") {
-        iPage = sessionStorage.relaket_page !== undefined ? parseInt(sessionStorage.relaket_page) : iPage;
-        iLimit = sessionStorage.relaket_limit !== undefined ? parseInt(sessionStorage.relaket_limit) : iLimit;
+        iPage = sessionStorage.marketAccount_page !== undefined ? parseInt(sessionStorage.marketAccount_page) : iPage;
+        iLimit = sessionStorage.marketAccount_limit !== undefined ? parseInt(sessionStorage.marketAccount_limit) : iLimit;
       }
 
       return {

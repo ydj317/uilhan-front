@@ -40,7 +40,7 @@
             <a-tooltip>
               <template #title>
                 <div>무료배송 박스 체크 시 배송비를 상품 판매가 내 추가하여 등록 할 수 있는 기능입니다.</div>
-                <a-popover v-model:visible="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop"
+                <a-popover v-model:open="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop"
                            style="z-index: 999">
                   <template #content>
                     <table border="1" style="border: 1px solid #999" class="popoverTable">
@@ -588,7 +588,7 @@ export default defineComponent({
       //
       //   return false;
       // }
-
+      this.product.xiangjiVisible = true;
       this.product.bProductDetailsEditor = false;
       this.product.bProductImageEditor = false;
       this.product.bImageEditorModule = true;
@@ -605,8 +605,16 @@ export default defineComponent({
           translate_status: record.translate_status,
         },
       ];
+      this.productTranslateImage(this.product.aPhotoCollection, false)
     },
-
+//상품이미지 번역
+    productTranslateImage(aImagesInfo, isTranslate) {
+      this.product.isTranslate = isTranslate
+      this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
+        let sTranslateUrl = oTranslateInfo[aImagesInfo[0].key].translate_url;
+        this.requestXiangji([sTranslateUrl]);
+      });
+    },
     // 이미지 편집
     requestXiangji(aImagesUrl) {
       this.product.requestXiangji(aImagesUrl, (oRequestId) => {
@@ -653,9 +661,7 @@ export default defineComponent({
     },
 
     handleShippingFeeChange(val) {
-      this.product.sku.map((data, i) => {
-        this.product.sku[i].shipping_fee_ko = val;
-      });
+      this.product.sku = this.product.sku.map(data => ({ ...data, shipping_fee_ko: val }));
     },
 
     handleShippingFeeDeliveryChange() {

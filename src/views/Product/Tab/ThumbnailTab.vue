@@ -1,5 +1,5 @@
 <template>
-
+<div>
   <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
     <a-spin v-if="product.loading" size="large"/>
   </div>
@@ -7,7 +7,7 @@
     <!--상품 이미지-->
     <ImageUpload></ImageUpload>
   </div>
-
+</div>
 </template>
 
 <script>
@@ -16,6 +16,7 @@ import {mapState} from "vuex";
 import ImageUpload from "@/components/Detail/ImageUpload.vue";
 
 export default defineComponent({
+  name: "ThumbnailTab",
   components: {ImageUpload},
 
   computed: {

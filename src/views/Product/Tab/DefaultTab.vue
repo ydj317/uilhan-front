@@ -1,5 +1,5 @@
 <template>
-
+  <div>
   <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
     <a-spin v-if="product.loading" size="large"/>
   </div>
@@ -7,7 +7,7 @@
   <BasicInfo></BasicInfo>
   <MarketData> </MarketData>
   </div>
-
+  </div>
 </template>
 
 <script>
@@ -18,6 +18,7 @@ import Loading from "vue-loading-overlay";
 import MarketData from "@/components/Detail/MarketData.vue";
 
 export default defineComponent({
+  name: "DefaultTab",
   components: {MarketData, Loading, BasicInfo},
 
   data() {

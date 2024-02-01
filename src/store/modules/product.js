@@ -1,7 +1,6 @@
 import {AuthRequest} from "@/util/request";
 import {lib} from "@/util/lib";
 import {message} from "ant-design-vue";
-import {commit} from "lodash/seq";
 
 const state = () => ({
     detail: {
@@ -34,7 +33,7 @@ const actions = {
                     router.push("/product");
                     return false;
                 }
-
+                res.data.item_is_free_delivery = res.data.item_is_free_delivery === "T";
                 commit("setDetail", res.data);
             }).finally(() => {
                 state.detail.onload = true;

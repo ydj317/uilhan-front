@@ -1,5 +1,5 @@
 <template>
-
+  <div>
   <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
     <a-spin v-if="product.loading" size="large"/>
   </div>
@@ -7,7 +7,7 @@
     <!--상세페이지-->
     <Description></Description>
   </div>
-
+  </div>
 </template>
 
 <script>
@@ -16,6 +16,7 @@ import Description from "@/components/Detail/description.vue";
 import {mapState} from "vuex";
 
 export default defineComponent({
+  name: "DetailInfoTab",
   components: {Description},
 
   computed: {

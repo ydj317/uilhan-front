@@ -1,19 +1,17 @@
 import {createStore} from "vuex";
 import product from "@/store/modules/product";
+import marketAccount from "@/store/modules/marketAccount";
 
 export default createStore({
     state: {
         common: {},
-        relaket: {
-            data: {},
-            methods: {}
-        },
         return: {
             isOptionApplied: false,
         },
     },
 
     modules: {
-        product
+        product,
+        marketAccount
     },
 });
