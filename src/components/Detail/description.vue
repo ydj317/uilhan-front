@@ -65,6 +65,7 @@
       />
     </div>
   </div>
+  <image-translate-tools v-model:visible="imageTranslateToolsVisible" @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList" @update:translateImageList="updateTranslateImageList"/>
 </template>
 
 <script>
@@ -75,12 +76,14 @@ import { watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
 
 export default {
   name: "productDetailDescription",
 
   components: {
+    ImageTranslateTools,
     QuestionCircleOutlined,
     TEditor
   },
@@ -113,7 +116,10 @@ export default {
       guideBeforeId: "editor_before_guide",
       guideAfterId: "editor_after_guide",
       guideValue: "",
-      guideData: []
+      guideData: [],
+
+      imageTranslateToolsVisible: false,
+      translateImageList: []
     };
   },
   mounted() {
@@ -121,6 +127,7 @@ export default {
     this.getGuide();
   },
   methods: {
+
     setGuideContent() {
       const value = this.guideValue;
 
@@ -326,31 +333,37 @@ export default {
     },
 
     translatePopup() {
+
       let aImagesUrl = this.getDetailContentsImage();
       //이미지 없을 경우
       if (aImagesUrl === false) {
         return false;
       }
 
-      this.product.bProductDetailsEditor = true;
-      this.product.bImageEditorModule = true;
-      this.product.aPhotoCollection = [];
-
-      aImagesUrl.map((oImageInfo) => {
-        this.product.aPhotoCollection.push({
-          msg: "",
-          key: oImageInfo.key,
-          name: "",
-          order: "",
+      // { order: ..., url: ...} 구조로 변경
+      aImagesUrl = aImagesUrl.map((item, index) => {
+        return {
           checked: false,
-          visible: true,
-          original_url: oImageInfo.url,
-          translate_url: oImageInfo.url,
-          translate_status:
-              oImageInfo.url.indexOf("https://i.tosoiot.com/") !== -1
-        });
+          order: index,
+          url: item.url
+        };
       });
-    }
+      aImagesUrl[0].checked = true;
+
+      this.imageTranslateToolsVisible = true;
+      this.translateImageList = aImagesUrl;
+    },
+    updateTranslateImageList(imageList) {
+      this.$refs.editor.clear();
+
+      let content = '<p>';
+      imageList.forEach((item) => {
+        content += `<img src="${item.url}" style="max-width: 100%; height: auto;"/>`;
+      });
+      content += '</p>';
+
+      this.$refs.editor.contentValue = content;
+    },
   },
 };
 </script>

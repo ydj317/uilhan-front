@@ -21,9 +21,9 @@
     </a-tabs>
     <template #footer>
       <div style="display: flex; justify-content: center">
-        <a-button type="primary" @click="onSubmit" >저장</a-button>
-        <a-button type="primary" @click="submitSync">상품등록</a-button>
         <a-button @click="onCancel">취소</a-button>
+        <a-button type="primary" @click="submitSync">상품등록</a-button>
+        <a-button type="primary" @click="onSubmit" >저장</a-button>
       </div>
     </template>
   </a-modal>
@@ -75,8 +75,8 @@
     </a-table>
 
     <template v-slot:footer>
-      <a-button type="primary" @click="sendMarket()">선택마켓등록</a-button>
       <a-button @click="closeResultPop()">닫기</a-button>
+      <a-button type="primary" @click="sendMarket()">선택마켓등록</a-button>
     </template>
   </a-modal>
 

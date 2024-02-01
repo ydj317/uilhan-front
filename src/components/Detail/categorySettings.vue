@@ -84,7 +84,6 @@ const onAutoCompSelect = (value, name) => {
 };
 
 const getMarketAccount = () => {
-  console.log(product.value);
   marketAccounts.value = product.value.item_sync_market
 };
 

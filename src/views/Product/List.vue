@@ -386,8 +386,8 @@
       </a-table>
 
       <template v-slot:footer>
-        <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
         <a-button @click="closeResultPop('single')">닫기</a-button>
+        <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
       </template>
     </a-modal>
 
