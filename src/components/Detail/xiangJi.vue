@@ -1,10 +1,14 @@
 <template>
   <!--편집기-->
   <div id="xiangJi">
-    <a-modal class="xiangJi" v-if="product.xiangjiVisible" :open="product.xiangjiVisible" :closable="false"
+
+    <a-modal class="xiangJi" :open="product.xiangjiVisible" :closable="false"
       :cancel-button-props="{ ghost: true, disabled: true }" :footer="null">
+      <div v-if="product.loading">
+        <a-spin v-if="product.loading" size="large"/>
+      </div>
       <!-- 模板HTML 不可修改 -->
-      <div id="app">
+      <div v-show="!product.loading" id="xiangji-app">
         <div id="some-dialog">
           <div class="logo-hide"></div>
           <div class="close-btn" @click="product.xiangjiVisible = false">닫기</div>
@@ -26,10 +30,6 @@ import { message } from "ant-design-vue";
 export default {
   name: "xiangJi",
 
-  data() {
-    return {};
-  },
-
   computed: {
     ...mapState({
       product: (state) => state.product.detail,
@@ -47,22 +47,14 @@ export default {
         },
         "*"
       );
-
-      // loading 제거
-      this.product.loading = false;
     },
 
     // 이미지 편집기 적용후 처리
     listenerImageEditor() {
-      let self = this;
       window.addEventListener("message", function (e) {
-        if (e.origin === 'https://www.xiangjifanyi.com') {
-          // let content = window?.tinymce?.editors[0]?.getContent();
-          const { name, all } = e.data;
-          if (name === "XJ_IMAGE_EDITOR_URL") {
-            // 편집완료후 데이터 업데이트
-            self.product.xiangjiCallback(all);
-          }
+        const { name, all } = e.data;
+        if (e.origin === 'https://www.xiangjifanyi.com' && name === "XJ_IMAGE_EDITOR_URL") {
+          this.product.xiangjiCallback(all);
         }
       });
     },
@@ -78,8 +70,8 @@ export default {
         };
 
         if (
-          this.product.recharge < 1 ||
-          oParam.list.length > this.product.recharge
+            this.product.recharge < 1 ||
+            oParam.list.length > this.product.recharge
         ) {
           message.warning("이미지번역 잔여수가 부족합니다.");
           this.product.loading = false;
@@ -88,8 +80,8 @@ export default {
 
         this.product.loading = true;
         AuthRequest.post(
-          process.env.VUE_APP_API_URL + "/api/transimage",
-          oParam
+            process.env.VUE_APP_API_URL + "/api/transimage",
+            oParam
         ).then((res) => {
           if (res.status !== "2000") {
             message.error(res.message);
@@ -98,7 +90,7 @@ export default {
 
           if (lib.isArray(res.data["list"], true) === false) {
             message.error(
-              "번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다."
+                "번역 실패. 오류가 지속될경우 관리자에게 문의하시길 바랍니다."
             );
             return false;
           }
@@ -111,7 +103,7 @@ export default {
           res.data["list"].map((data) => {
             oTranslateInfo[data.key] = data;
           });
-
+          this.product.loading = false;
           xiangjiCallback(oTranslateInfo);
         }).finally(() => {
           this.product.loading = false;
@@ -142,8 +134,8 @@ export default {
           // 불러올 이미지 ID
           this.product.xiangjiRequestIds = aXiangjiRequestIds;
           // 이미지 편집기 열기
-          this.product.xiangjiVisible = true;
-          // // loading 제거
+
+          // loading 제거
           this.product.loading = false;
 
           this.product.xiangjiCallback = xiangjiCallback;
@@ -190,7 +182,7 @@ export default {
 }
 
 .xiangJi,
-.xiangJi #app,
+.xiangJi #xiangji-app,
 .xiangJi #some-dialog,
 .xiangJi #xiangji-image-editor {
   display: flex !important;

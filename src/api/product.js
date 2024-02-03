@@ -32,5 +32,26 @@ export function useProductApi() {
                 data: data,
             });
         },
+        async translateImage(data, callback) {
+            return await AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/transimage",
+                method: "post",
+                data: data,
+            }).then((res) => {
+                callback(res);
+            });
+        },
+
+        async translateImageBatch(data, callback) {
+            return await AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/transimage/batch",
+                method: "post",
+                data: data,
+            }).then((res) => {
+                callback(res);
+            });
+        }
+
+
     }
 }

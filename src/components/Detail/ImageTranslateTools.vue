@@ -26,6 +26,12 @@
                     :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
                     @click="activedImage(element, index)"
                 >
+                  <div
+                      style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
+                      v-if="element.translate_status"
+                  >
+                    <CheckCircleOutlined style="color: #059669"/>
+                  </div>
                 </div>
 
                 <div style="position: absolute;top: 6px;right: 6px;width: 20px;height: 20px;border-radius: 2px; background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;cursor: pointer">
@@ -39,8 +45,8 @@
       <a-card style="flex: 4;height: 760px;">
         <div style="display: flex;justify-content: space-between;align-items: center">
           <div style="display: flex;gap: 5px">
-            <a-button type="primary" @click="handleTranslateImage">번역</a-button>
-            <a-button>편집</a-button>
+            <a-button type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
+            <a-button @click="editorImage">편집</a-button>
           </div>
           <div>
             이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span>
@@ -48,11 +54,17 @@
         </div>
         <section
             id="preview"
-            style="display: flex;justify-content: center;align-items: center; width: 100%;height: 700px; margin-top: 10px" v-show="localTranslateImageList.find(item => item.checked === true)?.url"
+            style="display: flex;justify-content: center;align-items: center; width: 100%;height: 700px; margin-top: 10px"
         >
           <div
+              v-if="translateImageLoading"
+          >
+            <a-spin size="large"/>
+          </div>
+          <div
+              v-else
               style="background-color: white;width: 100%;height: 600px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
-              :style="{backgroundImage: `url(${localTranslateImageList.find(item => item.checked === true)?.url})`}"
+              :style="selectedCollectionBackgroundImage"
           >
 
           </div>
@@ -62,9 +74,14 @@
     <template #title>
       <div style="display: flex;justify-content: space-between;align-items:center;padding: 0 20px;">
         상세이미지 번역
-      <a-button @click="onCancel">
-        전체이미지 다운로드
-      </a-button>
+        <div style="display: flex;gap: 5px;">
+          <a-button @click="onCancel">
+            전체이미지 다운로드
+          </a-button>
+          <a-popconfirm title="리스트의 전체 이미지가 번역됩니다. 계속 진행 하시겠습니까?" ok-text="확인" cancel-text="취소" @confirm="translateImageBatch">
+            <a-button :loading="translateImageBatchLoading">전체 이미지 번역</a-button>
+          </a-popconfirm>
+        </div>
       </div>
     </template>
     <template #footer>
@@ -74,6 +91,14 @@
       </div>
     </template>
   </a-modal>
+  <NewXiangJi
+      :isOpen="isOpen"
+      @update:isOpen="isOpen = false"
+      :requestIds="requestIds"
+      translateType="imgTranslate"
+      :key="requestIds[0]"
+      @callbackReceived="handleTranslateCallback"
+  />
 </template>
 
 <script>
@@ -84,12 +109,20 @@ import draggable from "vuedraggable";
 import {AuthRequest} from "@/util/request";
 import {mapState} from "vuex";
 import {message} from "ant-design-vue";
-import {QuestionCircleOutlined, PlusOutlined,DeleteOutlined,CloseOutlined} from "@ant-design/icons-vue";
-import XiangJi from "@/components/Detail/xiangJi.vue";
+import {
+  QuestionCircleOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  CloseOutlined,
+  CheckCircleOutlined
+} from "@ant-design/icons-vue";
+import NewXiangJi from "@/components/Detail/newXiangJi.vue";
+import {useProductApi} from "@/api/product";
 
 export default defineComponent({
   components: {
-    XiangJi,
+    CheckCircleOutlined,
+    NewXiangJi,
     QuestionCircleOutlined,
     draggable,
     PlusOutlined,
@@ -109,6 +142,26 @@ export default defineComponent({
         this.$emit("update:visible", value);
       },
     },
+    selectedCollectionBackgroundImage() {
+      const checkedImage = this.localTranslateImageList.find(item => item.checked === true);
+      if (checkedImage === undefined) {
+        return false;
+      }
+
+      // checked translate_status
+      if (checkedImage.translate_status === true) {
+        return {
+          backgroundImage: `url(${checkedImage.translate_url})`
+        };
+      } else {
+        return {
+          backgroundImage: `url(${checkedImage.url})`
+        };
+      }
+    },
+    selectedCollection() {
+      return this.localTranslateImageList.find(item => item.checked === true);
+    }
   },
   props: {
     visible: {
@@ -141,66 +194,138 @@ export default defineComponent({
         ghostClass: "ghost",
       },
       localTranslateImageList: this.translateImageList,
+
+      isOpen: false,
+
+      translateImageLoading: false,
+      translateImageBatchLoading: false,
+      requestIds: [],
     };
   },
 
   methods: {
 
-    handleTranslateImage() {
+    handleTranslateCallback(oTranslateInfo) {
+      const {requestId,all,url} = oTranslateInfo;
+
+      if(requestId === undefined){
+        message.error("이미지 번역 실패");
+        return false;
+      }
+
+      const checkedImage = this.localTranslateImageList.find(item => item.request_id === requestId);
+      if(checkedImage.translate_status === true){
+        checkedImage.translate_url = url;
+      } else {
+        checkedImage.translate_url = url;
+        checkedImage.url = url;
+      }
+    },
+
+    // 단건 이미지 번역
+    async translateImage(option) {
+      const { isTranslate = true } = option;
       const checkedImage = this.localTranslateImageList.find(item => item.checked === true);
       const index = this.localTranslateImageList.findIndex(item => item.checked === true);
-      if(checkedImage === undefined){
+      if (checkedImage === undefined) {
         message.error("이미지를 선택해주세요.");
         return false;
       }
 
-      this.translatePopup(index,checkedImage)
+      if(checkedImage.translate_status === true){
+        message.error("이미 번역된 이미지입니다.");
+        return false;
+      }
+
+      const oParam = {
+        from: "zh",
+        to: "ko",
+        list: [
+          {
+            msg: "",
+            key: index,
+            name: checkedImage.name || "",
+            order: checkedImage.order || "",
+            checked: checkedImage.checked,
+            visible: checkedImage.visible,
+            original_url: checkedImage.url,
+            translate_url: checkedImage.translate_url || '',
+            translate_status: checkedImage.translate_status,
+            request_id: checkedImage.request_id || '',
+            is_translate: isTranslate
+          }
+        ],
+        isTranslate,
+      }
+      this.translateImageLoading = true;
+      await useProductApi().translateImage(oParam, (oTranslateInfo) => {
+        const { list,recharge } = oTranslateInfo.data;
+        this.localTranslateImageList[index] = {...this.localTranslateImageList[index],...list.find(item => item.key === index)}
+        this.product.recharge = recharge;
+      }).finally(() => {
+        this.translateImageLoading = false;
+      });
+
     },
-    translatePopup(index, element) {
-      this.product.xiangjiVisible = true;
-      this.product.aPhotoCollection = [
-        {
+
+    // 전체 이미지 번역
+    async translateImageBatch() {
+
+      // 이미지 번역이 안된 이미지만 번역
+      const aImagesInfo = this.localTranslateImageList.filter(item => item.translate_status !== true);
+      if(aImagesInfo.length === 0){
+        message.info("번역할 이미지가 없습니다.");
+        return false;
+      }
+
+
+      const oParam = {
+        from: "zh",
+        to: "ko",
+        list: [],
+        isTranslate: true
+      }
+
+      aImagesInfo.forEach((item,index) => {
+        oParam.list.push({
           msg: "",
           key: index,
-          name: element.name || "",
-          order: element.order || "",
-          checked: true,
-          visible: true,
-          original_url: element.url,
-          translate_url: "",
-          translate_status: element.translate_status,
+          name: item.name || "",
+          order: item.order || "",
+          checked: item.checked,
+          visible: item.visible,
+          original_url: item.url,
+          translate_url: item.translate_url || '',
+          translate_status: item.translate_status,
+          request_id: item.request_id || '',
+          is_translate: true,
+        })
+      })
+
+      this.translateImageBatchLoading = true;
+      await useProductApi().translateImageBatch(oParam, (oTranslateInfo) => {
+        const { list,recharge } = oTranslateInfo.data;
+        this.localTranslateImageList = list
+        this.product.recharge = recharge;
+      }).finally(() => {
+        this.translateImageBatchLoading = false;
+      });
+
+    },
+
+    // 편집
+    async editorImage() {
+      const { request_id } = this.selectedCollection
+      // 이미지 번역이 안된 이미지는 번역부터 진행
+      if(request_id === undefined || request_id === ''){
+        const option = {
+          isTranslate: false // 편집만함
         }
-      ]
-      this.productTranslateImage(this.product.aPhotoCollection, false)
-    },
+        await this.translateImage(option)
+      }
 
-    //상품이미지 번역
-    productTranslateImage(aImagesInfo, isTranslate) {
-      this.product.isTranslate = isTranslate
-      this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
-        let sTranslateUrl = oTranslateInfo[aImagesInfo[0].key].translate_url;
-        this.localTranslateImageList[aImagesInfo[0].key].translate_tmp_url = sTranslateUrl;
-        this.productRequestXiangji([sTranslateUrl]);
-      });
-    },
-    productRequestXiangji(aImagesUrl) {
-      this.product.requestXiangji(aImagesUrl, (oRequestId) => {
-        Object.keys(oRequestId).map((sRequestId) => {
-          this.localTranslateImageList.map((data, i) => {
-            if (
-                lib.isString(data.translate_tmp_url, true) === true &&
-                data.translate_tmp_url.split("/").includes(sRequestId) === true
-            ) {
-              this.localTranslateImageList[i].url = oRequestId[sRequestId];
-              this.localTranslateImageList[i].translate_status = true;
-            }
-          });
-        });
-
-        // 이미지 편집기 닫기
-        this.product.bImageEditorModule = false;
-        this.product.xiangjiVisible = false;
-      });
+      this.requestIds = [this.selectedCollection.request_id];
+      this.isOpen = true;
     },
 
     deleteImages(index) {

@@ -1,5 +1,5 @@
 <template>
-  <div id="eModelTitle_0" class="bg-white" style="padding: 20px">
+  <div id="eModelTitle_0" class="mt20 bg-white" style="padding: 20px">
     <h3><strong>기본정보</strong></h3>
 
     <div class="detail-basic">

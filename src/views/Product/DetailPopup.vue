@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="visible" title="상품상세" width="1200px" style="top: 20px;" @ok="onSubmit" @cancel="onCancel">
+  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" style="top: 20px;">
     <a-tabs v-model:activeKey="activeKey"
             :tabBarGutter="30"
     >
@@ -188,6 +188,14 @@ export default defineComponent({
     ...mapState({
       product: state => state.product.detail
     }),
+    localvisible: {
+      get() {
+        return this.visible;
+      },
+      set(value) {
+        this.$emit("update:visible", value);
+      },
+    },
   },
 
   props: {

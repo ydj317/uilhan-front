@@ -355,10 +355,15 @@ export default {
     },
     updateTranslateImageList(imageList) {
       this.$refs.editor.clear();
-
+      console.log(imageList);
       let content = '<p>';
       imageList.forEach((item) => {
-        content += `<img src="${item.url}" style="max-width: 100%; height: auto;"/>`;
+        if(item.translate_status === true){
+          content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
+        } else {
+          const nUrl = item.translate_url || item.url;
+          content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
+        }
       });
       content += '</p>';
 

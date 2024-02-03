@@ -1,6 +1,7 @@
 <template>
-  <div id="eModelTitle_1" class="mt20 p20 bg-white">
+  <div id="eModelTitle_1" class="mt20 p20">
     <!--title-->
+    <div style="display: flex;justify-content: space-between;align-items: center">
     <h3><strong>대표 이미지</strong>
       <a-tooltip>
         <template #title>
@@ -10,43 +11,58 @@
         <QuestionCircleOutlined/>
       </a-tooltip>
     </h3>
-    <!--이미지 리스트-->
-    <div id="eModelTitle_1_conent">
-      <draggable
-          style="display: grid; /* 세 개의 행, 각각 높이가 1:2:1 비율로 정의 */
-          grid-template-columns: repeat(6, 1fr); gap: 10px;"
-          item-key="order"
-          v-bind="DRAG_OPTIONS"
-          v-model="product.item_thumbnails"
-          :component-data="DRAG_CONFIG"
-      >
-        <template #item="{ element, index }">
-          <div
-              class="eModelTitle_1_conent_group"
-              style="border:1px solid #cccccc;"
-              :key="index"
-              :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
-          >
-            <div style="position: relative;">
-              <!--이미지-->
-              <img
-                  class="w100"
-                  :src="element.url"
-                  @click="activedImage(element, index)"
-                  @dblclick="translatePopup(index, element)"
-                  alt=""
-              />
-              <div style="position: absolute;top: 1px;right: 1px;width: 20px;height: 20px;background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;cursor: pointer">
-                <CloseOutlined style="color: white;" @click="deleteImages(index)"/>
+      <a-button @click="translateImageBatch" :loading="translateImageBatchLoading">전체 이미지 번역</a-button>
+    </div>
+
+    <div style="display: flex;gap: 10px;margin-top: 10px">
+      <a-card style="flex: 6;height: 600px;overflow-y: scroll;">
+        <draggable
+            style="display: grid;
+            grid-template-columns: repeat(2, 1fr); gap: 10px;"
+            item-key="order"
+            v-bind="DRAG_OPTIONS"
+            v-model="product.item_thumbnails"
+            :component-data="DRAG_CONFIG"
+        >
+          <template #item="{ element, index }">
+            <div
+                class="eModelTitle_1_conent_group"
+                style="width: 250px;height: 250px;"
+                :key="index"
+            >
+              <div v-if="element.is_loading" style="width: 250px;height:250px;display: flex;justify-content: center;align-items: center;" class="checkedEl">
+                <a-spin size="large"/>
+              </div>
+              <div v-else style="position: relative;">
+                <!--이미지-->
+                <div
+                    class="imageList"
+                    style="background-color: white;width: 250px;height: 250px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
+                    :style="{backgroundImage: `url(${element.url})`}"
+                    :key="index"
+                    :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
+                    @click="activedImage(element, index)"
+                >
+                  <div
+                      style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
+                      v-if="element.translate_status"
+                  >
+                    <CheckCircleOutlined style="color: #059669"/>
+                  </div>
+                </div>
+
+                <div
+                    style="position: absolute;top: 6px;right: 6px;width: 20px;height: 20px;border-radius: 2px; background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;cursor: pointer">
+                  <CloseOutlined style="color: white;" @click="deleteImages(index)"/>
+                </div>
               </div>
             </div>
-          </div>
-        </template>
-        <template #footer>
+          </template>
+          <template #footer>
             <div
                 class="eModelTitle_1_conent_group"
                 key="all"
-                style="border:1px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 150px;"
+                style="border:2px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 250px;width: 250px;border-radius: 10px;"
             >
               <a-upload
                   name="file"
@@ -56,30 +72,54 @@
                   :beforeUpload="validateUploadImage"
                   :customRequest="uploadImage"
               >
-              <div style="display: flex;flex-direction: column;gap: 5px;justify-content: center;align-items: center">
-                <PlusOutlined/>
-                이미지 업로드
-              </div>
+                <div style="display: flex;flex-direction: column;gap: 5px;justify-content: center;align-items: center">
+                  <PlusOutlined/>
+                  이미지 업로드
+                </div>
               </a-upload>
             </div>
 
-        </template>
-      </draggable>
-      <div style="display: flex;justify-content: space-between;margin: 20px 0;">
-        <div style="display: flex;gap: 5px">
-          <a-button type="primary" @click="handleTranslateImage">이미지 번역</a-button>
-          <a-button>이미지 편집</a-button>
+          </template>
+        </draggable>
+      </a-card>
+      <a-card style="flex: 4;height: 600px;">
+        <div style="display: flex;justify-content: space-between;align-items: center">
+          <div style="display: flex;gap: 5px">
+            <a-button type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
+            <a-button @click="editorImage">편집</a-button>
+          </div>
+          <div>
+            이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span>
+          </div>
         </div>
-        <div>
-          이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span>
-        </div>
-      </div>
+        <section
+            id="preview"
+            style="display: flex;justify-content: center;align-items: center; width: 100%;height: 500px; margin-top: 10px"
+        >
+          <div
+              v-if="translateImageLoading"
+          >
+            <a-spin size="large"/>
+          </div>
+          <div
+              v-else
+              style="width: 100%;height: 500px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
+              :style="selectedCollectionBackgroundImage"
+          >
 
-      <section id="preview" style="display: flex;justify-content: center;align-items: center; width: 100%;" v-show="product.item_thumbnails.find(item => item.checked === true)?.url">
-        <img :src="product.item_thumbnails.find(item => item.checked === true)?.url" alt="" style="width: 500px">
-      </section>
+          </div>
+        </section>
+      </a-card>
     </div>
-    <XiangJi />
+
+    <NewXiangJi
+        :isOpen="isOpen"
+        @update:isOpen="isOpen = false"
+        :requestIds="requestIds"
+        translateType="imgTranslate"
+        :key="requestIds[0]"
+        @callbackReceived="handleTranslateCallback"
+    />
   </div>
 </template>
 
@@ -90,23 +130,45 @@ import draggable from "vuedraggable";
 import {AuthRequest} from "@/util/request";
 import {mapState} from "vuex";
 import {message} from "ant-design-vue";
-import {QuestionCircleOutlined, PlusOutlined,DeleteOutlined,CloseOutlined} from "@ant-design/icons-vue";
-import XiangJi from "@/components/Detail/xiangJi.vue";
+import {QuestionCircleOutlined, PlusOutlined, DeleteOutlined, CloseOutlined,CheckCircleOutlined} from "@ant-design/icons-vue";
+import NewXiangJi from "@/components/Detail/newXiangJi.vue";
+import {useProductApi} from "@/api/product";
 
 export default {
   components: {
-    XiangJi,
+    NewXiangJi,
     QuestionCircleOutlined,
     draggable,
     PlusOutlined,
     DeleteOutlined,
     CloseOutlined,
+    CheckCircleOutlined
   },
 
   computed: {
     ...mapState({
       product: (state) => state.product.detail,
     }),
+    selectedCollectionBackgroundImage() {
+      const checkedImage = this.product.item_thumbnails.find(item => item.checked === true);
+      if (checkedImage === undefined) {
+        return false;
+      }
+
+      // checked translate_status
+      if (checkedImage.translate_status === true) {
+        return {
+          backgroundImage: `url(${checkedImage.translate_url})`
+        };
+      } else {
+        return {
+          backgroundImage: `url(${checkedImage.url})`
+        };
+      }
+    },
+    selectedCollection() {
+      return this.product.item_thumbnails.find(item => item.checked === true);
+    }
   },
 
   data() {
@@ -128,6 +190,11 @@ export default {
         animation: 300,
         ghostClass: "ghost",
       },
+      isOpen: false,
+
+      translateImageLoading: false,
+      translateImageBatchLoading: false,
+      requestIds: [],
     };
   },
 
@@ -147,66 +214,133 @@ export default {
         aItemThumbnails[i].visible = false;
       }
 
-      if(aItemThumbnails.find(item => item.checked === true) === undefined){
+      if (aItemThumbnails.find(item => item.checked === true) === undefined) {
         aItemThumbnails[0].checked = true;
       }
       this.product.item_thumbnails = aItemThumbnails;
     },
-    handleTranslateImage() {
+
+    handleTranslateCallback(oTranslateInfo) {
+      const {requestId,all,url} = oTranslateInfo;
+
+      if(requestId === undefined){
+        message.error("이미지 번역 실패");
+        return false;
+      }
+
+      const checkedImage = this.product.item_thumbnails.find(item => item.request_id === requestId);
+      if(checkedImage.translate_status === true){
+        checkedImage.translate_url = url;
+      } else {
+        checkedImage.url = url;
+      }
+    },
+
+    // 단건 이미지 번역
+    async translateImage(option) {
+      const { isTranslate = true } = option;
       const checkedImage = this.product.item_thumbnails.find(item => item.checked === true);
       const index = this.product.item_thumbnails.findIndex(item => item.checked === true);
-      if(checkedImage === undefined){
+      if (checkedImage === undefined) {
         message.error("이미지를 선택해주세요.");
         return false;
       }
 
-      this.translatePopup(index,checkedImage)
+      if(checkedImage.translate_status === true){
+        message.error("이미 번역된 이미지입니다.");
+        return false;
+      }
+
+      const oParam = {
+        from: "zh",
+        to: "ko",
+        list: [
+          {
+            msg: "",
+            key: index,
+            name: checkedImage.name || "",
+            order: checkedImage.order || "",
+            checked: checkedImage.checked,
+            visible: checkedImage.visible,
+            original_url: checkedImage.url,
+            translate_url: checkedImage.translate_url || '',
+            translate_status: checkedImage.translate_status,
+            request_id: checkedImage.request_id || '',
+            is_translate: isTranslate
+          }
+        ],
+        isTranslate,
+      }
+      this.translateImageLoading = true;
+      await useProductApi().translateImage(oParam, (oTranslateInfo) => {
+        const { list,recharge } = oTranslateInfo.data;
+        this.product.item_thumbnails[index] = {...this.product.item_thumbnails[index],...list.find(item => item.key === index)}
+        this.product.recharge = recharge;
+      }).finally(() => {
+        this.translateImageLoading = false;
+      });
+
     },
-    translatePopup(index, element) {
-      this.product.xiangjiVisible = true;
-      this.product.aPhotoCollection = [
-        {
+
+    // 전체 이미지 번역
+    async translateImageBatch() {
+
+      // 이미지 번역이 안된 이미지만 번역
+      const aImagesInfo = this.product.item_thumbnails.filter(item => item.translate_status !== true);
+      if(aImagesInfo.length === 0){
+        message.info("번역할 이미지가 없습니다.");
+        return false;
+      }
+
+
+      const oParam = {
+        from: "zh",
+        to: "ko",
+        list: [],
+        isTranslate: true
+      }
+
+      aImagesInfo.forEach((item,index) => {
+        oParam.list.push({
           msg: "",
           key: index,
-          name: element.name || "",
-          order: element.order || "",
-          checked: true,
-          visible: true,
-          original_url: element.url,
-          translate_url: "",
-          translate_status: element.translate_status,
+          name: item.name || "",
+          order: item.order || "",
+          checked: item.checked,
+          visible: item.visible,
+          original_url: item.url,
+          translate_url: item.translate_url || '',
+          translate_status: item.translate_status,
+          request_id: item.request_id || '',
+          is_translate: true,
+        })
+      })
+
+      this.translateImageBatchLoading = true;
+      await useProductApi().translateImageBatch(oParam, (oTranslateInfo) => {
+        const { list,recharge } = oTranslateInfo.data;
+        this.product.item_thumbnails = list
+        this.product.recharge = recharge;
+      }).finally(() => {
+        this.translateImageBatchLoading = false;
+      });
+
+    },
+
+    // 편집
+    async editorImage() {
+      const { request_id } = this.selectedCollection
+
+      // 이미지 번역이 안된 이미지는 번역부터 진행
+      if(request_id === undefined || request_id === ''){
+        const option = {
+          isTranslate: false // 편집만함
         }
-      ]
-      this.productTranslateImage(this.product.aPhotoCollection, false)
-    },
+        await this.translateImage(option)
+      }
 
-    //상품이미지 번역
-    productTranslateImage(aImagesInfo, isTranslate) {
-      this.product.isTranslate = isTranslate
-      this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
-        let sTranslateUrl = oTranslateInfo[aImagesInfo[0].key].translate_url;
-        this.product.item_thumbnails[aImagesInfo[0].key].translate_tmp_url = sTranslateUrl;
-        this.productRequestXiangji([sTranslateUrl]);
-      });
-    },
-    productRequestXiangji(aImagesUrl) {
-      this.product.requestXiangji(aImagesUrl, (oRequestId) => {
-        Object.keys(oRequestId).map((sRequestId) => {
-          this.product.item_thumbnails.map((data, i) => {
-            if (
-                lib.isString(data.translate_tmp_url, true) === true &&
-                data.translate_tmp_url.split("/").includes(sRequestId) === true
-            ) {
-              this.product.item_thumbnails[i].url = oRequestId[sRequestId];
-              this.product.item_thumbnails[i].translate_status = true;
-            }
-          });
-        });
-
-        // 이미지 편집기 닫기
-        this.product.bImageEditorModule = false;
-        this.product.xiangjiVisible = false;
-      });
+      this.requestIds = [this.selectedCollection.request_id];
+      this.isOpen = true;
     },
 
     deleteImages(index) {
@@ -300,17 +434,16 @@ export default {
 </script>
 
 <style scoped>
-.eModelTitle_1_conent_group img {
-  width: 100px;
-  height: 150px;
-}
-.checkedEl > div {
-  border: 2px solid #1890ff !important;
+.checkedEl {
+  border: 2px solid dodgerblue;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   padding: 0;
 }
 
-.checkedNot > div {
-  border: 2px solid white !important;
+.checkedNot {
+  border: 2px solid #cccccc;
+  border-radius: 10px;
   padding: 0;
 }
 
