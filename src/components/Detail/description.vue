@@ -355,7 +355,6 @@ export default {
     },
     updateTranslateImageList(imageList) {
       this.$refs.editor.clear();
-      console.log(imageList);
       let content = '<p>';
       imageList.forEach((item) => {
         if(item.translate_status === true){
