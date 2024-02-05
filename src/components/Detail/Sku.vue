@@ -158,16 +158,6 @@
             <div class="center">
               {{ record.code }}
             </div>
-            <div class="center pt5">
-              <a-input
-                  class="w90"
-                  :style="
-                  record.img
-                    ? `height: 30px; text-align: center; border: none;`
-                    : `height: 30px; text-align: center; border: none;`
-                " v-model:value="record['barcode']"
-              />
-            </div>
           </template>
 
           <template v-else-if="column.key === 'is_option_reference_price'">
@@ -242,13 +232,6 @@
                 @blur="handlerCustomPrice(column.key, index)"
                 v-model:value="record[column.key]"
             />
-            <div v-if="isManager"
-                 :style="`text-align: center; border: none;`"
-            >
-              <div v-if="record.selling_price_cn > 0">
-                <sub><span style="color: #999999">{{ record.selling_price_cn }}위안</span></sub>
-              </div>
-            </div>
           </template>
           <!--보여주기-->
           <template v-else>
@@ -712,9 +695,6 @@ export default {
       });
     },
 
-    isManager() {
-      return ['jwli', 'irunkorea_02', 'haeju'].includes(lib.getCookie("member_name"));
-    }
   },
 
   mounted() {
