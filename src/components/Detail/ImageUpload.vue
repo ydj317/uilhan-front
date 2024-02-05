@@ -2,16 +2,19 @@
   <div id="eModelTitle_1" class="mt20 p20">
     <!--title-->
     <div style="display: flex;justify-content: space-between;align-items: center">
-    <h3><strong>대표 이미지</strong>
-      <a-tooltip>
-        <template #title>
-          <div class="mb10">상품 업로드 시 이미지는 마켓별 권장크기로 자동리사이징됩니다 (1000*1000)</div>
-          <div>이미지는 스마크스토어/쿠팡은 최대 10개,11번가 최대 5개, ESM2.0/인터파크 최대4개, 위메프 최대3개까지 등록 됩니다.</div>
-        </template>
-        <QuestionCircleOutlined/>
-      </a-tooltip>
-    </h3>
-      <a-button @click="translateImageBatch" :loading="translateImageBatchLoading">전체 이미지 번역</a-button>
+      <h3><strong>대표 이미지</strong>
+        <a-tooltip>
+          <template #title>
+            <div class="mb10">상품 업로드 시 이미지는 마켓별 권장크기로 자동리사이징됩니다 (1000*1000)</div>
+            <div>이미지는 스마크스토어/쿠팡은 최대 10개,11번가 최대 5개, ESM2.0/인터파크 최대4개, 위메프 최대3개까지 등록 됩니다.</div>
+          </template>
+          <QuestionCircleOutlined/>
+        </a-tooltip>
+      </h3>
+      <div style="display: flex;gap: 5px;">
+        <a-button @click="translateImageWhalePopup" v-if="checkUserAgant">웨일 번역</a-button>
+        <a-button @click="translateImageBatch" :loading="translateImageBatchLoading">전체 이미지 번역</a-button>
+      </div>
     </div>
 
     <div style="display: flex;gap: 10px;margin-top: 10px">
@@ -140,6 +143,10 @@
         :key="requestIds[0]"
         @callbackReceived="handleTranslateCallback"
     />
+    <whale-translate-popup
+        :isOpen="whalePopupIsOpen"
+        @update:isOpen="whalePopupIsOpen = false"
+    />
   </div>
 </template>
 
@@ -153,9 +160,11 @@ import {message} from "ant-design-vue";
 import {QuestionCircleOutlined, PlusOutlined, DeleteOutlined, CloseOutlined,CheckCircleOutlined} from "@ant-design/icons-vue";
 import NewXiangJi from "@/components/Detail/newXiangJi.vue";
 import {useProductApi} from "@/api/product";
+import WhaleTranslatePopup from "@/components/Detail/whaleTranslatePopup.vue";
 
 export default {
   components: {
+    WhaleTranslatePopup,
     NewXiangJi,
     QuestionCircleOutlined,
     draggable,
@@ -189,7 +198,11 @@ export default {
     },
     selectedCollection() {
       return this.product.item_thumbnails.find(item => item.checked === true);
-    }
+    },
+    checkUserAgant() {
+      const userAgent = navigator.userAgent;
+      return userAgent.indexOf("Whale") > -1;
+    },
   },
 
   data() {
@@ -217,6 +230,8 @@ export default {
       translateImageBatchLoading: false,
       imageMattingLoading: false,
       requestIds: [],
+
+      whalePopupIsOpen: false,
     };
   },
 
@@ -476,7 +491,11 @@ export default {
             }
           }
       );
-    }
+    },
+
+    translateImageWhalePopup() {
+      this.whalePopupIsOpen = true;
+    },
   },
 
   mounted() {
