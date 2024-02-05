@@ -1,6 +1,6 @@
 <template>
   <div>
-  <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
+  <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 360px">
     <a-spin v-if="product.loading" size="large"/>
   </div>
   <div v-show="!product.loading">

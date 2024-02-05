@@ -20,7 +20,6 @@
 
           <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true">
             <a-input
-                @focus="product.filter_word_status = false"
                 @blur="validateFilterWord(product.item_trans_name)"
                 v-model:value="product.item_trans_name"
                 :maxlength="max_name_length"
@@ -31,9 +30,13 @@
         </a-descriptions-item>
 
         <a-descriptions-item label="금지어">
-          <a-tag color="warning" v-if="product.filter_word_status === true">금지어 없음</a-tag >
+          <CheckCircleOutlined v-if="product.filter_word_status === true" style="color: #059669"/>
           <a-tag v-else v-for="(filter_words, i) in product.filter_word_list"
-                 @click="deleteFilterWord(filter_words)" color="error" :key="i">
+                 @click="deleteFilterWord(filter_words)" color="error" :key="i"
+                 style="cursor: pointer"
+                 closable
+                 @close="deleteFilterWord(filter_words)"
+          >
             {{ filter_words }}
           </a-tag >
         </a-descriptions-item>
@@ -72,10 +75,10 @@
 import { message } from "ant-design-vue";
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
-import {QuestionCircleOutlined} from '@ant-design/icons-vue';
+import {QuestionCircleOutlined,CheckCircleOutlined} from '@ant-design/icons-vue';
 
 export default {
-  components: {QuestionCircleOutlined},
+  components: {QuestionCircleOutlined,CheckCircleOutlined},
 
   computed: {
     ...mapState({
@@ -197,7 +200,6 @@ export default {
         }
 
         this.product.filter_word_validate_in_process = false;
-        message.success("금지어 체크완료");
       });
     },
 

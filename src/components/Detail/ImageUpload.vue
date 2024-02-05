@@ -44,6 +44,12 @@
                     @click="activedImage(element, index)"
                 >
                   <div
+                      style="position: absolute;top: 5px;left: 5px;width: 15px;height: 15px;border-radius: 50%;color: white;font-size: 10px; background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;"
+                      :style="{backgroundColor: index === 0 ? '#ff5656' : '#cccccc'}"
+                  >
+                    {{ index + 1 }}
+                  </div>
+                  <div
                       style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
                       v-if="element.translate_status"
                   >
@@ -83,18 +89,32 @@
         </draggable>
       </a-card>
       <a-card style="flex: 4;height: 600px;">
-        <div style="display: flex;justify-content: space-between;align-items: center">
-          <div style="display: flex;gap: 5px">
-            <a-button type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
-            <a-button @click="editorImage">편집</a-button>
+        <template #title>
+          <div style="display: flex;justify-content: space-between;align-items: center;padding: 5px 0;">
+            <div style="display: flex;flex-direction: column; justify-content: space-evenly">
+              <h4>
+                Preview
+                <a-tooltip>
+                  <template #title>
+                    <div>이미지 번역은 한국어로 번역된 이미지를 생성합니다.</div>
+                    <div>이미지 번역은 번역회수가 소모됩니다.</div>
+                  </template>
+                  <QuestionCircleOutlined/>
+                </a-tooltip>
+              </h4>
+              <span style="font-size: 12px;color: #b0b0b0;font-weight: 400">이미지 번역 회수: <span style="font-size: 14px;color: #b91c1c;font-weight: bold;">{{this.product.recharge}}</span></span>
+            </div>
+            <div style="display: flex;gap: 5px">
+              <a-button size="small" type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
+              <a-button size="small" @click="editorImage">편집</a-button>
+              <a-button size="small" @click="imageMatting" :loading="imageMattingLoading">AI 누끼 따기</a-button>
+            </div>
           </div>
-          <div>
-            이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span>
-          </div>
-        </div>
+        </template>
+
         <section
             id="preview"
-            style="display: flex;justify-content: center;align-items: center; width: 100%;height: 500px; margin-top: 10px"
+            style="display: flex;justify-content: center;align-items: center; width: 100%;height: 490px; "
         >
           <div
               v-if="translateImageLoading"
@@ -161,8 +181,9 @@ export default {
           backgroundImage: `url(${checkedImage.translate_url})`
         };
       } else {
+        const nUrl = checkedImage.translate_url || checkedImage.url;
         return {
-          backgroundImage: `url(${checkedImage.url})`
+          backgroundImage: `url(${nUrl})`
         };
       }
     },
@@ -194,6 +215,7 @@ export default {
 
       translateImageLoading: false,
       translateImageBatchLoading: false,
+      imageMattingLoading: false,
       requestIds: [],
     };
   },
@@ -341,6 +363,37 @@ export default {
 
       this.requestIds = [this.selectedCollection.request_id];
       this.isOpen = true;
+    },
+
+    // 이미지 누끼 따기
+    async imageMatting() {
+      const selectedCollection = this.selectedCollection
+
+      if(selectedCollection === undefined){
+        message.error("이미지를 선택해주세요.");
+        return false;
+      }
+
+      const option = {
+        msg: "",
+        key: selectedCollection.key || 0,
+        name: selectedCollection.name || "",
+        order: selectedCollection.order || "",
+        checked: selectedCollection.checked,
+        visible: selectedCollection.visible,
+        original_url: selectedCollection.url,
+        translate_url: selectedCollection.translate_url || '',
+        translate_status: selectedCollection.translate_status,
+        request_id: selectedCollection.request_id || '',
+        is_translate: selectedCollection.is_translate || false
+      }
+      this.imageMattingLoading = true;
+      useProductApi().imageMatting(option, (oTranslateInfo) => {
+        const { translate_url } = oTranslateInfo.data;
+        selectedCollection.translate_url = translate_url;
+      }).finally(() => {
+        this.imageMattingLoading = false;
+      });
     },
 
     deleteImages(index) {

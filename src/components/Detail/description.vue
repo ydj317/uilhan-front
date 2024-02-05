@@ -367,6 +367,7 @@ export default {
       content += '</p>';
 
       this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
     },
   },
 };

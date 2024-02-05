@@ -50,7 +50,17 @@ export function useProductApi() {
             }).then((res) => {
                 callback(res);
             });
-        }
+        },
+
+        async imageMatting(data, callback) {
+            return await AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/image_matting",
+                method: "post",
+                data: data,
+            }).then((res) => {
+                callback(res);
+            });
+        },
 
 
     }

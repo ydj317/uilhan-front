@@ -860,11 +860,18 @@ export default defineComponent({
       console.log('cancel!');
       this.$emit('update:visible');
     },
-    // onSubmit() {
-    //   console.log(this.product);
-    //   console.log('submit!');
-    //   //this.$emit('update:visible');
-    // },
+
+    handleTabsEvent(e) {
+      const event = e || window.event;
+      if (event.key === 'Tab' || event.keyCode === 9) {
+        event.preventDefault();
+        if (this.tabList.length === parseInt(this.activeKey)) {
+          this.activeKey = "1";
+        } else {
+          this.activeKey = String((parseInt(this.activeKey) + 1));
+        }
+      }
+    },
   },
 
   watch: {
@@ -883,7 +890,18 @@ export default defineComponent({
         this.$store.dispatch('product/getDetail', this.prdId);
       },
       flush: 'post',
-    }
+    },
+    localvisible: {
+      handler() {
+        if (this.localvisible) {
+          // add keyboard event listener
+          document.addEventListener('keydown', this.handleTabsEvent);
+        } else {
+          document.removeEventListener('keydown', this.handleTabsEvent);
+        }
+      },
+      immediate: true,
+    },
   },
 
   beforeMount() {

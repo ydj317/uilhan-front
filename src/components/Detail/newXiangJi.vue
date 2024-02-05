@@ -55,9 +55,10 @@ export default defineComponent({
     return {
       translateTypes: {
         imgTranslate: ["XJ_IMAGE_EDITOR_REQUESTIDS","XJ_IMAGE_EDITOR_URL"],
-        ImgMatting: ["XJ_KOUTU_REQUESTIDS","XJ_KOUTU_RESULT"],
+        imgMatting: ["XJ_KOUTU_REQUESTIDS","XJ_KOUTU_RESULT"],
       },
       iframeSrc: "https://www.xiangjifanyi.com/image-editor/#/?lang=KOR",
+      iframeKoutuSrc: "https://www.xiangjifanyi.com/koutu/",
     };
   },
   methods: {
