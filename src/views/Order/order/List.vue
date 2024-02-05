@@ -1,4 +1,5 @@
 <template>
+  <loading v-model:active="state.loading" :can-cancel="false" :is-full-page="true"/>
   <a-card title="주문관리">
     <template #extra>
       <a-tooltip>
@@ -220,24 +221,32 @@
       <a-table-column title="" :width="200" fixed="right" dataIndex="manage" key="manage" >
         <template #default="{ record }">
           <div style="display: grid;">
-            <a-space>
+            <a-space direction="vertical">
+              <div style="  display: flex; justify-content: space-between; gap: 5px;">
+                <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id'] && Object.keys(state.orderStatusData).includes(record.status)">
+                  <a-button size="small">상세</a-button>
+                </RouterLink>
+                <!--              <RouterLink :to="`/claim/info/${record['id']}`" v-if="record['id'] && Object.keys(state.claimStatusData).includes(record.status)">-->
+                <!--                <a-button size="small">상세</a-button>-->
+                <!--              </RouterLink>-->
+                <a-button size="small"
+                          @click.prevent="showHistory({title: record.prdName + ' - ' + record.prdOptionName, type: 'order', index_id: record.id})">
+                  히스토리
+                </a-button>
+                <a-button size="small" v-if="record.status === 'paid' && record.marketCode !== 'interpark'"
+                          @click.prevent="receiverOneOrder(record.id)">발주
+                </a-button>
+                <a-button type="primary" size="small" v-if="record.status === 'shippingAddress'"
+                          @click.prevent="deliveryOrder(record.id)">배송
+                </a-button>
+              </div>
 
-              <RouterLink :to="`/order/info/${record['id']}`" v-if="record['id'] && Object.keys(state.orderStatusData).includes(record.status)">
-                <a-button size="small">상세</a-button>
-              </RouterLink>
-<!--              <RouterLink :to="`/claim/info/${record['id']}`" v-if="record['id'] && Object.keys(state.claimStatusData).includes(record.status)">-->
-<!--                <a-button size="small">상세</a-button>-->
-<!--              </RouterLink>-->
-              <a-button size="small"
-                        @click.prevent="showHistory({title: record.prdName + ' - ' + record.prdOptionName, type: 'order', index_id: record.id})">
-                히스토리
-              </a-button>
-              <a-button type="info" size="small" v-if="record.status === 'paid' && record.marketCode !== 'interpark'"
-                        @click.prevent="receiverOneOrder(record.id)">발주
-              </a-button>
-              <a-button type="primary" size="small" v-if="record.status === 'shippingAddress'"
-                        @click.prevent="deliveryOrder(record.id)">배송
-              </a-button>
+              <div style="text-align: right;">
+                <a-button size="small" v-if="(record.status === 'shippingAddress' || record.status === 'paid') && record.marketCode === 'sk11st'"
+                          @click.prevent="openDelayForm(record)">발송지연
+                </a-button>
+              </div>
+
             </a-space>
             <a-space class="mt10"
                      v-if="record.status === 'shippingAddress' && record.isSendBridge === 0 && state.is_bridge_sync === true && record.prdImage">
@@ -261,11 +270,46 @@
   <BridgeFormView :visible.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData"
                   @update="getTableData" :key="bridgeFormData.type"/>
 
+  <div>
+    <a-modal
+        v-model:open="state.delayGuideData.showModal"
+        :title="state.delayGuideData.title"
+        @ok="sendDelayGuide"
+        :closable="true"
+        :maskClosable="false"
+    >
+      <div v-if="state.delayGuideData.formData.order_data.marketCode === 'sk11st'">
+        <a-form ref="delayFormRef" :model="state.delayGuideData.formData" class="market_form" >
+          <a-form-item name="send_day" label="예상배송일" :rules="[{ required: true, message: '예상배송일을 선택해주세요.'}]">
+            <a-date-picker :disabledDate="delayDisabledDate" v-model:value="state.delayGuideData.formData.send_day"  />
+          </a-form-item>
+          <a-form-item name="delay_reason" label="배송지연사유" :rules="[{ required: true, message: '배송지연사유를 선택해주세요.'}]" >
+            <a-select v-model:value="state.delayGuideData.formData.delay_reason">
+              <a-select-option value="01">단기 재고 부족</a-select-option>
+              <a-select-option value="02">주문폭주로 인한 작업지연</a-select-option>
+              <a-select-option value="03">주문제작 시간이 필요</a-select-option>
+              <a-select-option value="04">고객 요청</a-select-option>
+              <a-select-option value="05">기타</a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item name="detail_reason" label="상세사유" :rules="[{ required: true, min:20, max:300, message: '상세사유 값은 20~300Byte 사이로 입력해 주세요.'}]">
+            <a-textarea show-count :maxlength="300" :auto-size="{ minRows: 4 }"  v-model:value="state.delayGuideData.formData.detail_reason" placeholder="상세사유를 입력해주세요."/>
+          </a-form-item>
+        </a-form>
+      </div>
+
+      <template #footer>
+        <a-button key="back" @click="resetDelayData">닫기</a-button>
+        <a-button key="submit" type="primary" :loading="state.delayGuideData.loading" @click="sendDelayGuide">확인</a-button>
+      </template>
+    </a-modal>
+  </div>
+
 </template>
 
 <script setup>
 
-import {onMounted, reactive, ref} from 'vue'
+import {onMounted, reactive, ref, toRaw} from 'vue'
 import {useMarketAccountApi} from "@/api/marketAccount";
 import {useMarketOrderApi} from '@/api/order'
 import {useMarketApi} from '@/api/market'
@@ -282,6 +326,8 @@ import {
   RedoOutlined
 } from '@ant-design/icons-vue';
 import {useUserApi} from "@/api/user";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
 
 
 const state = reactive({
@@ -298,6 +344,7 @@ const state = reactive({
       status: '',
     },
   },
+  loading: false,
   accountData: {},
   order_date: [moment().subtract(15, 'days'), moment()],
   orderStatus: [],
@@ -311,7 +358,21 @@ const state = reactive({
   marketDetailUrls: {},
   syncStatusShow: false,
   is_bridge_sync: false,
+
+  delayGuideData: {
+    formData : {
+      order_data: {},
+      send_day: moment(),
+      delay_reason: '01',
+      detail_reason: '',
+    },
+    title: '발송지연 안내',
+    loading : false,
+    showModal: false,
+  },
 });
+
+const delayFormRef = ref(null);
 
 // 검색기간
 const onChangeDatePicker = (value, dateString) => {
@@ -490,6 +551,59 @@ const deliveryOrder = (id) => {
   }).finally(() => {
     getTableData();
   });
+}
+
+const openDelayForm = (orderData) => {
+  state.delayGuideData.formData.order_data = orderData;
+  // 타이틀 설정
+  if (orderData.marketCode === 'sk11st') {
+    state.delayGuideData.title = '[11번가 발송지연안내 처리]';
+  } else {
+    state.delayGuideData.title = '발송지연 안내';
+  }
+
+  state.delayGuideData.showModal = true;
+}
+
+const delayDisabledDate = (current) => {
+  // 지나간 날짜는와 미래 30일 이후의 날자 선택불가
+  return current && (current < moment().subtract(1, 'days') || current > moment().add(30, 'days'));
+}
+
+// 배송지연 안내
+const sendDelayGuide = () => {
+  delayFormRef.value.validate().then(() => {
+    state.loading = true;
+    state.delayGuideData.loading = true;
+    useMarketOrderApi().sendDelayGuide(toRaw(state.delayGuideData.formData)).then(res => {
+      if (res.status !== "2000") {
+        message.error(res.message);
+        state.delayGuideData.loading = false;
+        state.loading = false;
+        return false;
+      }
+
+      message.success(res.message === '' ? '발송지연안내 성공 하었습니다.' : res.data.message);
+      state.delayGuideData.loading = false;
+      state.loading = false;
+      resetDelayData();
+    }).finally(() => {
+      getTableData();
+    });
+  }).catch(() => {
+    message.error('필수항목을 입력해주세요.');
+  });
+
+}
+
+const resetDelayData = () => {
+  state.delayGuideData.showModal = false;
+  state.delayGuideData.formData = {
+    order_data: {},
+    send_day: moment(),
+    delay_reason: '01',
+    detail_reason: '',
+  };
 }
 
 // 마켓 관리자 페이지 열기
@@ -677,6 +791,29 @@ onMounted(async () => {
 <style>
 #header .ant-picker-input input {
   text-align: center;
+}
+
+.market_form .ant-form-item {
+  margin-bottom: 0;
+}
+
+.market_form .ant-form-item-label {
+  border: 1px solid #eeeeee;
+  background-color: #fafafa;
+  width: 170px;
+  padding: 10px;
+  margin-bottom: -1px;
+}
+
+.market_form .ant-form-item-control {
+  border: 1px solid #eeeeee;
+  padding: 10px;
+  margin-left: -1px;
+  margin-bottom: -1px;
+}
+
+.market_form .ant-form-item-control:nth-last-child {
+  border-bottom: 1px solid #eeeeee;
 }
 .ant-radio-group .ant-radio-button-wrapper-checked span{
   color: #000;

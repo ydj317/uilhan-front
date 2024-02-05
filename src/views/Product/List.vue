@@ -16,16 +16,13 @@
 
     <div v-if="expand" class="mt20">
       <!--선택버튼 (상품수집마켓, 번역)-->
-      <div style="display: flex;flex-direction: column;justify-content:center;border-top: 1px solid #eeeeee">
-        <div v-for="CONFIG in SEARCH_BUTTON_CONFIG"
-             style="display: flex;flex-direction: row;align-items:center;border-bottom: 1px solid #eeeeee;height: 50px;">
-          <h1 style="width: 120px;margin-top: 6px;">{{ CONFIG.label }}</h1>
-          <a-radio-group v-model:value="this[CONFIG.key]" style="">
-            <a-radio v-for="options in CONFIG.options" :value="options.value">
-              {{ options.label }}
-            </a-radio>
-          </a-radio-group>
-        </div>
+      <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
+        <h1>{{ CONFIG.label }}</h1>
+        <a-radio-group v-model:value="this[CONFIG.key]" :class="CONFIG.group_class" button-style="solid">
+          <a-radio-button v-for="options in CONFIG.options" :class="CONFIG.key" :value="options.value">
+            {{ options.label }}
+          </a-radio-button>
+        </a-radio-group>
       </div>
 
       <!--검색기간-->
@@ -360,6 +357,12 @@
               <img :src="getLogoSrc('market-logo', record.market_code)"
                    style="width: 16px; height: 16px; margin-right: 5px;" :alt="record.market_code">
               {{ record.seller_id }}
+              <a-tooltip v-if="record.market_code === 'lotteon'">
+                <template #title>
+                  <div>롯데ON의 경우 마켓 등록 재전송 필요합니다.(*기존 데이터 베이스가 없으므로 작업 후 기존 마켓들과 동일하게 업로드 가능)</div>
+                </template>
+                <ExclamationCircleOutlined />
+              </a-tooltip>
             </div>
           </template>
 
@@ -476,6 +479,7 @@ export default defineComponent({
     UploadOutlined,
     HistoryView,
     QuestionCircleOutlined,
+    ExclamationCircleOutlined,
     DownloadOutlined,
     SearchOutlined,
     DollarTwoTone,

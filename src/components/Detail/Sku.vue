@@ -36,34 +36,45 @@
           <a-space>
             <a-tooltip>
               <template #title>
-                <div>무료배송 박스 체크 시 배송비를 상품 판매가 내 추가하여 등록 할 수 있는 기능입니다.</div>
-                <a-popover v-model:visible="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop"
-                           style="z-index: 999">
-                  <template #content>
-                    <table border="1" style="border: 1px solid #999" class="popoverTable">
-                      <tr>
-                        <th>항목</th>
-                        <th>상품 가격 기준</th>
-                        <th>배송비</th>
-                      </tr>
-                      <tr>
-                        <td rowspan="3">전체 카테고리</td>
-                        <td><strong>상품가</strong> &lt;&equals; 20,000</td>
-                        <td>최대 15,000</td>
-                      </tr>
-                      <tr>
-                        <td>20,000 &lt; <strong>상품가</strong> &lt;&equals; 40,000</td>
-                        <td>최대 20,000</td>
-                      </tr>
-                      <tr>
-                        <td><strong>상품가</strong> &gt; 40,000</td>
-                        <td>최대 30,000</td>
-                      </tr>
-                    </table>
-                  </template>
-                  쿠팡 배송비 정책 자세히 보러가기 (삼각형 클릭)
-                  <a-button type="link">▶</a-button>
-                </a-popover>
+                <div>
+                  <div style="font-weight: bold">[무료배송 기능]</div>
+                  <div style="line-height: 1.8;">무료배송 박스 체크 시 배송비를 상품 판매가 내 추가하여 등록 할 수 있는 기능입니다.</div>
+                </div>
+                <div>
+                  <div style="font-weight: bold; margin-top: 10px">[쿠팡 배송 정책]</div>
+                  <a-popover v-model:open="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop"
+                             style="z-index: 999">
+                    <template #content>
+                      <table border="1" style="border: 1px solid #999" class="popoverTable">
+                        <tr>
+                          <th>항목</th>
+                          <th>상품 가격 기준</th>
+                          <th>배송비</th>
+                        </tr>
+                        <tr>
+                          <td rowspan="3">전체 카테고리</td>
+                          <td><strong>상품가</strong> &lt;&equals; 20,000</td>
+                          <td>최대 15,000</td>
+                        </tr>
+                        <tr>
+                          <td>20,000 &lt; <strong>상품가</strong> &lt;&equals; 40,000</td>
+                          <td>최대 20,000</td>
+                        </tr>
+                        <tr>
+                          <td><strong>상품가</strong> &gt; 40,000</td>
+                          <td>최대 30,000</td>
+                        </tr>
+                      </table>
+                    </template>
+                    쿠팡 배송비 정책 자세히 보러 가기 (삼각형 클릭)
+                    <a-button type="link">▶</a-button>
+                  </a-popover>
+                </div>
+                <div>
+                  <div style="font-weight: bold; margin-top: 10px">[티몬 배송 정책]</div>
+                  <div style="line-height: 1.8;">티몬의 경우 무료배송을 체크하지 않을 시 배송비용과 반품비용이 동일하게 적용됩니다.</div>
+                  <div style="line-height: 1.8; margin-top: 10px">무료배송으로 체크 시 기존에 설정되어 있는 반품 비용으로 적용됩니다.</div>
+                </div>
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>

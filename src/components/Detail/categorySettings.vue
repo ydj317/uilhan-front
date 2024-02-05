@@ -8,7 +8,6 @@
          :open="autoCompleteOpen" />
         <a-button class="ml10" type="primary" @click="onAutoCompSearch(autoCompleteValue)">검색</a-button>
       </div>
-      <p class="mt5" style="color: #999999">도움말입니다.</p>
     </div>
     <div style="max-height: 500px;overflow-y: scroll">
       <a-table :dataSource="marketAccounts" :pagination="false">
@@ -46,33 +45,34 @@ const marketCategorysRef = ref(null)
 const marketAccounts = ref('')
 
 const onAutoCompSearch = (searchText) => {
-
-  setTimeout(() => {
-    useCategoryApi().getAutoRecommendCategory({ search_keyword: searchText }).then(res => {
-
-      const options = [];
-      res.data.forEach(element => {
-        options.push({
-          value: element.cate_name,
-          labels: element.cate_name,
-          code: element.cate_id,
-        });
-      });
-
-      // options에서 중복 제거
-      const uniqueOptions = options.filter((item, index) => {
-        return options.findIndex((item2, index2) => {
-          return item.value === item2.value;
-        }) === index;
-      });
-
-      autoCompleteOptions.value = !searchText
-          ? []
-          : uniqueOptions
-
-      autoCompleteOpen.value = true
-    })
-  }, 300);
+  searchCategoryValue.value = searchText
+  // 카테고리 바로 검색어로 검색하게 수정
+  // setTimeout(() => {
+  //   useCategoryApi().getAutoRecommendCategory({ search_keyword: searchText }).then(res => {
+  //
+  //     const options = [];
+  //     res.data.forEach(element => {
+  //       options.push({
+  //         value: element.cate_name,
+  //         labels: element.cate_name,
+  //         code: element.cate_id,
+  //       });
+  //     });
+  //
+  //     // options에서 중복 제거
+  //     const uniqueOptions = options.filter((item, index) => {
+  //       return options.findIndex((item2, index2) => {
+  //         return item.value === item2.value;
+  //       }) === index;
+  //     });
+  //
+  //     autoCompleteOptions.value = !searchText
+  //         ? []
+  //         : uniqueOptions
+  //
+  //     autoCompleteOpen.value = true
+  //   })
+  // }, 300);
 
 
 };
