@@ -242,8 +242,9 @@
 
         <div class="foorterSetting">
           <a-checkbox v-model:checked="checked">회원약관 동의.
-            <a-button class="init" type="link">[관리자페이지]</a-button>
+            <a-button class="init" type="link" @click="openPolicyDialog">[약관보기]</a-button>
           </a-checkbox>
+          <policy :showModal="policyVisible" @cancelDialog="showModal" @agree="onAgree" />
         </div>
 
 <!--        <div class="foorterSetting">-->
@@ -287,15 +288,30 @@ import {useBridgeApi} from "@/api/bridge";
 import {lib} from "@/util/lib";
 import {useRoute} from "vue-router";
 
+import Policy from "@/components/Detail/policy.vue";
+
 
 export default defineComponent({
   components: {
     Loading,
     UserOutlined,
-    LockOutlined
+    LockOutlined,
+    Policy
   },
 
   setup() {
+    const policyVisible = ref(false);
+    const showModal = (visible) => {
+      policyVisible.value = visible;
+    };
+    const openPolicyDialog = () => {
+      policyVisible.value = true;
+    }
+    const onAgree = () => {
+      checked.value = true;
+      policyVisible.value = false;
+    };
+
     onBeforeMount(() => {
       if (isLogin() === true) {
         router.push("/product");
@@ -896,7 +912,12 @@ export default defineComponent({
       changeToInput,
       bridge_sync_pass,
       bridgeSyncCheck,
-      lib
+      lib,
+
+      policyVisible,
+      openPolicyDialog,
+      showModal,
+      onAgree,
     };
   }
 });
@@ -1044,4 +1065,5 @@ export default defineComponent({
   margin-top: 20px;
   color: gray;
 }
+
 </style>
