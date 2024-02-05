@@ -203,6 +203,12 @@
             {{ record.show_price }}
           </template>
 
+          <template v-if="column.key === 'item_memo'">
+           <a-button type="text" size="small" @click="editPrdMemo(record)" :style="memoButtonStyle(record.item_memo) ">
+             <FileTextOutlined :style="{fontSize: '20px'}" />
+           </a-button>
+          </template>
+
           <!--상품등록(수정)일-->
           <!--          <template v-if="column.key === 'item_ins'">-->
           <!--            <div>{{ record.item_ins.slice(0, 16) }}</div>-->
@@ -391,7 +397,7 @@
     </a-modal>
 
     <!--연동결과-->
-    <a-modal width="600px" v-model:open="marketSyncPop" centered title="제휴사연동결과" @cancel="closeResultPop('multi')">
+    <a-modal width="600px" v-model:open="marketSyncPop" centered title="제휴사연동결과" @cancel="cancelEditMemo">
       <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
       <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
         <template #renderItem="{ item }">
@@ -405,6 +411,22 @@
       <template v-slot:footer>
         <a-button type="primary" @click="searchFailed">실패상품검색</a-button>
         <a-button type="primary" @click="closeResultPop('multi')">확인</a-button>
+      </template>
+    </a-modal>
+
+    <!--상품메모-->
+    <a-modal width="600px" v-model:open="prdMemoData.openPop" centered title="상품 메모" :afterClose="cancelEditMemo" :maskClosable="false">
+      <a-textarea
+          show-count :maxlength="500"
+          v-model:value="prdMemoData.memo"
+          placeholder="메모를 입력해주세요."
+          :auto-size="{ minRows: 15, maxRows: 15 }"
+      />
+      <br>
+
+      <template v-slot:footer>
+        <a-button @click="cancelEditMemo">취소</a-button>
+        <a-button type="primary" @click="savePrdMemo">저장</a-button>
       </template>
     </a-modal>
 
@@ -433,7 +455,14 @@ import {
   CloseCircleOutlined,
   CheckCircleOutlined,
   LinkOutlined,
-  DollarTwoTone, DownloadOutlined, SearchOutlined, QuestionCircleOutlined, UploadOutlined, UpOutlined, DownOutlined
+  DollarTwoTone,
+  DownloadOutlined,
+  SearchOutlined,
+  QuestionCircleOutlined,
+  UploadOutlined,
+  UpOutlined,
+  DownOutlined,
+  FileTextOutlined
 } from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
@@ -458,7 +487,8 @@ export default defineComponent({
     CheckCircleOutlined,
     LinkOutlined,
     UpOutlined,
-    DownOutlined
+    DownOutlined,
+    FileTextOutlined
   },
 
   computed: {
@@ -573,6 +603,12 @@ export default defineComponent({
           align: "center"
         },
         {
+          title: "메모",
+          key: "item_memo",
+          width: "5%",
+          align: "center"
+        },
+        {
           title: "마켓등록",
           key: "item_sync_status",
           width: "8%",
@@ -682,6 +718,11 @@ export default defineComponent({
       expand: true,
       copyPrdVisible: false,
       copyPrdCondition: true,
+      prdMemoData: {
+        openPop: false,
+        memo: '',
+        item_id: ''
+      },
     };
   },
 
@@ -1400,6 +1441,45 @@ export default defineComponent({
         return false;
       }
     },
+
+    memoButtonStyle(memo) {
+      if (memo === undefined || memo === null || memo === '') {
+        return 'color:#b0b0b0;'
+      } else {
+        return 'background-color:#ffd117;'
+      }
+    },
+
+    editPrdMemo (item) {
+      this.prdMemoData.item_id = item.item_id;
+      this.prdMemoData.memo = item.item_memo;
+      this.prdMemoData.openPop = true;
+    },
+
+    cancelEditMemo () {
+      this.prdMemoData.openPop = false;
+      this.prdMemoData.memo = '';
+      this.prdMemoData.item_id = '';
+    },
+
+    async savePrdMemo () {
+      this.indicator = true;
+      await useProductApi().savePrdMemo(this.prdMemoData).then(res => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          this.indicator = false;
+          return false;
+        }
+
+        message.success('메모가 저장되었습니다.');
+        this.indicator = false;
+        this.prdMemoData.openPop = false;
+        this.prdMemoData.memo = '';
+        this.prdMemoData.item_id = '';
+        this.getList();
+      });
+    },
+
   },
 
 
