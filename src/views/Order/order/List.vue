@@ -1,4 +1,5 @@
 <template>
+  <loading v-model:active="state.loading" :can-cancel="false" :is-full-page="true"/>
   <a-card title="주문관리">
     <template #extra>
       <a-tooltip>
@@ -325,6 +326,8 @@ import {
   RedoOutlined
 } from '@ant-design/icons-vue';
 import {useUserApi} from "@/api/user";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
 
 
 const state = reactive({
@@ -341,6 +344,7 @@ const state = reactive({
       status: '',
     },
   },
+  loading: false,
   accountData: {},
   order_date: [moment().subtract(15, 'days'), moment()],
   orderStatus: [],
@@ -569,14 +573,19 @@ const delayDisabledDate = (current) => {
 // 배송지연 안내
 const sendDelayGuide = () => {
   delayFormRef.value.validate().then(() => {
+    state.loading = true;
+    state.delayGuideData.loading = true;
     useMarketOrderApi().sendDelayGuide(toRaw(state.delayGuideData.formData)).then(res => {
       if (res.status !== "2000") {
         message.error(res.message);
-        state.delayGuideData.showModal = false;
+        state.delayGuideData.loading = false;
+        state.loading = false;
         return false;
       }
 
       message.success(res.message === '' ? '발송지연안내 성공 하었습니다.' : res.data.message);
+      state.delayGuideData.loading = false;
+      state.loading = false;
       resetDelayData();
     }).finally(() => {
       getTableData();
