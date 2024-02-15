@@ -103,6 +103,15 @@ export function useMarketOrderApi() {
                 method: "post",
                 data: data,
             });
+        },
+
+        downLoadSaleHistory: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/order/saleHistory",
+                method: "post",
+                data: data,
+            });
         }
+
     }
 }

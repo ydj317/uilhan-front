@@ -104,6 +104,12 @@
         </a-space>
       </div>
       <div class="right-div" style="display: flex;align-items: center;gap: 5px">
+
+
+        <a-button @click.prevent="downLoadSaleHistory">
+          매출내역 다운로드
+        </a-button>
+
         <a-tooltip>
           <template #title>EXCEL 다운로드</template>
           <a-button @click.prevent="excelDownload">
@@ -667,6 +673,24 @@ const excelDownload = () => {
     // document.body.removeChild(a);
 
     window.open(res.data.download_url, "_blank");
+  });
+}
+
+const downLoadSaleHistory = () => {
+  useMarketOrderApi().downLoadSaleHistory(state.tableData.params).then(res => {
+    if (res === undefined) {
+      message.error("엑셀 다운에 실패하였습니다. \n오류가 지속될시 관리자에게 문의하시길 바랍니다");
+      return false;
+    }
+
+    let downloadElement = document.createElement("a");
+    let url = window.URL || window.webkitURL || window.moxURL;
+    let href = process.env.VUE_APP_API_URL + '/uploads/cache/order-sale-history.xlsx?t=' + new Date().getTime();
+    downloadElement.href = href;
+    downloadElement.download = decodeURI('order-sale-history.xlsx'); // 下载后文件名
+    downloadElement.click(); // 点击下载
+    document.body.removeChild(downloadElement); // 下载完成移除元素
+    url.revokeObjectURL(href);
   });
 }
 
