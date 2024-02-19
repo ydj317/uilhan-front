@@ -24,6 +24,7 @@
             <div class="s-sail"><div v-show="data.sailValue"><span>{{ data.sailValue }}% 할인</span> 할부 결제 가능</div></div>
             <div class="s-price" :style="data.isBest ? 'color: #fe3a2f;' : ''">₩ {{ data.servicePrice }} / 월</div>
             <div class="introduction" v-show="data.introduction">{{data.introduction}}</div>
+            <div class="introduction">결제 취소 요청시 바로 취소가 가능합니다<br>사용기간 제외한 나머지 남은날짜 일일 계산하여 환불 진행합니다</div>
             <div><a-button class="s-button" size="large" @click="serviceBuy(data)">결제하기</a-button></div>
           </div>
         </a-card>
