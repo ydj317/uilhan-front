@@ -1,6 +1,55 @@
 <template>
+<div class="container">
+  <div class="header-section">
+    <!--세팅버튼-->
+    <div class="setting header-button" style="display: flex;padding-right: 15px;">
+      <!--      <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
+      <a-button @click="deleteOptionName" class="spec-right-button" type="primary"
+                 size="small">삭제
+      </a-button>
+      <a-button @click="setTrim" class="spec-right-button" type="primary" 
+                size="small">빈칸
+      </a-button>
+      <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
+                 size="small">특문
+      </a-button>
+      <a-button @click="strLengthTo25" class="spec-right-button" type="primary"
+                 size="small">25자
+      </a-button>
+      <a-button @click="setAtoZ" class="spec-right-button" type="primary" 
+                size="small">A-Z
+      </a-button>
+      <a-button @click="handleMenuClick('N')" class="spec-right-button" type="primary"
+                size="small">01.___
+      </a-button>
+      <a-button @click="handleMenuClick('A')" class="spec-right-button" type="primary"
+                size="small">A.___
+      </a-button>
+
+      <a-button @click="setBeforeOldOptionData" class="spec-right-button" type="primary"
+                 size="small">초기화
+      </a-button>
+      <a-popover v-model:open="popoverVisible" trigger="click">
+        <template #content>
+          <div style="display: flex;justify-content: end;padding: 15px 10px;">
+            <a-space>
+              <a-input v-model:value="option_group_find_str" style="width: 100px;"
+                        placeholder="변경 전"></a-input>
+              >
+              <a-input v-model:value="option_group_replace_str" style="width: 100px;"
+                        placeholder="변경 후"></a-input>
+              <a-button type="primary" @click="handleReplaceOptionGroup()" >
+                글자변경
+              </a-button>
+            </a-space>
+          </div>
+        </template>
+        <a-button type="primary" size="small">글자변경</a-button>
+      </a-popover>
+    </div>
+  </div>
   <div class="spec-box">
-    <table>
+    <table  v-for="(option, optionIndex) in this.options" :key="optionIndex">
       <!--옵션그룹,옵션일괄설정-->
       <thead>
       <tr>
@@ -8,8 +57,8 @@
         <th style="background-color: #ebeff0;">
           <div class="spec-option-group">
             <span class="spec-font">옵션그룹{{ optionIndex + 1 }}</span>
-            <a-input class="spec-option-input-size spec-checkbox2" v-model:value="option.name" size="default" placeholder="옵션그룹"
-                     :disabled="product.is_sync === 'T'"/>
+            <a-input class="spec-option-input-size spec-checkbox" v-model:value="option.name" size="default" placeholder="옵션그룹"
+            />
             <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{
                 option.name.length
               }}</span> / 25</span>
@@ -21,62 +70,15 @@
         <th>
           <div class="spec-option-header">
             <div class="spec-option-left">
-              <a-checkbox class="spec-checkbox" v-model:checked="selectAll" @change="onCheckAllChange"
-                          :disabled="product.is_sync === 'T'"></a-checkbox>
+              <a-checkbox class="spec-checkbox checkAll" v-model:checked="option.checkAll" @change="onCheckAllChange(option, optionIndex)"
+              ></a-checkbox>
               <span class="spec-font">옵션명</span>
             </div>
             <div class="spec-option-button">
-              <a-button @click="deleteOptionName" class="spec-right-button" type="primary"
-                        :disabled="product.is_sync === 'T'" size="small">삭제
-              </a-button>
-              <a-button @click="setTrim" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'"
-                        size="small">빈칸
-              </a-button>
-              <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
-                        :disabled="product.is_sync === 'T'" size="small">특문
-              </a-button>
-              <a-button @click="strLengthTo25" class="spec-right-button" type="primary"
-                        :disabled="product.is_sync === 'T'" size="small">25자
-              </a-button>
-              <a-button @click="setAtoZ" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'"
-                        size="small">A-Z
-              </a-button>
-              <a-dropdown size="small">
-                <template #overlay>
-                  <a-menu>
-                    <a-menu-item @click="handleMenuClick('N')">01.___</a-menu-item>
-                    <a-menu-item @click="handleMenuClick('A')">A.___</a-menu-item>
-                  </a-menu>
-                </template>
-                <a-button class="spec-right-button" :disabled="product.is_sync === 'T'" size="small">
-                  순번
-                </a-button>
-              </a-dropdown>
-              <a-button @click="setBeforeOldOptionData" class="spec-right-button" type="primary"
-                        :disabled="product.is_sync === 'T'" size="small">Back
-              </a-button>
-              <a-popover v-model:open="popoverVisible" trigger="click">
-                <template #content>
-                  <div style="display: flex;justify-content: end;padding: 15px 10px;">
-                    <a-space>
-                      <a-input v-model:value="option_group_find_str" style="width: 100px;"
-                               :disabled="product.is_sync === 'T'" placeholder="변경 전"></a-input>
-                      >
-                      <a-input v-model:value="option_group_replace_str" style="width: 100px;"
-                               :disabled="product.is_sync === 'T'" placeholder="변경 후"></a-input>
-                      <a-button type="primary" @click="handleReplaceOptionGroup()" :disabled="product.is_sync === 'T'">
-                        글자변경
-                      </a-button>
-                    </a-space>
-                  </div>
-                </template>
-                <a-button type="primary" size="small">글자변경</a-button>
-              </a-popover>
-
               <!--重复词语-->
               <div class="repeat">
                 <a-tag class="ant-tag" v-for="word in getDuplicateWords(option.data.map(item => item.name).join(' '))"
-                       :key="word" color="error" @click="removeWordFromInputs(word)">
+                       :key="word" color="error" @click="removeWordFromInputs(option, word)">
                   {{ word }}
                 </a-tag>
               </div>
@@ -91,11 +93,11 @@
         <td>
           <div class="spec-option-name" >
             <label class="ant-checkbox-wrapper spec-checkbox"
-                   :class="{'ant-checkbox-wrapper-checked': selectedRows.indexOf(item.key) !== -1}">
-              <span class="ant-checkbox" :class="{'ant-checkbox-checked': selectedRows.indexOf(item.key) !== -1}">
+                   >
+              <span class="ant-checkbox" >
 
-                <input type="checkbox" class="ant-checkbox-input" v-model="selectedRows" :value="item.key"
-                       @change="updateSelectAll" :disabled="product.is_sync === 'T'">
+                <input type="checkbox" class="ant-checkbox-input" v-model="selectedRows[optionIndex]" :value="item.key"
+                       @change="updateSelectAll(option, optionIndex)" >
 
                 <span class="option-image" v-if="item.img">
                   <div class="option-image-large"><img :src="item.img" /></div>
@@ -106,13 +108,13 @@
               </span>
             </label>
             <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
-                     :disabled="product.is_sync === 'T'" @input="handleInputChange" />
+                     @input="handleInputChange" />
             <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">
               {{ item.name.length }}
             </span> / 25</span>
             <div class="spec-option-name-button">
               <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large"
-                        class="spec-set-option-name-button" :disabled="product.is_sync === 'T'">
+                        class="spec-set-option-name-button" >
                 <MinusOutlined/>
               </a-button>
             </div>
@@ -122,6 +124,8 @@
       </tbody>
     </table>
   </div>
+</div>
+
 </template>
 <script>
 import {cloneDeep, forEach} from "lodash";
@@ -135,19 +139,18 @@ export default {
   computed: {
     ...mapState(["product"]),
   },
-  props: ['option', 'optionIndex'],
   components: {PlusOutlined, MinusOutlined},
   data() {
     return {
       popoverVisible: false,
       option_group_find_str: '',
       option_group_replace_str: '',
-      oldOptionData: cloneDeep(this.option.data),
-      selectAll: false,
-      selectedRows: [],
+      oldOptionData: cloneDeep(this.$store.state.product.item_option),
+      options: [],
+      selectAll: {},
+      selectedRows: {},
     };
   },
-
   methods: {
     handleReplaceOptionGroup() {
       if (this.option_group_find_str.trim().length === 0) {
@@ -194,20 +197,26 @@ export default {
       }
       this.product.item_option[optionIndex].data.splice(index, 1);
     },
-    onCheckAllChange() {
-      if (this.selectAll === true) {
-        this.selectedRows = [];
-        forEach(this.option.data, (item, index) => {
-          this.selectedRows.push(item.key);
+    onCheckAllChange(option, optionIndex) {
+      console.log('option', option);
+      console.log('optionIndex', optionIndex);
+      return false
+      if (option.checkAll === true) {
+        this.selectedRows[optionIndex] = [];
+        forEach(option.data, (item, index) => {
+          this.selectedRows[optionIndex].push(item.key);
         });
       } else {
-        this.selectedRows = [];
+        this.selectedRows[optionIndex] = [];
       }
+      console.log('this.selectedRows', this.selectedRows)
     },
-    updateSelectAll() {
-      this.selectAll = this.selectedRows.length === this.option.data.length;
+    updateSelectAll(item, optionIndex) {
+      console.log( + this.item)
+      this.selectAll[optionIndex] = this.selectedRows[optionIndex].length === option.data.length;
     },
     deleteOptionName() {
+      console.log('this', this.selectedRows)
       if (this.selectedRows.length === 0) {
         message.warning('삭제할 옵션명을 선택하세요.');
         return false;
@@ -280,6 +289,8 @@ export default {
       this._setCheckBoxInit();
     },
     setAtoZ() {
+      console.log('this.option.data', this.option.data)
+      return false;
       let typeValue = 'A';
       forEach(this.option.data, (item) => {
         item.name = typeValue;
@@ -338,8 +349,8 @@ export default {
       return nextLetter;
     },
     _setCheckBoxInit() {
-      this.selectAll = false;
-      this.selectedRows = [];
+      this.selectAll = {};
+      this.selectedRows = {};
     },
     _uniqueKey() {
       return ((1 + Math.random()) * 0x10000) | 0;
@@ -413,8 +424,8 @@ export default {
 
 
     //点击a-tag同时删除对应的input中的name
-    removeWordFromInputs(wordToRemove) {
-      this.option.data.forEach(item => {
+    removeWordFromInputs(option, wordToRemove) {
+      option.data.forEach(item => {
         item.name = item.name.split(' ').filter(word => word !== wordToRemove).join(' ');
       });
 
@@ -426,23 +437,28 @@ export default {
     }
   },
   mounted() {
+    this.options = this.product.item_option;
     this.adjustRepeatHeights();
   },
 }
-
 </script>
 <style lang="css" scoped>
 .spec-box {
   margin-top: 5px;
   margin-right: 5px;
   margin-left: 5px;
-  width: 50%;
+  width: 100%;
   min-width: 580px;
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping to the next line */
+  overflow-x: auto;
 }
 
 .spec-box table {
   border-radius: 5px;
   width: 100%;
+  border-collapse: collapse;
+  margin-right: 10px; /* Optional: Add some spacing between tables */
 }
 
 .spec-box table tr {
@@ -631,6 +647,25 @@ margin-bottom:5px;
 
 .option-image-small {
   border-radius: 5px; width: 30px; height: 30px;
+}
+
+.header-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 60px;
+  margin-top: 10px;
+  border-radius: 0.275rem;
+  background-color: #f4f8f9;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* 默认为 column，即垂直排列 */
+}
+.spec-right-button {
+
 }
 
 </style>

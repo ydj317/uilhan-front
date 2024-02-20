@@ -10,7 +10,7 @@
           <a-button>일괄적용</a-button>
         </a-popconfirm>
         <!--품목삭제-->
-        <a-button @click="deleteSku" :disabled="product.is_sync === 'T'">품목삭제</a-button>
+        <a-button @click="deleteSku" >품목삭제</a-button>
         <a-divider type="vertical"></a-divider>
         <div style="display: flex;gap: 5px">
           <a-input-group compact>
@@ -28,12 +28,12 @@
           </a-tooltip>
         </div>
       </div>
-
       <!--sku 상단 right 버튼-->
       <div class="row" style="display: flex;flex-direction: column;gap: 10px;">
 
         <div>
           <a-space>
+            <a-button @click="showOptionPop" >옵션 수정</a-button>
             <a-tooltip>
               <template #title>
                 <div>
@@ -129,7 +129,7 @@
           <!--선택-->
           <template v-if="column.key === 'checked'">
             <div class="center">
-              <a-checkbox v-model:checked="record.checked" :disabled="product.is_sync === 'T'"></a-checkbox>
+              <a-checkbox v-model:checked="record.checked" ></a-checkbox>
             </div>
           </template>
 
@@ -259,6 +259,8 @@ import {forEach} from "lodash";
 import {message} from "ant-design-vue";
 import {computed, reactive, ref} from "vue";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import detail from "src/views/Product/Detail.vue";
+
 
 export default {
   name: "productDetailSku",
@@ -694,6 +696,9 @@ export default {
         this.product.sku[i].expected_return = Number(expected_return);
       });
     },
+    showOptionPop() {
+      this.$emit('showOptionPop');
+    }
 
   },
 
