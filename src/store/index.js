@@ -16,6 +16,7 @@ export default createStore({
     return: {
       isOptionApplied: false,
     },
+    showOptionModifyModal: false,
   },
   mutations: {
     //bottonBanner옵션적용
@@ -29,6 +30,11 @@ export default createStore({
     setUseAutoSave(state, value) {
       state.useAutoSave = value;
     },
+
+    // 상품상세에서 옵션 수정 모달 띄우기
+    setShowOptionModifyModal(state, value) {
+      state.showOptionModifyModal = value;
+    }
   },
   actions: {},
   modules: {},

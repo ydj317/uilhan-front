@@ -25,10 +25,10 @@
 <!--    <Spec></Spec>-->
 
     <!--Sku-->
-    <Sku @showOptionPop="openOptionPop"></Sku>
+    <Sku></Sku>
 
     <!--New Spec-->
-    <NewSpec ref="newSpecComponent"></NewSpec>
+    <NewSpec></NewSpec>
 
     <!--상세페이지-->
     <Description></Description>
@@ -98,7 +98,6 @@ export default defineComponent({
     return {
       useAutoSave: false,
       productWatchCount: 0,
-      showOptionPop: false,
     };
   },
 
@@ -116,9 +115,6 @@ export default defineComponent({
   },
 
   methods: {
-    openOptionPop() {
-      this.$refs.newSpecComponent.openOptionPop();
-    },
 
     getForm(oForm) {
       let oProduct = this.product;

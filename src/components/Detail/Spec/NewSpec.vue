@@ -1,27 +1,17 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="this.showOptionPop" width="1500px">
-    <template #footer>
-      <div style="display: flex; justify-content: center;">
-        <a-button key="back" style="width: 100px;" @click="this.showOptionPop=false" >취소</a-button>
-        <a-button key="submit" style="width: 100px;" type="primary">적용</a-button>
-      </div>
-    </template>
-
-    <div id="eModelTitle_2" class="mt20 p20 bg-white" v-if="product.item_option">
-      <!--옵션그룹해더, 옵션 셋팅, 옵션그룹 추가-->
+  <div id="eModelTitle_2" class="mt20 p20 bg-white" v-if="product.item_option">
+    <!--옵션그룹해더, 옵션 셋팅, 옵션그룹 추가-->
 <!--      <div class="header-section">-->
 <!--        &lt;!&ndash;세팅버튼&ndash;&gt;-->
 <!--        <div class="setting header-button" style="display: flex;justify-content: space-between;width: 100%;padding-right: 15px;">-->
 <!--          <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
 <!--        </div>-->
 <!--      </div>-->
-      <!--옵션그룹 영역-->
-      <div class="body-section">
-<!--        <SpecGroup v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :option="option" :optionIndex="optionIndex"></SpecGroup>-->
-        <SpecGroup></SpecGroup>
-      </div>
+    <!--옵션그룹 영역-->
+    <div class="body-section">
+      <SpecGroup></SpecGroup>
     </div>
-  </a-modal>
+  </div>
 </template>
 <script>
 import { lib } from "util/lib";
@@ -48,9 +38,6 @@ export default {
   },
 
   methods: {
-    openOptionPop() {
-      this.showOptionPop = true;
-    },
     setting() {
       if (!this.product || !this.product.item_option) {
         return;

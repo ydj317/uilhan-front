@@ -697,7 +697,7 @@ export default {
       });
     },
     showOptionPop() {
-      this.$emit('showOptionPop');
+      this.$store.commit('setShowOptionModifyModal', true);
     }
 
   },
