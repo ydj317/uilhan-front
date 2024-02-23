@@ -36,6 +36,11 @@ export default createStore({
     //用于修改 isModalOpen 的值。
     setIsModalOpen(state, value) {
       state.isModalOpen = value;
+    },
+
+    // 상품상세에서 옵션 수정 모달 띄우기
+    setShowOptionModifyModal(state, value) {
+      state.showOptionModifyModal = value;
     }
   },
   actions: {
