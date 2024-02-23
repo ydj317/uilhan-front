@@ -23,6 +23,12 @@
             <div class="s-day">{{ data.serviceDay }}개월</div>
             <div class="s-sail"><div v-show="data.sailValue"><span>{{ data.sailValue }}% 할인</span> 할부 결제 가능</div></div>
             <div class="s-price" :style="data.isBest ? 'color: #fe3a2f;' : ''">₩ {{ data.servicePrice }} / 월</div>
+            <div>
+              <a-checkbox v-model:checked="checked">
+                <a-button class="init" type="link" @click="openPolicyModal">이용약관</a-button> (결제 취소 및 환불 규정) 에 동의합니다.
+              </a-checkbox>
+              <policy @agree="onAgree" />
+            </div>
             <div><a-button class="s-button" size="large" @click="serviceBuy(data)">결제하기</a-button></div>
           </div>
         </a-card>
@@ -42,6 +48,7 @@ import {reactive, ref} from "vue";
 import {message} from "ant-design-vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
+import Policy from "@/components/Detail/policy.vue";
 
 const indicator = ref(false);
 
@@ -86,12 +93,27 @@ const payList = ref([
 
 // 결제버튼
 const serviceBuy = (data) => {
+  if (!checked.value) {
+    message.warning('결제 하시러면 이용약관 내용을 읽어보시고 약관 동의가 필요합니다.');
+    return false;
+  }
+
   console.log('==0==')
   console.log(data)
 
   message.success('결제');
 }
 
+const checked = ref(false);
+const onAgree = () => {
+  checked.value = true;
+};
+
+import { useStore } from 'vuex';
+const store = useStore();
+const openPolicyModal= () => {
+  store.commit('setIsModalOpen', true);
+}
 
 </script>
 
@@ -179,6 +201,15 @@ const serviceBuy = (data) => {
 
 .s-service-pay .introduction {
   color: #939393;
+}
+
+.ant-checkbox-wrapper{
+  color:#fe3a2f;
+}
+
+.ant-btn-link {
+  padding:0;
+  color:#1677ff;
 }
 
 </style>

@@ -1,11 +1,12 @@
 <template>
   <a-modal
       title="유일 이용약관"
-      v-model:open="props.showModal"
+      v-model:open="this.$store.state.isModalOpen"
       @ok="handleOk"
-      @cancel="handleCancel"
+      @cancel="handleModalClose"
       okText="동의"
       cancelText="닫기"
+
   >
     <div class="modal-content">
       <p class="sectionTitle">제1조. (목적 및 용어의정의)</p>
@@ -391,15 +392,18 @@
 
 <script setup>
 
-const props = defineProps(['showModal'])
-const emit = defineEmits(['cancelDialog'])
+import { defineEmits } from 'vue';
+import { useStore } from 'vuex';
 
-const handleOk = () => {
-  emit('agree');
+//通过 useStore从 Vuex 中获取 store 的实例。
+const store = useStore();
+const handleModalClose = () => {
+  store.commit('setIsModalOpen', false);
 };
-
-const handleCancel = () => {
-  emit("cancelDialog");
+const emit = defineEmits(['agree']);
+const handleOk = () => {
+  store.commit('setIsModalOpen', false);
+  emit('agree');
 };
 
 </script>
