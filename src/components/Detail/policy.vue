@@ -1,7 +1,7 @@
 <template>
   <a-modal
       title="유일 이용약관"
-      v-model:open="this.$store.state.isModalOpen"
+      v-model:open="store.state.isModalOpen"
       @ok="handleOk"
       @cancel="handleModalClose"
       okText="동의"
