@@ -142,14 +142,14 @@
       </tr>
       <template v-for="(order, key) in state.tableData.data" :key="key">
         <tr v-for="(item, _key) in order.items" :key="_key">
-          <td :rowspan="shouldDisplayRowspan(order, _key) ? order.items.length : 1" v-if="_key === 0">
+          <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0">
             <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
               <img :src="getLogoSrc(order.marketCode)" style="width: 18px;height: 18px;cursor: pointer;"
                    @click="openMarketAdminPage(order.marketCode)"/>
               {{ order.sellerId }}
             </div>
           </td>
-          <td :rowspan="shouldDisplayRowspan(order, _key) ? order.items.length : 1" v-if="_key === 0" style="text-align: center;">{{ order.orderNo }} <br /> {{ order.orderDate}}</td>
+          <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0" style="text-align: center;">{{ order.orderNo }} <br /> {{ order.orderDate}}</td>
           <td ><a-image
             :src="item.prdImage"
             fallback="data:image/png;base64,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"
@@ -157,9 +157,8 @@
           <td style="min-width: 350px">{{ item.prdName }} <br /> {{ item.prdOptionName }} </td>
           <td >{{ item.quantity }}</td>
 
-          <template v-if="!order.is_group">
-            <td>{{ item.totalPaymentAmount }}</td>
-            <td>
+            <td :rowspan="shouldDisplayRowspan(order, _key) ? order.is_group ? order.items.filter(it => Object.keys(state.orderStatusData).includes(it.status)).length : 1 : 1" v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">{{ item.totalPaymentAmount }}</td>
+            <td :rowspan="shouldDisplayRowspan(order, _key) ? order.is_group ? order.items.filter(it => Object.keys(state.orderStatusData).includes(it.status)).length : 1 : 1" v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
               <a-badge color="blue" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
                        v-if="item.status === 'paid'"/>
               <a-badge color="yellow" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
@@ -172,7 +171,7 @@
                        v-else/>
               <a-tag color="volcano" v-if="!item.prdImage">마켓상품</a-tag>
             </td>
-            <td>
+            <td :rowspan="shouldDisplayRowspan(order, _key) ? order.is_group ? order.items.filter(it => Object.keys(state.orderStatusData).includes(it.status)).length : 1 : 1" v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group" >
               <div style="display: flex;flex-direction: column;gap: 5px;"
                    v-if="item.status === 'shippingAddress'">
                 <a-select v-model:value="item.courierName" placeholder="택배사를 선택해주세요.">
@@ -187,7 +186,7 @@
                 {{ order.courierName }} - {{ order.invoiceNumber }}
               </div>
             </td>
-            <td >
+            <td :rowspan="shouldDisplayRowspan(order, _key) ? order.is_group ? order.items.filter(it => Object.keys(state.orderStatusData).includes(it.status)).length : 1 : 1" v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group" >
               <div style="display: grid;">
                 <a-space direction="vertical">
                   <div style="  display: flex; justify-content: space-between; gap: 5px;">
@@ -200,7 +199,7 @@
                               @click.prevent="receiverOneOrder(item.id)">발주
                     </a-button>
                     <a-button type="primary" size="small" v-if="item.status === 'shippingAddress'"
-                              @click.prevent="deliveryOrder(item.id)">배송
+                              @click.prevent="deliveryOrder(item.id, item.courierName, item.invoiceNumber)">배송
                     </a-button>
                   </div>
 
@@ -226,78 +225,6 @@
                 </a-space>
               </div>
             </td>
-          </template>
-
-          <template v-else>
-            <td :rowspan="shouldDisplayRowspan(order, _key) ? order.items.length : 1" v-if="_key === 0">{{ item.totalPaymentAmount }}</td>
-            <td :rowspan="shouldDisplayRowspan(order, _key) ? order.items.length : 1" v-if="_key === 0">
-              <a-badge color="blue" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                       v-if="item.status === 'paid'"/>
-              <a-badge color="yellow" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                       v-else-if="item.status === 'shippingAddress'"/>
-              <a-badge color="orange" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                       v-else-if="item.status === 'shipping'"/>
-              <a-badge color="green" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                       v-else-if="item.status === 'shippingComplete'"/>
-              <a-badge color="red" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                       v-else/>
-              <a-tag color="volcano" v-if="!item.prdImage">마켓상품</a-tag>
-            </td>
-            <td :rowspan="shouldDisplayRowspan(order, _key) ? order.items.length : 1" v-if="_key === 0">
-              <div style="display: flex;flex-direction: column;gap: 5px;"
-                   v-if="item.status === 'shippingAddress'">
-                <a-select v-model:value="item.courierName" placeholder="택배사를 선택해주세요.">
-                  <a-select-option :value="key" :key="key"
-                                   v-for="(company, key) in state.marketDeliveryCompany[order.marketCode]">
-                    {{ company }}
-                  </a-select-option>
-                </a-select>
-                <a-input v-model:value="item.invoiceNumber" placeholder="송장번호를 입력해 주세요." allow-clear/>
-              </div>
-              <div v-else>
-                {{ order.courierName }} - {{ order.invoiceNumber }}
-              </div>
-            </td>
-            <td :rowspan="shouldDisplayRowspan(order, _key) ? order.items.length : 1" v-if="_key === 0">
-              <div style="display: grid;">
-                <a-space direction="vertical">
-                  <div style="  display: flex; justify-content: space-between; gap: 5px;">
-
-                    <a-button size="small"
-                              @click.prevent="showHistory({title: item.prdName + ' - ' + item.prdOptionName, type: 'order', index_id: item.id})">
-                      히스토리
-                    </a-button>
-                    <a-button size="small" v-if="item.status === 'paid' && item.marketCode !== 'interpark'"
-                              @click.prevent="receiverOneOrder(item.id)">발주
-                    </a-button>
-                    <a-button type="primary" size="small" v-if="item.status === 'shippingAddress'"
-                              @click.prevent="deliveryOrder(item.id)">배송
-                    </a-button>
-                  </div>
-
-                  <div style="text-align: right;">
-                    <a-button size="small" v-if="(item.status === 'shippingAddress' || item.status === 'paid') && item.marketCode === 'sk11st'"
-                              @click.prevent="openDelayForm(item)">발송지연
-                    </a-button>
-                  </div>
-
-                </a-space>
-                <a-space class="mt10"
-                         v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">
-                  <a-button size="small" @click.prevent="showBridgeForm({record: item, type:'puragent'})">구매대행</a-button>
-                  <a-button size="small" @click.prevent="showBridgeForm({record: item, type:'shipagent'})">배송대행</a-button>
-                </a-space>
-
-                <a-space class="mt10"
-                         v-if="item.status === 'shippingAddress' && item.isSendBridge === 1 && state.is_bridge_sync === true && item.prdImage"
-                         direction="vertical" align="center">
-                  <a-tag color="pink">- 신청서 작성완료 -</a-tag>
-                  <a-tag size="small" color="#15803d" v-if="state.syncStatusShow">{{ item.bridgeStatus }}</a-tag>
-                  <a-tag size="small" v-else> -</a-tag>
-                </a-space>
-              </div>
-            </td>
-          </template>
         </tr>
       </template>
     </table>
@@ -408,7 +335,13 @@ const state = reactive({
   },
 });
 
-const shouldDisplayRowspan = (order, key) => { return order.items.length > 0 && key === 0;}
+const shouldDisplayRowspan = (order, key) => {
+  if (order.items.filter(it => Object.keys(state.orderStatusData).includes(it.status)).length > 1) {
+    return order.items.length > 0 && key === 0;
+  } else {
+    return order.items.length > 0
+  }
+}
 
 const delayFormRef = ref(null);
 
@@ -440,25 +373,26 @@ const getAccountData = async () => {
   });
 }
 
+/** marketSetting [order:주문별, item:품주별] */
 const marketSetting = {
   '11st': {
-    orderType: 'order',
+    orderType: 'item',
   },
   'coupang': {},
   'gmarket': {},
   'lotteon': {
-    orderType: 'order',
+    orderType: 'item',
   },
   'smartstore': {
-    orderType: 'order',
+    orderType: 'item',
   },
   'wemakeprice': {},
   'auction': {},
   'tmon': {
-    orderType: 'item',
+    orderType: 'order',
   },
   'interpark': {
-    orderType: 'order',
+    orderType: 'item',
   },
 
 };
@@ -479,7 +413,7 @@ const getTableData = async () => {
 
     const groupedByOrderNo = res.data.reduce((acc, cur) => {
       const { orderNo, sellerId, marketCode, orderDate, status, totalPaymentAmount }= cur;
-      console.log(totalPaymentAmount);
+
       if (!acc[orderNo]) {
         acc[orderNo] = [];
         acc[orderNo]['totalPrice'] = 0;
@@ -489,7 +423,6 @@ const getTableData = async () => {
       if(marketSetting[marketCode] && marketSetting[marketCode].orderType === 'order') {
         acc[orderNo]['is_group'] = true;
         acc[orderNo]['totalPrice'] = totalPaymentAmount;
-        acc[orderNo]['status'] = status;
       }
 
       acc[orderNo]['orderNo'] = orderNo;
@@ -502,7 +435,6 @@ const getTableData = async () => {
     }, {})
 
     state.tableData.data = groupedByOrderNo;
-    console.log(state.tableData.data);
 
     // set courierNameValues default value
     // state.tableData.data.forEach((item) => {
@@ -611,21 +543,24 @@ const receiverOneOrder = (id) => {
 }
 
 // 배송처리
-const deliveryOrder = (id) => {
-  if (!state.courierNameValues[id]) {
+const deliveryOrder = (id,courierName, invoiceNumber) => {
+  console.log(id);
+  console.log(invoiceNumber);
+  return;
+  if (!courierName) {
     message.error('택배사를 선택해주세요.');
     return false;
   }
 
-  if (!state.invoiceNumberValues[id]) {
+  if (!invoiceNumber) {
     message.error('운송장번호를 입력해주세요.');
     return false;
   }
 
   useMarketOrderApi().deliveryOrder({
     id: id,
-    courierName: state.courierNameValues[id],
-    invoiceNumber: state.invoiceNumberValues[id]
+    courierName: courierName,
+    invoiceNumber: invoiceNumber
   }).then(res => {
     if (res.status !== "2000") {
       message.error(res.data.message);
