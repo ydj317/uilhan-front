@@ -33,6 +33,7 @@
 
         <div>
           <a-space>
+            <a-button type="primary" @click="resetOption" >옵션정보 초기화</a-button>
             <a-button @click="showOptionPop" >옵션 수정</a-button>
             <a-tooltip>
               <template #title>
@@ -255,11 +256,12 @@
 <script>
 import {mapState, useStore} from "vuex";
 import {lib} from "@/util/lib";
-import {forEach} from "lodash";
+import {cloneDeep, forEach} from "lodash";
 import {message} from "ant-design-vue";
 import {computed, reactive, ref} from "vue";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 import detail from "src/views/Product/Detail.vue";
+import { Modal } from 'ant-design-vue';
 
 
 export default {
@@ -297,7 +299,7 @@ export default {
           width: "6%",
         },
         {
-          title: "품목코드 / 바코드",
+          title: "품목코드",
           key: "code",
           width: "12%",
         },
@@ -698,9 +700,31 @@ export default {
     },
     showOptionPop() {
       this.$store.commit('setShowOptionModifyModal', true);
-    }
+    },
 
-  },
+    // 옵션 초기화  (수집시 옵션으로)
+    resetOption() {
+      if (!this.product.item_org_sku|| !this.product.item_org_option || this.product.item_org_sku.length === 0 || !this.product.item_org_option.length === 0) {
+        message.error('기존 상품은 옵션정보가 존재하지 않습니다.')
+        return false;
+      }
+      const _this = this;
+      Modal.confirm({
+        title: '옵션정보를 초기화 하시겠습니까?',
+        content: '편집된 옵션정보는 삭제되고 상품 수집시 옵션정보로 초기화됩니다.',
+        onOk() {
+          _this.product.item_option =  {..._this.product.item_org_option};
+          _this.product.sku = cloneDeep(_this.product.item_org_sku);
+          _this.handleShippingFeeChange(_this.formState.item_shipping_fee);
+          _this.setExpectedReturn();
+          _this.product.resetOption = true;
+          message.success('옵션정보가 초기화 되었습니다.')
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onCancel() {},
+      });
+    },
+},
 
   mounted() {
 

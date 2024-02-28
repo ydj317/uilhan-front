@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.showOptionModifyModal" width="1500px">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.showOptionModifyModal" width="1500px" :maskClosable="false">
     <template #footer>
       <div style="display: flex; justify-content: center;">
         <a-button key="back" style="width: 100px;" @click="this.closeOptionModal" >취소</a-button>
@@ -145,6 +145,30 @@ export default {
   computed: {
     ...mapState(["product"]),
   },
+  watch: {
+    'product.resetOption': {
+      handler: function (val) {
+        if (val === true) {
+          // 옵션정보를 수집시 옵션정보로
+          let tempOptions = cloneDeep(this.product.item_org_option);
+          this.options = tempOptions.map(option => {
+            option.checkAll = false;
+            option.oldName = option.name;
+            option.data = option.data.map(item => {
+              item.oldName = item.name;
+              item.checked = false;
+              return item;
+            });
+            return option;
+          });
+
+          // 옵션정보 초기화 여부 초기화
+          this.product.resetOption = false
+        }
+      },
+      deep: true
+    }
+  },
   components: {PlusOutlined, MinusOutlined},
   data() {
     return {
@@ -165,6 +189,7 @@ export default {
       options : [],
       // selectedRows 는 오브젝트 그리고 각각의 옵션그룹에 해당하는 배열을 가지고 있음
       selectedRows: this.$store.state.product.item_option.map(option => []),
+      restOption : this.$store.state.resetOption,
     };
   },
   methods: {
@@ -386,7 +411,7 @@ export default {
       return nextLetter;
     },
     _setCheckBoxInit() {
-      this.selectedRows = this.$store.state.product.item_option.map(option => []);
+      this.selectedRows = [];
       this.options.forEach(option => {
         option.checkAll = false;
         option.data.forEach(item => {
@@ -505,7 +530,7 @@ export default {
         });
       });
 
-      this.product.item_option = this.options;
+      this.product.item_option = {...this.options};
       this.$store.commit('setShowOptionModifyModal', false);
 
     },
