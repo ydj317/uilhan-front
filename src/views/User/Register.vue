@@ -242,9 +242,9 @@
 
         <div class="foorterSetting">
           <a-checkbox v-model:checked="checked">회원약관 동의.
-            <a-button class="init" type="link" @click="openPolicyDialog">[약관보기]</a-button>
+            <a-button class="init" type="link" @click="openPolicyModal">[약관보기]</a-button>
           </a-checkbox>
-          <policy :showModal="policyVisible" @cancelDialog="showModal" @agree="onAgree" />
+          <policy @agree="onAgree" />
         </div>
 
 <!--        <div class="foorterSetting">-->
@@ -289,7 +289,7 @@ import {lib} from "@/util/lib";
 import {useRoute} from "vue-router";
 
 import Policy from "@/components/Detail/policy.vue";
-
+import { useStore } from 'vuex';
 
 export default defineComponent({
   components: {
@@ -300,18 +300,6 @@ export default defineComponent({
   },
 
   setup() {
-    const policyVisible = ref(false);
-    const showModal = (visible) => {
-      policyVisible.value = visible;
-    };
-    const openPolicyDialog = () => {
-      policyVisible.value = true;
-    }
-    const onAgree = () => {
-      checked.value = true;
-      policyVisible.value = false;
-    };
-
     onBeforeMount(() => {
       if (isLogin() === true) {
         router.push("/product");
@@ -857,8 +845,6 @@ export default defineComponent({
 
     const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
 
-    const checked = ref(false);
-
     const bridgeSyncCheck = () => {
       if (formState.is_bridge_sync === true) {
 
@@ -881,6 +867,16 @@ export default defineComponent({
           bridge_sync_pass.value = true;
         });
       }
+    };
+
+    const checked = ref(false);
+    const onAgree = () => {
+      checked.value = true;
+    };
+
+    const store = useStore();
+    const openPolicyModal = () => {
+      store.commit('setIsModalOpen', true);
     };
 
     return {
@@ -914,9 +910,7 @@ export default defineComponent({
       bridgeSyncCheck,
       lib,
 
-      policyVisible,
-      openPolicyDialog,
-      showModal,
+      openPolicyModal,
       onAgree,
     };
   }

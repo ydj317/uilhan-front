@@ -16,7 +16,9 @@ export default createStore({
     return: {
       isOptionApplied: false,
     },
-    showOptionModifyModal: false,
+
+    //通过Vuex来管理模态窗口的显示状态
+    isModalOpen: false,
   },
   mutations: {
     //bottonBanner옵션적용
@@ -31,11 +33,17 @@ export default createStore({
       state.useAutoSave = value;
     },
 
+    //用于修改 isModalOpen 的值。
+    setIsModalOpen(state, value) {
+      state.isModalOpen = value;
+    },
+
     // 상품상세에서 옵션 수정 모달 띄우기
     setShowOptionModifyModal(state, value) {
       state.showOptionModifyModal = value;
     }
   },
-  actions: {},
+  actions: {
+  },
   modules: {},
 });
