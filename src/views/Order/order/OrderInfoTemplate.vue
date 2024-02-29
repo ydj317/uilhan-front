@@ -2,8 +2,8 @@
   <a-descriptions title="주문정보" bordered :column="2" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }">
     <a-descriptions-item label="주문번호">{{ orderData.orderNo }}</a-descriptions-item>
     <a-descriptions-item label="주문일시">{{ moment(orderData.orderDate).format('YYYY-MM-DD') }}</a-descriptions-item>
-    <a-descriptions-item label="결제위치">-</a-descriptions-item>
-    <a-descriptions-item label="결제일시">{{ moment(orderData.orgData?.depositDate).format('YYYY-MM-DD') }}</a-descriptions-item>
+    <a-descriptions-item label="결제위치">{{ orderData.payLocation }}</a-descriptions-item>
+    <a-descriptions-item label="결제일시">{{ moment(orderData.payDate, 'YYYYMMDDHHmmss').format('YYYY-MM-DD') }}</a-descriptions-item>
   </a-descriptions>
   <div class="mt20">
     <h3><strong>주문상품</strong></h3>
@@ -42,10 +42,10 @@
         </template>
       </a-table-column>
       <a-table-column title="수량" dataIndex="quantity" key="quantity" />
-      <a-table-column title="배송비" dataIndex="itemOrgData.deliveryFee.amount" key="itemOrgData.deliveryFee.amount">
-        <template #default="{ record }">
+      <a-table-column title="배송비" dataIndex="deliveryFee" key="deliveryFee">
+        <template #customRender="{ text,record }">
           <div v-if="state.orderStatusList.hasOwnProperty(record.status)">
-            {{ record.itemOrgData.deliveryFee.amount.toLocaleString() }}
+            {{ text.toLocaleString() }}
           </div>
           <div v-else>
             -
@@ -75,45 +75,45 @@
       <template #summary>
         <a-table-summary-row>
           <a-table-summary-cell :col-span="7" :index="0" style="text-align: right">합계 금액</a-table-summary-cell>
-          <a-table-summary-cell :index="1">{{ total.price }}</a-table-summary-cell>
+          <a-table-summary-cell :index="1">{{ total.price.toLocaleString() }}</a-table-summary-cell>
         </a-table-summary-row>
         <a-table-summary-row>
           <a-table-summary-cell :col-span="7" :index="0" style="text-align: right">배송비</a-table-summary-cell>
-          <a-table-summary-cell :index="1">{{ total.deliveryFee }}</a-table-summary-cell>
+          <a-table-summary-cell :index="1">{{ total.deliveryFee.toLocaleString() }}</a-table-summary-cell>
         </a-table-summary-row>
         <a-table-summary-row>
           <a-table-summary-cell :col-span="7" :index="0" style="text-align: right">총 할인금액</a-table-summary-cell>
-          <a-table-summary-cell :index="1">{{ total.totalDiscountAmount }}</a-table-summary-cell>
+          <a-table-summary-cell :index="1">{{ total.totalDiscountAmount.toLocaleString() }}</a-table-summary-cell>
         </a-table-summary-row>
         <a-table-summary-row>
           <a-table-summary-cell :col-span="7" :index="0" style="text-align: right">실 결제금액</a-table-summary-cell>
-          <a-table-summary-cell :index="1">{{ total.totalPaymentAmount }}</a-table-summary-cell>
+          <a-table-summary-cell :index="1">{{ total.totalPaymentAmount.toLocaleString() }}</a-table-summary-cell>
         </a-table-summary-row>
       </template>
     </a-table>
   </div>
 
   <a-descriptions title="주문자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }" :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="주문자">{{ orderData.orgData.userName }}</a-descriptions-item>
-    <a-descriptions-item label="주문자 연락처">{{ orderData.orgData.userPhone }}</a-descriptions-item>
+    <a-descriptions-item label="주문자">{{ orderData.ordererName }}</a-descriptions-item>
+    <a-descriptions-item label="주문자 연락처">{{ orderData.ordererTel }}</a-descriptions-item>
   </a-descriptions>
 
   <a-descriptions title="수령자 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
                   :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="수령자">{{ orderData.orgData.receiverName }}</a-descriptions-item>
-    <a-descriptions-item label="수령자 전화번호 1">{{ orderData.orgData.receiverPhone }}</a-descriptions-item>
-    <a-descriptions-item label="개인통관번호">{{ orderData.items[0].personalCustomsClearanceCode }}</a-descriptions-item>
-    <a-descriptions-item label="수령자 전화번호 2">{{ orderData.orgData.userPhone }}</a-descriptions-item>
-    <a-descriptions-item label="기본 주소">{{ orderData.orgData.receiverAddress.address }}</a-descriptions-item>
-    <a-descriptions-item label="상세 주소">{{ orderData.orgData.receiverAddress.addressDetail }}</a-descriptions-item>
-    <a-descriptions-item label="우편번호">{{ orderData.orgData.receiverAddress.zipCode }}</a-descriptions-item>
+    <a-descriptions-item label="수령자">{{ orderData.receiverName }}</a-descriptions-item>
+    <a-descriptions-item label="수령자 전화번호 1">{{ orderData.receiverTel1 }}</a-descriptions-item>
+    <a-descriptions-item label="개인통관번호">{{ orderData.personalCustomsClearanceCode }}</a-descriptions-item>
+    <a-descriptions-item label="수령자 전화번호 2">{{ orderData.receiverTel2 }}</a-descriptions-item>
+    <a-descriptions-item label="기본 주소">{{ orderData.receiverAddr1 }}</a-descriptions-item>
+    <a-descriptions-item label="상세 주소">{{ orderData.receiverAddr2 }}</a-descriptions-item>
+    <a-descriptions-item label="우편번호">{{ orderData.receiverPostCode }}</a-descriptions-item>
   </a-descriptions>
 
   <a-descriptions title="배송 정보" bordered :column="2" class="mt40" :labelStyle="{ width: '220px' }"
                   :contentStyle="{ width: '500px' }">
-    <a-descriptions-item label="택배사" >{{ orderData.items[0].courierName }}</a-descriptions-item>
-    <a-descriptions-item label="운송장번호 " >{{ orderData.items[0].invoiceNumber }}</a-descriptions-item>
-    <a-descriptions-item label="배송메모" >{{ orderData.orgData.additionalMessage }}</a-descriptions-item>
+    <a-descriptions-item label="택배사" >{{ orderData.courierName }}</a-descriptions-item>
+    <a-descriptions-item label="운송장번호 " >{{ orderData.invoiceNumber }}</a-descriptions-item>
+    <a-descriptions-item label="배송메모" >{{ orderData.message }}</a-descriptions-item>
   </a-descriptions>
 </template>
 
@@ -191,7 +191,7 @@ const total = computed(() => {
   /** 배송비 */
   const deliveryFee = orderData.value.items.reduce((acc, cur) => {
     if(Object.keys(state.orderStatusList).includes(cur.status)) {
-      return acc + cur.itemOrgData.deliveryFee.amount;
+      return acc + cur.deliveryFee;
     } else {
       return acc
     }
