@@ -10,13 +10,6 @@ import { reactive, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { useMarketOrderApi } from '@/api/order'
 import { message } from "ant-design-vue";
-import Coupang from "./markets/Coupang.vue";
-import Smartstore from "./markets/SmartStore.vue";
-import Lotteon from "./markets/Lotteon.vue";
-import Tmon from "./markets/Tmon.vue";
-import Interpark from "./markets/Interpark.vue";
-import Sk11st from "@/views/Order/order/markets/Sk11st.vue";
-import Qoo10sg from "@/views/Order/order/markets/Qoo10sg.vue";
 import { OrderMapping } from "@/views/Order/order/mapping";
 import OrderInfoTemplate from "@/views/Order/order/OrderInfoTemplate.vue";
 
@@ -26,10 +19,6 @@ const state = reactive({
   orderNo: route.params.orderNo,
   orderData: {}
 });
-
-const markets = {
-  Coupang, Smartstore, Tmon, Lotteon, Interpark, Sk11st, Qoo10sg
-}
 
 let marketCode = ref('')
 const getOrderDetail = async () => {
@@ -53,6 +42,5 @@ const getOrderDetail = async () => {
 onMounted(async () => {
   await getOrderDetail();
 })
-
 
 </script>
