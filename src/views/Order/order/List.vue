@@ -130,7 +130,8 @@
     <table border="1" style="border: 1px solid #eeeeee;width: 100%;" class="order_list">
       <tr>
         <th>
-          <a-checkbox></a-checkbox>
+          <a-checkbox v-model:checked="orderCheckAll" :indeterminate="orderIndeterminate"
+                      @change="onOrderCheckAllChange"></a-checkbox>
         </th>
         <th>판매처</th>
         <th>주문번호(주문시간)</th>
@@ -146,7 +147,7 @@
         <tr v-for="(item, _key) in order.items" :key="_key" :class="getGroupClass(index)">
           <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0"
               style="text-align: center;">
-            <a-checkbox v-model:value="item.checked" />
+            <a-checkbox v-model:checked="order.checked" />
           </td>
           <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0">
             <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
@@ -303,7 +304,7 @@
 
 <script setup>
 
-import { computed, onMounted, reactive, ref, toRaw, watch } from "vue";
+import { computed, onMounted, reactive, ref, toRaw, watch, watchEffect } from "vue";
 import { useMarketAccountApi } from "@/api/marketAccount";
 import { useMarketOrderApi } from "@/api/order";
 import { useMarketApi } from "@/api/market";
@@ -497,6 +498,29 @@ const filterOrderData = computed(() => {
   return Object.fromEntries(Object.entries(state.tableData.data).slice((state.tableData.page - 1) * state.tableData.pageSize, state.tableData.page * state.tableData.pageSize));
 });
 
+const orderCheckAll = ref(false);
+const orderIndeterminate = ref(true);
+
+watchEffect(() => {
+
+  if(Object.keys(filterOrderData.value).length === 0) {
+    return;
+  }
+  const isCheckedAll = Object.values(filterOrderData.value).every((item) => {
+    return item.checked;
+  });
+
+  const val = Object.values(filterOrderData.value).filter((item) => item.checked);
+
+  orderIndeterminate.value = !!val.length && val.length < Object.keys(filterOrderData.value).length;
+  orderCheckAll.value = !!isCheckedAll;
+});
+const onOrderCheckAllChange = e => {
+  orderIndeterminate.value = false;
+  Object.keys(filterOrderData.value).forEach((key) => {
+    filterOrderData.value[key].checked = !!e.target.checked;
+  });
+};
 const onPageChange = (page, pageSize) => {
   state.tableData.page = page;
   state.tableData.pageSize = pageSize;
