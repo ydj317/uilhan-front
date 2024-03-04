@@ -11,7 +11,7 @@
     </div>
     <MarketDisplayCategorys v-if="displayCategorysVisible" :marketCode="marketCode" :sellerId="sellerId" :displayCategorys="displayCategorys" />
 
-    <div style="display: flex;flex-direction: column;gap: 10px" class="mt15" v-if="searchMarketCategoryList.length > 0">
+    <div style="display: flex;flex-direction: column;gap: 10px" class="mt15 scrollable-div" v-if="searchMarketCategoryList.length > 0">
       <template v-for="(item, key) in searchMarketCategoryList" :key="key">
         <div>
           <a-typography-link @click="settingCategory(item)">
@@ -97,7 +97,6 @@ const handleCascaderChange = (value, selectedOptions) => {
       const cateId = selectedOptions.map(o => o.cateId)
       displayCategoryLoading = true
       useCategoryApi().getDisplayCategorys({ market_code: marketCode.value, seller_id: sellerId.value, cate_id: cateId }).then(res => {
-        console.log(displayCategoryLoading);
         if(res.status !== "2000") {
           message.error(res.message)
           return false;
@@ -161,4 +160,9 @@ onUpdated(async () => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.scrollable-div {
+  max-height: 150px; /* 或你希望的高度 */
+  overflow-y: auto; /* 在垂直方向上启用滚动条 */
+}
+</style>

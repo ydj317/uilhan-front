@@ -1,82 +1,84 @@
 <template>
+  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.showOptionModifyModal" width="1500px" :maskClosable="false">
+    <template #footer>
+      <div style="display: flex; justify-content: center;">
+        <a-button key="back" style="width: 100px;" @click="this.closeOptionModal" >취소</a-button>
+        <a-button key="submit" style="width: 100px;" @click="this.saveOption" type="primary">적용</a-button>
+      </div>
+    </template>
+
+<div class="container">
+<!--  버튼 구역-->
+  <div class="header-section">
+    <!--세팅버튼-->
+    <div class="setting header-button" style="display: flex;padding-right: 15px;">
+      <!--      <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
+
+      <a-button @click="setTrim" class="spec-right-button" type="primary"
+                size="middle">빈칸
+      </a-button>
+      <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
+                 size="middle">특문
+      </a-button>
+
+      <a-button @click="setAtoZ" class="spec-right-button" type="primary"
+                size="middle">A-Z
+      </a-button>
+
+      <a-button @click="handleMenuClick('N')" class="spec-right-button" type="primary"
+                size="middle">01.___
+      </a-button>
+
+      <a-button @click="handleMenuClick('A')" class="spec-right-button" type="primary"
+                size="middle">A.___
+      </a-button>
+
+      <a-button @click="setBeforeOldOptionData" class="spec-right-button" type="primary"
+                 size="middle">초기화
+      </a-button>
+
+      <a-input size="middle" v-model:value="option_group_find_str" style="width: 100px;"
+               placeholder="변경 전"></a-input>
+      >
+      <a-input size="middle" v-model:value="option_group_replace_str" style="width: 100px;"
+               placeholder="변경 후"></a-input>
+      <a-button type="primary" size="middle" @click="handleReplaceOptionGroup()" >
+        글자변경
+      </a-button>
+
+    </div>
+  </div>
   <div class="spec-box">
-    <table>
+    <table v-for="(option, optionIndex) in this.options" :key="optionIndex" :data-index="optionIndex">
       <!--옵션그룹,옵션일괄설정-->
       <thead>
+      <!--그룹명 영역-->
       <tr>
-        <!--그룹명 영역-->
         <th style="background-color: #ebeff0;">
           <div class="spec-option-group">
             <span class="spec-font">옵션그룹{{ optionIndex + 1 }}</span>
-            <a-input class="spec-option-input-size spec-checkbox2" v-model:value="option.name" size="default" placeholder="옵션그룹"
-                     :disabled="product.is_sync === 'T'"/>
+            <a-input class="spec-option-input-size spec-checkbox" v-model:value="option.name" size="default" placeholder="옵션그룹"
+            />
             <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{
                 option.name.length
               }}</span> / 25</span>
           </div>
         </th>
       </tr>
+      <!--옵션값 일괄 설정 영역-->
       <tr>
-        <!--옵션값 일괄 설정 영역-->
         <th>
           <div class="spec-option-header">
             <div class="spec-option-left">
-              <a-checkbox class="spec-checkbox" v-model:checked="selectAll" @change="onCheckAllChange"
-                          :disabled="product.is_sync === 'T'"></a-checkbox>
+              <a-checkbox class="spec-checkbox" v-model:checked="option.checkAll" @change="onCheckAllChange(option, optionIndex)"
+              ></a-checkbox>
               <span class="spec-font">옵션명</span>
             </div>
             <div class="spec-option-button">
-              <a-button @click="deleteOptionName" class="spec-right-button" type="primary"
-                        :disabled="product.is_sync === 'T'" size="small">삭제
-              </a-button>
-              <a-button @click="setTrim" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'"
-                        size="small">빈칸
-              </a-button>
-              <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
-                        :disabled="product.is_sync === 'T'" size="small">특문
-              </a-button>
-              <a-button @click="strLengthTo25" class="spec-right-button" type="primary"
-                        :disabled="product.is_sync === 'T'" size="small">25자
-              </a-button>
-              <a-button @click="setAtoZ" class="spec-right-button" type="primary" :disabled="product.is_sync === 'T'"
-                        size="small">A-Z
-              </a-button>
-              <a-dropdown size="small">
-                <template #overlay>
-                  <a-menu>
-                    <a-menu-item @click="handleMenuClick('N')">01.___</a-menu-item>
-                    <a-menu-item @click="handleMenuClick('A')">A.___</a-menu-item>
-                  </a-menu>
-                </template>
-                <a-button class="spec-right-button" :disabled="product.is_sync === 'T'" size="small">
-                  순번
-                </a-button>
-              </a-dropdown>
-              <a-button @click="setBeforeOldOptionData" class="spec-right-button" type="primary"
-                        :disabled="product.is_sync === 'T'" size="small">Back
-              </a-button>
-              <a-popover v-model:open="popoverVisible" trigger="click">
-                <template #content>
-                  <div style="display: flex;justify-content: end;padding: 15px 10px;">
-                    <a-space>
-                      <a-input v-model:value="option_group_find_str" style="width: 100px;"
-                               :disabled="product.is_sync === 'T'" placeholder="변경 전"></a-input>
-                      >
-                      <a-input v-model:value="option_group_replace_str" style="width: 100px;"
-                               :disabled="product.is_sync === 'T'" placeholder="변경 후"></a-input>
-                      <a-button type="primary" @click="handleReplaceOptionGroup()" :disabled="product.is_sync === 'T'">
-                        글자변경
-                      </a-button>
-                    </a-space>
-                  </div>
-                </template>
-                <a-button type="primary" size="small">글자변경</a-button>
-              </a-popover>
-
               <!--重复词语-->
               <div class="repeat">
                 <a-tag class="ant-tag" v-for="word in getDuplicateWords(option.data.map(item => item.name).join(' '))"
-                       :key="word" color="error" @click="removeWordFromInputs(word)">
+                       :key="word" color="error" @click="removeWordFromInputs(option, word)">
                   {{ word }}
                 </a-tag>
               </div>
@@ -89,39 +91,47 @@
       <tbody>
       <tr v-for="(item, index) in option.data" :key="item.key">
         <td>
-          <div class="spec-option-name" >
+          <div class="spec-option-name" style="padding: 6px 0;">
             <label class="ant-checkbox-wrapper spec-checkbox"
-                   :class="{'ant-checkbox-wrapper-checked': selectedRows.indexOf(item.key) !== -1}">
-              <span class="ant-checkbox" :class="{'ant-checkbox-checked': selectedRows.indexOf(item.key) !== -1}">
+                   >
+              <span class="ant-checkbox" >
+                <input type="checkbox" class="ant-checkbox-input" v-model="item.checked" :value="item.key"
+                       @change="updateSelectAll(item, option, optionIndex)" >
 
-                <input type="checkbox" class="ant-checkbox-input" v-model="selectedRows" :value="item.key"
-                       @change="updateSelectAll" :disabled="product.is_sync === 'T'">
-
-                <span class="option-image" v-if="item.img">
-                  <div class="option-image-large"><img :src="item.img" /></div>
-                  <img class="option-image-small" :src="item.img" />
-                </span>
 
                 <span class="ant-checkbox-inner"></span>
               </span>
             </label>
+
+            <span class="option-image" v-if="item.img" style="margin-right: 5px;">
+                  <div class="option-image-large"><img :src="item.img" /></div>
+                  <img class="option-image-small" :src="item.img" />
+                </span>
+
+            <div style="display: flex;flex-direction: column;justify-content: flex-start;width: 100%">
             <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
-                     :disabled="product.is_sync === 'T'" @input="handleInputChange" />
-            <span class="spec-count"><span :style="item.name.length > 25 ? 'color:red;' : ''">
+                     @input="handleInputChange" style="width: 100%" />
+
+            <span style="color: #999999">{{ item.oldName }}</span>
+            </div>
+
+            <span class="spec-count" style="width: 80px"><span :style="item.name.length > 25 ? 'color:red;' : ''">
               {{ item.name.length }}
             </span> / 25</span>
-            <div class="spec-option-name-button">
-              <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large"
-                        class="spec-set-option-name-button" :disabled="product.is_sync === 'T'">
-                <MinusOutlined/>
-              </a-button>
-            </div>
+<!--            <div class="spec-option-name-button">-->
+<!--              <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large"-->
+<!--                        class="spec-set-option-name-button" >-->
+<!--                <MinusOutlined/>-->
+<!--              </a-button>-->
+<!--            </div>-->
           </div>
         </td>
       </tr>
       </tbody>
     </table>
   </div>
+</div>
+  </a-modal>
 </template>
 <script>
 import {cloneDeep, forEach} from "lodash";
@@ -137,33 +147,71 @@ export default {
       product: state => state.product.detail
     }),
   },
-  props: ['option', 'optionIndex'],
+  watch: {
+    'product.resetOption': {
+      handler: function (val) {
+        if (val === true) {
+          // 옵션정보를 수집시 옵션정보로
+          let tempOptions = cloneDeep(this.product.item_org_option);
+          this.options = tempOptions.map(option => {
+            option.checkAll = false;
+            option.oldName = option.name;
+            option.data = option.data.map(item => {
+              item.oldName = item.name;
+              item.checked = false;
+              return item;
+            });
+            return option;
+          });
+
+          // 옵션정보 초기화 여부 초기화
+          this.product.resetOption = false
+        }
+      },
+      deep: true
+    }
+  },
   components: {PlusOutlined, MinusOutlined},
   data() {
     return {
       popoverVisible: false,
       option_group_find_str: '',
       option_group_replace_str: '',
-      oldOptionData: cloneDeep(this.option.data),
-      selectAll: false,
-      selectedRows: [],
+      // 설정할 옵션안에 체크여부 판단필드를 넣어줌
+      oldOptionData: this.$store.state.product.item_option.map(option => {
+        option.checkAll = false;
+        option.oldName = option.name;
+        option.data = option.data.map(item => {
+          item.oldName = item.name;
+          item.checked = false;
+          return item;
+        });
+        return option;
+      }),
+      options : [],
+      // selectedRows 는 오브젝트 그리고 각각의 옵션그룹에 해당하는 배열을 가지고 있음
+      selectedRows: this.$store.state.product.item_option.map(option => []),
+      restOption : this.$store.state.resetOption,
     };
   },
-
   methods: {
+    closeOptionModal() {
+      this.$store.commit('setShowOptionModifyModal', false);
+    },
     handleReplaceOptionGroup() {
       if (this.option_group_find_str.trim().length === 0) {
         message.warning('변경 전 글자를 입력해주세요.');
         return false;
       }
 
-      if (this.selectedRows.length === 0) {
+      let selectItems = this.selectedRows.flat();
+      if (selectItems.length === 0) {
         message.warning('처리할 옵션명을 선택하세요.');
         return false;
       }
 
       let newOptionData = [];
-      forEach(this.option.data, (item) => {
+      forEach(this.options.data, (item) => {
         if (this.selectedRows.indexOf(item.key) !== -1) {
           if (item.name.includes(this.option_group_find_str)) {
             item.name = item.name.replace(this.option_group_find_str, this.option_group_replace_str);
@@ -176,7 +224,16 @@ export default {
         }
       });
 
-      this.product.item_option[this.optionIndex].data = newOptionData;
+      this.options.forEach(option => {
+        option.data.forEach(item => {
+          if (selectItems.includes(item.key)) {
+            if (item.name.includes(this.option_group_find_str)) {
+              item.name = item.name.replace(this.option_group_find_str, this.option_group_replace_str);
+            }
+          }
+        });
+      });
+
       this._setCheckBoxInit();
     },
     deleteSpecGroup(optionIndex) {
@@ -196,18 +253,30 @@ export default {
       }
       this.product.item_option[optionIndex].data.splice(index, 1);
     },
-    onCheckAllChange() {
-      if (this.selectAll === true) {
-        this.selectedRows = [];
-        forEach(this.option.data, (item, index) => {
-          this.selectedRows.push(item.key);
+    onCheckAllChange(option, optionIndex) {
+      if (option.checkAll === true) {
+        this.selectedRows[optionIndex] = [];
+        forEach(option.data, (item, index) => {
+          item.checked = true;
+          this.selectedRows[optionIndex].push(item.key);
         });
       } else {
-        this.selectedRows = [];
+        this.selectedRows[optionIndex] = [];
+        forEach(option.data, (item, index) => {
+          item.checked = false;
+        });
       }
     },
-    updateSelectAll() {
-      this.selectAll = this.selectedRows.length === this.option.data.length;
+
+    updateSelectAll(item, option, optionIndex) {
+      // item 에서 checked 가 true 일때 selectedRows 에 추가
+      if (item.checked === true) {
+        this.selectedRows[optionIndex].push(item.key);
+      } else {
+        // item 에서 checked 가 false 일때 selectedRows 에서 제거
+        this.selectedRows[optionIndex] = this.selectedRows[optionIndex].filter(key => key !== item.key);
+      }
+      option.checkAll = this.selectedRows[optionIndex].length === option.data.length;
     },
     deleteOptionName() {
       if (this.selectedRows.length === 0) {
@@ -229,90 +298,94 @@ export default {
       this._setCheckBoxInit();
     },
     setTrim() {
-      if (this.selectedRows.length === 0) {
+      let selectItems = this.selectedRows.flat();
+      if (selectItems.length === 0) {
         message.warning('빈칸을 제거할 옵션명을 선택하세요.');
         return false;
       }
-      let newOptionData = [];
       const specialChars = /[ ]+/g;
-      forEach(this.option.data, (item, index) => {
-        if (this.selectedRows.indexOf(item.key) !== -1) {
-          item.name = item.name.replace(specialChars, '');
-          newOptionData.push(item);
-        } else {
-          newOptionData.push(item);
-        }
+      this.options.forEach(option => {
+        option.data.forEach(item => {
+          if (selectItems.includes(item.key)) {
+            item.name = item.name.replace(specialChars, '');
+          }
+        });
       });
-      this.product.item_option[this.optionIndex].data = newOptionData;
       this._setCheckBoxInit();
     },
     replaceSpecialChars() {
-      if (this.selectedRows.length === 0) {
+      let selectItems = this.selectedRows.flat();
+
+      if (selectItems.length === 0) {
         message.warning('특문을 제거할 옵션명을 선택하세요.');
         return false;
       }
-      let newOptionData = [];
       const specialChars = /[@#$%^&* ㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡®ªº㉾＄％￦Ｆ′″℃Å￠￡￥¤℉‰€㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．／：；？＾＿｀｜￣、。·…¨〃­―∥＼∼～ˇ˘˝˚˙¸˛¿ː]+/g;
-      forEach(this.option.data, (item, index) => {
-        if (this.selectedRows.indexOf(item.key) !== -1) {
-          item.name = item.name.replace(specialChars, '');
-          newOptionData.push(item);
-        } else {
-          newOptionData.push(item);
-        }
+      this.options.forEach(option => {
+        option.data.forEach(item => {
+          if (selectItems.includes(item.key)) {
+            item.name = item.name.replace(specialChars, '');
+          }
+        });
       });
-      this.product.item_option[this.optionIndex].data = newOptionData;
+
       this._setCheckBoxInit();
     },
-    strLengthTo25() {
-      if (this.selectedRows.length === 0) {
-        message.warning('25자로 처리할 옵션명을 선택하세요.');
+
+    setAtoZ() {
+      // this.options 에서 checkAll 이 true 인것만 checkAllOption 에 넣는다
+      let checkAllOption = this.options.filter(option => option.checkAll === true);
+      if (checkAllOption.length === 0) {
+        message.warning('A-Z로 처리할 옵션그룹을 선택하세요.');
         return false;
       }
-      let newOptionData = [];
-      forEach(this.option.data, (item, index) => {
-        if (this.selectedRows.indexOf(item.key) !== -1) {
-          item.name = item.name.substring(0, 25);
-          newOptionData.push(item);
-        } else {
-          newOptionData.push(item);
-        }
+      checkAllOption.forEach((option) => {
+        let typeValue = 'A';
+        forEach(option.data, (item) => {
+          item.name = typeValue;
+          typeValue = this._getNextLetter(typeValue);
+        });
       });
-      this.product.item_option[this.optionIndex].data = newOptionData;
+
       this._setCheckBoxInit();
     },
-    setAtoZ() {
-      let typeValue = 'A';
-      forEach(this.option.data, (item) => {
-        item.name = typeValue;
-        typeValue = this._getNextLetter(typeValue);
-      });
-    },
+
     handleMenuClick(type) {
       //type:N 01__, A A.__
       let prefix;
       let typeValue;
-      if (type === 'N') {
-        typeValue = 1;
-      } else {
-        typeValue = 'A';
+
+      // this.options 에서 checkAll 이 true 인것만 checkAllOption 에 넣는다
+      let checkAllOption = this.options.filter(option => option.checkAll === true);
+      if (checkAllOption.length === 0) {
+        message.warning('처리할 옵션그룹을 선택하세요.');
+        return false;
       }
-      forEach(this.option.data, (item, index) => {
-        prefix = typeValue.toString();
+      checkAllOption.forEach((option) => {
         if (type === 'N') {
-          if (prefix.length === 1) {
-            prefix = '0' + prefix;
-          }
-          item.name = prefix + '.' + item.name;
-          typeValue++;
+          typeValue = 1;
         } else {
-          item.name = prefix + '.' + item.name;
-          typeValue = this._getNextLetter(typeValue);
+          typeValue = 'A';
         }
+
+        forEach(option.data, (item, index) => {
+          prefix = typeValue.toString();
+          if (type === 'N') {
+            if (prefix.length === 1) {
+              prefix = '0' + prefix;
+            }
+            item.name = prefix + '.' + item.name;
+            typeValue++;
+          } else {
+            item.name = prefix + '.' + item.name;
+            typeValue = this._getNextLetter(typeValue);
+          }
+        });
       });
+
     },
     setBeforeOldOptionData() {
-      this.product.item_option[this.optionIndex].data = cloneDeep(this.oldOptionData);
+      this.options = cloneDeep(this.oldOptionData);
     },
     _getNextLetter(letter) {
       let nextLetter = '';
@@ -340,8 +413,13 @@ export default {
       return nextLetter;
     },
     _setCheckBoxInit() {
-      this.selectAll = false;
       this.selectedRows = [];
+      this.options.forEach(option => {
+        option.checkAll = false;
+        option.data.forEach(item => {
+          item.checked = false;
+        });
+      });
     },
     _uniqueKey() {
       return ((1 + Math.random()) * 0x10000) | 0;
@@ -415,8 +493,8 @@ export default {
 
 
     //点击a-tag同时删除对应的input中的name
-    removeWordFromInputs(wordToRemove) {
-      this.option.data.forEach(item => {
+    removeWordFromInputs(option, wordToRemove) {
+      option.data.forEach(item => {
         item.name = item.name.split(' ').filter(word => word !== wordToRemove).join(' ');
       });
 
@@ -425,22 +503,105 @@ export default {
         el.style.height = 'auto'; // 重置高度
       }
       this.adjustRepeatHeights();
-    }
+    },
+
+    saveOption() {
+      if (!this.product || !this.product.item_option) {
+        return;
+      }
+
+      if (!this._checkOptionGroup()) {
+        return false;
+      }
+
+      // sku 수정
+      if (this.product.sku.length < 0) {
+        return false;
+      }
+
+      this.product.sku.forEach((sku, i) => {
+        let aSkuName = sku.spec.split("::");
+        let aSkuPvs = sku.pvs.split(";");
+        forEach(this.options, (option, option_index) => {
+          forEach(option.data, (item, item_index) => {
+            if (aSkuPvs[option_index] === item.key) {
+              aSkuName[option_index] = item.name;
+              this.product.sku[i].spec = aSkuName.join("::");
+            }
+          });
+        });
+      });
+
+      this.product.item_option = {...this.options};
+      this.$store.commit('setShowOptionModifyModal', false);
+
+    },
+
+    _checkOptionGroup() {
+      let check = true;
+      let tmpOptionGroupName = [];
+      try {
+        forEach(this.options, (itemOption) => {
+          //입력하지 않은 옵션그룹 존재
+          if (itemOption.name.trim().length === 0) {
+            message.warning('입력하지 않은 옵션그룹이 존재합니다.');
+            check = false;
+            throw new Error();
+          }
+
+          if (tmpOptionGroupName.indexOf(itemOption.name) !== -1) {
+            message.warning(`동일한 옵션그룹이 존재합니다. 옵션그룹:${itemOption.name}`);
+            check = false;
+            throw new Error();
+          } else {
+            tmpOptionGroupName.push(itemOption.name);
+          }
+          let tmpOptionName = [];
+          forEach(itemOption.data, (item) => {
+            if (item.name.trim().length === 0) {
+              message.warning(`입력하지 않은 옵션명이 존재합니다. 옵션그룹:${itemOption.name}`);
+              check = false;
+              throw new Error();
+            }
+
+            if (tmpOptionName.indexOf(item.name) !== -1) {
+              message.warning(`동일한 옵션명이 존재합니다. 옵션그룹:${itemOption.name}, 옵션명:${item.name}`);
+              check = false;
+              throw new Error();
+            } else {
+              tmpOptionName.push(item.name);
+            }
+          });
+        });
+      } catch(e) {
+      }
+
+      return check;
+    },
   },
   mounted() {
+    this.options = cloneDeep(this.oldOptionData);
     this.adjustRepeatHeights();
   },
 }
-
 </script>
 <style lang="css" scoped>
 .spec-box {
+  margin-top: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
   width: 100%;
+  min-width: 580px;
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping to the next line */
+  overflow-x: auto;
 }
 
 .spec-box table {
   border-radius: 5px;
   width: 100%;
+  border-collapse: collapse;
+  margin-right: 10px; /* Optional: Add some spacing between tables */
 }
 
 .spec-box table tr {
@@ -478,7 +639,6 @@ export default {
 .spec-option-name {
   display: flex;
   align-items: center;
-  height: 45px;
 }
 
 .input-size {
@@ -629,6 +789,25 @@ margin-bottom:5px;
 
 .option-image-small {
   border-radius: 5px; width: 30px; height: 30px;
+}
+
+.header-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 60px;
+  margin-top: 10px;
+  border-radius: 0.275rem;
+  background-color: #f4f8f9;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* 默认为 column，即垂直排列 */
+}
+.spec-right-button {
+
 }
 
 </style>

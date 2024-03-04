@@ -24,6 +24,12 @@
               <img :src="getLogoSrc('market-logo', record.market_code)"
                    style="width: 16px; height: 16px; margin-right: 5px;" >
               {{ record.seller_id }}
+              <a-tooltip v-if="record.market_code === 'lotteon'">
+                <template #title>
+                  <div>롯데ON의 경우 마켓 등록 재전송 필요합니다.(*기존 데이터 베이스가 없으므로 작업 후 기존 마켓들과 동일하게 업로드 가능)</div>
+                </template>
+                <ExclamationCircleOutlined />
+              </a-tooltip>
             </div>
           </template>
         </template>
@@ -44,11 +50,11 @@
 import {mapState} from 'vuex';
 import {AuthRequest} from '@/util/request';
 import { message } from "ant-design-vue";
-import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {ExclamationCircleOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {useCategoryApi} from "@/api/category";
 
 export default {
-  components: {QuestionCircleOutlined},
+  components: {ExclamationCircleOutlined, QuestionCircleOutlined},
   computed: {
     ...mapState({
       marketAccount: (state) => state.marketAccount,

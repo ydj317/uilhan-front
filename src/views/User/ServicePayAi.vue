@@ -22,7 +22,13 @@
           <div class="s-content">
             <div class="s-day">{{ data.serviceDay }}개월</div>
             <div class="s-sail"><div v-show="data.sailValue"><span>{{ data.sailValue }}% 할인</span> 할부 결제 가능</div></div>
-            <div class="s-price" :style="data.isBest ? 'color: #fe3a2f;' : ''">₩ {{ data.servicePrice.toLocaleString() }} / 월</div>
+            <div class="s-price" :style="data.isBest ? 'color: #fe3a2f;' : ''">₩ {{ data.servicePrice }} / 월</div>
+            <div>
+              <a-checkbox v-model:checked="checked">
+                <a-button class="init" type="link" @click="openPolicyModal">이용약관</a-button> (결제 취소 및 환불 규정) 에 동의합니다.
+              </a-checkbox>
+              <policy @agree="onAgree" />
+            </div>
             <div><a-button class="s-button" size="large" @click="serviceBuy(data)">결제하기</a-button></div>
           </div>
         </a-card>
@@ -42,6 +48,7 @@ import {reactive, ref} from "vue";
 import {message} from "ant-design-vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
+import Policy from "@/components/Detail/policy.vue";
 
 const indicator = ref(false);
 
@@ -49,49 +56,64 @@ const payList = ref([
   {
     serviceDay: 1,
     sailValue: 0,
-    servicePrice: 250000,
-    isBest: false
+    servicePrice: '25만원',
+    isBest: false,
   },
-  {
-    serviceDay: 3,
-    sailValue: 20,
-    servicePrice: 200000,
-    isBest: false
-  },
-  {
-    serviceDay: 6,
-    sailValue: 33,
-    servicePrice: 167000,
-    isBest: true
-  },
-  {
-    serviceDay: 0,
-    sailValue: 0,
-    servicePrice: 0,
-    isBest: false
-  },
-  {
-    serviceDay: 0,
-    sailValue: 0,
-    servicePrice: 0,
-    isBest: false
-  },
-  {
-    serviceDay: 12,
-    sailValue: 44,
-    servicePrice: 140000,
-    isBest: true
-  },
+  // {
+  //   serviceDay: 3,
+  //   sailValue: 20,
+  //   servicePrice: 200000,
+  //   isBest: false
+  // },
+  // {
+  //   serviceDay: 6,
+  //   sailValue: 33,
+  //   servicePrice: 167000,
+  //   isBest: true
+  // },
+  // {
+  //   serviceDay: 0,
+  //   sailValue: 0,
+  //   servicePrice: 0,
+  //   isBest: false
+  // },
+  // {
+  //   serviceDay: 0,
+  //   sailValue: 0,
+  //   servicePrice: 0,
+  //   isBest: false
+  // },
+  // {
+  //   serviceDay: 12,
+  //   sailValue: 44,
+  //   servicePrice: 140000,
+  //   isBest: true
+  // },
 ]);
 
 // 결제버튼
 const serviceBuy = (data) => {
+  if (!checked.value) {
+    message.warning('결제 하시러면 이용약관 내용을 읽어보시고 약관 동의가 필요합니다.');
+    return false;
+  }
+
   console.log('==0==')
   console.log(data)
 
   message.success('결제');
 }
 
+const checked = ref(false);
+const onAgree = () => {
+  checked.value = true;
+};
+
+import { useStore } from 'vuex';
+const store = useStore();
+const openPolicyModal= () => {
+  store.commit('setIsModalOpen', true);
+}
 
 </script>
 
@@ -140,10 +162,15 @@ const serviceBuy = (data) => {
 }
 
 .s-service-pay .s-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;
+  //position: absolute;
+  //top: 50%;
+  //left: 50%;
+  //transform: translate(-50%, -50%);
 }
 
 .s-service-pay .s-day {
@@ -153,7 +180,6 @@ const serviceBuy = (data) => {
 
 .s-service-pay .s-sail {
   font-size: 14px;
-  height: 25px;
 }
 .s-service-pay .s-sail span {
   color: #fe3a2f;
@@ -171,6 +197,19 @@ const serviceBuy = (data) => {
   padding: 0 25px;
   margin-top: 30px;
   border: none;
+}
+
+.s-service-pay .introduction {
+  color: #939393;
+}
+
+.ant-checkbox-wrapper{
+  color:#fe3a2f;
+}
+
+.ant-btn-link {
+  padding:0;
+  color:#1677ff;
 }
 
 </style>

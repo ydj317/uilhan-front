@@ -1,6 +1,6 @@
 <template>
   <a-card :loading="formState.loading" :bordered="false">
-    <a-descriptions title="수익률 설정" bordered :column="1" :labelStyle="{ width: '100px' }"
+    <a-descriptions title="환율 / 수익률 / 수수료 설정" bordered :column="1" :labelStyle="{ width: '100px' }"
                     :contentStyle="{ width: '500px' }">
       <a-descriptions-item>
         <!-- label slot-->
@@ -90,6 +90,25 @@
           </a-descriptions-item>
         </a-descriptions>
       </a-descriptions-item>
+
+      <a-descriptions-item>
+        <template #label>
+          <a-space>
+            <span>마켓별 수수료율 설정</span>
+          </a-space>
+        </template>
+<!--        <a-radio-group v-model:value="formState.settingDatas.margin_weight.is_use">-->
+<!--          <a-radio :value="false">사용안함</a-radio>-->
+<!--          <a-radio :value="true">사용</a-radio>-->
+<!--        </a-radio-group>-->
+
+        <a-descriptions bordered size="small" class="mt15" :column="4">
+          <a-descriptions-item :label="market" v-for="(market,index) in formState.marketList" :key="index">
+            <a-input-number v-model:value.number="formState.settingDatas.commission_rate.markets[index]" addon-after="%"
+                            :min="0" :max="300" size="small" style="width: 150px" defaultValue="0"/>
+          </a-descriptions-item>
+        </a-descriptions>
+      </a-descriptions-item>
     </a-descriptions>
     <div style="display: flex;justify-content: center" class="mt15">
       <a-button type="primary" @click="handleSaveUserData">저장</a-button>
@@ -128,6 +147,11 @@ const formState = reactive({
       is_use: false, // 사용(true),미사용(false) 여부
       markets: {},
     },
+
+    commission_rate: {
+      markets: {},
+    },
+
   },
   loading: false,
   marketList: [],
@@ -154,9 +178,19 @@ function getUserInfoData() {
       return false;
     }
 
+    if (user_data.commission_rate === undefined) {
+      formState.loading = false;
+      return false;
+    }
+
     // 빈 json 일때 백앤드에선 []로 저장되기에 추후에 버그가 생길수 있어서 프론트단에서 []받을시 강제로 {}로 전환
     if (Array.isArray(user_data.margin_weight.markets) && user_data.margin_weight.markets.length === 0) {
       user_data.margin_weight.markets = {};
+    }
+
+    // 빈 json 일때 백앤드에선 []로 저장되기에 추후에 버그가 생길수 있어서 프론트단에서 []받을시 강제로 {}로 전환
+    if (Array.isArray(user_data.commission_rate.markets) && user_data.commission_rate.markets.length === 0) {
+      user_data.commission_rate.markets = {};
     }
 
     formState.settingDatas = user_data;

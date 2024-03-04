@@ -22,7 +22,7 @@
 
 
     <!--Spec-->
-    <!--<Spec></Spec>-->
+<!--    <Spec></Spec>-->
 
     <!--Sku-->
     <Sku></Sku>
@@ -97,7 +97,7 @@ export default defineComponent({
   data() {
     return {
       useAutoSave: false,
-      productWatchCount: 0
+      productWatchCount: 0,
     };
   },
 

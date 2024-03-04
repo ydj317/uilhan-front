@@ -5,15 +5,15 @@
   <div v-else id="eModelTitle_2" class="mt20 p20 bg-white" v-if="product.item_option">
     <h3><strong>옵션설정</strong></h3>
     <!--옵션그룹해더, 옵션 셋팅, 옵션그룹 추가-->
-    <div class="header-section">
-      <!--세팅버튼-->
-      <div class="setting header-button" style="display: flex;justify-content: space-between;width: 100%;padding-right: 15px;">
-        <a-button class="floatRight" type="primary" @click="setting" :disabled="product.is_sync === 'T'">옵션 적용</a-button>
-      </div>
-    </div>
+<!--      <div class="header-section">-->
+<!--        &lt;!&ndash;세팅버튼&ndash;&gt;-->
+<!--        <div class="setting header-button" style="display: flex;justify-content: space-between;width: 100%;padding-right: 15px;">-->
+<!--          <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
+<!--        </div>-->
+<!--      </div>-->
     <!--옵션그룹 영역-->
     <div class="body-section">
-      <SpecGroup v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :option="option" :optionIndex="optionIndex"></SpecGroup>
+      <SpecGroup></SpecGroup>
     </div>
   </div>
 </template>
@@ -39,6 +39,7 @@ export default {
     return {
       temp_sku: [],
       temp_item_option: cloneDeep(this.$store.state.product.item_option),
+      showOptionPop: false
     };
   },
 
@@ -335,5 +336,8 @@ export default {
 
 .spec-box table tr {
   border: 1px solid #f0f0f0;
+}
+.spec-right-button {
+  margin-right: 5px;
 }
 </style>

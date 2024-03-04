@@ -13,7 +13,7 @@
           <a-button>일괄적용</a-button>
         </a-popconfirm>
         <!--품목삭제-->
-        <a-button @click="deleteSku" :disabled="product.is_sync === 'T'">품목삭제</a-button>
+        <a-button @click="deleteSku" >품목삭제</a-button>
         <a-divider type="vertical"></a-divider>
         <div style="display: flex;gap: 5px">
           <a-input-group compact>
@@ -37,36 +37,49 @@
 
         <div>
           <a-space>
+            <a-button type="primary" @click="resetOption" >옵션정보 초기화</a-button>
+            <a-button @click="showOptionPop" >옵션 수정</a-button>
             <a-tooltip>
               <template #title>
-                <div>무료배송 박스 체크 시 배송비를 상품 판매가 내 추가하여 등록 할 수 있는 기능입니다.</div>
-                <a-popover v-model:open="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop"
-                           style="z-index: 999">
-                  <template #content>
-                    <table border="1" style="border: 1px solid #999" class="popoverTable">
-                      <tr>
-                        <th>항목</th>
-                        <th>상품 가격 기준</th>
-                        <th>배송비</th>
-                      </tr>
-                      <tr>
-                        <td rowspan="3">전체 카테고리</td>
-                        <td><strong>상품가</strong> &lt;&equals; 20,000</td>
-                        <td>최대 15,000</td>
-                      </tr>
-                      <tr>
-                        <td>20,000 &lt; <strong>상품가</strong> &lt;&equals; 40,000</td>
-                        <td>최대 20,000</td>
-                      </tr>
-                      <tr>
-                        <td><strong>상품가</strong> &gt; 40,000</td>
-                        <td>최대 30,000</td>
-                      </tr>
-                    </table>
-                  </template>
-                  쿠팡 배송비 정책 자세히 보러가기 (삼각형 클릭)
-                  <a-button type="link">▶</a-button>
-                </a-popover>
+                <div>
+                  <div style="font-weight: bold">[무료배송 기능]</div>
+                  <div style="line-height: 1.8;">무료배송 박스 체크 시 배송비를 상품 판매가 내 추가하여 등록 할 수 있는 기능입니다.</div>
+                </div>
+                <div>
+                  <div style="font-weight: bold; margin-top: 10px">[쿠팡 배송 정책]</div>
+                  <a-popover v-model:open="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop"
+                             style="z-index: 999">
+                    <template #content>
+                      <table border="1" style="border: 1px solid #999" class="popoverTable">
+                        <tr>
+                          <th>항목</th>
+                          <th>상품 가격 기준</th>
+                          <th>배송비</th>
+                        </tr>
+                        <tr>
+                          <td rowspan="3">전체 카테고리</td>
+                          <td><strong>상품가</strong> &lt;&equals; 20,000</td>
+                          <td>최대 15,000</td>
+                        </tr>
+                        <tr>
+                          <td>20,000 &lt; <strong>상품가</strong> &lt;&equals; 40,000</td>
+                          <td>최대 20,000</td>
+                        </tr>
+                        <tr>
+                          <td><strong>상품가</strong> &gt; 40,000</td>
+                          <td>최대 30,000</td>
+                        </tr>
+                      </table>
+                    </template>
+                    쿠팡 배송비 정책 자세히 보러 가기 (삼각형 클릭)
+                    <a-button type="link">▶</a-button>
+                  </a-popover>
+                </div>
+                <div>
+                  <div style="font-weight: bold; margin-top: 10px">[티몬 배송 정책]</div>
+                  <div style="line-height: 1.8;">티몬의 경우 무료배송을 체크하지 않을 시 배송비용과 반품비용이 동일하게 적용됩니다.</div>
+                  <div style="line-height: 1.8; margin-top: 10px">무료배송으로 체크 시 기존에 설정되어 있는 반품 비용으로 적용됩니다.</div>
+                </div>
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
@@ -121,7 +134,7 @@
           <!--선택-->
           <template v-if="column.key === 'checked'">
             <div class="center">
-              <a-checkbox v-model:checked="record.checked" :disabled="product.is_sync === 'T'"></a-checkbox>
+              <a-checkbox v-model:checked="record.checked" ></a-checkbox>
             </div>
           </template>
 
@@ -149,16 +162,6 @@
           <template v-else-if="column.key === 'code'">
             <div class="center">
               {{ record.code }}
-            </div>
-            <div class="center pt5">
-              <a-input
-                  class="w90"
-                  :style="
-                  record.img
-                    ? `height: 30px; text-align: center; border: none;`
-                    : `height: 30px; text-align: center; border: none;`
-                " v-model:value="record['barcode']"
-              />
             </div>
           </template>
 
@@ -234,13 +237,6 @@
                 @blur="handlerCustomPrice(column.key, index)"
                 v-model:value="record[column.key]"
             />
-            <div v-if="isManager"
-                 :style="`text-align: center; border: none;`"
-            >
-              <div v-if="record.selling_price_cn > 0">
-                <sub><span style="color: #999999">{{ record.selling_price_cn }}위안</span></sub>
-              </div>
-            </div>
           </template>
           <!--보여주기-->
           <template v-else>
@@ -264,10 +260,13 @@
 <script>
 import {mapState, useStore} from "vuex";
 import {lib} from "@/util/lib";
-import {forEach} from "lodash";
+import {cloneDeep, forEach} from "lodash";
 import {message} from "ant-design-vue";
 import {computed, reactive, ref, defineComponent} from "vue";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import detail from "src/views/Product/Detail.vue";
+import { Modal } from 'ant-design-vue';
+
 
 export default defineComponent({
   name: "productDetailSku",
@@ -306,7 +305,7 @@ export default defineComponent({
           width: "6%",
         },
         {
-          title: "품목코드 / 바코드",
+          title: "품목코드",
           key: "code",
           width: "12%",
         },
@@ -682,10 +681,33 @@ export default defineComponent({
     shippingFeeInit() {
 
     },
-    isManager() {
-      return ['jwli', 'irunkorea_02', 'haeju'].includes(lib.getCookie("member_name"));
-    }
-  },
+    showOptionPop() {
+      this.$store.commit('setShowOptionModifyModal', true);
+    },
+
+    // 옵션 초기화  (수집시 옵션으로)
+    resetOption() {
+      if (!this.product.item_org_sku|| !this.product.item_org_option || this.product.item_org_sku.length === 0 || !this.product.item_org_option.length === 0) {
+        message.error('기존 상품은 옵션정보가 존재하지 않습니다.')
+        return false;
+      }
+      const _this = this;
+      Modal.confirm({
+        title: '옵션정보를 초기화 하시겠습니까?',
+        content: '편집된 옵션정보는 삭제되고 상품 수집시 옵션정보로 초기화됩니다.',
+        onOk() {
+          _this.product.item_option =  {..._this.product.item_org_option};
+          _this.product.sku = cloneDeep(_this.product.item_org_sku);
+          _this.handleShippingFeeChange(_this.formState.item_shipping_fee);
+          _this.setExpectedReturn();
+          _this.product.resetOption = true;
+          message.success('옵션정보가 초기화 되었습니다.')
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onCancel() {},
+      });
+    },
+},
 
   mounted() {
     this.css();
