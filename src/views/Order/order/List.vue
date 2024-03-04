@@ -481,13 +481,6 @@ const getTableData = async () => {
     }, {});
 
     state.tableData.data = groupedByOrderNo;
-    // set courierNameValues default value
-    // state.tableData.data.forEach((item) => {
-    //   if (item.courierName !== '' && item.invoiceNumber !== '') {
-    //     state.courierNameValues[item.id] = item.courierName;
-    //     state.invoiceNumberValues[item.id] = item.invoiceNumber;
-    //   }
-    // });
 
     state.tableData.total = Object.keys(state.tableData.data).length;
     state.tableData.loading = false;
