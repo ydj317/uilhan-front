@@ -178,20 +178,10 @@ export default {
       option_group_find_str: '',
       option_group_replace_str: '',
       // 설정할 옵션안에 체크여부 판단필드를 넣어줌
-      oldOptionData: this.$store.state.product.item_option.map(option => {
-        option.checkAll = false;
-        option.oldName = option.name;
-        option.data = option.data.map(item => {
-          item.oldName = item.name;
-          item.checked = false;
-          return item;
-        });
-        return option;
-      }),
+      oldOptionData : [],
       options : [],
-      // selectedRows 는 오브젝트 그리고 각각의 옵션그룹에 해당하는 배열을 가지고 있음
-      selectedRows: this.$store.state.product.item_option.map(option => []),
-      restOption : this.$store.state.resetOption,
+      selectedRows: [],
+      // restOption : this.$store.state.resetOption,
     };
   },
   methods: {
@@ -580,7 +570,21 @@ export default {
     },
   },
   mounted() {
+
+    this.oldOptionData = this.product.item_option.map(option => {
+      option.checkAll = false;
+      option.oldName = option.name;
+      option.data = option.data.map(item => {
+        item.oldName = item.name;
+        item.checked = false;
+        return item;
+      });
+      return option;
+    });
+
     this.options = cloneDeep(this.oldOptionData);
+    this.selectedRows = this.product.item_option.map(option => []);
+
     this.adjustRepeatHeights();
   },
 }
