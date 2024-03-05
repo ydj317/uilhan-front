@@ -98,9 +98,8 @@
 <script>
 
 import { defineComponent, ref } from "vue";
-import { AndroidOutlined,PictureOutlined,ProfileOutlined } from '@ant-design/icons-vue';
+import { AndroidOutlined,ProfileOutlined } from '@ant-design/icons-vue';
 import DefaultTab from "@/views/Product/Tab/DefaultTab.vue";
-import ThumbnailTab from "@/views/Product/Tab/ThumbnailTab.vue";
 import OptionTab from "@/views/Product/Tab/OptionTab.vue";
 import DetailInfoTab from "@/views/Product/Tab/DetailInfoTab.vue";
 import {lib} from "@/util/lib";
@@ -110,9 +109,6 @@ import { mapState} from "vuex";
 import {throttle} from "lodash";
 import {useCategoryApi} from "@/api/category";
 import {useUserApi} from "@/api/user";
-// const OptionTab = defineAsyncComponent(() => import('@/views/Product/Tab/OptionTab.vue'));
-// const ThumbnailTab = defineAsyncComponent(() => import('@/views/Product/Tab/ThumbnailTab.vue'));
-// const DetailInfoTab = defineAsyncComponent(() => import('@/views/Product/Tab/DetailInfoTab.vue'));
 
 
 export default defineComponent({
