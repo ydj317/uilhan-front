@@ -113,8 +113,13 @@
   </div>
 
   <div class="mt20">
+    <ImageDetail />
+  </div>
+
+  <div class="mt20">
     <Guide />
   </div>
+
 </template>
 
 <script setup>
@@ -130,6 +135,7 @@ import Password from "@/views/Setting/Password.vue";
 import Account from "@/views/Setting/Account.vue";
 import Guide from "@/views/Setting/Guide.vue";
 import BindBridge from "@/views/Setting/BindBridge.vue";
+import ImageDetail from "@/views/Setting/ImageDetail.vue";
 
 const formState = reactive({
   username: "",
