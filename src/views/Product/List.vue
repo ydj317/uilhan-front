@@ -33,7 +33,7 @@
         style="display: flex;flex-direction: column;gap: 10px;background-color: white;width: 100%;"
       >
         <div style="width: 100%;display: flex; justify-content: center;align-items: center;">
-          <div style="position: relative;display: flex;justify-content: center;align-items: center;width: 276px;height: 310px;">
+          <div style="position: relative;display: flex;justify-content: center;align-items: center;">
             <img :src="product.item_thumb[0]" style="width: 100%;height: 100%;object-fit: contain"/>
             <div
               style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;gap: 10px; background-color: rgba(255, 223, 64,0.3);position: absolute;top: 0;left: 0;transition: all 0.2s ease-in-out;"
@@ -59,9 +59,9 @@
 
           </div>
         </div>
-        <div style="padding: 0 20px">
+        <div style="padding: 0 20px;height: 39px;overflow: hidden">
           <a-typography-text
-            style="margin-top: 10px;"
+              style="margin-top: 10px;"
           >
             <a href="javascript:void(0)" @click="openDetailPopup(product.item_id)" style="color: black">
               {{ substrName(product.item_is_trans ? product.item_trans_name : product.item_name) }}
@@ -972,8 +972,8 @@ export default defineComponent({
     },
 
     substrName(sName) {
-      if (sName.length > 80) {
-        return sName.substr(0, 80) + "...";
+      if (sName.length > 38) {
+        return sName.substr(0, 38) + "...";
       }
 
       return sName;
