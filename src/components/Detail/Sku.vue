@@ -682,7 +682,8 @@ export default defineComponent({
 
     },
     showOptionPop() {
-      this.$store.commit('setShowOptionModifyModal', true);
+      // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModifyModal = true 로 설정
+      this.$store.commit('product/setShowOptionModify', true)
     },
 
     // 옵션 초기화  (수집시 옵션으로)
@@ -696,9 +697,9 @@ export default defineComponent({
         title: '옵션정보를 초기화 하시겠습니까?',
         content: '편집된 옵션정보는 삭제되고 상품 수집시 옵션정보로 초기화됩니다.',
         onOk() {
-          _this.product.item_option =  {..._this.product.item_org_option};
-          _this.product.sku = cloneDeep(_this.product.item_org_sku);
-          _this.handleShippingFeeChange(_this.formState.item_shipping_fee);
+          _this.product.item_option = cloneDeep(_this.product.item_org_option);
+          _this.product.sku = _this.product.item_org_sku;
+          _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
           _this.product.resetOption = true;
           message.success('옵션정보가 초기화 되었습니다.')
