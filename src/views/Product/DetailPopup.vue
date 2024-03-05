@@ -1,14 +1,14 @@
 <template>
-  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" style="top: 20px;">
+  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" centered>
     <a-tabs v-model:activeKey="activeKey"
-            :tabBarGutter="30"
+            :tabBarGutter="-1"
+            type="card"
     >
       <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange" :forceRender="true">
         <template #tab>
-          <div style="display: flex;gap: 3px">
-            <span>
-              <component :is="pane.icon" />
-            </span>
+          <div style="display: flex;gap: 3px"
+          :style="activeKey === pane.key ? 'background-color: #ffdf40;color:white;' : ''"
+          >
             {{pane.tab}}
           </div>
         </template>
