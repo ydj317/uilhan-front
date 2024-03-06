@@ -3,55 +3,23 @@
     <a-spin v-if="product.loading" size="large"/>
   </div>
   <div v-show="!product.loading" id="eModelTitle_4" class="mt20 p20 bg-white">
+    <h3><strong>상세페이지</strong></h3>
     <!--title-->
     <div style="display: flex; justify-content: space-between;">
-      <h3><strong>상세페이지</strong></h3>
+      <div style="display: flex;align-items: center;">
+        <a-space>
+          <a-checkbox v-model:value="useAutoSave">상/하단 이미지</a-checkbox>
+          <a-checkbox v-model:value="useAutoSave">동영상</a-checkbox>
+          <a-checkbox v-model:value="useAutoSave">옵션테이블</a-checkbox>
+        </a-space>
+      </div>
       <div class="editorToolbar">
         <a-space>
-          <span>옵션 테이블</span>
-          <a-input-group compact>
-            <a-select v-model:value="selectOptionValue" style="width: 120px">
-              <a-select-option v-for="selectOption in optionTableSelectOption" :key="selectOption.value"
-                               :value="selectOption.value">
-                {{ selectOption.label }}
-              </a-select-option>
-            </a-select>
-            <a-button type="primary" @click="setOptionTableContent">적용</a-button>
-          </a-input-group>
+          <a-button class="originalDetailTrans" type="default" @click="translatePopup">미리보기</a-button>
+          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역</a-button>
+          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기</a-button>
         </a-space>
 
-        <a-divider type="vertical" style="border-color: #999" />
-
-        <a-space>
-          <span>안내정보</span>
-          <div v-if="guideData.length > 0">
-            <a-input-group compact>
-              <a-select v-model:value="guideValue" style="width: 200px">
-                <a-select-option v-for="data in guideData" :value="data.id">
-                  {{ data.name }}
-                </a-select-option>
-                <a-select-option value="guide_cancel">제거</a-select-option>
-              </a-select>
-              <a-button type="primary" @click="setGuideContent">적용</a-button>
-            </a-input-group>
-          </div>
-          <router-link v-else to="/setting/guideForm">
-            <a-button type="primary">
-              상하단이미지 설정
-              <a-tooltip>
-                <template #title>
-                  <div class="mb10">상하단 이미지 설정 클릭 시 설정 페이지로 이동합니다.</div>
-                  <div>이동 전 수정하신 내용을 먼저 저장해주세요.</div>
-                </template>
-                <QuestionCircleOutlined/>
-              </a-tooltip>
-            </a-button>
-          </router-link>
-        </a-space>
-
-        <a-divider type="vertical" style="border-color: #999" />
-
-        <a-button class="originalDetailTrans" type="primary" @click="translatePopup">상세 이미지번역</a-button>
       </div>
     </div>
 
