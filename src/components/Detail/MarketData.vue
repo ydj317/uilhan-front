@@ -1,7 +1,7 @@
 <template>
   <div class="plrb20 bg-white" style="padding: 20px;">
     <h3><strong>카테고리</strong></h3>
-    <table style="width: 100%; border-collapse: collapse;">
+    <table class="basic-info-table" style="width: 100%; border-collapse: collapse;">
       <colgroup>
         <col style="width: 15%">
         <col >
@@ -107,5 +107,23 @@ export default {
 
 .detail-basic .ant-form-item {
   margin-bottom: 0;
+}
+</style>
+
+<style scoped>
+.basic-info-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.basic-info-table th {
+  text-align: right;
+  padding: 10px 20px;
+  font-weight: bold;
+  color: #666;
+}
+
+.basic-info-table td {
+  padding: 10px 20px;
 }
 </style>

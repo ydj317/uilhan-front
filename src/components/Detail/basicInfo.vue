@@ -1,7 +1,7 @@
 <template>
   <div id="eModelTitle_0" class="mt20 bg-white" style="padding: 20px">
     <h3><strong>기본정보</strong></h3>
-    <table style="width: 100%; border-collapse: collapse;">
+    <table class="basic-info-table" style="width: 100%; border-collapse: collapse;">
       <colgroup>
         <col style="width: 15%">
         <col >
@@ -17,7 +17,7 @@
               <a-button type="primary" style="background-color: #1e44ff;color: white">키워드 검색</a-button>
             </div>
 
-            <div style="background-color: #eeeeee;padding: 10px;display: grid;grid-template-columns: repeat(15,1fr);gap: 5px;">
+            <div style="background-color: #eeeeee;padding: 10px;display: grid;grid-template-columns: repeat(12,1fr);gap: 5px;justify-content: center;align-items: center">
               <a-tag>키워드</a-tag>
               <a-tag color="red">키워드</a-tag>
               <a-tag :bordered="false">키워드</a-tag>
@@ -311,4 +311,19 @@ export default {
   height: 16px;
 }
 
+.basic-info-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.basic-info-table th {
+  text-align: right;
+  padding: 10px 20px;
+  font-weight: bold;
+  color: #666;
+}
+
+.basic-info-table td {
+  padding: 10px 20px;
+}
 </style>
