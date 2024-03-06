@@ -19,10 +19,7 @@ import Sku from "@/components/Detail/Sku.vue"
 import NewSpec from "@/components/Detail/Spec/NewSpec.vue"
 import {mapState} from "vuex";
 
-//const NewSpec = defineAsyncComponent(() => import("@/components/Detail/Spec/NewSpec.vue"));
-
-export default defineComponent({
-  name: "OptionTab",
+export default {
   components: {Sku,NewSpec},
 
   computed: {
@@ -30,5 +27,5 @@ export default defineComponent({
       product: state => state.product.detail
     }),
   },
-})
+}
 </script>

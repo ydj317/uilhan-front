@@ -2,6 +2,44 @@
   <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
     <a-spin v-if="product.loading" size="large"/>
   </div>
+
+  <h3><strong>가격설정</strong></h3>
+  <table class="price-setting-table">
+    <colgroup>
+      <col style="width: 15%">
+      <col>
+      <col style="width: 15%">
+      <col>
+    </colgroup>
+    <tr>
+      <th>판매가 할인율</th>
+      <td>
+        <a-input-number v-model:value="product.item_discount_rate" :min="0" :max="100" :step="1" style="width: 100%" />
+      </td>
+      <th>배송비 설정</th>
+      <td>
+        <a-radio-group v-model:value="product.item_shipping_fee_type">
+          <a-radio value="0">무료배송</a-radio>
+          <a-radio value="1">유료배송</a-radio>
+        </a-radio-group>
+      </td>
+    </tr>
+
+    <tr>
+      <th>판매가 인상/인하 설정</th>
+      <td>
+        <a-select v-model:value="product.item_price_change_type" style="width: 100%">
+          <a-select-option value="0">+</a-select-option>
+          <a-select-option value="1">-</a-select-option>
+        </a-select>
+      </td>
+      <th></th>
+      <td>
+        <a-input-number v-model:value="product.item_price_change_value" :min="0" :step="1000" style="width: 100%" /> 추가
+      </td>
+    </tr>
+  </table>
+
   <div v-else id="eModelTitle_3" class="mt20 p20 bg-white">
     <h3><strong>옵션정보</strong></h3>
     <!--sku 상단 버튼-->
@@ -825,4 +863,20 @@ export default defineComponent({
   padding: 5px;
 }
 
+.price-setting-table {
+  border-collapse: collapse;
+  background-color: #eeeeee;
+  width: 100%;
+}
+
+.price-setting-table th {
+  text-align: right;
+  padding: 10px 20px;
+  font-weight: bold;
+  color: #666;
+}
+
+.price-setting-table td {
+  padding: 10px 20px;
+}
 </style>

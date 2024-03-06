@@ -1,21 +1,18 @@
 <template>
-  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" style="top: 20px;">
+  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" centered>
     <a-tabs v-model:activeKey="activeKey"
-            :tabBarGutter="30"
+            :tabBarGutter="0.5"
+            type="card"
     >
-      <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange" :forceRender="true">
+      <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange">
         <template #tab>
-          <div style="display: flex;gap: 3px">
-            <span>
-              <component :is="pane.icon" />
-            </span>
+          <div :style="{color: activeKey === pane.key ? '#ffffff' : '#000000'}">
             {{pane.tab}}
           </div>
+
         </template>
         <keep-alive>
-          <div>
           <component :is="pane.component" v-show="activeKey === pane.key" style="height: 700px;overflow-y: scroll" />
-          </div>
         </keep-alive>
       </a-tab-pane>
     </a-tabs>
@@ -81,7 +78,7 @@
   </a-modal>
 
   <!--제휴사 연동결과-->
-  <a-modal width="600px" :maskClosable="false" v-model:open="marketSyncPop" title="제휴사연동결과" @ok="">
+  <a-modal width="600px" :maskClosable="false" v-model:open="marketSyncPop" centered title="제휴사연동결과" @ok="">
     <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
     <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
       <template #renderItem="{ item }">
@@ -101,9 +98,8 @@
 <script>
 
 import { defineComponent, ref } from "vue";
-import { AndroidOutlined,PictureOutlined,ProfileOutlined } from '@ant-design/icons-vue';
+import { AndroidOutlined,ProfileOutlined } from '@ant-design/icons-vue';
 import DefaultTab from "@/views/Product/Tab/DefaultTab.vue";
-import ThumbnailTab from "@/views/Product/Tab/ThumbnailTab.vue";
 import OptionTab from "@/views/Product/Tab/OptionTab.vue";
 import DetailInfoTab from "@/views/Product/Tab/DetailInfoTab.vue";
 import {lib} from "@/util/lib";
@@ -113,9 +109,6 @@ import { mapState} from "vuex";
 import {throttle} from "lodash";
 import {useCategoryApi} from "@/api/category";
 import {useUserApi} from "@/api/user";
-// const OptionTab = defineAsyncComponent(() => import('@/views/Product/Tab/OptionTab.vue'));
-// const ThumbnailTab = defineAsyncComponent(() => import('@/views/Product/Tab/ThumbnailTab.vue'));
-// const DetailInfoTab = defineAsyncComponent(() => import('@/views/Product/Tab/DetailInfoTab.vue'));
 
 
 export default defineComponent({
@@ -132,18 +125,12 @@ export default defineComponent({
         },
         {
           key: '2',
-          tab: '썸네일',
-          icon: PictureOutlined,
-          component: ThumbnailTab,
-        },
-        {
-          key: '3',
-          tab: '옵션정보',
+          tab: '옵션/가격정보',
           icon: AndroidOutlined,
           component: OptionTab,
         },
         {
-          key: '4',
+          key: '3',
           tab: '상세페이지',
           icon: AndroidOutlined,
           component: DetailInfoTab,
@@ -924,5 +911,9 @@ export default defineComponent({
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active{
+  background-color: #ffd117 !important;
 }
 </style>

@@ -11,14 +11,12 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
-import BasicInfo from "@/components/Detail/basicInfo.vue";
 import {mapState} from "vuex";
 import Loading from "vue-loading-overlay";
+import BasicInfo from "@/components/Detail/basicInfo.vue";
 import MarketData from "@/components/Detail/MarketData.vue";
 
-export default defineComponent({
-  name: "DefaultTab",
+export default {
   components: {MarketData, Loading, BasicInfo},
 
   data() {
@@ -33,5 +31,5 @@ export default defineComponent({
       product: state => state.product.detail
     }),
   },
-})
+}
 </script>
