@@ -8,14 +8,14 @@
     <div style="display: flex; justify-content: space-between;">
       <div style="display: flex;align-items: center;">
         <a-space>
-          <a-checkbox v-model:value="useAutoSave">상/하단 이미지</a-checkbox>
-          <a-checkbox v-model:value="useAutoSave">동영상</a-checkbox>
-          <a-checkbox v-model:value="useAutoSave">옵션테이블</a-checkbox>
+          <a-checkbox v-model:checked="this.product.user.description_option.top_bottom_image.use">상/하단 이미지</a-checkbox>
+          <a-checkbox v-model:checked="this.product.user.description_option.show_video">동영상</a-checkbox>
+          <a-checkbox v-model:checked="this.product.user.description_option.option_table.use">옵션테이블</a-checkbox>
         </a-space>
       </div>
       <div class="editorToolbar">
         <a-space>
-          <a-button class="originalDetailTrans" type="default" @click="translatePopup">미리보기</a-button>
+          <a-button class="originalDetailTrans" type="default" @click="showPreview">미리보기</a-button>
           <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역</a-button>
           <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기</a-button>
         </a-space>
@@ -34,10 +34,21 @@
     </div>
   </div>
   <image-translate-tools v-model:visible="imageTranslateToolsVisible" @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList" @update:translateImageList="updateTranslateImageList"/>
+  <!-- 미리보기 -->
+  <a-modal v-model:visible="this.previewVisible"
+           title="상품 미리보기"
+           width="1000px"
+           :centered="true"
+           :footer="null"
+           @ok="this.previewVisible = false">
+    <div v-html="modalContent" id="previewContainer" >
+
+    </div>
+  </a-modal>
 </template>
 
 <script>
-import { forEach } from "lodash";
+import {cloneDeep, forEach} from "lodash";
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
 import { watchEffect } from "vue";
@@ -87,7 +98,12 @@ export default {
       guideData: [],
 
       imageTranslateToolsVisible: false,
-      translateImageList: []
+      translateImageList: [],
+      previewVisible: false,
+      modalContent: "",
+      showTopBottomImage: false,
+      showVideo: false,
+      showOptionTable: false
     };
   },
   mounted() {
@@ -142,6 +158,8 @@ export default {
     setOptionTableContent() {
       let doc = window.tinymce.editors[0].dom.doc;
       let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
+      console.log(optionTableDoc)
+      return;
       if (this.selectOptionValue === "table_cancel") {
         if (optionTableDoc) {
           optionTableDoc.innerHTML = "";
@@ -337,6 +355,39 @@ export default {
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
     },
+    showPreview() {
+      this.getViewContent();
+      return false;
+      let contain = document.getElementById('previewContain');
+      console.log(contain)
+      this.previewVisible = true;
+    },
+
+    getViewContent() {
+      this.modalContent = cloneDeep(this.product.item_detail);
+      // 동영상 노출여부 필드
+      let useOptionTable = this.product.user.description_option.option_table.use ?? false;
+      if (useOptionTable === true) {
+        this.setOptionTableContent()
+      }
+
+      //
+    }
   },
 };
 </script>
+
+<style>
+  #previewContainer {
+    overflow: auto;
+    max-height: 800px;
+    padding: 20px;
+    text-align: center; /* 텍스트 중앙 정렬 */
+  }
+  #previewContainer img {
+    display: block; /* 이미지 블록 레벨 요소로 설정 */
+    margin: 0 auto; /* 이미지 상하 마진 0, 좌우 마진 자동으로 설정하여 중앙 정렬 */
+    max-width: 100%; /* 이미지가 모달 너비를 초과하지 않도록 설정 */
+    height: auto; /* 이미지의 원래 비율을 유지 */
+  }
+</style>
