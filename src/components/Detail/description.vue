@@ -8,9 +8,9 @@
     <div style="display: flex; justify-content: space-between;">
       <div style="display: flex;align-items: center;">
         <a-space>
-          <a-checkbox v-model:checked="this.product.user.description_option.top_bottom_image.use">상/하단 이미지</a-checkbox>
-          <a-checkbox v-model:checked="this.product.user.description_option.show_video">동영상</a-checkbox>
-          <a-checkbox v-model:checked="this.product.user.description_option.option_table.use">옵션테이블</a-checkbox>
+          <a-checkbox v-model:checked="this.showGuideImage">상/하단 이미지</a-checkbox>
+          <a-checkbox v-model:checked="this.showVideo">동영상</a-checkbox>
+          <a-checkbox v-model:checked="this.showOptionTable">옵션테이블</a-checkbox>
         </a-space>
       </div>
       <div class="editorToolbar">
@@ -51,7 +51,7 @@
 import {cloneDeep, forEach} from "lodash";
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
-import { watchEffect } from "vue";
+import {watch, watchEffect} from "vue";
 import { message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
@@ -66,6 +66,7 @@ export default {
     QuestionCircleOutlined,
     TEditor
   },
+
 
   computed: {
     ...mapState({
@@ -94,73 +95,85 @@ export default {
       ],
       guideBeforeId: "editor_before_guide",
       guideAfterId: "editor_after_guide",
-      guideValue: "",
-      guideData: [],
 
       imageTranslateToolsVisible: false,
       translateImageList: [],
       previewVisible: false,
       modalContent: "",
-      showTopBottomImage: false,
+      showGuideImage: false,
       showVideo: false,
-      showOptionTable: false
+      showOptionTable: false,
     };
   },
   mounted() {
     this.fetchData();
     this.getGuide();
+
+    this.showGuideImage = this.product.user.description_option.top_bottom_image.use;
+    this.showVideo = this.product.user.description_option.show_video;
+    this.showOptionTable = this.product.user.description_option.option_table.use;
+    setTimeout(() => {
+      if (this.showGuideImage === true){
+        this.setGuideContent();
+      } else {
+        this.deleteGuideContent();
+      }
+      if (this.showOptionTable === true){
+        this.setOptionTableContent();
+      }
+    }, 500);
+
+    this.$nextTick(() => {
+      watch(() => this.showGuideImage, (newValue) => {
+        if (newValue === true) {
+          this.setGuideContent();
+        } else {
+          this.deleteGuideContent();
+        }
+      });
+      watch(() => this.showOptionTable, (newValue) => {
+        this.setOptionTableContent();
+      });
+    });
   },
+
   methods: {
-
     setGuideContent() {
-      const value = this.guideValue;
-
-      const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
-      this.product.item_detail = this.product.item_detail.replace(regex, "");
-
-      if (value === "guide_cancel") {
-        return true;
+      if (this.product.user.description_option.top_bottom_image.top_image_url === "" || this.product.user.description_option.top_bottom_image.bottom_image_url === ""){
+        message.warning("상/하단 이미지가 없습니다");
+        this.showGuideImage = false;
+        return false;
       }
 
-      const selectData = this.guideData.find(item => item.id === value);
-      const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${value}">${selectData.beforeCont}</div>`;
-      const afterCont = `<div id="${this.guideAfterId}" data-tid="${value}">${selectData.afterCont}</div>`;
-
+      const beforeCont = `<div id="${this.guideBeforeId}" ><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt="">}</div>`;
+      const afterCont = `<div id="${this.guideAfterId}" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
       this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
-
     },
+
+    deleteGuideContent() {
+      const regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>|<div id="${this.guideAfterId}".*?</div>`, "igs");
+      this.product.item_detail = this.product.item_detail.replace(regex, "");
+    },
+
     getGuide() {
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/guide/list").then((res) => {
-            if (res.status !== "2000") {
-              message.error(res.message);
-            }
+      if (this.showGuideImage === false) {
+        return;
+      }
+      // 기존에 있는지 업는지 판단소스를 써줘
+      const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"><\\/div>`, "ig");
 
-            this.guideData = res.data;
-            if (this.guideData.length < 1) {
-              return true;
-            }
+      const match = regex.exec(this.product.item_detail);
 
-            this.guideValue = this.guideData.find(item => item.isDefault === "1").id;
-
-            // 기존에 없을때 자동적용
-            const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
-            const match = regex.exec(this.product.item_detail);
-            if (match === null) {
-              const selectData = this.guideData.find(item => item.id === this.guideValue);
-              const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${this.guideValue}">${selectData.beforeCont}</div>`;
-              const afterCont = `<div id="${this.guideAfterId}" data-tid="${this.guideValue}">${selectData.afterCont}</div>`;
-              this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
-            }
-
-          }
-      );
+      if (match === null) {
+        const beforeCont = `<div id="${this.guideBeforeId}"></div>`;
+        const afterCont = `<div id="${this.guideAfterId}"></div>`;
+        this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
+      }
     },
     setOptionTableContent() {
       let doc = window.tinymce.editors[0].dom.doc;
       let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
-      console.log(optionTableDoc)
-      return;
-      if (this.selectOptionValue === "table_cancel") {
+      if (this.showOptionTable === false) {
         if (optionTableDoc) {
           optionTableDoc.innerHTML = "";
           this.product.item_detail = doc.documentElement.innerHTML;
@@ -168,19 +181,30 @@ export default {
         return;
       }
 
-      let columnCount = this.selectOptionValue === "table_two_column" ? 2 : 4;
+      let columnCount = this.product.user.description_option.option_table.column_length ?? 2;
       let optionHtml = this.getOptionTable(columnCount);
       if (optionTableDoc) {
         optionTableDoc.innerHTML = optionHtml;
         this.product.item_detail = doc.documentElement.innerHTML;
       } else {
-        this.product.item_detail = `<div id="${this.optionTableId}">${optionHtml}</div>${this.product.item_detail}`;
+        const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
+        // top에 올라가게 변경
+        let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
+        // bottom에 올라가게 변경
+        if (this.product.user.description_option.option_table.show_position === "bottom") {
+          // <div id="${this.guideAfterId}"[^>] 위에 올라가게 변경
+          regex = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "igs");
+        }
 
-        const regex = new RegExp(`<div id="${this.guideBeforeId}"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
         const match = regex.exec(this.product.item_detail);
         if (match !== null) {
-          this.product.item_detail = this.product.item_detail.replace(regex, "");
-          this.product.item_detail = match[0] + this.product.item_detail;
+          if (this.product.user.description_option.option_table.show_position === "bottom") {
+            this.product.item_detail = this.product.item_detail.replace(regex, "");
+            this.product.item_detail = this.product.item_detail + optionTable+ match[0];
+          } else {
+            this.product.item_detail = this.product.item_detail.replace(regex, "");
+            this.product.item_detail = match[0] + optionTable + this.product.item_detail;
+          }
         }
 
       }
@@ -209,6 +233,7 @@ export default {
         }
       });
     },
+
     setOptionTable() {
       let dom = window.tinymce.editors[0].dom;
       if (dom === undefined) {
@@ -223,12 +248,12 @@ export default {
       //테이블 2줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
         optionHtml = this.getOptionTable(2);
-        this.selectOptionValue = "table_two_column";
+        this.selectOptionValue = 2;
       }
       //테이블 4줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_4`)) {
         optionHtml = this.getOptionTable(4);
-        this.selectOptionValue = "table_four_column";
+        this.selectOptionValue = 4;
       }
       if (optionHtml) {
         optionTableDoc.innerHTML = optionHtml;
@@ -319,13 +344,11 @@ export default {
     },
 
     translatePopup() {
-
       let aImagesUrl = this.getDetailContentsImage();
       //이미지 없을 경우
       if (aImagesUrl === false) {
         return false;
       }
-
       // { order: ..., url: ...} 구조로 변경
       aImagesUrl = aImagesUrl.map((item, index) => {
         return {
@@ -351,28 +374,13 @@ export default {
         }
       });
       content += '</p>';
-
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
     },
     showPreview() {
-      this.getViewContent();
-      return false;
-      let contain = document.getElementById('previewContain');
-      console.log(contain)
+      this.modalContent = cloneDeep(this.product.item_detail);
       this.previewVisible = true;
     },
-
-    getViewContent() {
-      this.modalContent = cloneDeep(this.product.item_detail);
-      // 동영상 노출여부 필드
-      let useOptionTable = this.product.user.description_option.option_table.use ?? false;
-      if (useOptionTable === true) {
-        this.setOptionTableContent()
-      }
-
-      //
-    }
   },
 };
 </script>
