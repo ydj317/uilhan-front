@@ -76,25 +76,12 @@ export default {
 
   data() {
     return {
-      optionTableId: "editor_option_table",
       aBakDetailImages: {},
-      selectOptionValue: "table_two_column",
-      optionTableSelectOption: [
-        {
-          label: "두줄로 추가",
-          value: "table_two_column"
-        },
-        {
-          label: "네줄로 추가",
-          value: "table_four_column"
-        },
-        {
-          label: "제거",
-          value: "table_cancel"
-        }
-      ],
+      selectOptionValue: 2,
+      optionTableId: "editor_option_table",
       guideBeforeId: "editor_before_guide",
       guideAfterId: "editor_after_guide",
+      videoId: "editor_video_content",
 
       imageTranslateToolsVisible: false,
       translateImageList: [],
@@ -108,7 +95,6 @@ export default {
   mounted() {
     this.fetchData();
     this.getGuide();
-
     this.showGuideImage = this.product.user.description_option.top_bottom_image.use;
     this.showVideo = this.product.user.description_option.show_video;
     this.showOptionTable = this.product.user.description_option.option_table.use;
@@ -118,10 +104,16 @@ export default {
       } else {
         this.deleteGuideContent();
       }
+
+      if (this.showVideo === true){
+        this.setVideoContent();
+      }
+
       if (this.showOptionTable === true){
         this.setOptionTableContent();
       }
-    }, 500);
+
+    }, 100);
 
     this.$nextTick(() => {
       watch(() => this.showGuideImage, (newValue) => {
@@ -134,20 +126,59 @@ export default {
       watch(() => this.showOptionTable, (newValue) => {
         this.setOptionTableContent();
       });
+      watch(() => this.showVideo, (newValue) => {
+        this.setVideoContent();
+      });
     });
   },
 
   methods: {
-    setGuideContent() {
-      if (this.product.user.description_option.top_bottom_image.top_image_url === "" || this.product.user.description_option.top_bottom_image.bottom_image_url === ""){
-        message.warning("상/하단 이미지가 없습니다");
-        this.showGuideImage = false;
+    setVideoContent(){
+      const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
+      this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
+
+      if (this.product.item_video_url === "" && this.showVideo === true){
+        message.warning("수집된 상품정보에 동영상 URL이 존재하지 않습니다.");
+        this.showVideo = false;
         return false;
       }
 
-      const beforeCont = `<div id="${this.guideBeforeId}" ><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt="">}</div>`;
+      if (this.showVideo === false){
+        return false;
+      }
+
+      const videoContent = `<div id="${this.videoId}">
+                            <video width="auto;" height="400;" controls="controls">
+                            <source src="${this.product.item_video_url}" type="video/mp4"></video>
+                            </div>`;
+      let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
+      const match = regex.exec(this.product.item_detail);
+      if (match !== null) {
+        this.product.item_detail = this.product.item_detail.replace(regex, "");
+        this.product.item_detail = match[0] + videoContent + this.product.item_detail;
+      } else {
+        this.product.item_detail = videoContent + this.product.item_detail;
+      }
+    },
+    setGuideContent() {
+      if (this.showGuideImage === true &&
+          this.product.user.description_option.top_bottom_image.top_image_url === "" &&
+          this.product.user.description_option.top_bottom_image.bottom_image_url === "" ) {
+        message.warning("등록된 상/하단 이미지가 없습니다. \n" +
+            "계정설정에서 별도로 등록하여 주시기 바랍니다.");
+        this.showGuideImage = false;
+        return;
+      }
+
+      const beforeCont = `<div id="${this.guideBeforeId}" ><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
       const afterCont = `<div id="${this.guideAfterId}" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
-      this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
+      if (this.product.user.description_option.top_bottom_image.top_image_url !== "") {
+        this.product.item_detail = beforeCont + this.product.item_detail;
+      }
+
+      if (this.product.user.description_option.top_bottom_image.bottom_image_url !== "") {
+        this.product.item_detail = this.product.item_detail + afterCont;
+      }
     },
 
     deleteGuideContent() {
@@ -160,15 +191,21 @@ export default {
         return;
       }
       // 기존에 있는지 업는지 판단소스를 써줘
-      const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"><\\/div>`, "ig");
+      const regexBefore = new RegExp(`<div id="(${this.guideBeforeId}"><\\/div>`, "ig");
+      const regexAfter = new RegExp(`<div id="(${this.guideAfterId}"><\\/div>`, "ig");
+      const matchBefore = regexBefore.exec(this.product.item_detail);
+      const matchAfter = regexAfter.exec(this.product.item_detail);
 
-      const match = regex.exec(this.product.item_detail);
-
-      if (match === null) {
+      if (matchBefore === null) {
         const beforeCont = `<div id="${this.guideBeforeId}"></div>`;
-        const afterCont = `<div id="${this.guideAfterId}"></div>`;
-        this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
+        this.product.item_detail = beforeCont + this.product.item_detail;
       }
+
+      if (matchAfter === null) {
+        const afterCont = `<div id="${this.guideBeforeId}"></div>`;
+        this.product.item_detail = this.product.item_detail + afterCont;
+      }
+
     },
     setOptionTableContent() {
       let doc = window.tinymce.editors[0].dom.doc;
@@ -203,9 +240,23 @@ export default {
             this.product.item_detail = this.product.item_detail + optionTable+ match[0];
           } else {
             this.product.item_detail = this.product.item_detail.replace(regex, "");
-            this.product.item_detail = match[0] + optionTable + this.product.item_detail;
+            const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
+            const matchVideo = regexVideo.exec(this.product.item_detail);
+            if (matchVideo !== null) {
+              this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
+              this.product.item_detail = match[0] + matchVideo[0] + optionTable + this.product.item_detail;
+            } else {
+              this.product.item_detail = match[0] + optionTable + this.product.item_detail;
+            }
+          }
+        } else {
+          if (this.product.user.description_option.option_table.show_position === "bottom") {
+            this.product.item_detail = this.product.item_detail + optionTable;
+          } else {
+            this.product.item_detail = optionTable + this.product.item_detail;
           }
         }
+
 
       }
     },
