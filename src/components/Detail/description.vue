@@ -136,8 +136,7 @@ export default {
     setVideoContent(){
       const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
       this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
-
-      if (this.product.item_video_url === "" && this.showVideo === true){
+      if ((this.product.item_video_url === "" || this.product.item_video_url === null) && this.showVideo === true){
         message.warning("수집된 상품정보에 동영상 URL이 존재하지 않습니다.");
         this.showVideo = false;
         return false;
