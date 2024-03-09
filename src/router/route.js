@@ -164,6 +164,17 @@ export const menus = [{
                         active: "/setting/template"
                     }
                 },
+                {
+                    path: "/setting/AccountManage",
+                    name: "setting_accountManage",
+                    component: () => import("@/views/Setting/AccountManage"),
+                    meta: {
+                        title: "계정관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                }
 
             ]
         },
