@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.showOptionModifyModal" width="1500px" :maskClosable="false">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.product.showOptionModify" width="1500px" :maskClosable="false">
     <template #footer>
       <div style="display: flex; justify-content: center;">
         <a-button key="back" style="width: 100px;" @click="this.closeOptionModal" >취소</a-button>
@@ -14,14 +14,14 @@
     <div class="setting header-button" style="display: flex;padding-right: 15px;">
       <!--      <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
 
-      <a-button @click="setTrim" class="spec-right-button" type="primary" 
+      <a-button @click="setTrim" class="spec-right-button" type="primary"
                 size="middle">빈칸
       </a-button>
       <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
                  size="middle">특문
       </a-button>
 
-      <a-button @click="setAtoZ" class="spec-right-button" type="primary" 
+      <a-button @click="setAtoZ" class="spec-right-button" type="primary"
                 size="middle">A-Z
       </a-button>
 
@@ -143,7 +143,9 @@ import { nextTick, watch } from "vue";
 export default {
   name: "productDetailSpecGroup",
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: state => state.product.detail
+    }),
   },
   watch: {
     'product.resetOption': {
@@ -176,7 +178,7 @@ export default {
       option_group_find_str: '',
       option_group_replace_str: '',
       // 설정할 옵션안에 체크여부 판단필드를 넣어줌
-      oldOptionData: this.$store.state.product.item_option.map(option => {
+      oldOptionData : this.$store.state.product.detail.item_option.map(option => {
         option.checkAll = false;
         option.oldName = option.name;
         option.data = option.data.map(item => {
@@ -187,14 +189,13 @@ export default {
         return option;
       }),
       options : [],
-      // selectedRows 는 오브젝트 그리고 각각의 옵션그룹에 해당하는 배열을 가지고 있음
-      selectedRows: this.$store.state.product.item_option.map(option => []),
-      restOption : this.$store.state.resetOption,
+      selectedRows: this.$store.state.product.detail.item_option.map(option => []),
+      // restOption : this.$store.state.resetOption,
     };
   },
   methods: {
     closeOptionModal() {
-      this.$store.commit('setShowOptionModifyModal', false);
+      this.$store.commit('product/setShowOptionModify', false);
     },
     handleReplaceOptionGroup() {
       if (this.option_group_find_str.trim().length === 0) {
@@ -516,7 +517,6 @@ export default {
       if (this.product.sku.length < 0) {
         return false;
       }
-
       this.product.sku.forEach((sku, i) => {
         let aSkuName = sku.spec.split("::");
         let aSkuPvs = sku.pvs.split(";");
@@ -530,8 +530,8 @@ export default {
         });
       });
 
-      this.product.item_option = {...this.options};
-      this.$store.commit('setShowOptionModifyModal', false);
+      this.product.item_option = this.options;
+      this.$store.commit('product/setShowOptionModify', false);
 
     },
 

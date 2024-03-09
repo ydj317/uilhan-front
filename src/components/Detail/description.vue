@@ -1,54 +1,25 @@
 <template>
-  <div id="eModelTitle_4" class="mt20 p20 bg-white">
+  <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
+    <a-spin v-if="product.loading" size="large"/>
+  </div>
+  <div v-show="!product.loading" id="eModelTitle_4" class="mt20 p20 bg-white">
+    <h3><strong>상세페이지</strong></h3>
     <!--title-->
     <div style="display: flex; justify-content: space-between;">
-      <h1><strong>상세페이지</strong></h1>
+      <div style="display: flex;align-items: center;">
+        <a-space>
+          <a-checkbox v-model:checked="this.showGuideImage">상/하단 이미지</a-checkbox>
+          <a-checkbox v-model:checked="this.showVideo">동영상</a-checkbox>
+          <a-checkbox v-model:checked="this.showOptionTable">옵션테이블</a-checkbox>
+        </a-space>
+      </div>
       <div class="editorToolbar">
         <a-space>
-          <span>옵션 테이블</span>
-          <a-input-group compact>
-            <a-select v-model:value="selectOptionValue" style="width: 120px">
-              <a-select-option v-for="selectOption in optionTableSelectOption" :key="selectOption.value"
-                               :value="selectOption.value">
-                {{ selectOption.label }}
-              </a-select-option>
-            </a-select>
-            <a-button type="primary" @click="setOptionTableContent">적용</a-button>
-          </a-input-group>
+          <a-button class="originalDetailTrans" type="default" @click="showPreview">미리보기</a-button>
+          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역</a-button>
+          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기</a-button>
         </a-space>
 
-        <a-divider type="vertical" style="border-color: #999" />
-
-        <a-space>
-          <span>안내정보</span>
-          <div v-if="guideData.length > 0">
-            <a-input-group compact>
-              <a-select v-model:value="guideValue" style="width: 200px">
-                <a-select-option v-for="data in guideData" :value="data.id">
-                  {{ data.name }}
-                </a-select-option>
-                <a-select-option value="guide_cancel">제거</a-select-option>
-              </a-select>
-              <a-button type="primary" @click="setGuideContent">적용</a-button>
-            </a-input-group>
-          </div>
-          <router-link v-else to="/setting/guideForm">
-            <a-button type="primary">
-              상하단이미지 설정
-              <a-tooltip>
-                <template #title>
-                  <div class="mb10">상하단 이미지 설정 클릭 시 설정 페이지로 이동합니다.</div>
-                  <div>이동 전 수정하신 내용을 먼저 저장해주세요.</div>
-                </template>
-                <QuestionCircleOutlined/>
-              </a-tooltip>
-            </a-button>
-          </router-link>
-        </a-space>
-
-        <a-divider type="vertical" style="border-color: #999" />
-
-        <a-button class="originalDetailTrans" type="primary" @click="translatePopup">상세 이미지번역</a-button>
       </div>
     </div>
 
@@ -62,107 +33,183 @@
       />
     </div>
   </div>
+  <image-translate-tools v-model:visible="imageTranslateToolsVisible" @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList" @update:translateImageList="updateTranslateImageList"/>
+  <!-- 미리보기 -->
+  <a-modal v-model:visible="this.previewVisible"
+           title="상품 미리보기"
+           width="1000px"
+           :centered="true"
+           :footer="null"
+           @ok="this.previewVisible = false">
+    <div v-html="modalContent" id="previewContainer" >
+
+    </div>
+  </a-modal>
 </template>
 
 <script>
-import { forEach } from "lodash";
+import {cloneDeep, forEach} from "lodash";
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
-import { watchEffect } from "vue";
+import {watch, watchEffect} from "vue";
 import { message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
 
 export default {
   name: "productDetailDescription",
 
   components: {
+    ImageTranslateTools,
     QuestionCircleOutlined,
     TEditor
   },
 
+
   computed: {
-    ...mapState(["product"])
+    ...mapState({
+      product: (state) => state.product.detail,
+    })
   },
 
   data() {
     return {
-      optionTableId: "editor_option_table",
       aBakDetailImages: {},
-      selectOptionValue: "table_two_column",
-      optionTableSelectOption: [
-        {
-          label: "두줄로 추가",
-          value: "table_two_column"
-        },
-        {
-          label: "네줄로 추가",
-          value: "table_four_column"
-        },
-        {
-          label: "제거",
-          value: "table_cancel"
-        }
-      ],
+      selectOptionValue: 2,
+      optionTableId: "editor_option_table",
       guideBeforeId: "editor_before_guide",
       guideAfterId: "editor_after_guide",
-      guideValue: "",
-      guideData: []
+      videoId: "editor_video_content",
+
+      imageTranslateToolsVisible: false,
+      translateImageList: [],
+      previewVisible: false,
+      modalContent: "",
+      showGuideImage: false,
+      showVideo: false,
+      showOptionTable: false,
     };
   },
   mounted() {
     this.fetchData();
     this.getGuide();
-  },
-  methods: {
-    setGuideContent() {
-      const value = this.guideValue;
-
-      const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
-      this.product.item_detail = this.product.item_detail.replace(regex, "");
-
-      if (value === "guide_cancel") {
-        return true;
+    this.showGuideImage = this.product.user.description_option.top_bottom_image.use;
+    this.showVideo = this.product.user.description_option.show_video;
+    this.showOptionTable = this.product.user.description_option.option_table.use;
+    setTimeout(() => {
+      if (this.showGuideImage === true){
+        this.setGuideContent();
+      } else {
+        this.deleteGuideContent();
       }
 
-      const selectData = this.guideData.find(item => item.id === value);
-      const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${value}">${selectData.beforeCont}</div>`;
-      const afterCont = `<div id="${this.guideAfterId}" data-tid="${value}">${selectData.afterCont}</div>`;
+      if (this.showVideo === true){
+        this.setVideoContent();
+      }
 
-      this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
+      if (this.showOptionTable === true){
+        this.setOptionTableContent();
+      }
 
+    }, 100);
+
+    this.$nextTick(() => {
+      watch(() => this.showGuideImage, (newValue) => {
+        if (newValue === true) {
+          this.setGuideContent();
+        } else {
+          this.deleteGuideContent();
+        }
+      });
+      watch(() => this.showOptionTable, (newValue) => {
+        this.setOptionTableContent();
+      });
+      watch(() => this.showVideo, (newValue) => {
+        this.setVideoContent();
+      });
+    });
+  },
+
+  methods: {
+    setVideoContent(){
+      const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
+      this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
+      if ((this.product.item_video_url === "" || this.product.item_video_url === null) && this.showVideo === true){
+        message.warning("수집된 상품정보에 동영상 URL이 존재하지 않습니다.");
+        this.showVideo = false;
+        return false;
+      }
+
+      if (this.showVideo === false){
+        return false;
+      }
+
+      const videoContent = `<div id="${this.videoId}">
+                            <video width="auto;" height="400;" controls="controls">
+                            <source src="${this.product.item_video_url}" type="video/mp4"></video>
+                            </div>`;
+      let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
+      const match = regex.exec(this.product.item_detail);
+      if (match !== null) {
+        this.product.item_detail = this.product.item_detail.replace(regex, "");
+        this.product.item_detail = match[0] + videoContent + this.product.item_detail;
+      } else {
+        this.product.item_detail = videoContent + this.product.item_detail;
+      }
     },
+    setGuideContent() {
+      if (this.showGuideImage === true &&
+          this.product.user.description_option.top_bottom_image.top_image_url === "" &&
+          this.product.user.description_option.top_bottom_image.bottom_image_url === "" ) {
+        message.warning("등록된 상/하단 이미지가 없습니다. \n" +
+            "계정설정에서 별도로 등록하여 주시기 바랍니다.");
+        this.showGuideImage = false;
+        return;
+      }
+
+      const beforeCont = `<div id="${this.guideBeforeId}" ><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
+      const afterCont = `<div id="${this.guideAfterId}" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
+      if (this.product.user.description_option.top_bottom_image.top_image_url !== "") {
+        this.product.item_detail = beforeCont + this.product.item_detail;
+      }
+
+      if (this.product.user.description_option.top_bottom_image.bottom_image_url !== "") {
+        this.product.item_detail = this.product.item_detail + afterCont;
+      }
+    },
+
+    deleteGuideContent() {
+      const regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>|<div id="${this.guideAfterId}".*?</div>`, "igs");
+      this.product.item_detail = this.product.item_detail.replace(regex, "");
+    },
+
     getGuide() {
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/guide/list").then((res) => {
-            if (res.status !== "2000") {
-              message.error(res.message);
-            }
+      if (this.showGuideImage === false) {
+        return;
+      }
+      // 기존에 있는지 업는지 판단소스를 써줘
+      const regexBefore = new RegExp(`<div id="(${this.guideBeforeId}"><\\/div>`, "ig");
+      const regexAfter = new RegExp(`<div id="(${this.guideAfterId}"><\\/div>`, "ig");
+      const matchBefore = regexBefore.exec(this.product.item_detail);
+      const matchAfter = regexAfter.exec(this.product.item_detail);
 
-            this.guideData = res.data;
-            if (this.guideData.length < 1) {
-              return true;
-            }
+      if (matchBefore === null) {
+        const beforeCont = `<div id="${this.guideBeforeId}"></div>`;
+        this.product.item_detail = beforeCont + this.product.item_detail;
+      }
 
-            this.guideValue = this.guideData.find(item => item.isDefault === "1").id;
+      if (matchAfter === null) {
+        const afterCont = `<div id="${this.guideBeforeId}"></div>`;
+        this.product.item_detail = this.product.item_detail + afterCont;
+      }
 
-            // 기존에 없을때 자동적용
-            const regex = new RegExp(`<div id="(${this.guideBeforeId}|${this.guideAfterId})"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
-            const match = regex.exec(this.product.item_detail);
-            if (match === null) {
-              const selectData = this.guideData.find(item => item.id === this.guideValue);
-              const beforeCont = `<div id="${this.guideBeforeId}" data-tid="${this.guideValue}">${selectData.beforeCont}</div>`;
-              const afterCont = `<div id="${this.guideAfterId}" data-tid="${this.guideValue}">${selectData.afterCont}</div>`;
-              this.product.item_detail = beforeCont + this.product.item_detail + afterCont;
-            }
-
-          }
-      );
     },
     setOptionTableContent() {
       let doc = window.tinymce.editors[0].dom.doc;
       let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
-      if (this.selectOptionValue === "table_cancel") {
+      if (this.showOptionTable === false) {
         if (optionTableDoc) {
           optionTableDoc.innerHTML = "";
           this.product.item_detail = doc.documentElement.innerHTML;
@@ -170,20 +217,45 @@ export default {
         return;
       }
 
-      let columnCount = this.selectOptionValue === "table_two_column" ? 2 : 4;
+      let columnCount = this.product.user.description_option.option_table.column_length ?? 2;
       let optionHtml = this.getOptionTable(columnCount);
       if (optionTableDoc) {
         optionTableDoc.innerHTML = optionHtml;
         this.product.item_detail = doc.documentElement.innerHTML;
       } else {
-        this.product.item_detail = `<div id="${this.optionTableId}">${optionHtml}</div>${this.product.item_detail}`;
+        const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
+        // top에 올라가게 변경
+        let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
+        // bottom에 올라가게 변경
+        if (this.product.user.description_option.option_table.show_position === "bottom") {
+          // <div id="${this.guideAfterId}"[^>] 위에 올라가게 변경
+          regex = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "igs");
+        }
 
-        const regex = new RegExp(`<div id="${this.guideBeforeId}"[^>]+>[\\s\\S]*?<\\/div>`, "ig");
         const match = regex.exec(this.product.item_detail);
         if (match !== null) {
-          this.product.item_detail = this.product.item_detail.replace(regex, "");
-          this.product.item_detail = match[0] + this.product.item_detail;
+          if (this.product.user.description_option.option_table.show_position === "bottom") {
+            this.product.item_detail = this.product.item_detail.replace(regex, "");
+            this.product.item_detail = this.product.item_detail + optionTable+ match[0];
+          } else {
+            this.product.item_detail = this.product.item_detail.replace(regex, "");
+            const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
+            const matchVideo = regexVideo.exec(this.product.item_detail);
+            if (matchVideo !== null) {
+              this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
+              this.product.item_detail = match[0] + matchVideo[0] + optionTable + this.product.item_detail;
+            } else {
+              this.product.item_detail = match[0] + optionTable + this.product.item_detail;
+            }
+          }
+        } else {
+          if (this.product.user.description_option.option_table.show_position === "bottom") {
+            this.product.item_detail = this.product.item_detail + optionTable;
+          } else {
+            this.product.item_detail = optionTable + this.product.item_detail;
+          }
         }
+
 
       }
     },
@@ -200,14 +272,18 @@ export default {
       // if (match[1] === `${this.optionTableId}_4`) {
       //   this.selectOptionValue = "table_four_column";
       // }
-
       //품목 이미지, 품목명 변경에 따라 액션
       watchEffect(() => {
-        this.product.sku.map(item => item.img);
-        //변경될 경우 테이블 업데이트
-        this.setOptionTable();
+        if(this.product.loading !== true){
+          this.product.sku.map(item => item.img);
+          //변경될 경우 테이블 업데이트
+          this.$nextTick(() => {
+            this.setOptionTable();
+          });
+        }
       });
     },
+
     setOptionTable() {
       let dom = window.tinymce.editors[0].dom;
       if (dom === undefined) {
@@ -222,12 +298,12 @@ export default {
       //테이블 2줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
         optionHtml = this.getOptionTable(2);
-        this.selectOptionValue = "table_two_column";
+        this.selectOptionValue = 2;
       }
       //테이블 4줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_4`)) {
         optionHtml = this.getOptionTable(4);
-        this.selectOptionValue = "table_four_column";
+        this.selectOptionValue = 4;
       }
       if (optionHtml) {
         optionTableDoc.innerHTML = optionHtml;
@@ -323,29 +399,53 @@ export default {
       if (aImagesUrl === false) {
         return false;
       }
-
-      this.product.bProductDetailsEditor = true;
-      this.product.bImageEditorModule = true;
-      this.product.aPhotoCollection = [];
-
-      aImagesUrl.map((oImageInfo) => {
-        this.product.aPhotoCollection.push({
-          msg: "",
-          key: oImageInfo.key,
-          name: "",
-          order: "",
+      // { order: ..., url: ...} 구조로 변경
+      aImagesUrl = aImagesUrl.map((item, index) => {
+        return {
           checked: false,
-          visible: true,
-          original_url: oImageInfo.url,
-          translate_url: oImageInfo.url,
-          translate_status:
-              oImageInfo.url.indexOf("https://i.tosoiot.com/") !== -1
-        });
+          order: index,
+          url: item.url
+        };
       });
-    }
-  }
+      aImagesUrl[0].checked = true;
+
+      this.imageTranslateToolsVisible = true;
+      this.translateImageList = aImagesUrl;
+    },
+    updateTranslateImageList(imageList) {
+      this.$refs.editor.clear();
+      let content = '<p>';
+      imageList.forEach((item) => {
+        if(item.translate_status === true){
+          content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
+        } else {
+          const nUrl = item.translate_url || item.url;
+          content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
+        }
+      });
+      content += '</p>';
+      this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
+    },
+    showPreview() {
+      this.modalContent = cloneDeep(this.product.item_detail);
+      this.previewVisible = true;
+    },
+  },
 };
 </script>
 
-<style scoped>
+<style>
+  #previewContainer {
+    overflow: auto;
+    max-height: 800px;
+    padding: 20px;
+    text-align: center; /* 텍스트 중앙 정렬 */
+  }
+  #previewContainer img {
+    display: block; /* 이미지 블록 레벨 요소로 설정 */
+    margin: 0 auto; /* 이미지 상하 마진 0, 좌우 마진 자동으로 설정하여 중앙 정렬 */
+    max-width: 100%; /* 이미지가 모달 너비를 초과하지 않도록 설정 */
+    height: auto; /* 이미지의 원래 비율을 유지 */
+  }
 </style>

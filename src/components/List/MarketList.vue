@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal width="600px" v-model:open="relaket.data.MarketListVisible" centered>
+    <a-modal width="600px" v-model:open="marketAccount.data.MarketListVisible" centered>
       <template #title>
         선택상품 등록
         <a-tooltip>
@@ -10,7 +10,7 @@
           <QuestionCircleOutlined/>
         </a-tooltip>
       </template>
-      <a-table :columns="columns" :data-source="relaket.data.options" :pagination="{hideOnSinglePage:true}"
+      <a-table :columns="columns" :data-source="marketAccount.data.options" :pagination="{hideOnSinglePage:true}"
                :row-selection="{ selectedRowKeys: marketSelectedRowKeys, onChange: onMarketSelectChange }">
 
         <!--bodyCell-->
@@ -56,9 +56,9 @@ import {useCategoryApi} from "@/api/category";
 export default {
   components: {ExclamationCircleOutlined, QuestionCircleOutlined},
   computed: {
-    ...mapState([
-      'relaket',
-    ])
+    ...mapState({
+      marketAccount: (state) => state.marketAccount,
+    })
   },
 
   data() {
@@ -87,12 +87,12 @@ export default {
     onMarketSelectChange(marketSelectedRowKeys) {
       this.marketSelectedRowKeys = marketSelectedRowKeys;
 
-      if (this.relaket.data.options === undefined || this.relaket.data.options.length < 1) {
+      if (this.marketAccount.data.options === undefined || this.marketAccount.data.options.length < 1) {
         return false;
       }
 
-      for (let i = 0; i < this.relaket.data.options.length; i++) {
-        this.relaket.data.options[i].checked = this.marketSelectedRowKeys.includes(this.relaket.data.options[i].key);
+      for (let i = 0; i < this.marketAccount.data.options.length; i++) {
+        this.marketAccount.data.options[i].checked = this.marketSelectedRowKeys.includes(this.marketAccount.data.options[i].key);
       }
     },
 
@@ -105,13 +105,13 @@ export default {
     },
 
     MarketListClose() {
-      this.relaket.data.MarketListVisible = false;
+      this.marketAccount.data.MarketListVisible = false;
     },
 
     async sendMarket() {
 
       let productList = this.getCheckList();
-      let accountList = this.relaket.data.options.filter(item => item.checked === true);
+      let accountList = this.marketAccount.data.options.filter(item => item.checked === true);
 
       if (productList === "," || productList.length === 0) {
         message.warning('선택된 상품이 없습니다.');
@@ -128,7 +128,7 @@ export default {
         return false
       }
 
-      this.relaket.data.indicator = true;
+      this.marketAccount.data.indicator = true;
 
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
@@ -144,12 +144,12 @@ export default {
 
         if (res.data !== undefined && res.data.length === 0) {
           message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
-          this.relaket.data.indicator = false;
+          this.marketAccount.data.indicator = false;
           return false;
         }
 
         let returnData = res.data;
-        this.relaket.data.setResultPopData(true, [
+        this.marketAccount.data.setResultPopData(true, [
           returnData.success,
           returnData.failedCode,
           returnData.failed,
@@ -157,13 +157,13 @@ export default {
           returnData.data,
         ])
 
-        this.relaket.data.MarketListVisible = false;
-        this.relaket.data.indicator = false;
+        this.marketAccount.data.MarketListVisible = false;
+        this.marketAccount.data.indicator = false;
 
         return true;
       } catch (e) {
         message.error(e.message);
-        this.relaket.data.indicator = false;
+        this.marketAccount.data.indicator = false;
         return false;
       }
 
@@ -171,7 +171,7 @@ export default {
 
     checkSmartStoreCategory(accountList) {
       const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
-      const checkedPrdList = this.relaket.data.prdlist.filter((item) => item.checked === true);
+      const checkedPrdList = this.marketAccount.data.prdlist.filter((item) => item.checked === true);
 
       let faildItem = [];
       if(smartstoreAccounts.length === 0) {
@@ -208,10 +208,10 @@ export default {
 
     getCheckList() {
       let list = '';
-      for (let i = 0; i < this.relaket.data.prdlist.length; i++) {
-        if (this.relaket.data.prdlist[i].checked === true) {
+      for (let i = 0; i < this.marketAccount.data.prdlist.length; i++) {
+        if (this.marketAccount.data.prdlist[i].checked === true) {
           let comma = list === '' ? '' : ',';
-          list += comma + this.relaket.data.prdlist[i].item_id;
+          list += comma + this.marketAccount.data.prdlist[i].item_id;
         }
       }
 

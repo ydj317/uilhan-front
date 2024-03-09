@@ -76,7 +76,7 @@ export const menus = [{
             },
         },
         {
-            path: "/order/info/:id?",
+            path: "/order/info/:orderNo?",
             name: "order_info",
             component: () => import("@/views/Order/order/Info.vue"),
             meta: {

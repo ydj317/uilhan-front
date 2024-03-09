@@ -1,26 +1,52 @@
 <template>
-  <div id="eModelTitle_0" class="bg-white" style="padding: 20px">
-    <h1><strong>기본정보</strong></h1>
+  <div id="eModelTitle_0" class="mt20 bg-white" style="padding: 20px">
+    <h3><strong>기본정보</strong></h3>
+    <table class="basic-info-table" style="width: 100%; border-collapse: collapse;">
+      <colgroup>
+        <col style="width: 15%">
+        <col >
+      </colgroup>
+      <tr>
+        <th>
+          <img :src="product.item_thumbnails[0]?.url" style="width: 100px;height: 100px" alt=""/>
+        </th>
+        <td style="display: flex;align-items: flex-start">
+          <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
+            <div style="display: flex;gap: 10px">
+              <a-input placeholder="검색 키워드를 입력하세요" />
+              <a-button type="primary" style="background-color: #1e44ff;color: white">키워드 검색</a-button>
+            </div>
 
-    <div class="detail-basic">
-      <a-descriptions bordered :column="1" >
+            <div style="background-color: #eeeeee;padding: 10px;display: grid;grid-template-columns: repeat(12,1fr);gap: 5px;justify-content: center;align-items: center">
+              <a-tag>키워드</a-tag>
+              <a-tag color="red">키워드</a-tag>
+              <a-tag :bordered="false">키워드</a-tag>
+              <a-tag>키워드</a-tag>
+              <a-tag color="red">키워드</a-tag>
+              <a-tag :bordered="false">키워드</a-tag>
+              <a-tag>키워드</a-tag>
+              <a-tag color="red">키워드</a-tag>
+              <a-tag :bordered="false">키워드</a-tag>
+              <a-tag>키워드</a-tag>
+              <a-tag color="red">키워드</a-tag>
+              <a-tag :bordered="false">키워드</a-tag>
+              <a-tag>키워드</a-tag>
+              <a-tag color="red">키워드</a-tag>
+              <a-tag :bordered="false">키워드</a-tag>
+              <a-tag>키워드</a-tag>
+              <a-tag color="red">키워드</a-tag>
+              <a-tag :bordered="false">키워드</a-tag>
+            </div>
+          </div>
+        </td>
+      </tr>
 
-        <a-descriptions-item label="상품명칭" v-if="product.item_is_trans === false">
-          <a-input v-model:value="product.item_name" :placeholder="`상품명칭을 입력하세요.`" />
-        </a-descriptions-item>
-        <a-descriptions-item label="상품명칭" v-else>
-          <a-button type="dashed" :href="product.item_url" :target="'_blank'" style="margin-bottom: 10px;">
-          <span class="get-market-icon">
-              <img :src="getLogoSrc('get-logo', product.item_market.toLowerCase())" alt="">
-          </span>
-            {{ product.item_name }}
-          </a-button>
-
-          <a-button class="ml10" v-if="use_ai" @click="replaceWithAI">AI 추천모드</a-button>
-
-          <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true">
+      <tr>
+        <th>상품명</th>
+        <td style="display: flex;gap: 5px;">
+          <div style="flex: 1">
+          <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true" >
             <a-input
-                @focus="product.filter_word_status = false"
                 @blur="validateFilterWord(product.item_trans_name)"
                 v-model:value="product.item_trans_name"
                 :maxlength="max_name_length"
@@ -28,37 +54,32 @@
                 :placeholder="`상품명칭을 입력하세요.`"
             />
           </a-spin>
-        </a-descriptions-item>
+          </div>
+          <a-button type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
+        </td>
+      </tr>
+      <tr>
+        <th>상품태그</th>
+        <td>
+          <a-spin :spinning="ai_loading === true">
+            <a-input v-model:value="product.item_sync_keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다." :maxlength="255" :showCount="true"
+            />
+          </a-spin>
+        </td>
+      </tr>
+      <tr>
+        <th>상품고시</th>
+        <td>
+          <a-select v-model:value="product.item_mandatory" placeholder="상품고시 선택해주세요." style="width: 100%">
+            <a-select-option value="선택">선택</a-select-option>
+            <a-select-option v-for="(item, key) in mandatory" :key="key" :value="item.value">
+              {{ item.label }}
+            </a-select-option>
+          </a-select>
+        </td>
+      </tr>
+    </table>
 
-        <a-descriptions-item label="금지어">
-          <a-tag color="warning" v-if="product.filter_word_status === true">금지어 없음</a-tag >
-          <a-tag v-else v-for="(filter_words, i) in product.filter_word_list"
-                 @click="deleteFilterWord(filter_words)" color="error" :key="i">
-            {{ filter_words }}
-          </a-tag >
-        </a-descriptions-item>
-
-        <a-descriptions-item>
-          <template #label>
-            상품태그
-            <a-tooltip>
-              <template #title>
-                <div>상품태그에는 상품 카테고리 명칭을 기입 할 수 없습니다.</div>
-              </template>
-              <QuestionCircleOutlined/>
-            </a-tooltip>
-          </template>
-          <a-form-item>
-            <a-spin :spinning="ai_loading === true">
-              <a-input v-model:value="product.item_sync_keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다."
-                       />
-            </a-spin>
-          </a-form-item>
-        </a-descriptions-item>
-
-      </a-descriptions>
-
-    </div>
   </div>
 </template>
 
@@ -66,13 +87,16 @@
 import { message } from "ant-design-vue";
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
-import {QuestionCircleOutlined} from '@ant-design/icons-vue';
+import {QuestionCircleOutlined,CheckCircleOutlined} from '@ant-design/icons-vue';
+import {useMandatoryApi} from "@/api/mandatory";
 
 export default {
-  components: {QuestionCircleOutlined},
+  components: {QuestionCircleOutlined,CheckCircleOutlined},
 
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: (state) => state.product.detail,
+    }),
   },
 
   data() {
@@ -113,6 +137,7 @@ export default {
         },
       ],
       tempImage: require('../../assets/img/temp_image.png'),
+      mandatory: [],
       is_filter_word_list: false,
       use_ai: false,
       ai_loading: false
@@ -120,6 +145,12 @@ export default {
   },
 
   methods: {
+
+    getMandatory() {
+      useMandatoryApi().getList().then((res) => {
+        this.mandatory = res.data;
+      })
+    },
 
     getLogoSrc(fileName, marketCode) {
       try {
@@ -189,7 +220,6 @@ export default {
         }
 
         this.product.filter_word_validate_in_process = false;
-        message.success("금지어 체크완료");
       });
     },
 
@@ -203,14 +233,7 @@ export default {
 
         this.use_ai = (res.data.use_ai === '1');
         this.use_auto_save = (res.data.use_auto_save === '1');
-
-
-        // 发射一个事件，携带数据
-        this.$emit('userinfo-updated', {
-          use_auto_save: this.use_auto_save
-        });
       });
-
     },
 
     replaceWithAI() {
@@ -249,7 +272,8 @@ export default {
 
   mounted() {
     this.getUserInfo();
-
+    this.getMandatory();
+    console.log(this.product);
     if (this.product.item_is_trans) {
       this.product.item_trans_name = this.product.item_trans_name.substr(
           0,
@@ -287,4 +311,19 @@ export default {
   height: 16px;
 }
 
+.basic-info-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.basic-info-table th {
+  text-align: right;
+  padding: 10px 20px;
+  font-weight: bold;
+  color: #666;
+}
+
+.basic-info-table td {
+  padding: 10px 20px;
+}
 </style>

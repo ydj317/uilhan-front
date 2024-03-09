@@ -18,9 +18,9 @@ import { message } from "ant-design-vue";
 
 export default {
   computed: {
-    ...mapState([
-      'product',
-    ])
+    ...mapState({
+      product: state => state.product.detail
+    })
   },
 
   methods: {
@@ -162,5 +162,3 @@ export default {
   }
 };
 </script>
-
-<style scoped></style>

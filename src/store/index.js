@@ -1,32 +1,19 @@
-import { createStore } from "vuex";
+import {createStore} from "vuex";
+import product from "@/store/modules/product";
+import marketAccount from "@/store/modules/marketAccount";
 
 export default createStore({
   state: {
     common: {},
-    product: {
-      onload: false,
-      loading: true,
-    },
-    relaket: {
-      data: {},
-      methods: {}
-    },
-    prdlist: [],
-
     return: {
       isOptionApplied: false,
     },
-
-    //通过Vuex来管理模态窗口的显示状态
     isModalOpen: false,
   },
   mutations: {
     //bottonBanner옵션적용
     setOptionApplied(state, value) {
       state.isOptionApplied = value;
-    },
-    setOptionModified(state, value) {
-      state.isOptionModified = value;
     },
 
     setUseAutoSave(state, value) {
@@ -36,14 +23,12 @@ export default createStore({
     //用于修改 isModalOpen 的值。
     setIsModalOpen(state, value) {
       state.isModalOpen = value;
-    },
-
-    // 상품상세에서 옵션 수정 모달 띄우기
-    setShowOptionModifyModal(state, value) {
-      state.showOptionModifyModal = value;
     }
   },
   actions: {
   },
-  modules: {},
+  modules: {
+    product,
+    marketAccount
+  },
 });

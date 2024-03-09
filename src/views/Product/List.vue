@@ -1,6 +1,142 @@
 <template>
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
 
+  <div class="product-list-container" style="padding: 30px;display: flex;flex-direction: column;gap: 10px;">
+    <div class="title" style="display: flex;justify-content: space-between;align-items: center">
+      <h3><strong>상품관리</strong></h3>
+      <a-button type="primary" style="background-color: #2171e2;color: white;">상품수집</a-button>
+    </div>
+    <a-divider style="margin: 10px 0;"/>
+    <div class="action-tool" style="display: flex;justify-content: space-between;align-items: center">
+      <div class="button-group" style="flex: auto;display: flex;align-items: center;gap: 5px;">
+        <a-checkbox ></a-checkbox>
+        <a-button type="primary" @click="productFilterVisible = true">필터</a-button>
+        <a-divider type="vertical"/>
+        <div><strong>선택한 상품</strong></div>
+        <a-button type="primary" >삭제</a-button>
+        <a-button type="primary" >복사</a-button>
+        <a-button type="primary" >상품등록</a-button>
+        <a-button type="primary" v-if="this.userinfo.use_ai === '1'" @click="replaceWithAI">AI 추천모드</a-button>
+      </div>
+      <div class="search">
+        <a-input-search placeholder="검색어를 입력하세요" enter-button="검색" style="width: 300px" />
+      </div>
+    </div>
+
+    <div
+      style="padding: 20px;display: grid;grid-template-columns: repeat(5, 1fr); gap: 20px;background-color: #f5f5f5;width: 100%"
+    >
+      <!-- items -->
+      <div
+        v-for="(product,key) in prdlist"
+        :key="key"
+        style="display: flex;flex-direction: column;gap: 10px;background-color: white;width: 100%;"
+      >
+        <div style="width: 100%;display: flex; justify-content: center;align-items: center;">
+          <div style="position: relative;display: flex;justify-content: center;align-items: center;">
+            <img :src="product.item_thumb[0]" style="width: 100%;height: 100%;object-fit: contain"/>
+            <div
+              style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;gap: 10px; background-color: rgba(255, 223, 64,0.3);position: absolute;top: 0;left: 0;transition: all 0.2s ease-in-out;"
+              @mouseover="product.hover = true"
+              @mouseout="product.hover = false"
+              :style="{'opacity': product.hover ? '1' : '0'}"
+            >
+              <img src="@/assets/img/edit_icon.png" style="width: 15px;height: 15px;"/>
+              <a href="javascript:void(0)" @click="openDetailPopup(product.item_id)" style="color: white;font-weight: bold;">
+                편집
+              </a>
+              <div style="position: absolute;bottom: 5px;width:226px;overflow:hidden;display: flex;gap: 10px;padding: 5px 10px;justify-content: center; align-items: center;background-color: white;border-radius: 5px;
+                          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+              ">
+                <img :src="getLogoSrc('get-logo', product.item_market.toLowerCase())" style="width: 20px;height: 20px;border-radius: 10px"/>
+                <span>{{ product.item_code }}</span>
+                <a :href="product.item_url" :target="'_blank'" style="padding: 0;margin: 0;display: flex;align-items: center">
+                  <img src="@/assets/img/log_out.png" style="width: 15px;height: 15px;"/>
+                </a>
+              </div>
+            </div>
+            <a-checkbox v-model:checked="product.checked" style="position: absolute;left: 5px;top: 8px;"/>
+
+          </div>
+        </div>
+        <div style="padding: 0 20px;height: 39px;overflow: hidden">
+          <a-typography-text
+              style="margin-top: 10px;"
+          >
+            <a href="javascript:void(0)" @click="openDetailPopup(product.item_id)" style="color: black">
+              {{ substrName(product.item_is_trans ? product.item_trans_name : product.item_name) }}
+            </a>
+          </a-typography-text>
+        </div>
+        <div style="display: flex;justify-content: space-between;align-items: center;padding: 0 20px;">
+          <strong>{{ product.show_price }}</strong>
+          <div style="display: flex;gap: 3px;align-items: center">
+            <template v-for="(market_info, key) in product.item_sync_market" :key="key">
+              <a-tooltip placement="bottom">
+                <template #title>
+                  <span>{{ market_info.seller_id }}</span>
+                </template>
+                <span class="item-market-icon" :class="market_info.status"
+                      @click="openMarketPopup(market_info, market_info.market_prd_code)">
+                        <img :src="getLogoSrc('market-logo', market_info.market_code)" alt="">
+                      </span>
+              </a-tooltip>
+            </template>
+          </div>
+        </div>
+        <a-divider style="margin: 5px 0;"/>
+        <div style="display: flex;justify-content: space-around;align-items: center;padding: 0 10px;margin-bottom: 10px;gap: 3px;">
+          <a-button type="text" style="padding: 0">옵션편집</a-button>
+          <a-divider type="vertical" style="margin: 0;padding: 0;background-color: #ffde3d "/>
+          <a-button type="text" style="padding: 0">상세페이지 편집</a-button>
+          <a-divider type="vertical" style="margin: 0;padding: 0;background-color: #ffde3d"/>
+          <a-button type="text" style="padding: 0;"><strong>상품등록</strong></a-button>
+          <a-popover v-model:open="product.moreActionVisible" trigger="click">
+            <template #content>
+              <div style="display: flex;flex-direction: column;gap: 3px;width: 120px;">
+                <div style="display: flex;gap: 3px;align-items: center">
+                  <a-button type="primary" style="padding:1px 5px;margin: 0;height: auto">
+                    <FileTextOutlined/>
+                  </a-button>
+                  <a-button type="default" style="padding: 0;width: 100%" size="small" @click.prevent="showHistory({title: product.item_trans_name || product.item_name, type: 'product', index_id: product.item_id})">히스토리</a-button>
+                </div>
+                <div style="display: flex;gap: 3px">
+                  <a-button type="default" style="padding: 0;width: 100%" size="small">복사</a-button>
+                  <a-button type="default" style="padding: 0;width: 100%" size="small">삭제</a-button>
+                </div>
+                <div style="display: flex;flex-direction: column;justify-content: center; align-items: center; gap: 3px;font-weight: bold;font-size: 9pt;margin-top: 5px;">
+                  <span>수집일</span>
+                  <span>2024-02-29 23:59</span>
+                  <span>연동일</span>
+                  <span>2024-02-29 23:59</span>
+                </div>
+                <div style="margin-top: 5px;">
+                  <a-button type="default" size="small" style="width: 100%" @click="product.moreActionVisible = false">닫기</a-button>
+                </div>
+              </div>
+            </template>
+            <a-button type="primary" style="border-radius: 50%;display: flex;align-items: center;justify-content: center;width: 20px;height: 20px;padding: 0 3px 6px 3px;">...</a-button>
+          </a-popover>
+        </div>
+      </div>
+    </div>
+
+    <a-pagination
+      style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 15px;"
+      v-model:current="pagination.current"
+      v-model:page-size="pagination.pageSize"
+      show-size-changer
+      @show-size-change="pagination.onShowSizeChange"
+      @change="pagination.onChange"
+      :total="pagination.total"
+      :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
+
+    />
+
+  </div>
+
+  <product-filter v-model:is-show="productFilterVisible"/>
+
   <!--검색-->
 
   <div id="header" style="padding:0 30px;">
@@ -16,13 +152,16 @@
 
     <div v-if="expand" class="mt20">
       <!--선택버튼 (상품수집마켓, 번역)-->
-      <div v-for="CONFIG in SEARCH_BUTTON_CONFIG" :class="CONFIG.class">
-        <h1>{{ CONFIG.label }}</h1>
-        <a-radio-group v-model:value="this[CONFIG.key]" :class="CONFIG.group_class" button-style="solid">
-          <a-radio-button v-for="options in CONFIG.options" :class="CONFIG.key" :value="options.value">
-            {{ options.label }}
-          </a-radio-button>
-        </a-radio-group>
+      <div style="display: flex;flex-direction: column;justify-content:center;border-top: 1px solid #eeeeee">
+        <div v-for="CONFIG in SEARCH_BUTTON_CONFIG"
+             style="display: flex;flex-direction: row;align-items:center;border-bottom: 1px solid #eeeeee;height: 50px;">
+          <h1 style="width: 120px;margin-top: 6px;">{{ CONFIG.label }}</h1>
+          <a-radio-group v-model:value="this[CONFIG.key]" style="">
+            <a-radio v-for="options in CONFIG.options" :value="options.value">
+              {{ options.label }}
+            </a-radio>
+          </a-radio-group>
+        </div>
       </div>
 
       <!--검색기간-->
@@ -113,31 +252,6 @@
           <DownloadOutlined/>
           업로드 샘플
         </a-button>
-<!--        <a-upload-->
-<!--            v-if="haveDownloadProductPermission"-->
-<!--            :action="uploadProductPath"-->
-<!--            v-model:fileList="fileList"-->
-<!--            name="file"-->
-<!--            :max-count="1"-->
-<!--            :headers="headers"-->
-<!--            :multiple="false"-->
-<!--            :showUploadList="false"-->
-<!--            @change="addExcelProduct"-->
-<!--            class="ml10"-->
-<!--        >-->
-<!--          <a-spin style="margin-right: 10px;" v-if="uploadProductIndicator"/>-->
-<!--          <a-button class="button-blue mr10" size="small">-->
-<!--            상품 업로드-->
-<!--            <template #icon>-->
-<!--              <UploadOutlined/>-->
-<!--            </template>-->
-<!--          </a-button>-->
-<!--        </a-upload>-->
-
-<!--        <a-spin style="margin-right: 10px;" v-if="indicator"/>-->
-<!--        <a-button v-if="haveDownloadProductPermission" @click="productExcelDown(record)" class="button-blue"-->
-<!--                  size="small">상품 다운로드-->
-<!--        </a-button>-->
         <!--선택상품 등록-->
         <a-button class="ml10 button-blue" @click="MarketListPop(record)" size="small">선택상품 등록</a-button>
       </div>
@@ -174,7 +288,7 @@
           <!--상품명-->
           <template v-if="column.key === 'item_name'">
             <div class="item-name">
-              <a :href="`/product/detail/${record.item_id}`">
+              <a href="javascript:void(0)" @click="openDetailPopup(record.item_id)">
                 {{ substrName(record.item_is_trans ? record.item_trans_name : record.item_name) }}
               </a>
               <div class="cantent">
@@ -206,32 +320,6 @@
            </a-button>
           </template>
 
-          <!--상품등록(수정)일-->
-          <!--          <template v-if="column.key === 'item_ins'">-->
-          <!--            <div>{{ record.item_ins.slice(0, 16) }}</div>-->
-          <!--            <div v-if="record.item_upd !== null" class="item-upd">-->
-          <!--              ( {{ record.item_upd.slice(0, 16) }} )-->
-          <!--            </div>-->
-          <!--          </template>-->
-
-          <!--등록상태-->
-          <!--          <template v-if="column.key === 'item_status'">-->
-
-          <!--            <span v-if="record.item_sync_date">-->
-          <!--              &lt;!&ndash;연동성공&ndash;&gt;-->
-          <!--              <a-tag color="success" v-if="record.item_sync_status">연동성공</a-tag>-->
-          <!--              &lt;!&ndash;연동실패&ndash;&gt;-->
-          <!--              <a-tooltip v-if="record.item_sync_status === false">-->
-          <!--                <template #title>{{ record.item_sync_result }}</template>-->
-          <!--                <a-tag color="error">연동실패</a-tag>-->
-          <!--              </a-tooltip>-->
-          <!--            </span>-->
-          <!--            <span v-else>-->
-          <!--              &lt;!&ndash;연동대기&ndash;&gt;-->
-          <!--              <a-tag color="default">연동대기</a-tag>-->
-          <!--            </span>-->
-          <!--          </template>-->
-
           <!--제휴사연동-->
           <template v-if="column.key === 'item_sync_status'">
             <div class="center">
@@ -250,6 +338,7 @@
       </a-table>
     </div>
 
+    <DetailPopup :visible="detailPopupVisible" @update:visible="detailPopupVisible = false" :prdId="prdId"/>
     <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData"/>
   </a-card>
 
@@ -394,8 +483,8 @@
       </a-table>
 
       <template v-slot:footer>
-        <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
         <a-button @click="closeResultPop('single')">닫기</a-button>
+        <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
       </template>
     </a-modal>
 
@@ -447,11 +536,7 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import Cookie from "js-cookie";
 import MarketList from "@/components/List/MarketList";
 import {useMarketApi} from "@/api/market";
-
 import {Empty} from 'ant-design-vue';
-
-const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
-
 import {mapState} from "vuex";
 import {
   ClockCircleOutlined,
@@ -474,9 +559,17 @@ import HistoryView from "@/components/HistoryView.vue";
 import {useCategoryApi} from "@/api/category";
 import {useProductApi} from "@/api/product";
 import {useUserApi} from "@/api/user";
+import DetailPopup from "@/views/Product/DetailPopup.vue";
+import Filter from "@/views/Product/Popup/ProductFilter.vue";
+import ProductFilter from "@/views/Product/Popup/ProductFilter.vue";
+
+const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 
 export default defineComponent({
   components: {
+    ProductFilter,
+    Filter,
+    DetailPopup,
     UploadOutlined,
     HistoryView,
     QuestionCircleOutlined,
@@ -497,9 +590,9 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState([
-      "relaket",
-    ])
+    ...mapState({
+      marketAccount: (state) => state.marketAccount,
+    })
   },
 
   data() {
@@ -628,13 +721,13 @@ export default defineComponent({
         showSizeChanger: true,
         pageSizeOptions: ["10", "20", "50", "100"],
         onChange: page => {
-          sessionStorage.relaket_page = page;
+          sessionStorage.marketAccount_page = page;
           this.pageNum = page;
           this.pagination.current = page;
           this.getList();
         },
         onShowSizeChange: (current, pageSize) => {
-          sessionStorage.relaket_limit = pageSize;
+          sessionStorage.marketAccount_limit = pageSize;
           this.limit = pageSize;
           this.getList();
         }
@@ -723,11 +816,20 @@ export default defineComponent({
       expand: true,
       copyPrdVisible: false,
       copyPrdCondition: true,
+
       prdMemoData: {
         openPop: false,
         memo: '',
         item_id: ''
       },
+
+      productFilterVisible: false, // 필터
+
+      moreActionVisible: false, // 상품 더보기
+
+      detailPopupVisible: false, // 상품 상세 팝업
+
+      prdId: 0,
     };
   },
 
@@ -808,7 +910,7 @@ export default defineComponent({
         message.warning("선택된 상품이 없습니다.");
         return false;
       }
-      this.relaket.data = this;
+      this.marketAccount.data = this;
       this.MarketListVisible = true;
     },
 
@@ -870,8 +972,8 @@ export default defineComponent({
     },
 
     substrName(sName) {
-      if (sName.length > 80) {
-        return sName.substr(0, 80) + "...";
+      if (sName.length > 38) {
+        return sName.substr(0, 38) + "...";
       }
 
       return sName;
@@ -882,8 +984,8 @@ export default defineComponent({
       let iPage = parseInt(this.pageNum) || 1;
 
       if (sType === "reload") {
-        iPage = sessionStorage.relaket_page !== undefined ? parseInt(sessionStorage.relaket_page) : iPage;
-        iLimit = sessionStorage.relaket_limit !== undefined ? parseInt(sessionStorage.relaket_limit) : iLimit;
+        iPage = sessionStorage.marketAccount_page !== undefined ? parseInt(sessionStorage.marketAccount_page) : iPage;
+        iLimit = sessionStorage.marketAccount_limit !== undefined ? parseInt(sessionStorage.marketAccount_limit) : iLimit;
       }
 
       return {
@@ -1485,6 +1587,10 @@ export default defineComponent({
       });
     },
 
+    openDetailPopup(prdId) {
+      this.detailPopupVisible = true;
+      this.prdId = prdId;
+    },
   },
 
 

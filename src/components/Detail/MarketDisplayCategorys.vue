@@ -16,12 +16,12 @@
 
 <script setup>
 
-import {toRefs} from "vue";
+import {computed, toRefs} from "vue";
 import {useStore} from "vuex";
 import { ref } from 'vue';
 
-const store = useStore();
-const { product } = toRefs(store.state);
+const store = useStore()
+const product = computed(() => store.state.product.detail)
 const displayCategoryValue = ref([])
 const props = defineProps(
   {

@@ -1,6 +1,47 @@
 <template>
+  <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
+    <a-spin v-if="product.loading" size="large"/>
+  </div>
+
+  <h3><strong>가격설정</strong></h3>
+  <table class="price-setting-table">
+    <colgroup>
+      <col style="width: 15%">
+      <col>
+      <col style="width: 15%">
+      <col>
+    </colgroup>
+    <tr>
+      <th>판매가 할인율</th>
+      <td>
+        <a-input-number v-model:value="product.item_discount_rate" :min="0" :max="100" :step="1" style="width: 100%" />
+      </td>
+      <th>배송비 설정</th>
+      <td>
+        <a-radio-group v-model:value="product.item_shipping_fee_type">
+          <a-radio value="0">무료배송</a-radio>
+          <a-radio value="1">유료배송</a-radio>
+        </a-radio-group>
+      </td>
+    </tr>
+
+    <tr>
+      <th>판매가 인상/인하 설정</th>
+      <td>
+        <a-select v-model:value="product.item_price_change_type" style="width: 100%">
+          <a-select-option value="0">+</a-select-option>
+          <a-select-option value="1">-</a-select-option>
+        </a-select>
+      </td>
+      <th></th>
+      <td>
+        <a-input-number v-model:value="product.item_price_change_value" :min="0" :step="1000" style="width: 100%" /> 추가
+      </td>
+    </tr>
+  </table>
+
   <div id="eModelTitle_3" class="mt20 p20 bg-white">
-    <h1><strong>옵션정보</strong></h1>
+    <h3><strong>옵션정보</strong></h3>
     <!--sku 상단 버튼-->
     <div class="top_button_container" style="display: flex;justify-content: space-between;">
       <!--sku 상단 left 버튼-->
@@ -28,6 +69,7 @@
           </a-tooltip>
         </div>
       </div>
+
       <!--sku 상단 right 버튼-->
       <div class="row" style="display: flex;flex-direction: column;gap: 10px;">
 
@@ -79,10 +121,10 @@
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
-            <a-checkbox v-model:checked="formState.item_is_free_delivery" @change="handleShippingFeeDeliveryChange">
+            <a-checkbox v-model:checked="product.item_is_free_delivery" @change="handleShippingFeeDeliveryChange">
               무료 배송
             </a-checkbox>
-            <a-input-number v-model:value.number="formState.item_shipping_fee" placeholder="배송비 입력" :step="1000"
+            <a-input-number v-model:value.number="product.item_shipping_fee" placeholder="배송비 입력" :step="1000"
                             :min="0" style="width: 80px" @change="handleShippingFeeChange"/>
           </a-space>
         </div>
@@ -258,18 +300,20 @@ import {mapState, useStore} from "vuex";
 import {lib} from "@/util/lib";
 import {cloneDeep, forEach} from "lodash";
 import {message} from "ant-design-vue";
-import {computed, reactive, ref} from "vue";
+import {computed, reactive, ref, defineComponent} from "vue";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 import detail from "src/views/Product/Detail.vue";
 import { Modal } from 'ant-design-vue';
 
 
-export default {
+export default defineComponent({
   name: "productDetailSku",
   components: {QuestionCircleOutlined},
 
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: (state) => state.product.detail,
+    }),
   },
 
   data() {
@@ -345,19 +389,6 @@ export default {
     };
   },
 
-  setup() {
-    const store = useStore()
-    const aProduct = computed(() => store.state.product)
-    const formState = reactive({
-      item_is_free_delivery: false,
-      item_shipping_fee: '',
-      original_item_skus: [],
-    });
-    return {
-      aProduct,
-      formState,
-    }
-  },
   methods: {
     settingSkuPrice() {
       if (!Array.isArray(this.product.sku) || this.product.sku.length === 0) {
@@ -594,7 +625,7 @@ export default {
       //
       //   return false;
       // }
-
+      this.product.xiangjiVisible = true;
       this.product.bProductDetailsEditor = false;
       this.product.bProductImageEditor = false;
       this.product.bImageEditorModule = true;
@@ -611,8 +642,16 @@ export default {
           translate_status: record.translate_status,
         },
       ];
+      this.productTranslateImage(this.product.aPhotoCollection, false)
     },
-
+//상품이미지 번역
+    productTranslateImage(aImagesInfo, isTranslate) {
+      this.product.isTranslate = isTranslate
+      this.product.translateImage(aImagesInfo, (oTranslateInfo) => {
+        let sTranslateUrl = oTranslateInfo[aImagesInfo[0].key].translate_url;
+        this.requestXiangji([sTranslateUrl]);
+      });
+    },
     // 이미지 편집
     requestXiangji(aImagesUrl) {
       this.product.requestXiangji(aImagesUrl, (oRequestId) => {
@@ -658,38 +697,16 @@ export default {
       });
     },
 
-    // 전체 마진자동셋팅
-    shippingFeeInit() {
-      this.formState.item_shipping_fee = this.product.item_shipping_fee || 0;
-      this.formState.item_is_free_delivery = this.product.item_is_free_delivery === 'T' ? true : false;
-      if (!this.formState.item_is_free_delivery) {
-        this.formState.shipping_fee_ko = this.product.item_shipping_fee;
-      }
-    },
-
-    sellingPriceInit() {
-      this.product.sku.map((data, i) => {
-        this.product.sku[i].original_selling_price = Number(data.selling_price);
-      });
-    },
-
     handleShippingFeeChange(val) {
-      this.product.sku.map((data, i) => {
-        this.product.sku[i].shipping_fee_ko = val;
-      });
-
-      this.formState.item_shipping_fee = val;
-      this.product.formState.item_shipping_fee = val;
-      this.product.formState.item_is_free_delivery = this.formState.item_is_free_delivery;
+      this.product.sku = this.product.sku.map(data => ({ ...data, shipping_fee_ko: val }));
     },
 
     handleShippingFeeDeliveryChange() {
-      if (this.formState.item_is_free_delivery) {
+      if (this.product.item_is_free_delivery) {
         message.warn('배송비가 판매가에 적용됩니다.');
       } else {
         message.warn('배송비가 운임에 적용됩니다.');
       }
-      this.product.formState.item_is_free_delivery = this.formState.item_is_free_delivery;
     },
 
     setExpectedReturn() {
@@ -698,8 +715,13 @@ export default {
         this.product.sku[i].expected_return = Number(expected_return);
       });
     },
+  // 전체 마진자동셋팅
+    shippingFeeInit() {
+
+    },
     showOptionPop() {
-      this.$store.commit('setShowOptionModifyModal', true);
+      // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModifyModal = true 로 설정
+      this.$store.commit('product/setShowOptionModify', true)
     },
 
     // 옵션 초기화  (수집시 옵션으로)
@@ -713,9 +735,9 @@ export default {
         title: '옵션정보를 초기화 하시겠습니까?',
         content: '편집된 옵션정보는 삭제되고 상품 수집시 옵션정보로 초기화됩니다.',
         onOk() {
-          _this.product.item_option =  {..._this.product.item_org_option};
-          _this.product.sku = cloneDeep(_this.product.item_org_sku);
-          _this.handleShippingFeeChange(_this.formState.item_shipping_fee);
+          _this.product.item_option = cloneDeep(_this.product.item_org_option);
+          _this.product.sku = _this.product.item_org_sku;
+          _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
           _this.product.resetOption = true;
           message.success('옵션정보가 초기화 되었습니다.')
@@ -727,14 +749,13 @@ export default {
 },
 
   mounted() {
-
     this.css();
     this.shippingFeeInit();
     //예상수익
-    this.handleShippingFeeChange(this.formState.item_shipping_fee);
+    this.handleShippingFeeChange(this.product.item_shipping_fee);
     this.setExpectedReturn();
   },
-};
+});
 </script>
 
 <style scoped>
@@ -842,4 +863,20 @@ export default {
   padding: 5px;
 }
 
+.price-setting-table {
+  border-collapse: collapse;
+  background-color: #eeeeee;
+  width: 100%;
+}
+
+.price-setting-table th {
+  text-align: right;
+  padding: 10px 20px;
+  font-weight: bold;
+  color: #666;
+}
+
+.price-setting-table td {
+  padding: 10px 20px;
+}
 </style>
