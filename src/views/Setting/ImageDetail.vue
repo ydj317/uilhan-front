@@ -25,12 +25,17 @@
                   :customRequest="(options) => uploadImage(options, 'top')"
                   v-model:file-list="fileListTop"
               >
+                <template v-if="fileListTop.length < 1">
                   <div>
                     <loading-outlined v-if="loadingTop" />
                     <plus-outlined v-else />
                     <div class="ant-upload-text">Upload</div>
                   </div>
+                </template>
               </a-upload>
+              <template v-if="fileListTop.length > 0">
+                <close-circle-outlined class="delete-icon" @click="removeFileTop" />
+              </template>
             </span>
             <span class="image-fix">
               <span class="title">하단 고정 이미지</span>
@@ -44,13 +49,17 @@
                   :customRequest="(options) => uploadImage(options, 'bottom')"
                   v-model:file-list="fileListBottom"
               >
-
-                <div>
-                  <loading-outlined v-if="loadingBottom" />
-                  <plus-outlined v-else />
-                  <div class="ant-upload-text">Upload</div>
-                </div>
+                <template v-if="fileListBottom.length < 1">
+                  <div>
+                    <loading-outlined v-if="loadingBottom" />
+                    <plus-outlined v-else />
+                    <div class="ant-upload-text">Upload</div>
+                  </div>
+                </template>
               </a-upload>
+              <template v-if="fileListBottom.length > 0">
+                <close-circle-outlined class="delete-icon" @click="removeFileBottom" />
+              </template>
             </span>
         </div>
       </a-descriptions-item>
@@ -75,7 +84,6 @@
         <a-switch v-model:checked="formState.settingDatas.description_option.option_table.use"
                    checked-children="on" un-checked-children="off" />
         <div class="select upload-container" :class="{ 'is-disabled': !formState.settingDatas.description_option.option_table.use }">
-          <!-- 第一个下拉菜单 -->
           <a-select v-model:value="formState.settingDatas.description_option.option_table.show_position"
                     style="width: 120px">
             <a-select-option v-for="selectOption in showPosition" :key="selectOption.value"
@@ -83,7 +91,6 @@
               {{ selectOption.label }}
             </a-select-option>
           </a-select>
-          <!-- 第二个下拉菜单 -->
           <a-select v-model:value="formState.settingDatas.description_option.option_table.column_length"
                     style="width: 120px">
             <a-select-option v-for="selectOption in columnLength" :key="selectOption.value"
@@ -103,12 +110,12 @@
 <script setup>
 import {AuthRequest} from "@/util/request";
 
-import {onMounted, reactive, ref } from "vue";
+import {onMounted, reactive, ref} from "vue";
 import Cookie from "js-cookie";
 import {message} from "ant-design-vue";
 import {useUserApi} from "@/api/user";
-import {PlusOutlined, LoadingOutlined} from "@ant-design/icons-vue";
-import router from "@/router";
+import {LoadingOutlined, PlusOutlined, CloseCircleOutlined  } from "@ant-design/icons-vue";
+import response from "vuedraggable";
 
 const showPosition = reactive([
   { label: '상단에', value: 'top' },
@@ -143,22 +150,11 @@ const formState = reactive({
   loading: false,
 });
 
-// const topImageUrl = "https:\\/\\/worldlink.mev\\/uploads\\/25778155-65e915fd0fa48.jpg";
-// const fileListTop = ref([
-//   {
-//     uid: '-1', // 通常使用文件的唯一标识符，这里只是示例
-//     name: 'Top Image.jpg',
-//     status: 'done', // 表示文件已经上传
-//     url: topImageUrl, // 从后端获取的图片URL
-//   }
-// ]);
-
 const fileListTop = ref([]);
+
 const fileListBottom = ref([]);
 const loadingTop = ref(false);
 const loadingBottom = ref(false);
-// const imageUrl = ref('');
-// const loading = ref(false);
 
 const HEADER =ref({
     token: Cookie.get("token"),
@@ -191,29 +187,28 @@ function uploadImage(option,position) {
 
     message.success(res.message);
 
-    // 上传成功处理逻辑
+    // 上传成功处理
     let imgUrl = res.data.img_url;
+
     let newFileList = [{
-      uid: '-1', // 唯一标识，可以是上传文件的ID
-      name: 'image.png', // 文件名
-      status: 'done', // 状态有：uploading, done, error, removed
-      url: imgUrl, // 文件访问路径
+      uid: '-1',
+      name: 'option.file.name',
+      status: 'done',
+      url: imgUrl,
     }];
 
     // 根据位置更新状态和文件列表
     if (position === 'top') {
       formState.settingDatas.description_option.top_bottom_image.top_image_url = imgUrl;
-      fileListTop.value = newFileList; // 更新文件列表
-      loadingTop.value = false; // 停止加载状态
+      fileListTop.value.splice(0, fileListTop.value.length, ...newFileList);
+      console.log(fileListTop.value);
+
+      loadingTop.value = false;
     } else if (position === 'bottom') {
       formState.settingDatas.description_option.top_bottom_image.bottom_image_url = imgUrl;
       fileListBottom.value = newFileList;
       loadingBottom.value = false;
     }
-
-    // // 保存到数据库
-    // handleSaveUserData();
-
   }).catch((error) => {
     message.error(`Upload failed: ${error.message}`);
     if (position === 'top') loadingTop.value = false;
@@ -231,35 +226,53 @@ function validateUploadImage(file) {
     message.warning("허용되는 이미지 격식이 아닙니다.");
     return false;
   }
-
   return true;
 }
 
-// const handleSaveUserData = () => {
-//   useUserApi().saveUserData(formState.settingDatas).then((res) => {
-//     console.log('Data saved successfully');
-//   }).catch((error) => {
-//       console.error('Failed to save data:', error);
-//   });
-// }
-
-function saveUserInfo(){
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail").then((res) => {
-    if (res.status !== '2000') {
-      message.error(res.message)
-      return false;
-    }
-
-    message.success(res.message);
-
-    useUserApi().saveUserData(formState.settingDatas).then((res) => {
-      console.log('Data saved successfully');
-    }).catch((error) => {
-      console.error('Failed to save data:', error);
-    });
-  });
+function removeFileTop(){
+  fileListTop.value = [];
+}
+function removeFileBottom(){
+  fileListBottom.value = [];
 }
 
+async function saveUserInfo(){
+  const isSwitchOn = formState.settingDatas.description_option.top_bottom_image.use;
+  if (isSwitchOn && fileListTop.value.length === 0 && fileListBottom.value.length === 0)
+  {
+    message.error('상/하단 이미지를 등록하여 주세요.');
+    return; // 阻止执行后续保存操作
+  }
+
+  // 检查并清除空的图片URL
+  if (fileListTop.value.length === 0) {
+    formState.settingDatas.description_option.top_bottom_image.top_image_url = '';
+  }
+  if (fileListBottom.value.length === 0) {
+    formState.settingDatas.description_option.top_bottom_image.bottom_image_url = '';
+  }
+
+  try {
+    const updateResponse = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", {
+      settingDatas: formState.settingDatas
+    });
+
+    if (updateResponse.status !== '2000') {
+      message.error(updateResponse.message);
+      return;
+    }
+
+    await useUserApi().saveUserData(formState.settingDatas);
+    console.log('Data saved successfully');
+    message.success(updateResponse.message);
+
+    // 在所有数据保存操作完成后获取最新的用户信息
+    getUserInfoData();
+  } catch (error) {
+    console.error('Failed to save data:', error);
+    message.error('\'Failed to save data:\', error');
+  }
+}
 
 function getUserInfoData() {
   formState.loading = true;
@@ -277,26 +290,42 @@ function getUserInfoData() {
       return false;
     }
 
-    // 直接赋值可能不会触发更新，特别是对于深层次的对象
+    //更新顶部和底部图片的文件列表
     if (user_data.description_option && user_data.description_option.top_bottom_image) {
-      formState.settingDatas.description_option.top_bottom_image = { ...user_data.description_option.top_bottom_image };
-    }
+      const top_image_url = user_data.description_option.top_bottom_image.top_image_url;
+      const bottom_image_url = user_data.description_option.top_bottom_image.bottom_image_url;
 
-    if (user_data.description_option && user_data.description_option.show_video) {
-      formState.settingDatas.description_option.show_video = { ...user_data.description_option.show_video };
-    }
+      // 如果有顶部图片 URL，则创建对应的文件列表项
+      if (top_image_url) {
+        fileListTop.value = [{
+          uid: '-1',
+          name: 'Top Image',
+          status: 'done',
+          url: top_image_url,
+        }];
+      }
 
-    if (user_data.description_option && user_data.description_option.option_table) {
-      formState.settingDatas.description_option.option_table = { ...user_data.description_option.option_table };
+      if (bottom_image_url) {
+        fileListBottom.value = [{
+          uid: '-2',
+          name: 'Bottom Image',
+          status: 'done',
+          url: bottom_image_url,
+        }];
+      }
     }
+    formState.settingDatas = user_data; //更新状态
 
-    formState.settingDatas = user_data;
     setTimeout(() => {
       formState.loading = false;
     }, 500);
 
+  }).catch((error)=>{
+    message.error('실패: ${error.message}');
+    formState.loading = false;
   });
 }
+
 onMounted(() => {
   getUserInfoData();
 });
@@ -323,6 +352,7 @@ onMounted(() => {
     display:block;
   }
   .image-fix{
+    position:relative;
     display:inline-block;
     margin-top:10px;
   }
@@ -333,6 +363,26 @@ onMounted(() => {
   .upload-container.is-disabled {
     pointer-events: none;
     opacity: 0.5;
+  }
+
+  :deep .ant-upload-list-item-actions {
+    display: none;
+  }
+
+  :deep .ant-upload-list-item::before{
+    display:none;
+  }
+
+  :deep .ant-upload-list-item-custom {
+    position: relative;
+  }
+
+  :deep .delete-icon {
+    color: red;
+    position: absolute;
+    right: 100px;
+    top: 20px;
+    cursor: pointer;
   }
 
 </style>
