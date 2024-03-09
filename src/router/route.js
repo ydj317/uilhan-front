@@ -41,6 +41,17 @@ export const menus = [{
             },
         },
         {
+            path: "/product/new",
+            name: "product_new",
+            component: () => import("@/views/Product/ListNew"),
+            meta: {
+                title: "상품관리",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: GiftOutlined
+            },
+        },
+        {
             path: "/product/detail/:id",
             name: "prd_detail",
             component: () => import("@/views/Product/Detail"),
