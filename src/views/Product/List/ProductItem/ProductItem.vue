@@ -11,8 +11,11 @@
           <btn-edit @click="openDetailPopup(product.item_id)" />
           <btn-link-market :product="product" />
         </div>
-        <!-- @todo check 批量选择标记 -->
-        <a-checkbox v-model:checked="product.checked" style="position: absolute;left: 5px;top: 8px;"/>
+        <a-checkbox
+          :checked="selected"
+          @change="$emit('select')"
+          style="position: absolute;left: 5px;top: 8px;"
+        />
       </div>
     </div>
     <item-title :product="product" @popup="openDetailPopup" />
@@ -29,14 +32,11 @@ import ItemTitle from "@/views/Product/List/ProductItem/ItemTitle.vue";
 import ItemPrice from "@/views/Product/List/ProductItem/ItemPrice.vue";
 import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
-import {ref} from "vue";
+import {ref, toRefs} from "vue";
 import ItemCtrlBar from "@/views/Product/List/ProductItem/ItemCtrlBar.vue";
-defineProps({
-  product: {
-    type: Object,
-    default: () => ({})
-  }
-})
+const props = defineProps(['product', 'selected'])
+const emit = defineEmits(['select'])
+const {selected} = toRefs(props)
 
 const marketDetailUrls = ref({})
 

@@ -1,5 +1,4 @@
 import {message} from "ant-design-vue";
-import moment from "moment";
 import {lib} from "@/util/lib";
 import {AuthRequest} from "@/util/request";
 
@@ -7,13 +6,19 @@ export class ProductList {
   static defaultParams() {
     return {
       market_code: "all",
+
+      // as-is: 日期区间只能应用一种; to-be 同时应用所有日期区间.
       date_type: "insert_date",
-      search_key: "item_code",
       start_time: "",
       end_time: "",
+
+      // as-is 检索语类型 radio, 只能检索商品code, 商品名, ... 之一。 to-be : 分离了类型，同时检索
+      search_key: "item_code",
       search_value: "",
+
       trans_status: "all",
       sync_status: "all",
+
       page: 1,
       limit: 10,
     }
@@ -29,7 +34,11 @@ export class ProductList {
       params.limit = parseInt(sessionStorage.marketAccount_limit)
     }
 
-    params.page = (params.page > 1) ? params.page : 1
+    if (type === 'search') {
+      params.page = 1
+    }
+
+    params.page = (params.page >= 1) ? params.page : 1
     params.limit = isNaN(params.limit) ? 10 : params.limit
 
     return params
@@ -37,7 +46,7 @@ export class ProductList {
 
   /**
    * @param {*} params
-   * @param type
+   * @param {'reload'|'search'|''} type
    * @return {*}
    */
   static getList(params = this.defaultParams(), type = '') {

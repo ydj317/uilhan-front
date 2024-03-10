@@ -1,8 +1,12 @@
 <template>
   <div class="action-tool" :class="{disabled}">
     <div class="button-group">
-      <a-checkbox ></a-checkbox>
-      <a-button type="primary" @click="$emit('show-filter')">필터</a-button>
+      <a-checkbox
+        :indeterminate="selectPart"
+        :checked="selectAll"
+        @change="$emit('toggleSelect')"
+      />
+      <a-button type="primary" @click="$emit('showFilter')">필터</a-button>
       <a-divider type="vertical"/>
       <div><strong>선택한 상품</strong></div>
       <a-button type="primary" >삭제</a-button>
@@ -17,14 +21,11 @@
 </template>
 
 <script setup>
-defineProps({
-  userinfo: {
-    type: Object,
-    default: () => ({use_ai: '0'})
-  },
-  disabled: Boolean
-})
-defineEmits(['show-filter'])
+import {toRefs} from "vue";
+
+const props = defineProps(['disabled', 'userinfo', 'selectPart', 'selectAll'])
+defineEmits(['showFilter', 'toggleSelect'])
+const {selectAll, selectPart} = toRefs(props)
 
 const replaceWithAI = () => {
   console.log('---', 'replace white AI')
