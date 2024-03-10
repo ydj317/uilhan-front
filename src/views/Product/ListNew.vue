@@ -1,7 +1,7 @@
 <template>
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
 
-  <textarea :value="JSON.stringify(selection, null, '\t')" style="width:500px;height:200px" />
+<!--  <textarea :value="JSON.stringify(selection, null, '\t')" style="width:500px;height:200px" />-->
 
   <div class="product-list-container">
     <product-list-title />
