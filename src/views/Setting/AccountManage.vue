@@ -232,21 +232,20 @@
 
         loading: false,
         //yl+
-
-        password: "",
-        new_password: "",
-        password_confirm: "",
-        //账号权限
-        auth: ['상품관리 (삭제 제외)', ' 상품삭제'],
-        formRef:"",
         //修改密码
         pwdLoading:false,
         pwdOpen:false,
+        password: "",
+        new_password: "",
+        password_confirm: "",
+        formRef:"",
         //注册账户
-        reg_new_password: "",
-        reg_password_confirm: "",
         regLoading:false,
         regOpen:false,
+        reg_new_password: "",
+        reg_password_confirm: "",
+        //默认拥有的账号权限
+        auth: ['상품관리 (삭제 제외)', ' 상품삭제'],
     });
 
     const copyText = (recommend_code) => {
@@ -378,7 +377,7 @@
             }
 
             if (formState.password_confirm !== "") {
-                formState.formRef.value.validateFields("password_confirm");
+                formState.formRef.validateFields("password_confirm");
             }
 
             return Promise.resolve();
