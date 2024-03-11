@@ -697,19 +697,19 @@
         };
 
         formState.regLoading = true;
-        AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
-            if (res.status !== "2000") {
-                message.error(res.message);
-                formState.regLoading = false;
-                return false;
-            }
-            console.log(res);
-
-            message.success(res.message);
-
-            formState.regLoading = false;
-            formState.regOpen = false;
-        });
+        // AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
+        //     if (res.status !== "2000") {
+        //         message.error(res.message);
+        //         formState.regLoading = false;
+        //         return false;
+        //     }
+        //     console.log(res);
+        //
+        //     message.success(res.message);
+        //
+        //     formState.regLoading = false;
+        //     formState.regOpen = false;
+        // });
     };
 
     const onFinishFailed3 = errorInfo => {
