@@ -1,125 +1,133 @@
 <template>
-  <BindBridge />
-  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
+<!--  <BindBridge />-->
+<!--  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">-->
 
-    <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
-            @finish="onFinish" @finishFailed="onFinishFailed">
+<!--    <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"-->
+<!--            @finish="onFinish" @finishFailed="onFinishFailed">-->
 
-      <a-form-item label="아이디">
-        {{ formState.username }}
-      </a-form-item>
+<!--      <a-form-item label="아이디">-->
+<!--        {{ formState.username }}-->
+<!--      </a-form-item>-->
 
-      <a-form-item label="추천코드">
-        <a-button @click="copyText(formState.recommend_code)">
-          {{ formState.recommend_code }}
-          <CopyOutlined />
-        </a-button>
-      </a-form-item>
+<!--      <a-form-item label="추천코드">-->
+<!--        <a-button @click="copyText(formState.recommend_code)">-->
+<!--          {{ formState.recommend_code }}-->
+<!--          <CopyOutlined />-->
+<!--        </a-button>-->
+<!--      </a-form-item>-->
 
-      <a-form-item label="사용자명" name="name" has-feedback>
-        <a-input v-model:value="formState.name" placeholder="사용자명을 입력해주시오" />
-      </a-form-item>
+<!--      <a-form-item label="사용자명" name="name" has-feedback>-->
+<!--        <a-input v-model:value="formState.name" placeholder="사용자명을 입력해주시오" />-->
+<!--      </a-form-item>-->
 
-      <a-form-item label="Email" name="email" has-feedback>
-        <a-input v-model:value="formState.email" placeholder="Email을 입력해주시오" />
-      </a-form-item>
+<!--      <a-form-item label="Email" name="email" has-feedback>-->
+<!--        <a-input v-model:value="formState.email" placeholder="Email을 입력해주시오" />-->
+<!--      </a-form-item>-->
 
-      <a-form-item label="휴대전화" name="phone1">
-        <a-row :gutter="10">
-          <a-col style="width: 160px;">
-            <a-form-item name="phone1" class="phone" has-feedback>
-              <a-input v-model:value="formState.phone1" placeholder="휴대전화" />
-            </a-form-item>
-          </a-col>
-          <a-col style="width: 160px;">
-            <a-form-item name="phone2" class="phone" has-feedback>
-              <a-input v-model:value="formState.phone2" placeholder="휴대전화" />
-            </a-form-item>
-          </a-col>
-          <a-col style="width: 160px;">
-            <a-form-item name="phone3" class="phone" has-feedback>
-              <a-input v-model:value="formState.phone3" placeholder="휴대전화" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form-item>
+<!--      <a-form-item label="휴대전화" name="phone1">-->
+<!--        <a-row :gutter="10">-->
+<!--          <a-col style="width: 160px;">-->
+<!--            <a-form-item name="phone1" class="phone" has-feedback>-->
+<!--              <a-input v-model:value="formState.phone1" placeholder="휴대전화" />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--          <a-col style="width: 160px;">-->
+<!--            <a-form-item name="phone2" class="phone" has-feedback>-->
+<!--              <a-input v-model:value="formState.phone2" placeholder="휴대전화" />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--          <a-col style="width: 160px;">-->
+<!--            <a-form-item name="phone3" class="phone" has-feedback>-->
+<!--              <a-input v-model:value="formState.phone3" placeholder="휴대전화" />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--        </a-row>-->
+<!--      </a-form-item>-->
 
-      <a-form-item label="업체명/사업자명" name="com_name" has-feedback>
-        <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명을 입력해주시오" />
-      </a-form-item>
+<!--      <a-form-item label="업체명/사업자명" name="com_name" has-feedback>-->
+<!--        <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명을 입력해주시오" />-->
+<!--      </a-form-item>-->
 
-      <a-form-item label="사업자번호" name="com_number" has-feedback>
-        <a-input v-model:value="formState.com_number" placeholder="사업자번호를 입력해주시오" />
-      </a-form-item>
+<!--      <a-form-item label="사업자번호" name="com_number" has-feedback>-->
+<!--        <a-input v-model:value="formState.com_number" placeholder="사업자번호를 입력해주시오" />-->
+<!--      </a-form-item>-->
 
-      <a-form-item label="사업장 전화번호" name="com_phone1">
-        <a-row :gutter="10">
-          <a-col style="width: 160px;">
-            <a-form-item name="com_phone1" class="phone" has-feedback>
-              <a-input v-model:value="formState.com_phone1" placeholder="전화번호" />
-            </a-form-item>
-          </a-col>
-          <a-col style="width: 160px;">
-            <a-form-item name="com_phone2" class="phone" has-feedback>
-              <a-input v-model:value="formState.com_phone2" placeholder="전화번호" />
-            </a-form-item>
-          </a-col>
-          <a-col style="width: 160px;">
-            <a-form-item name="com_phone3" class="phone" has-feedback>
-              <a-input v-model:value="formState.com_phone3" placeholder="전화번호" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form-item>
+<!--      <a-form-item label="사업장 전화번호" name="com_phone1">-->
+<!--        <a-row :gutter="10">-->
+<!--          <a-col style="width: 160px;">-->
+<!--            <a-form-item name="com_phone1" class="phone" has-feedback>-->
+<!--              <a-input v-model:value="formState.com_phone1" placeholder="전화번호" />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--          <a-col style="width: 160px;">-->
+<!--            <a-form-item name="com_phone2" class="phone" has-feedback>-->
+<!--              <a-input v-model:value="formState.com_phone2" placeholder="전화번호" />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--          <a-col style="width: 160px;">-->
+<!--            <a-form-item name="com_phone3" class="phone" has-feedback>-->
+<!--              <a-input v-model:value="formState.com_phone3" placeholder="전화번호" />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--        </a-row>-->
+<!--      </a-form-item>-->
 
-      <a-form-item label="대표자명" name="com_ceo" has-feedback>
-        <a-input v-model:value="formState.com_ceo" placeholder="대표자명을 입력해주시오" />
-      </a-form-item>
+<!--      <a-form-item label="대표자명" name="com_ceo" has-feedback>-->
+<!--        <a-input v-model:value="formState.com_ceo" placeholder="대표자명을 입력해주시오" />-->
+<!--      </a-form-item>-->
 
-      <a-form-item label="유선전화" name="tel1">
-        <a-row :gutter="10">
-          <a-col style="width: 160px;">
-            <a-form-item name="tel1" class="phone" has-feedback>
-              <a-input v-model:value="formState.tel1" placeholder="유선전화" />
-            </a-form-item>
-          </a-col>
-          <a-col style="width: 160px;">
-            <a-form-item name="tel2" class="phone" has-feedback>
-              <a-input v-model:value="formState.tel2" placeholder="유선전화" />
-            </a-form-item>
-          </a-col>
-          <a-col style="width: 160px;">
-            <a-form-item name="tel3" class="phone" has-feedback>
-              <a-input v-model:value="formState.tel3" placeholder="유선전화" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form-item>
+<!--      <a-form-item label="유선전화" name="tel1">-->
+<!--        <a-row :gutter="10">-->
+<!--          <a-col style="width: 160px;">-->
+<!--            <a-form-item name="tel1" class="phone" has-feedback>-->
+<!--              <a-input v-model:value="formState.tel1" placeholder="유선전화" />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--          <a-col style="width: 160px;">-->
+<!--            <a-form-item name="tel2" class="phone" has-feedback>-->
+<!--              <a-input v-model:value="formState.tel2" placeholder="유선전화" />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--          <a-col style="width: 160px;">-->
+<!--            <a-form-item name="tel3" class="phone" has-feedback>-->
+<!--              <a-input v-model:value="formState.tel3" placeholder="유선전화" />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--        </a-row>-->
+<!--      </a-form-item>-->
 
-      <div style="display: flex;justify-content: center;margin-top: 20px;">
-        <a-button type="primary" html-type="submit">저장</a-button>
-        <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>
-      </div>
-    </a-form>
+<!--      <div style="display: flex;justify-content: center;margin-top: 20px;">-->
+<!--        <a-button type="primary" html-type="submit">저장</a-button>-->
+<!--        <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>-->
+<!--      </div>-->
+<!--    </a-form>-->
 
-  </a-card>
+<!--  </a-card>-->
 
-  <div class="mt20">
-    <Password />
-  </div>
+<!--  <div class="mt20">-->
+<!--    <Password />-->
+<!--  </div>-->
 
   <div class="mt20">
     <Account />
   </div>
 
   <div class="mt20">
-    <ImageDetail />
+    <Margin />
   </div>
 
   <div class="mt20">
-    <Guide />
+    <ImageDetail />
   </div>
 
+<!--  <div class="mt20">-->
+<!--    <Guide />-->
+<!--  </div>-->
+
+  <div style="display: flex;justify-content: center;margin-top: 20px;">
+    <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>
+    <a-button type="primary" html-type="submit">저장</a-button>
+  </div>
 </template>
 
 <script setup>
@@ -136,6 +144,7 @@ import Account from "@/views/Setting/Account.vue";
 import Guide from "@/views/Setting/Guide.vue";
 import BindBridge from "@/views/Setting/BindBridge.vue";
 import ImageDetail from "@/views/Setting/ImageDetail.vue";
+import Margin from "@/views/Setting/Margin.vue";
 
 const formState = reactive({
   username: "",
@@ -490,5 +499,11 @@ onMounted(() => {
 </style>
 
 <style scoped>
+  .ant-btn-default{
+    margin-right:20px;
+  }
 
+  :deep .ant-descriptions.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content{
+    padding: 8px 5px;
+  }
 </style>

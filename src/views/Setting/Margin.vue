@@ -68,40 +68,44 @@
         </a-space>
       </a-descriptions-item>
 
+<!--      <a-descriptions-item>-->
+<!--        <template #label>-->
+<!--          <a-space>-->
+<!--            <span>마켓별 가중치(수수료율) 설정</span>-->
+<!--            <a-tooltip title="설정하신 기본 판매가에서 마켓별 가중치에 따라 적용되어 업로드 됩니다.">-->
+<!--              <QuestionCircleOutlined/>-->
+<!--            </a-tooltip>-->
+<!--          </a-space>-->
+<!--        </template>-->
+<!--        <a-radio-group v-model:value="formState.settingDatas.margin_weight.is_use">-->
+<!--          <a-radio :value="false">사용안함</a-radio>-->
+<!--          <a-radio :value="true">사용</a-radio>-->
+<!--        </a-radio-group>-->
+
+<!--        <a-descriptions bordered size="small" class="mt15" :column="4"-->
+<!--                        v-if="formState.settingDatas.margin_weight.is_use">-->
+<!--          <a-descriptions-item :label="market" v-for="(market,index) in formState.marketList" :key="index">-->
+<!--            <a-input-number v-model:value.number="formState.settingDatas.margin_weight.markets[index]" addon-after="%"-->
+<!--                            :min="0" :max="300" size="small" style="width: 150px" defaultValue="0"/>-->
+<!--          </a-descriptions-item>-->
+<!--        </a-descriptions>-->
+<!--      </a-descriptions-item>-->
+
       <a-descriptions-item>
         <template #label>
           <a-space>
-            <span>마켓별 가중치 설정</span>
+            <span>마켓별 가중치(수수료율) 설정</span>
             <a-tooltip title="설정하신 기본 판매가에서 마켓별 가중치에 따라 적용되어 업로드 됩니다.">
               <QuestionCircleOutlined/>
             </a-tooltip>
-          </a-space>
-        </template>
-        <a-radio-group v-model:value="formState.settingDatas.margin_weight.is_use">
-          <a-radio :value="false">사용안함</a-radio>
-          <a-radio :value="true">사용</a-radio>
-        </a-radio-group>
-
-        <a-descriptions bordered size="small" class="mt15" :column="4"
-                        v-if="formState.settingDatas.margin_weight.is_use">
-          <a-descriptions-item :label="market" v-for="(market,index) in formState.marketList" :key="index">
-            <a-input-number v-model:value.number="formState.settingDatas.margin_weight.markets[index]" addon-after="%"
-                            :min="0" :max="300" size="small" style="width: 150px" defaultValue="0"/>
-          </a-descriptions-item>
-        </a-descriptions>
-      </a-descriptions-item>
-
-      <a-descriptions-item>
-        <template #label>
-          <a-space>
-            <span>마켓별 수수료율 설정</span>
           </a-space>
         </template>
 <!--        <a-radio-group v-model:value="formState.settingDatas.margin_weight.is_use">-->
 <!--          <a-radio :value="false">사용안함</a-radio>-->
 <!--          <a-radio :value="true">사용</a-radio>-->
 <!--        </a-radio-group>-->
-
+        <a-switch v-model:checked="formState.settingDatas.use_auto_save" @change="changeUseAutoSave"
+                  checked-children="on" un-checked-children="off" />
         <a-descriptions bordered size="small" class="mt15" :column="4">
           <a-descriptions-item :label="market" v-for="(market,index) in formState.marketList" :key="index">
             <a-input-number v-model:value.number="formState.settingDatas.commission_rate.markets[index]" addon-after="%"
@@ -110,9 +114,9 @@
         </a-descriptions>
       </a-descriptions-item>
     </a-descriptions>
-    <div style="display: flex;justify-content: center" class="mt15">
-      <a-button type="primary" @click="handleSaveUserData">저장</a-button>
-    </div>
+<!--    <div style="display: flex;justify-content: center" class="mt15">-->
+<!--      <a-button type="primary" @click="handleSaveUserData">저장</a-button>-->
+<!--    </div>-->
   </a-card>
 </template>
 
@@ -285,3 +289,10 @@ onMounted(() => {
   getUserInfoData();
 })
 </script>
+
+<style scoped>
+:deep .ant-descriptions.ant-descriptions-bordered .ant-descriptions-view >table{
+  table-layout:fixed;
+}
+
+</style>
