@@ -1,11 +1,7 @@
 <template>
   <div class="action-tool" :class="{disabled}">
     <div class="button-group">
-      <a-checkbox
-        :indeterminate="selectPart"
-        :checked="selectAll"
-        @change="$emit('toggleSelect')"
-      />
+      <slot></slot>
       <a-button type="primary" @click="$emit('showFilter')">필터</a-button>
       <a-divider type="vertical"/>
       <div><strong>선택한 상품</strong></div>
@@ -21,11 +17,8 @@
 </template>
 
 <script setup>
-import {toRefs} from "vue";
-
-const props = defineProps(['disabled', 'userinfo', 'selectPart', 'selectAll'])
+const props = defineProps(['disabled', 'userinfo'])
 defineEmits(['showFilter', 'toggleSelect'])
-const {selectAll, selectPart} = toRefs(props)
 
 const replaceWithAI = () => {
   console.log('---', 'replace white AI')

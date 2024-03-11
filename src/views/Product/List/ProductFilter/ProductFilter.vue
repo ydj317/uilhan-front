@@ -56,15 +56,18 @@ import DateRange from "@/views/Product/List/ProductFilter/DateRange.vue";
 import {ProductList} from "@/services/product/ProductList";
 
 const props = defineProps(['isShow'])
-const emit = defineEmits(['update:isShow'])
+const emit = defineEmits(['update:isShow', 'search'])
 const {isShow} = toRefs(props)
 const {searchParams, doSearch} = inject('search')
 
 function resetParams() {
   const defaultParams = ProductList.defaultParams()
-  // 只重置搜索字段，保留分页信息.
+  // 保留分页信息，避免filter没有提交的情况下影响当前的 page 信息
   defaultParams.page = searchParams.value.page
   defaultParams.limit = searchParams.value.limit
+  // 保留商品名搜索的内容，提交时才清空。
+  defaultParams.product_name = searchParams.value.product_name || ''
+
   searchParams.value = defaultParams
 }
 
@@ -73,8 +76,8 @@ function onCancel() {
 }
 
 function onSubmit() {
-  doSearch()
   onCancel()
+  emit('search')
 }
 // 상품수집마켓
 const marketOptions = [

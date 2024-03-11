@@ -870,18 +870,6 @@ export default defineComponent({
     //   this.end_time = dateString[1];
     // },
 
-    getCheckList() {
-      let list = "";
-      for (let i = 0; i < this.prdlist.length; i++) {
-        if (this.prdlist[i].checked === true) {
-          let comma = list === '' ? '' : ',';
-          list += comma + this.prdlist[i].item_id;
-        }
-      }
-
-      return list;
-    },
-
     async replaceWithAI() {
       this.indicator = true;
 
@@ -907,30 +895,6 @@ export default defineComponent({
 
     },
 
-    deletePop() {
-      let list = this.getCheckList();
-      if (list === undefined || list.length === 0) {
-        message.warning("선택된 상품이 없습니다.");
-        return false;
-      }
-
-      this.deleteItems = this.prdlist.filter(item => list.includes(item.item_id));
-      this.deleteOptions = Object.values(this.deleteItems.flatMap(item => item.item_sync_market)
-      .reduce((acc, syncItem) => {
-        const key = syncItem.id;
-        if (!acc[key] && syncItem.status !== 'unsync') {
-          acc[key] = {
-            market_code: syncItem.market_code,
-            label: syncItem.seller_id,
-            value: syncItem.id
-          };
-        }
-        return acc;
-      }, {}));
-
-      this.deletePrdPop = true;
-
-    },
 
     async urlPrdUpload() {
       this.indicator = true;
@@ -948,71 +912,6 @@ export default defineComponent({
         this.urlPrdPop = false;
 
       });
-
-    },
-
-    async deletePrd() {
-      this.indicator = true;
-      // 연동 마켓이 있을때 선택한 마켓이 없으면 선택하도록 얼럿
-      if (this.deleteOptions.length > 0 && this.deleteCheckList.length === 0) {
-        message.warning("삭제할 마켓을 선택해주세요.");
-        this.indicator = false;
-        return false;
-      }
-
-      // 1. 연동 마켓이 없을때
-      // ㄴ리스트에서 상품삭제
-
-      // 2. 연동 마켓이 있을때
-      // ㄴ부분 마켓선택시 선택된 마켓만 삭제
-      // ㄴ전체 선택시 선택된 마켓 삭제 및 리스트에서 상품삭제
-      await useProductApi().deletePrd({
-        'deleteItems': this.deleteItems,
-        'deleteCheckList': this.deleteCheckList
-      }).then(res => {
-        if (res.status !== "2000") {
-          message.error(res.message);
-          this.indicator = false;
-          return false;
-        }
-
-        window.location.reload()
-      });
-
-      return true;
-    },
-
-    clonePrd() {
-      this.copyPrdVisible = true
-      if(this.copyPrdCondition === false) return;
-      const list = this.getCheckList();
-      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/clone', list).then((res) => {
-        if (res.status !== "2000") {
-          message.error(res.message);
-          return false;
-        }
-
-        window.location.reload()
-      });
-    },
-    clonePrdCancel(){
-      this.copyPrdVisible = false;
-    },
-
-    handleCopyPrdVisibleChange(bool){
-      if (!bool) {
-        this.copyPrdVisible = false
-        return;
-      }
-      const prdCheckedList = this.getCheckList();
-
-      if (prdCheckedList === undefined || prdCheckedList.length === 0) {
-        message.warning("선택된 상품이 없습니다.");
-        this.copyPrdCondition = false
-        return false;
-      } else {
-        this.copyPrdVisible = true
-      }
 
     },
 

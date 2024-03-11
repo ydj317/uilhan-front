@@ -15,8 +15,12 @@
             <a-button type="default" style="padding: 0;width: 100%" size="small" @click.prevent="showHistory({title: product.item_trans_name || product.item_name, type: 'product', index_id: product.item_id})">히스토리</a-button>
           </div>
           <div style="display: flex;gap: 3px">
-            <a-button type="default" style="padding: 0;width: 100%" size="small">복사</a-button>
-            <a-button type="default" style="padding: 0;width: 100%" size="small">삭제</a-button>
+            <btn-clone :selection="[product.item_id]">
+              <a-button type="default" style="padding: 0;width: 100%" size="small">복사</a-button>
+            </btn-clone>
+            <btn-delete :delete-items="[product]" @popup="product.moreActionVisible = false" :full-width="true">
+              <a-button type="default" style="padding: 0;width: 100%" size="small">삭제</a-button>
+            </btn-delete>
           </div>
           <div style="display: flex;flex-direction: column;justify-content: center; align-items: center; gap: 3px;font-weight: bold;font-size: 9pt;margin-top: 5px;">
             <span>수집일</span>
@@ -36,7 +40,10 @@
 
 <script setup>
 import {FileTextOutlined} from "@ant-design/icons-vue";
+import BtnDelete from "@/views/Product/List/Ctrls/BtnDelete.vue";
+import BtnClone from "@/views/Product/List/Ctrls/BtnClone.vue";
 defineProps(['product'])
+
 
 </script>
 

@@ -4,9 +4,9 @@
       <div class="product-image-wrap">
         <img :src="product.item_thumb[0]" class="product-image"/>
         <div class="product-image-mask"
-          @mouseover="() => product.hover = true"
-          @mouseout="() => product.hover = false"
-          :style="{'opacity': product.hover ? '1' : '0'}"
+          @mouseover="product.hover = true"
+          @mouseout="product.hover = false"
+          :style="{opacity: product.hover ? '1' : '0'}"
         >
           <btn-edit @click="openDetailPopup(product.item_id)" />
           <btn-link-market :product="product" />
@@ -36,7 +36,7 @@ import {ref, toRefs} from "vue";
 import ItemCtrlBar from "@/views/Product/List/ProductItem/ItemCtrlBar.vue";
 const props = defineProps(['product', 'selected'])
 const emit = defineEmits(['select'])
-const {selected} = toRefs(props)
+const {selected, product} = toRefs(props)
 
 const marketDetailUrls = ref({})
 

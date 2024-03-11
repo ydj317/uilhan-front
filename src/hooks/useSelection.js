@@ -38,7 +38,7 @@ export function useSelection(list) {
   }
 
   function isSelectPart() {
-    return selection.value.length > 0 && selectList.value.length < selectList.value.length
+    return selection.value.length > 0 && selection.value.length < selectList.value.length
   }
 
   return {

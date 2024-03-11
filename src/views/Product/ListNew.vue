@@ -5,15 +5,29 @@
 
   <div class="product-list-container">
     <product-list-title />
-    <list-ctrl
-      :select-all="isSelectAll()"
-      :select-part="isSelectPart()"
-      :disabled="listLoading"
-      :userinfo="userInfo"
-      @toggle-select="toggleSelectAll"
-      @show-filter="showFilter = true"
-    />
-    <product-filter v-model:is-show="showFilter" @submit="doSearch" />
+
+    <div class="action-tool" :class="{disabled: listLoading}">
+      <div class="button-group">
+        <a-checkbox :indeterminate="isSelectPart()" :checked="isSelectAll()" @change="toggleSelectAll"/>
+        <a-button type="primary" @click="showFilter = true">필터</a-button>
+        <a-divider type="vertical"/>
+        <div><strong>선택한 상품</strong></div>
+        <btn-delete :delete-items="productList.filter(d => selection.includes(d.item_id))" />
+        <btn-clone :selection="selection"></btn-clone>
+        <a-button type="primary" @click="MarketListPop">상품등록</a-button>
+        <btn-ai-replace v-if="userInfo?.use_ai === '1'" :selection="selection"></btn-ai-replace>
+      </div>
+      <div class="search">
+        <a-input-search
+          v-model:value="searchParams.product_name"
+          placeholder="검색어를 입력하세요" enter-button="검색" style="width: 300px"
+          @search="searchByPrdName"
+        />
+      </div>
+    </div>
+
+    <product-filter v-model:is-show="showFilter" @search="searchByFilter" />
+
     <a-spin size="large" :spinning="listLoading">
       <div class="product-list">
         <product-item
@@ -38,13 +52,14 @@
       :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
     />
   </div>
+  <MarketList v-if="MarketListVisible"></MarketList>
 </template>
 
 <script setup>
 import {onMounted, provide, ref} from "vue";
 import {useUserInfo} from "@/hooks/useUserInfo";
 import Loading from "vue-loading-overlay";
-import ListCtrl from "@/views/Product/List/ListCtrl/ListCtrl.vue";
+import "vue-loading-overlay/dist/vue-loading.css";
 import ProductListTitle from "@/views/Product/List/ProductListTitle.vue";
 import ProductItem from "@/views/Product/List/ProductItem/ProductItem.vue";
 import ProductFilter from "@/views/Product/List/ProductFilter/ProductFilter.vue";
@@ -52,6 +67,12 @@ import {ProductList} from "@/services/product/ProductList";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
 import {useSelection} from "@/hooks/useSelection";
+import BtnDelete from "@/views/Product/List/Ctrls/BtnDelete.vue";
+import BtnClone from "@/views/Product/List/Ctrls/BtnClone.vue";
+import {mapState, useStore} from "vuex";
+import MarketList from "@/components/List/MarketList.vue";
+import {useProductApi} from "@/api/product";
+import BtnAiReplace from "@/views/Product/List/Ctrls/BtnAiReplace.vue";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 const haveDownloadProductPermission = ref(false)
@@ -66,6 +87,21 @@ const {userInfo} = useUserInfo({}, checkUserPermission)
 const {selection, resetList, isSelect, isSelectAll, isSelectPart, toggleSelect, toggleSelectAll} = useSelection([])
 
 provide('search', {searchParams, doSearch})
+
+async function searchByFilter() {
+  searchParams.value.product_name = ''  // 重置右侧快捷搜索
+  searchParams.value.page = 1
+  return getList()
+}
+
+async function searchByPrdName() {
+  const params = ProductList.defaultParams()
+  params.limit = searchParams.value.limit
+  params.product_name = searchParams.value.product_name || ''
+
+  searchParams.value = params
+
+}
 
 async function doSearch() {
   searchParams.value.page = 1
@@ -103,8 +139,28 @@ function onChangeLimit(current, pageSize) {
   getList();
 }
 
-// @todo 没用到
+// @todo
 const options = ref([])
+const MarketListVisible = ref(false)
+const store = useStore()
+const { marketAccount } = mapState(['marketAccount']);
+function MarketListPop() {
+  console.log('---', '需要重写弹窗')
+  return;
+  // 重写
+  if (selection.value.length === 0) {
+    message.warning("선택된 상품이 없습니다.");
+    return false;
+  }
+  marketAccount.data = {
+    indicator: indicator,
+    options: options,
+    prdList: productList,
+  };
+  MarketListVisible.value = true;
+}
+
+// 初始化 options, 用于 MarketList
 async function getMarketList() {
   await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist").then((res) => {
     if (res.status !== "2000") {
@@ -116,6 +172,7 @@ async function getMarketList() {
     }
 
     options.value = res.data;
+    console.log('---', [...options.value])
   }).catch((e) => {
     message.error(e.message);
     return false;
@@ -130,7 +187,7 @@ function checkUserPermission(data) {
 
 onMounted(() => {
   Promise.all([
-    // getMarketList(),
+    getMarketList(),
     // this.getMarketDetailUrls(),
     getList("reload"),
     // this.getSmartstoreCategory()
@@ -154,5 +211,22 @@ onMounted(() => {
   background-color: #f5f5f5;
   width: 100%;
   min-height: 310px;
+}
+.action-tool {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-tool.disabled {
+  opacity: .5;
+  pointer-events: none;
+}
+
+.button-group {
+  flex: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 </style>
