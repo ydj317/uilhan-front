@@ -35,7 +35,9 @@
           :key="key"
           :product="product"
           :selected="isSelect(product.item_id)"
+          :market-detail-urls="marketDetailUrls"
           @select="() => toggleSelect(product.item_id)"
+          @detail="openDetailPopup"
         />
       </div>
     </a-spin>
@@ -53,6 +55,12 @@
     />
   </div>
   <MarketList v-if="MarketListVisible"></MarketList>
+  <DetailPopup
+    :visible="showDetail"
+    @update:visible="showDetail = false"
+    :prdId="detailPrd"
+    :active-tab="detailActive"
+  />
 </template>
 
 <script setup>
@@ -71,14 +79,19 @@ import BtnDelete from "@/views/Product/List/Ctrls/BtnDelete.vue";
 import BtnClone from "@/views/Product/List/Ctrls/BtnClone.vue";
 import {mapState, useStore} from "vuex";
 import MarketList from "@/components/List/MarketList.vue";
-import {useProductApi} from "@/api/product";
 import BtnAiReplace from "@/views/Product/List/Ctrls/BtnAiReplace.vue";
+import {useMarketApi} from "@/api/market";
+import DetailPopup from "@/views/Product/DetailPopup.vue";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 const haveDownloadProductPermission = ref(false)
+const marketDetailUrls = ref({})  // 用于 ProductItem 显示 market icon
 const indicator = ref(false)
 const listLoading = ref(false)
 const showFilter = ref(false)
+const showDetail = ref(false)
+const detailPrd = ref(0)
+const detailActive = ref('1')
 const searchParams = ref(ProductList.defaultParams())
 const productList = ref([])
 const searchCount = ref(0)
@@ -139,6 +152,12 @@ function onChangeLimit(current, pageSize) {
   getList();
 }
 
+function openDetailPopup({itemId, tab}) {
+  showDetail.value = true
+  detailPrd.value = itemId
+  detailActive.value = tab
+}
+
 // @todo
 const options = ref([])
 const MarketListVisible = ref(false)
@@ -172,28 +191,36 @@ async function getMarketList() {
     }
 
     options.value = res.data;
-    console.log('---', [...options.value])
   }).catch((e) => {
     message.error(e.message);
     return false;
   });
 }
+async function getMarketDetailUrls() {
+  await useMarketApi().getMarketDetailUrls({}).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    marketDetailUrls.value = res.data;
+  });
+}
+
+onMounted(() => {
+  Promise.all([
+    getMarketList(),
+    getMarketDetailUrls(),
+    getList("reload"),
+    // this.getSmartstoreCategory()
+  ]);
+})
+
 
 function checkUserPermission(data) {
   if (WHITE_LIST_USER.includes(data?.username)) {
     haveDownloadProductPermission.value = true
   }
 }
-
-onMounted(() => {
-  Promise.all([
-    getMarketList(),
-    // this.getMarketDetailUrls(),
-    getList("reload"),
-    // this.getSmartstoreCategory()
-  ]);
-})
-
 </script>
 
 <style scoped>

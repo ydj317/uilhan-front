@@ -8,7 +8,7 @@
           @mouseout="product.hover = false"
           :style="{opacity: product.hover ? '1' : '0'}"
         >
-          <btn-edit @click="openDetailPopup(product.item_id)" />
+          <btn-edit @click="openDetailPopup(product.item_id, '1')" />
           <btn-link-market :product="product" />
         </div>
         <a-checkbox
@@ -18,30 +18,33 @@
         />
       </div>
     </div>
-    <item-title :product="product" @popup="openDetailPopup" />
+    <item-title :product="product" @popup="openDetailPopup(product.item_id, '1')" />
     <item-price :product="product" @popup="openMarketPopup"/>
     <a-divider style="margin: 5px 0;"/>
-    <item-ctrl-bar :product="product" />
+    <item-ctrl-bar
+      :product="product"
+      @detail-option="openDetailPopup(product.item_id, '2')"
+      @detail-desc="openDetailPopup(product.item_id, '3')"
+    />
   </div>
 </template>
 
 <script setup>
+import {lib} from "@/util/lib";
+import { toRefs } from "vue";
+import {message} from "ant-design-vue";
 import BtnEdit from "@/views/Product/List/ProductItem/BtnEdit.vue";
 import BtnLinkMarket from "@/views/Product/List/ProductItem/BtnLinkMarket.vue";
 import ItemTitle from "@/views/Product/List/ProductItem/ItemTitle.vue";
 import ItemPrice from "@/views/Product/List/ProductItem/ItemPrice.vue";
-import {message} from "ant-design-vue";
-import {lib} from "@/util/lib";
-import {ref, toRefs} from "vue";
 import ItemCtrlBar from "@/views/Product/List/ProductItem/ItemCtrlBar.vue";
-const props = defineProps(['product', 'selected'])
-const emit = defineEmits(['select'])
-const {selected, product} = toRefs(props)
 
-const marketDetailUrls = ref({})
+const props = defineProps(['product', 'selected', 'marketDetailUrls'])
+const emit = defineEmits(['select', 'detail'])
+const {selected, product, marketDetailUrls} = toRefs(props)
 
-function openDetailPopup(itemId) {
-  console.log('---', 'openDetailPopup',  itemId)
+function openDetailPopup(itemId, tab) {
+  emit('detail', {itemId, tab})
 }
 
 function openMarketPopup(marketInfo) {

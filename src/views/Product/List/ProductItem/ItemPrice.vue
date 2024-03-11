@@ -31,4 +31,23 @@ defineEmits(['popup'])
   width: 16px;
   height: 16px;
 }
+
+.unsync img {
+  cursor: pointer;
+  filter: grayscale(100%);
+  opacity: 0.3;
+}
+
+.unsync:hover img {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+.failed img,
+.success img,
+.sending img {
+  cursor: pointer;
+  filter: grayscale(0%);
+  opacity: 1;
+}
 </style>
