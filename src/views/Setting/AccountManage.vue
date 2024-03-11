@@ -8,7 +8,7 @@
             <a-form-item label="아이디">
                 {{ formState.username }}
             </a-form-item>
-            <a-form-item label="비밀번호" name="pwd">
+            <a-form-item label="비밀번호" name="password">
                 <span class="mr30">*******</span>
                 <a-button type="primary" @click="showModal">비밀번호 변경</a-button>
             </a-form-item>
@@ -125,10 +125,10 @@
     </a-card>
     
     <!--    修改密码-->
-    <a-modal v-model:open="open" width="1000px"  :footer="null" :closable="false">
+    <a-modal v-model:open="formState.pwdOpen" width="1000px"  :footer="null" :closable="false">
         <a-card :bordered="false" :title="'비밀번호 변경'">
 
-            <a-form ref="formRef" :rules="rulesRef" :model="formState" name="user_form2" class="user_form" autocomplete="off"
+            <a-form :rules="rulesRef" :model="formState" name="user_form2" class="user_form" autocomplete="off"
                     @finish="onFinish2" @finishFailed="onFinishFailed2">
 
                 <a-form-item label="기존 비밀번호" name="password" has-feedback>
@@ -147,30 +147,30 @@
                 </a-form-item>
 
                 <div style="display: flex;justify-content: center;margin-top: 20px;">
-                    <a-button type="primary" html-type="submit" :loading="loading">저장</a-button>
-                    <a-button style="margin-left: 10px" @click="handleCancel">취 소</a-button>
+                    <a-button  @click="handleCancel">취 소</a-button>
+                    <a-button style="margin-left: 10px" type="primary" html-type="submit" :loading="formState.pwdLoading">저장</a-button>
                 </div>
             </a-form>
 
         </a-card>
     </a-modal>
     <!--    注冊账户-->
-    <a-modal v-model:open="open2" width="1000px"  :footer="null" :closable="false">
+    <a-modal v-model:open="formState.regOpen" width="1000px"  :footer="null" :closable="false">
         <a-card :bordered="false" :title="'직원 계정 등록'">
 
-            <a-form ref="formRef2" :rules="rulesRef" :model="formState" name="user_form3" class="user_form" autocomplete="off"
+            <a-form :rules="rulesRef" :model="formState" name="user_form3" class="user_form" autocomplete="off"
                     @finish="onFinish3" @finishFailed="onFinishFailed3">
 
                 <a-form-item label="직원 아이디" name="ID" has-feedback>
                     <a-input v-model:value="formState.ID" placeholder="최소 5자 최대 20자이내로 입력해주십시오" />
                 </a-form-item>
-                <a-form-item label="비밀번호" name="new_password" has-feedback>
-                    <a-input-password v-model:value="formState.new_password" placeholder="비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오" />
+                <a-form-item label="비밀번호" name="reg_new_password" has-feedback>
+                    <a-input-password v-model:value="formState.reg_new_password" placeholder="비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오" />
                 </a-form-item>
-                <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback>
-                    <a-input-password v-model:value="formState.password_confirm" placeholder="비밀번호와 같게 입력해주십시오" />
+                <a-form-item label="비밀번호 확인" name="reg_password_confirm" has-feedback>
+                    <a-input-password v-model:value="formState.reg_password_confirm" placeholder="비밀번호와 같게 입력해주십시오" />
                 </a-form-item>
-                <a-form-item label="권한설정" name="auth" has-feedback>
+                <a-form-item label="권한설정" name="auth">
                     <a-checkbox-group v-model:value="formState.auth" :options="authOptions" />
                 </a-form-item>
                 <a-form-item label="할당량" name="number" has-feedback>
@@ -179,10 +179,9 @@
                     </a-space>
                 </a-form-item>
 
-
                 <div style="display: flex;justify-content: center;margin-top: 20px;">
                     <a-button  @click="handleCancel2">취 소</a-button>
-                    <a-button style="margin-left: 10px" type="primary" html-type="submit" :loading="loading2">저장</a-button>
+                    <a-button style="margin-left: 10px" type="primary" html-type="submit" :loading="formState.regLoading">저장</a-button>
                 </div>
             </a-form>
 
@@ -195,7 +194,7 @@
     import {
         CopyOutlined
     } from "@ant-design/icons-vue";
-    import {onMounted, reactive, ref} from "vue";
+    import {onMounted, reactive} from "vue";
     import router from "@/router";
     import {message} from "ant-design-vue";
     import {useUserApi} from "@/api/user";
@@ -204,7 +203,6 @@
     import "vue-loading-overlay/dist/vue-loading.css";
     import Loading from "vue-loading-overlay";
 
-    const formRef = ref();
 
 
     const formState = reactive({
@@ -234,11 +232,21 @@
 
         loading: false,
         //yl+
+
         password: "",
         new_password: "",
         password_confirm: "",
         //账号权限
         auth: ['상품관리 (삭제 제외)', ' 상품삭제'],
+        formRef:"",
+        //修改密码
+        pwdLoading:false,
+        pwdOpen:false,
+        //注册账户
+        reg_new_password: "",
+        reg_password_confirm: "",
+        regLoading:false,
+        regOpen:false,
     });
 
     const copyText = (recommend_code) => {
@@ -370,7 +378,7 @@
             }
 
             if (formState.password_confirm !== "") {
-                formRef.value.validateFields("password_confirm");
+                formState.formRef.value.validateFields("password_confirm");
             }
 
             return Promise.resolve();
@@ -642,13 +650,11 @@
     ];
 
     //修改密码模态框
-    const loading = ref(false);
-    const open = ref(false);
     const showModal = () => {
-        open.value = true;
+        formState.pwdOpen = true;
     };
     const handleCancel = () => {
-        open.value = false;
+        formState.pwdOpen = false;
     };
     const onFinish2 = () => {
         let user = {
@@ -656,19 +662,19 @@
             new_password: formState.new_password
         };
 
-        loading.value = true;
+        formState.pwdLoading = true;
         AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
             if (res.status !== "2000") {
                 message.error(res.message);
-                loading.value = false;
+                formState.pwdLoading = false;
                 return false;
             }
             console.log(res);
 
             message.success(res.message);
 
-            loading.value = false;
-            open.value = false;
+            formState.pwdLoading = false;
+            formState.pwdOpen = false;
         });
     };
 
@@ -676,13 +682,11 @@
         console.log("Failed:", errorInfo);
     };
     //注册账户模态框
-    const loading2 = ref(false);
-    const open2 = ref(false);
     const showModal2 = () => {
-        open2.value = true;
+        formState.regOpen = true;
     };
     const handleCancel2 = () => {
-        open2.value = false;
+        formState.regOpen = false;
     };
 
     const authOptions = ['전체', '상품관리 (삭제 제외)', ' 상품삭제', ' 주문관리'];
@@ -692,19 +696,19 @@
             new_password: formState.new_password
         };
 
-        loading2.value = true;
+        formState.regLoading = true;
         AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
             if (res.status !== "2000") {
                 message.error(res.message);
-                loading2.value = false;
+                formState.regLoading = false;
                 return false;
             }
             console.log(res);
 
             message.success(res.message);
 
-            loading2.value = false;
-            open2.value = false;
+            formState.regLoading = false;
+            formState.regOpen = false;
         });
     };
 
@@ -712,6 +716,40 @@
         console.log("Failed:", errorInfo);
     };
 </script>
+<style>
+    .user_form .ant-form-item {
+        margin-bottom: 0;
+    }
+
+    .user_form .ant-form-item-label {
+        border: 1px solid #eeeeee;
+        background-color: #fafafa;
+        width: 170px;
+        padding: 10px;
+        margin-bottom: -1px;
+    }
+
+    .user_form .ant-form-item-control {
+        border: 1px solid #eeeeee;
+        padding: 10px;
+        margin-left: -1px;
+        margin-bottom: -1px;
+    }
+
+    .user_form .ant-form-item-control:nth-last-child {
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    .user_form .phone .ant-form-item-control {
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .user_form .phone .ant-form-item-control:nth-last-child {
+        border-bottom: none;
+    }
+</style>
 <style scoped>
 
 </style>
