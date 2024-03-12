@@ -10,7 +10,7 @@
       ><FileTextOutlined/></a-button>
     </div>
     <div class="item-ctrl-bar__row">
-      <a-button type="primary" style="flex: 1 1 auto;"><strong>상품등록</strong></a-button>
+      <a-button type="primary" @click="$emit('send')" style="flex: 1 1 auto;"><strong>상품등록</strong></a-button>
       <a-popover v-model:open="product.moreActionVisible" trigger="click">
         <template #content>
           <div style="display: flex;flex-direction: column;gap: 3px;width: 120px;">
@@ -53,7 +53,7 @@ import HistoryView from "@/components/HistoryView.vue";
 import {FileTextOutlined} from "@ant-design/icons-vue";
 
 const props = defineProps(['product'])
-defineEmits(['detailOption', 'detailDesc', 'editMemo'])
+defineEmits(['detailOption', 'detailDesc', 'editMemo', 'send'])
 
 const historyVisible = ref(false)
 const historyData = computed(() => {

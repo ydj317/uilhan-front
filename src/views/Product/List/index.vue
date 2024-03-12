@@ -33,6 +33,7 @@
           @select="() => toggleSelect(product.item_id)"
           @detail="openDetailPopup"
           @memo="editPrdMemo(product)"
+          @send="sendMarketSingle(product)"
         />
       </div>
     </a-spin>
@@ -50,12 +51,19 @@
   </div>
   <MarketList
     v-model:show="MarketListVisible"
-    :smartStoreCategory="smartStoreCategory"
+    :smart-store-category="smartStoreCategory"
     :options="options"
     :product-list="productList"
     :selection="selection"
     @result="setPopupResultData"
   />
+  <modal-single-sync
+    v-model:show="singleSyncPop"
+    :product="singleDetail"
+    :smart-store-category="smartStoreCategory"
+    @result="setPopupResultData"
+  />
+
   <DetailPopup
     :visible="showDetail"
     @update:visible="showDetail = false"
@@ -84,6 +92,7 @@ import BtnAiReplace from "@/views/Product/List/Ctrls/BtnAiReplace.vue";
 import DetailPopup from "@/views/Product/DetailPopup.vue";
 import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
 import {useCategoryApi} from "@/api/category";
+import ModalSingleSync from "@/views/Product/List/ModalSingleSync/ModalSingleSync.vue";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 
@@ -102,9 +111,19 @@ const totalCount = ref(0)
 const {userInfo} = useUserInfo({}, checkUserPermission)
 const {selection, resetList, isSelect, isSelectAll, isSelectPart, toggleSelect, toggleSelectAll} = useSelection([])
 const memoForm = ref({ show: false, item_id: -1, memo: '' })
-const options = ref([])    // 用于联动商品
-const MarketListVisible = ref(false)  // 是否显示联动商品弹窗
+const options = ref([])    // 用于登录商品
+const MarketListVisible = ref(false)  // 是否显示批量登录商品弹窗
+const singleSyncPop = ref(false)    // 是否显示登录单个商品弹窗
+const singleDetail = ref({})
 const smartStoreCategory = ref([])  // 联动时，检擦是否有 smartstore 联动失败的商品
+const syncResult = ref({
+  marketSyncPop: false,
+  marketSyncResult: [],
+  marketSyncSuccess: 0,
+  marketSyncFailed: 0,
+  marketSyncTotal: 0,
+  marketSyncFailedCode: "",
+})
 
 provide('search', {searchParams})
 
@@ -164,6 +183,12 @@ function editPrdMemo(product) {
   memoForm.value.show = true
   memoForm.value.item_id = product.item_id
   memoForm.value.memo = product.item_memo
+}
+
+// singlePop
+function sendMarketSingle(product) {
+  singleSyncPop.value = true
+  singleDetail.value = product
 }
 
 function MarketListPop() {

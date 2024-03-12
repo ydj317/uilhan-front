@@ -85,12 +85,8 @@ async function sendMarket() {
   if (result !== false) {
     emit('result')
   }
-  closeModal()
   loading.value = false
-}
-
-function getCheckList() {
-  return props.selection.join(',')
+  closeModal()
 }
 
 function closeModal() {
