@@ -50,6 +50,7 @@
   </div>
   <MarketList
     v-model:show="MarketListVisible"
+    :smartStoreCategory="smartStoreCategory"
     :options="options"
     :product-list="productList"
     :selection="selection"
@@ -82,6 +83,7 @@ import MarketList from "@/views/Product/List/MarketList/MarketList.vue";
 import BtnAiReplace from "@/views/Product/List/Ctrls/BtnAiReplace.vue";
 import DetailPopup from "@/views/Product/DetailPopup.vue";
 import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
+import {useCategoryApi} from "@/api/category";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 
@@ -102,6 +104,7 @@ const {selection, resetList, isSelect, isSelectAll, isSelectPart, toggleSelect, 
 const memoForm = ref({ show: false, item_id: -1, memo: '' })
 const options = ref([])    // 用于联动商品
 const MarketListVisible = ref(false)  // 是否显示联动商品弹窗
+const smartStoreCategory = ref([])  // 联动时，检擦是否有 smartstore 联动失败的商品
 
 provide('search', {searchParams})
 
@@ -218,12 +221,26 @@ async function getMarketDetailUrls() {
   });
 }
 
+function getSmartstoreCategory() {
+  return useCategoryApi().getSmartstoreCategory({}).then((res) => {
+    if (res.status !== '2000') {
+      message.error(res.message);
+      return false;
+    }
+
+    smartStoreCategory.value = res.data
+  }).catch((e) => {
+    message.error(e.message);
+    return false;
+  })
+}
+
 onMounted(() => {
   Promise.all([
     getMarketList(),
     getMarketDetailUrls(),
     getList("reload"),
-    // this.getSmartstoreCategory()
+    getSmartstoreCategory()
   ]);
 })
 

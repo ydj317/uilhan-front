@@ -47,6 +47,7 @@ import MarketListFooter from "@/views/Product/List/MarketList/MarketListFooter.v
 import {message} from "ant-design-vue";
 import {AuthRequest} from "@/util/request";
 import {useCategoryApi} from "@/api/category";
+import {ProductList} from "@/services/product/ProductList";
 
 const columns = [
   {
@@ -62,99 +63,30 @@ const columns = [
   },
 ]
 
-const props = defineProps(['show', 'options', 'productList', 'selection'])
+const props = defineProps(['show', 'options', 'productList', 'selection', 'smartStoreCategory'])
 const emit = defineEmits(['update:show', 'result'])
-const {show} = toRefs(props)
+const {show, smartStoreCategory} = toRefs(props)
 watch(show, val => {
   if (val) marketSelectedRowKeys.value = []
 })
 
 const loading = ref(false)
 const marketSelectedRowKeys = ref([])
-const smartStoreCategory = ref([])
 
 function onMarketSelectChange(selectedRowKeys) {
   marketSelectedRowKeys.value = selectedRowKeys;
 }
 
 async function sendMarket() {
-  let productList = getCheckList();
   let accountList = marketSelectedRowKeys.value.map(index => props.options[index])
-
-  if (productList === "," || productList.length === 0) {
-    message.warning('선택된 상품이 없습니다.');
-    return false;
+  loading.value = true
+  const productList = props.productList.filter(d => props.selection.includes(d.item_id))
+  const result = await ProductList.sendMarket(productList, accountList, smartStoreCategory.value)
+  if (result !== false) {
+    emit('result')
   }
-
-  if (accountList.length === undefined || accountList.length === 0) {
-    message.warning("선택된 계정이 없습니다.");
-    return false;
-  }
-
-  const checkSmartStore = checkSmartStoreCategory(accountList);
-  if(checkSmartStore === false) {
-    return false
-  }
-
-  loading.vaue = true;
-
-  try {
-    let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
-      productList: productList,
-      accountList: accountList
-    });
-
-    if (res.status !== "2000") {
-      message.error(res.message);
-      loading.value = false
-      return false;
-    }
-
-    if (res.data !== undefined && res.data.length === 0) {
-      message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
-      loading.vaue = false;
-      return false;
-    }
-
-    let returnData = res.data;
-    emit('result', [
-      returnData.success,
-      returnData.failedCode,
-      returnData.failed,
-      returnData.total,
-      returnData.data,
-    ])
-
-    closeModal()
-    loading.vaue = false;
-    return true;
-  } catch (e) {
-    message.error(e.message);
-    loading.vaue = false;
-    return false;
-  }
-}
-
-function checkSmartStoreCategory(accountList) {
-  const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
-  const checkedPrdList = props.productList.filter((item) => props.selection.includes(item.item_id));
-
-  let failedItem = [];
-  if(smartstoreAccounts.length === 0) {
-    return true;
-  }
-
-  checkedPrdList.map((prdItem) => {
-    failedItem = smartStoreCategory.value.filter((item) => {
-      return prdItem.item_sync_keyword.includes(item.cate_name);
-    })
-  })
-
-  if(failedItem.length > 0) {
-    message.warning(`스마트스토어 금지어: [${failedItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
-    return false;
-  }
-  return true;
+  closeModal()
+  loading.value = false
 }
 
 function getCheckList() {
@@ -164,17 +96,5 @@ function getCheckList() {
 function closeModal() {
   emit('update:show', false)
 }
-
-onMounted(() => {
-  useCategoryApi().getSmartstoreCategory({}).then((res) => {
-    if(res.status !== '2000'){
-      message.error(res.message);
-      return
-    }
-    smartStoreCategory.value = res.data
-  }).catch((e) => {
-    message.error(e.message);
-  })
-})
 
 </script>

@@ -90,4 +90,78 @@ export class ProductList {
       message.error("상품 리스트 조회 실패하였습니다.")
     })
   }
+
+  static async sendMarket(productList, accountList, smartStoreCategory) {
+    if (productList === "," || productList.length === 0) {
+      message.warning('선택된 상품이 없습니다.');
+      return false;
+    }
+
+    if (accountList.length === undefined || accountList.length === 0) {
+      message.warning("선택된 계정이 없습니다.");
+      return false;
+    }
+
+    const checkSmartStore = this.checkSmartStoreCategory(productList, accountList, smartStoreCategory);
+    if(checkSmartStore === false) {
+      return false
+    }
+
+    try {
+      let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
+        productList: productList.map(d => d.item_id).join(','),
+        accountList: accountList
+      });
+
+      if (res.status !== "2000") {
+        message.error(res.message);
+        return false;
+      }
+
+      if (res.data !== undefined && res.data.length === 0) {
+        message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
+        return false;
+      }
+
+      let returnData = res.data;
+      return [
+        returnData.success,
+        returnData.failedCode,
+        returnData.failed,
+        returnData.total,
+        returnData.data,
+      ]
+    } catch (e) {
+      message.error(e.message);
+      return false;
+    }
+  }
+
+  /**
+   *
+   * @param {Array} productList 要登录的商品列表
+   * @param {Array} accountList 要登录的商城
+   * @param {Array} smartStoreCategory
+   * @return {boolean}
+   */
+  static checkSmartStoreCategory(productList, accountList, smartStoreCategory) {
+    const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
+    if(smartstoreAccounts.length === 0) {
+      return true;
+    }
+
+    let failedItem = [];
+
+    productList.map((prdItem) => {
+      failedItem = smartStoreCategory.filter((item) => {
+        return prdItem.item_sync_keyword?.includes(item.cate_name);
+      })
+    })
+
+    if(failedItem.length > 0) {
+      message.warning(`스마트스토어 금지어: [${failedItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
+      return false;
+    }
+    return true;
+  }
 }
