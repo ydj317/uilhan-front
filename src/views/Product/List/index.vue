@@ -1,11 +1,7 @@
 <template>
-  <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
-
-<!--  <textarea :value="JSON.stringify(selection, null, '\t')" style="width:500px;height:200px" />-->
-
+  <FullPageLoading v-model:show="indicator" />
   <div class="product-list-container">
     <product-list-title />
-
     <div class="action-tool" :class="{disabled: listLoading}">
       <div class="button-group">
         <a-checkbox :indeterminate="isSelectPart()" :checked="isSelectAll()" @change="toggleSelectAll"/>
@@ -25,9 +21,7 @@
         />
       </div>
     </div>
-
     <product-filter v-model:is-show="showFilter" @search="searchByFilter" />
-
     <a-spin size="large" :spinning="listLoading">
       <div class="product-list">
         <product-item
@@ -42,7 +36,6 @@
         />
       </div>
     </a-spin>
-
     <a-pagination
       :disabled="listLoading"
       style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 15px;"
@@ -55,7 +48,13 @@
       :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
     />
   </div>
-  <MarketList v-if="MarketListVisible"></MarketList>
+  <MarketList
+    v-model:show="MarketListVisible"
+    :options="options"
+    :product-list="productList"
+    :selection="selection"
+    @result="setPopupResultData"
+  />
   <DetailPopup
     :visible="showDetail"
     @update:visible="showDetail = false"
@@ -67,26 +66,25 @@
 
 <script setup>
 import {onMounted, provide, ref} from "vue";
+import {useMarketApi} from "@/api/market";
 import {useUserInfo} from "@/hooks/useUserInfo";
-import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
-import ProductListTitle from "@/views/Product/List/ProductListTitle.vue";
-import ProductItem from "@/views/Product/List/ProductItem/ProductItem.vue";
-import ProductFilter from "@/views/Product/List/ProductFilter/ProductFilter.vue";
+import {useSelection} from "@/hooks/useSelection";
 import {ProductList} from "@/services/product/ProductList";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
-import {useSelection} from "@/hooks/useSelection";
+import FullPageLoading from "@/components/FullPageLoading.vue";
+import ProductListTitle from "@/views/Product/List/ProductListTitle.vue";
+import ProductItem from "@/views/Product/List/ProductItem/ProductItem.vue";
+import ProductFilter from "@/views/Product/List/ProductFilter/ProductFilter.vue";
 import BtnDelete from "@/views/Product/List/Ctrls/BtnDelete.vue";
 import BtnClone from "@/views/Product/List/Ctrls/BtnClone.vue";
-import {mapState, useStore} from "vuex";
-import MarketList from "@/components/List/MarketList.vue";
+import MarketList from "@/views/Product/List/MarketList/MarketList.vue";
 import BtnAiReplace from "@/views/Product/List/Ctrls/BtnAiReplace.vue";
-import {useMarketApi} from "@/api/market";
 import DetailPopup from "@/views/Product/DetailPopup.vue";
 import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
+
 const haveDownloadProductPermission = ref(false)
 const marketDetailUrls = ref({})  // 用于 ProductItem 显示 market icon
 const indicator = ref(false)
@@ -101,12 +99,9 @@ const searchCount = ref(0)
 const totalCount = ref(0)
 const {userInfo} = useUserInfo({}, checkUserPermission)
 const {selection, resetList, isSelect, isSelectAll, isSelectPart, toggleSelect, toggleSelectAll} = useSelection([])
-
-const memoForm = ref({
-  show: false,
-  item_id: -1,
-  memo: ''
-})
+const memoForm = ref({ show: false, item_id: -1, memo: '' })
+const options = ref([])    // 用于联动商品
+const MarketListVisible = ref(false)  // 是否显示联动商品弹窗
 
 provide('search', {searchParams})
 
@@ -168,25 +163,32 @@ function editPrdMemo(product) {
   memoForm.value.memo = product.item_memo
 }
 
-// @todo
-const options = ref([])
-const MarketListVisible = ref(false)
-const store = useStore()
-const { marketAccount } = mapState(['marketAccount']);
 function MarketListPop() {
-  console.log('---', '需要重写弹窗')
-  return;
-  // 重写
   if (selection.value.length === 0) {
     message.warning("선택된 상품이 없습니다.");
     return false;
   }
-  marketAccount.data = {
-    indicator: indicator,
-    options: options,
-    prdList: productList,
-  };
-  MarketListVisible.value = true;
+  MarketListVisible.value = true
+}
+
+function setPopupResultData(data) {
+  console.log('---', data)
+  // this.marketSyncSuccess = data[0];
+  // this.marketSyncFailedCode = data[1];
+  // this.marketSyncFailed = data[2];
+  // this.marketSyncTotal = data[3];
+  // this.marketSyncResult = data[4];
+  // this.marketSyncPop = true;
+}
+
+function setResultData(data) {
+  console.log('---', data)
+  // this.marketSyncSuccess = 0;
+  // this.marketSyncFailedCode = "";
+  // this.marketSyncFailed = 0;
+  // this.marketSyncTotal = 0;
+  // this.marketSyncResult = [];
+  // this.marketSyncPop = false;
 }
 
 // 初始化 options, 用于 MarketList
@@ -224,7 +226,6 @@ onMounted(() => {
     // this.getSmartstoreCategory()
   ]);
 })
-
 
 function checkUserPermission(data) {
   if (WHITE_LIST_USER.includes(data?.username)) {
