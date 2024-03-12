@@ -1,7 +1,7 @@
 
 <template>
-  <a-card :loading="formState.loading" :bordered="false">
-    <a-descriptions title="배대지 계정 연동" bordered :column="1" :labelStyle="{ width: '170px' }"
+  <a-card :loading="formState.loading" :bordered="false" title="배대지 계정 연동">
+    <a-descriptions bordered :column="1" :labelStyle="{ width: '170px' }"
                     :contentStyle="{ width: 'auto' }">
       <a-descriptions-item label="배대지 ID:" :labelStyle="{textAlign: 'right'}">
         <a-input v-model:value="formState.settingDatas.bind_bridge_id" size="small" style="width: 200px;" allow-clear @input="formState.settingDatas.is_bridge_sync = false" />
@@ -32,7 +32,6 @@
 import {onMounted, reactive} from "vue";
 import {useUserApi} from "@/api/user";
 import {message} from "ant-design-vue";
-import {NoAuthAjax} from "@/util/request";
 import {useBridgeApi} from "@/api/bridge";
 
 const formState = reactive({
