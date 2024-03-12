@@ -19,7 +19,7 @@
       </div>
       <Sider/>
     </a-layout-sider>
-    <a-layout style="background-color: white">
+    <a-layout style="background-color: white;min-width: 1248px">
       <a-layout-header style="background: #fff; padding: 0;display: flex; width: 100%;" id="components-layout-custom-trigger">
         <Header style="flex: 1; justify-content: end;"/>
       </a-layout-header>

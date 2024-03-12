@@ -26,12 +26,13 @@
 </template>
 
 <script setup>
-import { onMounted, onUpdated, ref, toRefs } from 'vue';
+import {computed, onMounted, onUpdated, ref, toRefs} from 'vue';
 import marketCategorys from "@/components/Detail/marketCategorys.vue";
 import { useCategoryApi } from "@/api/category";
-import { useStore } from 'vuex';
-const store = useStore();
-const { product } = toRefs(store.state);
+import {mapState, useStore} from 'vuex';
+
+const store = useStore()
+const product = computed(() => store.state.product.detail)
 
 const props = defineProps(['isShow'])
 const emit = defineEmits(['cancelDialog'])
@@ -96,8 +97,6 @@ const handleCancel = () => {
 // on mounted
 onMounted(() => {
   getMarketAccount();
-});
-onUpdated(() => {
 });
 
 </script>

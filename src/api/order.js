@@ -14,7 +14,7 @@ export function useMarketOrderApi() {
         // /api/market/order/{id}
         getOrderDetail: (data) => {
             return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/market/order/" + data.id,
+                url: process.env.VUE_APP_API_URL + "/api/market/order/" + data.orderNo,
                 method: "get",
             });
         },

@@ -1,24 +1,15 @@
-import { createStore } from "vuex";
+import {createStore} from "vuex";
+import product from "@/store/modules/product";
+import marketAccount from "@/store/modules/marketAccount";
 
 export default createStore({
   state: {
     common: {},
-    product: {
-      onload: false,
-      loading: true,
-    },
-    relaket: {
-      data: {},
-      methods: {}
-    },
-    prdlist: [],
-
     return: {
       isOptionApplied: false,
     },
-
-    //通过Vuex来管理模态窗口的显示状态
     isModalOpen: false,
+    isOptionModified: false,
   },
   mutations: {
     //bottonBanner옵션적용
@@ -45,5 +36,8 @@ export default createStore({
   },
   actions: {
   },
-  modules: {},
+  modules: {
+    product,
+    marketAccount
+  },
 });

@@ -76,7 +76,7 @@
                   주시면 됩니다.
                   </p>
                   <p>
-                    <a-popover v-model:visible="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop" style="z-index: 999">
+                    <a-popover v-model:open="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop" style="z-index: 999">
                       <template #content>
                         <table border="1" style="border: 1px solid #999" class="popoverTable">
                           <tr>

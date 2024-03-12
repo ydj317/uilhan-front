@@ -1,54 +1,25 @@
 <template>
-  <div id="eModelTitle_4" class="mt20 p20 bg-white">
+  <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
+    <a-spin v-if="product.loading" size="large"/>
+  </div>
+  <div v-show="!product.loading" id="eModelTitle_4" class="mt20 p20 bg-white">
+    <h3><strong>상세페이지</strong></h3>
     <!--title-->
     <div style="display: flex; justify-content: space-between;">
-      <h1><strong>상세페이지</strong></h1>
+      <div style="display: flex;align-items: center;">
+        <a-space>
+          <a-checkbox v-model:value="useAutoSave">상/하단 이미지</a-checkbox>
+          <a-checkbox v-model:value="useAutoSave">동영상</a-checkbox>
+          <a-checkbox v-model:value="useAutoSave">옵션테이블</a-checkbox>
+        </a-space>
+      </div>
       <div class="editorToolbar">
         <a-space>
-          <span>옵션 테이블</span>
-          <a-input-group compact>
-            <a-select v-model:value="selectOptionValue" style="width: 120px">
-              <a-select-option v-for="selectOption in optionTableSelectOption" :key="selectOption.value"
-                               :value="selectOption.value">
-                {{ selectOption.label }}
-              </a-select-option>
-            </a-select>
-            <a-button type="primary" @click="setOptionTableContent">적용</a-button>
-          </a-input-group>
+          <a-button class="originalDetailTrans" type="default" @click="translatePopup">미리보기</a-button>
+          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역</a-button>
+          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기</a-button>
         </a-space>
 
-        <a-divider type="vertical" style="border-color: #999" />
-
-        <a-space>
-          <span>안내정보</span>
-          <div v-if="guideData.length > 0">
-            <a-input-group compact>
-              <a-select v-model:value="guideValue" style="width: 200px">
-                <a-select-option v-for="data in guideData" :value="data.id">
-                  {{ data.name }}
-                </a-select-option>
-                <a-select-option value="guide_cancel">제거</a-select-option>
-              </a-select>
-              <a-button type="primary" @click="setGuideContent">적용</a-button>
-            </a-input-group>
-          </div>
-          <router-link v-else to="/setting/guideForm">
-            <a-button type="primary">
-              상하단이미지 설정
-              <a-tooltip>
-                <template #title>
-                  <div class="mb10">상하단 이미지 설정 클릭 시 설정 페이지로 이동합니다.</div>
-                  <div>이동 전 수정하신 내용을 먼저 저장해주세요.</div>
-                </template>
-                <QuestionCircleOutlined/>
-              </a-tooltip>
-            </a-button>
-          </router-link>
-        </a-space>
-
-        <a-divider type="vertical" style="border-color: #999" />
-
-        <a-button class="originalDetailTrans" type="primary" @click="translatePopup">상세 이미지번역</a-button>
       </div>
     </div>
 
@@ -62,6 +33,7 @@
       />
     </div>
   </div>
+  <image-translate-tools v-model:visible="imageTranslateToolsVisible" @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList" @update:translateImageList="updateTranslateImageList"/>
 </template>
 
 <script>
@@ -72,18 +44,22 @@ import { watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
 
 export default {
   name: "productDetailDescription",
 
   components: {
+    ImageTranslateTools,
     QuestionCircleOutlined,
     TEditor
   },
 
   computed: {
-    ...mapState(["product"])
+    ...mapState({
+      product: (state) => state.product.detail,
+    })
   },
 
   data() {
@@ -108,7 +84,10 @@ export default {
       guideBeforeId: "editor_before_guide",
       guideAfterId: "editor_after_guide",
       guideValue: "",
-      guideData: []
+      guideData: [],
+
+      imageTranslateToolsVisible: false,
+      translateImageList: []
     };
   },
   mounted() {
@@ -116,6 +95,7 @@ export default {
     this.getGuide();
   },
   methods: {
+
     setGuideContent() {
       const value = this.guideValue;
 
@@ -200,12 +180,15 @@ export default {
       // if (match[1] === `${this.optionTableId}_4`) {
       //   this.selectOptionValue = "table_four_column";
       // }
-
       //품목 이미지, 품목명 변경에 따라 액션
       watchEffect(() => {
-        this.product.sku.map(item => item.img);
-        //변경될 경우 테이블 업데이트
-        this.setOptionTable();
+        if(this.product.loading !== true){
+          this.product.sku.map(item => item.img);
+          //변경될 경우 테이블 업데이트
+          this.$nextTick(() => {
+            this.setOptionTable();
+          });
+        }
       });
     },
     setOptionTable() {
@@ -318,34 +301,42 @@ export default {
     },
 
     translatePopup() {
+
       let aImagesUrl = this.getDetailContentsImage();
       //이미지 없을 경우
       if (aImagesUrl === false) {
         return false;
       }
 
-      this.product.bProductDetailsEditor = true;
-      this.product.bImageEditorModule = true;
-      this.product.aPhotoCollection = [];
-
-      aImagesUrl.map((oImageInfo) => {
-        this.product.aPhotoCollection.push({
-          msg: "",
-          key: oImageInfo.key,
-          name: "",
-          order: "",
+      // { order: ..., url: ...} 구조로 변경
+      aImagesUrl = aImagesUrl.map((item, index) => {
+        return {
           checked: false,
-          visible: true,
-          original_url: oImageInfo.url,
-          translate_url: oImageInfo.url,
-          translate_status:
-              oImageInfo.url.indexOf("https://i.tosoiot.com/") !== -1
-        });
+          order: index,
+          url: item.url
+        };
       });
-    }
-  }
+      aImagesUrl[0].checked = true;
+
+      this.imageTranslateToolsVisible = true;
+      this.translateImageList = aImagesUrl;
+    },
+    updateTranslateImageList(imageList) {
+      this.$refs.editor.clear();
+      let content = '<p>';
+      imageList.forEach((item) => {
+        if(item.translate_status === true){
+          content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
+        } else {
+          const nUrl = item.translate_url || item.url;
+          content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
+        }
+      });
+      content += '</p>';
+
+      this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
+    },
+  },
 };
 </script>
-
-<style scoped>
-</style>

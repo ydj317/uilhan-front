@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.showOptionModifyModal" width="1500px">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.showOptionModifyModal" width="1500px" :maskClosable="false">
     <template #footer>
       <div style="display: flex; justify-content: center;">
         <a-button key="back" style="width: 100px;" @click="this.closeOptionModal" >취소</a-button>
@@ -14,14 +14,14 @@
     <div class="setting header-button" style="display: flex;padding-right: 15px;">
       <!--      <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
 
-      <a-button @click="setTrim" class="spec-right-button" type="primary" 
+      <a-button @click="setTrim" class="spec-right-button" type="primary"
                 size="middle">빈칸
       </a-button>
       <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
                  size="middle">특문
       </a-button>
 
-      <a-button @click="setAtoZ" class="spec-right-button" type="primary" 
+      <a-button @click="setAtoZ" class="spec-right-button" type="primary"
                 size="middle">A-Z
       </a-button>
 
@@ -143,7 +143,33 @@ import { nextTick, watch } from "vue";
 export default {
   name: "productDetailSpecGroup",
   computed: {
-    ...mapState(["product"]),
+    ...mapState({
+      product: state => state.product.detail
+    }),
+  },
+  watch: {
+    'product.resetOption': {
+      handler: function (val) {
+        if (val === true) {
+          // 옵션정보를 수집시 옵션정보로
+          let tempOptions = cloneDeep(this.product.item_org_option);
+          this.options = tempOptions.map(option => {
+            option.checkAll = false;
+            option.oldName = option.name;
+            option.data = option.data.map(item => {
+              item.oldName = item.name;
+              item.checked = false;
+              return item;
+            });
+            return option;
+          });
+
+          // 옵션정보 초기화 여부 초기화
+          this.product.resetOption = false
+        }
+      },
+      deep: true
+    }
   },
   components: {PlusOutlined, MinusOutlined},
   data() {
@@ -152,19 +178,10 @@ export default {
       option_group_find_str: '',
       option_group_replace_str: '',
       // 설정할 옵션안에 체크여부 판단필드를 넣어줌
-      oldOptionData: this.$store.state.product.item_option.map(option => {
-        option.checkAll = false;
-        option.oldName = option.name;
-        option.data = option.data.map(item => {
-          item.oldName = item.name;
-          item.checked = false;
-          return item;
-        });
-        return option;
-      }),
+      oldOptionData : [],
       options : [],
-      // selectedRows 는 오브젝트 그리고 각각의 옵션그룹에 해당하는 배열을 가지고 있음
-      selectedRows: this.$store.state.product.item_option.map(option => []),
+      selectedRows: [],
+      // restOption : this.$store.state.resetOption,
     };
   },
   methods: {
@@ -386,7 +403,7 @@ export default {
       return nextLetter;
     },
     _setCheckBoxInit() {
-      this.selectedRows = this.$store.state.product.item_option.map(option => []);
+      this.selectedRows = [];
       this.options.forEach(option => {
         option.checkAll = false;
         option.data.forEach(item => {
@@ -505,7 +522,7 @@ export default {
         });
       });
 
-      this.product.item_option = this.options;
+      this.product.item_option = {...this.options};
       this.$store.commit('setShowOptionModifyModal', false);
 
     },
@@ -553,7 +570,21 @@ export default {
     },
   },
   mounted() {
+
+    this.oldOptionData = this.product.item_option.map(option => {
+      option.checkAll = false;
+      option.oldName = option.name;
+      option.data = option.data.map(item => {
+        item.oldName = item.name;
+        item.checked = false;
+        return item;
+      });
+      return option;
+    });
+
     this.options = cloneDeep(this.oldOptionData);
+    this.selectedRows = this.product.item_option.map(option => []);
+
     this.adjustRepeatHeights();
   },
 }
