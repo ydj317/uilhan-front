@@ -38,6 +38,7 @@
           :market-detail-urls="marketDetailUrls"
           @select="() => toggleSelect(product.item_id)"
           @detail="openDetailPopup"
+          @memo="editPrdMemo(product)"
         />
       </div>
     </a-spin>
@@ -61,6 +62,7 @@
     :prdId="detailPrd"
     :active-tab="detailActive"
   />
+  <ModalMemo v-model:memo-data="memoForm" @before-save="indicator = true" @after-save="() => {getList()}" />
 </template>
 
 <script setup>
@@ -82,6 +84,7 @@ import MarketList from "@/components/List/MarketList.vue";
 import BtnAiReplace from "@/views/Product/List/Ctrls/BtnAiReplace.vue";
 import {useMarketApi} from "@/api/market";
 import DetailPopup from "@/views/Product/DetailPopup.vue";
+import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 const haveDownloadProductPermission = ref(false)
@@ -99,7 +102,13 @@ const totalCount = ref(0)
 const {userInfo} = useUserInfo({}, checkUserPermission)
 const {selection, resetList, isSelect, isSelectAll, isSelectPart, toggleSelect, toggleSelectAll} = useSelection([])
 
-provide('search', {searchParams, doSearch})
+const memoForm = ref({
+  show: false,
+  item_id: -1,
+  memo: ''
+})
+
+provide('search', {searchParams})
 
 async function searchByFilter() {
   searchParams.value.product_name = ''  // 重置右侧快捷搜索
@@ -111,17 +120,12 @@ async function searchByPrdName() {
   const params = ProductList.defaultParams()
   params.limit = searchParams.value.limit
   params.product_name = searchParams.value.product_name || ''
-
   searchParams.value = params
-
-}
-
-async function doSearch() {
-  searchParams.value.page = 1
   return getList()
 }
 
 async function getList(type = '') {
+  indicator.value = false // 当显示 list loading, 则不需要显示全局 loading
   listLoading.value = true
   return ProductList.getList({...searchParams.value}, type).then((res) => {
     productList.value = res.data.list;
@@ -156,6 +160,12 @@ function openDetailPopup({itemId, tab}) {
   showDetail.value = true
   detailPrd.value = itemId
   detailActive.value = tab
+}
+
+function editPrdMemo(product) {
+  memoForm.value.show = true
+  memoForm.value.item_id = product.item_id
+  memoForm.value.memo = product.item_memo
 }
 
 // @todo

@@ -58,7 +58,7 @@ import {ProductList} from "@/services/product/ProductList";
 const props = defineProps(['isShow'])
 const emit = defineEmits(['update:isShow', 'search'])
 const {isShow} = toRefs(props)
-const {searchParams, doSearch} = inject('search')
+const {searchParams} = inject('search')
 
 function resetParams() {
   const defaultParams = ProductList.defaultParams()

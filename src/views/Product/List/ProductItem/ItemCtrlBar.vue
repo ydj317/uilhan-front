@@ -3,7 +3,11 @@
     <div class="item-ctrl-bar__row">
       <a-button @click="$emit('detailOption')">옵션편집</a-button>
       <a-button @click="$emit('detailDesc')">상세페이지 편집</a-button>
-      <btn-memo :product="product" />
+      <a-button
+        :type="!! product.item_memo ? 'primary' : 'default'"
+        style="width: 32px;padding: 0;"
+        @click="$emit('editMemo')"
+      ><FileTextOutlined/></a-button>
     </div>
     <div class="item-ctrl-bar__row">
       <a-button type="primary" style="flex: 1 1 auto;"><strong>상품등록</strong></a-button>
@@ -42,13 +46,14 @@
 </template>
 
 <script setup>
+import {computed, ref} from "vue";
 import BtnDelete from "@/views/Product/List/Ctrls/BtnDelete.vue";
 import BtnClone from "@/views/Product/List/Ctrls/BtnClone.vue";
 import HistoryView from "@/components/HistoryView.vue";
-import {computed, ref} from "vue";
-import BtnMemo from "@/views/Product/List/Ctrls/BtnMemo.vue";
+import {FileTextOutlined} from "@ant-design/icons-vue";
+
 const props = defineProps(['product'])
-defineEmits(['detailOption', 'detailDesc'])
+defineEmits(['detailOption', 'detailDesc', 'editMemo'])
 
 const historyVisible = ref(false)
 const historyData = computed(() => {
