@@ -2,7 +2,7 @@ import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
 import {AuthRequest} from "@/util/request";
 
-export class ProductList {
+export class ServiceProduct {
   static defaultParams() {
     return {
       market_code: "all",
@@ -91,6 +91,13 @@ export class ProductList {
     })
   }
 
+  /**
+   *
+   * @param {Array} productList 要登录的商品列表
+   * @param {Array} accountList 要登录的商城
+   * @param {Array} smartStoreCategory
+   * @return {Promise<false|any[]>}
+   */
   static async sendMarket(productList, accountList, smartStoreCategory) {
     if (productList === "," || productList.length === 0) {
       message.warning('선택된 상품이 없습니다.');
@@ -137,13 +144,6 @@ export class ProductList {
     }
   }
 
-  /**
-   *
-   * @param {Array} productList 要登录的商品列表
-   * @param {Array} accountList 要登录的商城
-   * @param {Array} smartStoreCategory
-   * @return {boolean}
-   */
   static checkSmartStoreCategory(productList, accountList, smartStoreCategory) {
     const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
     if(smartstoreAccounts.length === 0) {

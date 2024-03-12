@@ -47,7 +47,7 @@ import MarketListFooter from "@/views/Product/List/MarketList/MarketListFooter.v
 import {message} from "ant-design-vue";
 import {AuthRequest} from "@/util/request";
 import {useCategoryApi} from "@/api/category";
-import {ProductList} from "@/services/product/ProductList";
+import {ServiceProduct} from "@/services/product/ServiceProduct";
 
 const columns = [
   {
@@ -81,7 +81,7 @@ async function sendMarket() {
   let accountList = marketSelectedRowKeys.value.map(index => props.options[index])
   loading.value = true
   const productList = props.productList.filter(d => props.selection.includes(d.item_id))
-  const result = await ProductList.sendMarket(productList, accountList, smartStoreCategory.value)
+  const result = await ServiceProduct.sendMarket(productList, accountList, smartStoreCategory.value)
   if (result !== false) {
     emit('result')
   }

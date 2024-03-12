@@ -70,7 +70,7 @@ import {onMounted, provide, ref} from "vue";
 import {useMarketApi} from "@/api/market";
 import {useUserInfo} from "@/hooks/useUserInfo";
 import {useSelection} from "@/hooks/useSelection";
-import {ProductList} from "@/services/product/ProductList";
+import {ServiceProduct} from "@/services/product/ServiceProduct";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
 import FullPageLoading from "@/components/FullPageLoading.vue";
@@ -95,7 +95,7 @@ const showFilter = ref(false)
 const showDetail = ref(false)
 const detailPrd = ref(0)
 const detailActive = ref('1')
-const searchParams = ref(ProductList.defaultParams())
+const searchParams = ref(ServiceProduct.defaultParams())
 const productList = ref([])
 const searchCount = ref(0)
 const totalCount = ref(0)
@@ -115,7 +115,7 @@ async function searchByFilter() {
 }
 
 async function searchByPrdName() {
-  const params = ProductList.defaultParams()
+  const params = ServiceProduct.defaultParams()
   params.limit = searchParams.value.limit
   params.product_name = searchParams.value.product_name || ''
   searchParams.value = params
@@ -125,7 +125,7 @@ async function searchByPrdName() {
 async function getList(type = '') {
   indicator.value = false // 当显示 list loading, 则不需要显示全局 loading
   listLoading.value = true
-  return ProductList.getList({...searchParams.value}, type).then((res) => {
+  return ServiceProduct.getList({...searchParams.value}, type).then((res) => {
     productList.value = res.data.list;
     searchParams.value.page = parseInt(res.data.page);
     searchParams.value.limit = parseInt(res.data.limit);

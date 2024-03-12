@@ -53,7 +53,7 @@
 <script setup>
 import {inject, toRefs} from "vue";
 import DateRange from "@/views/Product/List/ProductFilter/DateRange.vue";
-import {ProductList} from "@/services/product/ProductList";
+import {ServiceProduct} from "@/services/product/ServiceProduct";
 
 const props = defineProps(['isShow'])
 const emit = defineEmits(['update:isShow', 'search'])
@@ -61,7 +61,7 @@ const {isShow} = toRefs(props)
 const {searchParams} = inject('search')
 
 function resetParams() {
-  const defaultParams = ProductList.defaultParams()
+  const defaultParams = ServiceProduct.defaultParams()
   // 保留分页信息，避免filter没有提交的情况下影响当前的 page 信息
   defaultParams.page = searchParams.value.page
   defaultParams.limit = searchParams.value.limit
