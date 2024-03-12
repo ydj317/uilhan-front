@@ -1,29 +1,28 @@
 <template>
     <div>
         <a-card>
-            <div class="mb15" style="display: flex;">
-                <div>
-                    <h3>마켓선택</h3>
-                    <a-select v-model:value="state.tableData.params.market_code" style="width: 250px" @change="getTableList"
-                        clearable>
-                        <a-select-option value="">쇼핑몰(오픈마켓)</a-select-option>
-                        <a-select-option :value="item.value" v-for="(item, key) in state.marketList" :key="key">{{
-                            item.label
-                        }}</a-select-option>
-                    </a-select>
+            <a-card :bordered="false" :title="'마켓연동'">
+                <div class="user_form">
+                    <a-form-item label="마켓선택">
+                        <a-select v-model:value="state.tableData.params.market_code" style="width: 250px" @change="getTableList"
+                                  clearable>
+                            <a-select-option value="">쇼핑몰(오픈마켓)</a-select-option>
+                            <a-select-option :value="item.value" v-for="(item, key) in state.marketList" :key="key">{{
+                                item.label
+                                }}</a-select-option>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item label="노출선택">
+                        <a-radio-group v-model:value="state.tableData.params.is_use" @change="getTableList">
+                            <a-radio value="">전체</a-radio>
+                            <a-radio value="1">노출함</a-radio>
+                            <a-radio value="0">노출안함</a-radio>
+                        </a-radio-group>
+                    </a-form-item>
                 </div>
+            </a-card>
 
-                <div class="ml15" style="min-width: 210px;">
-                    <h3>노출선택</h3>
-                    <a-radio-group v-model:value="state.tableData.params.is_use" @change="getTableList">
-                        <a-radio-button value="">전체</a-radio-button>
-                        <a-radio-button value="1">노출함</a-radio-button>
-                        <a-radio-button value="0">노출안함</a-radio-button>
-                    </a-radio-group>
-                </div>
-            </div>
-
-            <div class="mb15" style="display: flex;justify-content: space-between;">
+            <div class="mb15 mt20" style="display: flex;justify-content: space-between;">
                 <div class="left-div">
                 </div>
                 <div class="right-div">
@@ -32,25 +31,32 @@
                     </RouterLink>
                 </div>
             </div>
-            <a-table :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
-                :pagination="false">
-                <a-table-column title="마켓코드" dataIndex="marketCode" key="marketCode" />
-                <a-table-column title="마켓ID" dataIndex="sellerId" key="sellerId" />
-                <a-table-column title="노출상태" dataIndex="isUse" key="isUse">
+            <a-table  :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
+                :pagination="false" bordered >
+                <a-table-column title="마켓" dataIndex="marketCode" key="marketCode" align="center">
+                    <template #customRender="scope, record, index">
+                        <img :src="getLogoSrc('market-logo', scope.record.marketCode)" alt="" class="mr10" style="width: 20px;height: 20px">
+                        <span>{{scope.record.marketCode}}</span>
+                    </template>
+
+                </a-table-column>
+
+                <a-table-column title="마켓ID" dataIndex="sellerId" key="sellerId" align="center"/>
+                <a-table-column title="노출상태" dataIndex="isUse" key="isUse" align="center">
                     <template #customRender="scope, record, index">
                         <a-switch v-model:checked="scope.record.isUse" @change="changeIsUse(scope.record)" :checkedValue="1"
                             :unCheckedValue="0" checked-children="On" un-checked-children="Off" />
                     </template>
                 </a-table-column>
-                <a-table-column title="등록일자" dataIndex="insDate" key="insDate">
+                <a-table-column title="등록일자" dataIndex="insDate" key="insDate" align="center">
                     <template #customRender="scope, record, index">
                         {{ scope.record.insDate.split('T')[0] }}
                     </template>
                 </a-table-column>
-                <a-table-column title="관리" dataIndex="manage" key="manage">
+                <a-table-column title="관리" dataIndex="manage" key="manage" align="center">
                     <template #customRender="scope, record, index">
                         <RouterLink :to="`/market/accounts/register/${scope.record['id']}`">
-                            <a-button size="small">수정</a-button>
+                            <a-button type="primary">수정</a-button>
                         </RouterLink>
 
                         <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No"
@@ -58,7 +64,7 @@
                             <template #title>
                                 <p>삭제 하시겠습니까?</p>
                             </template>
-                            <a-button class="mt5" type="danger" size="small">삭제</a-button>
+                            <a-button class="mt5" type="default">삭제</a-button>
                         </a-popconfirm>
                     </template>
                 </a-table-column>
@@ -109,7 +115,7 @@ const removeAccount = (id) => {
 const getTableList = async () => {
     await useMarketAccountApi().getAccountList(state.tableData.params).then(res => {
         const { list, total } = res.data
-
+        console.log('list:',list)
         state.tableData.data = list;
         state.tableData.total = total;
     });
@@ -159,4 +165,48 @@ const pageChangeHandler = (page) => {
     state.tableData.params.page = page;
     getTableList();
 }
+const getLogoSrc = (fileName, marketCode) => {
+    try {
+        return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
+    } catch (error) {
+        return require('../../assets/img/temp_image.png');
+    }
+};
 </script>
+<style>
+    .user_form .ant-form-item {
+        margin-bottom: 0;
+    }
+
+    .user_form .ant-form-item-label {
+        border: 1px solid #eeeeee;
+        background-color: #fafafa;
+        width: 170px;
+        padding: 10px;
+        margin-bottom: -1px;
+    }
+
+    .user_form .ant-form-item-control {
+        border: 1px solid #eeeeee;
+        padding: 10px;
+        margin-left: -1px;
+        margin-bottom: -1px;
+    }
+
+    .user_form .ant-form-item-control:nth-last-child {
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    .user_form .phone .ant-form-item-control {
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .user_form .phone .ant-form-item-control:nth-last-child {
+        border-bottom: none;
+    }
+</style>
+<style scoped>
+
+</style>
