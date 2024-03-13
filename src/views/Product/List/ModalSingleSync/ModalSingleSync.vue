@@ -61,7 +61,7 @@
     </a-table>
 
     <template v-slot:footer>
-      <a-button @click="closeResultPop('single')">닫기</a-button>
+      <a-button @click="closeModal">닫기</a-button>
       <a-button type="primary" @click="sendMarket()">선택마켓연동</a-button>
     </template>
   </a-modal>
@@ -97,7 +97,7 @@ const SYNC_COLUMNS_CONFIG = [
 ]
 
 const props = defineProps(['show', 'product', 'smartStoreCategory'])
-const emit = defineEmits(['update:show', 'result'])
+const emit = defineEmits(['update:show', 'result', 'close'])
 const {show} = toRefs(props)
 watch(show, val => {
   if (val && props.product) {
@@ -108,8 +108,8 @@ watch(show, val => {
 const loading = ref(false)
 const syncSelectedRowKeys = ref([])
 
-function onSyncSelectChange(syncSelectedRowKeys) {
-  syncSelectedRowKeys.value = syncSelectedRowKeys;
+function onSyncSelectChange(selectedRowKeys) {
+  syncSelectedRowKeys.value = selectedRowKeys;
 }
 
 async function approvalCheck(market_id) {
@@ -170,22 +170,12 @@ async function approvalCheck(market_id) {
 
 function closeModal() {
   emit('update:show', false)
-}
-
-// @todo 需要向父级传递
-function closeResultPop(type) {
-  closeModal()
-  // if (type === "multi") {
-  //   this.setResultPopData(false);
-  // }
-  // this.singleSyncPop = false;
-  // props.product = [];
-  // this.checkedList = []; // 好像没啥用
+  emit('close')
 }
 
 async function sendMarket() {
   const productList = [props.product]
-  // @todo 确认一下数据是否跟原来一致
+
   let accountList = syncSelectedRowKeys.value.map(index => props.product.item_sync_market[index])
   if (! ServiceProduct.checkBeforeSendMarket(productList, accountList, props.smartStoreCategory)) {
     return

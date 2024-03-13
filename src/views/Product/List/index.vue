@@ -55,15 +55,21 @@
     :options="options"
     :product-list="productList"
     :selection="selection"
-    @result="setPopupResultData"
+    @result="showSyncResult"
   />
   <modal-single-sync
     v-model:show="singleSyncPop"
     :product="singleDetail"
     :smart-store-category="smartStoreCategory"
-    @result="setPopupResultData"
+    @result="showSyncResult"
+    @close="clearSingleSendData"
   />
-
+  <modal-sync-result
+    :sync-result="syncResult"
+    v-model:show="syncResult.marketSyncPop"
+    @close="closeSyncResult"
+    @search-fail="searchFail"
+  />
   <DetailPopup
     :visible="showDetail"
     @update:visible="showDetail = false"
@@ -93,6 +99,7 @@ import DetailPopup from "@/views/Product/DetailPopup.vue";
 import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
 import {useCategoryApi} from "@/api/category";
 import ModalSingleSync from "@/views/Product/List/ModalSingleSync/ModalSingleSync.vue";
+import ModalSyncResult from "@/views/Product/List/ModalSyncResult/ModalSyncResult.vue";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 
@@ -116,14 +123,15 @@ const MarketListVisible = ref(false)  // 是否显示批量登录商品弹窗
 const singleSyncPop = ref(false)    // 是否显示登录单个商品弹窗
 const singleDetail = ref({})
 const smartStoreCategory = ref([])  // 联动时，检擦是否有 smartstore 联动失败的商品
-const syncResult = ref({
+const defaultSyncResult = {
   marketSyncPop: false,
   marketSyncResult: [],
   marketSyncSuccess: 0,
   marketSyncFailed: 0,
   marketSyncTotal: 0,
   marketSyncFailedCode: "",
-})
+}
+const syncResult = ref({...defaultSyncResult})
 
 provide('search', {searchParams})
 
@@ -138,6 +146,17 @@ async function searchByPrdName() {
   params.limit = searchParams.value.limit
   params.product_name = searchParams.value.product_name || ''
   searchParams.value = params
+  return getList()
+}
+
+async function searchFail() {
+  const params = ServiceProduct.defaultParams()
+  params.page = 1
+  params.limit = searchParams.value.limit
+  params.search_key = "item_code"
+  params.search_value = syncResult.value.marketSyncFailedCode
+  searchParams.value = params
+  closeSyncResult()
   return getList()
 }
 
@@ -191,6 +210,11 @@ function sendMarketSingle(product) {
   singleDetail.value = product
 }
 
+function clearSingleSendData() {
+  singleSyncPop.value = false
+  singleDetail.value = {}
+}
+
 function MarketListPop() {
   if (selection.value.length === 0) {
     message.warning("선택된 상품이 없습니다.");
@@ -199,24 +223,20 @@ function MarketListPop() {
   MarketListVisible.value = true
 }
 
-function setPopupResultData(data) {
-  console.log('---', data)
-  // this.marketSyncSuccess = data[0];
-  // this.marketSyncFailedCode = data[1];
-  // this.marketSyncFailed = data[2];
-  // this.marketSyncTotal = data[3];
-  // this.marketSyncResult = data[4];
-  // this.marketSyncPop = true;
+function showSyncResult(data) {
+  syncResult.value.marketSyncSuccess = data[0]
+  syncResult.value.marketSyncFailedCode = data[1]
+  syncResult.value.marketSyncFailed = data[2]
+  syncResult.value.marketSyncTotal = data[3]
+  syncResult.value.marketSyncResult = data[4]
+  syncResult.value.marketSyncPop = true
 }
 
-function setResultData(data) {
-  console.log('---', data)
-  // this.marketSyncSuccess = 0;
-  // this.marketSyncFailedCode = "";
-  // this.marketSyncFailed = 0;
-  // this.marketSyncTotal = 0;
-  // this.marketSyncResult = [];
-  // this.marketSyncPop = false;
+function closeSyncResult() {
+  syncResult.value = {...defaultSyncResult}
+
+  // 按旧代码, 清空 single send market 相关的数据
+  clearSingleSendData()
 }
 
 // 初始化 options, 用于 MarketList

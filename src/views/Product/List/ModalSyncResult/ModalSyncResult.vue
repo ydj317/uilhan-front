@@ -1,7 +1,8 @@
 <template>
   <a-modal
     width="600px"
-    v-model:open="syncResult.marketSyncPop"
+    :open="show"
+    @update:open="$emit('update:show', false)"
     centered title="제휴사연동결과"
     @cancel="closeAllModel"
   >
@@ -17,41 +18,25 @@
     </a-list>
     <template v-slot:footer>
       <a-button type="primary" @click="searchFailed">실패상품검색</a-button>
-      <a-button type="primary" @click="closeResultPop('multi')">확인</a-button>
+      <a-button type="primary" @click="$emit('close')">확인</a-button>
     </template>
   </a-modal>
 </template>
 
 <script setup>
 import {message, Modal} from 'ant-design-vue';
-defineProps(['syncResult'])
+const props = defineProps(['syncResult', 'show'])
+const emit = defineEmits(['update:show', 'searchFail', 'close'])
 
 function closeAllModel() {
   Modal.destroyAll()
 }
 
 function searchFailed() {
-  if (this.marketSyncFailedCode.length === 0) {
+  if (! props.syncResult?.marketSyncFailedCode) {
     message.warning("연동실패한 상품이 없습니다.");
     return false;
   }
-
-  // @todo
-  // this.search_key = "item_code";
-  // this.search_value = this.marketSyncFailedCode;
-  // this.getList();
-
-  // this.setResultPopData(false, []);
+  emit('searchFail')
 }
-
-// @todo
-function closeResultPop(type) {
-  // if (type === "multi") {
-  //   this.setResultPopData(false);
-  // }
-  // this.singleSyncPop = false;
-  // this.singleDetail = [];
-  // this.checkedList = [];
-}
-
 </script>
