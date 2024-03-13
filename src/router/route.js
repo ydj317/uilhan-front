@@ -422,6 +422,17 @@ export const menus = [{
                 icon: RobotOutlined
             },
         },
+        {
+            path: "/product/analytics",
+            name: "product_analytics",
+            component: () => import("@/views/Product/Analytics.vue"),
+            meta: {
+                title: "애널리틱스",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: GiftOutlined
+            },
+        },
     ]
 }]
 
