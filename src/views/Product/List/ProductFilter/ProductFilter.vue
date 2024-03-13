@@ -66,7 +66,7 @@ function resetParams() {
   defaultParams.page = searchParams.value.page
   defaultParams.limit = searchParams.value.limit
   // 保留商品名搜索的内容，提交时才清空。
-  defaultParams.product_name = searchParams.value.product_name || ''
+  defaultParams.keyword = searchParams.value.keyword || ''
 
   searchParams.value = defaultParams
 }

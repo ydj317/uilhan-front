@@ -15,9 +15,9 @@
       </div>
       <div class="search">
         <a-input-search
-          v-model:value="searchParams.product_name"
+          v-model:value="searchParams.keyword"
           placeholder="검색어를 입력하세요" enter-button="검색" style="width: 300px"
-          @search="searchByPrdName"
+          @search="searchByKeyword"
         />
       </div>
     </div>
@@ -136,15 +136,15 @@ const syncResult = ref({...defaultSyncResult})
 provide('search', {searchParams})
 
 async function searchByFilter() {
-  searchParams.value.product_name = ''  // 重置右侧快捷搜索
+  searchParams.value.keyword = ''  // 重置右侧快捷搜索
   searchParams.value.page = 1
   return getList()
 }
 
-async function searchByPrdName() {
+async function searchByKeyword() {
   const params = ServiceProduct.defaultParams()
   params.limit = searchParams.value.limit
-  params.product_name = searchParams.value.product_name || ''
+  params.keyword = searchParams.value.keyword || ''
   searchParams.value = params
   return getList()
 }

@@ -13,29 +13,21 @@
         <td style="display: flex;align-items: flex-start">
           <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
             <div style="display: flex;gap: 10px">
-              <a-input placeholder="검색 키워드를 입력하세요" />
-              <a-button type="primary" style="background-color: #1e44ff;color: white">키워드 검색</a-button>
+              <a-input v-model:value="search_keyword" placeholder="검색 키워드를 입력하세요" />
+              <a-button
+                type="primary"
+                style="background-color: #1e44ff;color: white"
+                @click="searchKeyword"
+              >키워드 검색</a-button>
             </div>
 
             <div style="background-color: #eeeeee;padding: 10px;display: grid;grid-template-columns: repeat(12,1fr);gap: 5px;justify-content: center;align-items: center">
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
+              <a-tag
+                v-for="item in keyword_list" :key="item.id"
+                :color="item.is_t ? 'red' : ''"
+                :bordered="item.is_using ? false : true"
+                @click="addKeyword(item)"
+              >{{item.keyword}}</a-tag>
             </div>
           </div>
         </td>
@@ -140,12 +132,30 @@ export default {
       mandatory: [],
       is_filter_word_list: false,
       use_ai: false,
-      ai_loading: false
+      ai_loading: false,
+      search_keyword: '',
+      keyword_list: [],
     };
   },
 
   methods: {
-
+    searchKeyword() {
+      this.keyword_list = [
+        {id: 1, keyword: 'aaa aaa aaa aaa', is_t: false, is_using: false},
+        {id: 2, keyword: 'bbb', is_t: true, is_using: false},
+        {id: 3, keyword: 'ccc', is_t: false, is_using: false},
+        {id: 4, keyword: 'ddd', is_t: false, is_using: true},
+      ]
+      // const params = {keyword: this.search_keyword}
+      // AuthRequest.get(process.env.VUE_APP_API_URL + "/api/naver/keywords", params).then(res => {
+      //   console.log('---', res)
+      // })
+    },
+    addKeyword(keywordInfo) {
+      this.product.item_trans_name = [this.product.item_trans_name, keywordInfo.keyword].filter(d => !!d).join(' ')
+      this.product.item_sync_keyword = [this.product.item_sync_keyword, keywordInfo.keyword].filter(d => !!d).join(',')
+      keywordInfo.is_using = true
+    },
     getMandatory() {
       useMandatoryApi().getList().then((res) => {
         this.mandatory = res.data;

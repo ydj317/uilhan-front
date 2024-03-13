@@ -3,27 +3,46 @@ import {lib} from "@/util/lib";
 import {AuthRequest} from "@/util/request";
 
 export class ServiceProduct {
+  /**
+   * 列表搜索的默认参数
+   * @return {{search_value: string, date_type: string, search_key: string, end_time: string, item_upd_end: string, market_code: string, item_sync_end: string, item_upd_start: string, item_no: string, start_time: string, item_ins_start: string, item_ins_end: string, item_sync_start: string, prd_code: string, limit: number, sync_status: string, page: number, keyword: string}}
+   */
   static defaultParams() {
     return {
-      market_code: "all",
-
-      // as-is: 日期区间只能应用一种; to-be 同时应用所有日期区间.
+      // 旧 params
+      // market_code: 'all',
       date_type: "insert_date",
       start_time: "",
       end_time: "",
-
-      // as-is 检索语类型 radio, 只能检索商品code, 商品名, ... 之一。 to-be : 分离了类型，同时检索
       search_key: "item_code",
       search_value: "",
+      trans_status: "all",  // 没有界面设置，无脑传 all
+      // sync_status: "all",
 
-      trans_status: "all",
-      sync_status: "all",
+      // 新 params
+      market_code: "all",   // 상품수집마켓  Taobao|Tmall|Alibaba|Aliexpress
+      sync_status: "all",   // 처리상태  'all'|연동성공('1')|연동실패('0')|연동전('2')
+      item_ins_start: '',   // 수집조회 (日期)
+      item_ins_end: '',     // 수집조회 (日期)
+      item_sync_start: '',  // 연동조회 (日期)
+      item_sync_end: '',    // 연동조회 (日期)
+      item_upd_start: '',   // 수정조회 (日期)
+      item_upd_end: '',     // 수정조회 (日期)
+      prd_code: '',         // 상품코드
+      item_no: '',          // 품목코드
+      keyword: '',          // 右侧快捷搜索
 
       page: 1,
       limit: 10,
     }
   }
 
+  /**
+   * 列表搜索前过滤参数
+   * @param params
+   * @param type
+   * @return {{search_value: string, date_type: string, start_time: string, search_key: string, end_time: string, limit: number, sync_status: string, page: number, market_code: string, trans_status: string}}
+   */
   static filterParams(params = this.defaultParams(), type = '') {
     params = {...params}
     params.market_code = lib.isEmpty(params.market_code) ? "all" : params.market_code
