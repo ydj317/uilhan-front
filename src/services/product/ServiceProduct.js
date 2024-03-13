@@ -91,14 +91,7 @@ export class ServiceProduct {
     })
   }
 
-  /**
-   *
-   * @param {Array} productList 要登录的商品列表
-   * @param {Array} accountList 要登录的商城
-   * @param {Array} smartStoreCategory
-   * @return {Promise<false|any[]>}
-   */
-  static async sendMarket(productList, accountList, smartStoreCategory) {
+  static checkBeforeSendMarket(productList, accountList, smartStoreCategory) {
     if (productList === "," || productList.length === 0) {
       message.warning('선택된 상품이 없습니다.');
       return false;
@@ -114,6 +107,19 @@ export class ServiceProduct {
       return false
     }
 
+    return true
+  }
+
+  /**
+   *
+   * @param {Array} productList 要登录的商品列表
+   * @param {Array} accountList 要登录的商城
+   * @param {Array} smartStoreCategory
+   * @return {Promise<false|any[]>}
+   */
+  static async sendMarket(productList, accountList, smartStoreCategory) {
+    // @see this.checkBeforeSendMarket().
+    // 由于前置验证太快，可能导致 sendMarket对应的 loading 闪屏，因此单独拎出去。
     try {
       let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
         productList: productList.map(d => d.item_id).join(','),

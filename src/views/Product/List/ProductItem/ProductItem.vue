@@ -13,7 +13,10 @@
           @mouseout="product.hover = false"
           :style="{opacity: product.hover ? '1' : '0'}"
         >
-          <btn-edit @click="openDetailPopup(product.item_id, '1')" />
+          <a
+            href="javascript:void(0)"
+            @click="openDetailPopup(product.item_id, '1')"
+            style="color: white;font-weight: bold;">편집</a>
           <btn-link-market :product="product" />
         </div>
         <a-checkbox

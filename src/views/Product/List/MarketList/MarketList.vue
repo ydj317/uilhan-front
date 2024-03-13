@@ -79,14 +79,19 @@ function onMarketSelectChange(selectedRowKeys) {
 
 async function sendMarket() {
   let accountList = marketSelectedRowKeys.value.map(index => props.options[index])
-  loading.value = true
+
   const productList = props.productList.filter(d => props.selection.includes(d.item_id))
+  if (! ServiceProduct.checkBeforeSendMarket(productList, accountList, smartStoreCategory.value)) {
+    return
+  }
+
+  loading.value = true
   const result = await ServiceProduct.sendMarket(productList, accountList, smartStoreCategory.value)
   if (result !== false) {
     emit('result')
+    closeModal()
   }
   loading.value = false
-  closeModal()
 }
 
 function closeModal() {

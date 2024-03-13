@@ -184,15 +184,20 @@ function closeResultPop(type) {
 }
 
 async function sendMarket() {
-  loading.value = true
+  const productList = [props.product]
   // @todo 确认一下数据是否跟原来一致
   let accountList = syncSelectedRowKeys.value.map(index => props.product.item_sync_market[index])
-  const result = await ServiceProduct.sendMarket([props.product], accountList, props.smartStoreCategory)
+  if (! ServiceProduct.checkBeforeSendMarket(productList, accountList, props.smartStoreCategory)) {
+    return
+  }
+
+  loading.value = true
+  const result = await ServiceProduct.sendMarket(productList, accountList, props.smartStoreCategory)
   if (result !== false) {
     emit('result')
+    closeModal()
   }
   loading.value = false
-  closeModal()
 }
 
 async function loadSyncInfo() {
