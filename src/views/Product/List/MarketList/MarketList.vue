@@ -88,7 +88,7 @@ async function sendMarket() {
   loading.value = true
   const result = await ServiceProduct.sendMarket(productList, accountList, smartStoreCategory.value)
   if (result !== false) {
-    emit('result')
+    emit('result', result)
     closeModal()
   }
   loading.value = false

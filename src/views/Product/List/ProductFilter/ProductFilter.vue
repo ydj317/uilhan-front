@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    v-model:open="isShow"
+    :open="isShow"
     :closable="false"
     centered width="220"
     okText="상품검색"

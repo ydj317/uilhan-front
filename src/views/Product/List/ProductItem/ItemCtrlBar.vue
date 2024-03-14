@@ -17,7 +17,7 @@
             <div style="display: flex;gap: 3px;align-items: center">
               <a-button
                 type="default" style="padding: 0;width: 100%" size="small"
-                @click.prevent.stop="historyVisible.value = true;">히스토리</a-button>
+                @click.prevent.stop="historyVisible = true;">히스토리</a-button>
             </div>
             <div style="display: flex;gap: 3px">
               <btn-clone :selection="[product.item_id]">
