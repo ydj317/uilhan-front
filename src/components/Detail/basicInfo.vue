@@ -13,7 +13,7 @@
         <td style="display: flex;align-items: flex-start">
           <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
             <div style="display: flex;gap: 10px">
-              <a-input v-model:value="keyword.search_value" placeholder="검색 키워드를 입력하세요" />
+              <a-input v-model:value.trim="keyword.search_value" placeholder="검색 키워드를 입력하세요" />
               <a-button
                 type="primary"
                 style="background-color: #1e44ff;color: white"
@@ -160,6 +160,8 @@ export default {
 
   methods: {
     async searchKeyword() {
+      if (! this.keyword.search_value) return
+
       // 如果没有搜索到 keywords, 该怎么版？  显示 div 内容不是 a-tag 列表，而是 空内容的文字提示？
 
       // this.keyword.loading = true
