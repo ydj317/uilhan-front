@@ -68,11 +68,11 @@ export class ServiceProduct {
    * @param {'reload'|'search'|''} type
    * @return {*}
    */
-  static getList(params = this.defaultParams(), type = '') {
+  static async getList(params = this.defaultParams(), type = '') {
     params = this.filterParams(params, type);
     return AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", {params}).then((res) => {
       if (res.status !== "2000") {
-        message.error();
+        message.error(res.message);
         return
       }
 
