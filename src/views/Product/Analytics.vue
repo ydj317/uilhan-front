@@ -92,11 +92,11 @@
         <img src="../../assets/img/404.jpg"  width="60" height="60" class="mr20">
         <a-flex vertical="vertical"  style="width: 90%">
           <a-flex justify="space-between" align="center">
-            <span>nickname</span>
+            <span>노랑 스마일 귀여운 LED 벽걸이 인테리어 무드등</span>
             <span><a-range-picker/></span>
           </a-flex>
           <a-flex vertical="vertical">
-            <span>마켓연동일：2021-11-11 12:11</span>
+            <span>마켓연동일 : 2023-12-30 12:30</span>
             <a-divider />
           </a-flex>
         </a-flex>
@@ -291,7 +291,7 @@ const modalChart = () => {
         trigger: 'axis'
       },
       legend: {
-        data: ['一', '二', '三', '四']
+        data: ['전체', '스마트스토어', '쿠팡', '인터파크','티몬','롯데ON','11번가','큐텐']
       },
       grid: {
         left: '3%',
@@ -309,29 +309,53 @@ const modalChart = () => {
       },
       series: [
         {
-          name: '一',
+          name: '전체',
           type: 'line',
           stack: 'Total',
           data: [120, 132, 101, 134, 90, 230, 210]
         },
         {
-          name: '二',
+          name: '스마트스토어',
           type: 'line',
           stack: 'Total',
           data: [220, 182, 191, 234, 290, 330, 310]
         },
         {
-          name: '三',
+          name: '쿠팡',
           type: 'line',
           stack: 'Total',
           data: [150, 232, 201, 154, 190, 330, 410]
         },
         {
-          name: '四',
+          name: '인터파크',
           type: 'line',
           stack: 'Total',
           data: [320, 332, 301, 334, 390, 330, 320]
-        }
+        },
+          {
+              name: '티몬',
+              type: 'line',
+              stack: 'Total',
+              data: [320, 332, 301, 334, 390, 330, 320]
+          },
+          {
+              name: '롯데ON',
+              type: 'line',
+              stack: 'Total',
+              data: [320, 332, 301, 334, 390, 330, 320]
+          },
+          {
+              name: '11번가',
+              type: 'line',
+              stack: 'Total',
+              data: [320, 332, 301, 334, 390, 330, 320]
+          },
+          {
+              name: '큐텐',
+              type: 'line',
+              stack: 'Total',
+              data: [320, 332, 301, 334, 390, 330, 320]
+          }
       ]
     };
     option && myChart.setOption(option);
