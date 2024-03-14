@@ -3,7 +3,7 @@
     <a-spin v-if="product.loading" size="large"/>
   </div>
   <div v-else id="eModelTitle_2" class="mt20 p20 bg-white" v-if="product.item_option">
-    <h3><strong>옵션설정</strong></h3>
+<!--    <h3><strong>옵션설정</strong></h3>-->
     <!--옵션그룹해더, 옵션 셋팅, 옵션그룹 추가-->
 <!--      <div class="header-section">-->
 <!--        &lt;!&ndash;세팅버튼&ndash;&gt;-->
