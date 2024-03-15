@@ -18,13 +18,13 @@
         </a-space>
         <a-space class="range" v-model:value="state.tableData.params.range">
           <div value="all">전체기간</div>
-          <a-divider type="vertical" class="line"/>
+          <a-divider type="vertical" class="line" />
           <div value="today">오늘</div>
-          <a-divider type="vertical" class="line"/>
+          <a-divider type="vertical" class="line" />
           <div value="week">일주일</div>
-          <a-divider type="vertical" class="line"/>
+          <a-divider type="vertical" class="line" />
           <div value="month1">1개월</div>
-          <a-divider type="vertical" class="line"/>
+          <a-divider type="vertical" class="line" />
           <div value="month3">3개월</div>
         </a-space>
       </a-descriptions-item>
@@ -53,58 +53,67 @@
       </a-descriptions-item>
     </a-descriptions>
     <div class="mt15 center">
-      <a-button type="default" class="mr15">초기화</a-button>
-      <a-button type="primary" class="mr15">조회수 0인 상품 검색</a-button>
-      <a-button type="primary">검색</a-button>
+      <a-button type="default" class="mr15" @click="resetSearchParam">초기화</a-button>
+      <a-button type="primary" class="mr15" @click="searchProductVisits(true)">조회수 0인 상품 검색</a-button>
+      <a-button type="primary" @click="searchProductVisits(false)">검색</a-button>
     </div>
   </a-card>
   <a-card class="mt15">
     <a-table :columns="tableColumns" :data-source="tableList" bordered :pagination="false">
-      <template #headerCell="{ column }">
-      </template>
       <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'goodsImg'">
-          <img src="../../assets/img/404.jpg"  width="60" height="60">
+        <template v-if="column.key === 'productThumbnails'">
+          <a-image
+            :src="record.productThumbnails[0]"
+            fallback="../../assets/img/404.jpg"
+            width="60" height="60" style="width: 60px;height:60px;border-radius: 10px;"/>
         </template>
-        <template v-if="column.key === 'goodsCode'">
-          <img src="../../assets/img/404.jpg"  width="20" height="20">
-          {{record.goodsCode}}
+        <template v-if="column.key === 'productCode'">
+          <div style="display: flex;gap: 5px;">
+            <img :src="getLogoSrc('get-logo', record.productMarket.toLowerCase())" style="width: 20px;height: 20px;" :alt="record.productMarket">
+            {{ record.productCode}}
+          </div>
         </template>
-        <template v-if="column.key === 'chart'" >
-          <img src="../../assets/img/404.jpg"  width="20" height="20" @click="modalChart" style="cursor: pointer;">
+        <template v-if="column.key === 'chart'">
+          <img src="../../assets/img/chart_icon.png" alt="차트보기" width="20" height="20" @click="modalChart(record.productId)" style="cursor: pointer;">
         </template>
-        <template v-if="column.key === 'note'">
-          <img src="../../assets/img/404.jpg"  width="20" height="20" style="cursor: pointer;">
+        <template v-if="column.key === 'productMemo'">
+          <img src="../../assets/img/memo_icon.png" alt="메모보기" width="20" height="20" style="cursor: pointer;">
         </template>
       </template>
     </a-table>
     <a-pagination
-            style="width: 100%;display: flex;justify-content: end;align-items: center;margin-top: 15px;"
-            v-model:current="state.tableData.page"
-            v-model:page-size="state.tableData.pageSize"
-            @change="onPageChange"
-            :total="state.tableData.total"
-            :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
+      style="width: 100%;display: flex;justify-content: end;align-items: center;margin-top: 15px;"
+      v-model:current="state.tableData.params.page"
+      v-model:page-size="state.tableData.params.pageSize"
+      @change="onPageChange"
+      :total="state.tableData.total"
+      :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
     />
   </a-card>
+
   <a-modal v-model:open="state.modalOpen" title="상품 유입 데이터 차트" :footer="null" :closable="false" width="1000px">
-      <a-flex class="mt20" justify="center">
-        <img src="../../assets/img/404.jpg"  width="60" height="60" class="mr20">
-        <a-flex vertical="vertical"  style="width: 90%">
-          <a-flex justify="space-between" align="center">
-            <span>nickname</span>
-            <span><a-range-picker/></span>
-          </a-flex>
-          <a-flex vertical="vertical">
-            <span>마켓연동일：2021-11-11 12:11</span>
-            <a-divider />
-          </a-flex>
+    <a-flex class="mt20" justify="center">
+      <img src="../../assets/img/404.jpg" width="60" height="60" class="mr20">
+      <a-flex vertical="vertical" style="width: 90%">
+        <a-flex justify="space-between" align="center">
+          <span>nickname</span>
+          <span><a-range-picker /></span>
+        </a-flex>
+        <a-flex vertical="vertical">
+          <span>마켓연동일：2021-11-11 12:11</span>
+          <a-divider />
         </a-flex>
       </a-flex>
+    </a-flex>
     <a-space class="tab-wrap">
-      <a-button :type="state.modalTabsIndex == k ?'primary':'default'" class="mr5" @click="modalToggleTabs(k)" v-for="(v,k) in state.modalTabs">{{v}}</a-button>
+      <a-button :type="state.modalTabsIndex == k ?'primary':'default'" class="mr5" @click="modalToggleTabs(k)"
+                v-for="(v,k) in state.modalTabs">{{ v }}
+      </a-button>
     </a-space>
-    <div class="mt20" ref="modalCharts" style="width: 100%;height: 200px"></div>
+    <a-divider />
+    <a-skeleton :active="loadChartDataLoading" :loading="loadChartDataLoading">
+      <div class="mt20" ref="modalCharts" style="width: 100%;height: 200px"></div>
+    </a-skeleton>
     <a-flex justify="flex-end" class="mt20">
       <a-button type="default" @click="modalClose">닫기</a-button>
     </a-flex>
@@ -112,42 +121,47 @@
 </template>
 
 <script setup>
-  import {computed, onMounted, reactive, ref, watch} from "vue";
-import {message} from "ant-design-vue";
-import * as echarts from 'echarts';
-import {useMarketApi} from '@/api/market';
+import { onMounted, reactive, ref, watch } from "vue";
+import { message } from "ant-design-vue";
+import * as echarts from "echarts";
 import moment from "moment";
-  import dayjs from "dayjs";
-  const modalCharts = ref(null);
+import { useMarketApi } from "@/api/market";
+import { findProductVisits, getProductVisits } from "@/api/productVisits";
+import dayjs from "dayjs";
+
+const modalCharts = ref(null);
 const state = reactive({
   tableData: {
     data: [],
     total: 0,
-    page: 1,
-    pageSize: 10,
+
     loading: false,
     params: {
+      page: 1,
+      pageSize: 10,
       market: [],
       order_date: [moment().subtract(15, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
       range: "",
       search_type: "order_no",
       search_value: "",
-      number:"",
-      sort:"up",
+      number: "",
+      sort: "up"
     }
   },
   loading: false,
   order_date: [moment().subtract(15, "days"), moment()],
   marketCheckAll: false,
+
+
   indeterminate: true,
   marketList: [],
-  modalOpen:false,
-  modalTabs:['일별','월별'],
-  modalTabsIndex:0,
+  modalOpen: false,
+  modalTabs: ["일별", "월별"],
+  modalTabsIndex: 0,
   dailyData: {
     params: {
-      period: '1week',
-      type: 'amount'
+      period: "1week",
+      type: "amount"
     }
   }
 });
@@ -178,164 +192,203 @@ const getMarketList = async () => {
   }
 };
 
+const tableColumns = [
+  {
+    title: "No",
+    dataIndex: "key",
+    key: "key",
+    width: "5%",
+    align: "center"
+  },
+  {
+    title: "이미지",
+    dataIndex: "productThumbnails",
+    key: "productThumbnails",
+    width: "10%",
+    align: "center"
+  },
+  {
+    title: "상품정보",
+    dataIndex: "productTransName",
+    key: "productTransName",
+    width: "20%",
+    align: "center"
+  },
+  {
+    title: "상품코드",
+    key: "productCode",
+    dataIndex: "productCode",
+    width: "10%",
+    align: "center"
+  },
+  {
+    title: "데이터차트",
+    key: "chart",
+    dataIndex: "chart",
+    width: "10%",
+    align: "center"
+  },
+  {
+    title: "누적 조회수",
+    key: "visitCount",
+    dataIndex: "visitCount",
+    width: "10%",
+    align: "center",
+    sorter: true
+  },
+  {
+    title: "판매수",
+    key: "sales",
+    dataIndex: "sales",
+    width: "10%",
+    align: "center",
+    sorter: true
+  },
+  {
+    title: "마켓연동일",
+    key: "date",
+    dataIndex: "date",
+    width: "20%",
+    align: "center"
+  },
+  {
+    title: "메모",
+    key: "productMemo",
+    dataIndex: "productMemo",
+    width: "10%",
+    align: "center"
+  }
+];
+const tableList = ref([])
+const getLogoSrc = (fileName, marketCode) => {
+  try {
+    return require(`../../assets/img/list/${fileName}/${marketCode}.png`);
+  } catch (error) {
+    return require('../../assets/img/temp_image.png');
+  }
+}
+
+const getProductVisitsList = async () => {
+  state.tableData.loading = true;
+  try {
+    const result = await getProductVisits(state.tableData.params);
+    result.status !== "2000" && message.error(result.message);
+
+    tableList.value = result.data;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    state.tableData.loading = false;
+  }
+};
+
+const searchProductVisits = (searchByZero = false) => {
+  if(searchByZero) {
+    state.tableData.params.number = "0";
+  }
+  getProductVisitsList()
+}
+
+const resetSearchParam = () => {
+  state.tableData.params = {
+    page: 1,
+    pageSize: 10,
+    market: Object.keys(state.marketList),
+    order_date: [moment().subtract(15, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
+    range: "",
+    search_type: "order_no",
+    search_value: "",
+    number: "",
+    sort: "up"
+  };
+}
+
 watch(
-        () => state.tableData.params.market,
-        val => {
-          state.indeterminate = !!val.length && val.length < Object.keys(state.marketList).length;
-          state.marketCheckAll = val.length === Object.keys(state.marketList).length;
-        }
+  () => state.tableData.params.market,
+  val => {
+    state.indeterminate = !!val.length && val.length < Object.keys(state.marketList).length;
+    state.marketCheckAll = val.length === Object.keys(state.marketList).length;
+  }
 );
 
 onMounted(async () => {
   await Promise.all([getMarketList()])
-          .then(() => {
-          });
+    .then(() => {
+    });
+  await getProductVisitsList();
 });
 
-const tableColumns = [
-  {
-    title: 'No',
-    dataIndex: 'No',
-    key: 'No',
-    width:'5%',
-    align:'center',
-  },
-  {
-    title: '이미지',
-    dataIndex: 'goodsImg',
-    key: 'goodsImg',
-    width:'10%',
-    align:'center',
-  },
-  {
-    title: '상품정보',
-    dataIndex: 'goodsInfo',
-    key: 'goodsInfo',
-    width:'15%',
-    align:'center',
-  },
-  {
-    title: '상품코드',
-    key: 'goodsCode',
-    dataIndex: 'goodsCode',
-    width:'10%',
-    align:'center',
-  },
-  {
-    title: '데이터차트',
-    key: 'chart',
-    dataIndex: 'chart',
-    width:'10%',
-    align:'center',
-  },
-  {
-    title: '누적 조회수',
-    key: 'views',
-    dataIndex: 'views',
-    width:'10%',
-    align:'center',
-    sorter:true,
-  },
-  {
-    title: '판매수',
-    key: 'sales',
-    dataIndex: 'sales',
-    width:'10%',
-    align:'center',
-    sorter:true,
-  },
-  {
-    title: '마켓연동일',
-    key: 'date',
-    dataIndex: 'date',
-    width:'20%',
-    align:'center',
-  },
-  {
-    title: '메모',
-    key: 'note',
-    width:'10%',
-    align:'center',
-  }
-];
-const tableList = [
-  {
-    key: '1',
-    No: 1,
-    goodsImg: '직원1직원1직원1',
-    goodsInfo: '여자 여름',
-    goodsCode: '777788889999',
-    views: 100,
-    sales: 99999,
-    date: '2023-12-20 12:40',
-  },
-  {
-    key: '2',
-    No: 2,
-    goodsImg: '직원1직원1직원1',
-    goodsInfo: '여자 여름',
-    goodsCode: '777788889999',
-    views: 100,
-    sales: 99999,
-    date: '2023-12-20 12:40',
-  },
-];
+
 //图表模态框
-const modalChart = () => {
+const loadChartDataLoading = ref(false);
+const modalChart = async (productId) => {
   state.modalOpen = true;
-  setTimeout(()=>{
-    var myChart = echarts.init(modalCharts.value);
-    var option;
-    option = {
-      tooltip: {
-        trigger: 'axis'
-      },
-      legend: {
-        data: ['一', '二', '三', '四']
-      },
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        boundaryGap: true,
-        data: ['10.21', '10.22', '10.23', '10.24', '10.25', '10.26', '10.27']
-      },
-      yAxis: {
-        type: 'value'
-      },
-      series: [
-        {
-          name: '一',
-          type: 'line',
-          stack: 'Total',
-          data: [120, 132, 101, 134, 90, 230, 210]
+  loadChartDataLoading.value = true;
+  try {
+    const result = await findProductVisits({ productId })
+    console.log(result);
+    const legend = result.data.map(v => v.marketCode);
+    // 1 mouth date range
+    let xAxis = result.data.map(v => dayjs(v.visitDate).format("MM.DD"));
+    // 중복 제거
+    xAxis = Array.from(new Set(xAxis));
+
+    // 값 세팅
+    const series = result.data.reduce((acc, cur) => {
+      const index = legend.indexOf(cur.marketCode);
+      if (acc[index]) {
+        xAxis.forEach((v, k) => {
+          if (v === dayjs(cur.visitDate).format("MM.DD")) {
+            acc[index].data[k] = cur.visitCount;
+          } else {
+            acc[index].data.push(0);
+          }
+        });
+      } else {
+        acc[index] = {
+          name: cur.marketCode,
+          type: "line",
+          data: [cur.visitCount],
+        };
+      }
+      return acc;
+    }, []);
+    console.log(series);
+    console.log(xAxis);
+    setTimeout(() => {
+      var myChart = echarts.init(modalCharts.value);
+      var option;
+      option = {
+        tooltip: {
+          trigger: "axis"
         },
-        {
-          name: '二',
-          type: 'line',
-          stack: 'Total',
-          data: [220, 182, 191, 234, 290, 330, 310]
+        legend: {
+          data: legend
         },
-        {
-          name: '三',
-          type: 'line',
-          stack: 'Total',
-          data: [150, 232, 201, 154, 190, 330, 410]
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
         },
-        {
-          name: '四',
-          type: 'line',
-          stack: 'Total',
-          data: [320, 332, 301, 334, 390, 330, 320]
-        }
-      ]
-    };
-    option && myChart.setOption(option);
-  })
+        xAxis: {
+          type: "category",
+          boundaryGap: true,
+          data: xAxis
+        },
+        yAxis: {
+          type: "value"
+        },
+        series: series
+      };
+      option && myChart.setOption(option);
+    });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loadChartDataLoading.value = false;
+  }
+
 };
 const modalClose = () => {
   state.modalOpen = false;
@@ -345,19 +398,22 @@ const modalToggleTabs = (k) => {
 };
 </script>
 <style scoped>
-  .range{
-    border: 1px solid #d9d9d9;
-    padding: 4px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .line{
-    background: #ffd117;
-  }
-  .tab-wrap button{
-    width: 100px;
-  }
-  .tab-wrap .ant-btn-default{
-    border: 1px solid #ffd117;
-  }
+.range {
+  border: 1px solid #d9d9d9;
+  padding: 4px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.line {
+  background: #ffd117;
+}
+
+.tab-wrap button {
+  width: 100px;
+}
+
+.tab-wrap .ant-btn-default {
+  border: 1px solid #ffd117;
+}
 </style>
