@@ -124,23 +124,23 @@ export const menus = [{
                     name: "setting_updateDetail",
                     component: () => import("@/views/Setting/UpdateDetail"),
                     meta: {
-                        title: "계정 정보",
+                        title: "계정설정",
                         isHide: false,
                         roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
                 },
-                {
-                    path: "/setting/margin",
-                    name: "setting_margin",
-                    component: () => import("@/views/Setting/Margin"),
-                    meta: {
-                        title: "수익률 & 환율 설정",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: '',
-                    }
-                },
+                // {
+                //     path: "/setting/margin",
+                //     name: "setting_margin",
+                //     component: () => import("@/views/Setting/Margin"),
+                //     meta: {
+                //         title: "수익률 & 환율 설정",
+                //         isHide: false,
+                //         roles: ["ROLE_ADMIN", "ROLE_USER"],
+                //         icon: '',
+                //     }
+                // },
                 {
                     path: "/user/FilterProductWords",
                     name: "user_filterProductWords",
