@@ -263,7 +263,6 @@ export default {
         const cateId = item.cate_ids;
         this.displayCategories[accountName].loading = true
         return useCategoryApi().getDisplayCategorys({ market_code: marketCode, seller_id: sellerId, cate_id: cateId }).then(res => {
-          console.log('---', 3, res)
           if(res.status !== "2000") {
             message.error(res.message)
             return false;
@@ -277,7 +276,6 @@ export default {
           this.displayCategories[accountName].loading = false
         })
       }
-      console.log('---', 'end')
     },
 
     getLogoSrc(marketCode) {
