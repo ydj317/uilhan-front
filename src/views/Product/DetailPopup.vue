@@ -311,7 +311,6 @@ export default defineComponent({
 
     getForm(oForm) {
       let oProduct = this.product;
-
       oForm = this.setForm(oForm, {
         id: oProduct["item_id"],
         sku: JSON.stringify(oProduct.sku),
@@ -640,10 +639,10 @@ export default defineComponent({
       this.product.loading = true;
 
       //연동필수데이터 없는 상황
-      if (this.checkMarket() === false) {
-        this.product.loading = false;
-        return false;
-      }
+      // if (this.checkMarket() === false) {
+      //   this.product.loading = false;
+      //   return false;
+      // }
 
       // 주문옵션 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능
       let checkSellingPrice = this.checkSellingPrice();
