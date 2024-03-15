@@ -21,8 +21,8 @@
               >키워드 검색</a-button>
             </div>
 
-            <a-spin v-show="keyword.list.length > 0 || keyword.loading" v-model:spinning="keyword.loading">
-              <div class="keyword-list">
+            <a-spin v-model:spinning="keyword.loading">
+              <div class="keyword-list" v-show="keyword.list.length > 0 || keyword.loading">
                 <a-tag
                   v-for="item in keyword.list" :key="item.id"
                   :color="item.reg ? 'red' : ''"
@@ -94,6 +94,7 @@ export default {
       product: (state) => state.product.detail,
     }),
   },
+  emits: ['suggestCategory'],
   watch: {
     "product.item_trans_name"() {
       this.keyword.list.forEach(d => {
@@ -169,7 +170,8 @@ export default {
       // const params = {keyword: this.keyword.search_value}
       // AuthRequest.get(process.env.VUE_APP_API_URL + "/api/naver/keywords", params).then(res => {
       //   console.log('---', res)
-      //   this.initKeywords(res.data)  // @todo
+      //   this.initKeywords(res.data.keyword)  // @todo 替换位置
+      //   this.$emit('changeKeywords', res.data.category)   // res.data.category: string[]
       // }).catch(() => {
       //   message.error("상품 리스트 조회 실패하였습니다.")
       // }).finally(() => {
@@ -179,6 +181,7 @@ export default {
       this.keyword.loading = true
       this.keyword.list = []
       setTimeout(() => {
+        // @todo 以下内容 -> 替换位置
         this.initKeywords([
           {word: '겨울', reg: 0},
           {word: 'aaa', reg: 1},
@@ -187,6 +190,8 @@ export default {
           {word: '스포츠', reg: 1},
           {word: 'ccc', reg: 0},
         ])
+        this.$emit('suggestCategory', ['화장품/미용',  '헤어케어', '헤어팩'])
+
         this.keyword.loading = false
       }, 1000)
 
@@ -200,7 +205,8 @@ export default {
       if (! Array.isArray(keywords)) return
       if (keywords.length === 0) return
 
-      this.keyword.list = keywords.map(item => {
+      // 最多显示 40 个
+      this.keyword.list = keywords.slice(0, 40).map(item => {
         return {
           id: lib.uuid(),
           word: item.word,
