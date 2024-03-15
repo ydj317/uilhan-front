@@ -266,30 +266,33 @@
           <template
               v-else-if="['stock', 'shipping_fee_cn'].includes(column.key)"
           >
-            <a-input
+            <a-input-number
                 :style="
                 record.img
-                  ? `height: 30px; text-align: center; border: none;`
-                  : `height: 30px; text-align: center; border: none;`
+                  ? `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
+                  : `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
               "
                 style="display: flex;flex-direction: column;margin-top:-20px;"
                 @blur="handlerShippingFee(column.key, index)"
-                @input="handleInput($event, index, column.key);"
-                :value="tempFormattedValues[`${index}_${column.key}`] || record[column.key].toLocaleString()"
+
+                :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                v-model:value="record[column.key]"
             />
           </template>
 
           <!-- 판매가 -->
           <template v-else-if="column.key === 'selling_price'">
-            <a-input
+            <a-input-number
                 :style="
-                  record.img
-                    ? `height: 30px; text-align: center; border: none;`
-                    : `height: 30px; text-align: center; border: none;`
+                  record.imgs
+                    ? `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
+                    : `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
                 "
-                @blur="handlerCustomPrice(column.key, index)"
-                @input="handleInput($event, index, column.key)"
-                :value="tempFormattedValues[`${index}_${column.key}`] || record[column.key].toLocaleString()"
+                step="1000"
+                :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                v-model:value="record[column.key]"
             />
             <div style="text-align:center">
               <span style="font-size:12px;">옵션가기준</span>
@@ -520,6 +523,9 @@ export default defineComponent({
     handlerCustomPrice(key, index) {
       //자체입력으로 의한 가격 동기화(권장가, 판매가, 예상수익)
       if (key === "selling_price") {
+        // 从 tempFormattedValues 中解析原始数字
+        this.product.sku[index][key] = this.parseNumber(this.tempFormattedValues[`${index}_${key}`]); // 更新原始数据模型
+
         let sellingPrice = Number(this.product.sku[index][key]);
         let expected_return = (Number(sellingPrice) - Number(this.product.sku[index].original_price_ko)).toFixed(0);
         this.product.sku[index].expected_return = Number(expected_return);
@@ -789,17 +795,18 @@ export default defineComponent({
       return !isNaN(number) ? number.toLocaleString() : '';
     },
 
-    handleInput(event, index, key) {
-      const value = event.target.value.replace(/\D/g,''); // 删除所有非数字字符
-      this.tempFormattedValues[`${index}_${key}`] = Number(value).toLocaleString();
-      // 强制组件重新渲染以更新显示的值
-      this.$forceUpdate();
-    },
-
-    parseNumber(formattedValue) {
-      // 从格式化的字符串中移除所有非数字字符，转换回数字
-      return Number(formattedValue.replace(/[^\d]/g, ''));
-    },
+    // handleInput(event, index, key) {
+    //   const rawValue = event.target.value.replace(/[^\d]/g, ''); // 删除所有非数字字符
+    //   const numericValue = rawValue ? parseInt(rawValue, 10) : 0;
+    //   this.tempFormattedValues[`${index}_${key}`] = numericValue.toLocaleString();
+    //   // 强制组件重新渲染以更新显示的值
+    //   this.$forceUpdate();
+    // },
+    //
+    // parseNumber(formattedValue) {
+    //   // 从格式化的字符串中移除所有非数字字符，转换回数字
+    //   return Number(formattedValue.replace(/[^\d]/g, ''));
+    // },
 
   },
 
