@@ -88,7 +88,7 @@
       </tr>
       </thead>
       <!--옵션명 영역-->
-      <tbody style="height: 400px;overflow-y: scroll">
+      <tbody>
       <tr v-for="(item, index) in option.data" :key="item.key">
         <td>
           <div class="spec-option-name" style="padding: 6px 0;">
@@ -178,15 +178,24 @@ export default {
       option_group_find_str: '',
       option_group_replace_str: '',
       // 설정할 옵션안에 체크여부 판단필드를 넣어줌
-      oldOptionData : [],
+      oldOptionData : this.$store.state.product.detail.item_option.map(option => {
+        option.checkAll = false;
+        option.oldName = option.name;
+        option.data = option.data.map(item => {
+          item.oldName = item.name;
+          item.checked = false;
+          return item;
+        });
+        return option;
+      }),
       options : [],
-      selectedRows: [],
+      selectedRows: this.$store.state.product.detail.item_option.map(option => []),
       // restOption : this.$store.state.resetOption,
     };
   },
   methods: {
     closeOptionModal() {
-      this.$store.commit('setShowOptionModifyModal', false);
+      this.$store.commit('product/setShowOptionModify', false);
     },
     handleReplaceOptionGroup() {
       if (this.option_group_find_str.trim().length === 0) {
@@ -508,7 +517,6 @@ export default {
       if (this.product.sku.length < 0) {
         return false;
       }
-
       this.product.sku.forEach((sku, i) => {
         let aSkuName = sku.spec.split("::");
         let aSkuPvs = sku.pvs.split(";");
@@ -522,8 +530,8 @@ export default {
         });
       });
 
-      this.product.item_option = {...this.options};
-      this.$store.commit('setShowOptionModifyModal', false);
+      this.product.item_option = this.options;
+      this.$store.commit('product/setShowOptionModify', false);
 
     },
 
@@ -570,21 +578,7 @@ export default {
     },
   },
   mounted() {
-
-    this.oldOptionData = this.product.item_option.map(option => {
-      option.checkAll = false;
-      option.oldName = option.name;
-      option.data = option.data.map(item => {
-        item.oldName = item.name;
-        item.checked = false;
-        return item;
-      });
-      return option;
-    });
-
     this.options = cloneDeep(this.oldOptionData);
-    this.selectedRows = this.product.item_option.map(option => []);
-
     this.adjustRepeatHeights();
   },
 }

@@ -14,32 +14,96 @@
     <tr>
       <th>판매가 할인율</th>
       <td>
-        <a-input v-model:value="product.item_discount_rate" :min="0" :max="100" :step="1" style="width: 100%"
-                        suffix="%" placeholder="숫자를 입력해주세요" />
+        <a-input-number v-model:value="this.product.item_discount_rate"
+                        :min="0"
+                        :max="100"
+                        :step="1"
+                        style="width: 79%"
+                        addon-after="%"
+                        placeholder="숫자를 입력해주세요" />
       </td>
-      <th style="text-align:right">배송비 설정</th>
+      <th style="text-align:right">배송비 설정
+        <a-tooltip>
+          <template #title>
+            <div>
+              <div style="font-weight: bold">[무료배송 기능]</div>
+              <div style="line-height: 1.8;">무료배송 박스 체크 시 배송비를 상품 판매가 내 추가하여 등록 할 수 있는 기능입니다.</div>
+            </div>
+            <div>
+              <div style="font-weight: bold; margin-top: 10px">[쿠팡 배송 정책]</div>
+              <a-popover v-model:open="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop"
+                         style="z-index: 999">
+                <template #content>
+                  <table border="1" style="border: 1px solid #999" class="popoverTable">
+                    <tr>
+                      <th>항목</th>
+                      <th>상품 가격 기준</th>
+                      <th>배송비</th>
+                    </tr>
+                    <tr>
+                      <td rowspan="3">전체 카테고리</td>
+                      <td><strong>상품가</strong> &lt;&equals; 20,000</td>
+                      <td>최대 15,000</td>
+                    </tr>
+                    <tr>
+                      <td>20,000 &lt; <strong>상품가</strong> &lt;&equals; 40,000</td>
+                      <td>최대 20,000</td>
+                    </tr>
+                    <tr>
+                      <td><strong>상품가</strong> &gt; 40,000</td>
+                      <td>최대 30,000</td>
+                    </tr>
+                  </table>
+                </template>
+                쿠팡 배송비 정책 자세히 보러 가기 (삼각형 클릭)
+                <a-button type="link">▶</a-button>
+              </a-popover>
+            </div>
+            <div>
+              <div style="font-weight: bold; margin-top: 10px">[티몬 배송 정책]</div>
+              <div style="line-height: 1.8;">티몬의 경우 무료배송을 체크하지 않을 시 배송비용과 반품비용이 동일하게 적용됩니다.</div>
+              <div style="line-height: 1.8; margin-top: 10px">무료배송으로 선택 시 기존에 설정되어 있는 반품 비용으로 적용됩니다.</div>
+            </div>
+          </template>
+          <QuestionCircleOutlined/>
+        </a-tooltip>
+      </th>
       <td>
-        <a-radio-group v-model:value="product.item_shipping_fee_type">
-          <a-radio value="0">무료배송</a-radio>
-          <a-radio value="1">유료배송</a-radio>
+        <a-radio-group v-model:value="this.product.item_is_free_delivery">
+          <a-tooltip>
+            <template #title>배송비가 판매가에 적용됩니다.</template>
+            <a-radio :value="true">무료배송</a-radio>
+          </a-tooltip>
+          <a-tooltip>
+            <template #title>배송비가 운임에 적용됩니다.</template>
+            <a-radio :value="false">유료배송</a-radio>
+          </a-tooltip>
         </a-radio-group>
       </td>
     </tr>
 
     <tr>
       <th>판매가 인상/인하 설정</th>
-      <td class="price_setting">
-        <a-select v-model:value="product.item_price_change_type" style="width: 60px">
-          <a-select-option value="0">+</a-select-option>
-          <a-select-option value="1">-</a-select-option>
-        </a-select>
-        <a-input :min="0" :step="1" style="width: 80%; margin-left:8px" placeholder="숫자를 입력해주세요" suffix="원" />
+      <td class="">
+          <a-input-number :min="0" :step="1000" style="width: 280px;" v-model:value="this.item_price_change_value" addon-after="원">
+            <template #addonBefore >
+              <a-select v-model:value="this.item_price_change_type" style="width: 60px">
+                <a-select-option value="add">+</a-select-option>
+                <a-select-option value="minus">-</a-select-option>
+              </a-select>
+            </template>
+          </a-input-number>
+        <a-button style="margin-left: 5px" @click="changeSellingPrice">적용</a-button>
       </td>
       <th></th>
       <td>
-        <a-input v-model:value="product.item_price_change_value" :min="0" :step="1000" style="width: 70%"
-                        placeholder="예:판매가에 1000" suffix="원" />
-        <span class="add">판매가에 추가</span>
+        <a-input-number @change="handleShippingFeeChange"
+                        v-model:value.number="product.item_shipping_fee"
+                        :min="0"
+                        :step="1000"
+                        style="width: 50%"
+                        addon-after="원"
+                    />
       </td>
     </tr>
   </table>
@@ -80,55 +144,6 @@
           <a-space>
             <a-button @click="showOptionPop" >옵션 미리보기</a-button>
             <a-button @click="showOptionPop" >옵션 수정</a-button>
-<!--            <a-tooltip>-->
-<!--              <template #title>-->
-<!--                <div>-->
-<!--                  <div style="font-weight: bold">[무료배송 기능]</div>-->
-<!--                  <div style="line-height: 1.8;">무료배송 박스 체크 시 배송비를 상품 판매가 내 추가하여 등록 할 수 있는 기능입니다.</div>-->
-<!--                </div>-->
-<!--                <div>-->
-<!--                  <div style="font-weight: bold; margin-top: 10px">[쿠팡 배송 정책]</div>-->
-<!--                  <a-popover v-model:open="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop"-->
-<!--                             style="z-index: 999">-->
-<!--                    <template #content>-->
-<!--                      <table border="1" style="border: 1px solid #999" class="popoverTable">-->
-<!--                        <tr>-->
-<!--                          <th>항목</th>-->
-<!--                          <th>상품 가격 기준</th>-->
-<!--                          <th>배송비</th>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                          <td rowspan="3">전체 카테고리</td>-->
-<!--                          <td><strong>상품가</strong> &lt;&equals; 20,000</td>-->
-<!--                          <td>최대 15,000</td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                          <td>20,000 &lt; <strong>상품가</strong> &lt;&equals; 40,000</td>-->
-<!--                          <td>최대 20,000</td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                          <td><strong>상품가</strong> &gt; 40,000</td>-->
-<!--                          <td>최대 30,000</td>-->
-<!--                        </tr>-->
-<!--                      </table>-->
-<!--                    </template>-->
-<!--                    쿠팡 배송비 정책 자세히 보러 가기 (삼각형 클릭)-->
-<!--                    <a-button type="link">▶</a-button>-->
-<!--                  </a-popover>-->
-<!--                </div>-->
-<!--                <div>-->
-<!--                  <div style="font-weight: bold; margin-top: 10px">[티몬 배송 정책]</div>-->
-<!--                  <div style="line-height: 1.8;">티몬의 경우 무료배송을 체크하지 않을 시 배송비용과 반품비용이 동일하게 적용됩니다.</div>-->
-<!--                  <div style="line-height: 1.8; margin-top: 10px">무료배송으로 체크 시 기존에 설정되어 있는 반품 비용으로 적용됩니다.</div>-->
-<!--                </div>-->
-<!--              </template>-->
-<!--              <QuestionCircleOutlined/>-->
-<!--            </a-tooltip>-->
-<!--            <a-checkbox v-model:checked="product.item_is_free_delivery" @change="handleShippingFeeDeliveryChange">-->
-<!--              무료 배송-->
-<!--            </a-checkbox>-->
-<!--            <a-input-number v-model:value.number="product.item_shipping_fee" placeholder="배송비 입력" :step="1000"-->
-<!--                            :min="0" style="width: 80px" @change="handleShippingFeeChange"/>-->
             <a-button type="primary" @click="resetOption" class="reset">옵션정보 초기화</a-button>
           </a-space>
         </div>
@@ -193,33 +208,16 @@
                     @click="translatePopup(record, record.img)"
                 />
               </div>
-<!--              <a-button-->
-<!--                  class="sku_image_button"-->
-<!--                  @click="skuImageWindowVisible(record.key)"-->
-<!--              >선택-->
-<!--              </a-button>-->
+              <a-button
+                  class="sku_image_button"
+                  @click="skuImageWindowVisible(record.key)"
+              >선택
+              </a-button>
               <a-button>
                 <EditOutlined />
               </a-button>
             </div>
           </template>
-
-          <!--품목코드-->
-<!--          <template v-else-if="column.key === 'code'">-->
-<!--            <div class="center">-->
-<!--              {{ record.code }}-->
-<!--            </div>-->
-<!--          </template>-->
-
-<!--          <template v-else-if="column.key === 'is_option_reference_price'">-->
-<!--            <div class="center">-->
-<!--              <label class="ant-radio-wrapper" :class="{'ant-radio-wrapper-checked': record.is_option_reference_price === 'T' }">-->
-<!--                <span class="ant-radio" :class="{'ant-radio-checked': record.is_option_reference_price === 'T' }">-->
-<!--                  <span class="ant-radio-inner" @click="setIsOptionReferencePrice(record.key)"></span>-->
-<!--                </span>-->
-<!--              </label>-->
-<!--            </div>-->
-<!--          </template>-->
 
           <!--스펙-->
           <template v-else-if="column.key === 'spec'">
@@ -262,7 +260,7 @@
             </div>
           </template>
 
-          <!--입력-->
+          <!--재고수량-->
           <template
               v-else-if="['stock', 'shipping_fee_cn'].includes(column.key)"
           >
@@ -273,8 +271,7 @@
                   : `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
               "
                 style="display: flex;flex-direction: column;margin-top:-20px;"
-                @blur="handlerShippingFee(column.key, index)"
-
+                min="0"
                 :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                 :parser="value => value.replace(/\$\s?|(,*)/g, '')"
                 v-model:value="record[column.key]"
@@ -290,6 +287,8 @@
                     : `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
                 "
                 step="1000"
+                min="0"
+                @change="watchExpectedReturn(column.key, index)"
                 :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                 :parser="value => value.replace(/\$\s?|(,*)/g, '')"
                 v-model:value="record[column.key]"
@@ -353,26 +352,11 @@ export default defineComponent({
       previewSrc: '',
       setting_price_type: 'min_price',
       sku_columns: [
-        // {
-        //   title: "선택",
-        //   key: "checked",
-        //   width: "1%",
-        // },
         {
           title: "옵션이미지",
           key: "img",
           width: "1%",
         },
-        // {
-        //   title: "옵션가 기준",
-        //   key: "is_option_reference_price",
-        //   width: "6%",
-        // },
-        // {
-        //   title: "품목코드",
-        //   key: "code",
-        //   width: "12%",
-        // },
         {
           title: "옵션명/품목코드",
           key: "spec",
@@ -419,7 +403,9 @@ export default defineComponent({
         onSelectAll: this.handleSelectAll,
       },
 
-      tempFormattedValues: {}, // 用于存储临时格式化的输入值
+      // 판매가 인상인하 사용값
+      item_price_change_type : 'add',
+      item_price_change_value : 0
     };
   },
 
@@ -513,8 +499,7 @@ export default defineComponent({
       });
     },
 
-    handlerShippingFee(key, index) {
-
+    watchExpectedReturn(key, index) {
       //예상수익
       let expected_return = (Number(this.product.sku[index].selling_price) - Number(this.product.sku[index].original_price_ko)).toFixed(0);
       this.product.sku[index].expected_return = Number(expected_return);
@@ -738,14 +723,6 @@ export default defineComponent({
       this.product.sku = this.product.sku.map(data => ({ ...data, shipping_fee_ko: val }));
     },
 
-    handleShippingFeeDeliveryChange() {
-      if (this.product.item_is_free_delivery) {
-        message.warn('배송비가 판매가에 적용됩니다.');
-      } else {
-        message.warn('배송비가 운임에 적용됩니다.');
-      }
-    },
-
     setExpectedReturn() {
       this.product.sku.map((data, i) => {
         let expected_return = (Number(data.selling_price) - Number(data.original_price_ko)).toFixed(0);
@@ -757,7 +734,8 @@ export default defineComponent({
 
     },
     showOptionPop() {
-      this.$store.commit('setShowOptionModifyModal', true);
+      // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModifyModal = true 로 설정
+      this.$store.commit('product/setShowOptionModify', true)
     },
 
     // 옵션 초기화  (수집시 옵션으로)
@@ -771,9 +749,9 @@ export default defineComponent({
         title: '옵션정보를 초기화 하시겠습니까?',
         content: '편집된 옵션정보는 삭제되고 상품 수집시 옵션정보로 초기화됩니다.',
         onOk() {
-          _this.product.item_option =  {..._this.product.item_org_option};
-          _this.product.sku = cloneDeep(_this.product.item_org_sku);
-          _this.handleShippingFeeChange(_this.formState.item_shipping_fee);
+          _this.product.item_option = cloneDeep(_this.product.item_org_option);
+          _this.product.sku = _this.product.item_org_sku;
+          _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
           _this.product.resetOption = true;
           message.success('옵션정보가 초기화 되었습니다.')
@@ -795,18 +773,22 @@ export default defineComponent({
       return !isNaN(number) ? number.toLocaleString() : '';
     },
 
-    // handleInput(event, index, key) {
-    //   const rawValue = event.target.value.replace(/[^\d]/g, ''); // 删除所有非数字字符
-    //   const numericValue = rawValue ? parseInt(rawValue, 10) : 0;
-    //   this.tempFormattedValues[`${index}_${key}`] = numericValue.toLocaleString();
-    //   // 强制组件重新渲染以更新显示的值
-    //   this.$forceUpdate();
-    // },
-    //
-    // parseNumber(formattedValue) {
-    //   // 从格式化的字符串中移除所有非数字字符，转换回数字
-    //   return Number(formattedValue.replace(/[^\d]/g, ''));
-    // },
+    changeSellingPrice(){
+      if (Number(this.item_price_change_value) === 0) {
+        return false;
+      }
+      this.product.sku.forEach((sku,index) => {
+        if (this.item_price_change_type === 'add') {
+          sku.selling_price = Number(sku.selling_price) + Number(this.item_price_change_value);
+        } else  {
+          sku.selling_price = Number(sku.selling_price) - Number(this.item_price_change_value);
+          if (sku.selling_price < 0) {
+            sku.selling_price = 0;
+          }
+        }
+        this.watchExpectedReturn('selling_price', index)
+      });
+    }
 
   },
 
@@ -899,7 +881,6 @@ export default defineComponent({
 
 .price_setting .ant-input-number-group-wrapper{
   width:79% !important;
-  margin-left:10px;
 }
 
 .price-setting-table .add{

@@ -6,7 +6,10 @@ const state = () => ({
     detail: {
         onload: false,
         loading: true,
+        resetOption : false  // 수집시 옵션으로 초기화
     },
+    showOptionModify: false,    // 옵션수정 모달노출여부
+// 옵션 정보 초기화
 });
 
 const getters = {}
@@ -14,6 +17,10 @@ const getters = {}
 const mutations = {
     setDetail(state, value) {
         state.detail = value;
+    },
+    // 상품상세에서 옵션 수정 모달 띄우기
+    setShowOptionModify(state, value) {
+        state.showOptionModify = value;
     },
 };
 
