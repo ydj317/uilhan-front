@@ -27,24 +27,24 @@
 
       <div>
         <h3 class="field-label">수집조회</h3>
-        <date-range v-model:start="searchParams.start_time" v-model:end="searchParams.end_time" />
+        <date-range v-model:start="searchParams.item_ins_start" v-model:end="searchParams.item_ins_end" />
       </div>
       <div>
         <h3 class="field-label">연동조회</h3>
-        <date-range v-model:start="searchParams.start_time" v-model:end="searchParams.end_time" />
+        <date-range v-model:start="searchParams.item_sync_start" v-model:end="searchParams.item_sync_end" />
       </div>
       <div>
         <h3 class="field-label">수정조회</h3>
-        <date-range v-model:start="searchParams.start_time" v-model:end="searchParams.end_time" />
+        <date-range v-model:start="searchParams.item_upd_start" v-model:end="searchParams.item_upd_end" />
       </div>
       <div>
         <h3 style="font-weight: bold;">상품코드</h3>
-        <a-input style="width: 100%" placeholder="다중검색은 콤마,로 구분하세요." />
+        <a-input v-model:value="searchParams.prd_code" style="width: 100%" placeholder="다중검색은 콤마,로 구분하세요." />
       </div>
 
       <div>
         <h3 style="font-weight: bold;">품목코드</h3>
-        <a-input style="width: 100%" placeholder="다중검색은 콤마,로 구분하세요." />
+        <a-input v-model:value="searchParams.item_no" style="width: 100%" placeholder="다중검색은 콤마,로 구분하세요." />
       </div>
     </div>
   </a-modal>
