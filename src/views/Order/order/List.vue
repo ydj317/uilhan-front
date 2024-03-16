@@ -859,7 +859,7 @@ const showHistory = (param) => {
 };
 
 
-const bridgeFormVisible = ref(true);
+const bridgeFormVisible = ref(false);
 const bridgeFormData = ref({});
 const showBridgeForm = (param) => {
   bridgeFormData.value = param;
