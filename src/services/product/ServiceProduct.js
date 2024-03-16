@@ -11,13 +11,13 @@ export class ServiceProduct {
     return {
       // 旧 params
       // market_code: 'all',
-      date_type: "insert_date",
-      start_time: "",
-      end_time: "",
-      search_key: "item_code",
-      search_value: "",
-      trans_status: "all",  // 没有界面设置，无脑传 all
+      // date_type: "insert_date",
+      // start_time: "",
+      // end_time: "",
+      // search_key: "item_code",
+      // search_value: "",
       // sync_status: "all",
+      trans_status: "all",  // 没有界面设置，无脑传 all
 
       // 新 params
       market_code: "all",   // 상품수집마켓  Taobao|Tmall|Alibaba|Aliexpress

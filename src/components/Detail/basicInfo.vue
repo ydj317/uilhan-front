@@ -13,8 +13,13 @@
         <td style="display: flex;align-items: flex-start">
           <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
             <div style="display: flex;gap: 10px">
-              <a-input v-model:value.trim="keyword.search_value" placeholder="검색 키워드를 입력하세요" />
+              <a-input
+                :disabled="keyword.loading"
+                v-model:value.trim="keyword.search_value"
+                placeholder="검색 키워드를 입력하세요"
+              />
               <a-button
+                :loading="keyword.loading"
                 type="primary"
                 style="background-color: #1e44ff;color: white"
                 @click="searchKeyword"
@@ -161,40 +166,17 @@ export default {
 
   methods: {
     async searchKeyword() {
-      if (! this.keyword.search_value) return
-
-      // 如果没有搜索到 keywords, 该怎么版？  显示 div 内容不是 a-tag 列表，而是 空内容的文字提示？
-
-      // this.keyword.loading = true
-      // this.keyword.list = []
-      // const params = {keyword: this.keyword.search_value}
-      // AuthRequest.get(process.env.VUE_APP_API_URL + "/api/naver/keywords", params).then(res => {
-      //   console.log('---', res)
-      //   this.initKeywords(res.data.keyword)  // @todo 替换位置
-      //   this.$emit('changeKeywords', res.data.category)   // res.data.category: string[]
-      // }).catch(() => {
-      //   message.error("상품 리스트 조회 실패하였습니다.")
-      // }).finally(() => {
-      //   this.keyword.loading = false
-      // })
-
       this.keyword.loading = true
       this.keyword.list = []
-      setTimeout(() => {
-        // @todo 以下内容 -> 替换位置
-        this.initKeywords([
-          {word: '겨울', reg: 0},
-          {word: 'aaa', reg: 1},
-          {word: 'bbb', reg: 0},
-          {word: '부츠', reg: 0},
-          {word: '스포츠', reg: 1},
-          {word: 'ccc', reg: 0},
-        ])
-        this.$emit('suggestCategory', ['화장품/미용',  '헤어케어', '헤어팩'])
-
+      const params = {keyword: this.keyword.search_value}
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/naver/keywords", params).then(res => {
+        this.initKeywords(res.data.keywords)
+        this.$emit('suggestCategory', res.data.category)
+      }).catch(() => {
+        message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
+      }).finally(() => {
         this.keyword.loading = false
-      }, 1000)
-
+      })
     },
     isUsingKeyword(word) {
       const in_name = this.product.item_trans_name?.split(' ')?.includes(word)
