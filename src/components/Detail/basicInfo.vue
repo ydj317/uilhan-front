@@ -13,30 +13,30 @@
         <td style="display: flex;align-items: flex-start">
           <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
             <div style="display: flex;gap: 10px">
-              <a-input placeholder="검색 키워드를 입력하세요" />
-              <a-button type="primary" style="background-color: #1e44ff;color: white">키워드 검색</a-button>
+              <a-input
+                :disabled="keyword.loading"
+                v-model:value.trim="keyword.search_value"
+                placeholder="검색 키워드를 입력하세요"
+              />
+              <a-button
+                :loading="keyword.loading"
+                type="primary"
+                style="background-color: #1e44ff;color: white"
+                @click="searchKeyword"
+              >키워드 검색</a-button>
             </div>
 
-            <div style="background-color: #eeeeee;padding: 10px;display: grid;grid-template-columns: repeat(12,1fr);gap: 5px;justify-content: center;align-items: center">
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-              <a-tag>키워드</a-tag>
-              <a-tag color="red">키워드</a-tag>
-              <a-tag :bordered="false">키워드</a-tag>
-            </div>
+            <a-spin v-model:spinning="keyword.loading">
+              <div class="keyword-list" v-show="keyword.list.length > 0 || keyword.loading">
+                <a-tag
+                  v-for="item in keyword.list" :key="item.id"
+                  :color="item.reg ? 'red' : ''"
+                  :class="{ 'default-tag': ! item.reg, 'is-using': item.is_using }"
+                  :bordered="! item.is_using || item.reg"
+                  @click="addKeyword(item)"
+                >{{item.word}}</a-tag>
+              </div>
+            </a-spin>
           </div>
         </td>
       </tr>
@@ -62,7 +62,7 @@
         <th>상품태그</th>
         <td>
           <a-spin :spinning="ai_loading === true">
-            <a-input v-model:value="product.item_sync_keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다." :maxlength="255" :showCount="true"
+            <a-input v-model:value="product.item_sync_keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다." :maxlength="max_sync_keyword_length" :showCount="true"
             />
           </a-spin>
         </td>
@@ -89,6 +89,7 @@ import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined,CheckCircleOutlined} from '@ant-design/icons-vue';
 import {useMandatoryApi} from "@/api/mandatory";
+import {lib} from "@/util/lib";
 
 export default {
   components: {QuestionCircleOutlined,CheckCircleOutlined},
@@ -98,10 +99,24 @@ export default {
       product: (state) => state.product.detail,
     }),
   },
+  emits: ['suggestCategory'],
+  watch: {
+    "product.item_trans_name"() {
+      this.keyword.list.forEach(d => {
+        d.is_using = this.isUsingKeyword(d.word)
+      })
+    },
+    "product.item_sync_keyword"() {
+      this.keyword.list.forEach(d => {
+        d.is_using = this.isUsingKeyword(d.word)
+      })
+    }
+  },
 
   data() {
     return {
       max_name_length: 50,
+      max_sync_keyword_length: 255,
       item_trans_name: "",
       CONFIG: [
         {
@@ -140,12 +155,66 @@ export default {
       mandatory: [],
       is_filter_word_list: false,
       use_ai: false,
-      ai_loading: false
+      ai_loading: false,
+      keyword: {
+        loading: false,
+        search_value: '',
+        list: [],
+      },
     };
   },
 
   methods: {
+    async searchKeyword() {
+      this.keyword.loading = true
+      this.keyword.list = []
+      const params = {keyword: this.keyword.search_value}
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/naver/keywords", params).then(res => {
+        this.initKeywords(res.data.keywords)
+        this.$emit('suggestCategory', res.data.category)
+      }).catch(() => {
+        message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
+      }).finally(() => {
+        this.keyword.loading = false
+      })
+    },
+    isUsingKeyword(word) {
+      const in_name = this.product.item_trans_name?.split(' ')?.includes(word)
+      const in_tags = this.product.item_sync_keyword?.split(',')?.includes(word)
+      return in_name || in_tags
+    },
+    initKeywords(keywords) {
+      if (! Array.isArray(keywords)) return
+      if (keywords.length === 0) return
 
+      // 最多显示 40 个
+      this.keyword.list = keywords.slice(0, 40).map(item => {
+        return {
+          id: lib.uuid(),
+          word: item.word,
+          reg: item.reg === 1,  // reg: 1|0
+          is_using: this.isUsingKeyword(item.word),
+        }
+      })
+    },
+    addKeyword(keywordInfo) {
+      let use = false
+      const newName = [this.product.item_trans_name, keywordInfo.word].filter(d => !!d).join(' ')
+      if (newName.length <= this.max_name_length) {
+        this.product.item_trans_name = newName
+        use = true
+      }
+
+      const newKeyword = [this.product.item_sync_keyword, keywordInfo.word].filter(d => !!d).join(',')
+      if (newKeyword.length <= this.max_sync_keyword_length) {
+        this.product.item_sync_keyword = [this.product.item_sync_keyword, keywordInfo.word].filter(d => !!d).join(',')
+        use = true
+      }
+
+      if (use) {
+        keywordInfo.is_using = true
+      }
+    },
     getMandatory() {
       useMandatoryApi().getList().then((res) => {
         this.mandatory = res.data;
@@ -325,5 +394,28 @@ export default {
 
 .basic-info-table td {
   padding: 10px 20px;
+}
+
+.keyword-list {
+  background-color: #eeeeee;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+  min-height: 42px;
+}
+
+.keyword-list :deep(.ant-tag) {
+  cursor: pointer;
+}
+
+.keyword-list :deep(.default-tag) {
+  background-color: #fff;
+  color: #000000;
+}
+.keyword-list :deep(.is-using) {
+  background-color: #f5f5f5;
 }
 </style>

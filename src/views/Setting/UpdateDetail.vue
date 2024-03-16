@@ -45,8 +45,8 @@
     </a-descriptions>
   </a-card>
 
-  <a-card :loading="formState.loading" :bordered="false">
-    <a-descriptions title="환율 / 수익률 / 수수료 설정" bordered :column="1" :labelStyle="{ width: '100px' }"
+  <a-card :loading="formState.loading" :bordered="false" title="환율 / 수익률 / 수수료 설정">
+    <a-descriptions bordered :column="1" :labelStyle="{ width: '100px' }"
                     :contentStyle="{ width: '500px' }">
       <a-descriptions-item>
         <!-- label slot-->
