@@ -22,7 +22,7 @@ const actions = {
         try {
             state.detail.loading = true;
             await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prd", {
-                params: {prduct_idx: value},
+                params: {product_idx: value},
             }).then((res) => {
                 if (
                     lib.isEmpty(res) ||
