@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" centered>
+  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" centered :maskClosable="false">
     <a-tabs v-model:activeKey="activeKey"
             :tabBarGutter="0.5"
             type="card"
@@ -332,7 +332,8 @@ export default defineComponent({
         custom_code: oProduct.custom_code,
 
         item_cate: JSON.stringify(oProduct.item_cate),
-        item_disp_cate: JSON.stringify(oProduct.item_disp_cate)
+        item_disp_cate: JSON.stringify(oProduct.item_disp_cate),
+        discount_rate: oProduct.item_discount_rate,
       });
 
       return oForm;
@@ -639,10 +640,10 @@ export default defineComponent({
       this.product.loading = true;
 
       //연동필수데이터 없는 상황
-      // if (this.checkMarket() === false) {
-      //   this.product.loading = false;
-      //   return false;
-      // }
+      if (this.checkMarket() === false) {
+        this.product.loading = false;
+        return false;
+      }
 
       // 주문옵션 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능
       let checkSellingPrice = this.checkSellingPrice();
