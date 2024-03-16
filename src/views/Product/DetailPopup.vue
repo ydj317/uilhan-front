@@ -116,6 +116,7 @@ export default defineComponent({
 
   data() {
     return {
+      activeKey: '1',
       tabList: [
         {
           key: '1',
@@ -193,15 +194,13 @@ export default defineComponent({
     prdId: {
       type: Number,
       required: true
+    },
+    activeTab: {
+      type: String,
+      default: '1'
     }
   },
   emits: ['update:visible'],
-  setup() {
-    const activeKey = ref('1');
-    return {
-      activeKey,
-    };
-  },
 
   methods: {
 
@@ -888,6 +887,10 @@ export default defineComponent({
       },
       immediate: true,
     },
+    activeTab(newVal) {
+      const keyList = this.tabList.map(d => d.key)
+      this.activeKey = keyList.indexOf(newVal) ? newVal : '1'
+    }
   },
 
   beforeMount() {
