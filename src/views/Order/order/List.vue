@@ -232,11 +232,13 @@
                 </div>
 
               </a-space>
-              <a-space class="mt10"
-                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">
+<!--              <a-space class="mt10"-->
+<!--                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">-->
+              <a-space class="mt10">
                 <a-button size="small" @click.prevent="showBridgeForm({record: item, type:'puragent'})">구매대행</a-button>
                 <a-button size="small" @click.prevent="showBridgeForm({record: item, type:'shipagent'})">배송대행</a-button>
               </a-space>
+
               <a-space class="mt10"
                        v-if="item.status === 'shippingAddress' && item.isSendBridge === 1 && state.is_bridge_sync === true && item.prdImage"
                        direction="vertical" align="center">
