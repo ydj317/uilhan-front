@@ -76,7 +76,7 @@
     :prdId="detailPrd"
     :active-tab="detailActive"
   />
-  <ModalMemo v-model:memo-data="memoForm" @before-save="indicator = true" @after-save="() => {getList()}" />
+  <ModalMemo v-model:memo-data="memoForm" @before-save="indicator = true" @after-save="() => {reloadList}" />
 </template>
 
 <script setup>
@@ -111,7 +111,7 @@ const showFilter = ref(false)
 const showDetail = ref(false)
 const detailPrd = ref(0)
 const detailActive = ref('1')
-const searchParams = ref(ServiceProduct.defaultParams())
+const searchParams = ref(ServiceProduct.getCacheParams())
 const productList = ref([])
 const searchCount = ref(0)
 const totalCount = ref(0)
@@ -160,10 +160,14 @@ async function searchFail() {
   return getList()
 }
 
-async function getList(type = '') {
+async function reloadList() {
+  return getList(ServiceProduct.getCacheParams())
+}
+
+async function getList() {
   indicator.value = false // 当显示 list loading, 则不需要显示全局 loading
   listLoading.value = true
-  return ServiceProduct.getList({...searchParams.value}, type).then((res) => {
+  return ServiceProduct.getList({...searchParams.value}).then((res) => {
     productList.value = res.data.list;
     searchParams.value.page = parseInt(res.data.page);
     searchParams.value.limit = parseInt(res.data.limit);
@@ -178,17 +182,17 @@ async function getList(type = '') {
 }
 
 function onChangePage(page) {
-  sessionStorage.marketAccount_page = page;
-  searchParams.value.page = page;
+  // 应用上一次生效的搜索条件，并设置新 page
+  searchParams.value = ServiceProduct.getCacheParams()
+  searchParams.value.page = page
   getList();
 }
 
 function onChangeLimit(current, pageSize) {
+  // 应用上一次生效的搜索条件，且分页设为1，然后设置新的 limit
+  searchParams.value = ServiceProduct.getCacheParams()
   searchParams.value.page = 1
-  sessionStorage.marketAccount_page = 1;
-
   searchParams.value.limit = pageSize;
-  sessionStorage.marketAccount_limit = pageSize;
   getList();
 }
 
@@ -284,7 +288,7 @@ onMounted(() => {
   Promise.all([
     getMarketList(),
     getMarketDetailUrls(),
-    getList("reload"),
+    reloadList(),
     getSmartstoreCategory()
   ]);
 })
