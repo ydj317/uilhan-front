@@ -326,50 +326,43 @@ const modalChart = async (productId) => {
   loadChartDataLoading.value = true;
   try {
     const result = await findProductVisits({ productId })
-    console.log(result);
     const legend = result.data.map(v => v.marketCode);
-    // 1 mouth date range
-    let xAxis = result.data.map(v => dayjs(v.visitDate).format("MM.DD"));
-    // 중복 제거
-    xAxis = Array.from(new Set(xAxis));
 
-    // 값 세팅
-    const series = result.data.reduce((acc, cur) => {
-      const index = legend.indexOf(cur.marketCode);
-      if (acc[index]) {
-        xAxis.forEach((v, k) => {
-          if (v === dayjs(cur.visitDate).format("MM.DD")) {
-            acc[index].data[k] = cur.visitCount;
-          } else {
-            acc[index].data.push(0);
-          }
-        });
+    // 오늘 부터 15일전 데이터
+    const today = dayjs();
+    let xAxis = Array.from({ length: 15 }, (v, k) => today.subtract(k, "day").format("YYYY-MM-DD")).reverse();
+
+    // group by marketCode
+    const groupByData = result.data.reduce((acc, cur) => {
+      if(acc[cur.marketCode]) {
+        acc[cur.marketCode].push(cur);
       } else {
-        acc[index] = {
-          name: cur.marketCode,
-          type: "line",
-          data: [cur.visitCount],
-        };
+        acc[cur.marketCode] = [cur];
       }
       return acc;
     }, []);
-    console.log(series);
-    console.log(xAxis);
+
+    let series;
+    series = Object.keys(groupByData).map((v, k) => {
+      return {
+        name: v,
+        type: "line",
+        data: xAxis.map(_v => {
+          const find = groupByData[v].find(_vv => dayjs(_vv.visitDate).format("YYYY-MM-DD") === _v);
+          return find ? find.visitCount : 0;
+        })
+      };
+    });
+
     setTimeout(() => {
-      var myChart = echarts.init(modalCharts.value);
-      var option;
+      const myChart = echarts.init(modalCharts.value);
+      let option;
       option = {
         tooltip: {
           trigger: "axis"
         },
         legend: {
           data: legend
-        },
-        grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "3%",
-          containLabel: true
         },
         xAxis: {
           type: "category",
@@ -388,7 +381,6 @@ const modalChart = async (productId) => {
   } finally {
     loadChartDataLoading.value = false;
   }
-
 };
 const modalClose = () => {
   state.modalOpen = false;
