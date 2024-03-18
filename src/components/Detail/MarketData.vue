@@ -75,19 +75,19 @@
                   >전시 카테고리 미설정</div>
                 </template>
               </template>
-              <div
-                style="display: flex;flex-direction: column;gap: 10px"
-                class="mt15 scrollable-div"
-                v-if="searchCategories[market.accountName].length > 0"
-              >
-                <template v-for="(item, key) in searchCategories[market.accountName]" :key="key">
-                  <div>
-                    <a-typography-link @click="settingCategory(item, market)">
-                      {{ item.cate_names.join(' / ') }}
-                    </a-typography-link>
-                  </div>
-                </template>
-              </div>
+<!--              <div-->
+<!--                style="display: flex;flex-direction: column;gap: 10px"-->
+<!--                class="mt15 scrollable-div"-->
+<!--                v-if="searchCategories[market.accountName].length > 0"-->
+<!--              >-->
+<!--                <template v-for="(item, key) in searchCategories[market.accountName]" :key="key">-->
+<!--                  <div>-->
+<!--                    <a-typography-link @click="settingCategory(item, market)">-->
+<!--                      {{ item.cate_names.join(' / ') }}-->
+<!--                    </a-typography-link>-->
+<!--                  </div>-->
+<!--                </template>-->
+<!--              </div>-->
             </template>
             <a-spin v-else spinning><a-input /></a-spin>
           </td>
@@ -237,6 +237,12 @@ export default {
         const params = { market_code: marketInfo.market_code, search_keyword: search_keyword }
         queue.push(
           useCategoryApi().getAutoRecommendCategoryNames(params).then(res => {
+            //yl+
+            if(res.data.length){
+              this.categories[marketInfo.accountName].value = res.data[0]['cate_names'].join('/');
+            }else{
+              this.categories[marketInfo.accountName].value = [];
+            }
             this.searchCategories[marketInfo.accountName] = res.data
           })
         )
