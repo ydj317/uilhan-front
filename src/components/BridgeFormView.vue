@@ -207,7 +207,7 @@
     </a-row>
     <a-row class="bottom-border">
       <a-col :span="3" class="bg-fa pt30 step4-left">
-        <a-row >
+        <a-row class="ml10">
           <a-upload
                   name="avatar"
                   list-type="picture-card"
@@ -1035,6 +1035,7 @@ watchEffect(() => {
         display: flex;
         flex-direction: column;
         justify-content: center;
+      align-items: center;
     }
     .step4-right-text{
         display: flex;
@@ -1056,5 +1057,8 @@ watchEffect(() => {
   .footer-wrap .under-line{
       padding-bottom: 2px;
       border-bottom: 1px solid white;
+  }
+  .ant-modal-content{
+    height: 100% !important;
   }
 </style>
