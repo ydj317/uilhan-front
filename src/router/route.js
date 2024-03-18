@@ -32,20 +32,9 @@ export const menus = [{
         {
             path: "/product",
             name: "product",
-            component: () => import("@/views/Product/List"),
-            meta: {
-                title: "상품관리",
-                isHide: false,
-                roles: ["ROLE_USER", "ROLE_ADMIN"],
-                icon: GiftOutlined
-            },
-        },
-        {
-            path: "/product/new",
-            name: "product_new",
             component: () => import("@/views/Product/List/index.vue"),
             meta: {
-                title: "상품관리_new",
+                title: "상품관리",
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: GiftOutlined
