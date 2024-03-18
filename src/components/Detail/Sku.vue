@@ -734,7 +734,7 @@ export default defineComponent({
 
     },
     showOptionPop() {
-      // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModifyModal = true 로 설정
+      // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModify = true 로 설정
       this.$store.commit('product/setShowOptionModify', true)
     },
 

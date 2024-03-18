@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.showOptionModifyModal" width="100%" wrap-class-name="full-modal" :maskClosable="false">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.product.showOptionModify" width="100%" wrap-class-name="full-modal" :maskClosable="false">
     <template #footer>
       <div style="display: flex; justify-content: center;">
         <a-button key="back" style="width: 100px;" @click="this.closeOptionModal" >취소</a-button>
