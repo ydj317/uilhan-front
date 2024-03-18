@@ -21,7 +21,7 @@
                 @click="searchMarketCategory(search_keyword)"
               >카테고리 검색</a-button>
             </div>
-            <div class="search_category_list">
+            <div class="search_category_list" v-if="suggestCategory.length">
               <a href="javascript:void(0)">추천 카테고리: {{suggestCategory.join(' / ') || '-'}}</a>
             </div>
           </td>
