@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청서'" width="1000px"
+  <a-modal v-model:open="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청서'" width="100%" wrap-class-name="full-modal"
            :confirm-loading="state.confirmLoading" @ok="handleOk" @cancel="onClose" class="showModal" :footer="null">
     <a-row>
       <a-divider class="divider bg-b mb10"></a-divider>
@@ -62,7 +62,7 @@
       <a-col :span="3" class="center bg-fa">수령자 정보</a-col>
       <a-col :span="21" class="mt10 mb10">
         <a-row class="center">
-          <a-col :span="12" class="center">
+          <a-col :span="9" class="pl70">
             <a-radio-group value="개인통관고유부호">
               <a-radio value="개인통관고유부호" class="mr30">개인통관고유부호
                 <a-tooltip>
@@ -75,7 +75,7 @@
               <a-radio value="사업자등록번호">사업자등록번호</a-radio>
             </a-radio-group>
           </a-col>
-          <a-col :span="7">
+          <a-col :span="10">
             <a-input />
           </a-col>
           <a-col :span="5" align="center">
@@ -176,16 +176,18 @@
       <a-col :span="3" class="center bg-fa text-center">트래킹번호Tracking No.</a-col>
       <a-col :span="21" class="pt10">
         <a-row class="mb10">
-          <a-col :span="8" class="center">
+          <a-col :span="1"></a-col>
+          <a-col :span="5">
             <a-select value="申通" class="step4-select">
               <a-select-option value="申通">申通</a-select-option>
               <a-select-option value="申通2">申通2</a-select-option>
             </a-select>
           </a-col>
-          <a-col :span="16" class="center"><a-input/></a-col>
+          <a-col :span="18" class="center"><a-input/></a-col>
         </a-row>
         <a-row class="mb10">
-          <a-col :span="24" class="ml40">
+          <a-col :span="1"></a-col>
+          <a-col :span="23">
             <a-checkbox class="mr10" checked></a-checkbox>
             <span class="fs12">트래킹번호 나중에 입력</span>
           </a-col>
@@ -380,14 +382,14 @@
           <a-checkbox class="mr15 mb10">깨짐주의스티커&nbsp;<a-tag color="blue">무료</a-tag></a-checkbox>
           <a-checkbox class="mr15">박스 재포장&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
           <a-checkbox class="mr15">모서리 보호대&nbsp;<a-tag color="red">2,000원</a-tag></a-checkbox>
-          <a-checkbox>스틱형 에어캡&nbsp;<a-tag color="red">1,500원</a-tag></a-checkbox>
-          <a-checkbox class="mr15 mb10">밴딩포장&nbsp;<a-tag color="red">2,000원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">스틱형 에어캡&nbsp;<a-tag color="red">1,500원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">밴딩포장&nbsp;<a-tag color="red">2,000원</a-tag></a-checkbox>
           <a-checkbox class="mr15">폴리백포장&nbsp;<a-tag color="red">500원</a-tag></a-checkbox>
           <a-checkbox class="mr15">고급 폴리백포장&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
-          <a-checkbox>기본뿌뿌이&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">기본뿌뿌이&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
           <a-checkbox class="mr15">나무 특수포장&nbsp;<a-tag color="red">20,000원</a-tag></a-checkbox>
           <a-checkbox class="mr15">발포지&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">내품보안포장&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
+          <a-checkbox>내품보안포장&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
       </a-col>
   </a-row>
   <a-row class="step5 bottom-border">
@@ -400,23 +402,23 @@
   <a-row class="step5 bottom-border">
       <a-col :span="3" class="center bg-fa">통관옵션</a-col>
       <a-col :span="21" class="right-content pt25 pb25 pl20">
-          <a-checkbox class="mr10 mb10">목록통관&nbsp;<a-tag color="blue">무료</a-tag></a-checkbox>
-          <a-checkbox class="mr10">간이통관 수수료&nbsp;<a-tag color="red">3,300원</a-tag></a-checkbox>
-          <a-checkbox class="mr10">사업자통관 수수료&nbsp;<a-tag color="red">33,000원</a-tag></a-checkbox>
-          <a-checkbox>원산지증명발급&nbsp;<a-tag color="red">40,000원</a-tag></a-checkbox>
-          <a-checkbox class="mb10">B/L비용&nbsp;<a-tag color="red">30,000원</a-tag></a-checkbox>
+          <a-checkbox class="mr15 mb10">목록통관&nbsp;<a-tag color="blue">무료</a-tag></a-checkbox>
+          <a-checkbox class="mr15">간이통관 수수료&nbsp;<a-tag color="red">3,300원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">사업자통관 수수료&nbsp;<a-tag color="red">33,000원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">원산지증명발급&nbsp;<a-tag color="red">40,000원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">B/L비용&nbsp;<a-tag color="red">30,000원</a-tag></a-checkbox>
           <a-checkbox>컨테이너 작업비&nbsp;<a-tag color="red">30,000원</a-tag></a-checkbox>
       </a-col>
   </a-row>
   <a-row class="step5 bottom-border">
       <a-col :span="3" class="center bg-fa">기타옵션</a-col>
       <a-col :span="21" class="right-content pt25 pb25 pl20">
-          <a-checkbox class="mr10 mb10">멀티박스&nbsp;<a-tag color="red">3,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr10">관/부가세 선불&nbsp;<a-tag color="red">3,300원</a-tag></a-checkbox>
-          <a-checkbox class="mr10">도서산간&nbsp;<a-tag color="red">3,300원</a-tag></a-checkbox>
-          <a-checkbox>경동택배비용 선불</a-checkbox>
-          <a-checkbox class="mb10">220V돼지코&nbsp;<a-tag color="red">1,500원</a-tag></a-checkbox>
-          <a-checkbox>원산지 작업 (스티커/미싱)&nbsp;<a-tag color="orange">유료</a-tag></a-checkbox>
+          <a-checkbox class="mr15 mb10">멀티박스&nbsp;<a-tag color="red">3,000원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">관/부가세 선불&nbsp;<a-tag color="red">3,300원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">도서산간&nbsp;<a-tag color="red">3,300원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">경동택배비용 선불</a-checkbox>
+          <a-checkbox class="mr15">220V돼지코&nbsp;<a-tag color="red">1,500원</a-tag></a-checkbox>
+          <a-checkbox class="mr15">원산지 작업 (스티커/미싱)&nbsp;<a-tag color="orange">유료</a-tag></a-checkbox>
           <a-checkbox>부피무게&nbsp;<a-tag color="orange">즉정</a-tag></a-checkbox>
       </a-col>
   </a-row>
@@ -970,10 +972,6 @@ watchEffect(() => {
   .showModal input,.ant-select,.ant-select-selector,.ant-select-selection-item{
     height: 40px!important;
     line-height: 40px!important;
-  }
-  .ant-modal{
-      height: 600px;
-      overflow-y: scroll;
   }
   .ant-modal .ant-modal-content{
       padding-bottom: 0;
