@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.showOptionModifyModal" width="1500px" :maskClosable="false">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.showOptionModifyModal" width="100%" wrap-class-name="full-modal" :maskClosable="false">
     <template #footer>
       <div style="display: flex; justify-content: center;">
         <a-button key="back" style="width: 100px;" @click="this.closeOptionModal" >취소</a-button>
@@ -178,15 +178,24 @@ export default {
       option_group_find_str: '',
       option_group_replace_str: '',
       // 설정할 옵션안에 체크여부 판단필드를 넣어줌
-      oldOptionData : [],
+      oldOptionData : this.$store.state.product.detail.item_option.map(option => {
+        option.checkAll = false;
+        option.oldName = option.name;
+        option.data = option.data.map(item => {
+          item.oldName = item.name;
+          item.checked = false;
+          return item;
+        });
+        return option;
+      }),
       options : [],
-      selectedRows: [],
+      selectedRows: this.$store.state.product.detail.item_option.map(option => []),
       // restOption : this.$store.state.resetOption,
     };
   },
   methods: {
     closeOptionModal() {
-      this.$store.commit('setShowOptionModifyModal', false);
+      this.$store.commit('product/setShowOptionModify', false);
     },
     handleReplaceOptionGroup() {
       if (this.option_group_find_str.trim().length === 0) {
@@ -508,7 +517,6 @@ export default {
       if (this.product.sku.length < 0) {
         return false;
       }
-
       this.product.sku.forEach((sku, i) => {
         let aSkuName = sku.spec.split("::");
         let aSkuPvs = sku.pvs.split(";");
@@ -522,8 +530,8 @@ export default {
         });
       });
 
-      this.product.item_option = {...this.options};
-      this.$store.commit('setShowOptionModifyModal', false);
+      this.product.item_option = this.options;
+      this.$store.commit('product/setShowOptionModify', false);
 
     },
 
@@ -570,21 +578,7 @@ export default {
     },
   },
   mounted() {
-
-    this.oldOptionData = this.product.item_option.map(option => {
-      option.checkAll = false;
-      option.oldName = option.name;
-      option.data = option.data.map(item => {
-        item.oldName = item.name;
-        item.checked = false;
-        return item;
-      });
-      return option;
-    });
-
     this.options = cloneDeep(this.oldOptionData);
-    this.selectedRows = this.product.item_option.map(option => []);
-
     this.adjustRepeatHeights();
   },
 }

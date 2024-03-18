@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" centered>
+  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" centered :maskClosable="false">
     <a-tabs v-model:activeKey="activeKey"
             :tabBarGutter="0.5"
             type="card"
@@ -116,6 +116,7 @@ export default defineComponent({
 
   data() {
     return {
+      activeKey: '1',
       tabList: [
         {
           key: '1',
@@ -193,15 +194,13 @@ export default defineComponent({
     prdId: {
       type: Number,
       required: true
+    },
+    activeTab: {
+      type: String,
+      default: '1'
     }
   },
   emits: ['update:visible'],
-  setup() {
-    const activeKey = ref('1');
-    return {
-      activeKey,
-    };
-  },
 
   methods: {
 
@@ -311,7 +310,6 @@ export default defineComponent({
 
     getForm(oForm) {
       let oProduct = this.product;
-
       oForm = this.setForm(oForm, {
         id: oProduct["item_id"],
         sku: JSON.stringify(oProduct.sku),
@@ -333,7 +331,8 @@ export default defineComponent({
         custom_code: oProduct.custom_code,
 
         item_cate: JSON.stringify(oProduct.item_cate),
-        item_disp_cate: JSON.stringify(oProduct.item_disp_cate)
+        item_disp_cate: JSON.stringify(oProduct.item_disp_cate),
+        discount_rate: oProduct.item_discount_rate,
       });
 
       return oForm;
@@ -889,6 +888,10 @@ export default defineComponent({
       },
       immediate: true,
     },
+    activeTab(newVal) {
+      const keyList = this.tabList.map(d => d.key)
+      this.activeKey = keyList.indexOf(newVal) ? newVal : '1'
+    }
   },
 
   beforeMount() {

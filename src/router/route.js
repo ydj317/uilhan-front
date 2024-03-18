@@ -32,7 +32,7 @@ export const menus = [{
         {
             path: "/product",
             name: "product",
-            component: () => import("@/views/Product/List"),
+            component: () => import("@/views/Product/List/index.vue"),
             meta: {
                 title: "상품관리",
                 isHide: false,
