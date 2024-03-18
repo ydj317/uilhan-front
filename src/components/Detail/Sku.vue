@@ -524,7 +524,8 @@ export default defineComponent({
       }
       // this.product.sku 에서 this.selectedRows 에 있는것을 삭제
       this.product.sku  = this.product.sku.filter((data) => !this.selectedRows.includes(data));
-
+      // 선택품목 초기화
+      this.selectedRows = [];
       // 옵션기준가 품목이 삭제되면 처음거로 세팅
       const hasTrueOption = this.product.sku.some(skuItem => skuItem.is_option_reference_price === 'T');
 
