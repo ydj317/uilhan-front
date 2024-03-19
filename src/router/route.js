@@ -153,6 +153,17 @@ export const menus = [{
                     },
                 },
                 {
+                    path: "/user/UserQuotaControl",
+                    name: "user_userQuotaControl",
+                    component: () => import("@/views/Setting/UserQuotaControl"),
+                    meta: {
+                        title: "用户定额配置",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+                {
                     path: "/setting/guideForm/:id?",
                     name: "setting_guideForm",
                     component: () => import("../views/Setting/GuideForm"),
