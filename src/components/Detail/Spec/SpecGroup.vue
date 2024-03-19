@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.product.showOptionModify" width="100%" wrap-class-name="full-modal" :maskClosable="false">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.product.showOptionModify" width="85%" centered :maskClosable="false">
     <template #footer>
       <div style="display: flex; justify-content: center;">
         <a-button key="back" style="width: 100px;" @click="this.closeOptionModal" >취소</a-button>
@@ -10,42 +10,47 @@
 <div class="container">
 <!--  버튼 구역-->
   <div class="header-section">
+    <div class="left">
     <!--세팅버튼-->
-    <div class="setting header-button" style="display: flex;padding-right: 15px;">
-      <!--      <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
+      <div class="setting header-button" style="display: flex;padding-right: 15px;">
+        <!--      <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
 
-      <a-button @click="setTrim" class="spec-right-button" type="primary"
-                size="middle">빈칸
-      </a-button>
-      <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
-                 size="middle">특문
-      </a-button>
+        <a-button @click="setTrim" class="spec-right-button" type="primary"
+                  size="middle">빈칸제거
+        </a-button>
+        <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
+                   size="middle">특수문자제거
+        </a-button>
 
-      <a-button @click="setAtoZ" class="spec-right-button" type="primary"
-                size="middle">A-Z
-      </a-button>
+        <a-button @click="setAtoZ" class="spec-right-button" type="primary"
+                  size="middle">A-Z
+        </a-button>
 
-      <a-button @click="handleMenuClick('N')" class="spec-right-button" type="primary"
-                size="middle">01.___
-      </a-button>
+        <a-button @click="handleMenuClick('N')" class="spec-right-button" type="primary"
+                  size="middle">01.___
+        </a-button>
 
-      <a-button @click="handleMenuClick('A')" class="spec-right-button" type="primary"
-                size="middle">A.___
-      </a-button>
+        <a-button @click="handleMenuClick('A')" class="spec-right-button" type="primary"
+                  size="middle">A.___
+        </a-button>
+      </div>
+    </div>
 
-      <a-button @click="setBeforeOldOptionData" class="spec-right-button" type="primary"
-                 size="middle">초기화
-      </a-button>
+    <div class="right">
+      <div class="setting header-button" style="display: flex;padding-right: 15px;">
 
-      <a-input size="middle" v-model:value="option_group_find_str" style="width: 100px;"
-               placeholder="변경 전"></a-input>
-      >
-      <a-input size="middle" v-model:value="option_group_replace_str" style="width: 100px;"
-               placeholder="변경 후"></a-input>
-      <a-button type="primary" size="middle" @click="handleReplaceOptionGroup()" >
-        글자변경
-      </a-button>
-
+        <a-input size="middle" v-model:value="option_group_find_str" style="width: 100px;"
+                 placeholder="변경 전"></a-input>
+        >
+        <a-input size="middle" v-model:value="option_group_replace_str" style="width: 100px;"
+                 placeholder="변경 후"></a-input>
+        <a-button type="primary" size="middle" @click="handleReplaceOptionGroup()" >
+          글자변경
+        </a-button>
+        <a-button @click="setBeforeOldOptionData" class="spec-right-button reset-button" type="primary"
+                  size="middle">옵션명 초기화
+        </a-button>
+      </div>
     </div>
   </div>
   <div class="spec-box">
@@ -67,7 +72,7 @@
       </tr>
       <!--옵션값 일괄 설정 영역-->
       <tr>
-        <th>
+        <th class="option-name">
           <div class="spec-option-header">
             <div class="spec-option-left">
               <a-checkbox class="spec-checkbox" v-model:checked="option.checkAll" @change="onCheckAllChange(option, optionIndex)"
@@ -632,6 +637,7 @@ export default {
   justify-content: flex-end;
   min-height: 50px;
   margin-left:10px;
+  background:#fff;
 }
 
 .spec-option-name {
@@ -792,7 +798,7 @@ margin-bottom:5px;
 .header-section {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   height: 60px;
   margin-top: 10px;
   border-radius: 0.275rem;
@@ -801,11 +807,35 @@ margin-bottom:5px;
 
 .container {
   width: 100%;
+  max-height: 760px;
+  overflow-y: auto;
+  overflow-x:hidden;
   display: flex;
   flex-direction: column; /* 默认为 column，即垂直排列 */
 }
-.spec-right-button {
 
+.spec-box .option-name{
+  position:sticky;
+  top:0;
+  z-index:2000;
+}
+
+.header-section .left .ant-btn-primary{
+  background-color:#fff;
+  border:1px solid #f4f4f4;
+ box-shadow:unset;
+}
+.header-section .left .ant-btn-primary:hover{
+  color:#000;
+}
+
+.header-section .right button{
+  margin-left:5px;
+}
+
+.reset-button{
+  color:#fff;
+  background-color:#2171e2;
 }
 
 </style>

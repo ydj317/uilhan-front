@@ -8,7 +8,10 @@ const state = () => ({
         loading: true,
         resetOption : false  // 수집시 옵션으로 초기화
     },
+
+
     showOptionModify: false,    // 옵션수정 모달노출여부
+    showOptionPreview: false
 // 옵션 정보 초기화
 });
 
@@ -21,6 +24,10 @@ const mutations = {
     // 상품상세에서 옵션 수정 모달 띄우기
     setShowOptionModify(state, value) {
         state.showOptionModify = value;
+    },
+
+    setShowOptionPreview(state, value) {
+        state.showOptionPreview = value;
     },
 };
 

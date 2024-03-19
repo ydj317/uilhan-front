@@ -142,7 +142,7 @@
 
         <div>
           <a-space>
-            <a-button @click="showOptionPop" >옵션 미리보기</a-button>
+            <a-button @click="showOptionConPop" >옵션 미리보기</a-button>
             <a-button @click="showOptionPop" >옵션 수정</a-button>
             <a-button type="primary" @click="resetOption" class="reset">옵션정보 초기화</a-button>
           </a-space>
@@ -267,8 +267,8 @@
             <a-input-number
                 :style="
                 record.img
-                  ? `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
-                  : `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
+                  ? `height: 30px; text-align: center; border: none;border: none;`
+                  : `height: 30px; text-align: center; border: none;border: none;`
               "
                 style="display: flex;flex-direction: column;margin-top:-20px;"
                 min="0"
@@ -283,8 +283,8 @@
             <a-input-number
                 :style="
                   record.imgs
-                    ? `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
-                    : `height: 30px; text-align: center; border: none;border: none;margin-left: 40px;`
+                    ? `height: 30px; text-align: center; border: none;border: none;`
+                    : `height: 30px; text-align: center; border: none;border: none;`
                 "
                 step="1000"
                 min="0"
@@ -733,6 +733,13 @@ export default defineComponent({
     shippingFeeInit() {
 
     },
+
+    showOptionConPop(){
+      this.$nextTick(() => {
+        this.$store.commit('product/setShowOptionPreview', true)
+      });
+    },
+
     showOptionPop() {
       // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModify = true 로 설정
       this.$store.commit('product/setShowOptionModify', true)
@@ -992,7 +999,7 @@ export default defineComponent({
 .image-pic button{
   position:absolute;
   bottom:0;
-  right:2px;
+  right:5px;
   color:#fff;
   border:unset;
   background:#4C73D8;
@@ -1049,6 +1056,11 @@ export default defineComponent({
   position:sticky;
   top:0;
   z-index:1;
+}
+
+:deep .ant-table-cell:nth-child(4),
+:deep .ant-table-cell:nth-child(6){
+  text-align: -webkit-center;
 }
 
 </style>
