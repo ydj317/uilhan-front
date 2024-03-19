@@ -404,7 +404,6 @@ const onCheckMarketChange = () => {
 const onCheckAllChange = e => {
   state.indeterminate = false;
   state.tableData.checkedMarket = e.target.checked ? Object.keys(state.marketList) : [];
-  console.log(state.tableData.checkedMarket)
 };
 const getMarketList = async () => {
   try {
@@ -433,7 +432,6 @@ const getMarketList = async () => {
       );
 
       state.tableData.checkedMarket = Object.keys(state.marketList);
-      console.log(state.accountList)
     });
   } catch (e) {
     console.error(e);

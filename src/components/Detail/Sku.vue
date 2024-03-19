@@ -200,8 +200,9 @@
           <template v-else-if="column.key === 'img'">
             <div class="col center image-pic">
               <div>
-                <img
-                    class="sku_image"
+                <a-image
+                    :width="100"
+                    :height="100"
                     alt=""
                     v-if="record.img"
                     :src="record.img"
