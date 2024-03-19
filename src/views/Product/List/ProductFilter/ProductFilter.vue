@@ -61,14 +61,22 @@ const {isShow} = toRefs(props)
 const {searchParams} = inject('search')
 
 function resetParams() {
+  // 清空所有搜索条件, 但保留 limit
   const defaultParams = ServiceProduct.defaultParams()
-  // 保留分页信息，避免filter没有提交的情况下影响当前的 page 信息
-  defaultParams.page = searchParams.value.page
-  defaultParams.limit = searchParams.value.limit
-  // 保留商品名搜索的内容，提交时才清空。
-  defaultParams.keyword = searchParams.value.keyword || ''
-
+  const cacheParams = ServiceProduct.getCacheParams()
+  defaultParams.limit = cacheParams.limit
   searchParams.value = defaultParams
+  onSubmit()
+
+  // 如果不直接提交，应该按下面的处理
+  // const defaultParams = ServiceProduct.defaultParams()
+  // // 保留分页信息，避免filter没有提交的情况下影响当前的 page 信息
+  // defaultParams.page = searchParams.value.page
+  // defaultParams.limit = searchParams.value.limit
+  // // 保留商品名搜索的内容，提交时才清空。
+  // defaultParams.keyword = searchParams.value.keyword || ''
+  //
+  // searchParams.value = defaultParams
 }
 
 function onCancel() {
