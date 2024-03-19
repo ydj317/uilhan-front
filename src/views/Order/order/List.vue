@@ -33,12 +33,13 @@
             </a-space>
           </a-input-group>
         </a-descriptions-item>
-        <a-descriptions-item label="계정">
+        <a-descriptions-item label="마켓">
           <div>
-            <a-checkbox v-model:checked="state.marketCheckAll" :indeterminate="state.indeterminate"
+            <a-checkbox v-model:checked="state.marketCheckAll"
+                        :indeterminate="state.indeterminate"
                         @change="onCheckAllChange">전체
             </a-checkbox>
-            <a-checkbox-group v-model:value="state.tableData.params.market">
+            <a-checkbox-group v-model:value="state.tableData.checkedMarket" @change="onCheckMarketChange">
               <a-checkbox v-for="(item, key) in state.marketList" :key="key" :value="key">{{ item }}</a-checkbox>
             </a-checkbox-group>
           </div>
@@ -337,14 +338,15 @@ const state = reactive({
     syncBridgeStatusLoading: false,
     params: {
       order_date: [moment().subtract(15, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
-      market: [],
+      account_ids: [],
       search_type: "order_no",
       search_value: "",
-      status: ""
-    }
+      status: "",
+    },
+    checkedMarket: []
   },
   loading: false,
-  accountData: {},
+  accountList: [],
   order_date: [moment().subtract(15, "days"), moment()],
   orderStatus: [],
   orderStatusData: [],
@@ -360,7 +362,6 @@ const state = reactive({
   marketDetailUrls: {},
   syncStatusShow: false,
   is_bridge_sync: false,
-
   delayGuideData: {
     formData: {
       order_data: {},
@@ -395,28 +396,54 @@ const onChangeDatePicker = (value, dateString) => {
   state.tableData.params.order_date = [dateString[0], dateString[1]];
 };
 
+const onCheckMarketChange = () => {
+  // state.accountList 에서 체크되여 있는 marketCode 의 id 를 state.tableData.param.accountIds 에 넣어준다.
+  state.tableData.params.account_ids = state.accountList.filter(it => state.tableData.checkedMarket.includes(it.marketCode)).map(it => Number(it.id));
+};
+
 const onCheckAllChange = e => {
   state.indeterminate = false;
-  state.tableData.params.market = e.target.checked ? Object.keys(state.marketList) : [];
+  state.tableData.checkedMarket = e.target.checked ? Object.keys(state.marketList) : [];
+  console.log(state.tableData.checkedMarket)
 };
 const getMarketList = async () => {
   try {
+    let marketList = [];
     await useMarketApi().getMarketList({}).then(res => {
       if (res.status !== "2000") {
         message.error(res.message);
         return false;
       }
+      marketList = res.data;
+    });
 
-      state.marketList = res.data;
-      state.tableData.params.market = Object.keys(state.marketList);
+    await useMarketAccountApi().getAccountList({'page' : 'all', 'is_use': 1}).then(res => {
+      if (res.status !== "2000") {
+        message.error(res.message);
+        return false;
+      }
+      state.accountList = res.data.list;
+      state.marketList = res.data.list.reduce(
+          (acc, cur) => ({
+                ...acc,
+                [cur.marketCode] : marketList[cur.marketCode]
+              }
+          ),
+          {}
+      );
+
+      state.tableData.checkedMarket = Object.keys(state.marketList);
+      console.log(state.accountList)
     });
   } catch (e) {
     console.error(e);
   }
 };
 
+
+
 watch(
-  () => state.tableData.params.market,
+  () => state.tableData.checkedMarket,
   val => {
     state.indeterminate = !!val.length && val.length < Object.keys(state.marketList).length;
     state.marketCheckAll = val.length === Object.keys(state.marketList).length;
@@ -888,6 +915,7 @@ onMounted(async () => {
   await Promise.all([getMarketList(), getUserInfoData(), getMarketStatusList(), getMarketClaimStatusList(), getMarketDeliveryCompany(), getMarketAdminUrls(), getMarketDetailUrls()])
     .then(() => {
       state.allStatus = [...state.orderStatus, ...state.claimStatus];
+      onCheckMarketChange();
       getTableData();
     });
 });
