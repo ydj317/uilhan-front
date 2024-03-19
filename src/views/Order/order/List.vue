@@ -16,7 +16,19 @@
       </a-button>
     </template>
     <div id="header">
-      <a-descriptions bordered :column="1" size="middle">
+      <a-descriptions bordered :column="1" :labelStyle="{ height: '50px' }" :contentStyle="{ height: '50px' }">
+        <a-descriptions-item label="마켓">
+          <div>
+            <a-checkbox v-model:checked="state.marketCheckAll"
+                        :indeterminate="state.indeterminate"
+                        @change="onCheckAllChange">전체
+            </a-checkbox>
+            <a-checkbox-group v-model:value="state.tableData.checkedMarket" @change="onCheckMarketChange">
+              <a-checkbox v-for="(item, key) in state.marketList" :key="key" :value="key">{{ item }}</a-checkbox>
+            </a-checkbox-group>
+          </div>
+        </a-descriptions-item>
+
         <a-descriptions-item>
           <template #label>
             검색기간
@@ -29,24 +41,13 @@
           </template>
           <a-input-group compact>
             <a-space direction="vertical" :size="12">
-              <a-range-picker v-model:value="state.order_date" @change="onChangeDatePicker" />
+              <a-range-picker size="middle" v-model:value="state.order_date" @change="onChangeDatePicker" />
             </a-space>
           </a-input-group>
         </a-descriptions-item>
-        <a-descriptions-item label="마켓">
-          <div>
-            <a-checkbox v-model:checked="state.marketCheckAll"
-                        :indeterminate="state.indeterminate"
-                        @change="onCheckAllChange">전체
-            </a-checkbox>
-            <a-checkbox-group v-model:value="state.tableData.checkedMarket" @change="onCheckMarketChange">
-              <a-checkbox v-for="(item, key) in state.marketList" :key="key" :value="key">{{ item }}</a-checkbox>
-            </a-checkbox-group>
-          </div>
-        </a-descriptions-item>
         <a-descriptions-item label="검색어">
           <a-input-group compact style="display: flex;">
-            <a-select v-model:value="state.tableData.params.search_type" style="width: 100px;">
+            <a-select size="middle" v-model:value="state.tableData.params.search_type" style="width: 100px;">
               <a-select-option value="order_no">주문번호</a-select-option>
               <a-select-option value="prd_code">상품번호</a-select-option>
               <a-select-option value="prd_name">상품명</a-select-option>
@@ -55,33 +56,9 @@
               <a-select-option value="orderer_name">주문자</a-select-option>
               <a-select-option value="receiver_name">수취인</a-select-option>
             </a-select>
-            <a-input v-model:value="state.tableData.params.search_value" style="width: 300px;" allowClear />
+            <a-input size="middle" v-model:value="state.tableData.params.search_value" style="width: 300px;" allowClear />
           </a-input-group>
         </a-descriptions-item>
-        <a-descriptions-item label="주문상태">
-          <a-space>
-            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
-                           @change="handleStatusChange">
-              <a-radio-button value="" style="color: black">전체</a-radio-button>
-            </a-radio-group>
-            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
-                           @change="handleStatusChange">
-              <a-radio-button v-for="option in state.orderStatus" :value="option.value">{{
-                  option.label
-                }}
-              </a-radio-button>
-            </a-radio-group>
-
-            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
-                           @change="handleStatusChange">
-              <a-radio-button v-for="option in state.claimStatus" :value="option.value">{{
-                  option.label
-                }}
-              </a-radio-button>
-            </a-radio-group>
-          </a-space>
-        </a-descriptions-item>
-
       </a-descriptions>
 
       <div style="display: flex;justify-content: center;">
@@ -91,6 +68,21 @@
     </div>
   </a-card>
 
+  <div style="display: flex; position: relative; top: 32px">
+    <a-tabs
+        size="small"
+        v-model:activeKey="state.activeKey"
+        type="card" :tabBarGutter="1"
+        @change="statusTabChange" >
+      <a-tab-pane class="status_tab" v-for="pane in state.allStatus" :key="pane.value">
+        <template #tab>
+          <div :style="{color: state.activeKey === pane.value ? '#ffffff' : '#000000'}">
+            {{pane.label}}
+          </div>
+        </template>
+      </a-tab-pane>
+    </a-tabs>
+  </div>
   <a-card class="mt15">
     <div class="mb15" style="display: flex;justify-content: space-between;">
       <div class="left-div">
@@ -144,7 +136,12 @@
         <th>운송장정보</th>
         <th>주문관리</th>
       </tr>
-      <template v-for="(order, key, index) in filterOrderData" :key="key">
+      <tr v-if="state.tableData.loading">
+        <td colspan="10" style="background-color: white; text-align: center; height: 200px">
+          <a-spin size="large"/>
+        </td>
+      </tr>
+      <template v-if="!state.tableData.loading" v-for="(order, key, index) in filterOrderData" :key="key">
         <tr v-for="(item, _key) in order.items" :key="_key" :class="getGroupClass(index)">
           <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0"
               style="text-align: center;">
@@ -352,6 +349,7 @@ const state = reactive({
   orderStatusData: [],
   claimStatus: [],
   allStatus: [],
+  activeKey: "",
   claimStatusData: [],
   courierNameValues: {},
   invoiceNumberValues: {},
@@ -374,6 +372,14 @@ const state = reactive({
     showModal: false
   }
 });
+
+const statusTabChange = (key) => {
+  rowSelection.value.selectedRowKeys = [];
+  state.activeKey = key;
+  state.tableData.params.status = key;
+
+  getTableData();
+};
 
 const calculateRowspan = (order, key) => {
   return shouldDisplayRowspan(order, key) ? order.is_group ? order.items.filter(it => Object.keys(state.orderStatusData).includes(it.status)).length || 1 : 1 : 1;
@@ -912,7 +918,7 @@ const getUserInfoData = async () => {
 onMounted(async () => {
   await Promise.all([getMarketList(), getUserInfoData(), getMarketStatusList(), getMarketClaimStatusList(), getMarketDeliveryCompany(), getMarketAdminUrls(), getMarketDetailUrls()])
     .then(() => {
-      state.allStatus = [...state.orderStatus, ...state.claimStatus];
+      state.allStatus = [{label:'전체', value:''}, ...state.orderStatus, ...state.claimStatus];
       onCheckMarketChange();
       getTableData();
     });
@@ -950,6 +956,9 @@ onMounted(async () => {
 
 .ant-radio-group .ant-radio-button-wrapper-checked span {
   color: #000;
+}
+.ant-tabs-tab.ant-tabs-tab-active{
+  background-color: #ffd117 !important;
 }
 </style>
 
