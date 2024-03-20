@@ -2,6 +2,8 @@ import {message} from "ant-design-vue";
 import {lib} from "@/util/lib";
 import {AuthRequest} from "@/util/request";
 
+const KEY_PRD_LIST_PARAMS = "KEY_PRD_LIST_PARAMS";
+
 export class ServiceProduct {
   /**
    * 列表搜索的默认参数
@@ -37,25 +39,24 @@ export class ServiceProduct {
     }
   }
 
+  static getCacheParams() {
+    return JSON.parse(sessionStorage[KEY_PRD_LIST_PARAMS] || "{}")
+  }
+
+  static setCacheParams(params) {
+    sessionStorage[KEY_PRD_LIST_PARAMS] = JSON.stringify(params)
+  }
+
   /**
    * 列表搜索前过滤参数
    * @param params
    * @param type
    * @return {{search_value: string, date_type: string, start_time: string, search_key: string, end_time: string, limit: number, sync_status: string, page: number, market_code: string, trans_status: string}}
    */
-  static filterParams(params = this.defaultParams(), type = '') {
-    params = {...params}
+  static filterParams(params = {}) {
+    params = Object.assign(this.defaultParams(), params)
     params.market_code = lib.isEmpty(params.market_code) ? "all" : params.market_code
     params.sync_status = lib.isEmpty(params.sync_status) ? "all" : params.sync_status
-
-    if (type === "reload" && sessionStorage.marketAccount_page !== undefined) {
-      params.page = parseInt(sessionStorage.marketAccount_page)
-      params.limit = parseInt(sessionStorage.marketAccount_limit)
-    }
-
-    if (type === 'search') {
-      params.page = 1
-    }
 
     params.page = (params.page >= 1) ? params.page : 1
     params.limit = isNaN(params.limit) ? 10 : params.limit
@@ -68,8 +69,9 @@ export class ServiceProduct {
    * @param {'reload'|'search'|''} type
    * @return {*}
    */
-  static async getList(params = this.defaultParams(), type = '') {
-    params = this.filterParams(params, type);
+  static async getList(params = {}) {
+    params = this.filterParams(params);
+    this.setCacheParams(params)
     return AuthRequest.get(process.env.VUE_APP_API_URL + "/api/prdlist", {params}).then((res) => {
       if (res.status !== "2000") {
         message.error(res.message);

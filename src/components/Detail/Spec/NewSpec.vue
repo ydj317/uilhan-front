@@ -15,6 +15,9 @@
     <div class="body-section">
       <SpecGroup></SpecGroup>
     </div>
+    <div class="body-section">
+      <OptionPreview></OptionPreview>
+    </div>
   </div>
 </template>
 <script>
@@ -22,13 +25,15 @@ import { lib } from "util/lib";
 import { forEach, cloneDeep} from "lodash";
 import {mapState, useStore} from "vuex";
 import SpecGroup from "./SpecGroup";
+import OptionPreview from "./OptionPreview";
 import { message } from "ant-design-vue";
 import {computed,ref} from "vue";
 
 export default {
   name: "productDetailNewSpec",
   components:{
-    SpecGroup
+    SpecGroup,
+    OptionPreview
   },
   computed: {
     ...mapState({
