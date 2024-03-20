@@ -346,10 +346,10 @@ const modalChart = async (productId) => {
     series = Object.keys(groupByData).map((v, k) => {
       return {
         name: v,
-        type: "line",
+        type: "bar",
         data: xAxis.map(_v => {
           const find = groupByData[v].find(_vv => dayjs(_vv.visitDate).format("YYYY-MM-DD") === _v);
-          return find ? find.visitCount : 0;
+          return find ? find.visitCount : '-';
         })
       };
     });
