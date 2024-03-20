@@ -300,7 +300,7 @@
       </template>
     </a-modal>
   </div>
-
+  <ModalDetail/>
 </template>
 
 <script setup>
@@ -313,6 +313,7 @@ import moment from "moment";
 import { message } from "ant-design-vue";
 import HistoryView from "@/components/HistoryView.vue";
 import BridgeFormView from "@/components/BridgeFormView.vue";
+import ModalDetail from "@/views/Order/order/ModalDetail.vue";
 import {
   ContainerOutlined,
   DownloadOutlined,
@@ -324,6 +325,7 @@ import {
 import { useUserApi } from "@/api/user";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
+import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
 
 
 const state = reactive({
