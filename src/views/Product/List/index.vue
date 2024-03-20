@@ -76,7 +76,7 @@
     :prdId="detailPrd"
     :active-tab="detailActive"
   />
-  <ModalMemo v-model:memo-data="memoForm" @before-save="indicator = true" @after-save="() => {reloadList}" />
+  <ModalMemo v-model:memo-data="memoForm" @before-save="indicator = true" @after-save="reloadList" />
 </template>
 
 <script setup>
