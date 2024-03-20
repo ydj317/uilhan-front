@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" centered :maskClosable="false">
+  <a-modal v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="false">
     <a-tabs v-model:activeKey="activeKey"
             :tabBarGutter="0.5"
             type="card"
@@ -919,4 +919,9 @@ export default defineComponent({
 .ant-tabs-tab.ant-tabs-tab-active{
   background-color: #ffd117 !important;
 }
+
+.ant-modal {
+  height: unset;
+}
+
 </style>
