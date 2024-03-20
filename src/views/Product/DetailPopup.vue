@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" centered :maskClosable="false">
+  <a-modal v-model:open="localvisible" title="상품상세" width="100%" centered :maskClosable="false" wrap-class-name="full-modal">
     <a-tabs v-model:activeKey="activeKey"
             :tabBarGutter="0.5"
             type="card"
