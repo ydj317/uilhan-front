@@ -62,7 +62,7 @@
         <th>상품태그</th>
         <td>
           <a-spin :spinning="ai_loading === true">
-            <a-input v-model:value="product.item_sync_keyword" placeholder="검색어는 '콤마(,)'로 구분하여 작성해주시기 바라며, 최대 255자내로 등록 가능합니다." :maxlength="max_sync_keyword_length" :showCount="true"
+            <a-input v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " :maxlength="max_sync_keyword_length" :showCount="false"
             />
           </a-spin>
         </td>
@@ -180,7 +180,7 @@ export default {
     },
     isUsingKeyword(word) {
       const in_name = this.product.item_trans_name?.split(' ')?.includes(word)
-      const in_tags = this.product.item_sync_keyword?.split(',')?.includes(word)
+      const in_tags = this.product.item_sync_keyword?.split(' ')?.includes(word)
       return in_name || in_tags
     },
     initKeywords(keywords) {
@@ -196,18 +196,29 @@ export default {
           is_using: this.isUsingKeyword(item.word),
         }
       })
+      //超过40个 商品tags显示20个未注册 yinliang+
+      keywords.slice(40, 60).map(item => {
+        //最多20个tags
+        let tagsLength = this.product.item_sync_keyword.split(' ').length;
+        if(tagsLength < 20 && item.reg == 0){
+          this.addKeyword(item,2);
+        }
+      })
     },
-    addKeyword(keywordInfo) {
+    addKeyword(keywordInfo,from = 1) {
       let use = false
-      const newName = [this.product.item_trans_name, keywordInfo.word].filter(d => !!d).join(' ')
-      if (newName.length <= this.max_name_length) {
-        this.product.item_trans_name = newName
-        use = true
+      if(from == 1){ //yinliang+
+        const newName = [this.product.item_trans_name, keywordInfo.word].filter(d => !!d).join(' ')
+        if (newName.length <= this.max_name_length) {
+          this.product.item_trans_name = newName
+          use = true
+        }
       }
 
-      const newKeyword = [this.product.item_sync_keyword, keywordInfo.word].filter(d => !!d).join(',')
-      if (newKeyword.length <= this.max_sync_keyword_length) {
-        this.product.item_sync_keyword = [this.product.item_sync_keyword, keywordInfo.word].filter(d => !!d).join(',')
+      const newKeyword = [this.product.item_sync_keyword, keywordInfo.word].filter(d => !!d).join(' ')
+      // if (newKeyword.length <= this.max_sync_keyword_length) {
+      if (this.max_sync_keyword_length) {//yinliang+
+        this.product.item_sync_keyword = [this.product.item_sync_keyword, keywordInfo.word].filter(d => !!d).join(' ')
         use = true
       }
 
@@ -322,8 +333,8 @@ export default {
         }
 
         if (res.data && Array.isArray(res.data.keywords)) {
-          this.product.item_sync_keyword = res.data.keywords.join(',');
-          let prd_name_keyword = res.data.keywords.join(',');
+          this.product.item_sync_keyword = res.data.keywords.join(' ');
+          let prd_name_keyword = res.data.keywords.join(' ');
           this.product.item_trans_name += ' ' + prd_name_keyword.replace(/,/g, ' ')
         } else {
           this.product.item_sync_keyword = '';
@@ -343,6 +354,10 @@ export default {
     this.getUserInfo();
     this.getMandatory();
     console.log(this.product);
+    //首次进来以空格分隔显示 yinliang+
+    if(this.product.item_sync_keyword){
+      this.product.item_sync_keyword = this.product.item_sync_keyword.split(/,\s*|\s+/).join(' ');
+    }
     if (this.product.item_is_trans) {
       this.product.item_trans_name = this.product.item_trans_name.substr(
           0,

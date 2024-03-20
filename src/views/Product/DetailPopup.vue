@@ -919,9 +919,4 @@ export default defineComponent({
 .ant-tabs-tab.ant-tabs-tab-active{
   background-color: #ffd117 !important;
 }
-
-.ant-modal {
-  height: unset;
-}
-
 </style>
