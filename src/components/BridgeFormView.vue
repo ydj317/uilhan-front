@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청서'" width="100%" wrap-class-name="full-modal"
+  <a-modal id="bridgeForm" v-model:open="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청서'" width="100%" wrap-class-name="full-modal"
            :confirm-loading="state.confirmLoading" @ok="handleOk" @cancel="onClose" class="showModal" :footer="null">
     <a-row>
       <a-divider class="divider bg-b mb10"></a-divider>
@@ -973,7 +973,7 @@ watchEffect(() => {
     height: 40px!important;
     line-height: 40px!important;
   }
-  .ant-modal .ant-modal-content{
+  #bridgeForm .ant-modal .ant-modal-content{
       padding-bottom: 0;
   }
   .ant-tag-blue,.ant-tag-red,.ant-tag-orange{
@@ -1058,7 +1058,7 @@ watchEffect(() => {
       padding-bottom: 2px;
       border-bottom: 1px solid white;
   }
-  .ant-modal-content{
+  #bridgeForm .ant-modal-content{
     height: 100% !important;
   }
 </style>

@@ -12,25 +12,24 @@
   <div class="header-section">
     <div class="left">
     <!--세팅버튼-->
-      <div class="setting header-button" style="display: flex;padding-right: 15px;">
-        <!--      <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
+      <div class="setting header-button" style="display: flex;padding-right: 15px; position: relative; left: 10px;">
 
-        <a-button @click="setTrim" class="spec-right-button" type="primary"
+        <a-button @click="setTrim" class="spec-right-button"
                   size="middle">빈칸제거
         </a-button>
-        <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
+        <a-button @click="replaceSpecialChars" class="spec-right-button"
                    size="middle">특수문자제거
         </a-button>
 
-        <a-button @click="setAtoZ" class="spec-right-button" type="primary"
+        <a-button @click="setAtoZ" class="spec-right-button"
                   size="middle">A-Z
         </a-button>
 
-        <a-button @click="handleMenuClick('N')" class="spec-right-button" type="primary"
+        <a-button @click="handleMenuClick('N')" class="spec-right-button"
                   size="middle">01.___
         </a-button>
 
-        <a-button @click="handleMenuClick('A')" class="spec-right-button" type="primary"
+        <a-button @click="handleMenuClick('A')" class="spec-right-button"
                   size="middle">A.___
         </a-button>
       </div>
@@ -39,11 +38,14 @@
     <div class="right">
       <div class="setting header-button" style="display: flex;padding-right: 15px;">
 
-        <a-input size="middle" v-model:value="option_group_find_str" style="width: 100px;"
-                 placeholder="변경 전"></a-input>
-        >
-        <a-input size="middle" v-model:value="option_group_replace_str" style="width: 100px;"
-                 placeholder="변경 후"></a-input>
+        <a-space>
+          <a-input size="middle" v-model:value="option_group_find_str" style="width: 100px;"
+                   placeholder="변경 전"></a-input>
+          >
+          <a-input size="middle" v-model:value="option_group_replace_str" style="width: 100px;"
+                   placeholder="변경 후"></a-input>
+        </a-space>
+
         <a-button type="primary" size="middle" @click="handleReplaceOptionGroup()" >
           글자변경
         </a-button>

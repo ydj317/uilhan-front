@@ -585,6 +585,11 @@ function getUserInfoData() {
       return false;
     }
 
+    if (user_data.description_option === undefined) {
+      formState.loading = false;
+      return false;
+    }
+
     // 빈 json 일때 백앤드에선 []로 저장되기에 추후에 버그가 생길수 있어서 프론트단에서 []받을시 강제로 {}로 전환
     if (Array.isArray(user_data.margin_weight.markets) && user_data.margin_weight.markets.length === 0) {
       user_data.margin_weight.markets = {};
