@@ -200,8 +200,9 @@
           <template v-else-if="column.key === 'img'">
             <div class="col center image-pic">
               <div>
-                <img
-                    class="sku_image"
+                <a-image
+                    :width="100"
+                    :height="100"
                     alt=""
                     v-if="record.img"
                     :src="record.img"
@@ -397,10 +398,9 @@ export default defineComponent({
         onShowSizeChange: (current, pageSize) => (this.pageSize = pageSize),
       },
 
+      selectedRows: [],
       rowSelection: {
-        onChange: this.handleRowSelectionChange,
-        onSelect: this.handleRowSelect,
-        onSelectAll: this.handleSelectAll,
+        onChange: this.handleRowSelectionChange
       },
 
       // 판매가 인상인하 사용값
@@ -519,21 +519,15 @@ export default defineComponent({
 
     // 품목삭제
     deleteSku() {
-      if (
-          !lib.isArray(
-              this.product.sku.filter((data) => data.checked === true),
-              true
-          )
-      ) {
+      if (this.selectedRows.length === 0) {
         message.warning("선택된 품목이 없습니다.");
         return false;
       }
-
-      // 삭제
-      this.product.sku = this.product.sku.filter(
-          (data) => data.checked !== true
-      );
-
+      // this.product.sku 에서 this.selectedRows 에 있는것을 삭제
+      this.product.sku  = this.product.sku.filter((data) => !this.selectedRows.includes(data));
+      // 선택품목 초기화
+      this.selectedRows = [];
+      // 옵션기준가 품목이 삭제되면 처음거로 세팅
       const hasTrueOption = this.product.sku.some(skuItem => skuItem.is_option_reference_price === 'T');
 
       if (!hasTrueOption) {
@@ -544,7 +538,6 @@ export default defineComponent({
           if (index === 0) {
             skuItem.is_option_reference_price = 'T';
           }
-
           index++;
         }
       }
@@ -734,7 +727,7 @@ export default defineComponent({
 
     },
     showOptionPop() {
-      // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModifyModal = true 로 설정
+      // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModify = true 로 설정
       this.$store.commit('product/setShowOptionModify', true)
     },
 
@@ -762,10 +755,7 @@ export default defineComponent({
     },
 
     handleRowSelectionChange(selectedRowKeys, selectedRows) {
-    },
-    handleRowSelect(record, selected, selectedRows) {
-    },
-    handleSelectAll(selected, selectedRows, changeRows) {
+      this.selectedRows = selectedRows;
     },
 
     formatNumber(value) {

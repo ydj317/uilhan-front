@@ -43,7 +43,6 @@
 import {lib} from "@/util/lib";
 import { toRefs } from "vue";
 import {message} from "ant-design-vue";
-import BtnEdit from "@/views/Product/List/ProductItem/BtnEdit.vue";
 import BtnLinkMarket from "@/views/Product/List/ProductItem/BtnLinkMarket.vue";
 import ItemTitle from "@/views/Product/List/ProductItem/ItemTitle.vue";
 import ItemPrice from "@/views/Product/List/ProductItem/ItemPrice.vue";
