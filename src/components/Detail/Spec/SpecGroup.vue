@@ -176,7 +176,16 @@ export default {
         }
       },
       deep: true
-    }
+    },
+
+    '$store.state.product.showOptionModify': {
+      handler: function (val) {
+        if (val === true) {
+          this.adjustRepeatHeights();
+        }
+      },
+      deep: true
+    },
   },
   components: {PlusOutlined, MinusOutlined},
   data() {
@@ -752,7 +761,6 @@ margin-bottom:5px;
 .repeat{
   text-align: right;
   max-width:100%;
-//min-height:0;
 }
 .ant-tag{
   margin: 0 0 5px 10px;
@@ -816,7 +824,7 @@ margin-bottom:5px;
   flex-direction: column; /* 默认为 column，即垂直排列 */
 }
 
-.spec-box .option-name{
+.spec-box thead{
   position:sticky;
   top:0;
   z-index:2000;

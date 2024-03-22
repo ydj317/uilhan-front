@@ -136,7 +136,7 @@
     </a-descriptions>
   </a-card>
 
-  <a-card :loading="formState.loading" :bordered="false" title="상세이미지 설정">
+  <a-card :loading="formState.loading" :bordered="false" title="상세페이지 설정">
     <a-descriptions bordered :column="1" :labelStyle="{ width: '100px' }"
                     :contentStyle="{ width: '500px' }">
       <a-descriptions-item>
@@ -711,7 +711,7 @@ onMounted(() => {
   :deep .delete-icon {
     color: red;
     position: absolute;
-    right: 100px;
+    right: 114px;
     top: 20px;
     cursor: pointer;
   }

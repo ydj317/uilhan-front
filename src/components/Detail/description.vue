@@ -2,8 +2,7 @@
   <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
     <a-spin v-if="product.loading" size="large"/>
   </div>
-  <div v-show="!product.loading" id="eModelTitle_4" class="mt20 p20 bg-white">
-    <h3><strong>상세페이지</strong></h3>
+  <div v-show="!product.loading" id="eModelTitle_4" class="bg-white">
     <!--title-->
     <div style="display: flex; justify-content: space-between;">
       <div style="display: flex;align-items: center;">
@@ -124,7 +123,7 @@ export default {
         }
       });
       watch(() => this.showOptionTable, (newValue) => {
-        this.setOptionTableContent();
+          this.setOptionTableContent();
       });
       watch(() => this.showVideo, (newValue) => {
         this.setVideoContent();
