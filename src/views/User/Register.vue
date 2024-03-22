@@ -78,18 +78,18 @@
           <div class="help">휴대전화를 입력해주십시오</div>
         </a-descriptions-item>
         <a-descriptions-item>
-            <div class="postal-code fl-tc mb20">
-              <span class="fl-tc mr12" :class="{'required':checked2}"><strong>우편번호</strong></span>
-              <a-form-item name="zoneCode" class="mr12" has-feedback>
-                <a-input v-model:value="formState.zoneCode" placeholder="우편번호" :maxlength="10" disabled />
-              </a-form-item>
-              <a-button type="primary" class="fl-cc" @click="showExpressModal">우편번호 검색</a-button>
-            </div>
-          <div class="help ml70" :class="{'red':checked2 && formState.zoneCode == ''}">넥스트배송 동시가입을 진행할 경우 우편번호는 필수로 입력해주십시오.</div>
+          <span :class="{'required':checked2}"><strong>우편번호</strong></span>
+          <div class="fl mt5">
+            <a-form-item name="zoneCode" class="mr12" has-feedback>
+              <a-input v-model:value="formState.zoneCode" placeholder="우편번호" :maxlength="10" disabled />
+            </a-form-item>
+            <a-button type="primary" class="center mt5" @click="showExpressModal">우편번호 검색</a-button>
+          </div>
+          <div class="help" :class="{'red':checked2 && formState.zoneCode == ''}">넥스트배송 동시가입을 진행할 경우 우편번호는 필수로 입력해주십시오.</div>
         </a-descriptions-item>
         <a-descriptions-item>
-          <span :class="{'required':checked2}"><strong>주소</strong></span>
-          <div class="address fl">
+          <span class="pb5" :class="{'required':checked2}"><strong>주소</strong></span>
+          <div class="address fl mt5">
             <a-form-item name="basicAddress" class="mr12" has-feedback>
               <a-input v-model:value="formState.basicAddress" placeholder="주소" disabled/>
             </a-form-item>
@@ -703,8 +703,8 @@ export default defineComponent({
         if (value === "") {
           return Promise.reject("상세주소를 입력해주십시오.");
         } else {
-          if (value.length < 2 || value.length > 20) {
-            return Promise.reject("상세주소는 최소 2자 최대 20자이내로 입력해주십시오");
+          if (value.length < 2 || value.length > 50) {
+            return Promise.reject("상세주소는 최소 2자 최대 50자이내로 입력해주십시오");
           }
         }
       }
@@ -1136,15 +1136,6 @@ export default defineComponent({
 #userRegister .buttons .ant-form-item-control-input-content button:last-child {
   margin-top: 20px;
   color: gray;
-}
-.fl-cc{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.postal-code .ant-form-item{
-  margin: 0;
-  flex: 1 1 auto;
 }
 .address .ant-form-item{
   width: 50%;
