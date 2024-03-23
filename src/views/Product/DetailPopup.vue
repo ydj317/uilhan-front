@@ -1,7 +1,7 @@
 <template>
-  <a-modal class="pro-detail" v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="false">
+  <a-modal class="pro-detail" v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="true">
     <a-tabs v-model:activeKey="activeKey"
-            :tabBarGutter="0.5"
+            :tabBarGutter="0"
             type="card"
     >
       <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange">
@@ -97,7 +97,7 @@
 
 <script>
 
-import { defineComponent, ref  } from "vue";
+import { defineAsyncComponent, defineComponent, markRaw, ref } from "vue";
 import { AndroidOutlined,ProfileOutlined } from '@ant-design/icons-vue';
 import DefaultTab from "@/views/Product/Tab/DefaultTab.vue";
 import OptionTab from "@/views/Product/Tab/OptionTab.vue";
@@ -110,7 +110,6 @@ import {throttle} from "lodash";
 import {useCategoryApi} from "@/api/category";
 import {useUserApi} from "@/api/user";
 
-
 export default defineComponent({
   name: "productDetailPopup",
 
@@ -122,19 +121,19 @@ export default defineComponent({
           key: '1',
           tab: '기본정보',
           icon: ProfileOutlined,
-          component: DefaultTab,
+          component: markRaw(DefaultTab),
         },
         {
           key: '2',
           tab: '옵션/가격정보',
           icon: AndroidOutlined,
-          component: OptionTab,
+          component: markRaw(OptionTab),
         },
         {
           key: '3',
           tab: '상세페이지',
           icon: AndroidOutlined,
-          component: DetailInfoTab,
+          component: markRaw(DetailInfoTab),
         },
       ],
       useAutoSave: false,

@@ -375,17 +375,6 @@ const getSaleList = async () => {
   });
 }
 
-onMounted(() => {
-  //getOrder();
-  Promise.all([getBoard(), getTableList().then(() => {
-    handleBeforeUnload();
-  }), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
-      .catch((e) => {
-        message.error(e.message)
-        return false;
-      });
-});
-
 // 마켓 관리자 페이지 URL
 const getMarketAdminUrls = async () => {
   await useMarketApi().getMarketAdminUrls({}).then(res => {
@@ -436,7 +425,7 @@ const getTableList = async () => {
     // 데이터를 조회해올때마다 루프 돌리며 판단하여 데이터 변경이 있는 애들을 찾아냄
     const oldOrderData = sessionStorage.getItem('orderData');
 
-    if (oldOrderData) {
+    if (!!oldOrderData) {
       const oldOrderJson = JSON.parse(oldOrderData);
       oldOrderJson.forEach((item) => {
         const newData = findObjectById(item.id, list);
@@ -489,6 +478,8 @@ const getTableList = async () => {
     } else {
       orderDataView = list
     }
+
+    console.log(orderDataView);
 
     account.orderData.data = orderDataView;
     account.orderData.list = list
@@ -691,9 +682,19 @@ const pieChartOption = {
   ]
 };
 
+onMounted(async () => {
+  await getTableList()
+  handleBeforeUnload();
+  //getOrder();
+  Promise.all([getBoard(), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
+    .catch((e) => {
+      message.error(e.message)
+      return false;
+    });
+});
+
 onBeforeUnmount(() => {
   clearInterval(intervalId);
-  handleBeforeUnload();
 });
 </script>
 
