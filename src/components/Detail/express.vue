@@ -208,27 +208,6 @@ const handleOk = () => {
 </script>
 
 <style>
-.ant-modal .ant-modal-content{
-  padding:0;
-}
-
-.ant-modal-header .ant-modal-title{
-  padding: 10px 16px;
-  background: #ffd117;
-}
-
-.ant-modal .ant-modal-close{
-  top:10px;
-}
-
-.ant-modal-body{
-  padding:0 20px 0 25px;
-}
-
-.ant-modal-footer{
-  padding:8px 20px 20px;
-}
-
 .sectionTitle{
   font-weight:bold;
 }
