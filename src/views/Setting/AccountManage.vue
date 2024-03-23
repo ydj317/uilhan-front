@@ -1,4 +1,6 @@
 <template>
+
+	<BindBridge/>
     <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
 
         <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
@@ -197,8 +199,9 @@
     import router from "@/router";
     import {message} from "ant-design-vue";
     import {useUserApi} from "@/api/user";
+	import BindBridge from "@/views/Setting/BindBridge.vue";
 
-    import "vue-loading-overlay/dist/vue-loading.css";
+	import "vue-loading-overlay/dist/vue-loading.css";
     import Loading from "vue-loading-overlay";
 
 

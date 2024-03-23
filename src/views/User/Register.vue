@@ -274,15 +274,15 @@
           <express v-model:open="formState.expressModal"  @agree="onExpressAgree"/>
         </div>
         <div class="help ml15">넥스트배송 계정이 있을 경우 동시가입 체크 해제 후 가입해 주시고 계정관리에서 바인딩 해주세요.</div>
-<!--        <div class="foorterSetting">-->
-<!--          <a-checkbox v-model:checked="formState.is_bridge_sync">-->
-<!--            배대지 동시가입-->
-<!--          </a-checkbox>-->
-<!--          <a-button type="primary" size="small" @click.prevent="bridgeSyncCheck"-->
-<!--                    :disabled="formState.is_bridge_sync === false">중복확인-->
-<!--          </a-button>-->
-<!--          <div style="color: #999999">배대지 아이디가 있을경우 동시가입 체크 해제후 가입해주시고 계정관리에서 바인딩해 주세요.</div>-->
-<!--        </div>-->
+        <div class="foorterSetting">
+          <a-checkbox v-model:checked="formState.is_bridge_sync">
+            배대지 동시가입
+          </a-checkbox>
+          <a-button type="primary" size="small" @click.prevent="bridgeSyncCheck"
+                    :disabled="formState.is_bridge_sync === false">중복확인
+          </a-button>
+          <div style="color: #999999">배대지 아이디가 있을경우 동시가입 체크 해제후 가입해주시고 계정관리에서 바인딩해 주세요.</div>
+        </div>
 
         <a-form-item class="buttons">
           <a-button type="primary" html-type="submit"
@@ -907,29 +907,45 @@ export default defineComponent({
 
     const {resetFields, validate, validateInfos} = useForm(formState, rulesRef);
 
-    const bridgeSyncCheck = () => {
-      if (formState.is_bridge_sync === true) {
+	  const bridgeSyncCheck = () => {
 
-        NoAuthAjax.post(
-            process.env.VUE_APP_API_URL + "/api/bridge/syncCheck", {
-              mb_id: formState.username
-            }).then((res) => {
+		  if (!!!formState.username) {
+			  message.warning('아이디를 입력해주십시오');
+			  return false;
+		  }
 
-          if (res.data.status !== "2000") {
-            message.error(res.data.message);
-            return false;
-          }
+		  if (!!!formState.email) {
+			  message.warning('Email을 입력해주십시오');
+			  return false;
+		  }
 
-          if (res.data.data.code !== "2000") {
-            message.error(res.data.data.message);
-            return false;
-          }
+		  if (!!!formState.phone1 || !!!formState.phone2 || !!!formState.phone3) {
+			  message.warning('휴대전화를 입력해주십시오');
+			  return false;
+		  }
 
-          message.success("배대지 동시가입 가능 합니다. 회원가입 진행 해주세요.");
-          bridge_sync_pass.value = true;
-        });
-      }
-    };
+		  if (formState.is_bridge_sync === true) {
+
+			  NoAuthAjax.post(
+				  process.env.VUE_APP_API_URL + "/api/bridge/syncCheck", {
+					  MEM_ID: formState.username,
+					  MOB_NO: `${formState.phone1}${formState.phone2}${formState.phone3}`,
+					  email: formState.email
+				  }).then((res) => {
+
+				  const result = res.data.data;
+
+				  // if ('ERROR_CD' in result) {
+					//   message.error(result.ERROR_CD);
+				  //
+					//   return false;
+				  // }
+
+				  message.success("배대지 동시가입 가능 합니다. 회원가입 진행 해주세요.");
+				  bridge_sync_pass.value = true;
+			  });
+		  }
+	  };
 
     const checked = ref(false);
     const checked2 = ref(false);
