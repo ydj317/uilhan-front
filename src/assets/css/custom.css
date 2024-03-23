@@ -8,7 +8,7 @@
     .ant-modal-content {
         display: flex;
         flex-direction: column;
-        height: calc(100vh);
+        height: 100vh;
     }
     .ant-modal-body {
         flex: 1;
