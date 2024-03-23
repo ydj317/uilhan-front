@@ -48,7 +48,7 @@
 
 <script>
 import {cloneDeep, forEach} from "lodash";
-import { mapState } from "vuex";
+import { mapState, useStore } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
 import {watch, watchEffect} from "vue";
 import { message } from "ant-design-vue";
@@ -70,6 +70,7 @@ export default {
   computed: {
     ...mapState({
       product: (state) => state.product.detail,
+      dataLoaded: (state) => state.product.dataLoaded,
     })
   },
 
@@ -97,6 +98,7 @@ export default {
     this.showGuideImage = this.product.user.description_option.top_bottom_image.use;
     this.showVideo = this.product.user.description_option.show_video;
     this.showOptionTable = this.product.user.description_option.option_table.use;
+
     setTimeout(() => {
       if (this.showGuideImage === true){
         this.setGuideContent();
@@ -112,7 +114,7 @@ export default {
         this.setOptionTableContent();
       }
 
-    }, 100);
+    }, 1000);
 
     this.$nextTick(() => {
       watch(() => this.showGuideImage, (newValue) => {
@@ -129,6 +131,14 @@ export default {
         this.setVideoContent();
       });
     });
+  },
+
+  watch: {
+    dataLoaded(newVal) {
+      if (newVal) {
+        this.setOptionTableContent();
+      }
+    },
   },
 
   methods: {
