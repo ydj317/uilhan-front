@@ -90,14 +90,14 @@
         <a-descriptions-item>
           <span class="pb5" :class="{'required':checked2}"><strong>주소</strong></span>
           <div class="address fl mt5">
-            <a-form-item name="basicAddress" class="mr12" has-feedback>
-              <a-input v-model:value="formState.basicAddress" placeholder="주소" disabled/>
+            <a-form-item name="address" class="mr12" has-feedback>
+              <a-input v-model:value="formState.address" placeholder="주소" disabled/>
             </a-form-item>
             <a-form-item name="detailAddress" has-feedback>
               <a-input v-model:value="formState.detailAddress" placeholder="상세주소"/>
             </a-form-item>
           </div>
-          <div class="help" :class="{'red':checked2 && formState.basicAddress == ''}">넥스트배송 동시가입을 진행할 경우 주소는 필수로 입력해주십시오.</div>
+          <div class="help" :class="{'red':checked2 && formState.address == ''}">넥스트배송 동시가입을 진행할 경우 주소는 필수로 입력해주십시오.</div>
         </a-descriptions-item>
         <div style="margin-top: 50px; border-top: 1px solid #eee">
           <h5>사업자 정보</h5>
@@ -395,7 +395,7 @@ export default defineComponent({
       //邮编
       zoneCode:'',
       //基本地址
-      basicAddress:'',
+      address:'',
       //详细地址
       detailAddress:'',
       //快递条款弹窗
@@ -415,7 +415,7 @@ export default defineComponent({
         return false;
       }
       if (checked2.value) {
-        if(!formState.zoneCode || !formState.basicAddress || !formState.detailAddress){
+        if(!formState.zoneCode || !formState.address || !formState.detailAddress){
           return false;
         }
       }
@@ -444,10 +444,9 @@ export default defineComponent({
         is_bridge_sync: formState.is_bridge_sync,
         recommend_code: formState.recommend_code,
         zone_code: formState.zoneCode,
-        basic_address: formState.basicAddress,
+        address: formState.address,
         detail_address: formState.detailAddress,
       };
-
       NoAuthAjax.post(
           process.env.VUE_APP_API_URL + "/api/register", user).then((res) => {
         if (res.data === undefined) {
@@ -949,7 +948,7 @@ export default defineComponent({
       new daum.Postcode({
         oncomplete: function(data) {
           formState.zoneCode = data.zonecode
-          formState.basicAddress = data.roadAddress
+          formState.address = data.roadAddress
         }
       }).open();
     }
