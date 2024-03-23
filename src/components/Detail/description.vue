@@ -34,7 +34,7 @@
   </div>
   <image-translate-tools v-model:visible="imageTranslateToolsVisible" @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList" @update:translateImageList="updateTranslateImageList"/>
   <!-- 미리보기 -->
-  <a-modal v-model:visible="this.previewVisible"
+  <a-modal v-model:open="this.previewVisible"
            title="상품 미리보기"
            width="1000px"
            :centered="true"
@@ -114,7 +114,7 @@ export default {
         this.setOptionTableContent();
       }
 
-    }, 1000);
+    }, 100);
 
     this.$nextTick(() => {
       watch(() => this.showGuideImage, (newValue) => {
