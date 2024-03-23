@@ -18,7 +18,7 @@
                         :min="0"
                         :max="100"
                         :step="1"
-                        style="width: 79%"
+                        style="width: 38.8%"
                         addon-after="%"
                         placeholder="숫자를 입력해주세요" />
       </td>
@@ -85,7 +85,7 @@
     <tr>
       <th>판매가 인상/인하 설정</th>
       <td class="">
-          <a-input-number :min="0" :step="1000" style="width: 280px;" v-model:value="this.item_price_change_value" addon-after="원">
+          <a-input-number :min="0" :step="1000" style="width: 30%;" v-model:value="this.item_price_change_value" addon-after="원">
             <template #addonBefore >
               <a-select v-model:value="this.item_price_change_type" style="width: 60px">
                 <a-select-option value="add">+</a-select-option>

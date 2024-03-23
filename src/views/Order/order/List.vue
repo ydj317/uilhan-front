@@ -70,6 +70,7 @@
 
   <div style="display: flex; position: relative; top: 32px">
     <a-tabs
+        id="order-status"
         size="small"
         v-model:activeKey="state.activeKey"
         type="card" :tabBarGutter="1"
@@ -957,7 +958,7 @@ onMounted(async () => {
 .ant-radio-group .ant-radio-button-wrapper-checked span {
   color: #000;
 }
-.ant-tabs-tab.ant-tabs-tab-active{
+#order-status .ant-tabs-tab.ant-tabs-tab-active{
   background-color: #ffd117 !important;
 }
 </style>
