@@ -9,7 +9,7 @@
         <a-space>
           <a-checkbox v-model:checked="this.showGuideImage">상/하단 이미지</a-checkbox>
           <a-checkbox v-model:checked="this.showVideo">동영상</a-checkbox>
-          <a-checkbox v-model:checked="this.showOptionTable">옵션테이블</a-checkbox>
+          <a-checkbox v-model:checked="this.showOptionTable" @change="handleOptionTableToggle">옵션테이블</a-checkbox>
         </a-space>
       </div>
       <div class="editorToolbar">
@@ -97,31 +97,25 @@ export default {
       showOptionTable: false
     };
   },
-  updated() {
-    this.showGuideImage = this.descriptionOption?.top_bottom_image?.use ?? false;
-    this.showVideo = this.descriptionOption?.show_video ?? false;
-    this.showOptionTable = this.descriptionOption?.option_table?.use ?? false;
+  watch: {
+    descriptionOption: {
+      handler() {
+        this.showGuideImage = this.descriptionOption?.top_bottom_image?.use ?? false;
+        this.showVideo = this.descriptionOption?.show_video ?? false;
+        this.showOptionTable = this.descriptionOption?.option_table?.use ?? false;
+        if (!!this.showOptionTable) {
+          this.$nextTick(() => {
+            this.handleOptionTableToggle();
+          })
+        }
+      },
+      immediate: true,
+      deep: true
+    }
   },
   mounted() {
     this.fetchData();
     this.getGuide();
-
-    setTimeout(() => {
-      if (this.showGuideImage === true) {
-        this.setGuideContent();
-      } else {
-        this.deleteGuideContent();
-      }
-
-      if (this.showVideo === true) {
-        this.setVideoContent();
-      }
-
-      if (this.showOptionTable === true) {
-        this.setOptionTableContent();
-      }
-
-    }, 100);
 
     this.$nextTick(() => {
       watch(() => this.showGuideImage, (newValue) => {
@@ -133,21 +127,11 @@ export default {
           }
         }
       });
-      watch(() => this.showOptionTable, (newValue) => {
-        this.setOptionTableContent();
-      });
+
       watch(() => this.showVideo, (newValue) => {
         this.setVideoContent();
       });
     });
-  },
-
-  watch: {
-    dataLoaded(newVal) {
-      if (newVal) {
-        this.setOptionTableContent();
-      }
-    }
   },
 
   methods: {
@@ -199,7 +183,7 @@ export default {
     },
 
     deleteGuideContent() {
-      if(!!this.product.item_detail) {
+      if (!!this.product.item_detail) {
         const regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>|<div id="${this.guideAfterId}".*?</div>`, "igs");
         this.product.item_detail = this.product.item_detail.replace(regex, "");
       }
@@ -225,6 +209,16 @@ export default {
         this.product.item_detail = this.product.item_detail + afterCont;
       }
 
+    },
+
+    handleOptionTableToggle(e) {
+      if (!this.descriptionOption?.option_table) {
+        message.warning("옵션테이블 설정이 없습니다. \n" +
+          "계정설정에서 옵션테이블 설정을 등록하여 주시기 바랍니다.");
+        this.showOptionTable = false;
+        return;
+      }
+      this.setOptionTableContent();
     },
     setOptionTableContent() {
       let doc = window.tinymce.editors[0].dom.doc;
@@ -280,28 +274,17 @@ export default {
       }
     },
     fetchData() {
-      // 절정된 옵션테이블 유형 선택함
-      // const regex = /id="(editor_option_table_\d+)"/g;
-      // const match = regex.exec(this.product.item_detail);
-      // if (match === null) {
-      //   return true;
-      // }
-      // if (match[1] === `${this.optionTableId}_2`) {
-      //   this.selectOptionValue = "table_two_column";
-      // }
-      // if (match[1] === `${this.optionTableId}_4`) {
-      //   this.selectOptionValue = "table_four_column";
-      // }
+
       //품목 이미지, 품목명 변경에 따라 액션
-      watchEffect(() => {
-        if (this.product.loading !== true) {
-          this.product.sku.map(item => item.img);
-          //변경될 경우 테이블 업데이트
-          this.$nextTick(() => {
-            this.setOptionTable();
-          });
-        }
-      });
+      // watchEffect(() => {
+      //   if (this.product.loading !== true) {
+      //     this.product.sku.map(item => item.img);
+      //     //변경될 경우 테이블 업데이트
+      //     this.$nextTick(() => {
+      //       this.setOptionTable();
+      //     });
+      //   }
+      // });
     },
 
     setOptionTable() {
