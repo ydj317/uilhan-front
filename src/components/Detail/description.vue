@@ -1,6 +1,6 @@
 <template>
   <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
-    <a-spin v-if="product.loading" size="large"/>
+    <a-spin v-if="product.loading" size="large" />
   </div>
   <div v-show="!product.loading" id="eModelTitle_4" class="bg-white">
     <!--title-->
@@ -15,8 +15,10 @@
       <div class="editorToolbar">
         <a-space>
           <a-button class="originalDetailTrans" type="default" @click="showPreview">미리보기</a-button>
-          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역</a-button>
-          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기</a-button>
+          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역
+          </a-button>
+          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기
+          </a-button>
         </a-space>
 
       </div>
@@ -25,14 +27,16 @@
     <!-- 상세페이지 편집기 -->
     <div style="margin-top: 10px;">
       <TEditor
-          ref="editor"
-          v-model:value="product.item_detail"
-          :productId="Number(product['item_id'])"
-          @contentUpdate="contentUpdate"
+        ref="editor"
+        v-model:value="product.item_detail"
+        :productId="Number(product['item_id'])"
+        @contentUpdate="contentUpdate"
       />
     </div>
   </div>
-  <image-translate-tools v-model:visible="imageTranslateToolsVisible" @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList" @update:translateImageList="updateTranslateImageList"/>
+  <image-translate-tools v-model:visible="imageTranslateToolsVisible"
+                         @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
+                         @update:translateImageList="updateTranslateImageList" />
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
            title="상품 미리보기"
@@ -40,20 +44,20 @@
            :centered="true"
            :footer="null"
            @ok="this.previewVisible = false">
-    <div v-html="modalContent" id="previewContainer" >
+    <div v-html="modalContent" id="previewContainer">
 
     </div>
   </a-modal>
 </template>
 
 <script>
-import {cloneDeep, forEach} from "lodash";
+import { cloneDeep, forEach } from "lodash";
 import { mapState, useStore } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
-import {watch, watchEffect} from "vue";
+import { watch, watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
-import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
 
@@ -71,6 +75,7 @@ export default {
     ...mapState({
       product: (state) => state.product.detail,
       dataLoaded: (state) => state.product.dataLoaded,
+      descriptionOption: (state) => state.product.detail?.user?.description_option
     })
   },
 
@@ -89,28 +94,30 @@ export default {
       modalContent: "",
       showGuideImage: false,
       showVideo: false,
-      showOptionTable: false,
+      showOptionTable: false
     };
+  },
+  updated() {
+    this.showGuideImage = this.descriptionOption?.top_bottom_image?.use ?? false;
+    this.showVideo = this.descriptionOption?.show_video ?? false;
+    this.showOptionTable = this.descriptionOption?.option_table?.use ?? false;
   },
   mounted() {
     this.fetchData();
     this.getGuide();
-    this.showGuideImage = this.product.user.description_option.top_bottom_image.use;
-    this.showVideo = this.product.user.description_option.show_video;
-    this.showOptionTable = this.product.user.description_option.option_table.use;
 
     setTimeout(() => {
-      if (this.showGuideImage === true){
+      if (this.showGuideImage === true) {
         this.setGuideContent();
       } else {
         this.deleteGuideContent();
       }
 
-      if (this.showVideo === true){
+      if (this.showVideo === true) {
         this.setVideoContent();
       }
 
-      if (this.showOptionTable === true){
+      if (this.showOptionTable === true) {
         this.setOptionTableContent();
       }
 
@@ -121,11 +128,13 @@ export default {
         if (newValue === true) {
           this.setGuideContent();
         } else {
-          this.deleteGuideContent();
+          if (this.product.loading !== true) {
+            this.deleteGuideContent();
+          }
         }
       });
       watch(() => this.showOptionTable, (newValue) => {
-          this.setOptionTableContent();
+        this.setOptionTableContent();
       });
       watch(() => this.showVideo, (newValue) => {
         this.setVideoContent();
@@ -138,20 +147,20 @@ export default {
       if (newVal) {
         this.setOptionTableContent();
       }
-    },
+    }
   },
 
   methods: {
-    setVideoContent(){
+    setVideoContent() {
       const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
       this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
-      if ((this.product.item_video_url === "" || this.product.item_video_url === null) && this.showVideo === true){
+      if ((this.product.item_video_url === "" || this.product.item_video_url === null) && this.showVideo === true) {
         message.warning("수집된 상품정보에 동영상 URL이 존재하지 않습니다.");
         this.showVideo = false;
         return false;
       }
 
-      if (this.showVideo === false){
+      if (this.showVideo === false) {
         return false;
       }
 
@@ -170,10 +179,10 @@ export default {
     },
     setGuideContent() {
       if (this.showGuideImage === true &&
-          this.product.user.description_option.top_bottom_image.top_image_url === "" &&
-          this.product.user.description_option.top_bottom_image.bottom_image_url === "" ) {
+        this.product.user.description_option.top_bottom_image.top_image_url === "" &&
+        this.product.user.description_option.top_bottom_image.bottom_image_url === "") {
         message.warning("등록된 상/하단 이미지가 없습니다. \n" +
-            "계정설정에서 별도로 등록하여 주시기 바랍니다.");
+          "계정설정에서 별도로 등록하여 주시기 바랍니다.");
         this.showGuideImage = false;
         return;
       }
@@ -190,8 +199,10 @@ export default {
     },
 
     deleteGuideContent() {
-      const regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>|<div id="${this.guideAfterId}".*?</div>`, "igs");
-      this.product.item_detail = this.product.item_detail.replace(regex, "");
+      if(!!this.product.item_detail) {
+        const regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>|<div id="${this.guideAfterId}".*?</div>`, "igs");
+        this.product.item_detail = this.product.item_detail.replace(regex, "");
+      }
     },
 
     getGuide() {
@@ -245,7 +256,7 @@ export default {
         if (match !== null) {
           if (this.product.user.description_option.option_table.show_position === "bottom") {
             this.product.item_detail = this.product.item_detail.replace(regex, "");
-            this.product.item_detail = this.product.item_detail + optionTable+ match[0];
+            this.product.item_detail = this.product.item_detail + optionTable + match[0];
           } else {
             this.product.item_detail = this.product.item_detail.replace(regex, "");
             const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
@@ -283,7 +294,7 @@ export default {
       // }
       //품목 이미지, 품목명 변경에 따라 액션
       watchEffect(() => {
-        if(this.product.loading !== true){
+        if (this.product.loading !== true) {
           this.product.sku.map(item => item.img);
           //변경될 경우 테이블 업데이트
           this.$nextTick(() => {
@@ -383,7 +394,7 @@ export default {
       arr = arr.filter((data) => {
         try {
           return (
-              data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
+            data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
           );
         } catch (e) {
           return false;
@@ -423,38 +434,39 @@ export default {
     },
     updateTranslateImageList(imageList) {
       this.$refs.editor.clear();
-      let content = '<p>';
+      let content = "<p>";
       imageList.forEach((item) => {
-        if(item.translate_status === true){
+        if (item.translate_status === true) {
           content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
         } else {
           const nUrl = item.translate_url || item.url;
           content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
         }
       });
-      content += '</p>';
+      content += "</p>";
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
     },
     showPreview() {
       this.modalContent = cloneDeep(this.product.item_detail);
       this.previewVisible = true;
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style>
-  #previewContainer {
-    overflow: auto;
-    max-height: 800px;
-    padding: 20px;
-    text-align: center; /* 텍스트 중앙 정렬 */
-  }
-  #previewContainer img {
-    display: block; /* 이미지 블록 레벨 요소로 설정 */
-    margin: 0 auto; /* 이미지 상하 마진 0, 좌우 마진 자동으로 설정하여 중앙 정렬 */
-    max-width: 100%; /* 이미지가 모달 너비를 초과하지 않도록 설정 */
-    height: auto; /* 이미지의 원래 비율을 유지 */
-  }
+<style scoped>
+#previewContainer {
+  overflow: auto;
+  max-height: 800px;
+  padding: 20px;
+  text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+#previewContainer img {
+  display: block; /* 이미지 블록 레벨 요소로 설정 */
+  margin: 0 auto; /* 이미지 상하 마진 0, 좌우 마진 자동으로 설정하여 중앙 정렬 */
+  max-width: 100%; /* 이미지가 모달 너비를 초과하지 않도록 설정 */
+  height: auto; /* 이미지의 원래 비율을 유지 */
+}
 </style>
