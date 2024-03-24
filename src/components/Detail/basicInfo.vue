@@ -3,7 +3,7 @@
     <h3><strong>기본정보</strong></h3>
     <table class="basic-info-table" style="width: 100%; border-collapse: collapse;">
       <colgroup>
-        <col style="width: 5%">
+        <col style="width: 150px">
         <col>
       </colgroup>
       <tr>
@@ -17,6 +17,7 @@
                 :disabled="keyword.loading"
                 v-model:value.trim="keyword.search_value"
                 placeholder="검색 키워드를 입력하세요"
+                @keyup.enter="searchKeyword"
               />
               <a-button
                 :loading="keyword.loading"
@@ -43,19 +44,31 @@
 
       <tr>
         <th>상품명</th>
-        <td style="display: flex;gap: 5px;">
-          <div style="flex: 1">
-          <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true" >
-            <a-input
-                @blur="validateFilterWord(product.item_trans_name)"
-                v-model:value="product.item_trans_name"
-                :maxlength="max_name_length"
-                :showCount="true"
-                :placeholder="`상품명칭을 입력하세요.`"
-            />
-          </a-spin>
+        <td style="display: flex;flex-direction: column; gap: 5px;">
+          <div style="display: flex;gap: 5px;">
+            <div style="flex: 1">
+            <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true" >
+              <a-input
+                  @blur="validateFilterWord(product.item_trans_name)"
+                  v-model:value="product.item_trans_name"
+                  :maxlength="max_name_length"
+                  :showCount="true"
+                  :placeholder="`상품명칭을 입력하세요.`"
+              />
+            </a-spin>
+            </div>
+            <a-button type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
-          <a-button type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
+          <div style="display: flex;gap: 5px;">
+            <a-tag
+              v-for="word in product.filter_word_list"
+              :key="word"
+              :color="'red'"
+              @close="deleteFilterWord(word)"
+              closable
+            >{{word}}</a-tag>
+          </div>
+
         </td>
       </tr>
       <tr>
@@ -379,12 +392,6 @@ export default {
 };
 </script>
 
-<style>
-.detail-basic .ant-descriptions-item-label {
-  width: 200px;
-}
-</style>
-
 <style scoped>
 
 #eModelTitle_0 .get-market-icon img {
@@ -401,7 +408,7 @@ export default {
 }
 
 .basic-info-table th {
-  text-align: left;
+  text-align: right;
   padding: 10px 20px;
   font-weight: bold;
   color: #666;
