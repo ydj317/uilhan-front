@@ -9,10 +9,14 @@
 						 @input="formState.settingData.is_bridge_sync = false" />
 			</a-descriptions-item>
 			<a-descriptions-item label="휴대전화:" :labelStyle="{textAlign: 'right'}">
-				<a-input v-model:value="formState.settingData.bind_bridge_phone" style="width: 200px;" allow-clear/>
+				<a-input v-model:value="formState.settingData.bind_bridge_phone" style="width: 200px;" allow-clear
+						 @input="formState.settingData.is_bridge_sync = false"
+				/>
 			</a-descriptions-item>
 			<a-descriptions-item label="Email:" :labelStyle="{textAlign: 'right'}">
-				<a-input v-model:value="formState.settingData.bind_bridge_email" style="width: 200px;" allow-clear/>
+				<a-input v-model:value="formState.settingData.bind_bridge_email" style="width: 200px;" allow-clear
+						 @input="formState.settingData.is_bridge_sync = false"
+				/>
 			</a-descriptions-item>
 <!--			<a-descriptions-item label="배대지 비밀번호:" :labelStyle="{textAlign: 'right'}">-->
 <!--				&lt;!&ndash; 크롬 자동입력 방지 하기위하여 추가 &ndash;&gt;-->
@@ -21,7 +25,7 @@
 <!--				<a-input type="password" v-model:value="formState.settingData.bind_bridge_password" size="small" style="position: relative; z-index: 2; width: 200px;" allow-clear @input="formState.settingData.is_bridge_sync = false" />-->
 <!--			</a-descriptions-item>-->
 			<a-descriptions-item label="사서함번호:" :labelStyle="{textAlign: 'right'}" v-if="formState.showItem">
-				{{formState.settingData.bind_bridge_id}}
+				{{formState.settingData.bind_bridge_mb_id}}
 				<a-space>
 					<a-tag v-if="formState.settingData.is_bridge_sync" color="green">연동완료</a-tag>
 					<a-tag v-else color="red">미연동</a-tag>
@@ -31,15 +35,15 @@
 				<a-button type="primary" size="small" @click.prevent="bridgeSyncCheck">연동확인</a-button>
 			</a-descriptions-item>
 		</a-descriptions>
-		<div style="display: flex;justify-content: center" class="mt15">
-			<a-button type="primary" @click="handleSaveUserData" :disabled="!formState.settingData.is_bridge_sync">저장</a-button>
-		</div>
+<!--		<div style="display: flex;justify-content: center" class="mt15">-->
+<!--			<a-button type="primary" @click="handleSaveUserData" :disabled="!formState.settingData.is_bridge_sync">저장</a-button>-->
+<!--		</div>-->
 
 	</a-card>
 </template>
 
 <script setup>
-import {onMounted, reactive, ref, watchEffect} from "vue";
+import {onMounted, reactive, watchEffect} from "vue";
 import {useUserApi} from "@/api/user";
 import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
@@ -48,6 +52,7 @@ import router from "@/router";
 const formState = reactive({
 	settingData: {
 		bind_bridge_id: '',
+		bind_bridge_mb_id: '',
 		bind_bridge_phone: '',
 		bind_bridge_email: '',
 		is_bridge_sync: false,
@@ -56,6 +61,8 @@ const formState = reactive({
 	loading: false,
 	showItem: false
 })
+
+const emit = defineEmits(['formUpdated']);
 
 function getUserInfoData() {
 	formState.loading = true;
@@ -66,9 +73,10 @@ function getUserInfoData() {
 			return false;
 		}
 
-		const { bridge_mb_id, is_bridge_sync, bridge_phone, bridge_email } = res.data;
+		const { bridge_mb_id, is_bridge_sync, bridge_phone, bridge_email, bridge_id } = res.data;
 
-		formState.settingData.bind_bridge_id = bridge_mb_id
+		formState.settingData.bind_bridge_id = bridge_id
+		formState.settingData.bind_bridge_mb_id = bridge_mb_id
 		formState.settingData.bind_bridge_phone = bridge_phone
 		formState.settingData.bind_bridge_email= bridge_email
 		formState.settingData.bind_bridge_password = ''
@@ -101,19 +109,19 @@ const bridgeSyncCheck = () => {
 		return false;
 	}
 	useBridgeApi().syncCheckIsMember(formState.settingData).then((res) => {
-		console.log(res)
 		if (res.status !== "2000") {
 			message.error(res.message);
 			return false;
 		}
 
-		if (res.data.code !== "2000") {
-			message.error(res.data.message);
+		if (! 'MEM_CODE' in res.data) {
+			message.error(res.message);
 			return false;
 		}
 
-		message.success('바인딩 가능한 ID입니다. 저장 버튼을 눌러주세요.');
+		message.success('연동 성공');
 		formState.settingData.is_bridge_sync = true;
+		formState.settingData.bind_bridge_mb_id = res.data['MEM_CODE'];
 	});
 }
 
@@ -142,13 +150,20 @@ const checkValidation = () => {
 	return true;
 }
 
-const prevBridgeId = formState.settingData.bind_bridge_id;
-const prevBridgePhone = formState.settingData.bind_bridge_phone;
-const prevBridgeEmail = formState.settingData.bind_bridge_email;
+const handleFormUpdate = () => {
+	emit('formUpdated', {
+		bind_bridge_id: formState.settingData.bind_bridge_id,
+		bind_bridge_mb_id: formState.settingData.bind_bridge_mb_id,
+		bind_bridge_phone: formState.settingData.bind_bridge_phone,
+		bind_bridge_email: formState.settingData.bind_bridge_email,
+		is_bridge_sync: formState.settingData.is_bridge_sync,
+	});
+};
 
 watchEffect(() => {
 	formState.showItem = formState.settingData.is_bridge_sync;
-	// if (formState.settingData.is_bridge_sync);
+	if (! formState.settingData.is_bridge_sync) formState.settingData.bind_bridge_mb_id = '';
+	handleFormUpdate();
 });
 
 onMounted(() => {
