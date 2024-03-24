@@ -1111,7 +1111,7 @@ watchEffect(() => {
 
 .step4-end {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .step4-select {

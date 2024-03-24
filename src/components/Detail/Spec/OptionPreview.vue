@@ -1,14 +1,16 @@
 <template>
-  <a-modal title="스마트스토어 옵션 미리보기" class="modal-preview" v-model:open="this.$store.state.product.showOptionPreview"
+  <a-modal title="스마트스토어 옵션 미리보기" class="modal-preview" v-model:open="showOptionPreview"
            width="30%" centered :maskClosable="false" @open-change="handleOpenChange">
-    <div v-for="(option, optionIndex) in this.$store.state.product.detail.item_option" :key="optionIndex" :data-index="optionIndex">
+    <div v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :data-index="optionIndex">
       <a-select
           style="width: 100%; margin-top:20px;"
           v-model:value="selectedValues[optionIndex]"
           size="default"
           :placeholder="option.name"
-          :suffixIcon="customArrowIcon"
       >
+        <template #suffixIcon>
+          <DownOutlined />
+        </template>
         <a-select-option
             v-for="item in option.data"
             :key="item.key"
@@ -26,29 +28,25 @@
   </a-modal>
 </template>
 <script>
-import {cloneDeep, forEach} from "lodash";
-import {mapState, useStore} from "vuex";
+import {mapState} from "vuex";
 import {UpOutlined,DownOutlined } from '@ant-design/icons-vue';
 
 export default {
   name: "productDetailSpecGroup",
   computed: {
     ...mapState({
-      product: state => state.product.detail
+      product: state => state.product.detail,
+      showOptionPreview: state => state.product.showOptionPreview,
     }),
 
     oldOptionData() {
-      if (this.$store.state.product && this.$store.state.product.detail && Array.isArray(this.$store.state.product.detail.item_option)) {
-        return this.$store.state.product.detail.item_option.map(option => ({
+      if (this.product && this.product.detail && Array.isArray(this.product.detail.item_option)) {
+        return this.product.item_option.map(option => ({
           ...option,
           data: option.data ? option.data.map(item => ({ ...item })) : []
         }));
       }
       return [];
-    },
-
-    customArrowIcon() {
-      return <DownOutlined />;
     },
   },
   components: {UpOutlined,DownOutlined},
@@ -59,11 +57,11 @@ export default {
     };
   },
   methods: {
-    initializeSelectedValues() {
-      this.$store.state.product.detail.item_option.forEach((option, index) => {
-        this.$set(this.selectedValues, index, null);
-      });
-    },
+    // initializeSelectedValues() {
+    //   this.product.item_option.forEach((option, index) => {
+    //     this.$set(this.selectedValues, index, null);
+    //   });
+    // },
     closeOptionModal() {
       this.$store.commit('product/setShowOptionPreview', false);
       this.selectedValues = {};
@@ -74,13 +72,13 @@ export default {
     },
   },
 
-  watch: {
-    'product.detail.item_option'(newVal) {
-      if (newVal && newVal.length > 0) {
-        this.initializeSelectedValues();
-      }
-    }
-  },
+  // watch: {
+  //   'product.item_option'(newVal) {
+  //     if (newVal && newVal.length > 0) {
+  //       this.initializeSelectedValues();
+  //     }
+  //   }
+  // },
 
   mounted() {
     // this.options = cloneDeep(this.oldOptionData);
