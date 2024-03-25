@@ -9,18 +9,18 @@
   <div v-if="isAdmin">
     <a-card title="금지어 관리" :bordered="false">
       <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '200px' }">
-        <a-descriptions-item label="用户名">
-          <a-input  v-model:value="username" style="width: 200px;" placeholder="请输入用户名."/>
+        <a-descriptions-item label="아이디">
+          <a-input  v-model:value="username" style="width: 200px;" placeholder="아이디를 입력해주세요."/>
         </a-descriptions-item>
 
-        <a-descriptions-item label="套餐类型">
+        <a-descriptions-item label="서비스 유형">
           <a-select
               class="mr10"
               v-model:value="plan_type"
               style="width: 200px"
               @change="handleChange"
           >
-            <a-select-option value="">全部</a-select-option>
+            <a-select-option value="">전체</a-select-option>
 
             <a-select-option v-for="(item,index) in plans" value="index">{{ index }}</a-select-option>
 
@@ -28,7 +28,7 @@
           </a-select>
         </a-descriptions-item>
 
-        <a-descriptions-item label="会员起止时间">
+        <a-descriptions-item label="서비스 기간">
           <a-range-picker
               v-model:value="seerch_day"
               value-format="YYYY-MM-DD"
@@ -54,18 +54,18 @@
         ">
         <!--금지어 추가 버튼-->
         <div>
-          <a-button type="primary" :disabled="!hasSelected" size="small" @click="openModel = true" class="ml5">重置套餐</a-button>
-          <a-modal v-model:open="openModel" title="重置套餐" @ok="handleOk" :closable="false">
+          <a-button type="primary" :disabled="!hasSelected" size="small" @click="openModel = true" class="ml5">서비스 초기화</a-button>
+          <a-modal v-model:open="openModel" title="서비스 초기화" @ok="handleOk" :closable="false">
             <a-radio-group v-model:value="plan">
               <a-radio v-for="(item, index) in plans" :key="index" :style="radioStyle" :value="index">{{ index }}</a-radio>
             </a-radio-group>
           </a-modal>
-          <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gpt_count')"  class="ml5">批量修改GPT</a-button>
-          <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gmarket_count')"  class="ml5">批量修改GMARKET</a-button>
-          <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auction_count')"  class="ml5">批量修改AUCTION</a-button>
+          <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gpt_count')"  class="ml5">GPT 사용횟수 일괄변경</a-button>
+          <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gmarket_count')"  class="ml5">지마켓 상품수집 일괄변경</a-button>
+          <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auction_count')"  class="ml5">옥션 상품수집 일괄변경</a-button>
           <a-modal
               v-model:open="cntModel"
-              :title="`重置 ${currentStoreName} 个数`"
+              :title="`서비스 ${currentStoreName}`"
               @ok="handleStoreOk"
               @cancel="handleStoreCancel"
               :closable="false">
@@ -119,7 +119,7 @@
           </template>
 
           <template v-if="column.key === 'edit'">
-            <a-button danger @click="resetCnt(record)">重置当前套餐</a-button>
+            <a-button danger @click="resetCnt(record)">서비스 초기화</a-button>
           </template>
 
         </template>
@@ -210,7 +210,7 @@ const onChange = (iCurrent, iPageSize) => {
 
 const columns = [
   {
-    title: "用户",
+    title: "아이디",
     dataIndex: "username",
     key: "username",
     width: 80,
@@ -218,67 +218,67 @@ const columns = [
     fixed: "left"
   },
   {
-    title: "开始日期",
+    title: "시작일시",
     dataIndex: ['quota', 'start_time'],
     key: "start_time",
     align: "center",
   },
   {
-    title: "结束日期",
+    title: "종료일시",
     dataIndex: ['quota', 'end_time'],
     key: "end_time",
     align: "center",
   },
   {
-    title: "套餐",
+    title: "서비스",
     dataIndex: ['quota', 'plan_type'],
     key: "plan_type",
     align: "center",
   },
   {
-    title: "采集个数",
+    title: "상품 수집수",
     dataIndex: ['quota', 'taobao_count'],
     key: "taobao_count",
     align: "center",
   },
   {
-    title: "图片翻译个数",
+    title: "이미지 번역 횟수",
     dataIndex: ['quota', 'trans_image_count'],
     key: "trans_image_count",
     align: "center",
   },
   {
-    title: "GPT次数",
+    title: "GPT 사용횟수",
     dataIndex: ['quota', 'gpt_count'],
     key: "gpt_count",
     align: "center",
   },
   {
-    title: "GMART次数",
+    title: "지마켓 상품 수집수",
     dataIndex: ['quota', 'gmarket_count'],
     key: "gmarket_count",
     align: "center",
   },
   {
-    title: "AMART次数",
+    title: "옥션 상품 수집수",
     dataIndex: ['quota', 'auction_count'],
     key: "auction_count",
     align: "center",
   },
   {
-    title: "创建时间",
+    title: "등록일시",
     dataIndex: ['quota', 'create_time'],
     key: "create_time",
     align: "center",
   },
   {
-    title: "更新时间",
+    title: "수정일시",
     dataIndex: ['quota', 'update_time'],
     key: "update_time",
     align: "center",
   },
   {
-    title: "操作",
+    title: "관리",
     dataIndex: "edit",
     key: "edit",
     width: 80,
