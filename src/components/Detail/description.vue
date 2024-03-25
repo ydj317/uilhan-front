@@ -52,11 +52,10 @@
 
 <script>
 import { cloneDeep, forEach } from "lodash";
-import { mapState, useStore } from "vuex";
+import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
-import { watch, watchEffect } from "vue";
+import { watch } from "vue";
 import { message } from "ant-design-vue";
-import { AuthRequest } from "@/util/request";
 import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
@@ -74,7 +73,6 @@ export default {
   computed: {
     ...mapState({
       product: (state) => state.product.detail,
-      dataLoaded: (state) => state.product.dataLoaded,
       descriptionOption: (state) => state.product.detail?.user?.description_option
     })
   },
@@ -82,7 +80,6 @@ export default {
   data() {
     return {
       aBakDetailImages: {},
-      selectOptionValue: 2,
       optionTableId: "editor_option_table",
       guideBeforeId: "editor_before_guide",
       guideAfterId: "editor_after_guide",
@@ -114,7 +111,6 @@ export default {
     }
   },
   mounted() {
-    this.fetchData();
     this.getGuide();
 
     this.$nextTick(() => {
@@ -273,19 +269,6 @@ export default {
 
       }
     },
-    fetchData() {
-
-      //품목 이미지, 품목명 변경에 따라 액션
-      // watchEffect(() => {
-      //   if (this.product.loading !== true) {
-      //     this.product.sku.map(item => item.img);
-      //     //변경될 경우 테이블 업데이트
-      //     this.$nextTick(() => {
-      //       this.setOptionTable();
-      //     });
-      //   }
-      // });
-    },
 
     setOptionTable() {
       let dom = window.tinymce.editors[0].dom;
@@ -301,12 +284,10 @@ export default {
       //테이블 2줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
         optionHtml = this.getOptionTable(2);
-        this.selectOptionValue = 2;
       }
       //테이블 4줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_4`)) {
         optionHtml = this.getOptionTable(4);
-        this.selectOptionValue = 4;
       }
       if (optionHtml) {
         optionTableDoc.innerHTML = optionHtml;
