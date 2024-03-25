@@ -77,7 +77,28 @@
           </div>
           <div class="help">휴대전화를 입력해주십시오</div>
         </a-descriptions-item>
-
+        <a-descriptions-item>
+          <span :class="{'required':checked2}"><strong>우편번호</strong></span>
+          <div class="fl mt5">
+            <a-form-item name="zoneCode" class="mr12" has-feedback>
+              <a-input v-model:value="formState.zoneCode" placeholder="우편번호" :maxlength="10" disabled />
+            </a-form-item>
+            <a-button type="primary" class="center mt5" @click="showExpressModal">우편번호 검색</a-button>
+          </div>
+          <div class="help" :class="{'red':checked2 && formState.zoneCode == ''}">넥스트배송 동시가입을 진행할 경우 우편번호는 필수로 입력해주십시오.</div>
+        </a-descriptions-item>
+        <a-descriptions-item>
+          <span class="pb5" :class="{'required':checked2}"><strong>주소</strong></span>
+          <div class="address fl mt5">
+            <a-form-item name="address" class="mr12" has-feedback>
+              <a-input v-model:value="formState.address" placeholder="주소" disabled/>
+            </a-form-item>
+            <a-form-item name="detailAddress" has-feedback>
+              <a-input v-model:value="formState.detailAddress" placeholder="상세주소"/>
+            </a-form-item>
+          </div>
+          <div class="help" :class="{'red':checked2 && formState.address == ''}">넥스트배송 동시가입을 진행할 경우 주소는 필수로 입력해주십시오.</div>
+        </a-descriptions-item>
         <div style="margin-top: 50px; border-top: 1px solid #eee">
           <h5>사업자 정보</h5>
         </div>
@@ -246,7 +267,13 @@
           </a-checkbox>
           <policy @agree="onAgree" />
         </div>
-
+        <div class="foorterSetting">
+          <a-checkbox v-model:checked="checked2">넥스트배송 동시가입.
+            <a-button class="init" type="link" @click="formState.expressModal = true">[약관보기]</a-button>
+          </a-checkbox>
+          <express v-model:open="formState.expressModal"  @agree="onExpressAgree"/>
+        </div>
+        <div class="help ml15">넥스트배송 계정이 있을 경우 동시가입 체크 해제 후 가입해 주시고 계정관리에서 바인딩 해주세요.</div>
 <!--        <div class="foorterSetting">-->
 <!--          <a-checkbox v-model:checked="formState.is_bridge_sync">-->
 <!--            배대지 동시가입-->
@@ -289,6 +316,7 @@ import {lib} from "@/util/lib";
 import {useRoute} from "vue-router";
 
 import Policy from "@/components/Detail/policy.vue";
+import Express from "@/components/Detail/express.vue";
 import { useStore } from 'vuex';
 
 export default defineComponent({
@@ -296,7 +324,8 @@ export default defineComponent({
     Loading,
     UserOutlined,
     LockOutlined,
-    Policy
+    Policy,
+    Express
   },
 
   setup() {
@@ -362,7 +391,15 @@ export default defineComponent({
       wholesale_commission: "0",
       is_bridge_sync: false,
       // 추천코드
-      recommend_code: ""
+      recommend_code: "",
+      //邮编
+      zoneCode:'',
+      //基本地址
+      address:'',
+      //详细地址
+      detailAddress:'',
+      //快递条款弹窗
+      expressModal:false,
     });
 
     const tooltip = {
@@ -376,6 +413,11 @@ export default defineComponent({
       if (!checked.value) {
         message.warning('회원가입 하시러면 회원약관 내용을 읽어보시고 약관 동의가 필요합니다.');
         return false;
+      }
+      if (checked2.value) {
+        if(!formState.zoneCode || !formState.address || !formState.detailAddress){
+          return false;
+        }
       }
 
       let user = {
@@ -400,9 +442,11 @@ export default defineComponent({
         commission: formState.commission,
         wholesale_commission: formState.wholesale_commission,
         is_bridge_sync: formState.is_bridge_sync,
-        recommend_code: formState.recommend_code
+        recommend_code: formState.recommend_code,
+        zone_code: formState.zoneCode,
+        address: formState.address,
+        detail_address: formState.detailAddress,
       };
-
       NoAuthAjax.post(
           process.env.VUE_APP_API_URL + "/api/register", user).then((res) => {
         if (res.data === undefined) {
@@ -653,6 +697,18 @@ export default defineComponent({
         return Promise.resolve();
       }
     };
+    let validateDetailAddress = async (rule, value) => {
+      if(checked2.value){
+        if (value === "") {
+          return Promise.reject("상세주소를 입력해주십시오.");
+        } else {
+          if (value.length < 2 || value.length > 50) {
+            return Promise.reject("상세주소는 최소 2자 최대 50자이내로 입력해주십시오");
+          }
+        }
+      }
+      return Promise.resolve();
+    };
 
     let validateTel = async (rule, value) => {
       if (value.length > 0) {
@@ -840,6 +896,12 @@ export default defineComponent({
           validator: validateExdate,
           trigger: "blur"
         }
+      ],
+      detailAddress: [
+        {
+          validator: validateDetailAddress,
+          trigger: "blur"
+        }
       ]
     });
 
@@ -870,17 +932,30 @@ export default defineComponent({
     };
 
     const checked = ref(false);
+    const checked2 = ref(false);
     const onAgree = () => {
       checked.value = true;
+    };
+    const onExpressAgree = () => {
+      checked2.value = true;
     };
 
     const store = useStore();
     const openPolicyModal = () => {
       store.commit('setIsModalOpen', true);
     };
+    const showExpressModal = () =>{
+      new daum.Postcode({
+        oncomplete: function(data) {
+          formState.zoneCode = data.zonecode
+          formState.address = data.roadAddress
+        }
+      }).open();
+    }
 
     return {
       checked,
+      checked2,
       labelCol: {
         style: {
           width: "400px"
@@ -912,6 +987,8 @@ export default defineComponent({
 
       openPolicyModal,
       onAgree,
+      onExpressAgree,
+      showExpressModal,
     };
   }
 });
@@ -1059,5 +1136,7 @@ export default defineComponent({
   margin-top: 20px;
   color: gray;
 }
-
+.address .ant-form-item{
+  width: 50%;
+}
 </style>

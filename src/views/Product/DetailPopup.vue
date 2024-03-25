@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="false">
+  <a-modal class="pro-detail" v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="false">
     <a-tabs v-model:activeKey="activeKey"
             :tabBarGutter="0.5"
             type="card"
@@ -12,7 +12,7 @@
 
         </template>
         <keep-alive>
-          <component :is="pane.component" v-show="activeKey === pane.key" style="height: 700px;overflow-y: scroll" />
+          <component :is="pane.component" v-show="activeKey === pane.key" style="height: calc(100vh - 180px);overflow-y: scroll" />
         </keep-alive>
       </a-tab-pane>
     </a-tabs>
@@ -97,7 +97,7 @@
 
 <script>
 
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref  } from "vue";
 import { AndroidOutlined,ProfileOutlined } from '@ant-design/icons-vue';
 import DefaultTab from "@/views/Product/Tab/DefaultTab.vue";
 import OptionTab from "@/views/Product/Tab/OptionTab.vue";
@@ -920,8 +920,7 @@ export default defineComponent({
   background-color: #ffd117 !important;
 }
 
-.ant-modal {
-  height: unset;
+.pro-detail .tox-tinymce{
+  height:700px !important;
 }
-
 </style>
