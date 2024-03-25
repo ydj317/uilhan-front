@@ -99,7 +99,7 @@
           </thead>
           <!--옵션명 영역-->
           <tbody>
-          <tr v-for="(item, index) in option.data" :key="item.key">
+          <tr v-for="(item, index) in option.data" :key="item.key" class="option-detail">
             <td>
               <div class="spec-option-name" style="padding: 6px 0;">
                 <label class="ant-checkbox-wrapper spec-checkbox"
@@ -584,7 +584,6 @@ export default {
         });
       } catch (e) {
       }
-
       return check;
     }
   },
@@ -648,7 +647,7 @@ export default {
 
 .spec-option-name {
   display: flex;
-  align-items: center;
+  align-items: baseline;
 }
 
 .input-size {
@@ -848,6 +847,14 @@ export default {
 .reset-button {
   color: #fff;
   background-color: #2171e2;
+}
+
+.option-detail{
+  display:flex;
+  border-top:none !important;
+}
+.option-detail>td{
+  width:100%;
 }
 
 </style>

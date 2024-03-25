@@ -301,7 +301,7 @@ const formState = reactive({
       show_video: false,
 
       option_table: {
-        use: true,
+        use: false,
         show_position : "top",
         column_length :2
       },
