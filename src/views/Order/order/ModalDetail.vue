@@ -33,7 +33,17 @@
                   <template #title>
                     <a-space direction="vertical" :size="0" style="color: #1a1a1a">
                       <div>
-                        <span style="  font-weight: bold;color: #333;" v-bind:class="state.claimStatusList[item.status] ? 'claimText' : 'orderText'">{{
+                        <span v-if="item.prdUrl.length > 0">
+                          <a target="_blank" :href="item.prdUrl">
+                            <img
+                                :src="getLogoSrc('get-logo', item.prdMarket.toLowerCase())"
+                                style="width: 20px;height: 20px;border-radius: 10px"
+                                alt=""/>
+                          </a>
+
+                        </span>
+
+                        <span :style="item.prdUrl.length > 0? 'margin-left: 5px' : 'margin-left: 25px'" v-bind:class="state.claimStatusList[item.status] ? 'claimText' : 'orderText'">{{
                             item.prdName
                           }}</span>
                         <span style="position: absolute; right: 50px;">
@@ -59,6 +69,7 @@
                   </template>
                   <template #description>
                     <div
+                        style="margin-left: 25px;"
                         v-bind:class="{
                                       'claimText': state.claimStatusList[item.status],
                                       'orderText': !state.claimStatusList[item.status],
@@ -66,10 +77,6 @@
                                     }">
 
                       <a-space direction="vertical" :size="0.1">
-                        <a-space :size="60" class="smallText">
-                          <div> {{ item.prdCode }}</div>
-
-                        </a-space>
                         <a-space :size="60" class="smallText">
                           <div> {{ item.prdOptionName }}</div>
                           <div> 수량 : {{ item.quantity }} 개</div>
@@ -218,6 +225,7 @@
       </div>
     </template>
 
+
   </a-modal>
 </template>
 
@@ -226,8 +234,9 @@ import {computed, onMounted, reactive, toRefs,} from "vue";
 import {message} from "ant-design-vue";
 import moment from "moment";
 import {useMarketApi} from "@/api/market";
+import {getLogoSrc} from "@/util/functions";
 
-const props = defineProps(['detail'])
+const props = defineProps(['detail', 'marketCode'])
 const emit = defineEmits(['update:detail'])
 const {detail} = toRefs(props)
 

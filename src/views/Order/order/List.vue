@@ -160,7 +160,16 @@
               style="text-align: center;">
             <div style="display: flex;flex-direction: column;gap: 3px;">
               <span><router-link :to="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</router-link></span>
-              <a-button type="link" @click="showDetail(order)">{{ order.orderNo }} (popup)</a-button>
+              <a-popover placement="top" trigger="hover" :overlayStyle="{width: '140px'}">
+                <template #content>
+                  <a-button size="small" @click="showDetail(order)">판매처</a-button>
+                  <a-button size="small" style="margin-left: 10px;" @click="showDetail(order)">유일</a-button>
+                </template>
+                <template #title>
+                  <span>주문상세 바로가기</span>
+                </template>
+                <a>{{ order.orderNo }} new</a>
+              </a-popover>
               <span style="color: #999999">({{ order.orderDate }})</span>
             </div>
           </td>
@@ -378,8 +387,7 @@ const state = reactive({
     title: "발송지연 안내",
     loading: false,
     showModal: false
-  },
-
+  }
 });
 
 const showDetail = async (orderData) => {

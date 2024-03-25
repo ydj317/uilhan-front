@@ -65,6 +65,7 @@ export class Qoo10sg {
         prdOptionNo: item.prdOptionNo,
         prdPriceCn: item.prdPriceCn,
         prdUrl: item.prdUrl,
+        prdMarket: item.prdMarket,
 
         receiverName: item.receiverName,
         receiverAddr1: item.receiverAddr1,
