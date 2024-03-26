@@ -7,7 +7,7 @@
   />
 
   <div v-if="isAdmin">
-    <a-card title="금지어 관리" :bordered="false">
+    <a-card title="서비스 권한 관리" :bordered="false">
       <a-descriptions bordered size="middle" :column="1" :labelStyle="{ width: '200px' }">
         <a-descriptions-item label="아이디">
           <a-input  v-model:value="username" style="width: 200px;" placeholder="아이디를 입력해주세요."/>
