@@ -5,8 +5,12 @@
         <a-image
           :src="product.item_thumb[0]"
           :fallback="DEFAULT_IMAGE"
-          width="276px"
-          height="276px"
+          alt=""
+          style="
+          width: 100%;
+          height: 250px;
+          object-fit: fill;
+          "
         />
         <div class="product-image-mask"
           @mouseover="product.hover = true"
@@ -120,6 +124,8 @@ function openMarketPopup(marketInfo) {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  background-color: white;
 }
 .product-image {width: 100%;height: 100%;object-fit: contain}
 .product-image-mask {

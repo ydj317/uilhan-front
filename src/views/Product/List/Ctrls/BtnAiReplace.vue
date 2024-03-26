@@ -1,6 +1,6 @@
 <template>
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
-  <a-button type="primary" @click="replaceWithAI">AI 추천모드</a-button>
+  <a-button type="default" @click="replaceWithAI">AI 추천모드</a-button>
 </template>
 
 <script setup>
