@@ -73,6 +73,9 @@
             {{ record.productCode}}
           </div>
         </template>
+        <template v-if="column.key === 'syncTime'">
+          {{ record.syncTime ? dayjs(record.syncTime).format("YYYY-MM-DD") : '-'}}
+        </template>
         <template v-if="column.key === 'chart'">
           <img src="../../assets/img/chart_icon.png" alt="차트보기" width="20" height="20" @click="modalChart(record)" style="cursor: pointer;">
         </template>
@@ -99,7 +102,7 @@
           <span>{{ state.selectedProduct?.productName}}</span>
         </a-flex>
         <a-flex vertical="vertical">
-          <span>마켓연동일：{{ state.selectedProduct && dayjs(state.selectedProduct.syncTime).format("YYYY-MM-DD") }}</span>
+          <span>마켓연동일：{{ state.selectedProduct && !!state.selectedProduct?.syncTime ? dayjs(state.selectedProduct.syncTime).format("YYYY-MM-DD") :'-' }}</span>
         </a-flex>
       </a-flex>
     </a-flex>
@@ -266,8 +269,8 @@ const tableColumns = [
   },
   {
     title: "마켓연동일",
-    key: "date",
-    dataIndex: "date",
+    key: "syncTime",
+    dataIndex: "syncTime",
     width: "20%",
     align: "center"
   },
