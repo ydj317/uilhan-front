@@ -168,7 +168,7 @@
                 <template #title>
                   <span>주문상세 바로가기</span>
                 </template>
-                <a>{{ order.orderNo }} new</a>
+                <a style="color: #1890ff">{{ order.orderNo }} new</a>
               </a-popover>
               <span style="color: #999999">({{ order.orderDate }})</span>
             </div>
@@ -219,34 +219,33 @@
           <td :rowspan="calculateRowspan(order, _key)"
               v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
             <div style="display: grid;">
-              <a-space direction="vertical">
-                <div style="  display: flex; justify-content: space-between; gap: 5px;">
+              <a-space >
+                <div >
 
                   <a-button size="small"
+                            style="width: 70px;"
                             @click.prevent="showHistory({title: item.prdName + ' - ' + item.prdOptionName, type: 'order', index_id: item.id})">
                     히스토리
                   </a-button>
-                  <a-button size="small" v-if="item.status === 'paid' && item.marketCode !== 'interpark'"
-                            @click.prevent="receiverOneOrder(item.id)">발주
+                  <a-button class="ml10" style="width: 70px;" size="small" v-if="item.status === 'paid' && item.marketCode !== 'interpark'"
+                            type="primary" @click.prevent="receiverOneOrder(item.id)">발주
                   </a-button>
-                  <a-button type="primary" size="small" v-if="item.status === 'shippingAddress'"
+                  <a-button class="ml10" style="width: 70px;" type="primary" size="small" v-if="item.status === 'shippingAddress'"
                             @click.prevent="deliveryOrder(item.id, item.courierName, item.invoiceNumber)">배송
                   </a-button>
-                </div>
 
-                <div style="text-align: right;">
-                  <a-button size="small"
-                            v-if="(item.status === 'shippingAddress' || item.status === 'paid') && item.marketCode === 'sk11st'"
-                            @click.prevent="openDelayForm(item)">발송지연
-                  </a-button>
                 </div>
 
               </a-space>
               <!--              <a-space class="mt10"-->
               <!--                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">-->
               <a-space class="mt10">
-                <a-button size="small" @click.prevent="showBridgeForm({record: item, type:'puragent'})">구매대행</a-button>
-                <a-button size="small" @click.prevent="showBridgeForm({record: item, type:'shipagent'})">배송대행</a-button>
+                <a-button size="small" style="width: 70px;" @click.prevent="showBridgeForm({record: item, type:'shipagent'})">배송대행</a-button>
+                <a-button size="small"
+                          style="width: 70px;"
+                          v-if="(item.status === 'shippingAddress' || item.status === 'paid') && item.marketCode === 'sk11st'"
+                          @click.prevent="openDelayForm(item)">발송지연
+                </a-button>
               </a-space>
 
               <a-space class="mt10"
