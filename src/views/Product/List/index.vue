@@ -310,7 +310,7 @@ function checkUserPermission(data) {
 .product-list {
   padding: 20px;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 20px;
   background-color: #f5f5f5;
   width: 100%;
