@@ -105,7 +105,7 @@
         </a-flex>
       </a-flex>
     </a-flex>
-    <a-space class="tab-wrap">
+    <a-space>
       <a-button :type="state.modalTabsIndex == k ?'primary':'default'" class="mr5" @click="modalToggleTabs(k)"
                 v-for="(v,k) in state.modalTabs">{{ v }}
       </a-button>
@@ -399,13 +399,5 @@ const modalToggleTabs = (k) => {
 
 .line {
   background: #ffd117;
-}
-
-.tab-wrap button {
-  width: 100px;
-}
-
-.tab-wrap .ant-btn-default {
-  border: 1px solid #ffd117;
 }
 </style>
