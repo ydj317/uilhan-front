@@ -10,7 +10,7 @@
         <div><strong>선택한 상품</strong></div>
         <btn-delete :delete-items="productList.filter(d => selection.includes(d.item_id))" />
         <btn-clone :selection="selection"></btn-clone>
-        <a-button type="primary" @click="MarketListPop">상품등록</a-button>
+        <a-button type="default" @click="MarketListPop">상품등록</a-button>
         <btn-ai-replace v-if="userInfo?.use_ai === '1'" :selection="selection"></btn-ai-replace>
       </div>
       <div class="search">
