@@ -104,7 +104,7 @@
               <a-input v-model:value="state.form.receiver_post_code" />
             </a-col>
             <a-col :span="5" class="center">
-              <a-button type="default" class="bg-f step3-button">우편번호 검색</a-button>
+              <a-button type="default" @click="showExpressModal(item)" class="bg-f step3-button">우편번호 검색</a-button>
             </a-col>
           </a-row>
           <a-row class="mb10">
@@ -176,9 +176,9 @@
           <a-col :span="21" class="step4-end">
             <a-space>
               <a-button type="primary">장바구니 & 주문복사</a-button>
-              <a-button class="bg-black cor-white">상품복사</a-button>
-              <a-button class="bg-black cor-white">+ 상품추가</a-button>
-              <a-button class="bg-black cor-white">- 상품삭제</a-button>
+              <a-button class="bg-black cor-white" @click="copyItem(index)">상품복사</a-button>
+              <a-button class="bg-black cor-white" @click="addItem(item)">+ 상품추가</a-button>
+              <a-button class="bg-black cor-white" @click="removeItem(index)">- 상품삭제</a-button>
             </a-space>
           </a-col>
         </a-row>
@@ -290,13 +290,13 @@
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
-              <a-col :span="6" class="step4-right-text pl30">브랜드 (영문)<span class="red">*</span></a-col>
+              <a-col :span="6" class="step4-right-text pl30">브랜드 (영문)</a-col>
               <a-col :span="18">
                 <a-input value="NO"/>
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
-              <a-col :span="6" class="step4-right-text pl30">브랜드 (중문)<span class="red">*</span></a-col>
+              <a-col :span="6" class="step4-right-text pl30">브랜드 (중문)</a-col>
               <a-col :span="18">
                 <a-input value="没有"/>
               </a-col>
@@ -749,6 +749,18 @@ const getOrderDetailForBridge = async () => {
   });
 };
 
+const showExpressModal = () =>{
+  new daum.Postcode({
+    oncomplete: function(data) {
+      state.form.receiver_post_code = data.zonecode;
+      state.form.receiver_addr1 = data.roadAddress;
+      state.form.receiver_addr1_en = data.roadAddressEnglish;
+
+      console.log(data)
+    }
+  }).open();
+}
+
 // 저장
 const handleOk = () => {
 
@@ -1077,6 +1089,32 @@ const handleRrnCdChange = (value) => {
 const setMessage = (message, options) => {
   state.form.message = message;
 };
+
+const copyItem = (index) => {
+  state.form.items.push(JSON.parse(JSON.stringify(state.form.items[index])));
+};
+
+const addItem = () => {
+  state.form.items.push({
+    PRO_NM: "",
+    PRO_NM_CH: "",
+    unitPrice: "",
+    quantity: "",
+    prdUrl: "",
+    prdImage: "",
+    hs_code: "",
+    ARC_SEQ: "",
+    rrn_no_con: "N"
+  });
+};
+
+const removeItem = (index) => {
+  if (state.form.items.length === 1) {
+    message.error("한개 이상의 상품이 필요합니다.");
+    return false;
+  }
+  state.form.items.splice(index, 1);
+}
 
 watchEffect(() => {
   if (visible.value) {
