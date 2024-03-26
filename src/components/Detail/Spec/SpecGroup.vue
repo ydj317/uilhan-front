@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="showOptionModify" width="85%" centered :maskClosable="false">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="showOptionModify" width="85%" centered :maskClosable="false" @cancel="this.closeOptionModal">
     <template #footer>
       <div style="display: flex; justify-content: center;">
         <a-button key="back" style="width: 100px;" @click="this.closeOptionModal">취소</a-button>
@@ -784,7 +784,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 100;
+  z-index: 10000;
 }
 
 .option-image-large img {

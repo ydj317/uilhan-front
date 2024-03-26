@@ -7,7 +7,7 @@
     <div style="display: flex; justify-content: space-between;">
       <div style="display: flex;align-items: center;">
         <a-space>
-          <a-checkbox v-model:checked="this.showGuideImage">상/하단 이미지</a-checkbox>
+          <a-checkbox v-model:checked="this.showGuideImage" @change="handleGuideImageToggle">상/하단 이미지</a-checkbox>
           <a-checkbox v-model:checked="this.showVideo">동영상</a-checkbox>
           <a-checkbox v-model:checked="this.showOptionTable" @change="handleOptionTableToggle">옵션테이블</a-checkbox>
         </a-space>
@@ -91,7 +91,10 @@ export default {
       modalContent: "",
       showGuideImage: false,
       showVideo: false,
-      showOptionTable: false
+      showOptionTable: false,
+
+      initialLoad: true, // 新增的变量
+      userTriggeredChange: false,// 用户交互触发标志
     };
   },
   watch: {
@@ -100,6 +103,13 @@ export default {
         this.showGuideImage = this.descriptionOption?.top_bottom_image?.use ?? false;
         this.showVideo = this.descriptionOption?.show_video ?? false;
         this.showOptionTable = this.descriptionOption?.option_table?.use ?? false;
+
+        //和setGuideContent
+        if (!!this.showGuideImage) {
+          this.$nextTick(() => {
+            this.handleGuideImageToggle();
+          })
+        }
         if (!!this.showOptionTable) {
           this.$nextTick(() => {
             this.handleOptionTableToggle();
@@ -108,25 +118,49 @@ export default {
       },
       immediate: true,
       deep: true
-    }
-  },
-  mounted() {
-    this.getGuide();
+    },
 
-    this.$nextTick(() => {
-      watch(() => this.showGuideImage, (newValue) => {
-        if (newValue === true) {
+    showGuideImage(newValue, oldValue) {
+      // 是交互触发的状态变化，而不是初始设置
+      if (!this.initialLoad && newValue !== oldValue) {
+        if (newValue) {
+          console.log(5555);
           this.setGuideContent();
         } else {
           if (this.product.loading !== true) {
             this.deleteGuideContent();
           }
         }
-      });
+      }
+    }
+  },
 
-      watch(() => this.showVideo, (newValue) => {
-        this.setVideoContent();
-      });
+  mounted() {
+    this.getGuide();
+
+    // this.showGuideImage = !!this.descriptionOption?.top_bottom_image && (
+    //     this.descriptionOption.top_bottom_image.top_image_url !== "" ||
+    //     this.descriptionOption.top_bottom_image.bottom_image_url !== "");
+    // // 如果showGuideImage为true，则立即显示图片
+    // if (this.showGuideImage) {
+    //
+    //   this.setGuideContent();
+    // }
+    this.initialLoad = false;
+
+    // this.$nextTick(() => {
+    //   watch(() => this.showGuideImage, (newValue) => {
+    //     if (newValue === true) {
+    //       this.setGuideContent();
+    //     } else {
+    //       if (this.product.loading !== true) {
+    //         this.deleteGuideContent();
+    //       }
+    //     }
+    //   });
+
+    watch(() => this.showVideo, (newValue) => {
+      this.setVideoContent();
     });
   },
 
@@ -157,7 +191,47 @@ export default {
         this.product.item_detail = videoContent + this.product.item_detail;
       }
     },
+
+    handleGuideImageToggle(e) {
+      // 检查图片设置是否存在[]时
+      if (!this.descriptionOption?.top_bottom_image) {
+        message.warning("상/하단 이미지 설정이 없습니다. \n계정설정에서 상/하단 이미지 설정을 등록하여 주시기 바랍니다.");
+        this.showGuideImage = false;
+        return;
+      }
+
+      // 设置用户交互触发标志为true
+      this.userTriggeredChange = true;
+
+      console.log('toggle');
+      this.setGuideContent();
+      //
+      // //切换不同的modal时也能够显示
+      // console.log('e', e);
+      // if (e.target.checked === true) {
+      //   this.setGuideContent();
+      //
+      // } else {
+      //   this.deleteGuideContent();
+      // }
+
+      // // 根据复选框的状态添加或删除图片内容
+      // if (this.showGuideImage) {
+      //   console.log('Adding guide content');
+      //   this.setGuideContent();
+      // } else {
+      //   console.log('Removing guide content');
+      //   this.deleteGuideContent();
+      // }
+    },
+
     setGuideContent() {
+      console.log(44444);
+      // 如果不是初始加载并且不是用户交互触发，则不执行逻辑
+      if (!this.initialLoad && !this.userTriggeredChange) {
+        return;
+      }
+
       if (this.showGuideImage === true &&
         this.product.user.description_option.top_bottom_image.top_image_url === "" &&
         this.product.user.description_option.top_bottom_image.bottom_image_url === "") {
@@ -176,6 +250,9 @@ export default {
       if (this.product.user.description_option.top_bottom_image.bottom_image_url !== "") {
         this.product.item_detail = this.product.item_detail + afterCont;
       }
+
+      // 执行后重置用户交互触发标志
+      this.userTriggeredChange = false;
     },
 
     deleteGuideContent() {
@@ -190,8 +267,8 @@ export default {
         return;
       }
       // 기존에 있는지 업는지 판단소스를 써줘
-      const regexBefore = new RegExp(`<div id="(${this.guideBeforeId}"><\\/div>`, "ig");
-      const regexAfter = new RegExp(`<div id="(${this.guideAfterId}"><\\/div>`, "ig");
+      const regexBefore = new RegExp(`<div id="${this.guideBeforeId}"><\\/div>`, "ig");
+      const regexAfter = new RegExp(`<div id="${this.guideAfterId}"><\\/div>`, "ig");
       const matchBefore = regexBefore.exec(this.product.item_detail);
       const matchAfter = regexAfter.exec(this.product.item_detail);
 
