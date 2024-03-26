@@ -23,7 +23,7 @@
               >카테고리 검색</a-button>
             </div>
             <div class="search_category_list" v-if="suggestCategory.length">
-              <a href="javascript:void(0)">추천 카테고리: {{suggestCategory.join(' / ') || '-'}}</a>
+              <a href="javascript:void(0)" style="color: #999999"><strong>추천 카테고리:</strong> {{suggestCategory.join(' / ') || '-'}}</a>
             </div>
           </td>
         </tr>

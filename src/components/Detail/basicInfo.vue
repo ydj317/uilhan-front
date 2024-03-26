@@ -59,14 +59,19 @@
             </div>
             <a-button type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
-          <div style="display: flex;gap: 5px;">
+          <div style="display: flex;justify-content: center; gap: 5px;text-align: center !important;">
             <a-tag
               v-for="word in product.filter_word_list"
               :key="word"
               :color="'red'"
               @close="deleteFilterWord(word)"
               closable
-            >{{word}}</a-tag>
+              style="display: flex;align-items: center;justify-content: center"
+            >
+              <p>
+              {{word}}
+              </p>
+            </a-tag>
           </div>
 
         </td>
@@ -75,7 +80,7 @@
         <th>상품태그</th>
         <td>
           <a-spin :spinning="ai_loading === true">
-            <a-input v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " :maxlength="max_sync_keyword_length" :showCount="false"
+            <a-textarea v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " @input="itemSyncKeywordCountCheck" @change="itemSyncKeywordCountCheck" :showCount="false"
             />
           </a-spin>
         </td>
@@ -129,7 +134,7 @@ export default {
   data() {
     return {
       max_name_length: 50,
-      max_sync_keyword_length: 255,
+      max_sync_keyword_length: 150,// 상품태그 최대 길이
       item_trans_name: "",
       CONFIG: [
         {
@@ -178,6 +183,25 @@ export default {
   },
 
   methods: {
+    itemSyncKeywordCountCheck() {
+
+      const keyword1 = this.product.item_sync_keyword && this.product.item_sync_keyword.split(' ')
+      const keyword2 = this.product.item_sync_keyword && this.product.item_sync_keyword.split(',')
+
+      const keyword = [...keyword1, ...keyword2]
+
+      if (keyword.length > 20) {
+        message.error('상품태그는 최대 20개까지 등록이 가능합니다.')
+        this.product.item_sync_keyword = keyword.slice(0, 20).join(' ')
+      }
+
+      for (const keywordElement of keyword) {
+        if (keywordElement.length > this.max_sync_keyword_length) {
+          message.error(`상품태그는 최대 ${this.max_sync_keyword_length}자까지 등록이 가능합니다.`)
+          this.product.item_sync_keyword = this.product.item_sync_keyword.replace(keywordElement, '')
+        }
+      }
+    },
     async searchKeyword() {
       this.keyword.loading = true
       this.keyword.list = []
@@ -219,6 +243,7 @@ export default {
       })
     },
     addKeyword(keywordInfo,from = 1) {
+
       let use = false
       if(from == 1){ //yinliang+
         const newName = [this.product.item_trans_name, keywordInfo.word].filter(d => !!d).join(' ')
@@ -238,6 +263,8 @@ export default {
       if (use) {
         keywordInfo.is_using = true
       }
+
+      this.itemSyncKeywordCountCheck()
     },
     getMandatory() {
       useMandatoryApi().getList().then((res) => {
