@@ -1,8 +1,8 @@
 <template>
-  <div class="express-wrap pa30">
+  <div class="express-wrap p30">
     <div class="fw mb20 fs18">배송대행지</div>
     <a-flex justify="space-between">
-      <a-col class="bor pa30 br5 w24">
+      <a-col class="bor p30 br5 w24">
         <a-flex vertical>
           <a-flex justify="space-between">
             <span class="fw fs16">배송대행 신청서</span>
@@ -11,7 +11,7 @@
           <a-button type="primary" class="mt40 fw h50 bg-black color-huang">신청서 작성하기</a-button>
         </a-flex>
       </a-col>
-      <a-col class="bor pa30 br5 w24">
+      <a-col class="bor p30 br5 w24">
         <a-flex vertical>
           <a-flex justify="space-between">
             <span class="fw fs16">나의 예치금</span>
@@ -26,7 +26,7 @@
           <a-button type="primary" class="fw h77 fs16 bg-hui">노 데이터</a-button>
         </a-flex>
       </a-col>
-      <a-col class="bor pa30 br5 w24">
+      <a-col class="bor p30 br5 w24">
         <a-flex vertical>
           <a-flex justify="space-between">
             <span class="fw fs16">배대지 공지사항</span>
