@@ -22,7 +22,7 @@
           >
             <a-select-option value="">전체</a-select-option>
 
-            <a-select-option v-for="(item,index) in plans" value="index">{{ index }}</a-select-option>
+            <a-select-option v-for="(item,index) in plans" :value="index">{{ index }}</a-select-option>
 
 
           </a-select>
@@ -115,7 +115,7 @@
                 @keydown.enter="editable = false"
                 @blur="onSave(index)"
             />
-            <span class="user-span" v-else @click="startEditing(index, column.key)">{{ text === -9999 ? '无限制' : text }}</span>
+            <span class="user-span" v-else @click="startEditing(index, column.key)">{{ text === -9999 ? '제한 없음' : text }}</span>
           </template>
 
           <template v-if="column.key === 'edit'">
@@ -141,7 +141,7 @@
     </a-card>
   </div>
   <div v-else>
-    不是管理员
+    관리자가 아닙니다
   </div>
 </template>
 
@@ -149,7 +149,7 @@
 <script setup>
 import {ref, reactive, computed, onMounted, createVNode} from "vue";
 import Loading from "vue-loading-overlay";
-import {cloneDeep} from "lodash-es";
+import {cloneDeep} from "lodash";
 import Cookie from "js-cookie";
 import {message, Modal} from "ant-design-vue";
 import {AuthRequest} from "@/util/request";
@@ -363,6 +363,7 @@ const search = () => {
  * @param value
  */
 const handleChange = (value) => {
+  // console.log('yy', value)
   plan_type.value = value;
 };
 
@@ -606,7 +607,7 @@ const onSave = (index) => {
       return false;
     }
 
-    message.success('success_row_update');
+    message.success('업데이트 성공');
 
     const data = dataSource.value[index];
 
