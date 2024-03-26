@@ -59,18 +59,15 @@
             </div>
             <a-button type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
-          <div style="display: flex;justify-content: center; gap: 5px;text-align: center !important;">
+          <div style="display: flex; gap: 5px;">
             <a-tag
               v-for="word in product.filter_word_list"
               :key="word"
               :color="'red'"
               @close="deleteFilterWord(word)"
               closable
-              style="display: flex;align-items: center;justify-content: center"
             >
-              <p>
               {{word}}
-              </p>
             </a-tag>
           </div>
 
@@ -263,7 +260,7 @@ export default {
       if (use) {
         keywordInfo.is_using = true
       }
-
+      this.validateFilterWord(this.product.item_trans_name)
       this.itemSyncKeywordCountCheck()
     },
     getMandatory() {
