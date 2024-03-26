@@ -1,10 +1,10 @@
 <template>
   <a-spin :spinning="loading">
-    <div class="plrb20 bg-white" style="padding: 20px;">
+    <div class="bg-white" style="margin-top:20px;">
       <h3><strong>카테고리</strong></h3>
       <table class="basic-info-table" style="width: 100%; border-collapse: collapse;">
         <colgroup>
-          <col style="width: 15%">
+          <col style="width: 8%">
           <col >
         </colgroup>
         <tr>
@@ -410,7 +410,7 @@ export default {
 }
 
 .basic-info-table th {
-  text-align: right;
+  text-align: left;
   padding: 10px 20px;
   font-weight: bold;
   color: #666;

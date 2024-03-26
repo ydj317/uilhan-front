@@ -1,16 +1,16 @@
 <template>
-  <div id="eModelTitle_0" class="mt20 bg-white" style="padding: 20px">
+  <div id="eModelTitle_0" class="bg-white">
     <h3><strong>기본정보</strong></h3>
     <table class="basic-info-table" style="width: 100%; border-collapse: collapse;">
       <colgroup>
-        <col style="width: 15%">
-        <col >
+        <col style="width: 5%">
+        <col>
       </colgroup>
       <tr>
         <th>
           <img :src="product.item_thumbnails[0]?.url" style="width: 100px;height: 100px" alt=""/>
         </th>
-        <td style="display: flex;align-items: flex-start">
+        <td>
           <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
             <div style="display: flex;gap: 10px">
               <a-input
@@ -401,14 +401,14 @@ export default {
 }
 
 .basic-info-table th {
-  text-align: right;
+  text-align: left;
   padding: 10px 20px;
   font-weight: bold;
   color: #666;
 }
 
 .basic-info-table td {
-  padding: 10px 20px;
+  padding: 10px 20px 10px 25px;
 }
 
 .keyword-list {
