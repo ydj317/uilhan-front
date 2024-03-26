@@ -116,7 +116,7 @@
           </a-row>
           <a-row class="mb10">
             <a-col :span="4" class="center"></a-col>
-            <a-col :span="10" class="fs12">예시: 서울시 강남구 청담동 123</a-col>
+            <a-col :span="10" class="fs12">* 주소는 시,군,구를 띄어쓰기하여 정확히 입력해주시기 바랍니다. ex) 서울시 강남구 일원동 741</a-col>
           </a-row>
           <a-row class="mb10">
             <a-col :span="4" class="center">상세주소</a-col>
@@ -127,7 +127,7 @@
           </a-row>
           <a-row class="mb10">
             <a-col :span="4" class="center"></a-col>
-            <a-col :span="10" class="fs12">*지번주소 기재시 통관/세관에서 오류분류로 통관지연</a-col>
+            <a-col :span="11" class="fs12">* 도로명 주소를 써주세요. 지번 주소 기재 시 통관/세관에서 오류로 분류시켜 통관지연이 될 수 있습니다.</a-col>
           </a-row>
           <a-row class="mb10">
             <a-col :span="4" class="center">영문주소</a-col>
@@ -161,7 +161,10 @@
           <a-row class="mb10">
             <a-col :span="1"></a-col>
             <a-col :span="18">
-              <a-input v-model:value="state.form.message" placeholder="* 국내 배송기사 분께 전달하고자 하는 요청사항을 남겨주세요(예: 부재 시 휴대폰으로 연락주세요.)"/>
+              <a-input v-model:value="state.form.message"/>
+              <span class="fs12">
+                * 국내 배송기사 분께 전달하고자 하는 요청사항을 남겨주세요(예: 부재 시 휴대폰으로 연락주세요.)
+              </span>
             </a-col>
           </a-row>
         </a-col>
@@ -241,7 +244,7 @@
             <a-row class="mb10">
               <a-col :span="6" class="step4-right-text pl30">상품명 (영문)</a-col>
               <a-col :span="18" class="help-input-wrap">
-                <a-input placeholder="※ 정확한 작성을 해주셔야 통관지연을 막을 수 있습니다. (대표품목, 특수문자, 한글 입력 금지)" ref="step3-input" @change="step3Input"/>
+                <a-input ref="step3-input" @change="step3Input"/>
                 <!--            <span class="help-input">입력금지</span>-->
               </a-col>
             </a-row>
@@ -326,7 +329,7 @@
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30"></a-col>
               <a-col :span="18" class="fs12">
-                *검수가 필요하신 분들은 정확한 URL주소를 력하세요. 상품URL이 없는 경우 구매영수증URL을 직 입력하세요.
+                *검수가 필요하신 분들은 정확한 URL주소를 넣어주세요. 상품URL이 없는 경우 구매영수증URL 을 꼭 넣으세요.
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
