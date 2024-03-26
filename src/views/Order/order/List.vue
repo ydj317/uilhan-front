@@ -162,7 +162,7 @@
               <span><router-link :to="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</router-link></span>
               <a-popover placement="top" trigger="hover" :overlayStyle="{width: '140px'}">
                 <template #content>
-                  <a-button size="small" @click="showDetail(order)">판매처</a-button>
+                  <a-button size="small" @click="openMarketAdminPage(order.marketCode)">판매처</a-button>
                   <a-button size="small" style="margin-left: 10px;" @click="showDetail(order)">유일</a-button>
                 </template>
                 <template #title>
@@ -779,6 +779,7 @@ const getMarketAdminUrls = async () => {
     }
 
     state.marketAdminUrls = res.data;
+    console.log(state.marketAdminUrls)
   });
 };
 
