@@ -2,7 +2,7 @@
   <a-modal id="bridgeForm" v-model:open="visible"
            width="100%" wrap-class-name="full-modal"
            :confirm-loading="state.confirmLoading" @ok="handleOk" @cancel="onClose" class="showModal" :footer="null">
-    <div style="padding: 0 200px; height: calc(100vh - 100px) ;overflow-y: scroll">
+    <div style="padding: 0 200px; height: calc(100vh - 100px) ;overflow-y: scroll; margin-right: 20px;">
       <span class="mb10 fs24">배송대행 신청서</span>
       <a-row>
         <a-divider class="divider bg-b mb10"></a-divider>
@@ -1122,7 +1122,7 @@ const removeItem = (index) => {
 watchEffect(() => {
   if (visible.value) {
     getOrderDetailForBridge();
-    getCategory();
+    // getCategory();
   }
 });
 </script>
