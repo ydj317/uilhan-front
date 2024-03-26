@@ -1,6 +1,7 @@
 <template>
-  <a-modal id="bridgeForm" v-model:open="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청서'" width="100%" wrap-class-name="full-modal"
-           :confirm-loading="state.confirmLoading" @ok="handleOk" @cancel="onClose" class="showModal" :footer="null">
+  <a-modal v-model:open="visible" :title="bridgeFormData.type === 'puragent' ? '구매대행 신청' : '배송대행 신청서'"
+           width="100%" wrap-class-name="full-modal"
+           :confirm-loading="state.confirmLoading" @ok="handleOk" @cancel="onClose" class="bridgeForm" :footer="null">
     <a-row>
       <a-divider class="divider bg-b mb10"></a-divider>
       <span class="title mb10">서비스 신청 유의사항</span>
@@ -44,12 +45,18 @@
       <a-col :span="21" class="pt10">
         <a-row class="mb10">
           <a-col :span="4" class="center">한글</a-col>
-          <a-col :span="15" class="center"><a-input /></a-col>
-          <a-col :span="5" class="center"><a-button type="default" class="step3-button bg-f">주소록 가져오기</a-button></a-col>
+          <a-col :span="15" class="center">
+            <a-input/>
+          </a-col>
+          <a-col :span="5" class="center">
+            <a-button type="default" class="step3-button bg-f">주소록 가져오기</a-button>
+          </a-col>
         </a-row>
         <a-row class="mb5">
           <a-col :span="4" class="center">영문</a-col>
-          <a-col :span="15"><a-input placeholder="※ 사업자 영문명은 반드시 수정해주세요."  /></a-col>
+          <a-col :span="15">
+            <a-input placeholder="※ 사업자 영문명은 반드시 수정해주세요."/>
+          </a-col>
           <a-col :span="5" class="center"></a-col>
         </a-row>
         <a-row>
@@ -66,17 +73,17 @@
             <a-radio-group value="개인통관고유부호">
               <a-radio value="개인통관고유부호" class="mr30">개인통관고유부호
                 <a-tooltip>
-                <template #title>
-                  <div>tip</div>
-                </template>
-                <QuestionCircleOutlined />
-              </a-tooltip>
-            </a-radio>
+                  <template #title>
+                    <div>tip</div>
+                  </template>
+                  <QuestionCircleOutlined/>
+                </a-tooltip>
+              </a-radio>
               <a-radio value="사업자등록번호">사업자등록번호</a-radio>
             </a-radio-group>
           </a-col>
           <a-col :span="10">
-            <a-input />
+            <a-input/>
           </a-col>
           <a-col :span="5" align="center">
             <a-button type="primary" class="step3-button">개인통관번호 조회</a-button>
@@ -89,16 +96,24 @@
       <a-col :span="21" class="pt10">
         <a-row class="mb10">
           <a-col :span="4" class="center">연락처</a-col>
-          <a-col :span="15" class="center"><a-input /></a-col>
+          <a-col :span="15" class="center">
+            <a-input/>
+          </a-col>
         </a-row>
         <a-row class="mb10">
           <a-col :span="4" class="center">우편번호</a-col>
-          <a-col :span="15" class="center"><a-input /></a-col>
-          <a-col :span="5" class="center"><a-button type="default" class="bg-f step3-button">우편번호 검색</a-button></a-col>
+          <a-col :span="15" class="center">
+            <a-input/>
+          </a-col>
+          <a-col :span="5" class="center">
+            <a-button type="default" class="bg-f step3-button">우편번호 검색</a-button>
+          </a-col>
         </a-row>
         <a-row class="mb10">
           <a-col :span="4" class="center">한글주소</a-col>
-          <a-col :span="15"><a-input placeholder="※ 시, 군, 구를 띄어쓰기로 정확히 입력해주세요."  /></a-col>
+          <a-col :span="15">
+            <a-input placeholder="※ 시, 군, 구를 띄어쓰기로 정확히 입력해주세요."/>
+          </a-col>
           <a-col :span="5" class="center"></a-col>
         </a-row>
         <a-row class="mb10">
@@ -107,7 +122,9 @@
         </a-row>
         <a-row class="mb10">
           <a-col :span="4" class="center">상세주소</a-col>
-          <a-col :span="15"><a-input placeholder="※ 도로명 주소를 입력해주세요."  /></a-col>
+          <a-col :span="15">
+            <a-input placeholder="※ 도로명 주소를 입력해주세요."/>
+          </a-col>
           <a-col :span="5" class="center"></a-col>
         </a-row>
         <a-row class="mb10">
@@ -116,11 +133,15 @@
         </a-row>
         <a-row class="mb10">
           <a-col :span="4" class="center">영문주소</a-col>
-          <a-col :span="15" class="center"><a-input /></a-col>
+          <a-col :span="15" class="center">
+            <a-input/>
+          </a-col>
         </a-row>
         <a-row class="mb10">
           <a-col :span="4" class="center">영문상세주소</a-col>
-          <a-col :span="15" class="center"><a-input /></a-col>
+          <a-col :span="15" class="center">
+            <a-input/>
+          </a-col>
         </a-row>
       </a-col>
     </a-row>
@@ -139,7 +160,7 @@
         <a-row class="mb10">
           <a-col :span="1"></a-col>
           <a-col :span="18">
-            <a-input placeholder="국내 배송기사님께 전달 요청사항을 남겨주세요." />
+            <a-input placeholder="국내 배송기사님께 전달 요청사항을 남겨주세요."/>
           </a-col>
         </a-row>
       </a-col>
@@ -183,7 +204,9 @@
               <a-select-option value="申通2">申通2</a-select-option>
             </a-select>
           </a-col>
-          <a-col :span="18" class="center"><a-input/></a-col>
+          <a-col :span="18" class="center">
+            <a-input/>
+          </a-col>
         </a-row>
         <a-row class="mb10">
           <a-col :span="1"></a-col>
@@ -209,11 +232,11 @@
       <a-col :span="3" class="bg-fa pt30 step4-left">
         <a-row class="ml10">
           <a-upload
-                  name="avatar"
-                  list-type="picture-card"
-                  class="avatar-uploader"
+              name="avatar"
+              list-type="picture-card"
+              class="avatar-uploader"
           >
-            <img v-if="state.avatar"  alt="avatar"/>
+            <img v-if="state.avatar" alt="avatar"/>
             <div v-else>
               <div class="ant-upload-text fs12">이미지 URL<br>입력해주세요</div>
             </div>
@@ -235,7 +258,7 @@
         <a-row class="mb10">
           <a-col :span="6" class="step4-right-text pl30"></a-col>
           <a-col :span="18">
-            <a-select value="품목은 정확하게 선택해주세요. (세관신고)"  class="step4-select2">
+            <a-select value="품목은 정확하게 선택해주세요. (세관신고)" class="step4-select2">
               <a-select-option value="품목은 정확하게 선택해주세요. (세관신고)">품목은 정확하게 선택해주세요. (세관신고)</a-select-option>
             </a-select>
           </a-col>
@@ -249,8 +272,8 @@
         <a-row class="mb10">
           <a-col :span="6" class="step4-right-text pl30">상품명 (영문)</a-col>
           <a-col :span="18" class="help-input-wrap">
-            <a-input placeholder="※ 대표품목, 특수문자, 한글입력금지" ref="step3-input" @change="step3Input"  />
-<!--            <span class="help-input">입력금지</span>-->
+            <a-input placeholder="※ 대표품목, 특수문자, 한글입력금지" ref="step3-input" @change="step3Input"/>
+            <!--            <span class="help-input">입력금지</span>-->
           </a-col>
         </a-row>
         <a-row class="mb10 bottom-border pb10">
@@ -262,84 +285,84 @@
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30">단가<span class="red">*</span></a-col>
           <a-col :span="8">
-            <a-input suffix="위안" />
+            <a-input suffix="위안"/>
           </a-col>
           <a-col :span="1" class="center">X</a-col>
           <a-col :span="9">
-            <a-input suffix="EA" />
+            <a-input suffix="EA"/>
           </a-col>
         </a-row>
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30">옵션<span class="red">*</span></a-col>
           <a-col :span="2" class="center">색상</a-col>
           <a-col :span="6">
-            <a-input />
+            <a-input/>
           </a-col>
           <a-col :span="2" class="center">상품단위</a-col>
           <a-col :span="8">
-            <a-input placeholder="叫:件/双/千克" />
+            <a-input placeholder="叫:件/双/千克"/>
           </a-col>
         </a-row>
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30">모멜명/재질/규격/사이즈<span class="red">*</span></a-col>
           <a-col :span="8">
-            <a-input placeholder="KF94/100ML*30支/水20ML乳20ML" />
+            <a-input placeholder="KF94/100ML*30支/水20ML乳20ML"/>
           </a-col>
           <a-col :span="2" class="center">순량(KG)</a-col>
           <a-col :span="8">
-            <a-input placeholder="한개/SET 상품의 순량" />
+            <a-input placeholder="한개/SET 상품의 순량"/>
           </a-col>
         </a-row>
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30">브랜드 (영문)<span class="red">*</span></a-col>
           <a-col :span="18">
-            <a-input  value="NO" />
+            <a-input value="NO"/>
           </a-col>
         </a-row>
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30">브랜드 (중문)<span class="red">*</span></a-col>
           <a-col :span="18">
-            <a-input  value="没有" />
+            <a-input value="没有"/>
           </a-col>
         </a-row>
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30">국내판매 쇼핑몰 URL</a-col>
           <a-col :span="18">
-            <a-input  value="" />
+            <a-input value=""/>
           </a-col>
         </a-row>
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30">자체관리 코드</a-col>
           <a-col :span="8">
-            <a-input  placeholder="표준상품코드 작성 요망 (请填写标准商品条码)" />
+            <a-input placeholder="표준상품코드 작성 요망 (请填写标准商品条码)"/>
           </a-col>
           <a-col :span="2" class="center">원산지</a-col>
           <a-col :span="8">
-            <a-input placeholder="한글 입력금지" />
+            <a-input placeholder="한글 입력금지"/>
           </a-col>
         </a-row>
         <a-row class="mb10">
           <a-col :span="6" class="step4-right-text pl30">상품URL<span class="red">*</span></a-col>
           <a-col :span="18">
-            <a-input placeholder="※ 배송대행 상품금액 세관신고 증명서류입니다. 중국쇼핑몰 URL 추천합니다."  />
+            <a-input placeholder="※ 배송대행 상품금액 세관신고 증명서류입니다. 중국쇼핑몰 URL 추천합니다."/>
           </a-col>
         </a-row>
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30"></a-col>
-          <a-col :span="18"  class="fs12">
+          <a-col :span="18" class="fs12">
             *검수가 필요하신 분들은 정확한 URL주소를 력하세요. 상품URL이 없는 경우 구매영수증URL을 직 입력하세요.
           </a-col>
         </a-row>
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30">이미지 URL URL<span class="red">*</span></a-col>
           <a-col :span="18">
-            <a-input  value="" />
+            <a-input value=""/>
           </a-col>
         </a-row>
         <a-row class="mb10 pb10">
           <a-col :span="6" class="step4-right-text pl30">오픈마켓 주문번호</a-col>
           <a-col :span="18">
-            <a-input  value="" />
+            <a-input value=""/>
           </a-col>
         </a-row>
       </a-col>
@@ -367,79 +390,111 @@
       <span class="title mb10">STEP 05&nbsp;&nbsp;&nbsp;&nbsp;요청사항을 선택해주세요.</span>
       <a-divider class="divider bg-b mt0 mb0"></a-divider>
     </a-row>
-  <a-row class="step5 bottom-border">
-    <a-col :span="3" class="center bg-fa">검수옵션</a-col>
-    <a-col :span="21" class="pt25 pb25 pl20">
-        <a-checkbox class="mr15">검수안함&nbsp;<a-tag color="blue">무료</a-tag></a-checkbox>
-        <a-checkbox class="mr15">정밀검수&nbsp;<a-tag color="red">3,000원</a-tag></a-checkbox>
-        <a-checkbox class="mr15">작동검수&nbsp;<a-tag color="red">3,000원</a-tag></a-checkbox>
-        <a-checkbox>기본검수&nbsp;<a-tag color="blue">무료</a-tag></a-checkbox>
-    </a-col>
-  </a-row>
-  <a-row class="step5 bottom-border">
+    <a-row class="step5 bottom-border">
+      <a-col :span="3" class="center bg-fa">검수옵션</a-col>
+      <a-col :span="21" class="pt25 pb25 pl20">
+        <a-checkbox class="mr15">검수안함&nbsp;<a-tag color="blue">무료</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">정밀검수&nbsp;<a-tag color="red">3,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">작동검수&nbsp;<a-tag color="red">3,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox>기본검수&nbsp;<a-tag color="blue">무료</a-tag>
+        </a-checkbox>
+      </a-col>
+    </a-row>
+    <a-row class="step5 bottom-border">
       <a-col :span="3" class="center bg-fa">포장옵션</a-col>
       <a-col :span="21" class="right-content pt25 pb25 pl20">
-          <a-checkbox class="mr15 mb10">깨짐주의스티커&nbsp;<a-tag color="blue">무료</a-tag></a-checkbox>
-          <a-checkbox class="mr15">박스 재포장&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">모서리 보호대&nbsp;<a-tag color="red">2,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">스틱형 에어캡&nbsp;<a-tag color="red">1,500원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">밴딩포장&nbsp;<a-tag color="red">2,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">폴리백포장&nbsp;<a-tag color="red">500원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">고급 폴리백포장&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">기본뿌뿌이&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">나무 특수포장&nbsp;<a-tag color="red">20,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">발포지&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
-          <a-checkbox>내품보안포장&nbsp;<a-tag color="red">1,000원</a-tag></a-checkbox>
+        <a-checkbox class="mr15 mb10">깨짐주의스티커&nbsp;<a-tag color="blue">무료</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">박스 재포장&nbsp;<a-tag color="red">1,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">모서리 보호대&nbsp;<a-tag color="red">2,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">스틱형 에어캡&nbsp;<a-tag color="red">1,500원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">밴딩포장&nbsp;<a-tag color="red">2,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">폴리백포장&nbsp;<a-tag color="red">500원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">고급 폴리백포장&nbsp;<a-tag color="red">1,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">기본뿌뿌이&nbsp;<a-tag color="red">1,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">나무 특수포장&nbsp;<a-tag color="red">20,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">발포지&nbsp;<a-tag color="red">1,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox>내품보안포장&nbsp;<a-tag color="red">1,000원</a-tag>
+        </a-checkbox>
       </a-col>
-  </a-row>
-  <a-row class="step5 bottom-border">
+    </a-row>
+    <a-row class="step5 bottom-border">
       <a-col :span="3" class="center bg-fa">제거옵션</a-col>
       <a-col :span="21" class="pt25 pb25 pl20">
-          <a-checkbox class="mr15">신발의류박스 제거&nbsp;<a-tag color="blue">무료</a-tag></a-checkbox>
-          <a-checkbox>영수증 제거&nbsp;<a-tag color="blue">무료</a-tag></a-checkbox>
+        <a-checkbox class="mr15">신발의류박스 제거&nbsp;<a-tag color="blue">무료</a-tag>
+        </a-checkbox>
+        <a-checkbox>영수증 제거&nbsp;<a-tag color="blue">무료</a-tag>
+        </a-checkbox>
       </a-col>
-  </a-row>
-  <a-row class="step5 bottom-border">
+    </a-row>
+    <a-row class="step5 bottom-border">
       <a-col :span="3" class="center bg-fa">통관옵션</a-col>
       <a-col :span="21" class="right-content pt25 pb25 pl20">
-          <a-checkbox class="mr15 mb10">목록통관&nbsp;<a-tag color="blue">무료</a-tag></a-checkbox>
-          <a-checkbox class="mr15">간이통관 수수료&nbsp;<a-tag color="red">3,300원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">사업자통관 수수료&nbsp;<a-tag color="red">33,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">원산지증명발급&nbsp;<a-tag color="red">40,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">B/L비용&nbsp;<a-tag color="red">30,000원</a-tag></a-checkbox>
-          <a-checkbox>컨테이너 작업비&nbsp;<a-tag color="red">30,000원</a-tag></a-checkbox>
+        <a-checkbox class="mr15 mb10">목록통관&nbsp;<a-tag color="blue">무료</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">간이통관 수수료&nbsp;<a-tag color="red">3,300원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">사업자통관 수수료&nbsp;<a-tag color="red">33,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">원산지증명발급&nbsp;<a-tag color="red">40,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">B/L비용&nbsp;<a-tag color="red">30,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox>컨테이너 작업비&nbsp;<a-tag color="red">30,000원</a-tag>
+        </a-checkbox>
       </a-col>
-  </a-row>
-  <a-row class="step5 bottom-border">
+    </a-row>
+    <a-row class="step5 bottom-border">
       <a-col :span="3" class="center bg-fa">기타옵션</a-col>
       <a-col :span="21" class="right-content pt25 pb25 pl20">
-          <a-checkbox class="mr15 mb10">멀티박스&nbsp;<a-tag color="red">3,000원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">관/부가세 선불&nbsp;<a-tag color="red">3,300원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">도서산간&nbsp;<a-tag color="red">3,300원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">경동택배비용 선불</a-checkbox>
-          <a-checkbox class="mr15">220V돼지코&nbsp;<a-tag color="red">1,500원</a-tag></a-checkbox>
-          <a-checkbox class="mr15">원산지 작업 (스티커/미싱)&nbsp;<a-tag color="orange">유료</a-tag></a-checkbox>
-          <a-checkbox>부피무게&nbsp;<a-tag color="orange">즉정</a-tag></a-checkbox>
+        <a-checkbox class="mr15 mb10">멀티박스&nbsp;<a-tag color="red">3,000원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">관/부가세 선불&nbsp;<a-tag color="red">3,300원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">도서산간&nbsp;<a-tag color="red">3,300원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">경동택배비용 선불</a-checkbox>
+        <a-checkbox class="mr15">220V돼지코&nbsp;<a-tag color="red">1,500원</a-tag>
+        </a-checkbox>
+        <a-checkbox class="mr15">원산지 작업 (스티커/미싱)&nbsp;<a-tag color="orange">유료</a-tag>
+        </a-checkbox>
+        <a-checkbox>부피무게&nbsp;<a-tag color="orange">즉정</a-tag>
+        </a-checkbox>
       </a-col>
-  </a-row>
-  <a-row class="step5 bottom-border">
+    </a-row>
+    <a-row class="step5 bottom-border">
       <a-col :span="3" class="center bg-fa">물류 요청사항</a-col>
       <a-col :span="21" class="right-content pt25 pb25 pl20">
-         <a-input></a-input>
+        <a-input></a-input>
       </a-col>
-  </a-row>
-  <a-row class="btn-wrap mt50">
+    </a-row>
+    <a-row class="btn-wrap mt50">
       <a-col :span="24" class=" center pt25 pb25 pl20">
-          <a-button class="mr20">접수대기</a-button>
-          <a-button>접수신청</a-button>
+        <a-button class="mr20">접수대기</a-button>
+        <a-button>접수신청</a-button>
       </a-col>
-  </a-row>
-  <a-row class="bg-black footer-wrap pt30 pb30 mt20">
+    </a-row>
+    <a-row class="bg-black footer-wrap pt30 pb30 mt20">
       <a-col :span="24" class="center pt25 pb25 pl20">
-          <div class="mb5"><span class="red">※</span>입고된 물품은 수정이 <span class="under-line">불가능</span>합니다. 트래킹번호 추가 등 수정이 필요하신 경우 <span class="under-line">접수대기</span>를 선택해주세요.<span class="red">※</span></div>
-          <div><span class="red">※</span><span class="under-line">접수신청</span>을 완료하신 후 부득이한 사유로 요청서 <span class="under-line">수정</span>이 필요한 경우 <span class="under-line">1:1문의</span>해주세요.<span class="red">※</span></div>
+        <div class="mb5"><span class="red">※</span>입고된 물품은 수정이 <span class="under-line">불가능</span>합니다. 트래킹번호 추가 등 수정이
+          필요하신 경우 <span class="under-line">접수대기</span>를 선택해주세요.<span class="red">※</span></div>
+        <div><span class="red">※</span><span class="under-line">접수신청</span>을 완료하신 후 부득이한 사유로 요청서 <span
+            class="under-line">수정</span>이 필요한 경우 <span class="under-line">1:1문의</span>해주세요.<span class="red">※</span>
+        </div>
       </a-col>
-  </a-row>
+    </a-row>
   </a-modal>
 </template>
 
@@ -450,8 +505,8 @@ import {ExclamationCircleOutlined, UploadOutlined} from '@ant-design/icons-vue';
 import {useMarketOrderApi} from "@/api/order";
 import {useBridgeApi} from "@/api/bridge";
 import Cookie from "js-cookie";
-import { createVNode } from 'vue';
-import { Modal } from 'ant-design-vue';
+import {createVNode} from 'vue';
+import {Modal} from 'ant-design-vue';
 import {
   QuestionCircleOutlined,
 } from "@ant-design/icons-vue";
@@ -464,7 +519,7 @@ const props = defineProps({
 })
 
 const {bridgeFormData} = toRefs(props)
-const emit = defineEmits(['close','update'])
+const emit = defineEmits(['close', 'update'])
 
 const state = reactive({
   form: {
@@ -510,17 +565,17 @@ const state = reactive({
     token: Cookie.get("token")
   },
   uploadUrl: process.env.VUE_APP_API_URL + '/api/bridge/BusilicenseBimgUpload',
-  checkPersonalCustomsClearanceCode : false,
-  textareaValue:`1. 주문서에 작성된 모든 정보는 세관신고서에 반영되므로 정확하게 작성하셔야 합니다.
+  checkPersonalCustomsClearanceCode: false,
+  textareaValue: `1. 주문서에 작성된 모든 정보는 세관신고서에 반영되므로 정확하게 작성하셔야 합니다.
   허위정보작성 및 정보 미기재에 의해 발생하는 불이익은 “00배송”에서 책임지지 않습니다.
   2. 주문서에 작성된 모든 정보는 세관신고서에 반영되므로 정확하게 작성하셔야 합니다.
   3. 허위정보작성 및 정보 미기재에 의해 발생하는 불이익은 "00배송”에서 책임지지 않습니다.
   4. 주문서에 작성된 모든 정보는 세관신고서에 반명되므로 정확하게 작성하셔야 합니다.
   5. 허위정보작성 및 정보 미기재에 의해 발생하는 불이익은 “00배송”에서 책임지지 않습니다.`,
-  radioType:'위해해운',
-  avatar:''
+  radioType: '위해해운',
+  avatar: ''
 })
-const step3Input = ()=>{
+const step3Input = () => {
 
 }
 const onClose = () => {
@@ -581,32 +636,32 @@ const getOrderDetailForBridge = async () => {
 // 저장
 const handleOk = () => {
 
-  if(state.form.rrn_cd === '사업자통관') {
-    if(state.form.fileList.length === 0) {
+  if (state.form.rrn_cd === '사업자통관') {
+    if (state.form.fileList.length === 0) {
       message.error('사업자등록증을 첨부해 주세요.');
       return false;
     }
-    if(state.form.fileList[0].response.data.code !== 2000) {
+    if (state.form.fileList[0].response.data.code !== 2000) {
       message.error(state.form.fileList[0].response.data.message);
       return false;
     }
   }
 
-  if(!state.form.receiver_name){
+  if (!state.form.receiver_name) {
     message.error("받는 사람을 입력해 주세요.");
     return false;
   }
 
-  if(!state.form.personal_customs_clearance_code){
+  if (!state.form.personal_customs_clearance_code) {
     message.error("개인통관고유부호를 입력해 주세요.");
     return false;
   }
-  if(state.checkPersonalCustomsClearanceCode === false){
+  if (state.checkPersonalCustomsClearanceCode === false) {
     message.error("개인통관고유부호를 확인해 주세요.");
     return false;
   }
 
-  if(!state.form.receiver_tel1){
+  if (!state.form.receiver_tel1) {
     message.error("받는 사람 연락처를 입력해 주세요.");
     return false;
   }
@@ -690,13 +745,13 @@ const fnHanEng = (pVal) => {
 
   let sCho, sJung, sChong;
 
-  sCho = [ "G", "Gg", "N", "D", "Tt", "R", "M", "B", "Pp", "S", "Ss", "O",
-    "J", "Jj", "Ch", "K", "T", "P", "H" ];
-  sJung = [ "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae",
-    "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i" ];
-  sChong = [ "", "g", "gg", "gs", "n", "nz", "nh", "d", "l", "lg", "lm",
+  sCho = ["G", "Gg", "N", "D", "Tt", "R", "M", "B", "Pp", "S", "Ss", "O",
+    "J", "Jj", "Ch", "K", "T", "P", "H"];
+  sJung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae",
+    "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
+  sChong = ["", "g", "gg", "gs", "n", "nz", "nh", "d", "l", "lg", "lm",
     "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "z",
-    "ch", "k", "t", "p", "h" ];
+    "ch", "k", "t", "p", "h"];
 
   var sVal = pVal;
 
@@ -747,17 +802,17 @@ const fnHanEng = (pVal) => {
   t = t.toUpperCase();
   return t;
 }
-const fnHanEng2 = (pVal,Target) => {
+const fnHanEng2 = (pVal, Target) => {
 
   let sCho, sJung, sChong;
 
-  sCho = [ "G", "Gg", "N", "D", "Tt", "R", "M", "B", "Pp", "S", "Ss", "O",
-    "J", "Jj", "Ch", "K", "T", "P", "H" ];
-  sJung = [ "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae",
-    "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i" ];
-  sChong = [ "", "g", "gg", "gs", "n", "nz", "nh", "d", "l", "lg", "lm",
+  sCho = ["G", "Gg", "N", "D", "Tt", "R", "M", "B", "Pp", "S", "Ss", "O",
+    "J", "Jj", "Ch", "K", "T", "P", "H"];
+  sJung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae",
+    "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
+  sChong = ["", "g", "gg", "gs", "n", "nz", "nh", "d", "l", "lg", "lm",
     "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "z",
-    "ch", "k", "t", "p", "h" ];
+    "ch", "k", "t", "p", "h"];
 
   var sVal = pVal;
 
@@ -811,15 +866,15 @@ const fnHanEng2 = (pVal,Target) => {
 
 // 관세 API
 function RRN_NO_API(ORDNO) {
-  if(!state.form.personal_customs_clearance_code){
+  if (!state.form.personal_customs_clearance_code) {
     message.error("먼저 개인통관고유부호를 입력해 주세요.");
     return false;
   }
-  if(!state.form.receiver_name){
+  if (!state.form.receiver_name) {
     message.error("먼저 받는 사람을 입력해 주세요.");
     return false;
   }
-  if(!state.form.receiver_tel1){
+  if (!state.form.receiver_tel1) {
     message.error("먼저 받는 사람 연락처를 입력해 주세요.");
     return false;
   }
@@ -860,7 +915,7 @@ function RRN_NO_API(ORDNO) {
 // 통관 품목 불러오기
 const getCategory = async () => {
   useBridgeApi().getArcSeq().then(res => {
-    if(res.status !== "2000"){
+    if (res.status !== "2000") {
       message.error("통관품목을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
       return false;
     }
@@ -885,7 +940,7 @@ const handleUploadChange = (info) => {
     console.log(info.file, info.fileList);
   }
   if (status === 'done') {
-    if(info.fileList[0].response.data.code !== 2000) {
+    if (info.fileList[0].response.data.code !== 2000) {
       message.error(info.fileList[0].response.data.message);
       return false;
     }
@@ -897,7 +952,7 @@ const handleUploadChange = (info) => {
 
 // 개인통관부호 change 이벤트
 const handleRrnCdChange = (value) => {
-  if(state.form.rrn_cd === '사업자통관') {
+  if (state.form.rrn_cd === '사업자통관') {
     state.form.fileList = []
     message.info('사업자통관은 33,000원 통관비가 적용됩니다.');
   }
@@ -910,155 +965,191 @@ watchEffect(() => {
   }
 })
 </script>
+<style scoped>
+.fw {
+  font-weight: bold;
+}
+
+.fs12 {
+  font-size: 12px;
+}
+
+.fs20 {
+  font-size: 20px;
+}
+
+.cor-ora {
+  color: #DA8464;
+}
+
+.cor-white {
+  color: white;
+}
+
+.col-blue {
+  color: #2A6BD0;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.mt0 {
+  margin-top: 0;
+}
+
+.bg-b {
+  background-color: black;
+}
+
+.bottom-border {
+  border-bottom: 1px solid #F3F3F3;
+}
+
+.bg-f {
+  background-color: #F0F0F0;
+}
+
+.bg-fa {
+  background-color: #FAFAFA;
+}
+
+.mb0 {
+  margin-bottom: 0;
+}
+
+.divider {
+  height: 2px;
+}
+
+.textarea {
+  color: black !important;
+  cursor: inherit !important;
+  padding: 20px;
+  height: 160px !important;
+  resize: none !important;
+  line-height: 1.5 !important;
+}
+
+.textarea2 {
+  width: 80%;
+  resize: none !important;
+}
+
+
+.btn-wrap button {
+  width: 150px;
+  height: 40px;
+  border: 0;
+}
+
+.btn-wrap button:first-child {
+  border: 1px solid #EFEAC1;
+}
+
+.btn-wrap button:last-child {
+  background-color: #FFDA41;
+}
+
+.help-input-wrap {
+  position: relative;
+}
+
+.help-input {
+  position: absolute;
+  color: red;
+  font-weight: bold;
+  z-index: 99;
+  left: 182px;
+  top: 9px;
+}
+
+.help-input-wrap input:focus:empty + .help-input {
+  display: block;
+}
+
+.help-input-wrap input:focus:not(:empty) + .help-input {
+  display: none;
+}
+
+.help-input-wrap input:not(:focus):empty + .help-input {
+  display: block;
+}
+
+.step1 .flex-wrap {
+  width: 100%;
+}
+
+.step3-select {
+  width: 100%;
+}
+
+.step3-button {
+  min-width: 150px;
+  height: 40px;
+}
+
+.step4-end {
+  display: flex;
+  justify-content: end;
+}
+
+.step4-select {
+  width: 200px;
+}
+
+.step4-select2 {
+  width: 100%;
+}
+
+.step4-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.step4-right-text {
+  display: flex;
+  align-items: center;
+}
+
+.step4-money-wrap {
+  height: 40px;
+  color: #F6E87A;
+  display: flex;
+  align-items: center;
+}
+
+.footer-wrap {
+  border-radius: 5px 5px 0 0;
+  color: white;
+}
+
+.footer-wrap .under-line {
+  padding-bottom: 2px;
+  border-bottom: 1px solid white;
+}
+
+</style>
 <style>
-  .showModal::-webkit-scrollbar{
-    display:none;
-  }
-  .fw{
-      font-weight: bold;
-  }
-  .fs12{
-    font-size: 12px;
-  }
-  .fs20{
-      font-size: 20px;
-  }
-  .cor-ora{
-    color: #DA8464;
-  }
-  .cor-white{
-    color: white;
-  }
-  .col-blue{
-    color: #2A6BD0;
-  }
-  .title{
-    font-weight: bold;
-    font-size: 16px;
-  }
-  .mt0{
-    margin-top: 0;
-  }
-  .bg-b{
-    background-color:black;
-  }
-  .bottom-border{
-    border-bottom: 1px solid #F3F3F3;
-  }
-  .bg-f{
-    background-color:#F0F0F0;
-  }
-  .bg-fa{
-    background-color: #FAFAFA;
-  }
-  .mb0{
-    margin-bottom: 0;
-  }
-  .divider{
-    height: 2px;
-  }
-  .textarea{
-    color: black!important;
-    cursor: inherit!important;
-    padding: 20px;
-    height: 160px!important;
-    resize: none!important;
-    line-height: 1.5!important;
-  }
-  .textarea2{
-    width: 80%;
-    resize: none!important;
-  }
-  .showModal input,.ant-select,.ant-select-selector,.ant-select-selection-item{
-    height: 40px!important;
-    line-height: 40px!important;
-  }
-  #bridgeForm .ant-modal .ant-modal-content{
-      padding-bottom: 0;
-  }
-  .ant-tag-blue,.ant-tag-red,.ant-tag-orange{
-      background: none;
-      border-radius: 10px;
-  }
-  .btn-wrap button{
-    width: 150px;
-    height: 40px;
-    border: 0;
-  }
-  .btn-wrap button:first-child{
-    border: 1px solid #EFEAC1;
-  }
-  .btn-wrap button:last-child{
-    background-color: #FFDA41;
-  }
-  .help-input-wrap{
-      position: relative;
-  }
-  .help-input{
-    position: absolute;
-    color: red;
-    font-weight: bold;
-    z-index: 99;
-    left: 182px;
-    top: 9px;
-  }
-  .help-input-wrap input:focus:empty + .help-input{
-      display: block;
-  }
-  .help-input-wrap input:focus:not(:empty) + .help-input{
-    display: none;
-  }
-  .help-input-wrap input:not(:focus):empty + .help-input{
-      display: block;
-  }
-  .step1 .flex-wrap{
-      width: 100%;
-  }
-    .step3-select{
-        width: 100%;
-    }
-    .step3-button{
-        min-width: 150px;
-        height: 40px;
-    }
-    .step4-end{
-        display: flex;
-        justify-content: end;
-    }
-    .step4-select{
-        width: 200px;
-    }
-    .step4-select2{
-      width: 100%;
-    }
-    .step4-left{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      align-items: center;
-    }
-    .step4-right-text{
-        display: flex;
-        align-items: center;
-    }
-    .step4-money-wrap{
-        height: 40px;
-        color: #F6E87A;
-        display: flex;
-        align-items: center;
-    }
-  .footer-wrap{
-      border-radius: 5px 5px 0 0;
-      color: white;
-  }
-  .footer-wrap .ant-col{
-      flex-direction: column;
-  }
-  .footer-wrap .under-line{
-      padding-bottom: 2px;
-      border-bottom: 1px solid white;
-  }
-  #bridgeForm .ant-modal-content{
-    height: 100% !important;
-  }
+.bridgeForm input, .bridgeForm .ant-select, .bridgeForm .ant-select-selector, .bridgeForm .ant-select-selection-item {
+  height: 40px !important;
+  line-height: 40px !important;
+}
+
+.bridgeForm .ant-tag-blue, .bridgeForm .ant-tag-red, .bridgeForm .ant-tag-orange {
+  background: none;
+  border-radius: 10px;
+}
+
+.bridgeForm .footer-wrap .ant-col {
+  flex-direction: column;
+}
+
+.bridgeForm .ant-modal-content {
+  padding-bottom: 0;
+  height: 100% !important;
+}
 </style>
