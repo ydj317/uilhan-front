@@ -114,6 +114,10 @@
       <a-button type="default" @click="modalClose">닫기</a-button>
     </a-flex>
   </a-modal>
+
+  <a-modal v-model:open="modal" centered width="800">
+    <parse-market-order-zh-cn />
+  </a-modal>
 </template>
 
 <script setup>
@@ -125,6 +129,9 @@ import { useMarketApi } from "@/api/market";
 import { findProductVisits, getProductVisits } from "@/api/productVisits";
 import dayjs from "dayjs";
 import { useMarketAccountApi } from "@/api/marketAccount";
+
+import ParseMarketOrderZhCn from "@/components/ParseMarketOrderZhCn.vue";
+const modal = ref(true);
 
 const modalCharts = ref(null);
 const state = reactive({
