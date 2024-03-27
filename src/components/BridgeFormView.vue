@@ -32,7 +32,7 @@
         <a-divider class="divider bg-b mt0 mb10"></a-divider>
         <a-flex class="ml30" vertical>
           <a-radio-group v-model:value="state.importation_mode">
-            <a-radio value="private_e_commerce">개인전자상거래</a-radio>
+            <a-radio value="3">개인전자상거래</a-radio>
           </a-radio-group>
         </a-flex>
         <a-divider class="bg-f mt10"></a-divider>
@@ -69,7 +69,7 @@
           <a-row class="center">
             <a-col :span="9" class="pl70">
               <a-radio-group v-model:value="state.receiver_info_type">
-                <a-radio value="01" class="mr30">개인통관고유부호
+                <a-radio value="1" class="mr30">개인통관고유부호
                   <a-tooltip>
                     <template #title>
                       <div>tip</div>
@@ -77,14 +77,21 @@
                     <QuestionCircleOutlined/>
                   </a-tooltip>
                 </a-radio>
-                <a-radio value="02">사업자등록번호</a-radio>
+                <a-radio value="2">사업자등록번호</a-radio>
               </a-radio-group>
             </a-col>
             <a-col :span="10">
               <a-input v-model:value="state.form.personal_customs_clearance_code"/>
             </a-col>
             <a-col :span="5" align="center">
-              <a-button v-if="state.receiver_info_type === '01'" type="primary" class="step3-button">개인통관번호 조회</a-button>
+              <a-button
+				  v-if="state.receiver_info_type === '1'"
+				  type="primary"
+				  class="step3-button"
+				  @click="RRN_NO_API"
+			  >
+				  개인통관번호 조회
+			  </a-button>
             </a-col>
           </a-row>
         </a-col>
@@ -689,8 +696,8 @@ const state = reactive({
     상품 등의 인도를 진행합니다.
 ③ 고객님이 구매 신청한 상품 등에 대하여 회사가 검수를 통해 악취, 액체누수 등의 이상이 있다고 판단한 경우 이용자에게
    이러한 사실을 통지하고 해당 상품을 취소할 수 있습니다.`,
-  importation_mode: "private_e_commerce",
-  receiver_info_type :"01",
+  importation_mode: "3",
+  receiver_info_type :"1",
   avatar: "",
   messageType: ""
 });
@@ -996,7 +1003,7 @@ const fnHanEng2 = (pVal, Target) => {
 };
 
 // 관세 API
-function RRN_NO_API(ORDNO) {
+function RRN_NO_API() {
   if (!state.form.personal_customs_clearance_code) {
     message.error("먼저 개인통관고유부호를 입력해 주세요.");
     return false;
@@ -1012,9 +1019,9 @@ function RRN_NO_API(ORDNO) {
 
   state.checkClearanceCodeLoading = true;
   useBridgeApi().checkPersonalCustomsClearanceCode({
-    ORD_NO: ORDNO,
-    ADRS_KR: state.form.receiver_name,
-    MOB_NO: state.form.receiver_tel1.replace(/-/gi, "")
+	  personal_customs_clearance_code: state.form.personal_customs_clearance_code,
+	  receiver_name: state.form.receiver_name,
+	  receiver_tel: state.form.receiver_tel1.replace(/-/gi, "")
   }).then(res => {
     state.checkPersonalCustomsClearanceCode = true;
     if (res.status !== "2000") {
