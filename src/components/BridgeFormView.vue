@@ -1202,7 +1202,7 @@ watchEffect(() => {
   resize: none !important;
 }
 
-.showModal input, .ant-select, .ant-select-selector, .ant-select-selection-item {
+#bridgeForm .showModal input, #bridgeForm .ant-select, #bridgeForm .ant-select-selector, #bridgeForm .ant-select-selection-item {
   height: 40px !important;
   line-height: 40px !important;
 }
@@ -1259,7 +1259,7 @@ watchEffect(() => {
   width: 100%;
 }
 
-.step3-select {
+#bridgeForm .step3-select {
   width: 100%;
 }
 
@@ -1273,11 +1273,11 @@ watchEffect(() => {
   justify-content: flex-end;
 }
 
-.step4-select {
+#bridgeForm .step4-select {
   width: 200px;
 }
 
-.step4-select2 {
+#bridgeForm .step4-select2 {
   width: 100%;
 }
 

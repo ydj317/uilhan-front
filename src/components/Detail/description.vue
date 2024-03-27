@@ -93,8 +93,7 @@ export default {
       showVideo: false,
       showOptionTable: false,
 
-      initialLoad: true, // 新增的变量
-      userTriggeredChange: false,// 用户交互触发标志
+      userTriggeredChange: false
     };
   },
   watch: {
@@ -119,49 +118,25 @@ export default {
       immediate: true,
       deep: true
     },
+  },
 
-    showGuideImage(newValue, oldValue) {
-      // 是交互触发的状态变化，而不是初始设置
-      if (!this.initialLoad && newValue !== oldValue) {
-        if (newValue) {
-          console.log(5555);
+  mounted() {
+    this.getGuide();
+    this.$nextTick(() => {
+      watch(() => this.showGuideImage, (newValue) => {
+        if (newValue === true) {
           this.setGuideContent();
         } else {
           if (this.product.loading !== true) {
             this.deleteGuideContent();
           }
         }
-      }
-    }
-  },
+      });
 
-  mounted() {
-    this.getGuide();
-
-    // this.showGuideImage = !!this.descriptionOption?.top_bottom_image && (
-    //     this.descriptionOption.top_bottom_image.top_image_url !== "" ||
-    //     this.descriptionOption.top_bottom_image.bottom_image_url !== "");
-    // // 如果showGuideImage为true，则立即显示图片
-    // if (this.showGuideImage) {
-    //
-    //   this.setGuideContent();
-    // }
-    this.initialLoad = false;
-
-    // this.$nextTick(() => {
-    //   watch(() => this.showGuideImage, (newValue) => {
-    //     if (newValue === true) {
-    //       this.setGuideContent();
-    //     } else {
-    //       if (this.product.loading !== true) {
-    //         this.deleteGuideContent();
-    //       }
-    //     }
-    //   });
-
-    watch(() => this.showVideo, (newValue) => {
-      this.setVideoContent();
-    });
+      watch(() => this.showVideo, (newValue) => {
+        this.setVideoContent();
+      });
+    })
   },
 
   methods: {
@@ -203,32 +178,12 @@ export default {
       // 设置用户交互触发标志为true
       this.userTriggeredChange = true;
 
-      console.log('toggle');
       this.setGuideContent();
-      //
-      // //切换不同的modal时也能够显示
-      // console.log('e', e);
-      // if (e.target.checked === true) {
-      //   this.setGuideContent();
-      //
-      // } else {
-      //   this.deleteGuideContent();
-      // }
-
-      // // 根据复选框的状态添加或删除图片内容
-      // if (this.showGuideImage) {
-      //   console.log('Adding guide content');
-      //   this.setGuideContent();
-      // } else {
-      //   console.log('Removing guide content');
-      //   this.deleteGuideContent();
-      // }
     },
 
     setGuideContent() {
-      console.log(44444);
-      // 如果不是初始加载并且不是用户交互触发，则不执行逻辑
-      if (!this.initialLoad && !this.userTriggeredChange) {
+      // 如果不是初始加载并且不是用户交互触发，不执行
+      if (!this.userTriggeredChange) {
         return;
       }
 
@@ -293,58 +248,61 @@ export default {
       }
       this.setOptionTableContent();
     },
+
     setOptionTableContent() {
-      let doc = window.tinymce.editors[0].dom.doc;
-      let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
-      if (this.showOptionTable === false) {
-        if (optionTableDoc) {
-          optionTableDoc.innerHTML = "";
-          this.product.item_detail = doc.documentElement.innerHTML;
-        }
-        return;
-      }
+      setTimeout(() => {
+        if (window.tinymce.editors && window.tinymce.editors[0]) {
+          let doc = window.tinymce.editors[0].dom.doc;
+          let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
+          if (this.showOptionTable === false) {
+            if (optionTableDoc) {
+              optionTableDoc.innerHTML = "";
+              this.product.item_detail = doc.documentElement.innerHTML;
+            }
+            return;
+          }
 
-      let columnCount = this.product.user.description_option.option_table.column_length ?? 2;
-      let optionHtml = this.getOptionTable(columnCount);
-      if (optionTableDoc) {
-        optionTableDoc.innerHTML = optionHtml;
-        this.product.item_detail = doc.documentElement.innerHTML;
-      } else {
-        const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
-        // top에 올라가게 변경
-        let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
-        // bottom에 올라가게 변경
-        if (this.product.user.description_option.option_table.show_position === "bottom") {
-          // <div id="${this.guideAfterId}"[^>] 위에 올라가게 변경
-          regex = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "igs");
-        }
-
-        const match = regex.exec(this.product.item_detail);
-        if (match !== null) {
-          if (this.product.user.description_option.option_table.show_position === "bottom") {
-            this.product.item_detail = this.product.item_detail.replace(regex, "");
-            this.product.item_detail = this.product.item_detail + optionTable + match[0];
+          let columnCount = this.product.user.description_option.option_table.column_length ?? 2;
+          let optionHtml = this.getOptionTable(columnCount);
+          if (optionTableDoc) {
+            optionTableDoc.innerHTML = optionHtml;
+            this.product.item_detail = doc.documentElement.innerHTML;
           } else {
-            this.product.item_detail = this.product.item_detail.replace(regex, "");
-            const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
-            const matchVideo = regexVideo.exec(this.product.item_detail);
-            if (matchVideo !== null) {
-              this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
-              this.product.item_detail = match[0] + matchVideo[0] + optionTable + this.product.item_detail;
+            const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
+            // top에 올라가게 변경
+            let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
+            // bottom에 올라가게 변경
+            if (this.product.user.description_option.option_table.show_position === "bottom") {
+              // <div id="${this.guideAfterId}"[^>] 위에 올라가게 변경
+              regex = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "igs");
+            }
+
+            const match = regex.exec(this.product.item_detail);
+            if (match !== null) {
+              if (this.product.user.description_option.option_table.show_position === "bottom") {
+                this.product.item_detail = this.product.item_detail.replace(regex, "");
+                this.product.item_detail = this.product.item_detail + optionTable + match[0];
+              } else {
+                this.product.item_detail = this.product.item_detail.replace(regex, "");
+                const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
+                const matchVideo = regexVideo.exec(this.product.item_detail);
+                if (matchVideo !== null) {
+                  this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
+                  this.product.item_detail = match[0] + matchVideo[0] + optionTable + this.product.item_detail;
+                } else {
+                  this.product.item_detail = match[0] + optionTable + this.product.item_detail;
+                }
+              }
             } else {
-              this.product.item_detail = match[0] + optionTable + this.product.item_detail;
+              if (this.product.user.description_option.option_table.show_position === "bottom") {
+                this.product.item_detail = this.product.item_detail + optionTable;
+              } else {
+                this.product.item_detail = optionTable + this.product.item_detail;
+              }
             }
           }
-        } else {
-          if (this.product.user.description_option.option_table.show_position === "bottom") {
-            this.product.item_detail = this.product.item_detail + optionTable;
-          } else {
-            this.product.item_detail = optionTable + this.product.item_detail;
-          }
         }
-
-
-      }
+      },100);
     },
 
     setOptionTable() {
