@@ -4,7 +4,7 @@
       <h3><strong>카테고리</strong></h3>
       <table class="basic-info-table" style="width: 100%; border-collapse: collapse;">
         <colgroup>
-          <col style="width: 8%">
+          <col style="width: 150px;">
           <col >
         </colgroup>
         <tr>
@@ -15,6 +15,7 @@
                 placeholder="검색 카테고리를 입력하세요."
                 style="width: 100%"
                 v-model:value.trim="search_keyword"
+                @keyup.enter="searchMarketCategory(search_keyword)"
               />
               <a-button
                 type="primary" style="background-color: #1e44ff;color: white"
@@ -22,12 +23,12 @@
               >카테고리 검색</a-button>
             </div>
             <div class="search_category_list" v-if="suggestCategory.length">
-              <a href="javascript:void(0)" style="color: #999999;">추천 카테고리: {{suggestCategory.join(' / ') || '-'}}</a>
+              <a href="javascript:void(0)" style="color: #999999"><strong>추천 카테고리:</strong> {{suggestCategory.join(' / ') || '-'}}</a>
             </div>
           </td>
         </tr>
         <tr v-for="market in marketList" :key="market.seller_id">
-          <th style="vertical-align: top">
+          <th style="text-align: right">
             <img :src="getLogoSrc(market.market_code)" style="width: 18px;height: 18px;"/>
             {{ market.market_code }}:
           </th>
@@ -75,19 +76,6 @@
                   >전시 카테고리 미설정</div>
                 </template>
               </template>
-<!--              <div-->
-<!--                style="display: flex;flex-direction: column;gap: 10px"-->
-<!--                class="mt15 scrollable-div"-->
-<!--                v-if="searchCategories[market.accountName].length > 0"-->
-<!--              >-->
-<!--                <template v-for="(item, key) in searchCategories[market.accountName]" :key="key">-->
-<!--                  <div>-->
-<!--                    <a-typography-link @click="settingCategory(item, market)">-->
-<!--                      {{ item.cate_names.join(' / ') }}-->
-<!--                    </a-typography-link>-->
-<!--                  </div>-->
-<!--                </template>-->
-<!--              </div>-->
             </template>
             <a-spin v-else spinning><a-input /></a-spin>
           </td>
@@ -410,13 +398,14 @@ export default {
 }
 
 .basic-info-table th {
-  text-align: left;
+  text-align: right;
   padding: 10px 20px;
   font-weight: bold;
   color: #666;
 }
 
 .basic-info-table td {
-  padding: 10px 20px;
+  padding: 10px 20px 10px 25px;
 }
+
 </style>

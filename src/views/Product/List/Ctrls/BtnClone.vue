@@ -15,7 +15,7 @@
       <br>
       <span style="font-size: 12px; color: #999;">*복사 된 상품은 최상단으로 이동합니다.</span>
     </template>
-    <slot><a-button type="primary" >복사</a-button></slot>
+    <slot><a-button type="default" >복사</a-button></slot>
   </a-popconfirm>
 </template>
 

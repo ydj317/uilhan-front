@@ -108,8 +108,8 @@
     </tr>
   </table>
 
-  <div id="eModelTitle_3" class="mt20 p20 bg-white">
-    <h3 style="margin-left:-20px"><strong>옵션정보</strong></h3>
+  <div id="eModelTitle_3" class="mt20 bg-white">
+    <h3><strong>옵션정보</strong></h3>
     <!--sku 상단 버튼-->
     <div class="top_button_container" style="display: flex;justify-content: space-between;">
       <!--sku 상단 left 버튼-->

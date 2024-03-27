@@ -16,7 +16,7 @@
       </a-button>
     </template>
     <div id="header">
-      <a-descriptions bordered :column="1" :labelStyle="{ height: '50px' }" :contentStyle="{ height: '50px' }">
+      <a-descriptions bordered :column="1" :labelStyle="{ height: '50px',width: '150px',textAlign: 'right' }" :contentStyle="{ height: '50px' }">
         <a-descriptions-item label="마켓">
           <div>
             <a-checkbox v-model:checked="state.marketCheckAll"
@@ -779,7 +779,6 @@ const getMarketAdminUrls = async () => {
     }
 
     state.marketAdminUrls = res.data;
-    console.log(state.marketAdminUrls)
   });
 };
 

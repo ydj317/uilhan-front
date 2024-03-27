@@ -7,7 +7,7 @@
           <a-checkbox v-model:checked="state.marketCheckAll" :indeterminate="state.indeterminate"
                       @change="onCheckAllChange">전체
           </a-checkbox>
-          <a-checkbox-group v-model:value="state.tableData.params.market">
+          <a-checkbox-group v-model:value="state.tableData.params.market" @change="onCheckMarketChange" >
             <a-checkbox v-for="(item, key) in state.marketList" :key="key" :value="key">{{ item }}</a-checkbox>
           </a-checkbox-group>
         </div>
@@ -73,8 +73,11 @@
             {{ record.productCode}}
           </div>
         </template>
+        <template v-if="column.key === 'syncTime'">
+          {{ record.syncTime ? dayjs(record.syncTime).format("YYYY-MM-DD") : '-'}}
+        </template>
         <template v-if="column.key === 'chart'">
-          <img src="../../assets/img/chart_icon.png" alt="차트보기" width="20" height="20" @click="modalChart(record.productId)" style="cursor: pointer;">
+          <img src="../../assets/img/chart_icon.png" alt="차트보기" width="20" height="20" @click="modalChart(record)" style="cursor: pointer;">
         </template>
         <template v-if="column.key === 'productMemo'">
           <img src="../../assets/img/memo_icon.png" alt="메모보기" width="20" height="20" style="cursor: pointer;">
@@ -93,26 +96,19 @@
 
   <a-modal v-model:open="state.modalOpen" title="상품 유입 데이터 차트" :footer="null" :closable="false" width="1000px">
     <a-flex class="mt20" justify="center">
-      <img src="../../assets/img/404.jpg" width="60" height="60" class="mr20">
+      <img :src="state.selectedProduct?.productThumbnails[0]" width="60" height="60" class="mr20" :alt="state.selectedProduct?.productName" style="border-radius: 10px">
       <a-flex vertical="vertical" style="width: 90%">
         <a-flex justify="space-between" align="center">
-          <span>nickname</span>
-          <span><a-range-picker /></span>
+          <span>{{ state.selectedProduct?.productName}}</span>
         </a-flex>
         <a-flex vertical="vertical">
-          <span>마켓연동일：2021-11-11 12:11</span>
-          <a-divider />
+          <span>마켓연동일：{{ state.selectedProduct && !!state.selectedProduct?.syncTime ? dayjs(state.selectedProduct.syncTime).format("YYYY-MM-DD") :'-' }}</span>
         </a-flex>
       </a-flex>
     </a-flex>
-    <a-space>
-      <a-button :type="state.modalTabsIndex == k ?'primary':'default'" class="mr5" @click="modalToggleTabs(k)"
-                v-for="(v,k) in state.modalTabs">{{ v }}
-      </a-button>
-    </a-space>
     <a-divider />
     <a-skeleton :active="loadChartDataLoading" :loading="loadChartDataLoading">
-      <div class="mt20" ref="modalCharts" style="width: 100%;height: 200px"></div>
+      <div class="mt20" ref="modalCharts" style="width: 100%;height: 400px;"></div>
     </a-skeleton>
     <a-flex justify="flex-end" class="mt20">
       <a-button type="default" @click="modalClose">닫기</a-button>
@@ -128,6 +124,7 @@ import moment from "moment";
 import { useMarketApi } from "@/api/market";
 import { findProductVisits, getProductVisits } from "@/api/productVisits";
 import dayjs from "dayjs";
+import { useMarketAccountApi } from "@/api/marketAccount";
 
 const modalCharts = ref(null);
 const state = reactive({
@@ -140,7 +137,8 @@ const state = reactive({
       page: 1,
       pageSize: 10,
       market: [],
-      order_date: [moment().subtract(15, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
+      account_ids: [],
+      order_date: [moment().subtract(30, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
       range: "",
       search_type: "order_no",
       search_value: "",
@@ -155,15 +153,16 @@ const state = reactive({
 
   indeterminate: true,
   marketList: [],
+  accountList: [],
   modalOpen: false,
-  modalTabs: ["일별", "월별"],
   modalTabsIndex: 0,
   dailyData: {
     params: {
       period: "1week",
       type: "amount"
     }
-  }
+  },
+  selectedProduct: null
 });
 const onPageChange = (page, pageSize) => {
   state.tableData.page = page;
@@ -176,17 +175,41 @@ const onCheckAllChange = e => {
   state.indeterminate = false;
   state.tableData.params.market = e.target.checked ? Object.keys(state.marketList) : [];
 };
+const onCheckMarketChange = () => {
+  // state.accountList 에서 체크되여 있는 marketCode 의 id 를 state.tableData.param.accountIds 에 넣어준다.
+  state.tableData.params.account_ids = state.accountList.filter(it => state.tableData.params.market.includes(it.marketCode)).map(it => Number(it.id));
+};
 const getMarketList = async () => {
   try {
+    let marketList = [];
     await useMarketApi().getMarketList({}).then(res => {
       if (res.status !== "2000") {
         message.error(res.message);
         return false;
       }
 
-      state.marketList = res.data;
-      state.tableData.params.market = Object.keys(state.marketList);
+      marketList = res.data;
     });
+
+    await useMarketAccountApi().getAccountList({'page' : 'all', 'is_use': 1}).then(res => {
+      if (res.status !== "2000") {
+        message.error(res.message);
+        return false;
+      }
+      state.accountList = res.data.list;
+      state.marketList = res.data.list.reduce(
+        (acc, cur) => ({
+            ...acc,
+            [cur.marketCode] : marketList[cur.marketCode]
+          }
+        ),
+        {}
+      );
+
+      state.tableData.params.market = Object.keys(state.marketList);
+      onCheckMarketChange();
+    });
+
   } catch (e) {
     console.error(e);
   }
@@ -230,8 +253,8 @@ const tableColumns = [
   },
   {
     title: "누적 조회수",
-    key: "visitCount",
-    dataIndex: "visitCount",
+    key: "totalVisitCount",
+    dataIndex: "totalVisitCount",
     width: "10%",
     align: "center",
     sorter: true
@@ -246,8 +269,8 @@ const tableColumns = [
   },
   {
     title: "마켓연동일",
-    key: "date",
-    dataIndex: "date",
+    key: "syncTime",
+    dataIndex: "syncTime",
     width: "20%",
     align: "center"
   },
@@ -321,16 +344,17 @@ onMounted(async () => {
 
 //图表模态框
 const loadChartDataLoading = ref(false);
-const modalChart = async (productId) => {
+const modalChart = async (product) => {
   state.modalOpen = true;
+  state.selectedProduct = product;
   loadChartDataLoading.value = true;
   try {
-    const result = await findProductVisits({ productId })
+    const result = await findProductVisits({ productId: product.productId })
     const legend = result.data.map(v => v.marketCode);
 
     // 오늘 부터 15일전 데이터
     const today = dayjs();
-    let xAxis = Array.from({ length: 15 }, (v, k) => today.subtract(k, "day").format("YYYY-MM-DD")).reverse();
+    let xAxis = Array.from({ length: 30 }, (v, k) => today.subtract(k, "day").format("YYYY-MM-DD")).reverse();
 
     // group by marketCode
     const groupByData = result.data.reduce((acc, cur) => {
@@ -347,12 +371,53 @@ const modalChart = async (productId) => {
       return {
         name: v,
         type: "bar",
+        stack: "visit",
         data: xAxis.map(_v => {
           const find = groupByData[v].find(_vv => dayjs(_vv.visitDate).format("YYYY-MM-DD") === _v);
           return find ? find.visitCount : '-';
         })
       };
     });
+
+    const stackInfo = {};
+    for (let i = 0; i < series[0].data.length; ++i) {
+      for (let j = 0; j < series.length; ++j) {
+        const stackName = series[j].stack;
+        if (!stackName) {
+          continue;
+        }
+        if (!stackInfo[stackName]) {
+          stackInfo[stackName] = {
+            stackStart: [],
+            stackEnd: []
+          };
+        }
+        const info = stackInfo[stackName];
+        const data = series[j].data[i];
+        if (data && data !== '-') {
+          if (info.stackStart[i] == null) {
+            info.stackStart[i] = j;
+          }
+          info.stackEnd[i] = j;
+        }
+      }
+    }
+    for (let i = 0; i < series.length; ++i) {
+      const data = series[i].data;
+      const info = stackInfo[series[i].stack];
+      for (let j = 0; j < series[i].data.length; ++j) {
+        // const isStart = info.stackStart[j] === i;
+        const isEnd = info.stackEnd[j] === i;
+        const topBorder = isEnd ? 5 : 0;
+        const bottomBorder = 0;
+        data[j] = {
+          value: data[j],
+          itemStyle: {
+            borderRadius: [topBorder, topBorder, bottomBorder, bottomBorder]
+          }
+        };
+      }
+    }
 
     setTimeout(() => {
       const myChart = echarts.init(modalCharts.value);
@@ -366,7 +431,6 @@ const modalChart = async (productId) => {
         },
         xAxis: {
           type: "category",
-          boundaryGap: true,
           data: xAxis
         },
         yAxis: {
@@ -383,10 +447,8 @@ const modalChart = async (productId) => {
   }
 };
 const modalClose = () => {
+  state.selectedProduct.value = null;
   state.modalOpen = false;
-};
-const modalToggleTabs = (k) => {
-  state.modalTabsIndex = k;
 };
 </script>
 <style scoped>
@@ -399,5 +461,13 @@ const modalToggleTabs = (k) => {
 
 .line {
   background: #ffd117;
+}
+
+.tab-wrap button {
+  width: 100px;
+}
+
+.tab-wrap .ant-btn-default {
+  border: 1px solid #ffd117;
 }
 </style>
