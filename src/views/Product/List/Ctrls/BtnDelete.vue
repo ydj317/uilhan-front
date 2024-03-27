@@ -2,7 +2,7 @@
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
   <span @click="deletePop" :style="fullWidth ? 'width: 100%' : ''">
     <slot>
-      <a-button type="primary" >삭제</a-button>
+      <a-button type="default" >삭제</a-button>
     </slot>
   </span>
 

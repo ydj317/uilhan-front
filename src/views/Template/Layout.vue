@@ -23,7 +23,7 @@
       <a-layout-header style="background: #fff; padding: 0;display: flex; width: 100%;" id="components-layout-custom-trigger">
         <Header style="flex: 1; justify-content: end;"/>
       </a-layout-header>
-      <a-layout-content :style="{ margin: '20px', minHeight: '280px' }">
+      <a-layout-content :style="{ margin: '0 20px', minHeight: '280px' }">
         <Content/>
       </a-layout-content>
 

@@ -3,7 +3,7 @@
     <h3><strong>기본정보</strong></h3>
     <table class="basic-info-table" style="width: 100%; border-collapse: collapse;">
       <colgroup>
-        <col style="width: 5%">
+        <col style="width: 150px">
         <col>
       </colgroup>
       <tr>
@@ -17,6 +17,7 @@
                 :disabled="keyword.loading"
                 v-model:value.trim="keyword.search_value"
                 placeholder="검색 키워드를 입력하세요"
+                @keyup.enter="searchKeyword"
               />
               <a-button
                 :loading="keyword.loading"
@@ -43,26 +44,40 @@
 
       <tr>
         <th>상품명</th>
-        <td style="display: flex;gap: 5px;">
-          <div style="flex: 1">
-          <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true" >
-            <a-input
-                @blur="validateFilterWord(product.item_trans_name)"
-                v-model:value="product.item_trans_name"
-                :maxlength="max_name_length"
-                :showCount="true"
-                :placeholder="`상품명칭을 입력하세요.`"
-            />
-          </a-spin>
+        <td style="display: flex;flex-direction: column; gap: 5px;">
+          <div style="display: flex;gap: 5px;">
+            <div style="flex: 1">
+            <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true" >
+              <a-input
+                  @blur="validateFilterWord(product.item_trans_name)"
+                  v-model:value="product.item_trans_name"
+                  :maxlength="max_name_length"
+                  :showCount="true"
+                  :placeholder="`상품명칭을 입력하세요.`"
+              />
+            </a-spin>
+            </div>
+            <a-button type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
-          <a-button type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
+          <div style="display: flex; gap: 5px;">
+            <a-tag
+              v-for="word in product.filter_word_list"
+              :key="word"
+              :color="'red'"
+              @close="deleteFilterWord(word)"
+              closable
+            >
+              {{word}}
+            </a-tag>
+          </div>
+
         </td>
       </tr>
       <tr>
         <th>상품태그</th>
         <td>
           <a-spin :spinning="ai_loading === true">
-            <a-input v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " :maxlength="max_sync_keyword_length" :showCount="false"
+            <a-textarea v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " @input="itemSyncKeywordCountCheck" @change="itemSyncKeywordCountCheck" :showCount="false"
             />
           </a-spin>
         </td>
@@ -116,7 +131,7 @@ export default {
   data() {
     return {
       max_name_length: 50,
-      max_sync_keyword_length: 255,
+      max_sync_keyword_length: 150,// 상품태그 최대 길이
       item_trans_name: "",
       CONFIG: [
         {
@@ -165,6 +180,25 @@ export default {
   },
 
   methods: {
+    itemSyncKeywordCountCheck() {
+
+      const keyword1 = this.product.item_sync_keyword && this.product.item_sync_keyword.split(' ')
+      const keyword2 = this.product.item_sync_keyword && this.product.item_sync_keyword.split(',')
+
+      const keyword = [...keyword1, ...keyword2]
+
+      if (keyword.length > 20) {
+        message.error('상품태그는 최대 20개까지 등록이 가능합니다.')
+        this.product.item_sync_keyword = keyword.slice(0, 20).join(' ')
+      }
+
+      for (const keywordElement of keyword) {
+        if (keywordElement.length > this.max_sync_keyword_length) {
+          message.error(`상품태그는 최대 ${this.max_sync_keyword_length}자까지 등록이 가능합니다.`)
+          this.product.item_sync_keyword = this.product.item_sync_keyword.replace(keywordElement, '')
+        }
+      }
+    },
     async searchKeyword() {
       this.keyword.loading = true
       this.keyword.list = []
@@ -206,6 +240,7 @@ export default {
       })
     },
     addKeyword(keywordInfo,from = 1) {
+
       let use = false
       if(from == 1){ //yinliang+
         const newName = [this.product.item_trans_name, keywordInfo.word].filter(d => !!d).join(' ')
@@ -225,6 +260,8 @@ export default {
       if (use) {
         keywordInfo.is_using = true
       }
+      this.validateFilterWord(this.product.item_trans_name)
+      this.itemSyncKeywordCountCheck()
     },
     getMandatory() {
       useMandatoryApi().getList().then((res) => {
@@ -379,12 +416,6 @@ export default {
 };
 </script>
 
-<style>
-.detail-basic .ant-descriptions-item-label {
-  width: 200px;
-}
-</style>
-
 <style scoped>
 
 #eModelTitle_0 .get-market-icon img {
@@ -401,7 +432,7 @@ export default {
 }
 
 .basic-info-table th {
-  text-align: left;
+  text-align: right;
   padding: 10px 20px;
   font-weight: bold;
   color: #666;

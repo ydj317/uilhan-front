@@ -1,5 +1,5 @@
 <template>
-  <div class="footer" style="display: flex;justify-content: start;width: 100%;">
+  <div class="footer">
     <div style="width: 400px;"></div>
     <div style="display: flex;flex-direction: column;gap: 10px;">
       <div style="font-size: 20px;font-weight: bold;color: black" class="mb30">해주국제무역상사(주)</div>
@@ -31,6 +31,7 @@
 
 <script>
 export default {
+  name: 'Footer',
   methods: {
     openPolicyModal() {
       this.$store.commit('setIsModalOpen', true);
@@ -39,10 +40,12 @@ export default {
 }
 </script>
 
-
 <style scoped>
 
 .footer {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
   position: relative;
   font-size: 12px;
   line-height: 26px;
@@ -51,8 +54,6 @@ export default {
 
 .policy_link{
   display:flex;
-  align-items: end;
+  align-items: flex-end;
 }
 </style>
-<script setup>
-</script>
