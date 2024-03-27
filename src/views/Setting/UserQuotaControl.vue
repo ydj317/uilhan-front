@@ -24,7 +24,6 @@
 
             <a-select-option v-for="(item,index) in plans" :value="index">{{ index }}</a-select-option>
 
-
           </a-select>
         </a-descriptions-item>
 
@@ -34,9 +33,19 @@
               value-format="YYYY-MM-DD"
           />
         </a-descriptions-item>
+        <a-descriptions-item label="自动图片">
+          <a-select
+              v-model:value="auto_trans_image"
+              style="width: 200px"
+          >
+            <a-select-option value="">전체</a-select-option>
+            <a-select-option value="true">使用</a-select-option>
+            <a-select-option value="false">未使用</a-select-option>
+
+          </a-select>
+        </a-descriptions-item>
 
       </a-descriptions>
-
 
       <div style="display: flex;justify-content: center;">
         <a-button type="primary" @click.prevent="search" class="mt15">검색</a-button>
@@ -118,6 +127,10 @@
             <span class="user-span" v-else @click="startEditing(index, column.key)">{{ text === -9999 ? '제한 없음' : text }}</span>
           </template>
 
+          <template v-else-if="column.key === 'auto_trans_image'">
+            <span>{{ text ? '使用' : '未使用' }}</span>
+          </template>
+
           <template v-if="column.key === 'edit'">
             <a-button danger @click="resetCnt(record)">서비스 초기화</a-button>
           </template>
@@ -162,6 +175,8 @@ const isAdmin = Cookie.get("member_roles").indexOf("ROLE_ADMIN") !== -1;
 const username = ref("");
 const plan_type = ref("");
 const seerch_day = ref(null);
+const auto_trans_image = ref("");
+
 
 const checkedId = ref([]);
 const hasSelected = computed(() => checkedId.value.length > 0);
@@ -242,6 +257,12 @@ const columns = [
     align: "center",
   },
   {
+    title: "图片自动翻译",
+    dataIndex: ['quota', 'auto_trans_image'],
+    key: "auto_trans_image",
+    align: "center",
+  },
+  {
     title: "이미지 번역 횟수",
     dataIndex: ['quota', 'trans_image_count'],
     key: "trans_image_count",
@@ -296,6 +317,7 @@ const initSearch = () => {
   username.value = '';
   plan_type.value = '';
   seerch_day.value = null;
+  auto_trans_image.value = '';
 }
 
 const onSelectChange = selectedRowKeys => {
@@ -324,6 +346,10 @@ const search = () => {
 
     oParam.start_time = Math.floor(Date.parse(seerch_day.value[0] + ' 00:00:00') / 1000);
     oParam.end_time = Math.floor(Date.parse(seerch_day.value[1] + ' 23:59:59') / 1000);
+  }
+
+  if (auto_trans_image.value !== '') {
+    oParam.auto_trans_image = auto_trans_image.value;
   }
 
 
