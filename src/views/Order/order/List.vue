@@ -779,7 +779,6 @@ const getMarketAdminUrls = async () => {
     }
 
     state.marketAdminUrls = res.data;
-    console.log(state.marketAdminUrls)
   });
 };
 
