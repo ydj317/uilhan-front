@@ -27,10 +27,10 @@
     <!-- 상세페이지 편집기 -->
     <div style="margin-top: 10px;">
       <TEditor
-        ref="editor"
-        v-model:value="product.item_detail"
-        :productId="Number(product['item_id'])"
-        @contentUpdate="contentUpdate"
+          ref="editor"
+          v-model:value="product.item_detail"
+          :productId="Number(product['item_id'])"
+          @contentUpdate="contentUpdate"
       />
     </div>
   </div>
@@ -54,7 +54,7 @@
 import { cloneDeep, forEach } from "lodash";
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
-import { watch } from "vue";
+import { watch, watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
@@ -121,6 +121,7 @@ export default {
   },
 
   mounted() {
+    this.fetchData();
     this.getGuide();
     this.$nextTick(() => {
       watch(() => this.showGuideImage, (newValue) => {
@@ -188,10 +189,10 @@ export default {
       }
 
       if (this.showGuideImage === true &&
-        this.product.user.description_option.top_bottom_image.top_image_url === "" &&
-        this.product.user.description_option.top_bottom_image.bottom_image_url === "") {
+          this.product.user.description_option.top_bottom_image.top_image_url === "" &&
+          this.product.user.description_option.top_bottom_image.bottom_image_url === "") {
         message.warning("등록된 상/하단 이미지가 없습니다. \n" +
-          "계정설정에서 별도로 등록하여 주시기 바랍니다.");
+            "계정설정에서 별도로 등록하여 주시기 바랍니다.");
         this.showGuideImage = false;
         return;
       }
@@ -242,7 +243,7 @@ export default {
     handleOptionTableToggle(e) {
       if (!this.descriptionOption?.option_table) {
         message.warning("옵션테이블 설정이 없습니다. \n" +
-          "계정설정에서 옵션테이블 설정을 등록하여 주시기 바랍니다.");
+            "계정설정에서 옵션테이블 설정을 등록하여 주시기 바랍니다.");
         this.showOptionTable = false;
         return;
       }
@@ -303,6 +304,20 @@ export default {
           }
         }
       },100);
+    },
+
+    fetchData() {
+
+      // 품목 이미지, 품목명 변경에 따라 액션
+      watchEffect(() => {
+        if (this.product.loading !== true) {
+          this.product.sku.map(item => item.img);
+          //변경될 경우 테이블 업데이트
+          this.$nextTick(() => {
+            this.setOptionTable();
+          });
+        }
+      });
     },
 
     setOptionTable() {
@@ -393,7 +408,7 @@ export default {
       arr = arr.filter((data) => {
         try {
           return (
-            data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
+              data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
           );
         } catch (e) {
           return false;
