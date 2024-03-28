@@ -382,7 +382,7 @@
           <a-divider class="divider bg-b mt0 mb0"></a-divider>
         </a-row>
         <a-row class="mt30" style="justify-content: space-between;">
-          <a-checkbox><span class="cor-ora fs14">해외직구보험 가입 & 내용확인하기(필수)</span></a-checkbox>
+          <a-checkbox v-model:value="state.form.is_care"><span class="cor-ora fs14">해외직구보험 가입 & 내용확인하기(필수)</span></a-checkbox>
           <span class="fw fs14">안심케어 비용 : <span style="color: #cf1322">{{ state.form.carePrice }}</span> 원</span>
         </a-row>
         <a-divider class="bg-f mt10"></a-divider>
@@ -437,6 +437,9 @@
 				<a-checkbox class="mr15 mb10" value="98">
 					깨짐주의스티커&nbsp;<a-tag color="blue">무료</a-tag>
 				</a-checkbox>
+				<a-checkbox class="mr15" value="69">
+					추천포장&nbsp;<a-tag color="orange">유료</a-tag>
+				</a-checkbox>
 				<a-checkbox class="mr15" value="103">
 					박스 재포장&nbsp;<a-tag color="red">1,000원</a-tag>
 				</a-checkbox>
@@ -459,13 +462,13 @@
 					기본뿌뿌이&nbsp;<a-tag color="red">1,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="104">
-					나무 특수포장&nbsp;<a-tag color="red">20,000원</a-tag>
+					나무 특수포장&nbsp;<a-tag color="red">30,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="97">
-					발포지&nbsp;<a-tag color="red">1,000원</a-tag>
+					발포지&nbsp;<a-tag color="red">1,500원</a-tag>
 				</a-checkbox>
 				<a-checkbox value="101">
-					내품보안포장&nbsp;<a-tag color="red">1,000원</a-tag>
+					내품보안포장&nbsp;<a-tag color="red">500원</a-tag>
 				</a-checkbox>
 			</a-checkbox-group>
         </a-col>
@@ -497,13 +500,13 @@
 					사업자통관 수수료&nbsp;<a-tag color="red">33,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="88">
-					원산지증명발급&nbsp;<a-tag color="red">40,000원</a-tag>
+					원산지증명발급&nbsp;<a-tag color="red">30,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="86">
 					B/L비용&nbsp;<a-tag color="red">30,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox value="138">
-					컨테이너 작업비&nbsp;<a-tag color="red">30,000원</a-tag>
+					컨테이너 작업비&nbsp;<a-tag color="red">20,000원</a-tag>
 				</a-checkbox>
 			</a-checkbox-group>
         </a-col>
@@ -519,19 +522,22 @@
 					관/부가세 선불&nbsp;<a-tag color="red">3,300원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="56">
-					도서산간&nbsp;<a-tag color="red">3,300원</a-tag>
+					도서산간&nbsp;<a-tag color="red">6,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="93">
 					경동택배비용 선불
 				</a-checkbox>
+				<a-checkbox class="mr15" value="151">
+					PDF 인쇄출력&nbsp;<a-tag color="red">200원</a-tag>
+				</a-checkbox>
 				<a-checkbox class="mr15" value="91">
-					220V돼지코&nbsp;<a-tag color="red">1,500원</a-tag>
+					220V돼지코&nbsp;<a-tag color="red">1,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="124">
 					원산지 작업 (스티커/미싱)&nbsp;<a-tag color="orange">유료</a-tag>
 				</a-checkbox>
-				<a-checkbox value="151">
-					부피무게&nbsp;<a-tag color="orange">즉정</a-tag>
+				<a-checkbox value="55">
+					부피무게&nbsp;<a-tag color="orange">측정</a-tag>
 				</a-checkbox>
 			</a-checkbox-group>
         </a-col>
@@ -622,6 +628,7 @@ const state = reactive({
 		avatar: "", // 이미지 URL
 		messageType: "", // 배송 요청사항
 		carePrice: 0, // 보험료?
+		is_care: false, // 보험 가입 여부
 
 		total_amount: 0,
 		total_count: 0,
