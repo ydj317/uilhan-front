@@ -103,6 +103,12 @@ export default {
         this.showVideo = this.descriptionOption?.show_video ?? false;
         this.showOptionTable = this.descriptionOption?.option_table?.use ?? false;
 
+        console.log('upd',this.product.item_upd)
+        if (this.product.item_upd !== null) {
+          this.checkDetatil();
+        }
+
+
         //和setGuideContent
         if (!!this.showGuideImage) {
           this.$nextTick(() => {
@@ -464,6 +470,43 @@ export default {
     showPreview() {
       this.modalContent = cloneDeep(this.product.item_detail);
       this.previewVisible = true;
+    },
+
+    checkDetatil() {
+      //  判断 detail里有没有 guideimage 内容来 判断 checkbox的 值
+      const regexBefore = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
+      const regexAfter = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "igs");
+      const matchBefore = regexBefore.exec(this.product.item_detail);
+      const matchAfter = regexAfter.exec(this.product.item_detail);
+      console.log('detail', this.product.item_detail)
+      this.showGuideImage = true;
+      if (matchBefore === null || matchAfter === null) {
+          this.showGuideImage = false;
+      }
+
+
+      //  判断 video
+      const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
+      const matchVideo = regexVideo.exec(this.product.item_detail);
+      if (matchVideo === null) {
+        this.showVideo = false;
+      } else {
+        this.showVideo = true;
+      }
+
+      console.log('detail', this.product.item_detail)
+
+
+      //  判断 table
+      // const regexTable = new RegExp(`<div id="${this.optionTableId}".*?</div>`, "igs");
+      // const matchTable = regexTable.exec(this.product.item_detail);
+      // if (matchTable === null) {
+      //   this.showOptionTable = false;
+      // } else {
+      //   this.showOptionTable = true;
+      // }
+
+
     }
   }
 };
