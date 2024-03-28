@@ -1,11 +1,7 @@
 <template>
   <a-card title="주문내역 등록" :bordered="false"
-
-
   >
     <p>* 복사된 상품정보 일부가 누락 또는 잘못 복사될 수 있으니 등록 후 , 상품 정보를 확인하시기 바랍니다.</p>
-    <div v-html="state.parseText">
-    </div>
     <a-form
       :model="state"
       :label-col="{ span: 4 }"
@@ -13,12 +9,12 @@
       :border="true"
     >
       <a-form-item label="사이트">
-        <a-select v-model:value="state.site">
-          <a-select-option value="">선택</a-select-option>
-          <a-select-option value="taobao">타오바오</a-select-option>
-          <a-select-option value="tmall">티엔모</a-select-option>
-          <a-select-option value="alibaba">1688</a-select-option>
-        </a-select>
+        <a-radio-group v-model:value="state.site">
+          <a-radio value="">선택</a-radio>
+          <a-radio value="taobao">타오바오</a-radio>
+          <a-radio value="tmall">티엔모</a-radio>
+          <a-radio value="alibaba">1688</a-radio>
+        </a-radio-group>
       </a-form-item>
       <a-form-item label="주문내역">
         <a-input v-model:value="state.parseText" id="pasteArea" placeholder="주문을 복사하여 붙혀넣기 해주세요."/>
