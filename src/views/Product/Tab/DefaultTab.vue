@@ -4,8 +4,8 @@
     <a-spin v-if="product.loading" size="large"/>
   </div>
   <div v-else>
-  <BasicInfo></BasicInfo>
-  <MarketData> </MarketData>
+  <BasicInfo @suggest-category="handleSuggestCategory"></BasicInfo>
+  <MarketData :suggest-category="suggestCategory"> </MarketData>
   </div>
   </div>
 </template>
@@ -22,7 +22,8 @@ export default {
   data() {
     return {
       useAutoSave: false,
-      productWatchCount: 0
+      productWatchCount: 0,
+      suggestCategory: []
     };
   },
 
@@ -31,5 +32,19 @@ export default {
       product: state => state.product.detail
     }),
   },
+  watch: {
+    "product.item_id"() {
+      this.suggestCategory = []
+    }
+  },
+
+  methods: {
+    handleSuggestCategory(categories) {
+      if (! Array.isArray(categories)) {
+        categories = []
+      }
+      this.suggestCategory = categories
+    }
+  }
 }
 </script>

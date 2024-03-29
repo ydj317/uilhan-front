@@ -1,7 +1,7 @@
 <template>
-  <a-modal v-model:open="localvisible" title="상품상세" width="1200px" centered>
+  <a-modal class="pro-detail" v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="true">
     <a-tabs v-model:activeKey="activeKey"
-            :tabBarGutter="0.5"
+            :tabBarGutter="0"
             type="card"
     >
       <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange">
@@ -12,7 +12,7 @@
 
         </template>
         <keep-alive>
-          <component :is="pane.component" v-show="activeKey === pane.key" style="height: 700px;overflow-y: scroll" />
+          <component :is="pane.component" v-show="activeKey === pane.key" style="height: calc(100vh - 180px);overflow-y: scroll" />
         </keep-alive>
       </a-tab-pane>
     </a-tabs>
@@ -97,7 +97,7 @@
 
 <script>
 
-import { defineComponent, ref } from "vue";
+import { defineAsyncComponent, defineComponent, markRaw, ref } from "vue";
 import { AndroidOutlined,ProfileOutlined } from '@ant-design/icons-vue';
 import DefaultTab from "@/views/Product/Tab/DefaultTab.vue";
 import OptionTab from "@/views/Product/Tab/OptionTab.vue";
@@ -110,30 +110,30 @@ import {throttle} from "lodash";
 import {useCategoryApi} from "@/api/category";
 import {useUserApi} from "@/api/user";
 
-
 export default defineComponent({
   name: "productDetailPopup",
 
   data() {
     return {
+      activeKey: '1',
       tabList: [
         {
           key: '1',
           tab: '기본정보',
           icon: ProfileOutlined,
-          component: DefaultTab,
+          component: markRaw(DefaultTab),
         },
         {
           key: '2',
           tab: '옵션/가격정보',
           icon: AndroidOutlined,
-          component: OptionTab,
+          component: markRaw(OptionTab),
         },
         {
           key: '3',
           tab: '상세페이지',
           icon: AndroidOutlined,
-          component: DetailInfoTab,
+          component: markRaw(DetailInfoTab),
         },
       ],
       useAutoSave: false,
@@ -193,15 +193,13 @@ export default defineComponent({
     prdId: {
       type: Number,
       required: true
+    },
+    activeTab: {
+      type: String,
+      default: '1'
     }
   },
   emits: ['update:visible'],
-  setup() {
-    const activeKey = ref('1');
-    return {
-      activeKey,
-    };
-  },
 
   methods: {
 
@@ -311,7 +309,6 @@ export default defineComponent({
 
     getForm(oForm) {
       let oProduct = this.product;
-
       oForm = this.setForm(oForm, {
         id: oProduct["item_id"],
         sku: JSON.stringify(oProduct.sku),
@@ -333,7 +330,8 @@ export default defineComponent({
         custom_code: oProduct.custom_code,
 
         item_cate: JSON.stringify(oProduct.item_cate),
-        item_disp_cate: JSON.stringify(oProduct.item_disp_cate)
+        item_disp_cate: JSON.stringify(oProduct.item_disp_cate),
+        discount_rate: oProduct.item_discount_rate,
       });
 
       return oForm;
@@ -889,6 +887,10 @@ export default defineComponent({
       },
       immediate: true,
     },
+    activeTab(newVal) {
+      const keyList = this.tabList.map(d => d.key)
+      this.activeKey = keyList.indexOf(newVal) ? newVal : '1'
+    }
   },
 
   beforeMount() {
@@ -915,5 +917,9 @@ export default defineComponent({
 
 .ant-tabs-tab.ant-tabs-tab-active{
   background-color: #ffd117 !important;
+}
+
+.pro-detail .tox-tinymce{
+  height:700px !important;
 }
 </style>

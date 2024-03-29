@@ -6,7 +6,7 @@
       @cancel="handleModalClose"
       okText="동의"
       cancelText="닫기"
-
+      class="policyModal"
   >
     <div class="modal-content">
       <p class="sectionTitle">제1조. (목적 및 용어의정의)</p>
@@ -56,7 +56,7 @@
         <p>3. "솔루션"은 5조1항에 사유가 발생될 시"회원" 회원가입할 당시 등록된 정보로 즉시 개별 및 전체공지를 통해 위 사실을 통지할 것입니다.</p>
         <p>4. "솔루션"의 사정으로 인해"유일" 서비스를 영구적으로 중단할 경우 1개월전에 사전 고지할 것입니다.</p>
         <p>5. 유지보수 및 업데이트"솔루션"불가피한 중요 업데이트 있을 시 사전 1주일전에 고지하고 서비스를 중지시킬 수 있습니다. 5조5항에
-         "회원"이 사용하지 못한 기간만큼"솔루션"은"회원"요구에 맞게 기간 연장을 연장해줄 것입니다.</p>
+          "회원"이 사용하지 못한 기간만큼"솔루션"은"회원"요구에 맞게 기간 연장을 연장해줄 것입니다.</p>
       </div>
 
       <p class="sectionTitle">제6조. 정보제공 의무</p>
@@ -174,18 +174,18 @@
         <p>(1) 서비스 제공에 관한 계약 이행 및 서비스 제공에 따른 요금 정산 콘텐츠 제공,청구서 등 발송,구매 및 요금 결제,금융서비스 및 본인 인증</p>
         <p>(2) 회원관리 회원제 서비스 이용 및 개인 식별, 불량회원의 부정 이용 방지와 비인가 사용방지, 가입의사 확인, 연령 확인, 민원 처리, 고지사항 전달</p>
         <p>(3) 마케팅 및 광고, 통계 활용 새 서비스 개발 및 서비스 제공, 광고 게재, 이벤트, 광고 제공, 정보 제공, 회원의 서비스 이용 통계 작성</p>
-        <p>3. 수집하는 개인정보의 항목 및 수집방법<br />“솔루션"은 회원가입, 상담, 서비스 제공 등을 위해 다음과 같은 개인정보를 수집하고 있습니다.</p>
+        <p>3. 수집하는 개인정보의 항목 및 수집방법<br/>“솔루션"은 회원가입, 상담, 서비스 제공 등을 위해 다음과 같은 개인정보를 수집하고 있습니다.</p>
         <p>(1) 수집항목 </p>
         <ul>
-          <li>필수 입력 항목 : 아이디, 이름, 비밀번호, 이메일 주소, 핸드폰번호, 사업자 정보  </li>
-          <li>선택 입력 항목 : 추천인 아이디  </li>
-          <li>비 입력 항목 : 브라우저 종류, 운영체제, 검색어, 서비스 이용 및 방문 기록, IP주소, 쿠키 </li>
+          <li>필수 입력 항목 : 아이디, 이름, 비밀번호, 이메일 주소, 핸드폰번호, 사업자 정보</li>
+          <li>선택 입력 항목 : 추천인 아이디</li>
+          <li>비 입력 항목 : 브라우저 종류, 운영체제, 검색어, 서비스 이용 및 방문 기록, IP주소, 쿠키</li>
         </ul>
-        <p>(2) 수집방법<br />홈페이지, 고객센터 문의, 이벤트 응모, 생성 정보 수집 도구를 통한 방법</p>
-        <p>(3) 개인정보의 보유기간<br />개인정보는 서비스를 이용하는 동안 원활한 서비스 이용을 위해 계속 보유하나 회원 탈퇴 신청이나 서비스 중단 등의 상황이 발생할 경우
+        <p>(2) 수집방법<br/>홈페이지, 고객센터 문의, 이벤트 응모, 생성 정보 수집 도구를 통한 방법</p>
+        <p>(3) 개인정보의 보유기간<br/>개인정보는 서비스를 이용하는 동안 원활한 서비스 이용을 위해 계속 보유하나 회원 탈퇴 신청이나 서비스 중단 등의 상황이 발생할 경우
           해당 정보를 바로 파기하거나 외부 공개를 막습니다. 단 다음의 경우에는 명시한 기간 동안 보존합니다.</p>
         <ul>
-          <li>보존 항목: ID,생년월일,이메일 주소 </li>
+          <li>보존 항목: ID,생년월일,이메일 주소</li>
           <li>보존 이유: 서비스 이용의 혼선 방지, 불법적 사용자에 대한 관련 기관 수사협조</li>
           <li>보존기간: 1년</li>
         </ul>
@@ -392,8 +392,8 @@
 
 <script setup>
 
-import { defineEmits } from 'vue';
-import { useStore } from 'vuex';
+import {defineEmits} from 'vue';
+import {useStore} from 'vuex';
 
 //通过 useStore从 Vuex 中获取 store 的实例。
 const store = useStore();
@@ -409,46 +409,48 @@ const handleOk = () => {
 </script>
 
 <style>
-.ant-modal .ant-modal-content{
-  padding:0;
+.policyModal .ant-modal-content {
+  padding: 0;
 }
 
-.ant-modal-header .ant-modal-title{
+.policyModal .ant-modal-header .ant-modal-title {
   padding: 10px 16px;
   background: #ffd117;
 }
 
-.ant-modal .ant-modal-close{
-  top:10px;
+.policyModal .ant-modal-close {
+  top: 10px;
 }
 
-.ant-modal-body{
-  padding:0 20px 0 25px;
+.policyModal .ant-modal-body {
+  padding: 0 20px 0 25px;
 }
 
-.ant-modal-footer{
-  padding:8px 20px 20px;
+.policyModal .ant-modal-footer {
+  padding: 8px 20px 20px;
 }
 
-.sectionTitle{
-  font-weight:bold;
+.sectionTitle {
+  font-weight: bold;
 }
+
 .modal-content {
   max-height: 500px;
-  padding-right:12px;
+  padding-right: 12px;
   overflow-y: auto;
 }
 
-.paragraph p{
+.paragraph p {
   position: relative;
   text-indent: -1em;
   margin-left: 1em;
 }
 
-.paragraph ul{
-  padding-left:20px;
+.paragraph ul {
+  padding-left: 20px;
 }
-.paragraph ul li{
-  margin-bottom:1em;
+
+.paragraph ul li {
+  margin-bottom: 1em;
 }
 </style>

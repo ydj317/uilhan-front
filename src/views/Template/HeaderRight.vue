@@ -151,6 +151,7 @@ export default {
 
     logout() {
       cookieInit();
+      sessionStorage.setItem("orderData", "");
       router.push("/user/login");
       return false;
     },

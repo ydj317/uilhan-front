@@ -1,5 +1,4 @@
 <template>
-    <BindBridge/>
     <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
 
         <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
@@ -8,7 +7,7 @@
             <a-form-item label="아이디">
                 {{ formState.username }}
             </a-form-item>
-            <a-form-item label="비밀번호" name="password">
+            <a-form-item label="비밀번호">
                 <span class="mr30">*******</span>
                 <a-button type="primary" @click="showModal">비밀번호 변경</a-button>
             </a-form-item>
@@ -198,7 +197,6 @@
     import router from "@/router";
     import {message} from "ant-design-vue";
     import {useUserApi} from "@/api/user";
-    import BindBridge from "@/views/Setting/BindBridge.vue";
 
     import "vue-loading-overlay/dist/vue-loading.css";
     import Loading from "vue-loading-overlay";

@@ -1,22 +1,34 @@
 <template>
-  <loading v-model:active="state.loading" :can-cancel="false" :is-full-page="true" />
+  <loading v-model:active="state.loading" :can-cancel="false" :is-full-page="true"/>
   <a-card title="주문관리">
     <template #extra>
       <a-tooltip>
         <template #title>
           <div>주문수집 버튼을 누른 후 주문건 수집까지 1~2분정도 소요됩니다.</div>
         </template>
-        <QuestionCircleOutlined />
+        <QuestionCircleOutlined/>
       </a-tooltip>
       <a-button class="ml10" @click.prevent="handleCollect">
         <template #icon>
-          <FileSyncOutlined />
+          <FileSyncOutlined/>
         </template>
         주문수집
       </a-button>
     </template>
     <div id="header">
-      <a-descriptions bordered :column="1" size="middle">
+      <a-descriptions bordered :column="1" :labelStyle="{ height: '50px',width: '150px',textAlign: 'right' }" :contentStyle="{ height: '50px' }">
+        <a-descriptions-item label="마켓">
+          <div>
+            <a-checkbox v-model:checked="state.marketCheckAll"
+                        :indeterminate="state.indeterminate"
+                        @change="onCheckAllChange">전체
+            </a-checkbox>
+            <a-checkbox-group v-model:value="state.tableData.checkedMarket" @change="onCheckMarketChange">
+              <a-checkbox v-for="(item, key) in state.marketList" :key="key" :value="key">{{ item }}</a-checkbox>
+            </a-checkbox-group>
+          </div>
+        </a-descriptions-item>
+
         <a-descriptions-item>
           <template #label>
             검색기간
@@ -24,28 +36,18 @@
               <template #title>
                 <div>검색기간은 30일 단위로 조회 가능합니다.</div>
               </template>
-              <QuestionCircleOutlined />
+              <QuestionCircleOutlined/>
             </a-tooltip>
           </template>
           <a-input-group compact>
             <a-space direction="vertical" :size="12">
-              <a-range-picker v-model:value="state.order_date" @change="onChangeDatePicker" />
+              <a-range-picker size="middle" v-model:value="state.order_date" @change="onChangeDatePicker"/>
             </a-space>
           </a-input-group>
         </a-descriptions-item>
-        <a-descriptions-item label="계정">
-          <div>
-            <a-checkbox v-model:checked="state.marketCheckAll" :indeterminate="state.indeterminate"
-                        @change="onCheckAllChange">전체
-            </a-checkbox>
-            <a-checkbox-group v-model:value="state.tableData.params.market">
-              <a-checkbox v-for="(item, key) in state.marketList" :key="key" :value="key">{{ item }}</a-checkbox>
-            </a-checkbox-group>
-          </div>
-        </a-descriptions-item>
         <a-descriptions-item label="검색어">
           <a-input-group compact style="display: flex;">
-            <a-select v-model:value="state.tableData.params.search_type" style="width: 100px;">
+            <a-select size="middle" v-model:value="state.tableData.params.search_type" style="width: 100px;">
               <a-select-option value="order_no">주문번호</a-select-option>
               <a-select-option value="prd_code">상품번호</a-select-option>
               <a-select-option value="prd_name">상품명</a-select-option>
@@ -54,33 +56,10 @@
               <a-select-option value="orderer_name">주문자</a-select-option>
               <a-select-option value="receiver_name">수취인</a-select-option>
             </a-select>
-            <a-input v-model:value="state.tableData.params.search_value" style="width: 300px;" allowClear />
+            <a-input size="middle" v-model:value="state.tableData.params.search_value" style="width: 300px;"
+                     allowClear/>
           </a-input-group>
         </a-descriptions-item>
-        <a-descriptions-item label="주문상태">
-          <a-space>
-            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
-                           @change="handleStatusChange">
-              <a-radio-button value="" style="color: black">전체</a-radio-button>
-            </a-radio-group>
-            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
-                           @change="handleStatusChange">
-              <a-radio-button v-for="option in state.orderStatus" :value="option.value">{{
-                  option.label
-                }}
-              </a-radio-button>
-            </a-radio-group>
-
-            <a-radio-group v-model:value="state.tableData.params.status" button-style="solid"
-                           @change="handleStatusChange">
-              <a-radio-button v-for="option in state.claimStatus" :value="option.value">{{
-                  option.label
-                }}
-              </a-radio-button>
-            </a-radio-group>
-          </a-space>
-        </a-descriptions-item>
-
       </a-descriptions>
 
       <div style="display: flex;justify-content: center;">
@@ -90,13 +69,29 @@
     </div>
   </a-card>
 
+  <div style="display: flex; position: relative; top: 32px">
+    <a-tabs
+        id="order-status"
+        size="small"
+        v-model:activeKey="state.activeKey"
+        type="card" :tabBarGutter="1"
+        @change="statusTabChange">
+      <a-tab-pane class="status_tab" v-for="pane in state.allStatus" :key="pane.value">
+        <template #tab>
+          <div :style="{color: state.activeKey === pane.value ? '#ffffff' : '#000000'}">
+            {{ pane.label }}
+          </div>
+        </template>
+      </a-tab-pane>
+    </a-tabs>
+  </div>
   <a-card class="mt15">
     <div class="mb15" style="display: flex;justify-content: space-between;">
       <div class="left-div">
         <a-space>
           <a-button @click.prevent="receiverOrderSelected" v-if="state.tableData.params.status === 'paid'">
             <template #icon>
-              <ContainerOutlined />
+              <ContainerOutlined/>
             </template>
             선택 주문처리
           </a-button>
@@ -113,14 +108,14 @@
           <template #title>EXCEL 다운로드</template>
           <a-button @click.prevent="excelDownload">
             <template #icon>
-              <DownloadOutlined />
+              <DownloadOutlined/>
             </template>
           </a-button>
         </a-tooltip>
 
         <a-button @click.prevent="syncBridgeStatus" :loading="state.tableData.syncBridgeStatusLoading">
           <template #icon>
-            <RedoOutlined />
+            <RedoOutlined/>
           </template>
           배대지 상태 동기화
         </a-button>
@@ -143,33 +138,48 @@
         <th>운송장정보</th>
         <th>주문관리</th>
       </tr>
-      <template v-for="(order, key, index) in filterOrderData" :key="key">
+      <tr v-if="state.tableData.loading">
+        <td colspan="10" style="background-color: white; text-align: center; height: 200px">
+          <a-spin size="large"/>
+        </td>
+      </tr>
+      <template v-if="!state.tableData.loading" v-for="(order, key, index) in filterOrderData" :key="key">
         <tr v-for="(item, _key) in order.items" :key="_key" :class="getGroupClass(index)">
           <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0"
               style="text-align: center;">
-            <a-checkbox v-model:checked="order.checked" />
+            <a-checkbox v-model:checked="order.checked"/>
           </td>
           <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0">
             <div style="display: flex;flex-direction: column; align-items: center;gap: 5px;">
               <img :src="getLogoSrc(order.marketCode)" style="width: 18px;height: 18px;cursor: pointer;"
-                   @click="openMarketAdminPage(order.marketCode)" />
+                   @click="openMarketAdminPage(order.marketCode)"/>
               {{ order.sellerId }}
             </div>
           </td>
           <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0"
               style="text-align: center;">
             <div style="display: flex;flex-direction: column;gap: 3px;">
-              <span><router-link :to="`/order/info/${item.orderNo}`">{{ order.orderNo }}</router-link></span>
+              <span><router-link :to="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</router-link></span>
+              <a-popover placement="top" trigger="hover" :overlayStyle="{width: '140px'}">
+                <template #content>
+                  <a-button size="small" @click="openMarketAdminPage(order.marketCode)">판매처</a-button>
+                  <a-button size="small" style="margin-left: 10px;" @click="showDetail(order)">유일</a-button>
+                </template>
+                <template #title>
+                  <span>주문상세 바로가기</span>
+                </template>
+                <a style="color: #1890ff">{{ order.orderNo }} new</a>
+              </a-popover>
               <span style="color: #999999">({{ order.orderDate }})</span>
             </div>
           </td>
           <td>
             <a-image
-              :src="item.prdImage"
-              fallback="data:image/png;base64,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"
-              style="width:60px;height:60px;border-radius: 10px;" />
+                :src="item.prdImage"
+                fallback="data:image/png;base64,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"
+                style="width:60px;height:60px;border-radius: 10px;"/>
           </td>
-          <td style="min-width: 350px">{{ item.prdName }} <br /> {{ item.prdOptionName }}</td>
+          <td style="min-width: 350px">{{ item.prdName }} <br/> {{ item.prdOptionName }}</td>
           <td>{{ item.quantity }}</td>
 
           <td :rowspan="calculateRowspan(order, _key)"
@@ -179,15 +189,15 @@
           <td :rowspan="calculateRowspan(order, _key)"
               v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
             <a-badge color="blue" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-if="item.status === 'paid'" />
+                     v-if="item.status === 'paid'"/>
             <a-badge color="yellow" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-else-if="item.status === 'shippingAddress'" />
+                     v-else-if="item.status === 'shippingAddress'"/>
             <a-badge color="orange" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-else-if="item.status === 'shipping'" />
+                     v-else-if="item.status === 'shipping'"/>
             <a-badge color="green" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-else-if="item.status === 'shippingComplete'" />
+                     v-else-if="item.status === 'shippingComplete'"/>
             <a-badge color="red" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-else />
+                     v-else/>
             <a-tag color="volcano" v-if="!item.prdImage">마켓상품</a-tag>
           </td>
           <td :rowspan="calculateRowspan(order, _key)"
@@ -200,7 +210,7 @@
                   {{ company }}
                 </a-select-option>
               </a-select>
-              <a-input v-model:value="item.invoiceNumber" placeholder="송장번호를 입력해 주세요." allow-clear />
+              <a-input v-model:value="item.invoiceNumber" placeholder="송장번호를 입력해 주세요." allow-clear/>
             </div>
             <div v-else>
               {{ order.courierName }} - {{ order.invoiceNumber }}
@@ -209,34 +219,35 @@
           <td :rowspan="calculateRowspan(order, _key)"
               v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
             <div style="display: grid;">
-              <a-space direction="vertical">
-                <div style="  display: flex; justify-content: space-between; gap: 5px;">
+              <a-space >
+                <div >
 
                   <a-button size="small"
+                            style="width: 70px;"
                             @click.prevent="showHistory({title: item.prdName + ' - ' + item.prdOptionName, type: 'order', index_id: item.id})">
                     히스토리
                   </a-button>
-                  <a-button size="small" v-if="item.status === 'paid' && item.marketCode !== 'interpark'"
-                            @click.prevent="receiverOneOrder(item.id)">발주
+                  <a-button class="ml10" style="width: 70px;" size="small" v-if="item.status === 'paid' && item.marketCode !== 'interpark'"
+                            type="primary" @click.prevent="receiverOneOrder(item.id)">발주
                   </a-button>
-                  <a-button type="primary" size="small" v-if="item.status === 'shippingAddress'"
+                  <a-button class="ml10" style="width: 70px;" type="primary" size="small" v-if="item.status === 'shippingAddress'"
                             @click.prevent="deliveryOrder(item.id, item.courierName, item.invoiceNumber)">배송
                   </a-button>
-                </div>
 
-                <div style="text-align: right;">
-                  <a-button size="small"
-                            v-if="(item.status === 'shippingAddress' || item.status === 'paid') && item.marketCode === 'sk11st'"
-                            @click.prevent="openDelayForm(item)">발송지연
-                  </a-button>
                 </div>
 
               </a-space>
-              <a-space class="mt10"
-                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">
-                <a-button size="small" @click.prevent="showBridgeForm({record: item, type:'puragent'})">구매대행</a-button>
-                <a-button size="small" @click.prevent="showBridgeForm({record: item, type:'shipagent'})">배송대행</a-button>
+              <!--              <a-space class="mt10"-->
+              <!--                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">-->
+              <a-space class="mt10">
+                <a-button size="small" style="width: 70px;" @click.prevent="showBridgeForm({record: item, type:'shipagent'})">배송대행</a-button>
+                <a-button size="small"
+                          style="width: 70px;"
+                          v-if="(item.status === 'shippingAddress' || item.status === 'paid') && item.marketCode === 'sk11st'"
+                          @click.prevent="openDelayForm(item)">발송지연
+                </a-button>
               </a-space>
+
               <a-space class="mt10"
                        v-if="item.status === 'shippingAddress' && item.isSendBridge === 1 && state.is_bridge_sync === true && item.prdImage"
                        direction="vertical" align="center">
@@ -250,30 +261,30 @@
       </template>
     </table>
     <a-pagination
-      style="width: 100%;display: flex;justify-content: end;align-items: center;margin-top: 15px;"
-      v-model:current="state.tableData.page"
-      v-model:page-size="state.tableData.pageSize"
-      @change="onPageChange"
-      :total="state.tableData.total"
-      :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
+        style="width: 100%;display: flex;justify-content: end;align-items: center;margin-top: 15px;"
+        v-model:current="state.tableData.page"
+        v-model:page-size="state.tableData.pageSize"
+        @change="onPageChange"
+        :total="state.tableData.total"
+        :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
     />
   </a-card>
-  <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData" />
+  <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData"/>
   <BridgeFormView :visible.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData"
-                  @update="getTableData" :key="bridgeFormData.type" />
+                  @update="getTableData" :key="bridgeFormData.type"/>
 
   <div>
     <a-modal
-      v-model:open="state.delayGuideData.showModal"
-      :title="state.delayGuideData.title"
-      @ok="sendDelayGuide"
-      :closable="true"
-      :maskClosable="false"
+        v-model:open="state.delayGuideData.showModal"
+        :title="state.delayGuideData.title"
+        @ok="sendDelayGuide"
+        :closable="true"
+        :maskClosable="false"
     >
       <div v-if="state.delayGuideData.formData.order_data.marketCode === 'sk11st'">
         <a-form ref="delayFormRef" :model="state.delayGuideData.formData" class="market_form">
           <a-form-item name="send_day" label="예상배송일" :rules="[{ required: true, message: '예상배송일을 선택해주세요.'}]">
-            <a-date-picker :disabledDate="delayDisabledDate" v-model:value="state.delayGuideData.formData.send_day" />
+            <a-date-picker :disabledDate="delayDisabledDate" v-model:value="state.delayGuideData.formData.send_day"/>
           </a-form-item>
           <a-form-item name="delay_reason" label="배송지연사유" :rules="[{ required: true, message: '배송지연사유를 선택해주세요.'}]">
             <a-select v-model:value="state.delayGuideData.formData.delay_reason">
@@ -287,7 +298,7 @@
           <a-form-item name="detail_reason" label="상세사유"
                        :rules="[{ required: true, min:20, max:300, message: '상세사유 값은 20~300Byte 사이로 입력해 주세요.'}]">
             <a-textarea show-count :maxlength="300" :auto-size="{ minRows: 4 }"
-                        v-model:value="state.delayGuideData.formData.detail_reason" placeholder="상세사유를 입력해주세요." />
+                        v-model:value="state.delayGuideData.formData.detail_reason" placeholder="상세사유를 입력해주세요."/>
           </a-form-item>
         </a-form>
       </div>
@@ -300,16 +311,17 @@
     </a-modal>
   </div>
 
+  <ModalDetail v-model:detail="orderDetail" :marketCode="openDetailMarketCode"/>
 </template>
 
 <script setup>
 
-import { computed, onMounted, reactive, ref, toRaw, watch, watchEffect } from "vue";
-import { useMarketAccountApi } from "@/api/marketAccount";
-import { useMarketOrderApi } from "@/api/order";
-import { useMarketApi } from "@/api/market";
+import {computed, onMounted, reactive, ref, toRaw, watch, watchEffect} from "vue";
+import {useMarketAccountApi} from "@/api/marketAccount";
+import {useMarketOrderApi} from "@/api/order";
+import {useMarketApi} from "@/api/market";
 import moment from "moment";
-import { message } from "ant-design-vue";
+import {message} from "ant-design-vue";
 import HistoryView from "@/components/HistoryView.vue";
 import BridgeFormView from "@/components/BridgeFormView.vue";
 import {
@@ -320,10 +332,14 @@ import {
   QuestionCircleOutlined,
   RedoOutlined
 } from "@ant-design/icons-vue";
-import { useUserApi } from "@/api/user";
+import {useUserApi} from "@/api/user";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
+import ModalDetail from "@/views/Order/order/ModalDetail.vue";
+import {OrderMapping} from "@/views/Order/order/mapping";
 
+const orderDetail = ref({show: false, orderData: {}})
+const openDetailMarketCode = ref('')
 
 const state = reactive({
   tableData: {
@@ -335,19 +351,21 @@ const state = reactive({
     syncBridgeStatusLoading: false,
     params: {
       order_date: [moment().subtract(15, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
-      market: [],
+      account_ids: [],
       search_type: "order_no",
       search_value: "",
-      status: ""
-    }
+      status: "",
+    },
+    checkedMarket: []
   },
   loading: false,
-  accountData: {},
+  accountList: [],
   order_date: [moment().subtract(15, "days"), moment()],
   orderStatus: [],
   orderStatusData: [],
   claimStatus: [],
   allStatus: [],
+  activeKey: "",
   claimStatusData: [],
   courierNameValues: {},
   invoiceNumberValues: {},
@@ -358,7 +376,6 @@ const state = reactive({
   marketDetailUrls: {},
   syncStatusShow: false,
   is_bridge_sync: false,
-
   delayGuideData: {
     formData: {
       order_data: {},
@@ -371,6 +388,33 @@ const state = reactive({
     showModal: false
   }
 });
+
+const showDetail = async (orderData) => {
+  state.loading = true;
+  await useMarketOrderApi().getOrderDetail({orderNo: orderData.orderNo}).then(res => {
+    if (res.status !== "2000") {
+      state.loading = false;
+      message.error(res.message);
+      return false;
+    }
+    state.loading = false;
+    const {marketAccount, marketOrder} = res.data;
+    const order = new OrderMapping(marketAccount.marketCode);
+    orderDetail.value.orderData= order.mappingMarketOrder(marketOrder);
+    // 마켓코드 설정
+    openDetailMarketCode.value = marketAccount.marketCode.charAt(0).toUpperCase() + marketAccount.marketCode.slice(1);
+    orderDetail.value.show = true;
+  });
+
+}
+
+const statusTabChange = (key) => {
+  rowSelection.value.selectedRowKeys = [];
+  state.activeKey = key;
+  state.tableData.params.status = key;
+
+  getTableData();
+};
 
 const calculateRowspan = (order, key) => {
   return shouldDisplayRowspan(order, key) ? order.is_group ? order.items.filter(it => Object.keys(state.orderStatusData).includes(it.status)).length || 1 : 1 : 1;
@@ -393,32 +437,55 @@ const onChangeDatePicker = (value, dateString) => {
   state.tableData.params.order_date = [dateString[0], dateString[1]];
 };
 
+const onCheckMarketChange = () => {
+  // state.accountList 에서 체크되여 있는 marketCode 의 id 를 state.tableData.param.accountIds 에 넣어준다.
+  state.tableData.params.account_ids = state.accountList.filter(it => state.tableData.checkedMarket.includes(it.marketCode)).map(it => Number(it.id));
+};
+
 const onCheckAllChange = e => {
   state.indeterminate = false;
-  state.tableData.params.market = e.target.checked ? Object.keys(state.marketList) : [];
+  state.tableData.checkedMarket = e.target.checked ? Object.keys(state.marketList) : [];
 };
 const getMarketList = async () => {
   try {
+    let marketList = [];
     await useMarketApi().getMarketList({}).then(res => {
       if (res.status !== "2000") {
         message.error(res.message);
         return false;
       }
+      marketList = res.data;
+    });
 
-      state.marketList = res.data;
-      state.tableData.params.market = Object.keys(state.marketList);
+    await useMarketAccountApi().getAccountList({'page': 'all', 'is_use': 1}).then(res => {
+      if (res.status !== "2000") {
+        message.error(res.message);
+        return false;
+      }
+      state.accountList = res.data.list;
+      state.marketList = res.data.list.reduce(
+          (acc, cur) => ({
+                ...acc,
+                [cur.marketCode]: marketList[cur.marketCode]
+              }
+          ),
+          {}
+      );
+
+      state.tableData.checkedMarket = Object.keys(state.marketList);
     });
   } catch (e) {
     console.error(e);
   }
 };
 
+
 watch(
-  () => state.tableData.params.market,
-  val => {
-    state.indeterminate = !!val.length && val.length < Object.keys(state.marketList).length;
-    state.marketCheckAll = val.length === Object.keys(state.marketList).length;
-  }
+    () => state.tableData.checkedMarket,
+    val => {
+      state.indeterminate = !!val.length && val.length < Object.keys(state.marketList).length;
+      state.marketCheckAll = val.length === Object.keys(state.marketList).length;
+    }
 );
 
 /** marketSetting [order:주문별, item:품주별] */
@@ -458,7 +525,7 @@ const getTableData = async () => {
     }
 
     const groupedByOrderNo = res.data.reduce((acc, cur) => {
-      const { orderNo, sellerId, marketCode, orderDate, status, totalPaymentAmount } = cur;
+      const {orderNo, sellerId, marketCode, orderDate, status, totalPaymentAmount} = cur;
 
       if (!acc[orderNo]) {
         acc[orderNo] = [];
@@ -496,7 +563,7 @@ const orderIndeterminate = ref(true);
 
 watchEffect(() => {
 
-  if(Object.keys(filterOrderData.value).length === 0) {
+  if (Object.keys(filterOrderData.value).length === 0) {
     return;
   }
   const isCheckedAll = Object.values(filterOrderData.value).every((item) => {
@@ -827,7 +894,7 @@ const getMarketDetailUrls = async () => {
   });
 };
 
-const handleOpenMarketProduct = ({ marketCode, prdCode, marketData }) => {
+const handleOpenMarketProduct = ({marketCode, prdCode, marketData}) => {
   let url = "";
   if (marketCode === "smartstore") {
     if (!marketData.channel_info) {
@@ -873,7 +940,7 @@ const getUserInfoData = async () => {
         return false;
       }
 
-      const { is_bridge_sync } = res.data;
+      const {is_bridge_sync} = res.data;
       state.is_bridge_sync = is_bridge_sync;
     });
   } catch (error) {
@@ -884,10 +951,11 @@ const getUserInfoData = async () => {
 
 onMounted(async () => {
   await Promise.all([getMarketList(), getUserInfoData(), getMarketStatusList(), getMarketClaimStatusList(), getMarketDeliveryCompany(), getMarketAdminUrls(), getMarketDetailUrls()])
-    .then(() => {
-      state.allStatus = [...state.orderStatus, ...state.claimStatus];
-      getTableData();
-    });
+      .then(() => {
+        state.allStatus = [{label: '전체', value: ''}, ...state.orderStatus, ...state.claimStatus];
+        onCheckMarketChange();
+        getTableData();
+      });
 });
 
 </script>
@@ -922,6 +990,10 @@ onMounted(async () => {
 
 .ant-radio-group .ant-radio-button-wrapper-checked span {
   color: #000;
+}
+
+#order-status .ant-tabs-tab.ant-tabs-tab-active {
+  background-color: #ffd117 !important;
 }
 </style>
 

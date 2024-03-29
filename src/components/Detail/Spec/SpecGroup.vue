@@ -1,155 +1,158 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="this.$store.state.product.showOptionModify" width="1500px" :maskClosable="false">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="showOptionModify" width="85%" centered :maskClosable="false">
     <template #footer>
       <div style="display: flex; justify-content: center;">
-        <a-button key="back" style="width: 100px;" @click="this.closeOptionModal" >취소</a-button>
+        <a-button key="back" style="width: 100px;" @click="this.closeOptionModal">취소</a-button>
         <a-button key="submit" style="width: 100px;" @click="this.saveOption" type="primary">적용</a-button>
       </div>
     </template>
 
-<div class="container">
-<!--  버튼 구역-->
-  <div class="header-section">
-    <!--세팅버튼-->
-    <div class="setting header-button" style="display: flex;padding-right: 15px;">
-      <!--      <a-button class="floatRight" type="primary" @click="setting" >옵션 적용</a-button>-->
+    <div class="container">
+      <!--  버튼 구역-->
+      <div class="header-section">
+        <div class="left">
+          <!--세팅버튼-->
+          <div class="setting header-button" style="display: flex;padding-right: 15px; position: relative; left: 10px;">
 
-      <a-button @click="setTrim" class="spec-right-button" type="primary"
-                size="middle">빈칸
-      </a-button>
-      <a-button @click="replaceSpecialChars" class="spec-right-button" type="primary"
-                 size="middle">특문
-      </a-button>
+            <a-button @click="setTrim" class="spec-right-button"
+                      size="middle">빈칸제거
+            </a-button>
+            <a-button @click="replaceSpecialChars" class="spec-right-button"
+                      size="middle">특수문자제거
+            </a-button>
 
-      <a-button @click="setAtoZ" class="spec-right-button" type="primary"
-                size="middle">A-Z
-      </a-button>
+            <a-button @click="setAtoZ" class="spec-right-button"
+                      size="middle">A-Z
+            </a-button>
 
-      <a-button @click="handleMenuClick('N')" class="spec-right-button" type="primary"
-                size="middle">01.___
-      </a-button>
+            <a-button @click="handleMenuClick('N')" class="spec-right-button"
+                      size="middle">01.___
+            </a-button>
 
-      <a-button @click="handleMenuClick('A')" class="spec-right-button" type="primary"
-                size="middle">A.___
-      </a-button>
-
-      <a-button @click="setBeforeOldOptionData" class="spec-right-button" type="primary"
-                 size="middle">초기화
-      </a-button>
-
-      <a-input size="middle" v-model:value="option_group_find_str" style="width: 100px;"
-               placeholder="변경 전"></a-input>
-      >
-      <a-input size="middle" v-model:value="option_group_replace_str" style="width: 100px;"
-               placeholder="변경 후"></a-input>
-      <a-button type="primary" size="middle" @click="handleReplaceOptionGroup()" >
-        글자변경
-      </a-button>
-
-    </div>
-  </div>
-  <div class="spec-box">
-    <table v-for="(option, optionIndex) in this.options" :key="optionIndex" :data-index="optionIndex">
-      <!--옵션그룹,옵션일괄설정-->
-      <thead>
-      <!--그룹명 영역-->
-      <tr>
-        <th style="background-color: #ebeff0;">
-          <div class="spec-option-group">
-            <span class="spec-font">옵션그룹{{ optionIndex + 1 }}</span>
-            <a-input class="spec-option-input-size spec-checkbox" v-model:value="option.name" size="default" placeholder="옵션그룹"
-            />
-            <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{
-                option.name.length
-              }}</span> / 25</span>
+            <a-button @click="handleMenuClick('A')" class="spec-right-button"
+                      size="middle">A.___
+            </a-button>
           </div>
-        </th>
-      </tr>
-      <!--옵션값 일괄 설정 영역-->
-      <tr>
-        <th>
-          <div class="spec-option-header">
-            <div class="spec-option-left">
-              <a-checkbox class="spec-checkbox" v-model:checked="option.checkAll" @change="onCheckAllChange(option, optionIndex)"
-              ></a-checkbox>
-              <span class="spec-font">옵션명</span>
-            </div>
-            <div class="spec-option-button">
-              <!--重复词语-->
-              <div class="repeat">
-                <a-tag class="ant-tag" v-for="word in getDuplicateWords(option.data.map(item => item.name).join(' '))"
-                       :key="word" color="error" @click="removeWordFromInputs(option, word)">
-                  {{ word }}
-                </a-tag>
+        </div>
+
+        <div class="right">
+          <div class="setting header-button" style="display: flex;padding-right: 15px;">
+
+            <a-space>
+              <a-input size="middle" v-model:value="option_group_find_str" style="width: 100px;"
+                       placeholder="변경 전"></a-input>
+              >
+              <a-input size="middle" v-model:value="option_group_replace_str" style="width: 100px;"
+                       placeholder="변경 후"></a-input>
+            </a-space>
+
+            <a-button type="primary" size="middle" @click="handleReplaceOptionGroup()">
+              글자변경
+            </a-button>
+            <a-button @click="setBeforeOldOptionData" class="spec-right-button reset-button" type="primary"
+                      size="middle">옵션명 초기화
+            </a-button>
+          </div>
+        </div>
+      </div>
+      <div class="spec-box">
+        <table v-for="(option, optionIndex) in this.options" :key="optionIndex" :data-index="optionIndex">
+          <!--옵션그룹,옵션일괄설정-->
+          <thead>
+          <!--그룹명 영역-->
+          <tr>
+            <th style="background-color: #ebeff0;">
+              <div class="spec-option-group">
+                <span class="spec-font">옵션그룹{{ optionIndex + 1 }}</span>
+                <a-input class="spec-option-input-size spec-checkbox" v-model:value="option.name" size="default"
+                         placeholder="옵션그룹"
+                />
+                <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{
+                    option.name.length
+                  }}</span> / 25</span>
               </div>
-            </div>
-          </div>
-        </th>
-      </tr>
-      </thead>
-      <!--옵션명 영역-->
-      <tbody>
-      <tr v-for="(item, index) in option.data" :key="item.key">
-        <td>
-          <div class="spec-option-name" style="padding: 6px 0;">
-            <label class="ant-checkbox-wrapper spec-checkbox"
-                   >
-              <span class="ant-checkbox" >
+            </th>
+          </tr>
+          <!--옵션값 일괄 설정 영역-->
+          <tr>
+            <th class="option-name">
+              <div class="spec-option-header">
+                <div class="spec-option-left">
+                  <a-checkbox class="spec-checkbox" v-model:checked="option.checkAll"
+                              @change="onCheckAllChange(option, optionIndex)"
+                  ></a-checkbox>
+                  <span class="spec-font">옵션명</span>
+                </div>
+                <div class="spec-option-button">
+                  <!--重复词语-->
+                  <div class="repeat">
+                    <a-tag class="ant-tag"
+                           v-for="word in getDuplicateWords(option.data.map(item => item.name).join(' '))"
+                           :key="word" color="error" @click="removeWordFromInputs(option, word)">
+                      {{ word }}
+                    </a-tag>
+                  </div>
+                </div>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <!--옵션명 영역-->
+          <tbody>
+          <tr v-for="(item, index) in option.data" :key="item.key">
+            <td>
+              <div class="spec-option-name" style="padding: 6px 0;">
+                <label class="ant-checkbox-wrapper spec-checkbox"
+                >
+              <span class="ant-checkbox">
                 <input type="checkbox" class="ant-checkbox-input" v-model="item.checked" :value="item.key"
-                       @change="updateSelectAll(item, option, optionIndex)" >
-
-
+                       @change="updateSelectAll(item, option, optionIndex)">
                 <span class="ant-checkbox-inner"></span>
               </span>
-            </label>
+                </label>
 
-            <span class="option-image" v-if="item.img" style="margin-right: 5px;">
+                <span class="option-image" v-if="item.img" style="margin-right: 5px;">
                   <div class="option-image-large"><img :src="item.img" /></div>
                   <img class="option-image-small" :src="item.img" />
                 </span>
 
-            <div style="display: flex;flex-direction: column;justify-content: flex-start;width: 100%">
-            <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
-                     @input="handleInputChange" style="width: 100%" />
+                <div style="display: flex;flex-direction: column;justify-content: flex-start;width: 100%">
+                  <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
+                           @input="handleInputChange" style="width: 100%" />
 
-            <span style="color: #999999">{{ item.oldName }}</span>
-            </div>
+                  <span style="color: #999999">{{ item.oldName }}</span>
+                </div>
 
-            <span class="spec-count" style="width: 80px"><span :style="item.name.length > 25 ? 'color:red;' : ''">
+                <span class="spec-count" style="width: 80px"><span :style="item.name.length > 25 ? 'color:red;' : ''">
               {{ item.name.length }}
             </span> / 25</span>
-<!--            <div class="spec-option-name-button">-->
-<!--              <a-button @click="deleteSpecOptionName(optionIndex, index)" type="link" size="large"-->
-<!--                        class="spec-set-option-name-button" >-->
-<!--                <MinusOutlined/>-->
-<!--              </a-button>-->
-<!--            </div>-->
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </a-modal>
 </template>
 <script>
-import {cloneDeep, forEach} from "lodash";
-import {mapState, useStore} from "vuex";
-import {PlusOutlined, MinusOutlined} from '@ant-design/icons-vue';
-import {message} from "ant-design-vue";
+import { cloneDeep, forEach } from "lodash";
+import { mapState, useStore } from "vuex";
+import { PlusOutlined, MinusOutlined } from "@ant-design/icons-vue";
+import { message } from "ant-design-vue";
 import { nextTick, watch } from "vue";
 
 export default {
   name: "productDetailSpecGroup",
   computed: {
     ...mapState({
-      product: state => state.product.detail
-    }),
+      product: state => state.product.detail,
+      showOptionModify: state => state.product.showOptionModify
+    })
   },
   watch: {
-    'product.resetOption': {
-      handler: function (val) {
+    "product.resetOption": {
+      handler: function(val) {
         if (val === true) {
           // 옵션정보를 수집시 옵션정보로
           let tempOptions = cloneDeep(this.product.item_org_option);
@@ -165,20 +168,29 @@ export default {
           });
 
           // 옵션정보 초기화 여부 초기화
-          this.product.resetOption = false
+          this.product.resetOption = false;
+        }
+      },
+      deep: true
+    },
+
+    "showOptionModify": {
+      handler: function(val) {
+        if (val === true) {
+          this.adjustRepeatHeights();
         }
       },
       deep: true
     }
   },
-  components: {PlusOutlined, MinusOutlined},
+  components: { PlusOutlined, MinusOutlined },
   data() {
     return {
       popoverVisible: false,
-      option_group_find_str: '',
-      option_group_replace_str: '',
+      option_group_find_str: "",
+      option_group_replace_str: "",
       // 설정할 옵션안에 체크여부 판단필드를 넣어줌
-      oldOptionData : this.$store.state.product.detail.item_option.map(option => {
+      oldOptionData: this.$store.state.product.detail.item_option.map(option => {
         option.checkAll = false;
         option.oldName = option.name;
         option.data = option.data.map(item => {
@@ -188,24 +200,24 @@ export default {
         });
         return option;
       }),
-      options : [],
-      selectedRows: this.$store.state.product.detail.item_option.map(option => []),
+      options: [],
+      selectedRows: this.$store.state.product.detail.item_option.map(option => [])
       // restOption : this.$store.state.resetOption,
     };
   },
   methods: {
     closeOptionModal() {
-      this.$store.commit('product/setShowOptionModify', false);
+      this.$store.commit("product/setShowOptionModify", false);
     },
     handleReplaceOptionGroup() {
       if (this.option_group_find_str.trim().length === 0) {
-        message.warning('변경 전 글자를 입력해주세요.');
+        message.warning("변경 전 글자를 입력해주세요.");
         return false;
       }
 
       let selectItems = this.selectedRows.flat();
       if (selectItems.length === 0) {
-        message.warning('처리할 옵션명을 선택하세요.');
+        message.warning("처리할 옵션명을 선택하세요.");
         return false;
       }
 
@@ -237,17 +249,17 @@ export default {
     },
     deleteSpecGroup(optionIndex) {
       if (this.product.item_option.length === 1) {
-        message.warning('옵션그룹 전부 삭제 불가합니다.');
+        message.warning("옵션그룹 전부 삭제 불가합니다.");
         return false;
       }
       this.product.item_option.splice(optionIndex, 1);
     },
     addSpecOptionName(optionIndex) {
-      this.product.item_option[optionIndex].data.push({key: this._uniqueKey(), name: ''});
+      this.product.item_option[optionIndex].data.push({ key: this._uniqueKey(), name: "" });
     },
     deleteSpecOptionName(optionIndex, index) {
       if (this.product.item_option[optionIndex].data.length === 1) {
-        message.warning('옵션명 전부 삭제는 불가합니다.');
+        message.warning("옵션명 전부 삭제는 불가합니다.");
         return false;
       }
       this.product.item_option[optionIndex].data.splice(index, 1);
@@ -279,12 +291,12 @@ export default {
     },
     deleteOptionName() {
       if (this.selectedRows.length === 0) {
-        message.warning('삭제할 옵션명을 선택하세요.');
+        message.warning("삭제할 옵션명을 선택하세요.");
         return false;
       }
       let newOptionData = [];
       if (this.option.data.length === this.selectedRows.length) {
-        message.warning('옵션명 전부 삭제는 불가합니다.');
+        message.warning("옵션명 전부 삭제는 불가합니다.");
         this._setCheckBoxInit();
         return false;
       }
@@ -299,14 +311,14 @@ export default {
     setTrim() {
       let selectItems = this.selectedRows.flat();
       if (selectItems.length === 0) {
-        message.warning('빈칸을 제거할 옵션명을 선택하세요.');
+        message.warning("빈칸을 제거할 옵션명을 선택하세요.");
         return false;
       }
       const specialChars = /[ ]+/g;
       this.options.forEach(option => {
         option.data.forEach(item => {
           if (selectItems.includes(item.key)) {
-            item.name = item.name.replace(specialChars, '');
+            item.name = item.name.replace(specialChars, "");
           }
         });
       });
@@ -316,14 +328,14 @@ export default {
       let selectItems = this.selectedRows.flat();
 
       if (selectItems.length === 0) {
-        message.warning('특문을 제거할 옵션명을 선택하세요.');
+        message.warning("특문을 제거할 옵션명을 선택하세요.");
         return false;
       }
       const specialChars = /[@#$%^&* ㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡®ªº㉾＄％￦Ｆ′″℃Å￠￡￥¤℉‰€㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．／：；？＾＿｀｜￣、。·…¨〃­―∥＼∼～ˇ˘˝˚˙¸˛¿ː]+/g;
       this.options.forEach(option => {
         option.data.forEach(item => {
           if (selectItems.includes(item.key)) {
-            item.name = item.name.replace(specialChars, '');
+            item.name = item.name.replace(specialChars, "");
           }
         });
       });
@@ -335,11 +347,11 @@ export default {
       // this.options 에서 checkAll 이 true 인것만 checkAllOption 에 넣는다
       let checkAllOption = this.options.filter(option => option.checkAll === true);
       if (checkAllOption.length === 0) {
-        message.warning('A-Z로 처리할 옵션그룹을 선택하세요.');
+        message.warning("A-Z로 처리할 옵션그룹을 선택하세요.");
         return false;
       }
       checkAllOption.forEach((option) => {
-        let typeValue = 'A';
+        let typeValue = "A";
         forEach(option.data, (item) => {
           item.name = typeValue;
           typeValue = this._getNextLetter(typeValue);
@@ -357,26 +369,26 @@ export default {
       // this.options 에서 checkAll 이 true 인것만 checkAllOption 에 넣는다
       let checkAllOption = this.options.filter(option => option.checkAll === true);
       if (checkAllOption.length === 0) {
-        message.warning('처리할 옵션그룹을 선택하세요.');
+        message.warning("처리할 옵션그룹을 선택하세요.");
         return false;
       }
       checkAllOption.forEach((option) => {
-        if (type === 'N') {
+        if (type === "N") {
           typeValue = 1;
         } else {
-          typeValue = 'A';
+          typeValue = "A";
         }
 
         forEach(option.data, (item, index) => {
           prefix = typeValue.toString();
-          if (type === 'N') {
+          if (type === "N") {
             if (prefix.length === 1) {
-              prefix = '0' + prefix;
+              prefix = "0" + prefix;
             }
-            item.name = prefix + '.' + item.name;
+            item.name = prefix + "." + item.name;
             typeValue++;
           } else {
-            item.name = prefix + '.' + item.name;
+            item.name = prefix + "." + item.name;
             typeValue = this._getNextLetter(typeValue);
           }
         });
@@ -387,13 +399,13 @@ export default {
       this.options = cloneDeep(this.oldOptionData);
     },
     _getNextLetter(letter) {
-      let nextLetter = '';
+      let nextLetter = "";
       let carry = true;
 
       for (let i = letter.length - 1; i >= 0; i--) {
         if (carry) {
-          if (letter[i] === 'Z') {
-            nextLetter = 'A' + nextLetter;
+          if (letter[i] === "Z") {
+            nextLetter = "A" + nextLetter;
             carry = true;
           } else {
             const nextCharCode = letter.charCodeAt(i) + 1;
@@ -406,7 +418,7 @@ export default {
       }
 
       if (carry) {
-        nextLetter = 'A' + nextLetter;
+        nextLetter = "A" + nextLetter;
       }
 
       return nextLetter;
@@ -427,18 +439,18 @@ export default {
     getDuplicateWords(names) {
       // 分割字符串为单词，特别处理括号内的内容和特殊格式如 "1.5X2"
       let words = names.split(/[\s,]+/)
-          .flatMap(word => {
-            // 处理特殊格式
-            if (/\d+\.\d+X\d+/.test(word)) {
-              return [word];
-            }
-            // 分割括号内的单词，保留括号
-            if (word.startsWith('[') && word.endsWith(']')) {
-              return word.slice(1, -1).split(/\s+/).map(w => `[${w}]`);
-            }
-            return word;
-          })
-          .filter(word => this.isValidWord(word));
+        .flatMap(word => {
+          // 处理特殊格式
+          if (/\d+\.\d+X\d+/.test(word)) {
+            return [word];
+          }
+          // 分割括号内的单词，保留括号
+          if (word.startsWith("[") && word.endsWith("]")) {
+            return word.slice(1, -1).split(/\s+/).map(w => `[${w}]`);
+          }
+          return word;
+        })
+        .filter(word => this.isValidWord(word));
 
       // 获取重复的单词或数字
       let duplicates = this.findDuplicates(words);
@@ -468,38 +480,37 @@ export default {
         let maxHeight = 0;
 
         // 获取所有 repeat 元素并找出最大高度
-        const repeats = document.getElementsByClassName('repeat');
+        const repeats = document.getElementsByClassName("repeat");
         for (const el of repeats) {
           maxHeight = Math.max(el.clientHeight, maxHeight);
         }
 
         // 设置所有 repeat 元素的高度为最大高度
         for (const el of repeats) {
-          el.style.height = maxHeight + 'px';
+          el.style.height = maxHeight + "px";
         }
       });
     },
 
     handleInputChange() {
-      const repeats = document.getElementsByClassName('repeat');
+      const repeats = document.getElementsByClassName("repeat");
       for (const el of repeats) {
-        el.style.height = 'auto';
+        el.style.height = "auto";
       }
       this.adjustRepeatHeights();
 
     },
 
 
-
     //点击a-tag同时删除对应的input中的name
     removeWordFromInputs(option, wordToRemove) {
       option.data.forEach(item => {
-        item.name = item.name.split(' ').filter(word => word !== wordToRemove).join(' ');
+        item.name = item.name.split(" ").filter(word => word !== wordToRemove).join(" ");
       });
 
-      const repeats = document.getElementsByClassName('repeat');
+      const repeats = document.getElementsByClassName("repeat");
       for (const el of repeats) {
-        el.style.height = 'auto'; // 重置高度
+        el.style.height = "auto"; // 重置高度
       }
       this.adjustRepeatHeights();
     },
@@ -531,7 +542,7 @@ export default {
       });
 
       this.product.item_option = this.options;
-      this.$store.commit('product/setShowOptionModify', false);
+      this.$store.commit("product/setShowOptionModify", false);
 
     },
 
@@ -542,7 +553,7 @@ export default {
         forEach(this.options, (itemOption) => {
           //입력하지 않은 옵션그룹 존재
           if (itemOption.name.trim().length === 0) {
-            message.warning('입력하지 않은 옵션그룹이 존재합니다.');
+            message.warning("입력하지 않은 옵션그룹이 존재합니다.");
             check = false;
             throw new Error();
           }
@@ -571,17 +582,17 @@ export default {
             }
           });
         });
-      } catch(e) {
+      } catch (e) {
       }
 
       return check;
-    },
+    }
   },
   mounted() {
     this.options = cloneDeep(this.oldOptionData);
     this.adjustRepeatHeights();
-  },
-}
+  }
+};
 </script>
 <style lang="css" scoped>
 .spec-box {
@@ -631,7 +642,8 @@ export default {
   align-items: center;
   justify-content: flex-end;
   min-height: 50px;
-  margin-left:10px;
+  margin-left: 10px;
+  background: #fff;
 }
 
 .spec-option-name {
@@ -663,10 +675,10 @@ export default {
 }
 
 .spec-option-button {
-  margin:5px 10px 0 0;
+  margin: 5px 10px 0 0;
 
-  max-width:53%;
-text-align:right;
+  max-width: 53%;
+  text-align: right;
 }
 
 .spec-option-left {
@@ -739,20 +751,21 @@ text-align:right;
 
 
 .ant-btn.ant-btn-sm {
-margin-bottom:5px;
-}
-.repeat{
-  text-align: right;
-  max-width:100%;
-//min-height:0;
-}
-.ant-tag{
-  margin: 0 0 5px 10px;
-  cursor:pointer;
+  margin-bottom: 5px;
 }
 
-.ant-tag-error{
-  max-width:100%;
+.repeat {
+  text-align: right;
+  max-width: 100%;
+}
+
+.ant-tag {
+  margin: 0 0 5px 10px;
+  cursor: pointer;
+}
+
+.ant-tag-error {
+  max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -776,7 +789,9 @@ margin-bottom:5px;
 }
 
 .option-image-large img {
-  border-radius: 5px; width: 500px; height: 500px;
+  border-radius: 5px;
+  width: 500px;
+  height: 500px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   background: #fff;
 }
@@ -786,13 +801,15 @@ margin-bottom:5px;
 }
 
 .option-image-small {
-  border-radius: 5px; width: 30px; height: 30px;
+  border-radius: 5px;
+  width: 30px;
+  height: 30px;
 }
 
 .header-section {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   height: 60px;
   margin-top: 10px;
   border-radius: 0.275rem;
@@ -801,11 +818,36 @@ margin-bottom:5px;
 
 .container {
   width: 100%;
+  max-height: 760px;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column; /* 默认为 column，即垂直排列 */
 }
-.spec-right-button {
 
+.spec-box thead {
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+}
+
+.header-section .left .ant-btn-primary {
+  background-color: #fff;
+  border: 1px solid #f4f4f4;
+  box-shadow: unset;
+}
+
+.header-section .left .ant-btn-primary:hover {
+  color: #000;
+}
+
+.header-section .right button {
+  margin-left: 5px;
+}
+
+.reset-button {
+  color: #fff;
+  background-color: #2171e2;
 }
 
 </style>

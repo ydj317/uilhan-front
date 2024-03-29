@@ -520,24 +520,6 @@ export default {
 </script>
 
 <style>
-.full-modal .ant-modal {
-  width: 100%;
-  top: 10px;
-  padding-bottom: 0;
-  margin: 0;
-}
-
-.full-modal .ant-modal-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.full-modal .ant-modal-body {
-  flex: 1;
-}
-</style>
-
-<style>
 /*.imageEditorGroupContainer .ant-modal-wrap {*/
 /*  top: -20% !important;*/
 /*  display: flex !important;*/

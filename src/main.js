@@ -8,6 +8,7 @@ import "moment/dist/locale/zh-cn";
 import 'ant-design-vue/dist/reset.css';
 import "./assets/css/global.css";
 import "./assets/css/custom.css";
+import "./assets/css/common.css";
 import 'echarts';
 import DatePicker from "ant-design-vue/es/date-picker/moment";
 

@@ -2,8 +2,8 @@
   <div v-if="product.loading" style="display: flex;justify-content: center;align-items:center;min-height: 300px">
     <a-spin v-if="product.loading" size="large"/>
   </div>
-  <div v-else id="eModelTitle_2" class="mt20 p20 bg-white" v-if="product.item_option">
-    <h3><strong>옵션설정</strong></h3>
+  <div v-else id="eModelTitle_2" class="bg-white" v-if="product.item_option" style="padding:20px 20px 0">
+<!--    <h3><strong>옵션설정</strong></h3>-->
     <!--옵션그룹해더, 옵션 셋팅, 옵션그룹 추가-->
 <!--      <div class="header-section">-->
 <!--        &lt;!&ndash;세팅버튼&ndash;&gt;-->
@@ -15,6 +15,9 @@
     <div class="body-section">
       <SpecGroup></SpecGroup>
     </div>
+    <div class="body-section">
+      <OptionPreview></OptionPreview>
+    </div>
   </div>
 </template>
 <script>
@@ -22,13 +25,15 @@ import { lib } from "util/lib";
 import { forEach, cloneDeep} from "lodash";
 import {mapState, useStore} from "vuex";
 import SpecGroup from "./SpecGroup";
+import OptionPreview from "./OptionPreview";
 import { message } from "ant-design-vue";
 import {computed,ref} from "vue";
 
 export default {
   name: "productDetailNewSpec",
   components:{
-    SpecGroup
+    SpecGroup,
+    OptionPreview
   },
   computed: {
     ...mapState({

@@ -32,7 +32,7 @@ export const menus = [{
         {
             path: "/product",
             name: "product",
-            component: () => import("@/views/Product/List"),
+            component: () => import("@/views/Product/List/index.vue"),
             meta: {
                 title: "상품관리",
                 isHide: false,
@@ -124,23 +124,23 @@ export const menus = [{
                     name: "setting_updateDetail",
                     component: () => import("@/views/Setting/UpdateDetail"),
                     meta: {
-                        title: "계정 정보",
+                        title: "계정설정",
                         isHide: false,
                         roles: ["ROLE_ADMIN", "ROLE_USER"],
                         icon: '',
                     }
                 },
-                {
-                    path: "/setting/margin",
-                    name: "setting_margin",
-                    component: () => import("@/views/Setting/Margin"),
-                    meta: {
-                        title: "수익률 & 환율 설정",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: '',
-                    }
-                },
+                // {
+                //     path: "/setting/margin",
+                //     name: "setting_margin",
+                //     component: () => import("@/views/Setting/Margin"),
+                //     meta: {
+                //         title: "수익률 & 환율 설정",
+                //         isHide: false,
+                //         roles: ["ROLE_ADMIN", "ROLE_USER"],
+                //         icon: '',
+                //     }
+                // },
                 {
                     path: "/user/FilterProductWords",
                     name: "user_filterProductWords",
@@ -434,6 +434,28 @@ export const menus = [{
                 icon: RobotOutlined
             },
         },
+        {
+            path: "/product/analytics",
+            name: "product_analytics",
+            component: () => import("@/views/Product/Analytics.vue"),
+            meta: {
+                title: "애널리틱스",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: GiftOutlined
+            },
+        },
+        // {
+        //     path: "/express",
+        //     name: "express",
+        //     component: () => import("@/views/express/index.vue"),
+        //     meta: {
+        //         title: "가이드북",
+        //         isHide: false,
+        //         roles: ["ROLE_USER", "ROLE_ADMIN"],
+        //         icon: GiftOutlined
+        //     },
+        // }
     ]
 }]
 
