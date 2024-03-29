@@ -19,15 +19,15 @@
  */
 
 export function useMarketOrderParser() {
+  const parsers = {
+    taobao: taobaoParser,
+    alibaba: alibabaParser,
+  };
+
   function parser(type,text) {
-    switch (type) {
-      case 'taobao':
-        return taobaoParser(text);
-      case 'alibaba':
-        return alibabaParser(text);
-      default:
-        return '';
-    }
+    if (!parsers[type]) throw new Error('Invalid parser type');
+    if (!text) throw new Error('Invalid text');
+    return parsers[type](text);
   }
 
   return {
@@ -40,9 +40,9 @@ function taobaoParser(text) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(text, 'text/html');
   const tbodyEl = doc.querySelectorAll('tbody');
-  let orders = [];
+  let orderData = {};
   if (tbodyEl.length !== 0) {
-    let orderData = {};
+
     orderData.items = [];
     for (let i = 0; i < tbodyEl.length; i++) {
       if(!!tbodyEl[i].textContent){
@@ -102,13 +102,63 @@ function taobaoParser(text) {
         }
       }
     }
-    orders.push(orderData)
   }
 
-  console.log(orders);
-  return orders[0];
+  return orderData;
 }
 
 function alibabaParser(text) {
-  return text;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(text, 'text/html');
+
+  let orderData = {};
+  // find data-order-id attribute
+  const orderNoEl = doc.querySelectorAll('[data-order-id]');
+  orderData.orderNo = orderNoEl[0].getAttribute('data-order-id');
+
+  // find has-multi-entry-order class
+  const multiEntryEl = doc.querySelector('.has-multi-entry-order').querySelectorAll('tr');
+  if (multiEntryEl.length > 0) {
+    orderData.items = [];
+    multiEntryEl.forEach((el) => {
+      const itemData = {};
+      const tdEl = el.querySelectorAll('td')
+      // find tdEl a href attribute
+      const aEl = tdEl[0].querySelector('a');
+      itemData.prdUrl = aEl.getAttribute('href');
+
+      // find img src attribute
+      const imgEl = tdEl[0].querySelector('img');
+      itemData.imgUrl = imgEl.getAttribute('src');
+
+      // find class productName
+      const productNameEl = tdEl[1].querySelector('.productName');
+      itemData.prdName = productNameEl.textContent;
+
+      // find class spec-item spec-item-last sku-item
+      const skuItemEl = tdEl[1].querySelector('.spec-item.spec-item-last.sku-item');
+      itemData.sku = skuItemEl.textContent;
+
+      // find tdEl[2] childNode title attribute
+      const divEl =  tdEl[2].querySelectorAll('div')
+      divEl.forEach((el) => {
+        if(el.getAttribute('title')) {
+          itemData.price = el.getAttribute('title');
+        }
+      })
+
+      orderData.items.push(itemData);
+    })
+
+    // find class total
+    const totalEl = doc.querySelectorAll('.total');
+    orderData.totalPrice = totalEl[0].textContent;
+
+    // find class date
+    const dateEl = doc.querySelectorAll('.date');
+    orderData.orderDate = dateEl[0].textContent;
+
+  }
+
+  return orderData;
 }
