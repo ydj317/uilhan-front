@@ -93,7 +93,6 @@ export default {
       showVideo: false,
       showOptionTable: false,
 
-      userTriggeredChange: false
     };
   },
   watch: {
@@ -129,17 +128,8 @@ export default {
   mounted() {
     this.fetchData();
     this.getGuide();
-    this.$nextTick(() => {
-      watch(() => this.showGuideImage, (newValue) => {
-        if (newValue === true) {
-          this.setGuideContent();
-        } else {
-          if (this.product.loading !== true) {
-            this.deleteGuideContent();
-          }
-        }
-      });
 
+    this.$nextTick(() => {
       watch(() => this.showVideo, (newValue) => {
         this.setVideoContent();
       });
@@ -182,39 +172,36 @@ export default {
         return;
       }
 
-      // 设置用户交互触发标志为true
-      this.userTriggeredChange = true;
+      this.deleteGuideContent();
 
-      this.setGuideContent();
+      if (this.showGuideImage) {
+        this.setGuideContent();
+      } else {
+        this.deleteGuideContent();
+      }
     },
 
     setGuideContent() {
-      // 如果不是初始加载并且不是用户交互触发，不执行
-      if (!this.userTriggeredChange) {
-        return;
-      }
 
-      if (this.showGuideImage === true &&
-          this.product.user.description_option.top_bottom_image.top_image_url === "" &&
-          this.product.user.description_option.top_bottom_image.bottom_image_url === "") {
-        message.warning("등록된 상/하단 이미지가 없습니다. \n" +
-            "계정설정에서 별도로 등록하여 주시기 바랍니다.");
-        this.showGuideImage = false;
-        return;
-      }
+        if (this.showGuideImage === true &&
+            this.product.user.description_option.top_bottom_image.top_image_url === "" &&
+            this.product.user.description_option.top_bottom_image.bottom_image_url === "") {
+          message.warning("등록된 상/하단 이미지가 없습니다. \n" +
+              "계정설정에서 별도로 등록하여 주시기 바랍니다.");
+          this.showGuideImage = false;
+          return;
+        }
 
-      const beforeCont = `<div id="${this.guideBeforeId}" ><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
-      const afterCont = `<div id="${this.guideAfterId}" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
-      if (this.product.user.description_option.top_bottom_image.top_image_url !== "") {
-        this.product.item_detail = beforeCont + this.product.item_detail;
-      }
+        const beforeCont = `<div id="${this.guideBeforeId}" ><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
+        const afterCont = `<div id="${this.guideAfterId}" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
+        if (this.product.user.description_option.top_bottom_image.top_image_url !== "") {
+          this.product.item_detail = beforeCont + this.product.item_detail;
+        }
 
-      if (this.product.user.description_option.top_bottom_image.bottom_image_url !== "") {
-        this.product.item_detail = this.product.item_detail + afterCont;
-      }
+        if (this.product.user.description_option.top_bottom_image.bottom_image_url !== "") {
+          this.product.item_detail = this.product.item_detail + afterCont;
+        }
 
-      // 执行后重置用户交互触发标志
-      this.userTriggeredChange = false;
     },
 
     deleteGuideContent() {
@@ -262,8 +249,11 @@ export default {
           let doc = window.tinymce.editors[0].dom.doc;
           let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
           if (this.showOptionTable === false) {
+
+            // 如果选项表不应该显示，移除已存在的选项表div,否则出现空div
             if (optionTableDoc) {
-              optionTableDoc.innerHTML = "";
+              // optionTableDoc.innerHTML = "";
+              optionTableDoc.remove(); // 移除元素
               this.product.item_detail = doc.documentElement.innerHTML;
             }
             return;
@@ -271,6 +261,8 @@ export default {
 
           let columnCount = this.product.user.description_option.option_table.column_length ?? 2;
           let optionHtml = this.getOptionTable(columnCount);
+
+          // 只有在 showOptionTable 为 true 时才创建或更新 optionTable
           if (optionTableDoc) {
             optionTableDoc.innerHTML = optionHtml;
             this.product.item_detail = doc.documentElement.innerHTML;
@@ -473,39 +465,40 @@ export default {
     },
 
     checkDetatil() {
-      //  判断 detail里有没有 guideimage 内容来 判断 checkbox的 值
+      // 判断 detail里有没有 guideimage 内容来 判断 checkbox的 值
       const regexBefore = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
       const regexAfter = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "igs");
       const matchBefore = regexBefore.exec(this.product.item_detail);
       const matchAfter = regexAfter.exec(this.product.item_detail);
-      console.log('detail', this.product.item_detail)
-      this.showGuideImage = true;
-      if (matchBefore === null || matchAfter === null) {
+      if (matchBefore === null && matchAfter === null) {
+        console.log('matchBefore:',matchBefore);
+        console.log('matchAfter:',matchAfter);
           this.showGuideImage = false;
+      }else{
+        this.showGuideImage = true;
       }
-
 
       //  判断 video
       const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
       const matchVideo = regexVideo.exec(this.product.item_detail);
       if (matchVideo === null) {
+        console.log('matchVideo:',matchVideo);
         this.showVideo = false;
       } else {
         this.showVideo = true;
       }
 
-      console.log('detail', this.product.item_detail)
-
-
       //  判断 table
-      // const regexTable = new RegExp(`<div id="${this.optionTableId}".*?</div>`, "igs");
-      // const matchTable = regexTable.exec(this.product.item_detail);
-      // if (matchTable === null) {
-      //   this.showOptionTable = false;
-      // } else {
-      //   this.showOptionTable = true;
-      // }
+      const regexTable = new RegExp(`<div id="${this.optionTableId}".*?</div>`, "igs");
+      const matchTable = regexTable.exec(this.product.item_detail);
+      // console.log('detail', this.product.item_detail)
 
+      if (matchTable === null) {
+        console.log('matchTable:',matchTable);
+        this.showOptionTable = false;
+      } else {
+        this.showOptionTable = true;
+      }
 
     }
   }
