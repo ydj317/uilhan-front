@@ -1,6 +1,6 @@
 <template>
   <a-modal title="스마트스토어 옵션 미리보기" class="modal-preview" v-model:open="showOptionPreview"
-           width="30%" centered :maskClosable="false" @open-change="handleOpenChange">
+           width="30%" centered :maskClosable="false">
     <div v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :data-index="optionIndex">
       <a-select
           style="width: 100%; margin-top:20px;"
@@ -53,7 +53,6 @@ export default {
   data() {
     return {
       selectedValues: {},
-      isSelectOpen: false,
     };
   },
   methods: {
@@ -65,10 +64,6 @@ export default {
     closeOptionModal() {
       this.$store.commit('product/setShowOptionPreview', false);
       this.selectedValues = {};
-    },
-
-    handleOpenChange(status) {
-      this.isSelectOpen = status;
     },
   },
 

@@ -7,7 +7,7 @@
     <div style="display: flex; justify-content: space-between;">
       <div style="display: flex;align-items: center;">
         <a-space>
-          <a-checkbox v-model:checked="this.showGuideImage">상/하단 이미지</a-checkbox>
+          <a-checkbox v-model:checked="this.showGuideImage" @change="handleGuideImageToggle">상/하단 이미지</a-checkbox>
           <a-checkbox v-model:checked="this.showVideo">동영상</a-checkbox>
           <a-checkbox v-model:checked="this.showOptionTable" @change="handleOptionTableToggle">옵션테이블</a-checkbox>
         </a-space>
@@ -27,10 +27,10 @@
     <!-- 상세페이지 편집기 -->
     <div style="margin-top: 10px;">
       <TEditor
-        ref="editor"
-        v-model:value="product.item_detail"
-        :productId="Number(product['item_id'])"
-        @contentUpdate="contentUpdate"
+          ref="editor"
+          v-model:value="product.item_detail"
+          :productId="Number(product['item_id'])"
+          @contentUpdate="contentUpdate"
       />
     </div>
   </div>
@@ -54,7 +54,7 @@
 import { cloneDeep, forEach } from "lodash";
 import { mapState } from "vuex";
 import TEditor from "../ImageEditor/TEdtor";
-import { watch } from "vue";
+import { watch, watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
@@ -91,7 +91,8 @@ export default {
       modalContent: "",
       showGuideImage: false,
       showVideo: false,
-      showOptionTable: false
+      showOptionTable: false,
+
     };
   },
   watch: {
@@ -100,6 +101,18 @@ export default {
         this.showGuideImage = this.descriptionOption?.top_bottom_image?.use ?? false;
         this.showVideo = this.descriptionOption?.show_video ?? false;
         this.showOptionTable = this.descriptionOption?.option_table?.use ?? false;
+
+        if (this.product.item_upd !== null) {
+          this.checkDetatil();
+        }
+
+
+        //和setGuideContent
+        if (!!this.showGuideImage) {
+          this.$nextTick(() => {
+            this.handleGuideImageToggle();
+          })
+        }
         if (!!this.showOptionTable) {
           this.$nextTick(() => {
             this.handleOptionTableToggle();
@@ -108,26 +121,18 @@ export default {
       },
       immediate: true,
       deep: true
-    }
+    },
   },
+
   mounted() {
+    this.fetchData();
     this.getGuide();
 
     this.$nextTick(() => {
-      watch(() => this.showGuideImage, (newValue) => {
-        if (newValue === true) {
-          this.setGuideContent();
-        } else {
-          if (this.product.loading !== true) {
-            this.deleteGuideContent();
-          }
-        }
-      });
-
       watch(() => this.showVideo, (newValue) => {
         this.setVideoContent();
       });
-    });
+    })
   },
 
   methods: {
@@ -157,25 +162,45 @@ export default {
         this.product.item_detail = videoContent + this.product.item_detail;
       }
     },
-    setGuideContent() {
-      if (this.showGuideImage === true &&
-        this.product.user.description_option.top_bottom_image.top_image_url === "" &&
-        this.product.user.description_option.top_bottom_image.bottom_image_url === "") {
-        message.warning("등록된 상/하단 이미지가 없습니다. \n" +
-          "계정설정에서 별도로 등록하여 주시기 바랍니다.");
+
+    handleGuideImageToggle(e) {
+      // 检查图片设置是否存在[]时
+      if (!this.descriptionOption?.top_bottom_image) {
+        message.warning("상/하단 이미지 설정이 없습니다. \n계정설정에서 상/하단 이미지 설정을 등록하여 주시기 바랍니다.");
         this.showGuideImage = false;
         return;
       }
 
-      const beforeCont = `<div id="${this.guideBeforeId}" ><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
-      const afterCont = `<div id="${this.guideAfterId}" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
-      if (this.product.user.description_option.top_bottom_image.top_image_url !== "") {
-        this.product.item_detail = beforeCont + this.product.item_detail;
-      }
+      this.deleteGuideContent();
 
-      if (this.product.user.description_option.top_bottom_image.bottom_image_url !== "") {
-        this.product.item_detail = this.product.item_detail + afterCont;
+      if (this.showGuideImage) {
+        this.setGuideContent();
+      } else {
+        this.deleteGuideContent();
       }
+    },
+
+    setGuideContent() {
+
+        if (this.showGuideImage === true &&
+            this.product.user.description_option.top_bottom_image.top_image_url === "" &&
+            this.product.user.description_option.top_bottom_image.bottom_image_url === "") {
+          message.warning("등록된 상/하단 이미지가 없습니다. \n" +
+              "계정설정에서 별도로 등록하여 주시기 바랍니다.");
+          this.showGuideImage = false;
+          return;
+        }
+
+        const beforeCont = `<div id="${this.guideBeforeId}" ><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
+        const afterCont = `<div id="${this.guideAfterId}" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
+        if (this.product.user.description_option.top_bottom_image.top_image_url !== "") {
+          this.product.item_detail = beforeCont + this.product.item_detail;
+        }
+
+        if (this.product.user.description_option.top_bottom_image.bottom_image_url !== "") {
+          this.product.item_detail = this.product.item_detail + afterCont;
+        }
+
     },
 
     deleteGuideContent() {
@@ -190,8 +215,8 @@ export default {
         return;
       }
       // 기존에 있는지 업는지 판단소스를 써줘
-      const regexBefore = new RegExp(`<div id="(${this.guideBeforeId}"><\\/div>`, "ig");
-      const regexAfter = new RegExp(`<div id="(${this.guideAfterId}"><\\/div>`, "ig");
+      const regexBefore = new RegExp(`<div id="${this.guideBeforeId}"><\\/div>`, "ig");
+      const regexAfter = new RegExp(`<div id="${this.guideAfterId}"><\\/div>`, "ig");
       const matchBefore = regexBefore.exec(this.product.item_detail);
       const matchAfter = regexAfter.exec(this.product.item_detail);
 
@@ -210,64 +235,86 @@ export default {
     handleOptionTableToggle(e) {
       if (!this.descriptionOption?.option_table) {
         message.warning("옵션테이블 설정이 없습니다. \n" +
-          "계정설정에서 옵션테이블 설정을 등록하여 주시기 바랍니다.");
+            "계정설정에서 옵션테이블 설정을 등록하여 주시기 바랍니다.");
         this.showOptionTable = false;
         return;
       }
       this.setOptionTableContent();
     },
+
     setOptionTableContent() {
-      let doc = window.tinymce.editors[0].dom.doc;
-      let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
-      if (this.showOptionTable === false) {
-        if (optionTableDoc) {
-          optionTableDoc.innerHTML = "";
-          this.product.item_detail = doc.documentElement.innerHTML;
-        }
-        return;
-      }
+      setTimeout(() => {
+        if (window.tinymce.editors && window.tinymce.editors[0]) {
+          let doc = window.tinymce.editors[0].dom.doc;
+          let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
+          if (this.showOptionTable === false) {
 
-      let columnCount = this.product.user.description_option.option_table.column_length ?? 2;
-      let optionHtml = this.getOptionTable(columnCount);
-      if (optionTableDoc) {
-        optionTableDoc.innerHTML = optionHtml;
-        this.product.item_detail = doc.documentElement.innerHTML;
-      } else {
-        const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
-        // top에 올라가게 변경
-        let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
-        // bottom에 올라가게 변경
-        if (this.product.user.description_option.option_table.show_position === "bottom") {
-          // <div id="${this.guideAfterId}"[^>] 위에 올라가게 변경
-          regex = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "igs");
-        }
+            // 如果选项表不应该显示，移除已存在的选项表div,否则出现空div
+            if (optionTableDoc) {
+              // optionTableDoc.innerHTML = "";
+              optionTableDoc.remove(); // 移除元素
+              this.product.item_detail = doc.documentElement.innerHTML;
+            }
+            return;
+          }
 
-        const match = regex.exec(this.product.item_detail);
-        if (match !== null) {
-          if (this.product.user.description_option.option_table.show_position === "bottom") {
-            this.product.item_detail = this.product.item_detail.replace(regex, "");
-            this.product.item_detail = this.product.item_detail + optionTable + match[0];
+          let columnCount = this.product.user.description_option.option_table.column_length ?? 2;
+          let optionHtml = this.getOptionTable(columnCount);
+
+          // 只有在 showOptionTable 为 true 时才创建或更新 optionTable
+          if (optionTableDoc) {
+            optionTableDoc.innerHTML = optionHtml;
+            this.product.item_detail = doc.documentElement.innerHTML;
           } else {
-            this.product.item_detail = this.product.item_detail.replace(regex, "");
-            const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
-            const matchVideo = regexVideo.exec(this.product.item_detail);
-            if (matchVideo !== null) {
-              this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
-              this.product.item_detail = match[0] + matchVideo[0] + optionTable + this.product.item_detail;
+            const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
+            // top에 올라가게 변경
+            let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
+            // bottom에 올라가게 변경
+            if (this.product.user.description_option.option_table.show_position === "bottom") {
+              // <div id="${this.guideAfterId}"[^>] 위에 올라가게 변경
+              regex = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "igs");
+            }
+
+            const match = regex.exec(this.product.item_detail);
+            if (match !== null) {
+              if (this.product.user.description_option.option_table.show_position === "bottom") {
+                this.product.item_detail = this.product.item_detail.replace(regex, "");
+                this.product.item_detail = this.product.item_detail + optionTable + match[0];
+              } else {
+                this.product.item_detail = this.product.item_detail.replace(regex, "");
+                const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
+                const matchVideo = regexVideo.exec(this.product.item_detail);
+                if (matchVideo !== null) {
+                  this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
+                  this.product.item_detail = match[0] + matchVideo[0] + optionTable + this.product.item_detail;
+                } else {
+                  this.product.item_detail = match[0] + optionTable + this.product.item_detail;
+                }
+              }
             } else {
-              this.product.item_detail = match[0] + optionTable + this.product.item_detail;
+              if (this.product.user.description_option.option_table.show_position === "bottom") {
+                this.product.item_detail = this.product.item_detail + optionTable;
+              } else {
+                this.product.item_detail = optionTable + this.product.item_detail;
+              }
             }
           }
-        } else {
-          if (this.product.user.description_option.option_table.show_position === "bottom") {
-            this.product.item_detail = this.product.item_detail + optionTable;
-          } else {
-            this.product.item_detail = optionTable + this.product.item_detail;
-          }
         }
+      },100);
+    },
 
+    fetchData() {
 
-      }
+      // 품목 이미지, 품목명 변경에 따라 액션
+      watchEffect(() => {
+        if (this.product.loading !== true) {
+          this.product.sku.map(item => item.img);
+          //변경될 경우 테이블 업데이트
+          this.$nextTick(() => {
+            this.setOptionTable();
+          });
+        }
+      });
     },
 
     setOptionTable() {
@@ -358,7 +405,7 @@ export default {
       arr = arr.filter((data) => {
         try {
           return (
-            data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
+              data.match(srcReg) !== null && data.match(srcReg)[1] !== logoUrl
           );
         } catch (e) {
           return false;
@@ -414,6 +461,40 @@ export default {
     showPreview() {
       this.modalContent = cloneDeep(this.product.item_detail);
       this.previewVisible = true;
+    },
+
+    checkDetatil() {
+      // 判断 detail里有没有 guideimage 内容来 判断 checkbox的 值
+      const regexBefore = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
+      const regexAfter = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "igs");
+      const matchBefore = regexBefore.exec(this.product.item_detail);
+      const matchAfter = regexAfter.exec(this.product.item_detail);
+      if (matchBefore === null && matchAfter === null) {
+          this.showGuideImage = false;
+      }else{
+        this.showGuideImage = true;
+      }
+
+      //  判断 video
+      const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
+      const matchVideo = regexVideo.exec(this.product.item_detail);
+      if (matchVideo === null) {
+        this.showVideo = false;
+      } else {
+        this.showVideo = true;
+      }
+
+      //  判断 table
+      const regexTable = new RegExp(`<div id="${this.optionTableId}".*?</div>`, "igs");
+      const matchTable = regexTable.exec(this.product.item_detail);
+      // console.log('detail', this.product.item_detail)
+
+      if (matchTable === null) {
+        this.showOptionTable = false;
+      } else {
+        this.showOptionTable = true;
+      }
+
     }
   }
 };

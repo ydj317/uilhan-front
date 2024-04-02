@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, defineEmits } from 'vue';
+import { computed } from 'vue';
 
 // 定义 props 和 emits
 const props = defineProps({

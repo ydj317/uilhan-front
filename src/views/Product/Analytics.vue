@@ -59,7 +59,7 @@
     </div>
   </a-card>
   <a-card class="mt15">
-    <a-table :columns="tableColumns" :data-source="tableList" bordered :pagination="false">
+    <a-table :columns="tableColumns" :data-source="tableList" bordered :pagination="false" @change="handleTableChange">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'productThumbnails'">
           <a-image
@@ -143,7 +143,9 @@ const state = reactive({
       search_type: "order_no",
       search_value: "",
       number: "",
-      sort: "up"
+      sort: "up",
+      sortOrder:"desc",
+      sortField: "", // 初始排序字段为空
     }
   },
   loading: false,
@@ -162,7 +164,7 @@ const state = reactive({
       type: "amount"
     }
   },
-  selectedProduct: null
+  selectedProduct: null,
 });
 const onPageChange = (page, pageSize) => {
   state.tableData.page = page;
@@ -257,7 +259,7 @@ const tableColumns = [
     dataIndex: "totalVisitCount",
     width: "10%",
     align: "center",
-    sorter: true
+    sorter: true,
   },
   {
     title: "판매수",
@@ -304,6 +306,31 @@ const getProductVisitsList = async () => {
     state.tableData.loading = false;
   }
 };
+
+const handleTableChange = async(pagination, filters, sorter) => {
+  state.tableData.loading = true;
+
+  //后端所需的排序参数
+  const sortField = sorter.field || 'totalVisitCount'; // 默认排序字段
+  const sortOrder = sorter.order === 'ascend' ? 'asc' : 'desc'; // 转换排序顺序
+
+  // 更新状态中的参数，发送给后端
+  state.tableData.params.sortField = sortField;
+  state.tableData.params.sortOrder = sortOrder;
+
+  try {
+    const result = await getProductVisits(state.tableData.params);
+    result.status !== "2000" && message.error(result.message);
+
+    tableList.value = result.data;
+    state.tableData.totalVisitCount = result.total; //涉及分页
+  } catch (e) {
+    console.error(e);
+  } finally {
+    state.tableData.loading = false;
+  }
+};
+
 
 const searchProductVisits = (searchByZero = false) => {
   if(searchByZero) {
