@@ -314,8 +314,6 @@ const handleTableChange = async(pagination, filters, sorter) => {
   const sortField = sorter.field || 'totalVisitCount'; // 默认排序字段
   const sortOrder = sorter.order === 'ascend' ? 'asc' : 'desc'; // 转换排序顺序
 
-  console.log(sortOrder);
-
   // 更新状态中的参数，发送给后端
   state.tableData.params.sortField = sortField;
   state.tableData.params.sortOrder = sortOrder;
