@@ -301,7 +301,7 @@ const formState = reactive({
       show_video: false,
 
       option_table: {
-        use: true,
+        use: false,
         show_position : "top",
         column_length :2
       },
@@ -652,11 +652,11 @@ onMounted(() => {
     margin-right:20px;
   }
 
-  :deep .ant-descriptions.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content{
+  :deep(.ant-descriptions.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content){
     padding: 8px 5px;
   }
 
-  :deep .ant-descriptions.ant-descriptions-bordered .ant-descriptions-view >table{
+  :deep(.ant-descriptions.ant-descriptions-bordered .ant-descriptions-view) > table{
     table-layout:fixed;
   }
 
@@ -696,19 +696,19 @@ onMounted(() => {
     opacity: 0.5;
   }
 
-  :deep .ant-upload-list-item-actions {
+  :deep(.ant-upload-list-item-actions) {
     display: none;
   }
 
-  :deep .ant-upload-list-item::before{
+  :deep(.ant-upload-list-item::before){
     display:none;
   }
 
-  :deep .ant-upload-list-item-custom {
+  :deep(.ant-upload-list-item-custom) {
     position: relative;
   }
 
-  :deep .delete-icon {
+  :deep(.delete-icon) {
     color: red;
     position: absolute;
     right: 114px;

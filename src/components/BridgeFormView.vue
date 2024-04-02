@@ -178,7 +178,7 @@
           <a-col :span="3" class="cor-ora">상품 #{{index + 1}}</a-col>
           <a-col :span="21" class="step4-end">
             <a-space>
-              <a-button type="primary">장바구니 & 주문복사</a-button>
+              <a-button type="primary" @click="parseMarketOrder(index)">장바구니 & 주문복사</a-button>
               <a-button class="bg-black cor-white" @click="copyItem(index)">상품복사</a-button>
               <a-button class="bg-black cor-white" @click="addItem(item)">+ 상품추가</a-button>
               <a-button class="bg-black cor-white" @click="removeItem(index)">- 상품삭제</a-button>
@@ -509,10 +509,11 @@
       </a-row>
     </div>
   </a-modal>
+  <parse-market-order-zh-cn v-model="parseMarketOrderModalIsOpen" />
 </template>
 
 <script setup>
-import {toRefs, watchEffect, reactive, computed} from "vue";
+import { toRefs, watchEffect, reactive, computed, ref } from "vue";
 import {message} from "ant-design-vue";
 import {ExclamationCircleOutlined, UploadOutlined} from "@ant-design/icons-vue";
 import {useMarketOrderApi} from "@/api/order";
@@ -523,6 +524,7 @@ import {Modal} from "ant-design-vue";
 import {
   QuestionCircleOutlined
 } from "@ant-design/icons-vue";
+import ParseMarketOrderZhCn from "@/components/ParseMarketOrderZhCn.vue";
 
 const props = defineProps({
   visible: Boolean,
@@ -1136,6 +1138,10 @@ const copyItem = (index) => {
   state.form.items.push(JSON.parse(JSON.stringify(state.form.items[index])));
 };
 
+const parseMarketOrderModalIsOpen = ref(false)
+const parseMarketOrder = (index) => {
+  parseMarketOrderModalIsOpen.value = true
+};
 const addItem = () => {
   state.form.items.push({
     PRO_NM: "",
@@ -1241,7 +1247,7 @@ watchEffect(() => {
   resize: none !important;
 }
 
-.showModal input, .ant-select, .ant-select-selector, .ant-select-selection-item {
+#bridgeForm .showModal input, #bridgeForm .ant-select, #bridgeForm .ant-select-selector, #bridgeForm .ant-select-selection-item {
   height: 40px !important;
   line-height: 40px !important;
 }
@@ -1298,7 +1304,7 @@ watchEffect(() => {
   width: 100%;
 }
 
-.step3-select {
+#bridgeForm .step3-select {
   width: 100%;
 }
 
@@ -1312,11 +1318,11 @@ watchEffect(() => {
   justify-content: flex-end;
 }
 
-.step4-select {
+#bridgeForm .step4-select {
   width: 200px;
 }
 
-.step4-select2 {
+#bridgeForm .step4-select2 {
   width: 100%;
 }
 

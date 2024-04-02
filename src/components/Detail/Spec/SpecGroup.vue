@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="showOptionModify" width="85%" centered :maskClosable="false">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="showOptionModify" width="85%" centered :maskClosable="false" @cancel="this.closeOptionModal">
     <template #footer>
       <div style="display: flex; justify-content: center;">
         <a-button key="back" style="width: 100px;" @click="this.closeOptionModal">취소</a-button>
@@ -99,7 +99,7 @@
           </thead>
           <!--옵션명 영역-->
           <tbody>
-          <tr v-for="(item, index) in option.data" :key="item.key">
+          <tr v-for="(item, index) in option.data" :key="item.key" class="option-detail">
             <td>
               <div class="spec-option-name" style="padding: 6px 0;">
                 <label class="ant-checkbox-wrapper spec-checkbox"
@@ -584,7 +584,6 @@ export default {
         });
       } catch (e) {
       }
-
       return check;
     }
   },
@@ -648,7 +647,7 @@ export default {
 
 .spec-option-name {
   display: flex;
-  align-items: center;
+  align-items: baseline;
 }
 
 .input-size {
@@ -785,7 +784,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 100;
+  z-index: 10000;
 }
 
 .option-image-large img {
@@ -848,6 +847,14 @@ export default {
 .reset-button {
   color: #fff;
   background-color: #2171e2;
+}
+
+.option-detail{
+  display:flex;
+  border-top:none !important;
+}
+.option-detail>td{
+  width:100%;
 }
 
 </style>
