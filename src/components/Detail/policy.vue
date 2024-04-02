@@ -391,8 +391,6 @@
 </template>
 
 <script setup>
-
-import {defineEmits} from 'vue';
 import {useStore} from 'vuex';
 
 //通过 useStore从 Vuex 中获取 store 的实例。

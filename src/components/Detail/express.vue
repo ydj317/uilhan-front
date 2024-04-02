@@ -194,7 +194,6 @@
 </template>
 
 <script setup>
-import { defineEmits,defineProps } from 'vue';
 const props = defineProps(['open'])
 const emit = defineEmits(['agree','update:open']);
 const handleModalClose = () => {

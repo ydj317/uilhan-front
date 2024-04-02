@@ -102,7 +102,6 @@ export default {
         this.showVideo = this.descriptionOption?.show_video ?? false;
         this.showOptionTable = this.descriptionOption?.option_table?.use ?? false;
 
-        console.log('upd',this.product.item_upd)
         if (this.product.item_upd !== null) {
           this.checkDetatil();
         }
@@ -471,8 +470,6 @@ export default {
       const matchBefore = regexBefore.exec(this.product.item_detail);
       const matchAfter = regexAfter.exec(this.product.item_detail);
       if (matchBefore === null && matchAfter === null) {
-        console.log('matchBefore:',matchBefore);
-        console.log('matchAfter:',matchAfter);
           this.showGuideImage = false;
       }else{
         this.showGuideImage = true;
@@ -482,7 +479,6 @@ export default {
       const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
       const matchVideo = regexVideo.exec(this.product.item_detail);
       if (matchVideo === null) {
-        console.log('matchVideo:',matchVideo);
         this.showVideo = false;
       } else {
         this.showVideo = true;
@@ -494,7 +490,6 @@ export default {
       // console.log('detail', this.product.item_detail)
 
       if (matchTable === null) {
-        console.log('matchTable:',matchTable);
         this.showOptionTable = false;
       } else {
         this.showOptionTable = true;
