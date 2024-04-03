@@ -166,7 +166,7 @@
 
         <a-descriptions-item>
           <span class="no_required"><strong>추천코드</strong></span>
-          <a-form-item name="com_name" has-feedback>
+          <a-form-item name="recommend_code" has-feedback>
             <a-input v-model:value="formState.recommend_code" placeholder="추천코드"/>
           </a-form-item>
           <div class="help">추천코드가 있다면 기입해주세요.</div>
