@@ -67,6 +67,7 @@
               <a-input v-model:value="formState.phone1" placeholder="휴대전화" :maxlength="3"
                        @input="(event) => changeToInput(event, 3, phone2Input)"/>
             </a-form-item>
+
             <a-form-item name="phone2" class="w32 mr12" has-feedback>
               <a-input v-model:value="formState.phone2" placeholder="휴대전화" :maxlength="4"
                        @input="(event) => changeToInput(event, 4, phone3Input)" ref="phone2Input"/>
@@ -75,7 +76,7 @@
               <a-input v-model:value="formState.phone3" placeholder="휴대전화" :maxlength="4" ref="phone3Input"/>
             </a-form-item>
           </div>
-          <div class="help">휴대전화를 입력해주십시오</div>
+          <div v-if="showFirstPhoneGuide" class="help">휴대전화를 입력해주십시오</div>
         </a-descriptions-item>
         <a-descriptions-item>
           <span :class="{'required':checked2}"><strong>우편번호</strong></span>
@@ -135,7 +136,7 @@
                        ref="comPhone3Input"/>
             </a-form-item>
           </div>
-          <div class="help">사업장 전화번호를 입력해주십시오</div>
+          <div v-if="showFirstComPhoneGuide" class="help">사업장 전화번호를 입력해주십시오</div>
         </a-descriptions-item>
 
         <a-descriptions-item>
@@ -329,6 +330,10 @@ export default defineComponent({
   },
 
   setup() {
+    let showFirstPhoneGuide = ref(true)
+    let showFirstComPhoneGuide = ref(true)
+
+
     onBeforeMount(() => {
       if (isLogin() === true) {
         router.push("/product");
@@ -609,12 +614,28 @@ export default defineComponent({
 
     let validatePhoneFirst = async (rule, value) => {
       if (value === "") {
+        if (rule.field === "com_phone1") {
+          showFirstComPhoneGuide.value = false;
+        } else if (rule.field === "phone1") {
+          showFirstPhoneGuide.value = false;
+        }
         return Promise.reject("번호를 입력해주십시오");
       } else {
         let regPhone = /^\d{2,3}$/;
         if (regPhone.test(value) !== true) {
+          if (rule.field === "com_phone1") {
+            showFirstComPhoneGuide.value = false;
+          } else if (rule.field === "phone1") {
+            showFirstPhoneGuide.value = false;
+          }
           return Promise.reject("숫자를 입력해주십시오");
         }
+      }
+
+      if (rule.field === "com_phone1") {
+        showFirstComPhoneGuide.value = true;
+      } else if (rule.field === "phone1") {
+        showFirstPhoneGuide.value = true;
       }
 
       return Promise.resolve();
@@ -748,8 +769,18 @@ export default defineComponent({
       return Promise.resolve();
     };
 
-    const handleFinishFailed = () => {
-      //message.warning('Login Error')
+    const handleFinishFailed = (errorInfo) => {
+      if (errorInfo && errorInfo.errorFields && errorInfo.errorFields.length > 0) {
+        const firstField = errorInfo.errorFields[0].name[0];
+        formRef.value.scrollToField(firstField);
+
+        setTimeout(() => {
+          const fieldElement = document.getElementById(`form_item_${firstField}`);
+          if (fieldElement) {
+            fieldElement.focus();
+          }
+        }, 100);
+      }
     };
 
     const phone2Input = ref(null);
@@ -989,6 +1020,8 @@ export default defineComponent({
       onAgree,
       onExpressAgree,
       showExpressModal,
+      showFirstPhoneGuide,
+      showFirstComPhoneGuide
     };
   }
 });
