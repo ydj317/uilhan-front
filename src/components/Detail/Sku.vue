@@ -884,7 +884,7 @@ export default defineComponent({
   margin-left:8px;
 }
 
-:deep .ant-input-group.ant-input-group-compact>.ant-select>.ant-select-selector{
+:deep(.ant-input-group.ant-input-group-compact) > .ant-select >.ant-select-selector{
   border-radius:6px !important;
 }
 
@@ -1009,25 +1009,25 @@ export default defineComponent({
   line-height:18px;
 }
 
-:deep .ant-table-wrapper .ant-table-thead >tr>th,
-:deep .ant-table-wrapper .ant-table.ant-table-bordered >.ant-table-container >.ant-table-content >table >tbody>tr>td{
+:deep(.ant-table-wrapper .ant-table-thead) > tr > th,
+:deep(.ant-table-wrapper .ant-table.ant-table-bordered) > .ant-table-container > .ant-table-content > table > tbody > tr > td {
   border-inline-end:none !important;
 }
 
-:deep .ant-table-wrapper .ant-table.ant-table-bordered >.ant-table-container{
+:deep(.ant-table-wrapper .ant-table.ant-table-bordered) > .ant-table-container {
   border-inline-start:none;
   border-radius:0;
 }
 
-:deep .ant-table-wrapper .ant-table-container table>thead>tr:first-child >*:last-child{
+:deep(.ant-table-wrapper .ant-table-container table) > thead > tr:first-child > *:last-child {
   border-start-end-radius:0;
 }
 
-:deep .ant-table-wrapper .ant-table-container table>thead>tr:first-child >*:first-child{
+:deep(.ant-table-wrapper .ant-table-container table) > thead > tr:first-child > *:first-child {
   border-start-start-radius:0;
 }
 
-:deep .ant-table-wrapper .ant-table.ant-table-bordered >.ant-table-container >.ant-table-content >table{
+:deep(.ant-table-wrapper .ant-table.ant-table-bordered) > .ant-table-container > .ant-table-content > table {
   border-top:2px solid #f0f0f0;
   border-radius:0;
 }
@@ -1037,19 +1037,19 @@ export default defineComponent({
   overflow-y: auto;
 }
 
-:deep .ant-table-selection-column{
+:deep(.ant-table-selection-column) {
   width:1%;
   height:50px !important;
 }
 
-:deep .ant-table-thead{
+:deep(.ant-table-thead) {
   position:sticky;
   top:0;
   z-index:1;
 }
 
-:deep .ant-table-cell:nth-child(4),
-:deep .ant-table-cell:nth-child(6){
+:deep(.ant-table-cell:nth-child(4)),
+:deep(.ant-table-cell:nth-child(6)){
   text-align: -webkit-center;
 }
 

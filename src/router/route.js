@@ -241,7 +241,7 @@ export const menus = [{
                     name: "board_list",
                     component: () => import("@/views/Board/List.vue"),
                     meta: {
-                        title: "게시글관리",
+                        title: "공지사항 관리",
                         isHide: false,
                         roles: ["ROLE_ADMIN"],
                         icon: ProfileOutlined,

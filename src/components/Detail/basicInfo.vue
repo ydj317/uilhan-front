@@ -34,6 +34,7 @@
                   :color="item.reg ? 'red' : ''"
                   :class="{ 'default-tag': ! item.reg, 'is-using': item.is_using }"
                   :bordered="! item.is_using || item.reg"
+                  :title="item.brand"
                   @click="addKeyword(item)"
                 >{{item.word}}</a-tag>
               </div>
@@ -226,6 +227,7 @@ export default {
         return {
           id: lib.uuid(),
           word: item.word,
+          brand: item.brand,
           reg: item.reg === 1,  // reg: 1|0
           is_using: this.isUsingKeyword(item.word),
         }
