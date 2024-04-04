@@ -201,17 +201,17 @@ export const menus = [{
                 //         icon: ''
                 //     },
                 // },
-                {
-                    path: "/user/UserQuotaControl",
-                    name: "user_userQuotaControl",
-                    component: () => import("@/views/Setting/UserQuotaControl"),
-                    meta: {
-                        title: "서비스 권한 관리",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
+                // {
+                //     path: "/user/UserQuotaControl",
+                //     name: "user_userQuotaControl",
+                //     component: () => import("@/views/Setting/UserQuotaControl"),
+                //     meta: {
+                //         title: "서비스 권한 관리",
+                //         isHide: false,
+                //         roles: ["ROLE_USER", "ROLE_ADMIN"],
+                //         icon: '',
+                //     },
+                // },
                 {
                     path: "/setting/UserManage",
                     name: "setting_userManage",
