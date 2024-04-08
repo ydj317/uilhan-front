@@ -595,9 +595,8 @@ const state = reactive({
 	form: {
 		id: "",
 		order_id: "",
-		app_type: bridgeFormData.value.type === "puragent" ? "구매대행" : "배송대행",
+		app_type: "배송대행",
 		ctr_seq: "1", // 배송방법
-		tracking_no: "",
 		receiver_name: "",
 		receiver_name_en: "",
 		receiver_tel1: "",
