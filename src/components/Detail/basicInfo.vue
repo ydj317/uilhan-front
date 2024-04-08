@@ -223,7 +223,7 @@ export default {
       if (keywords.length === 0) return
 
       // 最多显示 48 个
-      this.keyword.list = keywords.slice(0, 48).map(item => {
+      this.keyword.list = keywords.slice(0, 40).map(item => {
         return {
           id: lib.uuid(),
           word: item.word,
