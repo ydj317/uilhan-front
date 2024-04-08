@@ -222,8 +222,8 @@ export default {
       if (! Array.isArray(keywords)) return
       if (keywords.length === 0) return
 
-      // 最多显示 40 个
-      this.keyword.list = keywords.slice(0, 40).map(item => {
+      // 最多显示 48 个
+      this.keyword.list = keywords.slice(0, 48).map(item => {
         return {
           id: lib.uuid(),
           word: item.word,
@@ -232,8 +232,8 @@ export default {
           is_using: this.isUsingKeyword(item.word),
         }
       })
-      //超过40个 商品tags显示20个未注册 yinliang+
-      keywords.slice(40, 60).map(item => {
+      //超过48个 商品tags显示20个未注册 yinliang+
+      keywords.slice(48, 60).map(item => {
         //最多20个tags
         let tagsLength = this.product.item_sync_keyword.split(' ').length;
         if(tagsLength < 20 && item.reg == 0){

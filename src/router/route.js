@@ -201,6 +201,17 @@ export const menus = [{
                 //     },
                 // },
                 {
+                    path: "/user/UserQuotaControl",
+                    name: "user_userQuotaControl",
+                    component: () => import("@/views/Setting/UserQuotaControl"),
+                    meta: {
+                        title: "서비스 권한 관리",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+                {
                     path: "/setting/UserManage",
                     name: "setting_userManage",
                     component: () => import("@/views/Setting/UserManage.vue"),
@@ -438,7 +449,7 @@ export const menus = [{
         //     name: "express",
         //     component: () => import("@/views/express/index.vue"),
         //     meta: {
-        //         title: "배송대행지",
+        //         title: "가이드북",
         //         isHide: false,
         //         roles: ["ROLE_USER", "ROLE_ADMIN"],
         //         icon: GiftOutlined
