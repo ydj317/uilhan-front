@@ -137,6 +137,7 @@ export default defineComponent({
         },
       ],
       useAutoSave: false,
+      useAutoTranslate: false,
       productWatchCount: 0,
 
       SYNC_COLUMNS_CONFIG: [
@@ -173,8 +174,11 @@ export default defineComponent({
 
   computed: {
     ...mapState({
-      product: state => state.product.detail
+      product: state => state.product.detail,
+      autosave: (state) => state.product.detail?.user?.use_auto_save,
+      autotranslate: (state) => state.product.detail?.user?.use_auto_translate,
     }),
+
     localvisible: {
       get() {
         return this.visible;
@@ -217,6 +221,14 @@ export default defineComponent({
 
       message.success('자동 저장 성공')
     }, 5000, {
+      leading: false
+    }),
+
+    autoTranslate:  throttle(async function() {
+      message.success('이미지 자동 번역중...')
+
+      message.success('이미지 자동 번역 성공')
+    },8000, {
       leading: false
     }),
 
@@ -837,8 +849,6 @@ export default defineComponent({
           message.error(res.message);
           return false;
         }
-
-        this.useAutoSave = res.data.use_auto_save === '1';
       });
     },
     onCancel() {
@@ -860,16 +870,40 @@ export default defineComponent({
   },
 
   watch: {
-    'product': {
+    product: {
       handler() {
         this.productWatchCount++;
         if (this.productWatchCount > 6 && this.useAutoSave) {
-          this.autoSave()
+          this.autoSave();
+        }
+
+        if(this.productWatchCount > 6 && this.useAutoTranslate){
+          this.autoTranslate();
         }
       },
-      deep: true, // 深度监听，如果 product 是对象或数组，需要设置为 true
-      immediate: false, // 立即执行一次
+
+      deep: true,
+      immediate: true
     },
+
+    autosave: {
+      handler() {
+        this.useAutoSave = this.autosave ?? false;
+        console.log(this.useAutoSave);
+      }
+    },
+
+    autotranslate:{
+      handler() {
+        this.useAutoTranslate = this.autotranslate ?? false;
+        if (this.useAutoSave) {
+          this.autoTranslate();
+        }
+      },
+      deep: true,
+      immediate: true
+    },
+
     prdId: {
       async handler() {
         this.$store.dispatch('product/getDetail', this.prdId);

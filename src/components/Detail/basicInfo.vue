@@ -349,9 +349,6 @@ export default {
           message.error(res.message);
           return false;
         }
-
-        this.use_ai = (res.data.use_ai === '1');
-        this.use_auto_save = (res.data.use_auto_save === '1');
       });
     },
 
