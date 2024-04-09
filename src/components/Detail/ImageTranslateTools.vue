@@ -259,6 +259,11 @@ export default defineComponent({
       }
       this.translateImageLoading = true;
       await useProductApi().translateImage(oParam, (oTranslateInfo) => {
+        if (oTranslateInfo.status !== "2000") {
+          message.error(oTranslateInfo.message);
+          return false;
+        }
+
         const { list,recharge } = oTranslateInfo.data;
         this.localTranslateImageList[index] = {...this.localTranslateImageList[index],...list.find(item => item.key === index)}
         this.product.recharge = recharge;

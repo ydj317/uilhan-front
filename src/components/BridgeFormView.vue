@@ -264,11 +264,11 @@
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">단가<span class="red">*</span></a-col>
               <a-col :span="8">
-                <a-input  size="small" v-model:value="item.unitPrice" suffix="위안"/>
+                <a-input-number min="0" :controls="false" size="small" style="width: 420px"  v-model:value="item.unitPrice" @blur="setTotalPrice"  addon-after="위안" />
               </a-col>
               <a-col :span="1" class="center">X</a-col>
               <a-col :span="9">
-                <a-input size="small" v-model:value="item.quantity" suffix="EA"/>
+                <a-input-number min="1" style="width: 470px" :controls="false" size="small" v-model:value="item.quantity" addon-after="EA"/>
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
@@ -367,8 +367,40 @@
         <a-button type="default" class="mr5">단독배송</a-button>
         <a-button type="default">일반통관</a-button>
       </a-row>
-      <a-row class="mt30">
-        <span class="title mb10">STEP 05&nbsp;&nbsp;&nbsp;&nbsp;요청사항을 선택해주세요.</span>
+
+      <div>
+        <a-row class="mt30">
+          <span class="title mb10">STEP 05&nbsp;&nbsp;&nbsp;&nbsp;구매물품보상보험 안심케어 서비스에 가입하세요.</span>
+          <a-divider class="divider bg-b mt0 mb0"></a-divider>
+        </a-row>
+        <a-row class="mt30" style="justify-content: space-between;">
+          <a-checkbox><span class="cor-ora fs14">해외직구보험 가입 & 내용확인하기(필수)</span></a-checkbox>
+          <span class="fw fs14">안심케어 비용 : <span style="color: #cf1322">{{ state.carePrice }}</span> 원</span>
+        </a-row>
+        <a-divider class="bg-f mt10"></a-divider>
+
+        <a-row  style="height: 150px;">
+          <a-col :span="6" class="center bg-fa" style="line-height: 0.5; text-align: center;">
+            <a-col :span="24" class="pt10" style="line-height: 0.5; text-align: center;">
+              <p>해외에서 직접구매하신 물품의</p>
+              <p class="red fw">파손,도난분실,오배송 + 반송비용 보상</p>
+              <p> ※ 자세한 보장내용은 공지사항 참고해주세요</p>
+            </a-col>
+          </a-col>
+          <a-col :span="18" class="p10">
+            <p>※ 본 보험상품의 정식명칭은 에이스손해보험사에서 제공하는 구매물품보상보험 입니다.</p>
+            <p>※ 넥스트익스프레스 안심케어 미가입 물품의 파손, 분실, 도난, 오배송 손해에 대해 넥스트익스프레스는
+              책임을 지지 않습니다.</p>
+            <p>※ 깨짐에 취약한 상품이나 부피가 큰 상품의 경우 반드시 포장보완 또는 안전포장을 진행하셔야 합니다.<br>
+              [ 배송이 시작되면 Safe 케어 가입내용이 연락처로 안내됩니다. ]</p>
+            <p class="red fw">※ 구매하신 URL이 정확하지 않으면 보험 가입이 되어도 보상이 불가능합니다.</p>
+          </a-col>
+        </a-row>
+      </div>
+
+
+      <a-row class="mt40">
+        <span class="title mb10">STEP 06&nbsp;&nbsp;&nbsp;&nbsp;요청사항을 선택해주세요.</span>
         <a-divider class="divider bg-b mt0 mb0"></a-divider>
       </a-row>
       <a-row class="step5 bottom-border">
@@ -463,7 +495,6 @@
       </a-row>
       <a-row class="btn-wrap mt50">
         <a-col :span="24" class=" center pt25 pb25 pl20">
-          <a-button class="mr20">접수대기</a-button>
           <a-button>접수신청</a-button>
         </a-col>
       </a-row>
@@ -694,8 +725,16 @@ const state = reactive({
   importation_mode: "private_e_commerce",
   receiver_info_type :"01",
   avatar: "",
-  messageType: ""
+  messageType: "",
+  carePrice: 0
 });
+
+const setTotalPrice = async () => {
+  console.log(state.form.items)
+  const totalPrice = state.form.items.reduce((acc, cur) => {
+    return Number(acc) + Number(cur.unitPrice) * Number(cur.quantity);
+  }, 0);
+}
 const step3Input = () => {
 
 };
@@ -1107,8 +1146,8 @@ const addItem = () => {
   state.form.items.push({
     PRO_NM: "",
     PRO_NM_CH: "",
-    unitPrice: "",
-    quantity: "",
+    unitPrice: 0,
+    quantity: 1,
     prdUrl: "",
     prdImage: "",
     hs_code: "",
