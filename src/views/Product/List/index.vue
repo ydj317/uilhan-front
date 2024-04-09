@@ -72,7 +72,7 @@
   />
   <DetailPopup
     :visible="showDetail"
-    @update:visible="showDetail = false"
+    @update:visible="handleUpdateVisible"
     :prdId="detailPrd"
     :active-tab="detailActive"
   />
@@ -298,6 +298,12 @@ function checkUserPermission(data) {
     haveDownloadProductPermission.value = true
   }
 }
+
+const handleUpdateVisible = () => {
+  showDetail.value = false;
+  getList();
+};
+
 </script>
 
 <style scoped>
