@@ -272,11 +272,20 @@
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">단가<span class="red">*</span></a-col>
               <a-col :span="8">
-                <a-input-number min="0" :controls="false" size="small" style="width: 420px"  v-model:value="item.unitPrice" @blur="setTotalPrice"  addon-after="위안" />
+                <a-input-number
+                    :precision="2"
+                    min="0"
+                    :controls="false"
+                    size="small"
+                    style="width: 420px"
+                    v-model:value="item.unitPrice"
+                    @blur="calculateTotal"
+                    addon-after="위안"
+                />
               </a-col>
               <a-col :span="1" class="center">X</a-col>
               <a-col :span="9">
-                <a-input-number min="1" style="width: 470px" :controls="false" size="small" v-model:value="item.quantity" addon-after="EA"/>
+                <a-input-number :precision="0"  min="1" style="width: 470px" :controls="false" size="small" v-model:value="item.quantity" @blur="calculateTotal" addon-after="EA"/>
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
@@ -361,7 +370,7 @@
       </a-row>
       <a-row class="bg-fa bottom-border pt20 pb20">
         <a-col :span="20" class="pl40">총 수량</a-col>
-        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{state.form.total_count}}</span> EA</a-col>
+        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{state.form.total_quantity}}</span> EA</a-col>
       </a-row>
       <a-row class="bg-fa bottom-border pt20 pb20">
         <a-col :span="20" class="pl40">총 금액</a-col>
@@ -382,7 +391,7 @@
           <a-divider class="divider bg-b mt0 mb0"></a-divider>
         </a-row>
         <a-row class="mt30" style="justify-content: space-between;">
-          <a-checkbox v-model:value="state.form.is_care"><span class="cor-ora fs14">해외직구보험 가입 & 내용확인하기(필수)</span></a-checkbox>
+          <a-checkbox :checked="state.form.is_care" @click="showCareInfo"><span class="cor-ora fs14">해외직구보험 가입 & 내용확인하기(필수)</span></a-checkbox>
           <span class="fw fs14">안심케어 비용 : <span style="color: #cf1322">{{ state.form.carePrice }}</span> 원</span>
         </a-row>
         <a-divider class="bg-f mt10"></a-divider>
@@ -565,21 +574,22 @@
     </div>
   </a-modal>
   <parse-market-order-zh-cn v-model="parseMarketOrderModalIsOpen" />
+  <OverseasCareDetail v-model:data="OverseasCareData" />
 </template>
 
 <script setup>
-import { toRefs, watchEffect, reactive, computed, ref } from "vue";
-import {message} from "ant-design-vue";
+import {toRefs, watchEffect, reactive, computed, ref, onMounted} from "vue";
+import {message, Modal} from "ant-design-vue";
 import {ExclamationCircleOutlined, UploadOutlined} from "@ant-design/icons-vue";
 import {useMarketOrderApi} from "@/api/order";
 import {useBridgeApi} from "@/api/bridge";
 import Cookie from "js-cookie";
 import {createVNode} from "vue";
-import {Modal} from "ant-design-vue";
 import {
   QuestionCircleOutlined
 } from "@ant-design/icons-vue";
 import ParseMarketOrderZhCn from "@/components/ParseMarketOrderZhCn.vue";
+import OverseasCareDetail from "@/components/OverseasCareDetail.vue";
 
 const props = defineProps({
   visible: Boolean,
@@ -590,6 +600,7 @@ const props = defineProps({
 
 const {bridgeFormData} = toRefs(props);
 const emit = defineEmits(["close", "update"]);
+
 
 const state = reactive({
 	form: {
@@ -630,10 +641,10 @@ const state = reactive({
 		messageType: "", // 배송 요청사항
 		carePrice: 0, // 보험료?
 		is_care: false, // 보험 가입 여부
-
 		total_amount: 0,
-		total_count: 0,
+    total_quantity: 0,
 	},
+  total_amount_kr: 0,
   loading: false,
   confirmLoading: false,
   checkClearanceCodeLoading: false,
@@ -786,11 +797,87 @@ const state = reactive({
    이러한 사실을 통지하고 해당 상품을 취소할 수 있습니다.`
 });
 
-const setTotalPrice = async () => {
-  console.log(state.form.items)
-  const totalPrice = state.form.items.reduce((acc, cur) => {
+
+
+const OverseasCareData = ref({show: false, checked : false, total_amount_kr: state.total_amount_kr, care_price : state.form.carePrice})
+
+const calculateTotal = async () => {
+  // 총 금액
+  state.form.total_amount = state.form.items.reduce((acc, cur) => {
     return Number(acc) + Number(cur.unitPrice) * Number(cur.quantity);
   }, 0);
+  // 총 수량
+  state.form.total_quantity = state.form.items.reduce((acc, cur) => {
+    return Number(acc) + Number(cur.quantity);
+  }, 0);
+
+  // 안심케어 비용 계산
+  calculateCarePrice()
+}
+
+const calculateCarePrice = () => {
+  state.total_amount_kr = Math.round(state.form.total_amount * 185);
+  switch (true) {
+    case state.total_amount_kr > 0 && state.total_amount_kr < 100000:
+      state.form.carePrice = 500;
+      break;
+    case state.total_amount_kr > 100000 && state.total_amount_kr <= 150000:
+      state.form.carePrice = 1000;
+      break;
+    case state.total_amount_kr > 150000 && state.total_amount_kr <= 200000:
+      state.form.carePrice = 5000;
+      break;
+    case state.total_amount_kr > 200000 && state.total_amount_kr <= 250000:
+      state.form.carePrice = 6000;
+      break;
+    case state.total_amount_kr > 250000 && state.total_amount_kr <= 300000:
+      state.form.carePrice = 7000;
+      break;
+    case state.total_amount_kr > 300000 && state.total_amount_kr <= 350000:
+      state.form.carePrice = 8000;
+      break;
+    case state.total_amount_kr > 350000 && state.total_amount_kr <= 400000:
+      state.form.carePrice = 9000;
+      break;
+    case state.total_amount_kr > 400000 && state.total_amount_kr <= 450000:
+      state.form.carePrice = 10000;
+      break;
+    case state.total_amount_kr > 450000 && state.total_amount_kr <= 500000:
+      state.form.carePrice = 12000;
+      break;
+    case state.total_amount_kr > 500000 && state.total_amount_kr <= 550000:
+      state.form.carePrice = 14000;
+      break;
+    case state.total_amount_kr > 550000 && state.total_amount_kr <= 600000:
+      state.form.carePrice = 16000;
+      break;
+    case state.total_amount_kr > 600000 && state.total_amount_kr <= 650000:
+      state.form.carePrice = 18000;
+      break;
+    case state.total_amount_kr > 650000 && state.total_amount_kr <= 700000:
+      state.form.carePrice = 20000
+      break;
+    case state.total_amount_kr > 700000 && state.total_amount_kr <= 750000:
+      state.form.carePrice = 21000
+      break;
+    case state.total_amount_kr > 750000 && state.total_amount_kr <= 800000:
+      state.form.carePrice = 22000
+      break;
+    case state.total_amount_kr > 800000 && state.total_amount_kr <= 850000:
+      state.form.carePrice = 23000
+      break;
+    case state.total_amount_kr > 850000 && state.total_amount_kr <= 900000:
+      state.form.carePrice = 24000
+      break;
+    case state.total_amount_kr > 900000 && state.total_amount_kr <= 1000000:
+      state.form.carePrice = 25000
+      break;
+    default:
+      state.form.carePrice = 0;
+  }
+
+  OverseasCareData.value.total_amount_kr = state.total_amount_kr;
+  OverseasCareData.value.care_price = state.form.carePrice;
 }
 const step3Input = () => {
 
@@ -857,15 +944,12 @@ const showExpressModal = () =>{
       state.form.receiver_post_code = data.zonecode;
       state.form.receiver_addr1 = data.roadAddress;
       state.form.receiver_addr1_en = data.roadAddressEnglish;
-
-      console.log(data)
     }
   }).open();
 }
 
 // 저장
 const handleOk = () => {
-console.log(state.form)
   if (state.form.rrn_cd === "사업자통관") {
     if (state.form.fileList.length === 0) {
       message.error("사업자등록증을 첨부해 주세요.");
@@ -1232,11 +1316,42 @@ const removeItem = (index) => {
   state.form.items.splice(index, 1);
 }
 
+const showCareInfo = () => {
+  if (state.form.total_amount === 0) {
+    message.error("상품 정보가 입력이 안되면 보험 가입이 불가능합니다. 상품정보를 입력해주세요.");
+    return;
+  }
+
+  if (state.form.total_amount * 185 > 1000000) {
+    message.error("보험료 요율 구간이 최대 한화 기준 100만원 이상이면 보험 가입이 불가능합니다.");
+    return;
+  }
+
+  if (state.form.is_care === true) {
+    OverseasCareData.value.checked = false;
+    state.form.is_care = false;
+    return;
+  }
+  OverseasCareData.value.show = true;
+}
+
 watchEffect(() => {
   if (visible.value) {
     getOrderDetailForBridge();
     // getCategory();
   }
+
+  if (OverseasCareData.value.checked === true) {
+    state.form.is_care = true;
+  }
+});
+
+// mounted
+onMounted(async() => {
+  await Promise.all([getOrderDetailForBridge()])
+      .then(() => {
+        calculateTotal();
+      });
 });
 </script>
 <style>
