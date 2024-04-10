@@ -925,7 +925,7 @@ const showHistory = (param) => {
 
 
 const bridgeFormVisible = ref(false);
-const bridgeFormData = ref({});
+const bridgeFormData = ref({record:{orderId:""}});
 const showBridgeForm = (param) => {
   bridgeFormData.value = param;
   bridgeFormVisible.value = true;

@@ -276,7 +276,7 @@
                     :precision="2"
                     min="0"
                     :controls="false"
-                    size="small"
+                    size="middle"
                     style="width: 420px"
                     v-model:value="item.unitPrice"
                     @blur="calculateTotal"
@@ -285,7 +285,7 @@
               </a-col>
               <a-col :span="1" class="center">X</a-col>
               <a-col :span="9">
-                <a-input-number :precision="0"  min="1" style="width: 470px" :controls="false" size="small" v-model:value="item.quantity" @blur="calculateTotal" addon-after="EA"/>
+                <a-input-number :precision="0"  min="1" style="width: 470px" :controls="false" size="middle" v-model:value="item.quantity" @blur="calculateTotal" addon-after="개"/>
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
@@ -370,7 +370,7 @@
       </a-row>
       <a-row class="bg-fa bottom-border pt20 pb20">
         <a-col :span="20" class="pl40">총 수량</a-col>
-        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{state.form.total_quantity}}</span> EA</a-col>
+        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{state.form.total_quantity}}</span> 개</a-col>
       </a-row>
       <a-row class="bg-fa bottom-border pt20 pb20">
         <a-col :span="20" class="pl40">총 금액</a-col>
@@ -578,7 +578,7 @@
 </template>
 
 <script setup>
-import {toRefs, watchEffect, reactive, computed, ref, onMounted} from "vue";
+import {toRefs, watchEffect, reactive, computed, ref, onMounted, watch} from "vue";
 import {message, Modal} from "ant-design-vue";
 import {ExclamationCircleOutlined, UploadOutlined} from "@ant-design/icons-vue";
 import {useMarketOrderApi} from "@/api/order";
@@ -894,6 +894,9 @@ let visible = computed({
 // 주문정보 불러오기
 const getOrderDetailForBridge = async () => {
   state.loading = true;
+  if (bridgeFormData.value.record.orderId === "") {
+    return false;
+  }
   await useMarketOrderApi().getOrderDetailForBridge({id: bridgeFormData.value.record.orderId}).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
@@ -1279,6 +1282,7 @@ const setMessage = (message, options) => {
 
 const copyItem = (index) => {
   state.form.items.push(JSON.parse(JSON.stringify(state.form.items[index])));
+  calculateTotal();
 };
 
 const parseMarketOrderModalIsOpen = ref(false)
@@ -1306,6 +1310,8 @@ const addItem = () => {
 	  option_size: "",
 	  product_unit: "",
   });
+
+  calculateTotal();
 };
 
 const removeItem = (index) => {
@@ -1314,6 +1320,7 @@ const removeItem = (index) => {
     return false;
   }
   state.form.items.splice(index, 1);
+  calculateTotal();
 }
 
 const showCareInfo = () => {
@@ -1336,23 +1343,17 @@ const showCareInfo = () => {
 }
 
 watchEffect(() => {
-  if (visible.value) {
+  if (visible.value && (bridgeFormData.value.record.orderId === "" || bridgeFormData.value.record.orderId !== state.form.order_id)) {
     getOrderDetailForBridge();
-    // getCategory();
+    calculateTotal();
   }
 
   if (OverseasCareData.value.checked === true) {
+    console.log('checked')
     state.form.is_care = true;
   }
 });
 
-// mounted
-onMounted(async() => {
-  await Promise.all([getOrderDetailForBridge()])
-      .then(() => {
-        calculateTotal();
-      });
-});
 </script>
 <style>
 .showModal::-webkit-scrollbar {
