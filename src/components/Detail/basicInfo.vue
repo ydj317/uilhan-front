@@ -8,7 +8,7 @@
       </colgroup>
       <tr>
         <th>
-          <img :src="product.item_thumbnails[0]?.url" style="width: 100px;height: 100px" alt=""/>
+          <img :src="product.item_thumbnails[0]?.url" style="width: 100px;height: 100px" alt="" class="cp" @click="translatePopup"/>
         </th>
         <td>
           <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
@@ -95,7 +95,9 @@
         </td>
       </tr>
     </table>
-
+    <image-translate-tools v-model:visible="imageTranslateToolsVisible"
+                           @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
+                           @update:translateImageList="updateTranslateImageList" />
   </div>
 </template>
 
@@ -106,9 +108,10 @@ import { AuthRequest } from "@/util/request";
 import {QuestionCircleOutlined,CheckCircleOutlined} from '@ant-design/icons-vue';
 import {useMandatoryApi} from "@/api/mandatory";
 import {lib} from "@/util/lib";
+import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
 export default {
-  components: {QuestionCircleOutlined,CheckCircleOutlined},
+  components: {QuestionCircleOutlined,CheckCircleOutlined,ImageTranslateTools},
 
   computed: {
     ...mapState({
@@ -177,6 +180,8 @@ export default {
         search_value: '',
         list: [],
       },
+      imageTranslateToolsVisible: false,
+      translateImageList: [],
     };
   },
 
@@ -383,7 +388,19 @@ export default {
         message.success('상품명과 키워드가 성공적으로 업데이트 되었습니다. ');
       });
 
-    }
+    },
+    translatePopup() {
+      let aImagesUrl = [
+        {checked: true, order: 0, url: this.product.item_thumbnails[0].url}
+      ];
+      this.imageTranslateToolsVisible = true;
+      this.translateImageList = aImagesUrl;
+    },
+    updateTranslateImageList(imageList) {
+      if (imageList[0].translate_status === true) {
+        this.product.item_thumbnails[0].url =  imageList[0].translate_url;
+      }
+    },
   },
 
   mounted() {
