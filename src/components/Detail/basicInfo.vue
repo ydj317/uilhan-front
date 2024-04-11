@@ -26,7 +26,7 @@
                 @click="searchKeyword"
               >키워드 검색</a-button>
             </div>
-
+            <div v-show="keyword.list.length" style="color: #999999;">빨간색 라벨 키워드는 상표권에 등록된 단어입니다.</div>
             <a-spin v-model:spinning="keyword.loading">
               <div class="keyword-list" v-show="keyword.list.length > 0 || keyword.loading">
                 <a-tag
@@ -50,7 +50,7 @@
             <div style="flex: 1">
             <a-spin :spinning="product.filter_word_validate_in_process === true || ai_loading === true" >
               <a-input
-                  @blur="validateFilterWord(product.item_trans_name)"
+                  @blur="validateFilterWord($event,product.item_trans_name)"
                   v-model:value="product.item_trans_name"
                   :maxlength="max_name_length"
                   :showCount="true"
@@ -77,9 +77,37 @@
       <tr>
         <th>상품태그</th>
         <td>
-          <a-spin :spinning="ai_loading === true">
-            <a-textarea v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " @input="itemSyncKeywordCountCheck" @change="itemSyncKeywordCountCheck" :showCount="false"
+          <div style="display: flex;flex-direction: column;gap: 5px;width: 100%" class="mb10">
+            <div style="display: flex;gap: 10px">
+              <a-input
+                  :disabled="tagKeyword.loading"
+                  v-model:value.trim="tagKeyword.search_value"
+                  placeholder="검색할 상품태그를 입력하세요"
+                  @keyup.enter="searchTagKeyword"
+              />
+              <a-button
+                  :loading="tagKeyword.loading"
+                  type="primary"
+                  style="background-color: #1e44ff;color: white"
+                  @click="searchTagKeyword"
+              >상품태그 추천</a-button>
+            </div>
+          </div>
+          <a-spin :spinning="ai_loading === true || tagKeyword.loading === true">
+            <a-textarea v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " @input="itemSyncKeywordCountCheck" @change="itemSyncKeywordCountCheck" :showCount="false" @blur="tagKeywordBlur($event,2)"
             />
+          </a-spin>
+          <a-spin v-model:spinning="tagKeyword.loading">
+            <div class="keyword-list" v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
+              <a-tag
+                  v-for="item in tagKeyword.list" :key="item.id"
+                  :color="item.reg ? 'red' : ''"
+                  :class="{ 'default-tag': ! item.reg, 'is-using': item.is_using }"
+                  :bordered="! item.is_using || item.reg"
+                  :title="item.brand"
+                  @click="addKeyword(item,2)"
+              >{{item.word}}</a-tag>
+            </div>
           </a-spin>
         </td>
       </tr>
@@ -180,29 +208,26 @@ export default {
         search_value: '',
         list: [],
       },
+      tagKeyword: {
+        loading: false,
+        search_value: '',
+        list: [],
+      },
       imageTranslateToolsVisible: false,
       translateImageList: [],
+      blurIndex: {
+        type:1,
+        index:false,
+      },
     };
   },
 
   methods: {
     itemSyncKeywordCountCheck() {
-
-      const keyword1 = this.product.item_sync_keyword && this.product.item_sync_keyword.split(' ')
-      const keyword2 = this.product.item_sync_keyword && this.product.item_sync_keyword.split(',')
-
-      const keyword = [...keyword1, ...keyword2]
-
-      if (keyword.length > 20) {
+      const keyword = this.product.item_sync_keyword && this.product.item_sync_keyword.split(' ')
+      if (keyword && keyword.length > 20) {
         message.error('상품태그는 최대 20개까지 등록이 가능합니다.')
         this.product.item_sync_keyword = keyword.slice(0, 20).join(' ')
-      }
-
-      for (const keywordElement of keyword) {
-        if (keywordElement.length > this.max_sync_keyword_length) {
-          message.error(`상품태그는 최대 ${this.max_sync_keyword_length}자까지 등록이 가능합니다.`)
-          this.product.item_sync_keyword = this.product.item_sync_keyword.replace(keywordElement, '')
-        }
       }
     },
     async searchKeyword() {
@@ -218,57 +243,107 @@ export default {
         this.keyword.loading = false
       })
     },
+    async searchTagKeyword() {
+      this.tagKeyword.loading = true
+      this.tagKeyword.list = []
+      const params = {keyword: this.tagKeyword.search_value}
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/naver/keywords", params).then(res => {
+        this.initKeywords(res.data.keywords,2)
+      }).catch(() => {
+        message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
+      }).finally(() => {
+        this.tagKeyword.loading = false
+      })
+    },
     isUsingKeyword(word) {
       const in_name = this.product.item_trans_name?.split(' ')?.includes(word)
       const in_tags = this.product.item_sync_keyword?.split(' ')?.includes(word)
       return in_name || in_tags
     },
-    initKeywords(keywords) {
+    initKeywords(keywords,type = 1) {
       if (! Array.isArray(keywords)) return
       if (keywords.length === 0) return
-
-      // 最多显示 48 个
-      this.keyword.list = keywords.slice(0, 40).map(item => {
-        return {
-          id: lib.uuid(),
-          word: item.word,
-          brand: item.brand,
-          reg: item.reg === 1,  // reg: 1|0
-          is_using: this.isUsingKeyword(item.word),
-        }
-      })
-      //超过48个 商品tags显示20个未注册 yinliang+
-      keywords.slice(48, 60).map(item => {
-        //最多20个tags
-        let tagsLength = this.product.item_sync_keyword.split(' ').length;
-        if(tagsLength < 20 && item.reg == 0){
-          this.addKeyword(item,2);
-        }
-      })
+      // 最多显示 40 个
+      if(type == 1){
+        this.keyword.list = keywords.slice(0, 40).map(item => {
+          return {
+            id: lib.uuid(),
+            word: item.word,
+            brand: item.brand,
+            reg: item.reg === 1,  // reg: 1|0
+            is_using: this.isUsingKeyword(item.word),
+          }
+        })
+        //超过40个 剩下未注册的插入关键词,关键词最多20个
+        keywords.slice(40).map(item => {
+          //最多20个tags
+          let tagsLength = this.product.item_sync_keyword.split(' ').length;
+          if(tagsLength < 20 && item.reg == 0){
+            this.addKeyword(item,2);
+          }
+        })
+      }
+      if(type == 2){
+        this.tagKeyword.list = keywords.slice(0, 40).map(item => {
+          return {
+            id: lib.uuid(),
+            word: item.word,
+            brand: item.brand,
+            reg: item.reg === 1,  // reg: 1|0
+            is_using: this.isUsingKeyword(item.word),
+          }
+        })
+      }
     },
     addKeyword(keywordInfo,from = 1) {
-
       let use = false
-      if(from == 1){ //yinliang+
-        const newName = [this.product.item_trans_name, keywordInfo.word].filter(d => !!d).join(' ')
+      let keyword = [];
+      let keywordBefore = '';
+      let keywordAfter = '';
+      if(from == 1){
+        //插入光标处
+        if(this.blurIndex.type == 1){
+          if(this.product.item_trans_name){
+            keywordBefore = this.product.item_trans_name.slice(0,this.blurIndex.index).trim();
+            keywordAfter  = this.product.item_trans_name.slice(this.blurIndex.index).trim();
+          }
+          keyword = [keywordBefore, keywordInfo.word,keywordAfter];
+        }else{
+          keyword = [this.product.item_trans_name, keywordInfo.word];
+        }
+        const newName = keyword.filter(d => !!d).join(' ')
         if (newName.length <= this.max_name_length) {
           this.product.item_trans_name = newName
-          use = true
         }
-      }
-
-      const newKeyword = [this.product.item_sync_keyword, keywordInfo.word].filter(d => !!d).join(' ')
-      // if (newKeyword.length <= this.max_sync_keyword_length) {
-      if (this.max_sync_keyword_length) {//yinliang+
-        this.product.item_sync_keyword = [this.product.item_sync_keyword, keywordInfo.word].filter(d => !!d).join(' ')
         use = true
+        this.validateFilterWord(null,this.product.item_trans_name)
       }
+      if(from == 2) {
+        if(this.blurIndex.type == 2){//光标插
+          if(this.product.item_sync_keyword){
+            keywordBefore = this.product.item_sync_keyword.slice(0,this.blurIndex.index).trim();
+            keywordAfter  = this.product.item_sync_keyword.slice(this.blurIndex.index).trim();
+          }
+          keyword = [keywordBefore, keywordInfo.word,keywordAfter];
+        }else{//正常插
+          keyword = [this.product.item_sync_keyword, keywordInfo.word];
+        }
+        let newKeyword = keyword.filter(d => !!d).join(' ');
 
+        if(newKeyword.split(' ').length <= 20){
+          //点击关键词消失
+          this.tagKeyword.list.splice(this.tagKeyword.list.indexOf(keywordInfo),1);
+          this.product.item_sync_keyword = newKeyword;
+        }else{
+          message.error('상품태그는 최대 20개까지 등록이 가능합니다.');
+          return;
+        }
+        use = true
+        this.itemSyncKeywordCountCheck()
+      }
       if (use) {
         keywordInfo.is_using = true
       }
-      this.validateFilterWord(this.product.item_trans_name)
-      this.itemSyncKeywordCountCheck()
     },
     getMandatory() {
       useMandatoryApi().getList().then((res) => {
@@ -311,7 +386,10 @@ export default {
      * 상품명 금지어 체크
      * @returns {boolean}
      */
-    validateFilterWord(sTransProductName = "") {
+    validateFilterWord(e,sTransProductName = "") {
+      if(e){
+        this.tagKeywordBlur(e,1);
+      }
       if (sTransProductName === "") return false;
 
       this.product.filter_word_validate_in_process = true;
@@ -381,7 +459,7 @@ export default {
           this.product.item_sync_keyword = '';
         }
 
-        this.validateFilterWord(this.product.item_trans_name)
+        this.validateFilterWord(null,this.product.item_trans_name)
 
         this.ai_loading = false;
 
@@ -401,13 +479,17 @@ export default {
         this.product.item_thumbnails[0].url =  imageList[0].translate_url;
       }
     },
+    tagKeywordBlur(e,type){
+      this.blurIndex.type = type;
+      this.blurIndex.index = e.srcElement.selectionStart;
+    }
   },
 
   mounted() {
     this.getUserInfo();
     this.getMandatory();
     console.log(this.product);
-    //首次进来以空格分隔显示 yinliang+
+    //首次进来以空格分隔显示
     if(this.product.item_sync_keyword){
       this.product.item_sync_keyword = this.product.item_sync_keyword.split(/,\s*|\s+/).join(' ');
     }
@@ -426,7 +508,7 @@ export default {
     this.product.filter_word_list = [];
 
     if (this.product.item_is_trans === true) {
-      this.validateFilterWord(this.product.item_trans_name);
+      this.validateFilterWord(null,this.product.item_trans_name);
     }
   },
 };

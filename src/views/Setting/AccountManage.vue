@@ -106,7 +106,7 @@
         </a-form>
 
     </a-card>
-    <!--    yl+ 表格  -->
+    <!--     表格  -->
     <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'">
         <template #extra>
             <a-button type="primary" @click="showModal2">계정 등록</a-button>
@@ -229,7 +229,6 @@
         com_ceo: "",
 
         loading: false,
-        //yl+
         //修改密码
         pwdLoading:false,
         pwdOpen:false,
@@ -589,7 +588,6 @@
     onMounted(() => {
         getUserInfoData();
     });
-    //yl+
     const columns = [
         {
             title: 'No.',
