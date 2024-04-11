@@ -81,14 +81,17 @@ function taobaoParser(text) {
             // 상품명
             if(!!tdEl[0].textContent) {
               if (tdEl[0].textContent.includes('[交易快照]')) {
-                console.log(1111)
                 const prdInfo = tdEl[0].textContent.split('[交易快照]');
                 if (prdInfo.length > 1) {
                   itemData.prdName = prdInfo[0];
                   itemData.sku = prdInfo[1];
                 }
               } else {
-                console.log(22222)
+                const divEl = tdEl[0].querySelectorAll('p[data-reactid]');
+                if (divEl.length > 1) {
+                  itemData.prdName = divEl[0].textContent ?? '';
+                  itemData.sku = divEl[1].textContent ?? '';
+                }
               }
             }
 
