@@ -220,12 +220,16 @@
           <a-col :span="3" class="bg-fa pt30 step4-left">
             <a-row class="ml10">
               <a-upload
-                  name="avatar"
-				  :multiple="false"
+				  v-model:file="item.prdImage"
+				  name="file"
+				  :max-count="1"
+				  :headers="state.uploadHeaders"
                   list-type="picture-card"
                   class="avatar-uploader"
+				  :customRequest="(file) => handleUploadChange(file, index)"
+				  :beforeUpload="validateUploadImage"
               >
-                <img v-if="state.form.avatar" alt="avatar"/>
+                <img v-if="item.prdImage" alt="avatar" :src="item.prdImage"/>
                 <div v-else>
                   <div class="ant-upload-text fs12">이미지 URL<br>입력해주세요</div>
                 </div>
@@ -586,18 +590,16 @@
 </template>
 
 <script setup>
-import {toRefs, watchEffect, reactive, computed, ref, onMounted} from "vue";
+import {computed, createVNode, onMounted, reactive, ref, toRefs, watchEffect} from "vue";
 import {message, Modal} from "ant-design-vue";
-import {ExclamationCircleOutlined, UploadOutlined} from "@ant-design/icons-vue";
+import {ExclamationCircleOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {useMarketOrderApi} from "@/api/order";
 import {useBridgeApi} from "@/api/bridge";
 import Cookie from "js-cookie";
-import {createVNode} from "vue";
-import {
-  QuestionCircleOutlined
-} from "@ant-design/icons-vue";
 import ParseMarketOrderZhCn from "@/components/ParseMarketOrderZhCn.vue";
 import OverseasCareDetail from "@/components/OverseasCareDetail.vue";
+import {AuthRequest} from "@/util/request";
+import {lib} from "@/util/lib";
 
 const props = defineProps({
   visible: Boolean,
@@ -658,9 +660,10 @@ const state = reactive({
   checkClearanceCodeLoading: false,
   categoryData: [],
   uploadHeaders: {
-    token: Cookie.get("token")
+	  token: Cookie.get("token"),
+	  "Content-Type": "multipart/form-data",
   },
-  uploadUrl: process.env.VUE_APP_API_URL + "/api/bridge/BusilicenseBimgUpload",
+  uploadUrl: process.env.VUE_APP_API_URL + "/api/bridge/imgUpload",
   checkPersonalCustomsClearanceCode: false,
   textareaValue: `1. 주문서에 작성된 모든 정보는 세관신고서에 반영되므로 정확하게 작성하셔야 합니다.
    허위정보작성 및 정보 미기재에 의해 발생하는 불이익은 "넥스트배송"에서 책임지지 않습니다.
@@ -1222,7 +1225,6 @@ function RRN_NO_API() {
 }
 
 // 통관 품목 불러오기
-// TODO 개인통관조회 , 총 금액 계산 , 총 수량 계산
 const getCategory = async (arc_seq, index) => {
 	if (!arc_seq) {
 		message.error('통관품목을 입력해 주세요.');
@@ -1253,23 +1255,37 @@ const getCategory = async (arc_seq, index) => {
 	});
 };
 
-// 사업자 등록증 업로드 change 이벤트
-const handleUploadChange = (info) => {
+const validateUploadImage = (file) => {
+	const isJPG = file.type === "image/jpeg";
+	const isJPEG = file.type === "image/jpeg";
+	const isGIF = file.type === "image/gif";
+	const isPNG = file.type === "image/png";
 
-  const {status} = info.file;
-  if (status !== "uploading") {
-    console.log(info.file, info.fileList);
-  }
-  if (status === "done") {
-    if (info.fileList[0].response.data.code !== 2000) {
-      message.error(info.fileList[0].response.data.message);
-      return false;
-    }
-    message.success(`${info.file.name} 파일 업로드 성공.`);
-  } else if (status === "error") {
-    message.error(`${info.file.name} 파일 업로드 실패.`);
-  }
-};
+	if (!(isJPG || isJPEG || isPNG || isGIF)) {
+		message.warning("허용되는 이미지 격식이 아닙니다.");
+		return false;
+	}
+
+	return true;
+}
+
+const handleUploadChange = (option, index) => {
+
+	console.log(option)
+
+	// const formData = new FormData();
+	// formData.append("file", option.file);
+	// formData.append("image_type", "product");
+	// formData.append("relation_type", "product");
+	// formData.append("product_idx", state.form.order_id);
+	//
+	// AuthRequest.post(
+	// 	process.env.VUE_APP_API_URL + "/api/image",
+	// 	formData
+	// ).then(res => {
+	// 	console.log(res)
+	// })
+}
 
 // 개인통관부호 change 이벤트
 const handleRrnCdChange = (value) => {

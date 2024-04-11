@@ -45,9 +45,31 @@
 		<a-flex class="ml50">
 			<div class="fw fs18 mr80">배송대행</div>
 			<a-flex wrap="wrap" class="w50">
-				<a-space class="mr20 mb20" v-for="i in 11">
+				<a-space class="mr20 mb20">
 					<span>접수대기</span>
-					<a-badge count="85" class="default" :class="{'blue':i == 2}"/>
+					<a-badge count="85" class="default" :class="{'blue':true}"/>
+					<span>접수신청</span>
+					<a-badge count="85" class="default" :class="{'blue':true}"/>
+					<a @click="searchByStatus" :style="{ color: state.selectStatus === '입고완료' ? 'blue' : 'inherit' }">
+						입고완료
+					</a>
+					<a-badge :count="bridgeCount('입고완료')" class="default" :class="{'blue':true}"/>
+					<span>결제대기</span>
+					<a-badge count="85" class="default" :class="{'blue':true}"/>
+					<span>결제완료</span>
+					<a-badge count="85" class="default" :class="{'blue':true}"/>
+					<span>출고준비</span>
+					<a-badge count="85" class="default" :class="{'blue':true}"/>
+					<span>출고대기</span>
+					<a-badge count="85" class="default" :class="{'blue':true}"/>
+					<span>출고완료</span>
+					<a-badge count="85" class="default" :class="{'blue':true}"/>
+					<span>통관중</span>
+					<a-badge count="85" class="default" :class="{'blue':true}"/>
+					<span>국내도착</span>
+					<a-badge count="85" class="default" :class="{'blue':true}"/>
+					<span>배송완료</span>
+					<a-badge count="1" class="default"/>
 				</a-space>
 			</a-flex>
 		</a-flex>
@@ -55,18 +77,32 @@
 		<a-flex class="ml50">
 			<div class="fw fs18 mr80">오류현황</div>
 			<a-flex wrap="wrap" class="w50">
-				<a-space class="mr20 mb20" v-for="i in 4">
-					<span>접수대기</span>
-					<a-badge count="85" class="default" :class="{'orange':i == 2}"/>
+				<a-space class="mr20 mb20">
+					<a @click="searchByStatus" :style="{ color: state.selectStatus === '노데이터' ? 'blue' : 'inherit' }">
+						노데이터
+					</a>
+					<a-badge :count="bridgeCount('노데이터')" class="default" :class="{ 'orange': state.selectStatus === '노데이터'}"/>
+					<a @click="searchByStatus" :style="{ color: state.selectStatus === '결제대기' ? 'blue' : 'inherit' }">
+						결제대기
+					</a>
+					<a-badge count="85" class="default" :class="{ 'orange': state.selectStatus === '결제대기'}"/>
 				</a-space>
 			</a-flex>
 		</a-flex>
 		<a-flex class="ml50 mt10">
 			<div class="fw fs18 mr80">반품관리</div>
 			<a-flex wrap="wrap" class="w50">
-				<a-space class="mr20 mb20" v-for="i in 4">
-					<span>접수대기</span>
-					<a-badge count="85" class="default" :class="{'red':i == 2}"/>
+				<a-space class="mr20 mb20">
+					<span>반품신청</span>
+					<a-badge count="85" class="default" :class="{'red':true}"/>
+					<span>반품준비</span>
+					<a-badge count="85" class="default" :class="{'red':true}"/>
+					<span>통관실패</span>
+					<a-badge count="85" class="default" :class="{'red':true}"/>
+					<span>접수취소</span>
+					<a-badge count="85" class="default" :class="{'red':true}"/>
+					<span>반품배송</span>
+					<a-badge count="85" class="default" :class="{'red':true}"/>
 				</a-space>
 			</a-flex>
 		</a-flex>
@@ -227,7 +263,9 @@ const state = reactive({
 		invoiceNumber: '',
 		start_time: '',
 		end_time: '',
+		bridge_order_status: '',
 	},
+	selectStatus: '',
 	modal: {
 		open:false
 	},
@@ -268,6 +306,7 @@ const searchBridgeOrderByFilter = () => {
 
 const initSearchParams = () => {
 	state.searchParams.keyword = '';
+	state.searchParams.bridge_order_status = '';
     state.searchParams.bridge_order_id = '';
     state.searchParams.receiver_name = '';
     state.searchParams.order_id = '';
@@ -295,10 +334,24 @@ const searchKeyword = () => {
     getBridgeList();
 }
 
+const searchByStatus = (event) => {
+	state.searchParams.page = 1;
+	state.selectStatus = event.target.innerText;
+	state.searchParams.bridge_order_status = event.target.innerText;
+	getBridgeList();
+}
+
+const bridgeCount = (status) => {
+	const statusOrderList = state.bridgeList.filter(item => item['bridgeOrderStatus'] === status);
+
+	return statusOrderList.length ?? 0;
+}
+
 async function getBridgeList(params = {}) {
 	params = filterParams(params);
+
+	state.listLoading = true;
 	await useBridgeApi().getBridgeOrderList({...params}).then((res) => {
-		state.listLoading = true;
 		if (res.status !== "2000") {
 			state.listLoading = false
 			throw new Error("배송대행지 주문을 가져올수 없습니다. 다시 한번 시도 부탁드립니다.");
@@ -433,5 +486,8 @@ onMounted(() => {
 }
 .modal-wrap .date-wrap{
 	height: 40px;
+}
+a {
+	color: black;
 }
 </style>
