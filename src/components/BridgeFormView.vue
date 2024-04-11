@@ -573,12 +573,12 @@
       </a-row>
     </div>
   </a-modal>
-  <parse-market-order-zh-cn v-model="parseMarketOrderModalIsOpen" />
+  <parse-market-order-zh-cn v-model="parseMarketOrderData" />
   <OverseasCareDetail v-model:data="OverseasCareData" />
 </template>
 
 <script setup>
-import {toRefs, watchEffect, reactive, computed, ref, onMounted, watch} from "vue";
+import {toRefs, watchEffect, reactive, computed, ref} from "vue";
 import {message, Modal} from "ant-design-vue";
 import {ExclamationCircleOutlined, UploadOutlined} from "@ant-design/icons-vue";
 import {useMarketOrderApi} from "@/api/order";
@@ -1285,9 +1285,9 @@ const copyItem = (index) => {
   calculateTotal();
 };
 
-const parseMarketOrderModalIsOpen = ref(false)
+const parseMarketOrderData = reactive({show : false, orderData : {} })
 const parseMarketOrder = (index) => {
-  parseMarketOrderModalIsOpen.value = true
+  parseMarketOrderData.show = true
 };
 const addItem = () => {
   state.form.items.push({
@@ -1349,7 +1349,6 @@ watchEffect(() => {
   }
 
   if (OverseasCareData.value.checked === true) {
-    console.log('checked')
     state.form.is_care = true;
   }
 });
