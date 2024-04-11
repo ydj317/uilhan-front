@@ -1,4 +1,5 @@
 <template>
+	<a-spin v-model:spinning="state.loading" />
   <a-modal id="bridgeForm" v-model:open="visible"
            width="100%" wrap-class-name="full-modal"
            :confirm-loading="state.confirmLoading" @cancel="onClose" class="showModal" :footer="null">
@@ -210,7 +211,7 @@
             <a-row class="mb10">
               <a-col :span="1"></a-col>
               <a-col :span="23">
-                <a-input v-model:value="item.MALL_ORD_NO"/>
+                <a-input v-model:value="item.cn_order_id"/>
               </a-col>
             </a-row>
           </a-col>
@@ -219,18 +220,20 @@
           <a-col :span="3" class="bg-fa pt30 step4-left">
             <a-row class="ml10">
               <a-upload
-                  name="avatar"
+				  v-model:file="item.prdImage"
+				  name="file"
+				  :max-count="1"
+				  :headers="state.uploadHeaders"
                   list-type="picture-card"
                   class="avatar-uploader"
+				  :customRequest="(file) => handleUploadChange(file, index)"
+				  :beforeUpload="validateUploadImage"
               >
-                <img v-if="state.form.avatar" alt="avatar"/>
+                <img v-if="item.prdImage" alt="avatar" :src="item.prdImage"/>
                 <div v-else>
                   <div class="ant-upload-text fs12">이미지 URL<br>입력해주세요</div>
                 </div>
               </a-upload>
-            </a-row>
-            <a-row>
-              <a-button class="bg-black cor-white">이미지등록</a-button>
             </a-row>
           </a-col>
           <a-col :span="21" class="pt10">
@@ -241,7 +244,7 @@
               </a-col>
               <a-col :span="2"  class="right">
                 <div style="align-items: center; display: flex;">
-                  <a-button style="width: 60px;" type="primary" @click="getCategory">조회</a-button>
+                  <a-button style="width: 60px;" type="primary" @click="getCategory(item.arc_seq, index)">조회</a-button>
                 </div>
               </a-col>
             </a-row>
@@ -252,8 +255,8 @@
             <a-row class="mb10">
               <a-col :span="6" class="step4-right-text pl30">상품명 (영문)</a-col>
               <a-col :span="18" class="help-input-wrap">
-                <a-input ref="step3-input" @change="step3Input"/>
-                <!--            <span class="help-input">입력금지</span>-->
+                <a-input ref="step3-input" @change="step3Input" v-model:value="item.prd_name_en"/>
+<!--                            <span class="help-input">입력금지</span>-->
               </a-col>
             </a-row>
             <a-row class="mb10 bottom-border pb10">
@@ -266,7 +269,7 @@
               <a-col :span="6" class="step4-right-text pl30">HS 코드<span class="red">*</span></a-col>
               <a-col :span="18" class="help-input-wrap">
                 <a-input v-model:value="item.hs_code" />
-                <!--            <span class="help-input">입력금지</span>-->
+<!--				  <span class="help-input">입력금지</span>-->
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
@@ -277,7 +280,7 @@
                     min="0"
                     :controls="false"
                     size="middle"
-                    style="width: 420px"
+                    style="width: 100%"
                     v-model:value="item.unitPrice"
                     @blur="calculateTotal"
                     addon-after="위안"
@@ -285,7 +288,16 @@
               </a-col>
               <a-col :span="1" class="center">X</a-col>
               <a-col :span="9">
-                <a-input-number :precision="0"  min="1" style="width: 470px" :controls="false" size="middle" v-model:value="item.quantity" @blur="calculateTotal" addon-after="개"/>
+                <a-input-number
+					:precision="0"
+					min="1"
+					style="width: 100%"
+					:controls="false"
+					size="middle"
+					v-model:value="item.quantity"
+					@blur="calculateTotal"
+					addon-after="개"
+				/>
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
@@ -380,10 +392,10 @@
         <a-col :span="24" class="pl40 fs12">※ 세관에 신고되는 금액입니다. (해외직구: 해외 판매처 구매 원가 기재 / 해외구매대행업: 국내 오픈마켓 판매가 기재)</a-col>
         <a-col :span="24" class="pl40 fs12">※ 총 금액이 150달러를 넘을 경우 간이통관 (일반통관)으로 진행되며 관/부가세가 발생할 수 있습니다.</a-col>
       </a-row>
-      <a-row class="bg-fa pb20 pr20 btn-wrap" justify="end">
-        <a-button type="default" class="mr5">단독배송</a-button>
-        <a-button type="default">일반통관</a-button>
-      </a-row>
+<!--      <a-row class="bg-fa pb20 pr20 btn-wrap" justify="end">-->
+<!--        <a-button type="default" class="mr5">단독배송</a-button>-->
+<!--        <a-button type="default">일반통관</a-button>-->
+<!--      </a-row>-->
 
       <div>
         <a-row class="mt30">
@@ -578,18 +590,16 @@
 </template>
 
 <script setup>
-import {toRefs, watchEffect, reactive, computed, ref} from "vue";
+import {computed, createVNode, onMounted, reactive, ref, toRefs, watchEffect} from "vue";
 import {message, Modal} from "ant-design-vue";
-import {ExclamationCircleOutlined, UploadOutlined} from "@ant-design/icons-vue";
+import {ExclamationCircleOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {useMarketOrderApi} from "@/api/order";
 import {useBridgeApi} from "@/api/bridge";
 import Cookie from "js-cookie";
-import {createVNode} from "vue";
-import {
-  QuestionCircleOutlined
-} from "@ant-design/icons-vue";
 import ParseMarketOrderZhCn from "@/components/ParseMarketOrderZhCn.vue";
 import OverseasCareDetail from "@/components/OverseasCareDetail.vue";
+import {AuthRequest} from "@/util/request";
+import {lib} from "@/util/lib";
 
 const props = defineProps({
   visible: Boolean,
@@ -642,17 +652,18 @@ const state = reactive({
 		carePrice: 0, // 보험료?
 		is_care: false, // 보험 가입 여부
 		total_amount: 0,
-    total_quantity: 0,
+        total_quantity: 0,
 	},
   total_amount_kr: 0,
-  loading: false,
+  loading: true,
   confirmLoading: false,
   checkClearanceCodeLoading: false,
   categoryData: [],
   uploadHeaders: {
-    token: Cookie.get("token")
+	  token: Cookie.get("token"),
+	  "Content-Type": "multipart/form-data",
   },
-  uploadUrl: process.env.VUE_APP_API_URL + "/api/bridge/BusilicenseBimgUpload",
+  uploadUrl: process.env.VUE_APP_API_URL + "/api/bridge/imgUpload",
   checkPersonalCustomsClearanceCode: false,
   textareaValue: `1. 주문서에 작성된 모든 정보는 세관신고서에 반영되므로 정확하게 작성하셔야 합니다.
    허위정보작성 및 정보 미기재에 의해 발생하는 불이익은 "넥스트배송"에서 책임지지 않습니다.
@@ -921,8 +932,6 @@ const getOrderDetailForBridge = async () => {
 		  shipNm: "ycbridge",
 		  prdCode: item.prdCode,
 		  orderNo: item.orderNo,
-		  MALL_ORD_NO: "",
-		  arc_seq: "",
 		  prdImage: item.prdImage,
 		  prdName: item.prdName,
 		  prdNameCn: item.prdNameCn,
@@ -953,17 +962,6 @@ const showExpressModal = () =>{
 
 // 저장
 const handleOk = () => {
-  if (state.form.rrn_cd === "사업자통관") {
-    if (state.form.fileList.length === 0) {
-      message.error("사업자등록증을 첨부해 주세요.");
-      return false;
-    }
-    if (state.form.fileList[0].response.data.code !== 2000) {
-      message.error(state.form.fileList[0].response.data.message);
-      return false;
-    }
-  }
-
   if (!state.form.receiver_name) {
     message.error("받는 사람을 입력해 주세요.");
     return false;
@@ -989,17 +987,17 @@ const handleOk = () => {
     return false;
   }
 
-  // check PRO_NM
-  if (state.form.items.some(item => item.PRO_NM === "")) {
-    message.error("상품명을 입력해 주세요.");
-    return false;
-  }
-
-  // check PRO_NM_CH
-  if (state.form.items.some(item => item.PRO_NM_CH === "")) {
-    message.error("중문 상품명을 입력해 주세요.");
-    return false;
-  }
+  // // check PRO_NM
+  // if (state.form.items.some(item => item.PRO_NM === "")) {
+  //   message.error("상품명을 입력해 주세요.");
+  //   return false;
+  // }
+  //
+  // // check PRO_NM_CH
+  // if (state.form.items.some(item => item.PRO_NM_CH === "")) {
+  //   message.error("중문 상품명을 입력해 주세요.");
+  //   return false;
+  // }
 
   // check unitPrice
   if (state.form.items.some(item => item.unitPrice === "")) {
@@ -1230,43 +1228,67 @@ function RRN_NO_API() {
 }
 
 // 통관 품목 불러오기
-// TODO 개인통관조회 , 총 금액 계산 , 총 수량 계산
-const getCategory = async () => {
-  useBridgeApi().getArcSeq().then(res => {
-    if (res.status !== "2000") {
-      message.error("통관품목을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
-      return false;
-    }
-    state.categoryData = res.data;
-  }).catch(err => {
-    message.error(err);
-  });
+const getCategory = async (arc_seq, index) => {
+	if (!arc_seq) {
+		message.error('통관품목을 입력해 주세요.');
+		return false;
+	}
+
+	state.loading = true;
+	useBridgeApi().getArcSeq({arc_seq: arc_seq}).then(res => {
+		console.log(res)
+		if (res.status !== "2000") {
+			message.error("통관품목을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
+			return false;
+		}
+
+		const ArcSeqInfo = res?.data['RESULT_DATA'];
+		if (ArcSeqInfo['HS'][0] === false || ArcSeqInfo['HS'] === 'NONE') {
+			message.error("정확한 통관품목을 입력해 주세요.");
+			return false;
+		}
+
+		state.form.items[index].prd_name_en = ArcSeqInfo['EN'] ?? '';
+		state.form.items[index].hs_code = ArcSeqInfo['HS'][0]['CODE'] ?? '';
+
+	}).catch(err => {
+		message.error(err);
+	}).finally(() => {
+		state.loading = false;
+	});
 };
 
-// 통관 품목 change 이벤트
-const handleCategoryChange = (value, item) => {
-  item.PRO_NM = state.categoryData.find(item => item.ARC_SEQ === value).ca_eng;
-  item.PRO_NM_CH = state.categoryData.find(item => item.ARC_SEQ === value).ca_chn;
-  item.hs_code = state.categoryData.find(item => item.ARC_SEQ === value).hs_code;
-};
+const validateUploadImage = (file) => {
+	const isJPG = file.type === "image/jpeg";
+	const isJPEG = file.type === "image/jpeg";
+	const isGIF = file.type === "image/gif";
+	const isPNG = file.type === "image/png";
 
-// 사업자 등록증 업로드 change 이벤트
-const handleUploadChange = (info) => {
+	if (!(isJPG || isJPEG || isPNG || isGIF)) {
+		message.warning("허용되는 이미지 격식이 아닙니다.");
+		return false;
+	}
 
-  const {status} = info.file;
-  if (status !== "uploading") {
-    console.log(info.file, info.fileList);
-  }
-  if (status === "done") {
-    if (info.fileList[0].response.data.code !== 2000) {
-      message.error(info.fileList[0].response.data.message);
-      return false;
-    }
-    message.success(`${info.file.name} 파일 업로드 성공.`);
-  } else if (status === "error") {
-    message.error(`${info.file.name} 파일 업로드 실패.`);
-  }
-};
+	return true;
+}
+
+const handleUploadChange = (option, index) => {
+
+	console.log(option)
+
+	// const formData = new FormData();
+	// formData.append("file", option.file);
+	// formData.append("image_type", "product");
+	// formData.append("relation_type", "product");
+	// formData.append("product_idx", state.form.order_id);
+	//
+	// AuthRequest.post(
+	// 	process.env.VUE_APP_API_URL + "/api/image",
+	// 	formData
+	// ).then(res => {
+	// 	console.log(res)
+	// })
+}
 
 // 개인통관부호 change 이벤트
 const handleRrnCdChange = (value) => {
@@ -1298,7 +1320,6 @@ const addItem = () => {
     prdUrl: "",
     prdImage: "",
     hs_code: "",
-    ARC_SEQ: "",
     rrn_no_con: "N",
 	  prdUrl_kr: "",
 	  origin_text: "",
@@ -1309,6 +1330,9 @@ const addItem = () => {
 	  option_color: "",
 	  option_size: "",
 	  product_unit: "",
+	  cn_order_id: "",
+	  arc_seq: "",
+	  prd_name_en: "",
   });
 
   calculateTotal();
