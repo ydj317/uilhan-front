@@ -19,7 +19,7 @@
         </a-form-item>
         <a-form-item label="주문내역">
           <a-input v-model:value="state.parseText" id="pasteArea" placeholder="주문을 복사하여 붙혀넣기 해주세요." @focus="onParse" />
-          <div v-html="pasteValue" style="display: flex; width: 100%;overflow: hidden">
+          <div v-html="pasteValue" ref="pasteArea" style="display: flex; width: 100%;overflow: hidden">
 
           </div>
         </a-form-item>
@@ -41,9 +41,17 @@ const state = reactive({
 });
 
 const pasteValue = ref("");
+const pasteArea = ref();
 const onSubmit = () => {
   try {
+    if (state.site === "")
+    {
+      message.error('주문내역 사이트를 선택해 주십시오.');
+      return false;
+    }
+
     data.value.orderData = parser(state.site, pasteValue.value);
+    pasteArea.value.innerHTML = "";
     data.value.show = false;
   } catch (e) {
     console.log(e)
