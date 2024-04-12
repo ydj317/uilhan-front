@@ -17,8 +17,8 @@
           <a-button class="originalDetailTrans" type="default" @click="showPreview">미리보기</a-button>
           <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역
           </a-button>
-          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기
-          </a-button>
+<!--          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기-->
+<!--          </a-button>-->
         </a-space>
 
       </div>

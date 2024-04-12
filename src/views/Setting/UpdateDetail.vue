@@ -421,6 +421,7 @@ const showPosition = reactive([
 ]);
 
 const columnLength = reactive([
+  { label: '한줄로 추가', value: 1 },
   { label: '두줄로 추가', value: 2 },
   { label: '네줄로 추가', value: 4 },
 ]);
