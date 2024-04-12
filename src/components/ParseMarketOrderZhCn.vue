@@ -43,9 +43,10 @@ const state = reactive({
 const pasteValue = ref("");
 const onSubmit = () => {
   try {
-    let res = parser(state.site, pasteValue.value);
-    console.log( res)
+    data.value.orderData = parser(state.site, pasteValue.value);
+    data.value.show = false;
   } catch (e) {
+    console.log(e)
     message.error('주문내역을 가져올 수 없습니다. 주문내역의 영역을 잘 선택하여 복사 한 후 붙여넣으시기 바랍니다.');
   }
 };
