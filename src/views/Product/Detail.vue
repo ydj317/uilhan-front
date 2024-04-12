@@ -10,7 +10,7 @@
     <Navigation></Navigation>
 
     <!--기본 정보-->
-    <BasicInfo @userinfo-updated="handleUserInfoUpdate"></BasicInfo>
+    <BasicInfo></BasicInfo>
 
     <MarketData> </MarketData>
 
@@ -282,10 +282,6 @@ export default defineComponent({
       if (lib.isEmpty(this.product["item_upd"])) {
         this.product.is_modify = "F";
       }
-    },
-
-    handleUserInfoUpdate(data) {
-      this.useAutoSave = data.use_auto_save;
     },
   },
 

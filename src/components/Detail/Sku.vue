@@ -215,7 +215,7 @@
               >선택
               </a-button>
               <a-button>
-                <EditOutlined />
+                <EditOutlined @click="translateImg(record)" />
               </a-button>
             </div>
           </template>
@@ -321,6 +321,9 @@
       </a-table>
     </div>
   </div>
+  <image-translate-tools v-model:visible="imageTranslateToolsVisible"
+                         @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
+                         @update:translateImageList="updateTranslateImageList" />
 </template>
 
 <script>
@@ -330,11 +333,12 @@ import {cloneDeep, forEach} from "lodash";
 import {message, Modal} from "ant-design-vue";
 import {defineComponent} from "vue";
 import {EditOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
+import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
 
 export default defineComponent({
   name: "productDetailSku",
-  components: {QuestionCircleOutlined,EditOutlined},
+  components: {ImageTranslateTools, QuestionCircleOutlined,EditOutlined},
 
   computed: {
     ...mapState({
@@ -405,7 +409,9 @@ export default defineComponent({
 
       // 판매가 인상인하 사용값
       item_price_change_type : 'add',
-      item_price_change_value : 0
+      item_price_change_value : 0,
+      imageTranslateToolsVisible: false,
+      translateImageList: [],
     };
   },
 
@@ -657,7 +663,7 @@ export default defineComponent({
           translate_status: record.translate_status,
         },
       ];
-      this.productTranslateImage(this.product.aPhotoCollection, false)
+      //this.productTranslateImage(this.product.aPhotoCollection, false)
     },
 //상품이미지 번역
     productTranslateImage(aImagesInfo, isTranslate) {
@@ -785,8 +791,23 @@ export default defineComponent({
         }
         this.watchExpectedReturn('selling_price', index)
       });
-    }
-
+    },
+    translateImg(record) {
+      let aImagesUrl = [
+        {checked: true, order: 0, url: record.img}
+      ];
+      this.imageTranslateToolsVisible = true;
+      this.translateImageList = aImagesUrl;
+    },
+    updateTranslateImageList(imageList) {
+      if (imageList[0].translate_status === true) {
+        this.product.sku.map((v,k)=>{
+            if(v.img == imageList[0].url){
+              v.img = imageList[0].translate_url;
+            }
+        });
+      }
+    },
   },
 
   mounted() {
