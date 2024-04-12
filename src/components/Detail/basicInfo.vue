@@ -216,7 +216,7 @@ export default {
       imageTranslateToolsVisible: false,
       translateImageList: [],
       blurIndex: {
-        type:1,
+        type:0,
         index:false,
       },
     };
@@ -314,6 +314,7 @@ export default {
         const newName = keyword.filter(d => !!d).join(' ')
         if (newName.length <= this.max_name_length) {
           this.product.item_trans_name = newName
+          this.blurIndex.index += keywordInfo.word.length + 1;
         }
         use = true
         this.validateFilterWord(null,this.product.item_trans_name)
@@ -334,6 +335,7 @@ export default {
           //点击关键词消失
           this.tagKeyword.list.splice(this.tagKeyword.list.indexOf(keywordInfo),1);
           this.product.item_sync_keyword = newKeyword;
+          this.blurIndex.index += keywordInfo.word.length + 1;
         }else{
           message.error('상품태그는 최대 20개까지 등록이 가능합니다.');
           return;
