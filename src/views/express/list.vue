@@ -1,128 +1,280 @@
 <template>
 	<div class="express-wrap p30">
-		<div class="fw mb20 fs18">배송대행지</div>
+    <a-flex class="mb60">
+      <span class="fs30 mr40 color-f8f100 font-SCDream5">유일 배송대행지</span>
+      <span class="fs30 fw font-SCDream4">셀러들의 선택, 정확한 AI배송대행지</span>
+    </a-flex>
+    <a-flex class="mb30 color-4f0ae7 br20 p8 pl20 bg-fafafa">
+      <span class="fs12 font-SCDream5 mr80"><InfoCircleFilled class="mr10" />유일 배송대행지 이벤트 진행중</span>
+      <span class="fs11 font-SCDream4">
+        <span class="mr10">1,배송대행 VIP 등업</span>
+        <span>2.상품포장 내 에어캡 비용 무료</span>
+      </span>
+    </a-flex>
 		<a-flex justify="space-between">
-			<a-col class="bor p30 br5 w24">
+			<a-col class="ptb26 pl45 pr45 br5 w24 bg-f8f100">
 				<a-flex vertical>
 					<a-flex justify="space-between">
-						<span class="fw fs16">배송대행 신청서</span>
-						<span class="color-hui">비용확인</span>
+						<span class="fw fs16 font-SCDream6">배송대행 신청서</span>
+						<span class="fs12 color-ff6700 font-SCDream5">신청서 가이드라인</span>
 					</a-flex>
-					<a-button type="primary" class="mt40 fw h50 bg-black color-huang">신청서 작성하기</a-button>
+					<a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black mt25">신청서 작성하기</a-button>
 				</a-flex>
 			</a-col>
-			<a-col class="bor p30 br5 w24">
+			<a-col class="ptb26 pl45 pr45 br5 w24 bg-ff6700">
 				<a-flex vertical>
 					<a-flex justify="space-between">
-						<span class="fw fs16">나의 예치금</span>
-						<span class="color-lan">90,000원</span>
+						<span class="fw fs16 font-SCDream6 t-white">나의 출고지 주소</span>
 					</a-flex>
-					<a-button type="primary" class="mt40 fw h50">신청서 작성하기</a-button>
+					<a-button type="ghost" class="h50 t-white fs12 font-SCDream5 bor-fafafa mt25">신청서 작성하기</a-button>
 				</a-flex>
 			</a-col>
-			<a-col class="w24">
-				<a-flex vertical justify="space-between" class="he100">
-					<a-button type="primary" class="fw h77 fs16">중국 출고지 주소</a-button>
-					<a-button type="primary" class="fw h77 fs16 bg-hui">노 데이터</a-button>
-				</a-flex>
-			</a-col>
-			<a-col class="bor p30 br5 w24">
+      <a-col class="ptb26 pl45 pr45 br5 w24 bg-f8f100">
+        <a-flex vertical>
+          <a-flex justify="space-between">
+            <span class="fw fs16 font-SCDream6">배대지 비용 / 분실상품 찾기</span>
+          </a-flex>
+          <a-flex justify="space-between" class="mt25">
+            <a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black plr30">비용 확인하기</a-button>
+            <a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black plr30">분실상품 찾기</a-button>
+          </a-flex>
+        </a-flex>
+      </a-col>
+			<a-col class="bor ptb26 pl45 pr45 br5 w24">
 				<a-flex vertical>
 					<a-flex justify="space-between">
-						<span class="fw fs16">배대지 공지사항</span>
-						<span class="red cp">more</span>
+						<span class="fw fs16 font-SCDream5">배대지 공지사항</span>
+						<span class="red cp fs14 font-SCDream4">more</span>
 					</a-flex>
-					<a-flex vertical class="color-hui mt20">
-						<span class="mb5">[유일공지] 배송지연안내</span>
-						<span class="mb5">[유일공지] 송장번호오류안내</span>
-						<span>[유일공지] 마켓연동안내</span>
+					<a-flex vertical class="mt25 font-SCDream5 fs12">
+						<span class="mb14">
+              <span class="notice-title br20 plr7 mr5">중요</span>
+              배송지연안내
+            </span>
+						<span>
+              <span class="notice-title br20 plr7 mr5">중요</span>
+              송장번호 오류안내
+            </span>
 					</a-flex>
 				</a-flex>
 			</a-col>
 		</a-flex>
-		<div class="fw mt40 fs18">배대지 현황</div>
-		<a-divider />
-		<a-flex class="ml50">
-			<div class="fw fs18 mr80">배송대행</div>
-			<a-flex wrap="wrap" class="w50">
-				<a-space class="mr20 mb20">
-					<span>접수대기</span>
-					<a-badge count="85" class="default" :class="{'blue':true}"/>
-					<span>접수신청</span>
-					<a-badge count="85" class="default" :class="{'blue':true}"/>
-					<a @click="searchByStatus" :style="{ color: state.selectStatus === '입고완료' ? 'blue' : 'inherit' }">
-						입고완료
-					</a>
-					<a-badge :count="bridgeCount('입고완료')" class="default" :class="{'blue':true}"/>
-					<span>결제대기</span>
-					<a-badge count="85" class="default" :class="{'blue':true}"/>
-					<span>결제완료</span>
-					<a-badge count="85" class="default" :class="{'blue':true}"/>
-					<span>출고준비</span>
-					<a-badge count="85" class="default" :class="{'blue':true}"/>
-					<span>출고대기</span>
-					<a-badge count="85" class="default" :class="{'blue':true}"/>
-					<span>출고완료</span>
-					<a-badge count="85" class="default" :class="{'blue':true}"/>
-					<span>통관중</span>
-					<a-badge count="85" class="default" :class="{'blue':true}"/>
-					<span>국내도착</span>
-					<a-badge count="85" class="default" :class="{'blue':true}"/>
-					<span>배송완료</span>
-					<a-badge count="1" class="default"/>
-				</a-space>
+    <a-divider class="bg-hui"/>
+    <a-flex vertical class="bg-fafafa br10 p10 pl10 pr10 pb30">
+      <a-flex class="toggle-wrap center fl1 fs14 mr10 br5 ptb10 bg-434343 color-fefefe">
+        <span class="font-SCDream6 fs14 mr70">위해2  해운</span>
+        <a-divider type="vertical" class="bg-white mr30"/>
+        <span class="font-SCDream6 fs14 mr10">4.1 - 4.2 입항 건</span>
+        <span class="font-SCDream4 fs10 br15 mr30 p5 bg-f8f100 t-black">반입예정</span>
+        <a-divider type="vertical" class="bg-white mr30"/>
+        <span class="font-SCDream6 fs14 mr10">3.29 입항 건</span>
+        <span class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white">검사예정</span>
+        <a-flex class="toggle-btn">
+          <div>통관일정 자세히</div>
+          <div class="ml10"><InfoCircleFilled /></div>
+        </a-flex>
+      </a-flex>
+      <a-flex class="mt30 pl40 pr30" justify="space-between">
+        <a-flex vertical class="bg-white br10 pt20 pb20 pl40 pr40">
+           <div class="font-SCDream6 fs18 t-c">인천1  해운</div>
+           <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
+          <a-flex align="center" justify="space-between" class="fs14 mt20">
+            <div>
+              <span class="font-SCDream6">4.1 - 4.2</span>
+              <span class="font-SCDream4 color-hui ml5">입항 건</span>
+            </div>
+            <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
+          </a-flex>
+          <a-flex align="center" justify="space-between" class="fs14 mt5">
+            <div>
+              <span class="font-SCDream6 color-4f0ae7">3.29</span>
+              <span class="font-SCDream4 color-hui ml5">입항 건</span>
+            </div>
+            <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
+          </a-flex>
+        </a-flex>
+
+        <a-flex vertical class="bg-white br10 pt20 pb20 pl40 pr40">
+          <div class="font-SCDream6 fs18 t-c">인천2  해운</div>
+          <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
+          <a-flex align="center" justify="space-between" class="fs14 mt20">
+            <div>
+              <span class="font-SCDream6">4.4</span>
+              <span class="font-SCDream4 color-hui ml5">입항 건</span>
+            </div>
+            <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
+          </a-flex>
+          <a-flex align="center" justify="space-between" class="fs14 mt5">
+            <div>
+              <span class="font-SCDream6 color-4f0ae7">4.3</span>
+              <span class="font-SCDream4 color-hui ml5">입항 건</span>
+            </div>
+            <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
+          </a-flex>
+        </a-flex>
+
+        <a-flex vertical class="bg-white br10 pt20 pb20 pl40 pr40">
+          <div class="font-SCDream6 fs18 t-c">평택  해운</div>
+          <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
+          <a-flex align="center" justify="space-between" class="fs14 mt20">
+            <div>
+              <span class="font-SCDream6">4.4</span>
+              <span class="font-SCDream4 color-hui ml5">입항 건</span>
+            </div>
+            <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
+          </a-flex>
+          <a-flex align="center" justify="space-between" class="fs14 mt5">
+            <div>
+              <span class="font-SCDream6 color-4f0ae7">4.3</span>
+              <span class="font-SCDream4 color-hui ml5">입항 건</span>
+            </div>
+            <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
+          </a-flex>
+        </a-flex>
+
+        <a-flex vertical class="bg-white br10 pt20 pb20 pl40 pr40">
+          <div class="font-SCDream6 fs18 t-c">평택  해운</div>
+          <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
+          <a-flex align="center" justify="space-between" class="fs14 mt20">
+            <div>
+              <span class="font-SCDream6">4.4</span>
+              <span class="font-SCDream4 color-hui ml5">입항 건</span>
+            </div>
+            <div class="font-SCDream4 fs10 br15 p5 bg-ff6700 t-white ml20">오픈예정</div>
+          </a-flex>
+        </a-flex>
+
+        <a-flex vertical class="pt20 pb20 pl40 pr40 font-SCDream5 fs10 color-ff6700 center">
+          <span>*</span>
+          <span>통관일정은 <span style="text-decoration: underline;">매일 오전 10시</span>에 업데이트되며</span>
+          <span>통관업체의 사정에 따라 지연될 수 있습니다.</span>
+        </a-flex>
+      </a-flex>
+    </a-flex>
+    <a-flex vertical class="bg-fafafa br10 p30 mb40 mt30">
+        <a-flex vertical>
+          <a-space>
+            <span class="fs14 font-SCDream5">배송현황</span>
+            <span><InfoCircleFilled class="mr10 color-hui" /></span>
+          </a-space>
+          <a-flex wrap="wrap" class="mt15 tab-wrap">
+            <div v-for="(v,k) in state.tabs.send.tab" :class="{active:k == state.tabs.send.active}" @click="tabToggle('send',k)">
+              <span class="fs12 font-SCDream5">{{ v.text }}</span>
+              <span class="fs12 font-SCDream6 color-4f0ae7">{{ v.number }}건</span>
+            </div>
+          </a-flex>
+        </a-flex>
+      <a-divider class="bg-hui"/>
+      <a-flex>
+        <a-flex vertical>
+          <a-space>
+            <span class="fs14 font-SCDream5">오류현황</span>
+            <span><InfoCircleFilled class="mr10 color-hui" /></span>
+          </a-space>
+          <a-flex wrap="wrap" class="mt15 tab-wrap tab-wrap2">
+            <div v-for="(v,k) in state.tabs.error.tab" :class="{active:k == state.tabs.error.active}" @click="tabToggle('error',k)">
+              <span class="fs12 font-SCDream5">{{ v.text }}</span>
+              <span class="fs12 font-SCDream6 color-ff6700">{{ v.number }}건</span>
+            </div>
+          </a-flex>
+        </a-flex>
+        <a-flex vertical>
+          <a-space>
+            <span class="fs14 font-SCDream5">반품현황</span>
+            <span><InfoCircleFilled class="mr10 color-hui" /></span>
+          </a-space>
+          <a-flex wrap="wrap" class="mt15 tab-wrap tab-wrap2">
+            <div v-for="(v,k) in state.tabs.back.tab" :class="{active:k == state.tabs.back.active}" @click="tabToggle('back',k)">
+              <span class="fs12 font-SCDream5">{{ v.text }}</span>
+              <span class="fs12 font-SCDream6 color-ff6700">{{ v.number }}건</span>
+            </div>
+          </a-flex>
+        </a-flex>
+      </a-flex>
+    </a-flex>
+
+<!--		<a-flex class="ml50">-->
+<!--			<div class="fw fs18 mr80">배송대행</div>-->
+<!--			<a-flex wrap="wrap" class="w50">-->
+<!--				<a-space class="mr20 mb20">-->
+<!--					<span>접수대기</span>-->
+<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
+<!--					<span>접수신청</span>-->
+<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
+<!--					<a @click="searchByStatus" :style="{ color: state.selectStatus === '입고완료' ? 'blue' : 'inherit' }">-->
+<!--						입고완료-->
+<!--					</a>-->
+<!--					<a-badge :count="bridgeCount('입고완료')" class="default" :class="{'blue':true}"/>-->
+<!--					<span>결제대기</span>-->
+<!--					<a-badge count="84" class="default" :class="{'blue':true}"/>-->
+<!--					<span>결제완료</span>-->
+<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
+<!--					<span>출고준비</span>-->
+<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
+<!--					<span>출고대기</span>-->
+<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
+<!--					<span>출고완료</span>-->
+<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
+<!--					<span>통관중</span>-->
+<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
+<!--					<span>국내도착</span>-->
+<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
+<!--					<span>배송완료</span>-->
+<!--					<a-badge count="1" class="default"/>-->
+<!--				</a-space>-->
+<!--			</a-flex>-->
+<!--		</a-flex>-->
+<!--		<a-divider class="mt0" />-->
+<!--		<a-flex class="ml50">-->
+<!--			<div class="fw fs18 mr80">오류현황</div>-->
+<!--			<a-flex wrap="wrap" class="w50">-->
+<!--				<a-space class="mr20 mb20">-->
+<!--					<a @click="searchByStatus" :style="{ color: state.selectStatus === '노데이터' ? 'blue' : 'inherit' }">-->
+<!--						노데이터-->
+<!--					</a>-->
+<!--					<a-badge :count="bridgeCount('노데이터')" class="default" :class="{ 'orange': state.selectStatus === '노데이터'}"/>-->
+<!--					<a @click="searchByStatus" :style="{ color: state.selectStatus === '결제대기' ? 'blue' : 'inherit' }">-->
+<!--						결제대기-->
+<!--					</a>-->
+<!--					<a-badge count="85" class="default" :class="{ 'orange': state.selectStatus === '결제대기'}"/>-->
+<!--				</a-space>-->
+<!--			</a-flex>-->
+<!--		</a-flex>-->
+<!--		<a-flex class="ml50 mt10">-->
+<!--			<div class="fw fs18 mr80">반품관리</div>-->
+<!--			<a-flex wrap="wrap" class="w50">-->
+<!--				<a-space class="mr20 mb20">-->
+<!--					<span>반품신청</span>-->
+<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
+<!--					<span>반품준비</span>-->
+<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
+<!--					<span>통관실패</span>-->
+<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
+<!--					<span>접수취소</span>-->
+<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
+<!--					<span>반품배송</span>-->
+<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
+<!--				</a-space>-->
+<!--			</a-flex>-->
+<!--		</a-flex>-->
+<!--		<a-divider class="mt0" />-->
+		<a-flex class="search-wrap" justify="space-between">
+			<a-flex justify="space-between" align="center" class="mb20">
+        <div class="fw fs16 font-SCDream5 mr30">배송대행 신청 내역</div>
+        <a-button type="primary" class="fs14 font-SCDream6" @click="state.modal.open = true">필터</a-button>
 			</a-flex>
-		</a-flex>
-		<a-divider class="mt0" />
-		<a-flex class="ml50">
-			<div class="fw fs18 mr80">오류현황</div>
-			<a-flex wrap="wrap" class="w50">
-				<a-space class="mr20 mb20">
-					<a @click="searchByStatus" :style="{ color: state.selectStatus === '노데이터' ? 'blue' : 'inherit' }">
-						노데이터
-					</a>
-					<a-badge :count="bridgeCount('노데이터')" class="default" :class="{ 'orange': state.selectStatus === '노데이터'}"/>
-					<a @click="searchByStatus" :style="{ color: state.selectStatus === '결제대기' ? 'blue' : 'inherit' }">
-						결제대기
-					</a>
-					<a-badge count="85" class="default" :class="{ 'orange': state.selectStatus === '결제대기'}"/>
-				</a-space>
-			</a-flex>
-		</a-flex>
-		<a-flex class="ml50 mt10">
-			<div class="fw fs18 mr80">반품관리</div>
-			<a-flex wrap="wrap" class="w50">
-				<a-space class="mr20 mb20">
-					<span>반품신청</span>
-					<a-badge count="85" class="default" :class="{'red':true}"/>
-					<span>반품준비</span>
-					<a-badge count="85" class="default" :class="{'red':true}"/>
-					<span>통관실패</span>
-					<a-badge count="85" class="default" :class="{'red':true}"/>
-					<span>접수취소</span>
-					<a-badge count="85" class="default" :class="{'red':true}"/>
-					<span>반품배송</span>
-					<a-badge count="85" class="default" :class="{'red':true}"/>
-				</a-space>
-			</a-flex>
-		</a-flex>
-		<a-divider class="mt0" />
-		<a-flex vertical class="search-wrap">
-			<div class="fw fs18 mb20">배송대행 신청 내역</div>
-			<a-flex justify="space-between" class="mb20">
-				<a-button type="primary" @click="state.modal.open = true">필터</a-button>
-				<a-input-search
-					placeholder="검색어를 입력해 주세요."
-					enter-button="검색"
-					@search="searchKeyword"
-					v-model:value="state.searchParams.keyword"
-				/>
-			</a-flex>
+      <a-input-search
+          class="search-btn"
+          placeholder="검색어를 입력해 주세요."
+          enter-button="검색"
+          @search="searchKeyword"
+          v-model:value="state.searchParams.keyword"
+      />
 		</a-flex>
 		<a-divider class="mt0 bottom-border" />
 		<a-spin size="large" :spinning="state.listLoading">
 			<div class="list-wrap">
-				<a-flex class="header-wrap w100">
+				<a-flex class="header-wrap w100 font-SCDream6">
 					<template v-for="v in state.header">
 						<div class="fw">{{v}}</div>
 					</template>
@@ -134,7 +286,7 @@
 					v-for="(order, key) in state.bridgeList"
 					:key="key"
 				>
-					<a-flex class="header color-lan w100">
+					<a-flex class="header color-lan w100 font-SCDream5 fs14">
 						<div class="w10 text-center">{{ order['id'] ?? '' }}</div>
 						<div class="w10 text-center">{{ order['bridgeOrderId'] ?? '' }}</div>
 						<div class="w20 text-center">{{ order['ins_date'] ?? '' }}</div>
@@ -142,24 +294,24 @@
 					<a-flex class="content w100" align="center" v-for="(item, index) in order['items']" :key="index">
 						<div><img :src="item['prdImage']" class="br5"/></div>
 						<a-flex vertical style="text-align: left">
-							<div class="mb10">{{ item['prdName'] ?? '' }}</div>
-							<div class="fs12">{{ item['prdOptionName'] ?? '' }}</div>
+							<div class="mb10 fs14 font-SCDream5">{{ item['prdName'] ?? '' }}</div>
+							<div class="fs10 font-SCDream4">{{ item['prdOptionName'] ?? '' }}</div>
 						</a-flex>
-						<div>{{ item['quantity'] ?? 0 }}</div>
-						<div>{{ item['invoiceNumber'] ?? ''}}</div>
+						<div class="fs14 font-SCDream4">{{ item['quantity'] ?? 0 }}</div>
+						<div class="fs14 font-SCDream4">{{ item['invoiceNumber'] ?? ''}}</div>
 						<template v-if="index === 0">
-							<div>{{ order['bridgeOrderStatus'] ?? '' }}</div>
-							<div>{{ order['isPaid'] === 1 ? '결제완료' : '입금대기'}}</div>
-							<div>{{ order['ctr_seq'] ?? '' }}</div>
-							<div>{{ order['fee'] ?? 0 }}원</div>
-							<div>{{ order['receiverName'] ?? '' }}</div>
+							<div class="fs14 font-SCDream4">{{ order['bridgeOrderStatus'] ?? '' }}</div>
+							<div class="fs14 font-SCDream4">{{ order['isPaid'] === 1 ? '결제완료' : '입금대기'}}</div>
+							<div class="fs14 font-SCDream4">{{ order['ctr_seq'] ?? '' }}</div>
+							<div class="fs14 font-SCDream4">{{ order['fee'] ?? 0 }}원</div>
+							<div class="fs14 font-SCDream4">{{ order['receiverName'] ?? '' }}</div>
 						</template>
 					</a-flex>
 				</a-flex>
 			</div>
 		</a-spin>
 		<a-pagination
-			class="w100 fl-cc mt15"
+			class="w100 fl-cc mt15 font-SCDream4"
 			v-model:current="state.searchParams.page"
 			v-model:page-size="state.searchParams.pageSize"
 			@change="onPageChange"
@@ -247,6 +399,7 @@ import {computed, onMounted, reactive, watch} from "vue";
 import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
 import moment from "moment";
+import { InfoCircleFilled } from '@ant-design/icons-vue';
 
 const state = reactive({
 	header: ['No','상품정보','수량','트래킹번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
@@ -269,6 +422,41 @@ const state = reactive({
 	modal: {
 		open:false
 	},
+  tabs:{
+      send:{
+        tab:[
+          {text:'접수대기',number:1},
+          {text:'접수신청',number:1},
+          {text:'입고완료',number:0},
+          {text:'결제대기',number:1},
+          {text:'결제완료',number:0},
+          {text:'출고준비',number:0},
+          {text:'출고대기',number:1},
+          {text:'출고완료',number:1},
+          {text:'통관중',number:1},
+          {text:'국내도착',number:1},
+          {text:'배송완료',number:0},
+        ],
+        active:0
+      },
+    error:{
+        tab:[
+          {text:'노데이터',number:1},
+          {text:'결제대기',number:1},
+        ],
+        active:0
+    },
+    back:{
+        tab:[
+          {text:'반품신청',number:0},
+          {text:'반품준비',number:1},
+          {text:'통관실패',number:0},
+          {text:'접수취소',number:0},
+          {text:'반품배송',number:1},
+        ],
+        active:0
+    },
+  }
 });
 
 const dateValue = computed( () => {
@@ -367,6 +555,9 @@ async function getBridgeList(params = {}) {
 		state.listLoading = false;
 	});
 }
+const  tabToggle = (type,k) =>{
+  state.tabs[type].active = k;
+}
 
 watch(() => state.modal.open, () => {
 	// 处理 open 属性的变化
@@ -402,6 +593,9 @@ onMounted(() => {
 .express-wrap .search-wrap .ant-input-search{
 	width: 300px!important;
 }
+.express-wrap .search-btn span{
+  font-family: SCDream6;
+}
 .modal-wrap .ant-btn.reset{
 	background: #2270E3;
 	color: white;
@@ -423,8 +617,77 @@ onMounted(() => {
 }
 </style>
 <style scoped>
+@font-face {
+  font-family: 'SCDream1';
+  src: url('../../assets/font/SCDream1.woff');
+}
+@font-face {
+  font-family: 'SCDream2';
+  src: url('../../assets/font/SCDream2.woff');
+}
+@font-face {
+  font-family: 'SCDream3';
+  src: url('../../assets/font/SCDream3.woff');
+}
+@font-face {
+  font-family: 'SCDream4';
+  src: url('../../assets/font/SCDream4.woff');
+}
+@font-face {
+  font-family: 'SCDream5';
+  src: url('../../assets/font/SCDream5.woff');
+}
+@font-face {
+  font-family: 'SCDream6';
+  src: url('../../assets/font/SCDream6.woff');
+}
+@font-face {
+  font-family: 'SCDream7';
+  src: url('../../assets/font/SCDream7.woff');
+}
+@font-face {
+  font-family: 'SCDream8';
+  src: url('../../assets/font/SCDream8.woff');
+}
+@font-face {
+  font-family: 'SCDream9';
+  src: url('../../assets/font/SCDream9.woff');
+}
+.font-SCDream1{
+  font-family: 'SCDream1';
+}
+.font-SCDream2{
+  font-family: 'SCDream2';
+}
+.font-SCDream3{
+  font-family: 'SCDream3';
+}
+.font-SCDream4{
+  font-family: 'SCDream4';
+}
+.font-SCDream5{
+  font-family: 'SCDream5';
+}
+.font-SCDream6{
+  font-family: 'SCDream6';
+}
+.font-SCDream7{
+  font-family: 'SCDream7';
+}
+.font-SCDream8{
+  font-family: 'SCDream8';
+}
+.font-SCDream9{
+  font-family: 'SCDream9';
+}
 .bor{
 	border: 1px solid #F0F0F0;
+}
+.bor-black{
+  border: 1px solid black;
+}
+.bor-fafafa{
+  border: 1px solid #fafafa;
 }
 .bottom-border{
 	height: 2px;
@@ -439,8 +702,35 @@ onMounted(() => {
 .color-lan{
 	color: #2071E4;
 }
+.color-f8f100{
+  color: #f8f100;
+}
+.color-4f0ae7{
+  color: #4f0ae7;
+}
+.color-ff6700{
+  color: #ff6700;
+}
+.color-fefefe{
+  color: #fefefe;
+}
 .bg-hui{
 	background: #F0F0F0;
+}
+.bg-f8f100{
+  background: #f8f100;
+}
+.bg-4f0ae7{
+  background: #4f0ae7;
+}
+.bg-ff6700{
+  background: #ff6700;
+}
+.bg-434343{
+  background: #434343;
+}
+.bg-fafafa{
+  background: #fafafa;
 }
 .he100{
 	height: 100%;
@@ -489,5 +779,37 @@ onMounted(() => {
 }
 a {
 	color: black;
+}
+.notice-title{
+  color: #ff2828;
+  border: 1px solid #ff2828;
+}
+.tab-wrap > div{
+  width: 120px;
+  height: 46px;
+  border: 1px solid #f0f0f0;
+  border-radius: 10px;
+  background: #fff;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin:0 8px 8px 0;
+  cursor: pointer;
+}
+.tab-wrap > div.active{
+  border: 1px solid #4f0ae7;
+}
+.tab-wrap2 > div.active{
+  border: 1px solid #ff6700;
+}
+.toggle-wrap{
+  position: relative;
+}
+.toggle-wrap .toggle-btn{
+  position: absolute;
+  content: '';
+  right: 10px;
+  top: 12px;
 }
 </style>
