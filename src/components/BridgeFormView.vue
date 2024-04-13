@@ -660,7 +660,7 @@ const state = reactive({
         total_quantity: 0,
 	},
   total_amount_kr: 0,
-  loading: true,
+  loading: false,
   confirmLoading: false,
   checkClearanceCodeLoading: false,
   categoryData: [],
