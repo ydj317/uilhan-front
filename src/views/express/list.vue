@@ -60,102 +60,118 @@
 			</a-col>
 		</a-flex>
     <a-divider class="bg-hui"/>
-    <a-flex vertical class="bg-fafafa br10 p10 pl10 pr10 pb30">
-      <a-flex class="toggle-wrap center fl1 fs14 mr10 br5 ptb10 bg-434343 color-fefefe">
-        <span class="font-SCDream6 fs14 mr70">위해2  해운</span>
+    <a-flex vertical class="total-main bg-fafafa br10 p10 pl10 pr10 pb30">
+      <a-flex class="toggle-wrap center fl1 fs14 mr10 br5 ptb10 bg-434343 color-fefefe h52">
+        <template v-if="state.auth">
+          <a-input class="font-SCDream6 fs14 mr70 color-fefefe" value="위해2  해운"></a-input>
+        </template>
+        <template v-else>
+          <span class="font-SCDream6 fs14 mr10 mr70">위해2  해운</span>
+        </template>
         <a-divider type="vertical" class="bg-white mr30"/>
-        <span class="font-SCDream6 fs14 mr10">4.1 - 4.2 입항 건</span>
+        <template v-if="state.auth">
+          <a-input class="font-SCDream6 fs14 mr10 color-fefefe" value="4.1 - 4.2 입항 건"></a-input>
+        </template>
+        <template v-else>
+          <span class="font-SCDream6 fs14 mr10">4.1 - 4.2 입항 건</span>
+        </template>
         <span class="font-SCDream4 fs10 br15 mr30 p5 bg-f8f100 t-black">반입예정</span>
         <a-divider type="vertical" class="bg-white mr30"/>
-        <span class="font-SCDream6 fs14 mr10">3.29 입항 건</span>
+        <template v-if="state.auth">
+          <a-input class="font-SCDream6 fs14 mr10 color-fefefe" value="3.29 입항 건"></a-input>
+        </template>
+        <template v-else>
+          <span class="font-SCDream6 fs14 mr10">3.29 입항 건</span>
+        </template>
         <span class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white">검사예정</span>
-        <a-flex class="toggle-btn">
-          <div>통관일정 자세히</div>
-          <div class="ml10"><InfoCircleFilled /></div>
+        <a-flex class="toggle-btn cp">
+          <div @click="toggleTotal">통관일정 자세히&nbsp;∨</div>
         </a-flex>
       </a-flex>
-      <a-flex class="mt30 pl40 pr30" justify="space-between">
-        <a-flex vertical class="bg-white br10 pt20 pb20 pl40 pr40">
-           <div class="font-SCDream6 fs18 t-c">인천1  해운</div>
-           <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
-          <a-flex align="center" justify="space-between" class="fs14 mt20">
-            <div>
-              <span class="font-SCDream6">4.1 - 4.2</span>
-              <span class="font-SCDream4 color-hui ml5">입항 건</span>
-            </div>
-            <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
+      <transition name="fade">
+        <a-flex class="mt30 pl40 pr30" justify="space-between" v-show="state.toggleTotalActive">
+          <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40">
+            <div class="font-SCDream6 fs18 t-c">인천1  해운</div>
+            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
+            <a-flex align="center" justify="space-between" class="fs14 mt20">
+              <div>
+                <span class="font-SCDream6">4.1 - 4.2</span>
+                <span class="font-SCDream4 color-hui ml5">입항 건</span>
+              </div>
+              <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
+            </a-flex>
+            <a-flex align="center" justify="space-between" class="fs14 mt5">
+              <div>
+                <span class="font-SCDream6 color-4f0ae7">3.29</span>
+                <span class="font-SCDream4 color-hui ml5">입항 건</span>
+              </div>
+              <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
+            </a-flex>
           </a-flex>
-          <a-flex align="center" justify="space-between" class="fs14 mt5">
-            <div>
-              <span class="font-SCDream6 color-4f0ae7">3.29</span>
-              <span class="font-SCDream4 color-hui ml5">입항 건</span>
-            </div>
-            <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
-          </a-flex>
-        </a-flex>
 
-        <a-flex vertical class="bg-white br10 pt20 pb20 pl40 pr40">
-          <div class="font-SCDream6 fs18 t-c">인천2  해운</div>
-          <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
-          <a-flex align="center" justify="space-between" class="fs14 mt20">
-            <div>
-              <span class="font-SCDream6">4.4</span>
-              <span class="font-SCDream4 color-hui ml5">입항 건</span>
-            </div>
-            <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
+          <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40">
+            <div class="font-SCDream6 fs18 t-c">인천2  해운</div>
+            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
+            <a-flex align="center" justify="space-between" class="fs14 mt20">
+              <div>
+                <span class="font-SCDream6">4.4</span>
+                <span class="font-SCDream4 color-hui ml5">입항 건</span>
+              </div>
+              <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
+            </a-flex>
+            <a-flex align="center" justify="space-between" class="fs14 mt5">
+              <div>
+                <span class="font-SCDream6 color-4f0ae7">4.3</span>
+                <span class="font-SCDream4 color-hui ml5">입항 건</span>
+              </div>
+              <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
+            </a-flex>
           </a-flex>
-          <a-flex align="center" justify="space-between" class="fs14 mt5">
-            <div>
-              <span class="font-SCDream6 color-4f0ae7">4.3</span>
-              <span class="font-SCDream4 color-hui ml5">입항 건</span>
-            </div>
-            <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
-          </a-flex>
-        </a-flex>
 
-        <a-flex vertical class="bg-white br10 pt20 pb20 pl40 pr40">
-          <div class="font-SCDream6 fs18 t-c">평택  해운</div>
-          <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
-          <a-flex align="center" justify="space-between" class="fs14 mt20">
-            <div>
-              <span class="font-SCDream6">4.4</span>
-              <span class="font-SCDream4 color-hui ml5">입항 건</span>
-            </div>
-            <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
+          <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40">
+            <div class="font-SCDream6 fs18 t-c">평택  해운</div>
+            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
+            <a-flex align="center" justify="space-between" class="fs14 mt20">
+              <div>
+                <span class="font-SCDream6">4.4</span>
+                <span class="font-SCDream4 color-hui ml5">입항 건</span>
+              </div>
+              <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
+            </a-flex>
+            <a-flex align="center" justify="space-between" class="fs14 mt5">
+              <div>
+                <span class="font-SCDream6 color-4f0ae7">4.3</span>
+                <span class="font-SCDream4 color-hui ml5">입항 건</span>
+              </div>
+              <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
+            </a-flex>
           </a-flex>
-          <a-flex align="center" justify="space-between" class="fs14 mt5">
-            <div>
-              <span class="font-SCDream6 color-4f0ae7">4.3</span>
-              <span class="font-SCDream4 color-hui ml5">입항 건</span>
-            </div>
-            <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
-          </a-flex>
-        </a-flex>
 
-        <a-flex vertical class="bg-white br10 pt20 pb20 pl40 pr40">
-          <div class="font-SCDream6 fs18 t-c">평택  해운</div>
-          <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
-          <a-flex align="center" justify="space-between" class="fs14 mt20">
-            <div>
-              <span class="font-SCDream6">4.4</span>
-              <span class="font-SCDream4 color-hui ml5">입항 건</span>
-            </div>
-            <div class="font-SCDream4 fs10 br15 p5 bg-ff6700 t-white ml20">오픈예정</div>
+          <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40">
+            <div class="font-SCDream6 fs18 t-c">평택  해운</div>
+            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
+            <a-flex align="center" justify="space-between" class="fs14 mt20">
+              <div>
+                <span class="font-SCDream6">4.4</span>
+                <span class="font-SCDream4 color-hui ml5">입항 건</span>
+              </div>
+              <div class="font-SCDream4 fs10 br15 p5 bg-ff6700 t-white ml20">오픈예정</div>
+            </a-flex>
+          </a-flex>
+
+          <a-flex vertical class="pt20 pb20 pl40 pr40 font-SCDream5 fs10 color-ff6700 center">
+            <span>*</span>
+            <span>통관일정은 <span style="text-decoration: underline;">매일 오전 10시</span>에 업데이트되며</span>
+            <span>통관업체의 사정에 따라 지연될 수 있습니다.</span>
           </a-flex>
         </a-flex>
-
-        <a-flex vertical class="pt20 pb20 pl40 pr40 font-SCDream5 fs10 color-ff6700 center">
-          <span>*</span>
-          <span>통관일정은 <span style="text-decoration: underline;">매일 오전 10시</span>에 업데이트되며</span>
-          <span>통관업체의 사정에 따라 지연될 수 있습니다.</span>
-        </a-flex>
-      </a-flex>
+      </transition>
     </a-flex>
     <a-flex vertical class="bg-fafafa br10 p30 mb40 mt30">
         <a-flex vertical>
           <a-space>
             <span class="fs14 font-SCDream5">배송현황</span>
-            <span><InfoCircleFilled class="mr10 color-hui" /></span>
+            <span><img src="@/assets/img/car.png" class="mr10 color-hui" /></span>
           </a-space>
           <a-flex wrap="wrap" class="mt15 tab-wrap">
             <div v-for="(v,k) in state.tabs.send.tab" :class="{active:k == state.tabs.send.active}" @click="tabToggle('send',k)">
@@ -169,7 +185,7 @@
         <a-flex vertical>
           <a-space>
             <span class="fs14 font-SCDream5">오류현황</span>
-            <span><InfoCircleFilled class="mr10 color-hui" /></span>
+            <span><ExclamationCircleOutlined class="mr10 color-hui" /></span>
           </a-space>
           <a-flex wrap="wrap" class="mt15 tab-wrap tab-wrap2">
             <div v-for="(v,k) in state.tabs.error.tab" :class="{active:k == state.tabs.error.active}" @click="tabToggle('error',k)">
@@ -181,7 +197,7 @@
         <a-flex vertical>
           <a-space>
             <span class="fs14 font-SCDream5">반품현황</span>
-            <span><InfoCircleFilled class="mr10 color-hui" /></span>
+            <span><img src="@/assets/img/reset.png" class="mr10 color-hui" /></span>
           </a-space>
           <a-flex wrap="wrap" class="mt15 tab-wrap tab-wrap2">
             <div v-for="(v,k) in state.tabs.back.tab" :class="{active:k == state.tabs.back.active}" @click="tabToggle('back',k)">
@@ -399,7 +415,7 @@ import {computed, onMounted, reactive, watch} from "vue";
 import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
 import moment from "moment";
-import { InfoCircleFilled } from '@ant-design/icons-vue';
+import { InfoCircleFilled,ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 const state = reactive({
 	header: ['No','상품정보','수량','트래킹번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
@@ -456,7 +472,9 @@ const state = reactive({
         ],
         active:0
     },
-  }
+  },
+  toggleTotalActive:true,
+  auth:true,
 });
 
 const dateValue = computed( () => {
@@ -558,7 +576,9 @@ async function getBridgeList(params = {}) {
 const  tabToggle = (type,k) =>{
   state.tabs[type].active = k;
 }
-
+const toggleTotal = ()=>{
+  state.toggleTotalActive = !state.toggleTotalActive;
+}
 watch(() => state.modal.open, () => {
 	// 处理 open 属性的变化
 	initSearchParams()
@@ -595,6 +615,10 @@ onMounted(() => {
 }
 .express-wrap .search-btn span{
   font-family: SCDream6;
+}
+.express-wrap .total-main .ant-input{
+  background: none;
+  width: 10%;
 }
 .modal-wrap .ant-btn.reset{
 	background: #2270E3;
@@ -810,6 +834,15 @@ a {
   position: absolute;
   content: '';
   right: 10px;
-  top: 12px;
+  top: 18px;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+.total-wrap{
+  box-shadow: 6px 6px 6px #B8B8B8;
 }
 </style>
