@@ -225,7 +225,6 @@ export default {
         const params = { market_code: marketInfo.market_code, search_keyword: search_keyword }
         queue.push(
           useCategoryApi().getAutoRecommendCategoryNames(params).then(res => {
-            //yl+
             if(res.data.length){
               this.categories[marketInfo.accountName].value = res.data[0]['cate_names'].join('/');
             }else{

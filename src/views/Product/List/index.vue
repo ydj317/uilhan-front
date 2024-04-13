@@ -11,7 +11,7 @@
         <btn-delete :delete-items="productList.filter(d => selection.includes(d.item_id))" />
         <btn-clone :selection="selection"></btn-clone>
         <a-button type="default" @click="MarketListPop">상품등록</a-button>
-        <btn-ai-replace v-if="userInfo?.use_ai === '1'" :selection="selection"></btn-ai-replace>
+        <btn-ai-replace v-if="userInfo?.user_data?.use_ai===true || userInfo?.user_data?.use_ai==='true'" :selection="selection"></btn-ai-replace>
       </div>
       <div class="search">
         <a-input-search
@@ -72,7 +72,7 @@
   />
   <DetailPopup
     :visible="showDetail"
-    @update:visible="showDetail = false"
+    @update:visible="handleUpdateVisible"
     :prdId="detailPrd"
     :active-tab="detailActive"
   />
@@ -298,6 +298,12 @@ function checkUserPermission(data) {
     haveDownloadProductPermission.value = true
   }
 }
+
+const handleUpdateVisible = () => {
+  showDetail.value = false;
+  getList();
+};
+
 </script>
 
 <style scoped>

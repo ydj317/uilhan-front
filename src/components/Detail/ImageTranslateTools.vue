@@ -74,14 +74,14 @@
     <template #title>
       <div style="display: flex;justify-content: space-between;align-items:center;padding: 0 20px;">
         상세이미지 번역
-        <div style="display: flex;gap: 5px;">
-          <a-button @click="onCancel">
-            전체이미지 다운로드
-          </a-button>
-          <a-popconfirm title="리스트의 전체 이미지가 번역됩니다. 계속 진행 하시겠습니까?" ok-text="확인" cancel-text="취소" @confirm="translateImageBatch">
-            <a-button :loading="translateImageBatchLoading">전체 이미지 번역</a-button>
-          </a-popconfirm>
-        </div>
+<!--        <div style="display: flex;gap: 5px;">-->
+<!--          <a-button @click="onCancel">-->
+<!--            전체 이미지 다운로드-->
+<!--          </a-button>-->
+<!--          <a-popconfirm title="리스트의 전체 이미지가 번역됩니다. 계속 진행 하시겠습니까?" ok-text="확인" cancel-text="취소" @confirm="translateImageBatch">-->
+<!--            <a-button :loading="translateImageBatchLoading">전체 이미지 번역</a-button>-->
+<!--          </a-popconfirm>-->
+<!--        </div>-->
       </div>
     </template>
     <template #footer>
