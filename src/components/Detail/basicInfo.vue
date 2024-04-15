@@ -96,7 +96,7 @@
           <a-spin :spinning="ai_loading === true || tagKeyword.loading === true">
             <a-textarea v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " @input="itemSyncKeywordCountCheck" @change="itemSyncKeywordCountCheck" :showCount="false" @blur="tagKeywordBlur($event,2)"
             />
-            <div class="fl-le" style="color: #00000073">{{product.item_sync_keyword == '' ? 0 : product.item_sync_keyword?.split(' ').filter(d => !!d).length }} / {{keywordMaxLength}}</div>
+            <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(' ').filter(d => !!d).length }} / {{keywordMaxLength}}</div>
           </a-spin>
           <a-spin v-model:spinning="tagKeyword.loading">
             <div class="keyword-list" v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
