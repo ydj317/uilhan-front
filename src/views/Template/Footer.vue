@@ -16,11 +16,6 @@
           <p style="line-height: 16px">FAX: 031-226-1689</p>
           <p style="line-height: 16px">E-MAIL: haeju2024@hotmail.com</p>
         </div>
-        <div style="font-size: 14px;" class="policy_link">
-          <p style="line-height: 16px">
-            <a @click="openPolicyModal">이용약관</a>
-          </p>
-        </div>
       </div>
       <div style="font-size: 14px;">
         <p style="color: black;font-weight: bold;">대표: LI JIANFENG 이건봉</p>
@@ -50,10 +45,5 @@ export default {
   font-size: 12px;
   line-height: 26px;
   color: #666;
-}
-
-.policy_link{
-  display:flex;
-  align-items: flex-end;
 }
 </style>

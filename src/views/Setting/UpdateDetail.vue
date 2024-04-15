@@ -421,6 +421,7 @@ const showPosition = reactive([
 ]);
 
 const columnLength = reactive([
+  { label: '한줄로 추가', value: 1 },
   { label: '두줄로 추가', value: 2 },
   { label: '네줄로 추가', value: 4 },
 ]);
@@ -564,13 +565,26 @@ function getUserInfoData() {
     }
 
     formState.settingDatas.recharge = res.data.recharge;
-    formState.settingDatas.use_ai = (res.data.use_ai === '1');
-    formState.settingDatas.use_auto_save = (res.data.use_auto_save === '1');
-    formState.settingDatas.use_auto_translate = (res.data.use_auto_translate === '1');
 
     //--------Margin--------------------
     const { user_data } = res.data;
     if(!user_data || user_data.length < 1){
+      formState.loading = false;
+      return false;
+    }
+
+    //持久化数据库的状态
+    if (user_data.use_ai === undefined) {
+      formState.loading = false;
+      return;
+    }
+
+    if (user_data.use_auto_save === undefined) {
+      formState.loading = false;
+      return false;
+    }
+
+    if (user_data.use_auto_translate === undefined) {
       formState.loading = false;
       return false;
     }
