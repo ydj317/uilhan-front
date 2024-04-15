@@ -414,8 +414,7 @@ import {useBridgeApi} from "@/api/bridge";
 import moment from "moment";
 import { InfoCircleFilled,ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import {useExpressApi} from "@/api/express";
-import {useMarketOrderApi} from "@/api/order";
-
+import Cookie from "js-cookie";
 const state = reactive({
 	header: ['No','상품정보','수량','트래킹번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
 	bridgeList: [],
@@ -473,10 +472,11 @@ const state = reactive({
     },
   },
   toggleTotalActive:true,
-  auth:true,
+  auth:false,
   totalList:[]
 });
-
+state.auth = Cookie.get("member_name") == 'jwli' ? true :false;
+console.log(state.auth)
 const dateValue = computed( () => {
 	return (!state.searchParams.start_time && !state.searchParams.end_time) ? null : [moment(state.searchParams.start_time), moment(state.searchParams.end_time)]
 })
