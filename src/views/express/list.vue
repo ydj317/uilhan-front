@@ -597,14 +597,11 @@ const getTotalData = () =>{
   });
 }
 const setTotalData = (v) =>{
-  useExpressApi().save({
-    data:v
-  }).then(res => {
+  useExpressApi().save(v).then(res => {
     if (res.status !== "2000") {
       message.error(res.data.message);
       return false;
     }
-    // message.success(res.message);
   }).finally(() => {
   });
 }
