@@ -82,7 +82,7 @@
               <a-input
                   :disabled="tagKeyword.loading"
                   v-model:value.trim="tagKeyword.search_value"
-                  placeholder="검색할 상품태그를 입력하세요"
+                  placeholder="검색 상품태그를 입력하세요"
                   @keyup.enter="searchTagKeyword"
               />
               <a-button
@@ -96,6 +96,7 @@
           <a-spin :spinning="ai_loading === true || tagKeyword.loading === true">
             <a-textarea v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " @input="itemSyncKeywordCountCheck" @change="itemSyncKeywordCountCheck" :showCount="false" @blur="tagKeywordBlur($event,2)"
             />
+            <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(' ').filter(d => !!d).length }} / {{keywordMaxLength}}</div>
           </a-spin>
           <a-spin v-model:spinning="tagKeyword.loading">
             <div class="keyword-list" v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
@@ -219,6 +220,7 @@ export default {
         type:0,
         index:false,
       },
+      keywordMaxLength:20,
     };
   },
 
@@ -470,15 +472,23 @@ export default {
 
     },
     translatePopup() {
-      let aImagesUrl = [
-        {checked: true, order: 0, url: this.product.item_thumbnails[0].url}
-      ];
+      let aImagesUrl = this.product.item_thumbnails;
+      aImagesUrl = aImagesUrl.map((item, index) => {
+        return {
+          checked: false,
+          order: index,
+          url: item.url
+        };
+      });
+      aImagesUrl[0].checked = true;
       this.imageTranslateToolsVisible = true;
       this.translateImageList = aImagesUrl;
     },
     updateTranslateImageList(imageList) {
-      if (imageList[0].translate_status === true) {
-        this.product.item_thumbnails[0].url =  imageList[0].translate_url;
+      for (const k in imageList) {
+        if (imageList[k].translate_status === true) {
+          this.product.item_thumbnails[k].url =  imageList[k].translate_url;
+        }
       }
     },
     tagKeywordBlur(e,type){
