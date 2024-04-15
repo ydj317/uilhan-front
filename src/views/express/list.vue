@@ -474,13 +474,7 @@ const state = reactive({
   },
   toggleTotalActive:true,
   auth:true,
-  totalList:[
-    {id:0,type:1,title:'위해2  해운',rq1:'3.29 입항 건',rq2:'4.1 - 4.2 입항 건',upd_date:'2024.04.08'},
-    {id:0,type:2,title:'인천1  해운',rq1:'3.29',rq2:'4.1 - 4.2',upd_date:'2024.04.08'},
-    {id:0,type:2,title:'인천2  해운',rq1:'4.3',rq2:'4.4',upd_date:'2024.04.08'},
-    {id:0,type:2,title:'평택  해운',rq1:'4.3',rq2:'4.4',upd_date:'2024.04.08'},
-    {id:0,type:3,title:'평택  해운',rq1:'4.4',upd_date:'2024.04.08'},
-  ]
+  totalList:[]
 });
 
 const dateValue = computed( () => {
