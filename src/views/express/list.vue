@@ -62,104 +62,101 @@
     <a-divider class="bg-hui"/>
     <a-flex vertical class="total-main bg-fafafa br10 p10 pl10 pr10 pb30">
       <a-flex class="toggle-wrap center fl1 fs14 mr10 br5 ptb10 bg-434343 color-fefefe h52">
-        <template v-if="state.auth">
-          <a-input class="font-SCDream6 fs14 mr70 color-fefefe" value="위해2  해운"></a-input>
+        <template v-for="v in state.totalList">
+          <template v-if="v.type == 1">
+            <template v-if="state.auth" >
+              <a-input class="font-SCDream6 fs14 mr70 color-fefefe" v-model:value="v.title" @blur="setTotalData(v)"></a-input>
+            </template>
+            <template v-else>
+              <span class="font-SCDream6 fs14 mr10 mr70">{{ v.title }}</span>
+            </template>
+            <a-divider type="vertical" class="bg-white mr30"/>
+            <template v-if="state.auth">
+              <a-input class="font-SCDream6 fs14 mr10 color-fefefe" v-model:value="v.rq2" @blur="setTotalData(v)"></a-input>
+            </template>
+            <template v-else>
+              <span class="font-SCDream6 fs14 mr10">{{ v.rq2 }}</span>
+            </template>
+            <span class="font-SCDream4 fs10 br15 mr30 p5 bg-f8f100 t-black">반입예정</span>
+            <a-divider type="vertical" class="bg-white mr30"/>
+            <template v-if="state.auth">
+              <a-input class="font-SCDream6 fs14 mr10 color-fefefe" v-model:value="v.rq1" @blur="setTotalData(v)"></a-input>
+            </template>
+            <template v-else>
+              <span class="font-SCDream6 fs14 mr10">{{ v.rq1 }}</span>
+            </template>
+            <span class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white">검사예정</span>
+            <a-flex class="toggle-btn cp">
+              <div @click="toggleTotal">통관일정 자세히&nbsp;∨</div>
+            </a-flex>
+          </template>
         </template>
-        <template v-else>
-          <span class="font-SCDream6 fs14 mr10 mr70">위해2  해운</span>
-        </template>
-        <a-divider type="vertical" class="bg-white mr30"/>
-        <template v-if="state.auth">
-          <a-input class="font-SCDream6 fs14 mr10 color-fefefe" value="4.1 - 4.2 입항 건"></a-input>
-        </template>
-        <template v-else>
-          <span class="font-SCDream6 fs14 mr10">4.1 - 4.2 입항 건</span>
-        </template>
-        <span class="font-SCDream4 fs10 br15 mr30 p5 bg-f8f100 t-black">반입예정</span>
-        <a-divider type="vertical" class="bg-white mr30"/>
-        <template v-if="state.auth">
-          <a-input class="font-SCDream6 fs14 mr10 color-fefefe" value="3.29 입항 건"></a-input>
-        </template>
-        <template v-else>
-          <span class="font-SCDream6 fs14 mr10">3.29 입항 건</span>
-        </template>
-        <span class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white">검사예정</span>
-        <a-flex class="toggle-btn cp">
-          <div @click="toggleTotal">통관일정 자세히&nbsp;∨</div>
-        </a-flex>
       </a-flex>
       <transition name="fade">
         <a-flex class="mt30 pl40 pr30" justify="space-between" v-show="state.toggleTotalActive">
-          <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40">
-            <div class="font-SCDream6 fs18 t-c">인천1  해운</div>
-            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
-            <a-flex align="center" justify="space-between" class="fs14 mt20">
-              <div>
-                <span class="font-SCDream6">4.1 - 4.2</span>
-                <span class="font-SCDream4 color-hui ml5">입항 건</span>
-              </div>
-              <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
-            </a-flex>
-            <a-flex align="center" justify="space-between" class="fs14 mt5">
-              <div>
-                <span class="font-SCDream6 color-4f0ae7">3.29</span>
-                <span class="font-SCDream4 color-hui ml5">입항 건</span>
-              </div>
-              <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
-            </a-flex>
-          </a-flex>
-
-          <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40">
-            <div class="font-SCDream6 fs18 t-c">인천2  해운</div>
-            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
-            <a-flex align="center" justify="space-between" class="fs14 mt20">
-              <div>
-                <span class="font-SCDream6">4.4</span>
-                <span class="font-SCDream4 color-hui ml5">입항 건</span>
-              </div>
-              <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
-            </a-flex>
-            <a-flex align="center" justify="space-between" class="fs14 mt5">
-              <div>
-                <span class="font-SCDream6 color-4f0ae7">4.3</span>
-                <span class="font-SCDream4 color-hui ml5">입항 건</span>
-              </div>
-              <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
-            </a-flex>
-          </a-flex>
-
-          <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40">
-            <div class="font-SCDream6 fs18 t-c">평택  해운</div>
-            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
-            <a-flex align="center" justify="space-between" class="fs14 mt20">
-              <div>
-                <span class="font-SCDream6">4.4</span>
-                <span class="font-SCDream4 color-hui ml5">입항 건</span>
-              </div>
-              <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black ml20">반입예정</div>
-            </a-flex>
-            <a-flex align="center" justify="space-between" class="fs14 mt5">
-              <div>
-                <span class="font-SCDream6 color-4f0ae7">4.3</span>
-                <span class="font-SCDream4 color-hui ml5">입항 건</span>
-              </div>
-              <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white ml20">검사예정</div>
-            </a-flex>
-          </a-flex>
-
-          <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40">
-            <div class="font-SCDream6 fs18 t-c">평택  해운</div>
-            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>
-            <a-flex align="center" justify="space-between" class="fs14 mt20">
-              <div>
-                <span class="font-SCDream6">4.4</span>
-                <span class="font-SCDream4 color-hui ml5">입항 건</span>
-              </div>
-              <div class="font-SCDream4 fs10 br15 p5 bg-ff6700 t-white ml20">오픈예정</div>
-            </a-flex>
-          </a-flex>
-
-          <a-flex vertical class="pt20 pb20 pl40 pr40 font-SCDream5 fs10 color-ff6700 center">
+          <template v-for="v in state.totalList" :key="v.id">
+            <template v-if="v.type == 2">
+              <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40 w20">
+                <template v-if="state.auth">
+                  <a-input class="font-SCDream6 fs18 t-c w100" v-model:value="v.title" @blur="setTotalData(v)"></a-input>
+                </template>
+                <template v-else>
+                  <div class="font-SCDream6 fs18 t-c">{{ v.title }}</div>
+                </template>
+                <!--            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>-->
+                <a-flex align="center" justify="space-between" class="fs14 mt20">
+                  <div class="fl1">
+                    <template v-if="state.auth">
+                      <a-input class="font-SCDream6 w60" v-model:value="v.rq2" @blur="setTotalData(v)"></a-input>
+                    </template>
+                    <template v-else>
+                      <span class="font-SCDream6">{{ v.rq2 }}</span>
+                    </template>
+                    <span class="font-SCDream4 color-hui ml5">입항 건</span>
+                  </div>
+                  <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black t-c w30">반입예정</div>
+                </a-flex>
+                <a-flex align="center" justify="space-between" class="fs14 mt5">
+                  <div class="fl1">
+                    <template v-if="state.auth">
+                      <a-input class="font-SCDream6 color-4f0ae7 w60" v-model:value="v.rq1" @blur="setTotalData(v)"></a-input>
+                    </template>
+                    <template v-else>
+                      <span class="font-SCDream6 color-4f0ae7">{{ v.rq1 }}</span>
+                    </template>
+                    <span class="font-SCDream4 color-hui ml5">입항 건</span>
+                  </div>
+                  <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white t-c w30">검사예정</div>
+                </a-flex>
+              </a-flex>
+            </template>
+          </template>
+          <template v-for="v in state.totalList" :key="v.id">
+            <template v-if="v.type == 3">
+              <a-flex vertical class="total-wrap bg-white br10 pt20 pb20 pl40 pr40 w20">
+                <template v-if="state.auth">
+                  <a-input class="font-SCDream6 fs18 t-c w100" v-model:value="v.title" @blur="setTotalData(v)"></a-input>
+                </template>
+                <template v-else>
+                  <div class="font-SCDream6 fs18 t-c">{{ v.title }}</div>
+                </template>
+                <!--            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>-->
+                <a-flex align="center" justify="space-between" class="fs14 mt20">
+                  <div class="fl1">
+                    <template v-if="state.auth">
+                      <a-input class="font-SCDream6 w60" v-model:value="v.rq1" @blur="setTotalData(v)"></a-input>
+                    </template>
+                    <template v-else>
+                      <span class="font-SCDream6">{{ v.rq1 }}</span>
+                    </template>
+                    <span class="font-SCDream4 color-hui ml5">입항 건</span>
+                  </div>
+                  <div class="font-SCDream4 fs10 br15 p5 bg-ff6700 t-white t-c w30">오픈예정</div>
+                </a-flex>
+              </a-flex>
+            </template>
+          </template>
+          <a-flex vertical class="pt20 pb20 pl40 pr40 font-SCDream5 fs10 color-ff6700 center ">
             <span>*</span>
             <span>통관일정은 <span style="text-decoration: underline;">매일 오전 10시</span>에 업데이트되며</span>
             <span>통관업체의 사정에 따라 지연될 수 있습니다.</span>
@@ -416,6 +413,8 @@ import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
 import moment from "moment";
 import { InfoCircleFilled,ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import {useExpressApi} from "@/api/express";
+import {useMarketOrderApi} from "@/api/order";
 
 const state = reactive({
 	header: ['No','상품정보','수량','트래킹번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
@@ -475,6 +474,13 @@ const state = reactive({
   },
   toggleTotalActive:true,
   auth:true,
+  totalList:[
+    {id:0,type:1,title:'위해2  해운',rq1:'3.29 입항 건',rq2:'4.1 - 4.2 입항 건',upd_date:'2024.04.08'},
+    {id:0,type:2,title:'인천1  해운',rq1:'3.29',rq2:'4.1 - 4.2',upd_date:'2024.04.08'},
+    {id:0,type:2,title:'인천2  해운',rq1:'4.3',rq2:'4.4',upd_date:'2024.04.08'},
+    {id:0,type:2,title:'평택  해운',rq1:'4.3',rq2:'4.4',upd_date:'2024.04.08'},
+    {id:0,type:3,title:'평택  해운',rq1:'4.4',upd_date:'2024.04.08'},
+  ]
 });
 
 const dateValue = computed( () => {
@@ -579,6 +585,29 @@ const  tabToggle = (type,k) =>{
 const toggleTotal = ()=>{
   state.toggleTotalActive = !state.toggleTotalActive;
 }
+const getTotalData = () =>{
+  useExpressApi().getExpressList({
+  }).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    state.totalList = res.data;
+  }).finally(() => {
+  });
+}
+const setTotalData = (v) =>{
+  useExpressApi().save({
+    data:v
+  }).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.data.message);
+      return false;
+    }
+    // message.success(res.message);
+  }).finally(() => {
+  });
+}
 watch(() => state.modal.open, () => {
 	// 处理 open 属性的变化
 	initSearchParams()
@@ -587,6 +616,7 @@ watch(() => state.modal.open, () => {
 onMounted(() => {
 	Promise.all([
 		getBridgeList(),
+    getTotalData(),
 	]);
 })
 
