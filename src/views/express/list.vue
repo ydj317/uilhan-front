@@ -171,7 +171,7 @@
             <span><img src="@/assets/img/car.png" class="mr10 color-hui" /></span>
           </a-space>
           <a-flex wrap="wrap" class="mt15 tab-wrap">
-            <div v-for="(v,k) in state.tabs.send.tab" :class="{active:k == state.tabs.send.active}" @click="tabToggle('send',k)">
+            <div v-for="(v,k) in state.tabs.send.tab" :class="{active:k === state.tabs.send.active}" @click="tabToggle('send',k)">
               <span class="fs12 font-SCDream5">{{ v.text }}</span>
               <span class="fs12 font-SCDream6 color-4f0ae7">{{ v.number }}건</span>
             </div>
@@ -205,72 +205,6 @@
         </a-flex>
       </a-flex>
     </a-flex>
-
-<!--		<a-flex class="ml50">-->
-<!--			<div class="fw fs18 mr80">배송대행</div>-->
-<!--			<a-flex wrap="wrap" class="w50">-->
-<!--				<a-space class="mr20 mb20">-->
-<!--					<span>접수대기</span>-->
-<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
-<!--					<span>접수신청</span>-->
-<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
-<!--					<a @click="searchByStatus" :style="{ color: state.selectStatus === '입고완료' ? 'blue' : 'inherit' }">-->
-<!--						입고완료-->
-<!--					</a>-->
-<!--					<a-badge :count="bridgeCount('입고완료')" class="default" :class="{'blue':true}"/>-->
-<!--					<span>결제대기</span>-->
-<!--					<a-badge count="84" class="default" :class="{'blue':true}"/>-->
-<!--					<span>결제완료</span>-->
-<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
-<!--					<span>출고준비</span>-->
-<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
-<!--					<span>출고대기</span>-->
-<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
-<!--					<span>출고완료</span>-->
-<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
-<!--					<span>통관중</span>-->
-<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
-<!--					<span>국내도착</span>-->
-<!--					<a-badge count="85" class="default" :class="{'blue':true}"/>-->
-<!--					<span>배송완료</span>-->
-<!--					<a-badge count="1" class="default"/>-->
-<!--				</a-space>-->
-<!--			</a-flex>-->
-<!--		</a-flex>-->
-<!--		<a-divider class="mt0" />-->
-<!--		<a-flex class="ml50">-->
-<!--			<div class="fw fs18 mr80">오류현황</div>-->
-<!--			<a-flex wrap="wrap" class="w50">-->
-<!--				<a-space class="mr20 mb20">-->
-<!--					<a @click="searchByStatus" :style="{ color: state.selectStatus === '노데이터' ? 'blue' : 'inherit' }">-->
-<!--						노데이터-->
-<!--					</a>-->
-<!--					<a-badge :count="bridgeCount('노데이터')" class="default" :class="{ 'orange': state.selectStatus === '노데이터'}"/>-->
-<!--					<a @click="searchByStatus" :style="{ color: state.selectStatus === '결제대기' ? 'blue' : 'inherit' }">-->
-<!--						결제대기-->
-<!--					</a>-->
-<!--					<a-badge count="85" class="default" :class="{ 'orange': state.selectStatus === '결제대기'}"/>-->
-<!--				</a-space>-->
-<!--			</a-flex>-->
-<!--		</a-flex>-->
-<!--		<a-flex class="ml50 mt10">-->
-<!--			<div class="fw fs18 mr80">반품관리</div>-->
-<!--			<a-flex wrap="wrap" class="w50">-->
-<!--				<a-space class="mr20 mb20">-->
-<!--					<span>반품신청</span>-->
-<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
-<!--					<span>반품준비</span>-->
-<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
-<!--					<span>통관실패</span>-->
-<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
-<!--					<span>접수취소</span>-->
-<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
-<!--					<span>반품배송</span>-->
-<!--					<a-badge count="85" class="default" :class="{'red':true}"/>-->
-<!--				</a-space>-->
-<!--			</a-flex>-->
-<!--		</a-flex>-->
-<!--		<a-divider class="mt0" />-->
 		<a-flex class="search-wrap" justify="space-between">
 			<a-flex justify="space-between" align="center" class="mb20">
         <div class="fw fs16 font-SCDream5 mr30">배송대행 신청 내역</div>
@@ -343,7 +277,7 @@
 			<template #title>
 				<a-flex align="center" justify="space-between">
 					<div class="fw fs16">배송대행 검색 필터</div>
-					<a-button class="reset plr30" @click="initSearchParams">초기화</a-button>
+					<a-button class="reset plr30" @click="initSearch">초기화</a-button>
 				</a-flex>
 			</template>
 			<a-flex vertical class="mt30">
@@ -408,7 +342,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, watch} from "vue";
+import {computed, onBeforeUpdate, onMounted, reactive, watch} from "vue";
 import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
 import moment from "moment";
@@ -439,36 +373,36 @@ const state = reactive({
   tabs:{
       send:{
         tab:[
-          {text:'접수대기',number:1},
-          {text:'접수신청',number:1},
+          {text:'접수대기',number:0},
+          {text:'접수신청',number:0},
           {text:'입고완료',number:0},
-          {text:'결제대기',number:1},
+          {text:'결제대기',number:0},
           {text:'결제완료',number:0},
           {text:'출고준비',number:0},
-          {text:'출고대기',number:1},
-          {text:'출고완료',number:1},
-          {text:'통관중',number:1},
-          {text:'국내도착',number:1},
+          {text:'출고대기',number:0},
+          {text:'출고완료',number:0},
+          {text:'통관중',number:0},
+          {text:'국내도착',number:0},
           {text:'배송완료',number:0},
         ],
-        active:0
+        active: -1
       },
     error:{
         tab:[
-          {text:'노데이터',number:1},
-          {text:'결제대기',number:1},
+          {text:'노데이터',number:0},
+          {text:'결제대기',number:0},
         ],
-        active:0
+        active: -1
     },
     back:{
         tab:[
           {text:'반품신청',number:0},
-          {text:'반품준비',number:1},
+          {text:'반품준비',number:0},
           {text:'통관실패',number:0},
           {text:'접수취소',number:0},
-          {text:'반품배송',number:1},
+          {text:'반품배송',number:0},
         ],
-        active:0
+        active: -1
     },
   },
   toggleTotalActive:true,
@@ -503,9 +437,8 @@ const selectRange = (val, type) => {
 const searchBridgeOrderByFilter = () => {
 	state.searchParams.page = 1;
 	state.searchParams.pageSize = 10;
-
 	state.modal.open = false;
-
+	initTabs();
 	getBridgeList();
 }
 
@@ -518,6 +451,15 @@ const initSearchParams = () => {
     state.searchParams.invoiceNumber = '';
     state.searchParams.start_time = '';
     state.searchParams.end_time = '';
+	state.searchParams.page = 1;
+	state.searchParams.pageSize = 10;
+}
+
+const initSearch = () => {
+    initSearchParams();
+	initTabs();
+	state.modal.open = false;
+    getBridgeList();
 }
 
 const onPageChange = (page, pageSize) => {
@@ -535,28 +477,20 @@ const filterParams = () => {
 }
 
 const searchKeyword = () => {
+	if (state.searchParams.keyword.trim() === '') {
+		initSearchParams();
+	}
     state.searchParams.page = 1;
+	state.searchParams.pageSize = 10;
+	initTabs();
     getBridgeList();
 }
 
-const searchByStatus = (event) => {
-	state.searchParams.page = 1;
-	state.selectStatus = event.target.innerText;
-	state.searchParams.bridge_order_status = event.target.innerText;
-	getBridgeList();
-}
-
-const bridgeCount = (status) => {
-	const statusOrderList = state.bridgeList.filter(item => item['bridgeOrderStatus'] === status);
-
-	return statusOrderList.length ?? 0;
-}
-
-async function getBridgeList(params = {}) {
+const getBridgeList = async (params = {}) => {
 	params = filterParams(params);
 
 	state.listLoading = true;
-	await useBridgeApi().getBridgeOrderList({...params}).then((res) => {
+	useBridgeApi().getBridgeOrderList({...params}).then((res) => {
 		if (res.status !== "2000") {
 			state.listLoading = false
 			throw new Error("배송대행지 주문을 가져올수 없습니다. 다시 한번 시도 부탁드립니다.");
@@ -572,9 +506,48 @@ async function getBridgeList(params = {}) {
 		state.listLoading = false;
 	});
 }
-const  tabToggle = (type,k) =>{
-  state.tabs[type].active = k;
+
+const getTotalBridgeList = async () => {
+	useBridgeApi().getBridgeOrderListCount().then((res) => {
+		if (res.status === "2000" && res.data) {
+			bridgeCount(res.data['totalListByUserId']);
+		}
+	});
 }
+
+const bridgeCount = (totalBridgeList) => {
+	totalBridgeList.forEach(item => {
+		const tabs = {
+			send: state.tabs.send.tab,
+			error: state.tabs.error.tab,
+			back: state.tabs.back.tab
+		};
+
+		Object.keys(tabs).forEach(key => {
+			const tab = tabs[key];
+			const index = tab.findIndex(t => t.text === item['bridgeOrderStatus']);
+			if (index !== -1) {
+				state.tabs[key].tab[index].number++;
+			}
+		});
+	});
+}
+
+// tab init
+const initTabs = () => {
+	for (const key in state.tabs) {
+		state.tabs[key].active = -1
+	}
+}
+
+const tabToggle = (type,k) =>{
+	initSearchParams();
+	initTabs();
+	state.searchParams.bridge_order_status = state.tabs[type].tab[k].text;
+	state.tabs[type].active = k;
+	getBridgeList();
+}
+
 const toggleTotal = ()=>{
   state.toggleTotalActive = !state.toggleTotalActive;
 }
@@ -598,14 +571,16 @@ const setTotalData = (v) =>{
   }).finally(() => {
   });
 }
+
 watch(() => state.modal.open, () => {
 	// 处理 open 属性的变化
 	initSearchParams()
 });
 
-onMounted(() => {
-	Promise.all([
+onMounted(async () => {
+	await Promise.all([
 		getBridgeList(),
+		getTotalBridgeList(),
     getTotalData(),
 	]);
 })
