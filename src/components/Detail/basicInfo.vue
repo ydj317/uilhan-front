@@ -472,15 +472,23 @@ export default {
 
     },
     translatePopup() {
-      let aImagesUrl = [
-        {checked: true, order: 0, url: this.product.item_thumbnails[0].url}
-      ];
+      let aImagesUrl = this.product.item_thumbnails;
+      aImagesUrl = aImagesUrl.map((item, index) => {
+        return {
+          checked: false,
+          order: index,
+          url: item.url
+        };
+      });
+      aImagesUrl[0].checked = true;
       this.imageTranslateToolsVisible = true;
       this.translateImageList = aImagesUrl;
     },
     updateTranslateImageList(imageList) {
-      if (imageList[0].translate_status === true) {
-        this.product.item_thumbnails[0].url =  imageList[0].translate_url;
+      for (const k in imageList) {
+        if (imageList[k].translate_status === true) {
+          this.product.item_thumbnails[k].url =  imageList[k].translate_url;
+        }
       }
     },
     tagKeywordBlur(e,type){
