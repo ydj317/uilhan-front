@@ -476,7 +476,6 @@ const state = reactive({
   totalList:[]
 });
 state.auth = Cookie.get("member_name") == 'jwli' ? true :false;
-console.log(state.auth)
 const dateValue = computed( () => {
 	return (!state.searchParams.start_time && !state.searchParams.end_time) ? null : [moment(state.searchParams.start_time), moment(state.searchParams.end_time)]
 })
