@@ -229,7 +229,7 @@
 				  :beforeUpload="validateUploadImage"
 				  :customRequest="(file) => handleUploadChange(file, index)"
               >
-                <img v-if="item.prdImage" alt="avatar" :src="item.prdImage"/>
+                <img v-if="item.prdImage" alt="avatar" :src="item.prdImage" style="width: 100%;height:100%;object-fit: contain;"/>
                 <div v-else>
 					<loading-outlined v-if="state.loading"></loading-outlined>
 					<plus-outlined v-else></plus-outlined>
