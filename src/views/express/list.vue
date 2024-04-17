@@ -221,7 +221,7 @@
 		<a-divider class="mt0 bottom-border" />
 		<a-spin size="large" :spinning="state.listLoading">
 			<div class="list-wrap">
-				<a-flex class="header-wrap w100 font-SCDream6">
+				<a-flex class="header-wrap w100 font-SCDream6 mb10">
 					<template v-for="v in state.header">
 						<div class="fw">{{v}}</div>
 					</template>
@@ -229,27 +229,28 @@
 				<a-divider/>
 				<a-flex
 					wrap="wrap"
-					class="content-wrap bor br5 mb20"
+					class="content-wrap bor br5 mb10"
 					v-for="(order, key) in state.bridgeList"
 					:key="key"
 				>
 					<a-flex class="header color-lan w100 font-SCDream5 fs14">
-						<div class="w10 text-center">{{ order['id'] ?? '' }}</div>
+						<div class="w10 text-center">No.{{ order['id'] }}</div>
 						<div class="w10 text-center">{{ order['bridgeOrderId'] ?? '' }}</div>
-						<div class="w20 text-center">{{ order['ins_date'] ?? '' }}</div>
+						<div class="w20 text-center">{{ order['insDate'] ?? '' }}</div>
 					</a-flex>
 					<a-flex class="content w100" align="center" v-for="(item, index) in order['items']" :key="index">
-						<div><img :src="item['prdImage']" class="br5"/></div>
+						<div><img :src="item['prdImage']" class="br5" :alt="order['id']"/></div>
 						<a-flex vertical style="text-align: left">
 							<div class="mb10 fs14 font-SCDream5">{{ item['prdName'] ?? '' }}</div>
 							<div class="fs10 font-SCDream4">{{ item['prdOptionName'] ?? '' }}</div>
 						</a-flex>
 						<div class="fs14 font-SCDream4">{{ item['quantity'] ?? 0 }}</div>
-						<div class="fs14 font-SCDream4">{{ item['invoiceNumber'] ?? ''}}</div>
+						<div class="fs14 font-SCDream4">{{ item['tracking_no'] ?? ''}}</div>
+						<div class="fs14 font-SCDream4">{{ item['invoice_no'] ?? ''}}</div>
 						<template v-if="index === 0">
 							<div class="fs14 font-SCDream4">{{ order['bridgeOrderStatus'] ?? '' }}</div>
 							<div class="fs14 font-SCDream4">{{ order['isPaid'] === 1 ? '결제완료' : '입금대기'}}</div>
-							<div class="fs14 font-SCDream4">{{ order['ctr_seq'] ?? '' }}</div>
+							<div class="fs14 font-SCDream4">{{ order['ctrSeq'] ?? '' }}</div>
 							<div class="fs14 font-SCDream4">{{ order['fee'] ?? 0 }}원</div>
 							<div class="fs14 font-SCDream4">{{ order['receiverName'] ?? '' }}</div>
 						</template>
@@ -303,7 +304,7 @@
 					<a-input
 						class="w100"
 						placeholder="쇼핑몰 주문번호를 입력하세요."
-						v-model:value="state.searchParams.order_id"
+						v-model:value="state.searchParams.bridge_order_id"
 					/>
 				</a-form-item>
 			</a-flex>
@@ -323,7 +324,7 @@
 					<a-input
 						class="w100"
 						placeholder="중국 트래킹 번호를 입력하세요."
-						v-model:value="state.searchParams.invoiceNumber"
+						v-model:value="state.searchParams.tracking_no"
 					/>
 				</a-form-item>
 			</a-flex>
@@ -333,7 +334,7 @@
 					<a-input
 						class="w100"
 						placeholder="운송장번호를 입력하세요."
-						v-model:value="state.searchParams.bridge_order_id"
+						v-model:value="state.searchParams.invoice_no"
 					/>
 				</a-form-item>
 			</a-flex>
@@ -350,7 +351,7 @@ import { InfoCircleFilled,ExclamationCircleOutlined } from '@ant-design/icons-vu
 import {useExpressApi} from "@/api/express";
 import Cookie from "js-cookie";
 const state = reactive({
-	header: ['No','상품정보','수량','트래킹번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
+	header: ['No','상품정보','수량','트래킹번호','운송장번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
 	bridgeList: [],
 	total: 0,
 	listLoading: false,
@@ -360,8 +361,8 @@ const state = reactive({
 		keyword: '',
 		bridge_order_id: '',
 		receiver_name: '',
-		order_id: '',
-		invoiceNumber: '',
+		tracking_no: '', // cn
+		invoice_no: '', // kr
 		start_time: '',
 		end_time: '',
 		bridge_order_status: '',
@@ -390,7 +391,7 @@ const state = reactive({
     error:{
         tab:[
           {text:'노데이터',number:0},
-          {text:'결제대기',number:0},
+          {text:'주문오류',number:0},
         ],
         active: -1
     },
@@ -447,8 +448,8 @@ const initSearchParams = () => {
 	state.searchParams.bridge_order_status = '';
     state.searchParams.bridge_order_id = '';
     state.searchParams.receiver_name = '';
-    state.searchParams.order_id = '';
-    state.searchParams.invoiceNumber = '';
+    state.searchParams.invoice_no = '';
+    state.searchParams.tracking_no = '';
     state.searchParams.start_time = '';
     state.searchParams.end_time = '';
 	state.searchParams.page = 1;
@@ -497,6 +498,7 @@ const getBridgeList = async (params = {}) => {
 		}
 
 		state.bridgeList = res.data.list;
+		//TODO 배송대행료 계산
 		state.total = res.data.total;
 
 	}).catch((e) => {

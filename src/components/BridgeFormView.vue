@@ -200,7 +200,7 @@
             <a-row class="mb10">
               <a-col :span="1"></a-col>
               <a-col :span="23" class="center">
-                <a-input v-model:value="item.invoiceNumber"/>
+                <a-input v-model:value="item.tracking_no"/>
               </a-col>
             </a-row>
           </a-col>
@@ -943,7 +943,7 @@ const getOrderDetailForBridge = async () => {
 		  orderNo: item.orderNo,
 		  prdImage: item.prdImage,
 		  prdName: item.prdName,
-		  prdNameCn: item.prdNameCn,
+		  prd_name_cn: item.prdNameCn,
 		  prdOptionName: item.prdOptionName,
 		  prdUrl: item.prdUrl,
 		  quantity: item.quantity,
