@@ -159,7 +159,8 @@
           <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0"
               style="text-align: center;">
             <div style="display: flex;flex-direction: column;gap: 3px;">
-              <span><router-link :to="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</router-link></span>
+<!--              <span><router-link :to="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</router-link></span>-->
+              <span><a-button type="link" target="_blank" :href="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</a-button></span>
               <a-popover placement="top" trigger="hover" :overlayStyle="{width: '140px'}">
                 <template #content>
                   <a-button size="small" @click="openMarketAdminPage(order.marketCode)">판매처</a-button>
@@ -168,7 +169,7 @@
                 <template #title>
                   <span>주문상세 바로가기</span>
                 </template>
-                <a style="color: #1890ff">{{ order.orderNo }} new</a>
+                <a style="color: #1890ff">{{ order.orderNo }} (new)</a>
               </a-popover>
               <span style="color: #999999">({{ order.orderDate }})</span>
             </div>
