@@ -445,7 +445,7 @@ export default defineComponent({
         account_div: formState.account_div,
         commission: formState.commission,
         wholesale_commission: formState.wholesale_commission,
-        is_bridge_sync: checked2,
+        is_bridge_sync: checked2.value,
         recommend_code: formState.recommend_code,
         zone_code: formState.zoneCode,
         address: formState.address,

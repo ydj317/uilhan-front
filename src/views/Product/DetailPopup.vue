@@ -622,7 +622,7 @@ export default defineComponent({
       }
 
       let mandatoryVal = this.product.item_mandatory;
-      if (mandatoryVal === "선택") {
+      if (mandatoryVal === "") {
         message.warning("상품고시정보를 선택해 주세요");
         return false;
       }
@@ -889,7 +889,6 @@ export default defineComponent({
     autosave: {
       handler() {
         this.useAutoSave = this.autosave ?? false;
-        console.log(this.useAutoSave);
       }
     },
 

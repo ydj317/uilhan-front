@@ -69,7 +69,8 @@ function taobaoParser(text) {
                 }
               } else if (tdEl[k]?.firstChild?.className?.includes('price-mod__price')) {
                 // 상품가격
-                itemData.price = tdEl[k].firstChild.textContent;
+                let spans = tdEl[k].querySelectorAll('span')
+                itemData.price = spans[spans.length - 1].textContent;
               } else if (tdEl[k].className.includes('bought-wrapper-mod__quantity')) {
                 itemData.quantity = tdEl[k].textContent;
               } else if (tdEl[k].className.includes('bought-wrapper-mod__status')) {
@@ -79,10 +80,18 @@ function taobaoParser(text) {
 
             // 상품명
             if(!!tdEl[0].textContent) {
-              const prdInfo = tdEl[0].textContent.split('[交易快照]');
-              if(prdInfo.length > 1) {
-                itemData.prdName = prdInfo[0];
-                itemData.sku = prdInfo[1];
+              if (tdEl[0].textContent.includes('[交易快照]')) {
+                const prdInfo = tdEl[0].textContent.split('[交易快照]');
+                if (prdInfo.length > 1) {
+                  itemData.prdName = prdInfo[0];
+                  itemData.sku = prdInfo[1];
+                }
+              } else {
+                const divEl = tdEl[0].querySelectorAll('p[data-reactid]');
+                if (divEl.length > 1) {
+                  itemData.prdName = divEl[0].textContent ?? '';
+                  itemData.sku = divEl[1].textContent ?? '';
+                }
               }
             }
 
