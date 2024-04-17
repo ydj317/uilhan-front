@@ -99,7 +99,7 @@
             <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(' ').filter(d => !!d).length }} / {{keywordMaxLength}}</div>
           </a-spin>
           <a-spin v-model:spinning="tagKeyword.loading">
-            <div class="keyword-list" v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
+            <div v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
               <a-tag
                   v-for="item in tagKeyword.list" :key="item.id"
                   :color="item.reg ? 'red' : ''"
@@ -116,7 +116,7 @@
         <th>상품고시</th>
         <td>
           <a-select v-model:value="product.item_mandatory" placeholder="상품고시 선택해주세요." style="width: 100%">
-            <a-select-option value="선택">선택</a-select-option>
+            <a-select-option value="">선택</a-select-option>
             <a-select-option v-for="(item, key) in mandatory" :key="key" :value="item.value">
               {{ item.label }}
             </a-select-option>
