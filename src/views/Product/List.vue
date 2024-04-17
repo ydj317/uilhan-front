@@ -1199,7 +1199,7 @@ export default defineComponent({
     async getMarketList() {
       await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/marketlist").then((res) => {
         if (res.status !== "2000") {
-          throw new Error("설정하신 마켓계정 정보가 없습니다. \n마켓계정을 설정해주세요. ");
+          throw new Error("연동중인 마켓이 없습니다. 마켓연동에서 판매될 마켓을 등록해 주세요.");
         }
 
         for (let i = 0; i < res.data.length; i++) {

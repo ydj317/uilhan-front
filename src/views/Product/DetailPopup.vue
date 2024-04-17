@@ -137,7 +137,6 @@ export default defineComponent({
         },
       ],
       useAutoSave: false,
-      useAutoTranslate: false,
       productWatchCount: 0,
 
       SYNC_COLUMNS_CONFIG: [
@@ -176,7 +175,6 @@ export default defineComponent({
     ...mapState({
       product: state => state.product.detail,
       autosave: (state) => state.product.detail?.user?.use_auto_save,
-      autotranslate: (state) => state.product.detail?.user?.use_auto_translate,
     }),
 
     localvisible: {
@@ -221,14 +219,6 @@ export default defineComponent({
 
       message.success('자동 저장 성공')
     }, 5000, {
-      leading: false
-    }),
-
-    autoTranslate:  throttle(async function() {
-      message.success('이미지 자동 번역중...')
-
-      message.success('이미지 자동 번역 성공')
-    },8000, {
       leading: false
     }),
 
@@ -876,10 +866,6 @@ export default defineComponent({
         if (this.productWatchCount > 6 && this.useAutoSave) {
           this.autoSave();
         }
-
-        if(this.productWatchCount > 6 && this.useAutoTranslate){
-          this.autoTranslate();
-        }
       },
 
       deep: true,
@@ -890,17 +876,6 @@ export default defineComponent({
       handler() {
         this.useAutoSave = this.autosave ?? false;
       }
-    },
-
-    autotranslate:{
-      handler() {
-        this.useAutoTranslate = this.autotranslate ?? false;
-        if (this.useAutoSave) {
-          this.autoTranslate();
-        }
-      },
-      deep: true,
-      immediate: true
     },
 
     prdId: {
