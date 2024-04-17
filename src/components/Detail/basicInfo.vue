@@ -99,7 +99,7 @@
             <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(' ').filter(d => !!d).length }} / {{keywordMaxLength}}</div>
           </a-spin>
           <a-spin v-model:spinning="tagKeyword.loading">
-            <div class="keyword-list" v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
+            <div v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
               <a-tag
                   v-for="item in tagKeyword.list" :key="item.id"
                   :color="item.reg ? 'red' : ''"
