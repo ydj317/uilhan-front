@@ -118,6 +118,11 @@ export default {
             this.handleOptionTableToggle();
           })
         }
+        if (!!this.showVideo) {
+          this.$nextTick(() => {
+            this.setVideoContent();
+          })
+        }
       },
       immediate: true,
       deep: true
