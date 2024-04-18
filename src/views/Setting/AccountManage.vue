@@ -684,7 +684,6 @@
                 formState.pwdLoading = false;
                 return false;
             }
-            console.log(res);
 
             message.success(res.message);
 

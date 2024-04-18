@@ -17,38 +17,33 @@
           <a-range-picker v-model:value="state.order_date" @change="onChangeDatePicker" />
         </a-space>
         <a-space class="range" v-model:value="state.tableData.params.range">
-          <div value="all">전체기간</div>
-          <a-divider type="vertical" class="line" />
-          <div value="today">오늘</div>
-          <a-divider type="vertical" class="line" />
-          <div value="week">일주일</div>
-          <a-divider type="vertical" class="line" />
-          <div value="month1">1개월</div>
-          <a-divider type="vertical" class="line" />
-          <div value="month3">3개월</div>
+          <a-button size="small" type="ghost" @click="setOrderDate('all' , '')">전체기간</a-button>
+          <a-divider type="vertical" style="background-color: #ffd82c"/>
+          <a-button size="small" type="ghost" @click="setOrderDate('today', '')">오늘</a-button>
+          <a-divider type="vertical" style="background-color: #ffd82c"/>
+          <a-button size="small" type="ghost" @click="setOrderDate(1, 'week')">일주일</a-button>
+          <a-divider type="vertical" style="background-color: #ffd82c"/>
+          <a-button size="small" type="ghost" @click="setOrderDate(1, 'months')">1개월</a-button>
+          <a-divider type="vertical" style="background-color: #ffd82c"/>
+          <a-button size="small" type="ghost" @click="setOrderDate(3, 'months')">3개월</a-button>
         </a-space>
       </a-descriptions-item>
       <a-descriptions-item label="검색어">
         <a-input-group compact style="display: flex;">
           <a-select v-model:value="state.tableData.params.search_type" style="width: 100px;margin-right: 5px">
-            <a-select-option value="order_no">주문번호</a-select-option>
             <a-select-option value="prd_code">상품번호</a-select-option>
-            <a-select-option value="prd_name">상품명</a-select-option>
-            <a-select-option value="prd_option_no">옵션번호</a-select-option>
-            <a-select-option value="prd_option_name">옵션명</a-select-option>
-            <a-select-option value="orderer_name">주문자</a-select-option>
-            <a-select-option value="receiver_name">수취인</a-select-option>
+            <a-select-option value="prd_trans_name">상품명</a-select-option>
           </a-select>
           <a-input v-model:value="state.tableData.params.search_value" style="width: 300px;" allowClear />
         </a-input-group>
       </a-descriptions-item>
       <a-descriptions-item label="조회수">
         <a-space class="mr5">
-          <a-input v-model:value="state.tableData.params.number" suffix="회" />
+          <a-input type="number" min="0" v-model:value="state.tableData.params.visitCount" suffix="회" />
         </a-space>
         <a-select v-model:value="state.tableData.params.sort" style="width: 200px;">
-          <a-select-option value="up">이상</a-select-option>
-          <a-select-option value="down">이하</a-select-option>
+          <a-select-option value="up">이상(포함)</a-select-option>
+          <a-select-option value="down">이하(포함)</a-select-option>
         </a-select>
       </a-descriptions-item>
     </a-descriptions>
@@ -120,7 +115,7 @@
 import { onMounted, reactive, ref, watch } from "vue";
 import { message } from "ant-design-vue";
 import * as echarts from "echarts";
-import moment from "moment";
+import moment from "moment/moment";
 import { useMarketApi } from "@/api/market";
 import { findProductVisits, getProductVisits } from "@/api/productVisits";
 import dayjs from "dayjs";
@@ -138,18 +133,18 @@ const state = reactive({
       pageSize: 10,
       market: [],
       account_ids: [],
-      order_date: [moment().subtract(30, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
+      order_date: [],
       range: "",
-      search_type: "order_no",
+      search_type: "prd_code",
       search_value: "",
-      number: "",
+      visitCount: "",
       sort: "up",
       sortOrder:"desc",
       sortField: "", // 初始排序字段为空
     }
   },
   loading: false,
-  order_date: [moment().subtract(15, "days"), moment()],
+  order_date: [],
   marketCheckAll: false,
 
 
@@ -166,6 +161,20 @@ const state = reactive({
   },
   selectedProduct: null,
 });
+
+const setOrderDate = (range, period) => {
+  if (range === "all") {
+    state.order_date = [];
+    state.tableData.params.order_date = ["", ""]
+  } else if (range === "today") {
+    state.order_date = [moment(), moment()];
+    state.tableData.params.order_date = [moment().format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")]
+  } else {
+    state.order_date = [moment().subtract(range, period), moment()];
+    state.tableData.params.order_date = [moment().subtract(range, period).format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")]
+  }
+};
+
 const onPageChange = (page, pageSize) => {
   state.tableData.page = page;
   state.tableData.pageSize = pageSize;
@@ -334,7 +343,7 @@ const handleTableChange = async(pagination, filters, sorter) => {
 
 const searchProductVisits = (searchByZero = false) => {
   if(searchByZero) {
-    state.tableData.params.number = "0";
+    state.tableData.params.visitCount = "0";
   }
   getProductVisitsList()
 }
@@ -344,9 +353,9 @@ const resetSearchParam = () => {
     page: 1,
     pageSize: 10,
     market: Object.keys(state.marketList),
-    order_date: [moment().subtract(15, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
+    order_date: ["", ""],
     range: "",
-    search_type: "order_no",
+    search_type: "prd_code",
     search_value: "",
     number: "",
     sort: "up"
