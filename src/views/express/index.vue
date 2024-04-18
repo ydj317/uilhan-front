@@ -169,47 +169,74 @@
 </template>
 
 <script setup>
-import {reactive} from "vue";
+import {onMounted, reactive} from "vue";
+import {AuthRequest} from "@/util/request";
+import {message} from "ant-design-vue";
+import {useBridgeApi} from "@/api/bridge";
 
 const state = reactive({
-  header: ['No','상품정보','수량','트래킹번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
-  dataSource:[
-    {
-      key: '1',
-      No: 'No.1',
-      number:'신청번호0000',
-      dateTime:'2023-12-30 11:38 - 2024-01-13 09:00',
-      goods: [
-        {img:'../../assets/img/avatar.png',name:'노랑 스마일 귀여운 LED 벽걸이 인테리어 무드등',sku:'M사이즈 / 노랑',number:0,orderCode:'7777888899990'},
-        {img:'../../assets/img/avatar.png',name:'노랑 스마일 귀여운 LED 벽걸이 인테리어 무드등',sku:'M사이즈 / 화이트',number:1,orderCode:'7777888899991'}
-      ],
-      goodsNumber: 1,
-      orderCode: '777788889999',
-      orderStatus: '배송준비중',
-      payStatus: '결제완료',
-      type: '해운',
-      fee: '11,000',
-      recipientName: '홍길동',
-    },
-    {
-      key: '2',
-      No: 'No.2',
-      number:'신청번호00002',
-      dateTime:'2023-12-30 11:38 - 2024-01-13 09:02',
-      goods: [
-        {img:'',name:'노랑 스마일 귀여운 LED 벽걸이 인테리어 무드등',sku:'M사이즈2 / 노랑',number:1,orderCode:'7777888899992'},
-      ],
-      goodsNumber: 2,
-      orderCode: '7777888899992',
-      orderStatus: '배송준비중2',
-      payStatus: '결제완료2',
-      type: '해운2',
-      fee: '11,002',
-      recipientName: '홍길동2',
-    }
-  ],
-  modal:{open:false},
+	header: ['No','상품정보','수량','트래킹번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
+	dataSource:[
+		{
+			key: '1',
+			No: 'No.1',
+			number:'신청번호0000',
+			dateTime:'2023-12-30 11:38 - 2024-01-13 09:00',
+			goods: [
+				{img:'../../assets/img/avatar.png',name:'노랑 스마일 귀여운 LED 벽걸이 인테리어 무드등',sku:'M사이즈 / 노랑',number:0,orderCode:'7777888899990'},
+				{img:'../../assets/img/avatar.png',name:'노랑 스마일 귀여운 LED 벽걸이 인테리어 무드등',sku:'M사이즈 / 화이트',number:1,orderCode:'7777888899991'}
+			],
+			goodsNumber: 1,
+			orderCode: '777788889999',
+			orderStatus: '배송준비중',
+			payStatus: '결제완료',
+			type: '해운',
+			fee: '11,000',
+			recipientName: '홍길동',
+		},
+		{
+			key: '2',
+			No: 'No.2',
+			number:'신청번호00002',
+			dateTime:'2023-12-30 11:38 - 2024-01-13 09:02',
+			goods: [
+				{img:'',name:'노랑 스마일 귀여운 LED 벽걸이 인테리어 무드등',sku:'M사이즈2 / 노랑',number:1,orderCode:'7777888899992'},
+			],
+			goodsNumber: 2,
+			orderCode: '7777888899992',
+			orderStatus: '배송준비중2',
+			payStatus: '결제완료2',
+			type: '해운2',
+			fee: '11,002',
+			recipientName: '홍길동2',
+		}
+	],
+	modal:{open:false},
 });
+
+async function getBridgeList() {
+	await useBridgeApi().getBridgeOrderList().then((res) => {
+		if (res.status !== "2000") {
+			throw new Error("연동중인 마켓이 없습니다. 마켓연동에서 판매될 마켓을 등록해 주세요.");
+		}
+
+		for (let i = 0; i < res.data.length; i++) {
+			res.data[i].key = i;
+		}
+
+		// options.value = res.data;
+	}).catch((e) => {
+		message.error(e.message);
+		return false;
+	});
+}
+
+onMounted(() => {
+	Promise.all([
+		getBridgeList(),
+	]);
+})
+
 </script>
 
 <style>

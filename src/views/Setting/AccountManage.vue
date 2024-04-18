@@ -1,4 +1,6 @@
 <template>
+
+	<BindBridge @formUpdated="handleFormUpdate"/>
     <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
 
         <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
@@ -106,7 +108,7 @@
         </a-form>
 
     </a-card>
-    <!--    yl+ 表格  -->
+    <!--     表格  -->
     <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'">
         <template #extra>
             <a-button type="primary" @click="showModal2">계정 등록</a-button>
@@ -197,8 +199,9 @@
     import router from "@/router";
     import {message} from "ant-design-vue";
     import {useUserApi} from "@/api/user";
+	import BindBridge from "@/views/Setting/BindBridge.vue";
 
-    import "vue-loading-overlay/dist/vue-loading.css";
+	import "vue-loading-overlay/dist/vue-loading.css";
     import Loading from "vue-loading-overlay";
 
 
@@ -229,7 +232,6 @@
         com_ceo: "",
 
         loading: false,
-        //yl+
         //修改密码
         pwdLoading:false,
         pwdOpen:false,
@@ -244,7 +246,19 @@
         reg_password_confirm: "",
         //默认拥有的账号权限
         auth: ['상품관리 (삭제 제외)', ' 상품삭제'],
+		// 배대지 값들
+		bridgeData: {
+			bind_bridge_id: '',
+			bind_bridge_mb_id: '',
+			bind_bridge_phone: '',
+			bind_bridge_email: '',
+			is_bridge_sync: false,
+		}
     });
+
+	const handleFormUpdate = (data) => {
+		formState.bridgeData = data;
+	};
 
     const copyText = (recommend_code) => {
         var textArea = document.createElement("textarea");
@@ -521,6 +535,11 @@
             com_number: formState.com_number,
             com_phone: formState.com_phone1 + "-" + formState.com_phone2 + "-" + formState.com_phone3,
             com_ceo: formState.com_ceo,
+			bind_bridge_id: formState.bridgeData.bind_bridge_id,
+			bind_bridge_mb_id: formState.bridgeData.bind_bridge_mb_id,
+			bind_bridge_phone: formState.bridgeData.bind_bridge_phone,
+			bind_bridge_email: formState.bridgeData.bind_bridge_email,
+			is_bridge_sync: formState.bridgeData.is_bridge_sync,
         };
 
         AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
@@ -589,7 +608,6 @@
     onMounted(() => {
         getUserInfoData();
     });
-    //yl+
     const columns = [
         {
             title: 'No.',

@@ -152,7 +152,6 @@ export const menus = [{
                         icon: '',
                     },
                 },
-
                 {
                     path: "/setting/guideForm/:id?",
                     name: "setting_guideForm",
@@ -455,7 +454,18 @@ export const menus = [{
         //         roles: ["ROLE_USER", "ROLE_ADMIN"],
         //         icon: GiftOutlined
         //     },
-        // }
+        // },
+        {
+            path: "/express/list",
+            name: "express_list",
+            component: () => import("@/views/express/list.vue"),
+            meta: {
+                title: "배송대행지",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: GiftOutlined
+            },
+        }
     ]
 }]
 

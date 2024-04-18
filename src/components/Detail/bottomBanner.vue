@@ -193,7 +193,7 @@ export default {
       }
 
       let mandatoryVal = this.product.formState.mandatory_val;
-      if (mandatoryVal === "선택") {
+      if (mandatoryVal === "") {
         message.warning("상품고시정보를 선택해 주세요");
         return false;
       }

@@ -28,5 +28,14 @@ export function useBridgeApi() {
                 data,
             });
         },
+
+        // 리스트 조회
+        getBridgeOrderList: (param) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/bridgeOrderList",
+                method:'get',
+                params: {...param},
+            });
+        }
     }
 }

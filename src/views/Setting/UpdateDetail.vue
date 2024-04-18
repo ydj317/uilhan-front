@@ -238,11 +238,12 @@
         </div>
       </a-descriptions-item>
     </a-descriptions>
+    <div style="display: flex;justify-content: center;margin-top: 20px;">
+      <a-button type="primary" html-type="submit" @click="saveSettings">저장</a-button>
+    </div>
   </a-card>
 
-  <div style="display: flex;justify-content: center;margin-top: 20px;">
-    <a-button type="primary" html-type="submit" @click="saveSettings">저장</a-button>
-  </div>
+
 </template>
 <script setup>
 import {AuthRequest} from "@/util/request";
