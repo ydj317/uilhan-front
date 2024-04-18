@@ -169,7 +169,8 @@
         </template>
         <div class="box">
           <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
-            <e-charts ref="radarChartRef" :option="radarChart"/>
+            <e-charts ref="radarChartRef" :option="radarChart" v-if="hasData" />
+            <div v-if="!hasData" style="font-size:18px;color:#000">데이터가 없습니다.</div>
           </div>
         </div>
       </a-card>
@@ -725,6 +726,8 @@ const getAccountList = async () => {
   });
 }
 
+const hasData = ref(true);
+
 const  getProductVisitRadar = async () => {
   state.radarData.loading = true;
 
@@ -734,6 +737,8 @@ const  getProductVisitRadar = async () => {
           message.error(res.message);
           return false;
         }
+
+        hasData.value = hasData.value === res.data.length > 0;
 
         const formatResData = res.data.reduce((acc, { prd_id, market_code, visit_count, prd_trans_name }) => {
           // 如果当前prd_id还没有对应的条目，初始化
