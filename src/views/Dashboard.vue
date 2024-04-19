@@ -169,7 +169,7 @@
         </template>
         <div class="box">
           <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
-            <e-charts ref="radarChartRef" :option="radarChart" v-if="hasData" />
+            <e-charts :option="radarChart" v-if="hasData" />
             <div v-if="!hasData" style="font-size:18px;color:#000">데이터가 없습니다.</div>
           </div>
         </div>
@@ -620,14 +620,7 @@ const barChartOption = ref({
   series: barChartSeriesData.value
 });
 
-const radarChartRef = ref(null);
-const resetRadarChart = () => {
-  if (radarChartRef.value) {
-    radarChartRef.value.clear();
-    radarChartRef.value.setOption(radarChart.value);
-  }
-};
-const radarChartSeriesData = ref([]);
+
 const radarChart = ref({
   legend: {
     orient: 'vertical',
