@@ -69,6 +69,14 @@ export function useProductApi() {
                 method: "post",
                 data: data,
             });
-        }
+        },
+
+        getViewCountZeroProduct : (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/getViewCountZeroProduct",
+                method: "post",
+                data: data,
+            });
+        },
     }
 }

@@ -38,23 +38,24 @@
         </a-input-group>
       </a-descriptions-item>
       <a-descriptions-item label="조회수">
-        <a-space class="mr5">
-          <a-input type="number" min="0" v-model:value="state.tableData.params.visitCount" suffix="회" />
-        </a-space>
-        <a-select v-model:value="state.tableData.params.sort" style="width: 200px;">
+        <a-input-number  min="1" v-model:value="state.tableData.params.visitCount" addon-after="회"/>
+        <span class="ml10">
+          <a-select  v-model:value="state.tableData.params.sort" style="width: 200px;">
           <a-select-option value="up">이상(포함)</a-select-option>
           <a-select-option value="down">이하(포함)</a-select-option>
         </a-select>
+        </span>
+
       </a-descriptions-item>
     </a-descriptions>
     <div class="mt15 center">
       <a-button type="default" class="mr15" @click="resetSearchParam">초기화</a-button>
-      <a-button type="primary" class="mr15" @click="searchProductVisits(true)">조회수 0인 상품 검색</a-button>
+      <a-button type="primary" class="mr15" @click="searchProductVisitsZero(true)">조회수 0인 상품 검색</a-button>
       <a-button type="primary" @click="searchProductVisits(false)">검색</a-button>
     </div>
   </a-card>
   <a-card class="mt15">
-    <a-table :columns="tableColumns" :data-source="tableList" bordered :pagination="false" @change="handleTableChange">
+    <a-table  :loading="state.tableData.loading" :columns="tableColumns" :data-source="tableList" bordered :pagination="false" @change="handleTableChange">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'productThumbnails'">
           <a-image
@@ -68,8 +69,8 @@
             {{ record.productCode}}
           </div>
         </template>
-        <template v-if="column.key === 'syncTime'">
-          {{ record.syncTime ? dayjs(record.syncTime).format("YYYY-MM-DD") : '-'}}
+        <template v-if="column.key === 'insTime'">
+          {{ record.insTime ? dayjs(record.insTime).format("YYYY-MM-DD") : '-'}}
         </template>
         <template v-if="column.key === 'chart'">
           <img src="../../assets/img/chart_icon.png" alt="차트보기" width="20" height="20" @click="modalChart(record)" style="cursor: pointer;">
@@ -97,7 +98,7 @@
           <span>{{ state.selectedProduct?.productName}}</span>
         </a-flex>
         <a-flex vertical="vertical">
-          <span>마켓연동일：{{ state.selectedProduct && !!state.selectedProduct?.syncTime ? dayjs(state.selectedProduct.syncTime).format("YYYY-MM-DD") :'-' }}</span>
+          <span>마켓연동일：{{ state.selectedProduct && !!state.selectedProduct?.insTime ? dayjs(state.selectedProduct.insTime).format("YYYY-MM-DD") :'-' }}</span>
         </a-flex>
       </a-flex>
     </a-flex>
@@ -120,6 +121,7 @@ import { useMarketApi } from "@/api/market";
 import { findProductVisits, getProductVisits } from "@/api/productVisits";
 import dayjs from "dayjs";
 import { useMarketAccountApi } from "@/api/marketAccount";
+import {useProductApi} from "@/api/product";
 
 const modalCharts = ref(null);
 const state = reactive({
@@ -178,6 +180,13 @@ const setOrderDate = (range, period) => {
 const onPageChange = (page, pageSize) => {
   state.tableData.page = page;
   state.tableData.pageSize = pageSize;
+  if (tableList.value.length > 0) {
+    if (tableList.value[0].totalVisitCount === 0) {
+      getViewCountZeroProduct()
+    } else  {
+      getProductVisitsList()
+    }
+  }
 };
 const onChangeDatePicker = (value, dateString) => {
   state.tableData.params.order_date = [dateString[0], dateString[1]];
@@ -280,8 +289,8 @@ const tableColumns = [
   },
   {
     title: "마켓연동일",
-    key: "syncTime",
-    dataIndex: "syncTime",
+    key: "insTime",
+    dataIndex: "insTime",
     width: "20%",
     align: "center"
   },
@@ -308,7 +317,8 @@ const getProductVisitsList = async () => {
     const result = await getProductVisits(state.tableData.params);
     result.status !== "2000" && message.error(result.message);
 
-    tableList.value = result.data;
+    tableList.value = result.data.currentPageResults;
+    state.tableData.total = result.data.totalCount;
   } catch (e) {
     console.error(e);
   } finally {
@@ -342,10 +352,13 @@ const handleTableChange = async(pagination, filters, sorter) => {
 
 
 const searchProductVisits = (searchByZero = false) => {
-  if(searchByZero) {
-    state.tableData.params.visitCount = "0";
-  }
   getProductVisitsList()
+}
+
+const searchProductVisitsZero = () => {
+  resetSearchParam()
+  state.order_date = [];
+  getViewCountZeroProduct()
 }
 
 const resetSearchParam = () => {
@@ -486,6 +499,21 @@ const modalClose = () => {
   state.selectedProduct.value = null;
   state.modalOpen = false;
 };
+
+const getViewCountZeroProduct = async () => {
+  try {
+    state.tableData.loading = true;
+    const result = await useProductApi().getViewCountZeroProduct(state.tableData.params);
+    // result.data.currentPageResults 돌과서 totalVisitCount 를 모두 0 으로 넣어줌
+    result.data.currentPageResults.forEach(v => v.totalVisitCount = 0);
+    tableList.value = result.data.currentPageResults;
+    state.tableData.total = result.data.totalCount;
+    state.tableData.loading = false;
+  } catch (e) {
+    state.tableData.loading = false;
+    console.error(e);
+  }
+}
 </script>
 <style scoped>
 .range {
