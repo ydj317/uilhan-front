@@ -240,7 +240,7 @@
 					</a-flex>
 					<a-flex class="content w100" align="center" v-for="(item, index) in order['items']" :key="index">
 						<div><img :src="item['prdImage']" class="br5" :alt="order['id']"/></div>
-						<a-flex vertical style="text-align: left">
+						<a-flex vertical style="text-align: left;">
 							<div class="mb10 fs14 font-SCDream5">{{ item['prdName'] ?? '' }}</div>
 							<div class="fs10 font-SCDream4">{{ item['prdOptionName'] ?? '' }}</div>
 						</a-flex>
@@ -763,7 +763,7 @@ onMounted(async () => {
 	width: 10%;
 }
 .header-wrap > div:nth-of-type(2),.content > div:nth-of-type(2){
-	width: 25%;
+	width: 20%;
 }
 .header-wrap > div:nth-of-type(3),.content > div:nth-of-type(3){
 	width: 5%;
