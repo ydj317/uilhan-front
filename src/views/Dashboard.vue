@@ -169,7 +169,8 @@
         </template>
         <div class="box">
           <div class="content" style="display: flex; justify-content: center; align-items: center; height: 240px;">
-            <e-charts :option="radarChartOption"/>
+            <e-charts :option="radarChart" v-if="hasData" />
+            <div v-if="!hasData" style="font-size:18px;color:#000">데이터가 없습니다.</div>
           </div>
         </div>
       </a-card>
@@ -218,18 +219,17 @@
 </template>
 
 <script setup>
-import {ref, onMounted, reactive, onBeforeUnmount, watch, computed} from "vue";
+import {computed, onBeforeUnmount, onMounted, reactive, ref} from "vue";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
 import ECharts from 'vue-echarts';
 import {useMarketOrderApi} from "@/api/order";
 import {useMarketApi} from '@/api/market';
-import {QuestionCircleOutlined, ShoppingCartOutlined, UploadOutlined, ShoppingOutlined} from "@ant-design/icons-vue";
+import {useMarketAccountApi} from '@/api/marketAccount';
+import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {useRouter} from "vue-router";
 import Cookie from "js-cookie";
 import dayjs from "dayjs";
-import moment from "moment";
-import {forEach} from "lodash";
 
 const router = useRouter();
 
@@ -244,7 +244,22 @@ const state = reactive({
     marketTotal: '0',
     productTotal: '0',
     orderTotal: '0'
-  }
+  },
+
+  marketList:[],
+
+  radarData: {
+    data: [],
+    total: 0,
+
+    loading: false,
+    params: {
+      market: [],
+      account_ids: [],
+      tansName: []
+    }
+  },
+
 });
 let productLoading = ref(false);
 let orderLoading = ref(false);
@@ -479,8 +494,6 @@ const getTableList = async () => {
       orderDataView = list
     }
 
-    console.log(orderDataView);
-
     account.orderData.data = orderDataView;
     account.orderData.list = list
     account.orderData.total = total;
@@ -607,46 +620,40 @@ const barChartOption = ref({
   series: barChartSeriesData.value
 });
 
-const radarChartOption = {
+
+const radarChart = ref({
   legend: {
     orient: 'vertical',
-    data: ['상품1', '상품2', '상품3'],
+
+    //商品名
+    data: [],
     left: 'left',
-    top: 'bottom'
+    top: 'bottom',
+    formatter: function (name) {
+      const maxLength = 5;
+      if (name.length > maxLength) {
+        return name.substring(0, maxLength) + '...';
+      } else {
+        return name;
+      }
+    }
   },
   radar: {
     // shape: 'circle',
-    indicator: [
-      { name: '스마트스토어'},
-      { name: '지마켓'},
-      { name: '옥션'},
-      { name: '11번가'},
-      { name: '쿠팡'},
-      { name: '큐텐'},
-      { name: '인터파크'},
-    ]
+
+    //market_code名
+    indicator: []
   },
   series: [
     {
       name: 'Budget vs spending',
       type: 'radar',
-      data: [
-        {
-          value: [4200, 3000, 20000, 35000, 50000, 18000],
-          name: '상품1'
-        },
-        {
-          value: [5000, 14000, 28000, 26000, 42000, 21000],
-          name: '상품2'
-        },
-        {
-          value: [6000, 12000, 25000, 20000, 40000, 18000],
-          name: '상품3'
-        }
-      ]
+
+      //商品名&&market总浏览量
+      data: []
     }
   ]
-};
+});
 
 const pieChartOtion = ref('day')
 const pieChartOption = {
@@ -682,15 +689,98 @@ const pieChartOption = {
   ]
 };
 
+const getMarketList = async () => {
+  await useMarketApi().getMarketList({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    state.marketList = res.data;
+  });
+}
+
+const getAccountList = async () => {
+  await useMarketAccountApi().getAccountList({page:'all'}).then(async res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    radarChart.value.radar.indicator = [];
+    res.data.list.reduce((acc, cur) => {
+      if (!acc.includes(cur.marketCode)) {
+        acc.push(cur.marketCode);
+        radarChart.value.radar.indicator.push({name: state.marketList[cur.marketCode], code : cur.marketCode});
+      }
+      return acc;
+    },[])
+
+  });
+}
+
+const hasData = ref(true);
+
+const  getProductVisitRadar = async () => {
+  state.radarData.loading = true;
+
+   await AuthRequest.get(process.env.VUE_APP_API_URL + "/api/dashboard/radarProductInfo").then(
+      (res) => {
+        if (res.status !== "2000" || res.data === undefined) {
+          message.error(res.message);
+          return false;
+        }
+
+        hasData.value = hasData.value === res.data.length > 0;
+
+        const formatResData = res.data.reduce((acc, { prd_id, market_code, visit_count, prd_trans_name }) => {
+          // 如果当前prd_id还没有对应的条目，初始化
+          if (!acc[prd_id]) {
+            acc[prd_id] = { name: prd_trans_name, visit: {} };
+          }
+
+          // 添加或更新当前市场的访问量
+          acc[prd_id].visit[market_code] = visit_count;
+
+          return acc;
+        }, {});
+
+        //legend.data商品名
+        radarChart.value.legend.data = Object.values(formatResData).map(item => {
+          return item.name;
+        });
+
+        radarChart.value.series[0].data = Object.values(formatResData).map(item => {
+          const marketValues = radarChart.value.radar.indicator.map(() => 0);
+          Object.keys(item.visit).forEach(marketCode => {
+            const marketIndex = radarChart.value.radar.indicator.findIndex(market => market.code === marketCode);
+            if (marketIndex !== -1) {
+              marketValues[marketIndex] = item.visit[marketCode];
+            }
+          });
+          return {
+            name: item.name,
+            value: marketValues
+          };
+        });
+
+      }
+  );
+}
+
+
 onMounted(async () => {
   await getTableList()
+  await getMarketList()
   handleBeforeUnload();
   //getOrder();
-  Promise.all([getBoard(), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
+  Promise.all([getBoard(), getSaleList(), getMarketAdminUrls(), getHeaderCount(), getAccountList()])
     .catch((e) => {
       message.error(e.message)
       return false;
     });
+
+  await getProductVisitRadar();
 });
 
 onBeforeUnmount(() => {
