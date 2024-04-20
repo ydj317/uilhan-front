@@ -86,7 +86,7 @@
       </template>
     </a-table>
     <a-pagination
-      style="width: 100%;display: flex;justify-content: end;align-items: center;margin-top: 15px;"
+      style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 15px;"
       v-model:current="state.tableData.params.page"
       v-model:page-size="state.tableData.params.pageSize"
       @change="onPageChange"

@@ -262,7 +262,7 @@
       </template>
     </table>
     <a-pagination
-        style="width: 100%;display: flex;justify-content: end;align-items: center;margin-top: 15px;"
+        style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 15px;"
         v-model:current="state.tableData.page"
         v-model:page-size="state.tableData.pageSize"
         @change="onPageChange"
