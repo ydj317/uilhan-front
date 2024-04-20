@@ -163,6 +163,7 @@ const state = reactive({
 
   indeterminate: true,
   marketList: [],
+  openMarketList: [],
   accountList: [],
   modalOpen: false,
   modalTabsIndex: 0,
@@ -238,6 +239,7 @@ const getMarketList = async () => {
       }
 
       marketList = res.data;
+      state.openMarketList = res.data;
     });
 
     await useMarketAccountApi().getAccountList({'page' : 'all', 'is_use': 1}).then(res => {
@@ -267,8 +269,8 @@ const getMarketList = async () => {
 const tableColumns = [
   {
     title: "No",
-    dataIndex: "key",
-    key: "key",
+    dataIndex: "index",
+    key: "index",
     width: "5%",
     align: "center"
   },
@@ -346,7 +348,10 @@ const getProductVisitsList = async () => {
   try {
     const result = await getProductVisits(state.tableData.params);
     result.status !== "2000" && message.error(result.message);
-
+    // result.data.currentPageResults 에 index 를 추가 1부터++
+    result.data.currentPageResults.forEach((v, i) => {
+      v.index = (state.tableData.params.page - 1) * state.tableData.params.pageSize + i + 1;
+    });
     tableList.value = result.data.currentPageResults;
     state.tableData.total = result.data.totalCount;
   } catch (e) {
@@ -405,6 +410,7 @@ onMounted(async () => {
   await Promise.all([getMarketList()])
     .then(() => {
     });
+
   await getProductVisitsList();
 });
 
@@ -417,7 +423,7 @@ const modalChart = async (product) => {
   loadChartDataLoading.value = true;
   try {
     const result = await findProductVisits({ productId: product.productId })
-    const legend = result.data.map(v => v.marketCode);
+    const legend =  result.data.map(v => state.openMarketList[v.marketCode]);
 
     // 오늘 부터 15일전 데이터
     const today = dayjs();
@@ -436,7 +442,7 @@ const modalChart = async (product) => {
     let series;
     series = Object.keys(groupByData).map((v, k) => {
       return {
-        name: v,
+        name: state.openMarketList[v],
         type: "bar",
         stack: "visit",
         data: xAxis.map(_v => {
@@ -523,7 +529,11 @@ const getViewCountZeroProduct = async () => {
     state.tableData.loading = true;
     const result = await useProductApi().getViewCountZeroProduct(state.tableData.params);
     // result.data.currentPageResults 돌과서 totalVisitCount 를 모두 0 으로 넣어줌
-    result.data.currentPageResults.forEach(v => v.totalVisitCount = 0);
+    // result.data.currentPageResults 에 index 를 추가 1부터++
+    result.data.currentPageResults.forEach((v, i) => {
+      v.index = (state.tableData.params.page - 1) * state.tableData.params.pageSize + i + 1;
+      v.totalVisitCount = 0;
+    });
     tableList.value = result.data.currentPageResults;
     state.tableData.total = result.data.totalCount;
     state.tableData.loading = false;
