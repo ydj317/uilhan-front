@@ -73,7 +73,12 @@
           {{ record.insTime ? dayjs(record.insTime).format("YYYY-MM-DD") : '-'}}
         </template>
         <template v-if="column.key === 'chart'">
-          <img src="../../assets/img/chart_icon.png" alt="차트보기" width="20" height="20" @click="modalChart(record)" style="cursor: pointer;">
+          <div v-if="record.visitCount > 0">
+            <img src="../../assets/img/chart_icon.png" alt="차트보기" width="20" height="20" @click="modalChart(record)" style="cursor: pointer;">
+          </div>
+          <div v-else>
+            -
+          </div>
         </template>
         <template v-if="column.key === 'productMemo'">
           <a-button
