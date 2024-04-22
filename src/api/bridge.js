@@ -36,6 +36,14 @@ export function useBridgeApi() {
                 method:'get',
                 params: {...param},
             });
+        },
+
+        // 리스트 개수 조회
+        getBridgeOrderListCount: () => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/bridgeOrderListCount",
+                method:'get',
+            });
         }
     }
 }

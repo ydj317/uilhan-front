@@ -200,7 +200,7 @@
             <a-row class="mb10">
               <a-col :span="1"></a-col>
               <a-col :span="23" class="center">
-                <a-input v-model:value="item.invoiceNumber"/>
+                <a-input v-model:value="item.tracking_no"/>
               </a-col>
             </a-row>
           </a-col>
@@ -220,18 +220,20 @@
           <a-col :span="3" class="bg-fa pt30 step4-left">
             <a-row class="ml10">
               <a-upload
-				  v-model:file="item.prdImage"
 				  name="file"
 				  :max-count="1"
 				  :headers="state.uploadHeaders"
                   list-type="picture-card"
                   class="avatar-uploader"
-				  :customRequest="(file) => handleUploadChange(file, index)"
+				  :showUploadList="false"
 				  :beforeUpload="validateUploadImage"
+				  :customRequest="(file) => handleUploadChange(file, index)"
               >
-                <img v-if="item.prdImage" alt="avatar" :src="item.prdImage"/>
+                <img v-if="item.prdImage" alt="avatar" :src="item.prdImage" style="width: 100%;height:100%;object-fit: contain;"/>
                 <div v-else>
-                  <div class="ant-upload-text fs12">이미지 URL<br>입력해주세요</div>
+					<loading-outlined v-if="state.loading"></loading-outlined>
+					<plus-outlined v-else></plus-outlined>
+					<div class="ant-upload-text fs12">이미지 URL<br>입력해주세요</div>
                 </div>
               </a-upload>
             </a-row>
@@ -595,16 +597,20 @@
 </template>
 
 <script setup>
-import {computed, createVNode, onMounted, reactive, ref, toRefs, watchEffect} from "vue";
+import {computed, createVNode, reactive, ref, toRefs, watchEffect} from "vue";
 import {message, Modal} from "ant-design-vue";
-import {ExclamationCircleOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {
+	ExclamationCircleOutlined,
+	LoadingOutlined,
+	QuestionCircleOutlined,
+} from "@ant-design/icons-vue";
 import {useMarketOrderApi} from "@/api/order";
 import {useBridgeApi} from "@/api/bridge";
 import Cookie from "js-cookie";
 import ParseMarketOrderZhCn from "@/components/ParseMarketOrderZhCn.vue";
 import OverseasCareDetail from "@/components/OverseasCareDetail.vue";
 import {AuthRequest} from "@/util/request";
-import {lib} from "@/util/lib";
+import plusOutlined from "@ant-design/icons-vue/lib/icons/PlusOutlined";
 
 const props = defineProps({
   visible: Boolean,
@@ -813,8 +819,6 @@ const state = reactive({
    이러한 사실을 통지하고 해당 상품을 취소할 수 있습니다.`
 });
 
-
-
 const OverseasCareData = ref({show: false, checked : false, total_amount_kr: state.total_amount_kr, care_price : state.form.carePrice})
 
 const calculateTotal = async () => {
@@ -939,7 +943,7 @@ const getOrderDetailForBridge = async () => {
 		  orderNo: item.orderNo,
 		  prdImage: item.prdImage,
 		  prdName: item.prdName,
-		  prdNameCn: item.prdNameCn,
+		  prd_name_cn: item.prdNameCn,
 		  prdOptionName: item.prdOptionName,
 		  prdUrl: item.prdUrl,
 		  quantity: item.quantity,
@@ -1265,34 +1269,40 @@ const getCategory = async (arc_seq, index) => {
 
 const validateUploadImage = (file) => {
 	const isJPG = file.type === "image/jpeg";
-	const isJPEG = file.type === "image/jpeg";
-	const isGIF = file.type === "image/gif";
+	const isJPEG = file.type === "image/jpg";
 	const isPNG = file.type === "image/png";
 
-	if (!(isJPG || isJPEG || isPNG || isGIF)) {
-		message.warning("허용되는 이미지 격식이 아닙니다.");
+	if (!(isJPG || isJPEG || isPNG)) {
+		message.error("허용되는 이미지 격식이 아닙니다.");
 		return false;
+	}
+
+	const isLt2M = file.size / 1024 / 1024 < 2;
+	if (!isLt2M) {
+		message.error('이미지 용량은 2MB를 초과하였습니다.');
 	}
 
 	return true;
 }
 
 const handleUploadChange = (option, index) => {
+	state.loading = true;
+	const formData = new FormData();
+	formData.append("file", option.file);
+	formData.append("image_type", "bridge");
 
-	console.log(option)
-
-	// const formData = new FormData();
-	// formData.append("file", option.file);
-	// formData.append("image_type", "product");
-	// formData.append("relation_type", "product");
-	// formData.append("product_idx", state.form.order_id);
-	//
-	// AuthRequest.post(
-	// 	process.env.VUE_APP_API_URL + "/api/image",
-	// 	formData
-	// ).then(res => {
-	// 	console.log(res)
-	// })
+	AuthRequest.post(
+		process.env.VUE_APP_API_URL + "/api/image",
+		formData
+	).then(res => {
+		if (res.status !== '2000') {
+			message.error('이미지 업로드 실패');
+            return false;
+		}
+		state.form.items[index].prdImage = res?.data?.img_url;
+	}).finally(() => {
+		state.loading = false;
+	})
 }
 
 // 개인통관부호 change 이벤트
@@ -1594,5 +1604,19 @@ watchEffect(() => {
 
 #bridgeForm .ant-modal-content {
   height: 100% !important;
+}
+
+.avatar-uploader > .ant-upload {
+	width: 128px;
+	height: 128px;
+}
+.ant-upload-select-picture-card i {
+	font-size: 32px;
+	color: #999;
+}
+
+.ant-upload-select-picture-card .ant-upload-text {
+	margin-top: 8px;
+	color: #666;
 }
 </style>
