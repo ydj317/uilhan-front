@@ -13,7 +13,7 @@
                         style="padding:10px;border: 1px solid #eeeeee;border-bottom: none;border-left: none;"
                         :style="market_code === '' ? 'border-bottom: 1px solid #eeeeee;' : ''">
                         <a-select v-model:value="market_code" clearable @change="handleChangeSelection"
-                            style="width: 300px;" :disabled="!auth" >
+                            style="width: 300px;" :disabled="!auth && this.getAccountId() !== ''" >
 <!--                          :disabled="this.getAccountId() !== ''"-->
                             <a-select-option value="">쇼핑몰(오픈마켓)</a-select-option>
                             <a-select-option :value="item.value" v-for="(item, key) in marketList" :key="key">{{
