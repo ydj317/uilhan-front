@@ -8,7 +8,7 @@
           <img src="@/assets/logo_icon.png" style="height:35px;">
       </div>
       <div class="logo" v-if="!collapsed">
-          <img src="@/assets/logo_width.png" key="logo_width" style="height:35px;" @click="goDashboard">
+          <img src="../../assets/logo_width_240423.png" key="logo_width" style="height:20px; margin-right: 80px;" @click="goDashboard">
       </div>
       <div
           style="position: absolute;top: 18px;border-radius: 50%;padding: 4px 5px 5px 5px;background-color: white;"
