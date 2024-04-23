@@ -2,7 +2,7 @@
     <div>
         <a-card :title="this.getAccountId() === '' ? '마켓계정등록' : '마켓계정수정'">
             <div>
-              <div class="help fs12 pl10 pb10" style="color: #999">마켓계정 정보 수정은 관리자에게 문의하시기 바랍니다.</div>
+              <div class="help fs12 pl10 pb10" style="color: #999" v-if="!auth && this.getAccountId() !== ''">마켓계정 정보 수정은 관리자에게 문의하시기 바랍니다.</div>
                 <a-row>
                     <a-col :span="4"
                         style="display: flex;align-items: center;justify-content: right; padding:10px;background-color: #fafafa;border: 1px solid #eeeeee;border-bottom: none;"
