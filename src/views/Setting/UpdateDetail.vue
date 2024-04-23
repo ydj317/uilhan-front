@@ -35,7 +35,7 @@
         <template #label>
           <a-space>
             <span>이미지 자동 번역</span>
-            <a-tooltip title="자동 저장은 상품등록 시 저장버튼을 클릭하지 않아도 수정된 상품정보를 실시간으로 저장하는 기능입니다.">
+            <a-tooltip title="이미지 자동 번역을 사용하면 상품 수집 시 이미지는 자동으로 번역이 됩니다. 이미지가 많을 경우 일정한 대기시간이 소요됩니다.">
               <QuestionCircleOutlined/>
             </a-tooltip>
           </a-space>

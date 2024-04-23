@@ -2,6 +2,7 @@
     <div>
         <a-card :title="this.getAccountId() === '' ? '마켓계정등록' : '마켓계정수정'">
             <div>
+              <div class="help fs12 pl10 pb10" style="color: #999" v-if="!auth && this.getAccountId() !== ''">마켓계정 정보 수정은 관리자에게 문의하시기 바랍니다.</div>
                 <a-row>
                     <a-col :span="4"
                         style="display: flex;align-items: center;justify-content: right; padding:10px;background-color: #fafafa;border: 1px solid #eeeeee;border-bottom: none;"
@@ -12,7 +13,8 @@
                         style="padding:10px;border: 1px solid #eeeeee;border-bottom: none;border-left: none;"
                         :style="market_code === '' ? 'border-bottom: 1px solid #eeeeee;' : ''">
                         <a-select v-model:value="market_code" clearable @change="handleChangeSelection"
-                            style="width: 300px;" :disabled="this.getAccountId() !== ''">
+                            style="width: 300px;" :disabled="!auth && this.getAccountId() !== ''" >
+<!--                          :disabled="this.getAccountId() !== ''"-->
                             <a-select-option value="">쇼핑몰(오픈마켓)</a-select-option>
                             <a-select-option :value="item.value" v-for="(item, key) in marketList" :key="key">{{
                                 item.label
@@ -40,6 +42,7 @@ import Lotteon from "./markets/Lotteon.vue";
 import Tmon from "./markets/Tmon.vue";
 import Sk11st from "./markets/Sk11st.vue";
 import Qoo10sg from "./markets/Qoo10sg.vue";
+import Cookie from "js-cookie";
 
 export default {
     data() {
@@ -50,6 +53,7 @@ export default {
 
             marketList: [],
             marketItemFormRef: null,
+            auth:Cookie.get("member_name") == 'jwli' ? true : false
         }
     },
 
