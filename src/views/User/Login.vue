@@ -2,7 +2,7 @@
   <loading v-model:active="loading" :can-cancel="false" :is-full-page="true"/>
   <div class="container" style="display: flex;height: 100vh">
     <div class="login-bg">
-      <img style="margin: 50px" src="../../assets/logo_white.png" key="logo-white" alt="">
+      <img style="margin: 50px" src="../../assets/logo_login.png" key="logo-white" alt="">
     </div>
     <div class="login-form">
       <div style="display: flex;flex-direction: column; justify-content: center;align-items: center;width: 362px;">
