@@ -26,7 +26,7 @@
 					<a-flex justify="space-between">
 						<span class="fw fs16 font-SCDream6 t-white">나의 출고지 주소</span>
 					</a-flex>
-					<a-button type="ghost" class="h50 t-white fs12 font-SCDream5 bor-fafafa mt25">나의 중국 출고지 주소</a-button>
+					<a-button type="ghost" class="h50 t-white fs12 font-SCDream5 bor-fafafa mt25" href="https://zh8g.com/library/html/PopAdd.asp?CTR_SEQ=1" target="_blank">나의 중국 출고지 주소</a-button>
 				</a-flex>
 			</a-col>
       <a-col class="ptb26 pl45 pr45 br5 w24 bg-f8f100">

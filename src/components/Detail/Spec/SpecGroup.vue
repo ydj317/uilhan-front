@@ -56,7 +56,7 @@
         </div>
       </div>
       <div class="spec-box">
-        <table v-for="(option, optionIndex) in this.options" :key="optionIndex" :data-index="optionIndex">
+        <table v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :data-index="optionIndex">
           <!--옵션그룹,옵션일괄설정-->
           <thead>
           <!--그룹명 영역-->
@@ -124,8 +124,8 @@
                 </div>
 
                 <span class="spec-count" style="width: 80px"><span :style="item.name.length > 25 ? 'color:red;' : ''">
-              {{ item.name.length }}
-            </span> / 25</span>
+                  {{ item.name.length }}
+                </span> / 25</span>
               </div>
             </td>
           </tr>

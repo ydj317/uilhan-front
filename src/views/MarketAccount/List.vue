@@ -32,15 +32,13 @@
                 </div>
             </div>
             <a-table  :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
-                :pagination="false" bordered >
+                :pagination="false" bordered :custom-row="customLine" >
                 <a-table-column title="마켓" dataIndex="marketCode" key="marketCode" align="center">
                     <template #customRender="scope, record, index">
-                        <img :src="getLogoSrc('market-logo', scope.record.marketCode)" alt="" class="mr10" style="width: 20px;height: 20px">
-                        <span>{{scope.record.marketCode}}</span>
+                      <img :src="getLogoSrc('market-logo', scope.record.marketCode)" alt="" class="mr10" style="width: 20px;height: 20px">
+                      <span>{{scope.record.marketCode}}</span>
                     </template>
-
                 </a-table-column>
-
                 <a-table-column title="마켓ID" dataIndex="sellerId" key="sellerId" align="center"/>
                 <a-table-column title="노출상태" dataIndex="isUse" key="isUse" align="center">
                     <template #customRender="scope, record, index">
@@ -115,7 +113,15 @@ const removeAccount = (id) => {
 const getTableList = async () => {
     await useMarketAccountApi().getAccountList(state.tableData.params).then(res => {
         const { list, total } = res.data
-
+        let marketCode = [];
+        for (const k in list) {
+          list[k]['many'] = 0;
+          if(marketCode.indexOf(list[k]['marketCode']) !== -1){
+            list[k]['many'] = 1;
+          }else{
+            marketCode.push(list[k]['marketCode']);
+          }
+        }
         state.tableData.data = list;
         state.tableData.total = total;
     });
@@ -152,6 +158,11 @@ const rowSelection = {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
 };
+const customLine = (record) => {
+  return {
+    class:record.many == 1 ? 'disabled' : ''
+  }
+}
 
 onMounted(() => {
   Promise.all([getTableList(), getMarketList()])
@@ -205,6 +216,10 @@ const getLogoSrc = (fileName, marketCode) => {
 
     .user_form .phone .ant-form-item-control:nth-last-child {
         border-bottom: none;
+    }
+    .disabled{
+      background-color: #f0f0f0;
+      pointer-events: none;
     }
 </style>
 <style scoped>

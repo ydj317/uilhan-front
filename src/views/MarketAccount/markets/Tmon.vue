@@ -2,14 +2,14 @@
   <a-form ref="marketFormRef" :model="state.formData" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
           class="market_form">
     <a-form-item name="seller_id" label="파트너 ID" :rules="[{ required: true, message: '파트너 ID를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status"/>
+      <a-input v-model:value="state.formData.seller_id" :disabled="!auth"/>
     </a-form-item>
 
     <a-form-item name="partner_token" label="파트너 API KEY" @keyup="handleResetSyncStatus"
                  :rules="[{ required: true, message: '파트너 API KEY 를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.partner_token"/>
+      <a-input v-model:value="state.formData.partner_token" :disabled="!auth"/>
     </a-form-item>
-    <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
+    <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading" :disabled="!auth">
       <template #icon v-if="state.formData.sync_market_status">
         <CheckCircleOutlined style="color:#67C23A;"/>
       </template>
@@ -101,7 +101,8 @@ import {
 } from '@ant-design/icons-vue';
 import {useRouter} from 'vue-router';
 import {useAccountJsonApi} from "@/api/accountJson";
-
+import Cookie from "js-cookie";
+const auth = Cookie.get("member_name") == 'jwli' ? true : false;
 const props = defineProps({
   market_code: {
     type: String,
