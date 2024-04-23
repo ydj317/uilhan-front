@@ -486,6 +486,7 @@ export default {
     },
     updateTranslateImageList(imageList) {
       for (const k in imageList) {
+        this.product.item_thumbnails[k].url =  imageList[k].url;
         if (imageList[k].translate_status === true) {
           this.product.item_thumbnails[k].url =  imageList[k].translate_url;
         }
