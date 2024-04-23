@@ -950,6 +950,10 @@ const getOrderDetailForBridge = async () => {
 		  unitPrice: item.prdPriceCn,
 		  itemNo: item.itemNo,
 		  message: item.message,
+		  hs_code: "",
+		  cn_order_id: "",
+		  arc_seq: "",
+		  prd_name_en: "",
       });
     });
   }).catch(err => {
@@ -996,17 +1000,22 @@ const handleOk = () => {
     return false;
   }
 
-  // // check PRO_NM
-  // if (state.form.items.some(item => item.PRO_NM === "")) {
-  //   message.error("상품명을 입력해 주세요.");
-  //   return false;
-  // }
-  //
-  // // check PRO_NM_CH
-  // if (state.form.items.some(item => item.PRO_NM_CH === "")) {
-  //   message.error("중문 상품명을 입력해 주세요.");
-  //   return false;
-  // }
+  if (state.form.items.some(item => item.cn_order_id === "")) {
+    message.error("오더번호를 입력해 주세요.");
+    return false;
+  }
+
+  // check prd_name_en
+  if (state.form.items.some(item => item.prd_name_en === "")) {
+    message.error("통관품목을 선택해 주세요.");
+    return false;
+  }
+
+  // check hs_code
+  if (state.form.items.some(item => item.hs_code === "")) {
+    message.error("통관품목을 선택해 주세요.");
+    return false;
+  }
 
   // check unitPrice
   if (state.form.items.some(item => item.unitPrice === "")) {
@@ -1017,12 +1026,6 @@ const handleOk = () => {
   // check quantity
   if (state.form.items.some(item => item.quantity === "")) {
     message.error("수량을 입력해 주세요.");
-    return false;
-  }
-
-  // check prdUrl
-  if (state.form.items.some(item => item.prdUrl === "")) {
-    message.error("상품 URL을 입력해 주세요.");
     return false;
   }
 
@@ -1245,7 +1248,6 @@ const getCategory = async (arc_seq, index) => {
 
 	state.loading = true;
 	useBridgeApi().getArcSeq({arc_seq: arc_seq}).then(res => {
-		console.log(res)
 		if (res.status !== "2000") {
 			message.error("통관품목을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
 			return false;
