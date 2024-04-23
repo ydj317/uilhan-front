@@ -157,6 +157,9 @@ const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
+  getCheckboxProps: record => ({
+    disabled: record.many == 1,
+  }),
 };
 const customLine = (record) => {
   return {
