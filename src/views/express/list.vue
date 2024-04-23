@@ -11,14 +11,14 @@
         <span>2.상품포장 내 에어캡 비용 무료</span>
       </span>
     </a-flex>
-		<a-flex justify="space-between">
+		<a-flex justify="space-between" class="board-wrap">
 			<a-col class="ptb26 pl45 pr45 br5 w24 bg-f8f100">
 				<a-flex vertical>
 					<a-flex justify="space-between">
 						<span class="fw fs16 font-SCDream6">배송대행 신청서</span>
-						<span class="fs12 color-ff6700 font-SCDream5">신청서 가이드라인</span>
+						<a-button class="fs12 color-ff6700 font-SCDream5 more" href="https://zh8g.com/Front/Page/UserPage.asp?gMnu1=202&gMnu2=20210" target="_blank">신청서 가이드라인</a-button>
 					</a-flex>
-					<a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black mt25">신청서 작성하기</a-button>
+					<a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black mt25" href="https://zh8g.com/Front/Acting/Acting_W.asp?gMnu1=202&gMnu2=20202" target="_blank">신청서 작성하기</a-button>
 				</a-flex>
 			</a-col>
 			<a-col class="ptb26 pl45 pr45 br5 w24 bg-ff6700">
@@ -26,7 +26,7 @@
 					<a-flex justify="space-between">
 						<span class="fw fs16 font-SCDream6 t-white">나의 출고지 주소</span>
 					</a-flex>
-					<a-button type="ghost" class="h50 t-white fs12 font-SCDream5 bor-fafafa mt25">신청서 작성하기</a-button>
+					<a-button type="ghost" class="h50 t-white fs12 font-SCDream5 bor-fafafa mt25">나의 중국 출고지 주소</a-button>
 				</a-flex>
 			</a-col>
       <a-col class="ptb26 pl45 pr45 br5 w24 bg-f8f100">
@@ -35,8 +35,8 @@
             <span class="fw fs16 font-SCDream6">배대지 비용 / 분실상품 찾기</span>
           </a-flex>
           <a-flex justify="space-between" class="mt25">
-            <a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black plr30">비용 확인하기</a-button>
-            <a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black plr30">분실상품 찾기</a-button>
+            <a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black plr30" href="https://www.zh8g.com/Front/Introduction/DlvrMny.asp?gMnu1=201&gMnu2=20107" target="_blank">비용 확인하기</a-button>
+            <a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black plr30" href="https://www.zh8g.com/Front/Acting/NoData_S.asp?gMnu1=205&gMnu2=20512" target="_blank">분실상품 찾기</a-button>
           </a-flex>
         </a-flex>
       </a-col>
@@ -44,7 +44,7 @@
 				<a-flex vertical>
 					<a-flex justify="space-between">
 						<span class="fw fs16 font-SCDream5">배대지 공지사항</span>
-						<span class="red cp fs14 font-SCDream4">more</span>
+						<a-button class="color-ff6700 cp fs14 font-SCDream4 more" href="https://www.zh8g.com/Front/Board/Bbs_S.asp?gMnu1=205&gMnu2=20501&sBB_CODE=1" target="_blank">more</a-button>
 					</a-flex>
 					<a-flex vertical class="mt25 font-SCDream5 fs12">
 						<span class="mb14">
@@ -616,6 +616,18 @@ onMounted(async () => {
 .express-wrap .total-main .ant-input{
   background: none;
   width: 10%;
+}
+.express-wrap .board-wrap a.ant-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.express-wrap .board-wrap .more.ant-btn{
+  background: none;
+  box-shadow: none;
+  border: 0;
+  padding: 0;
+  height: inherit;
 }
 .modal-wrap .ant-btn.reset{
 	background: #2270E3;
