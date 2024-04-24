@@ -81,7 +81,7 @@ export default {
 
         // 마켓 리스트
         getMarketList() {
-            useMarketApi().getMarketList({}).then(res => {
+            useMarketApi().getMarketFilterList({}).then(res => {
               this.marketList = [];
 
               for (let key in res.data) {
