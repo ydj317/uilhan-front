@@ -179,10 +179,19 @@ export class ServiceProduct {
 
     let failedItem = [];
 
-    productList.map((prdItem) => {
-      failedItem = smartStoreCategory.filter((item) => {
-        return prdItem.item_sync_keyword?.includes(item.cate_name);
-      })
+
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    productList.forEach((prdItem) => {
+      smartStoreCategory.forEach((item) => {
+        const boundary = "(?:\\s|^|$)";
+        const regexPattern = `${boundary}${escapeRegExp(item.cate_name)}${boundary}`;
+        const regex = new RegExp(regexPattern, 'i');
+        if (prdItem.item_sync_keyword && regex.test(prdItem.item_sync_keyword)) {
+          failedItem.push(item);
+        }
+      });
     })
 
     if(failedItem.length > 0) {
