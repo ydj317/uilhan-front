@@ -82,7 +82,6 @@ import { message } from 'ant-design-vue';
 import Cookie from "js-cookie";
 
 const auth = Cookie.get("member_name") == 'jwli' ? true : false;
-console.log(Cookie.get("member_name"),auth)
 const state = reactive({
     tableData: {
         data: [],
