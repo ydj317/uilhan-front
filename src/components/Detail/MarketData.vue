@@ -348,6 +348,10 @@ export default {
       const queue = []
 
       this.marketList.forEach(market => {
+        // 处理 market_prd_code 为 null 的情况
+        if (market.market_prd_code === '' || market.market_prd_code === null) {
+          market.market_prd_code = '';
+        }
         let accountName = market.accountName
         // 创建 分类
         this.categories[accountName] = {
