@@ -118,7 +118,7 @@ export default defineComponent ({
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   height: 100%;
 }
 
@@ -129,7 +129,7 @@ export default defineComponent ({
   align-items: center;
   width: 500px;
   padding: 30px 80px;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 20px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 }
