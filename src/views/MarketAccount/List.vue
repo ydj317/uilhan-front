@@ -32,7 +32,7 @@
                 </div>
             </div>
             <a-table  :data-source="state.tableData.data" :loading="state.tableData.loading" :row-selection="rowSelection"
-                :pagination="false" bordered :custom-row="customLine" >
+                :pagination="false" bordered :row-class-name="(_record, index) => (_record.total && !auth ? 'bg-f0f0f0' : '')">
                 <a-table-column title="마켓" dataIndex="marketCode" key="marketCode" align="center">
                     <template #customRender="scope, record, index">
                       <img :src="getLogoSrc('market-logo', scope.record.marketCode)" alt="" class="mr10" style="width: 20px;height: 20px">
@@ -43,7 +43,7 @@
                 <a-table-column title="노출상태" dataIndex="isUse" key="isUse" align="center">
                     <template #customRender="scope, record, index">
                         <a-switch v-model:checked="scope.record.isUse" @change="changeIsUse(scope.record)" :checkedValue="1"
-                            :unCheckedValue="0" checked-children="On" un-checked-children="Off" />
+                            :unCheckedValue="0" checked-children="On" un-checked-children="Off" :disabled="scope.record.total && !auth" />
                     </template>
                 </a-table-column>
                 <a-table-column title="등록일자" dataIndex="insDate" key="insDate" align="center">
@@ -54,7 +54,7 @@
                 <a-table-column title="관리" dataIndex="manage" key="manage" align="center">
                     <template #customRender="scope, record, index">
                         <RouterLink :to="`/market/accounts/register/${scope.record['id']}`">
-                            <a-button type="primary">수정</a-button>
+                            <a-button type="primary" :disabled="scope.record.total && !auth">수정</a-button>
                         </RouterLink>
 
                         <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No"
@@ -79,7 +79,10 @@ import { onMounted, reactive } from 'vue';
 import { useMarketAccountApi } from '@/api/marketAccount';
 import { useMarketApi } from '@/api/market';
 import { message } from 'ant-design-vue';
+import Cookie from "js-cookie";
 
+const auth = Cookie.get("member_name") == 'jwli' ? true : false;
+console.log(Cookie.get("member_name"),auth)
 const state = reactive({
     tableData: {
         data: [],
@@ -115,9 +118,9 @@ const getTableList = async () => {
         const { list, total } = res.data
         let marketCode = [];
         for (const k in list) {
-          list[k]['many'] = 0;
+          list[k]['total'] = 0;
           if(marketCode.indexOf(list[k]['marketCode']) !== -1){
-            list[k]['many'] = 1;
+            list[k]['total'] = 1;
           }else{
             marketCode.push(list[k]['marketCode']);
           }
@@ -157,15 +160,11 @@ const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
+  //禁止全选单选
   getCheckboxProps: record => ({
-    disabled: record.many == 1,
+    disabled: record.total == 1 && !auth,
   }),
 };
-const customLine = (record) => {
-  return {
-    class:record.many == 1 ? 'disabled' : ''
-  }
-}
 
 onMounted(() => {
   Promise.all([getTableList(), getMarketList()])
@@ -220,9 +219,8 @@ const getLogoSrc = (fileName, marketCode) => {
     .user_form .phone .ant-form-item-control:nth-last-child {
         border-bottom: none;
     }
-    .disabled{
+    .bg-f0f0f0{
       background-color: #f0f0f0;
-      pointer-events: none;
     }
 </style>
 <style scoped>
