@@ -1053,7 +1053,7 @@ export default defineComponent({
   width: 100%;
   height: 100vh;
   overflow-y: hidden;
-  background: #ffdb41;
+  background: url("../../assets/img/login_bg.jpg") no-repeat center center;
 }
 
 #userRegister .init {
