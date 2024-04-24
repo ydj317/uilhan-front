@@ -40,7 +40,11 @@
             </a-tooltip>
           </a-space>
         </template>
-        <a-switch v-model:checked="formState.settingDatas.use_auto_translate" @change="changeUseAutoTranslate" checked-children="on" un-checked-children="off" />
+        <a-switch
+            v-model:checked="formState.settingDatas.use_auto_translate"
+            @change="changeUseAutoTranslate"
+            checked-children="on"
+            un-checked-children="off" />
       </a-descriptions-item>
     </a-descriptions>
   </a-card>
@@ -310,6 +314,7 @@ const formState = reactive({
   },
   loading: false,
   marketList: [],
+  userInfo : {},
 });
 
 const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN"));
@@ -338,6 +343,12 @@ function changeUseAutoSave() {
 }
 
 function changeUseAutoTranslate() {
+  if (formState.userInfo.is_vip_time === false || formState.userInfo.is_vip === false) {
+    formState.settingDatas.use_auto_translate = false;
+    message.error('이미지 자동 번역은 유료서비스로 결제후 사용이 가능합니다.');
+    return false;
+  }
+
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", {
     use_auto_translate: formState.settingDatas.use_auto_translate,
   }).then((res) => {
@@ -556,15 +567,15 @@ async function saveSettings(){
   }
 }
 
-function getUserInfoData() {
+async function getUserInfoData() {
   formState.loading = true;
-  useUserApi().getUserInfoData({}).then((res) => {
+  await useUserApi().getUserInfoData({}).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
       formState.loading = false;
       return false;
     }
-
+    formState.userInfo = res.data;
     formState.settingDatas.recharge = res.data.recharge;
 
     //--------Margin--------------------
@@ -654,9 +665,9 @@ function getUserInfoData() {
   });
 }
 
-onMounted(() => {
+onMounted( async () => {
+  await getUserInfoData();
   getMarketList();
-  getUserInfoData();
 });
 
 </script>

@@ -369,9 +369,9 @@ export default defineComponent({
         return true;
       }
 
-      if (this.product.formState.keyword !== undefined && this.product.formState.keyword !== null) {
+      if (this.product.item_sync_keyword !== undefined && this.product.item_sync_keyword !== null) {
         faildItem = this.smartStoreCategory.filter((item) => {
-          return this.product.formState.keyword.includes(item.cate_name);
+          return this.product.item_sync_keyword.includes(item.cate_name);
         })
       }
 
