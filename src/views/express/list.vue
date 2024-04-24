@@ -1,10 +1,10 @@
 <template>
 	<div class="express-wrap p30">
     <a-flex class="mb60">
-      <span class="fs30 mr40 color-f8f100 font-SCDream5">유일 배송대행지</span>
+      <span class="fs30 mr40 color-FEDB41 font-SCDream5">유일 배송대행지</span>
       <span class="fs30 fw font-SCDream4">셀러들의 선택, 정확한 AI배송대행지</span>
     </a-flex>
-    <a-flex class="mb30 color-4f0ae7 br20 p8 pl20 bg-fafafa">
+    <a-flex class="mb30 color-2171E2 br20 p8 pl20 bg-fafafa">
       <span class="fs12 font-SCDream5 mr80"><InfoCircleFilled class="mr10" />유일 배송대행지 이벤트 진행중</span>
       <span class="fs11 font-SCDream4">
         <span class="mr10">1,배송대행 VIP 등업</span>
@@ -12,16 +12,16 @@
       </span>
     </a-flex>
 		<a-flex justify="space-between" class="board-wrap">
-			<a-col class="ptb26 pl45 pr45 br5 w24 bg-f8f100">
+			<a-col class="ptb26 pl45 pr45 br5 w24 bg-FEDB41">
 				<a-flex vertical>
 					<a-flex justify="space-between">
 						<span class="fw fs16 font-SCDream6">배송대행 신청서</span>
-						<a-button class="fs12 color-ff6700 font-SCDream5 more" href="https://zh8g.com/Front/Page/UserPage.asp?gMnu1=202&gMnu2=20210" target="_blank">신청서 가이드라인</a-button>
+						<a-button class="fs12 color-FB6F3E font-SCDream5 more" href="https://zh8g.com/Front/Page/UserPage.asp?gMnu1=202&gMnu2=20210" target="_blank">신청서 가이드라인</a-button>
 					</a-flex>
 					<a-button type="ghost" class="h50 font-SCDream5 fs12 bor-black mt25" href="https://zh8g.com/Front/Acting/Acting_W.asp?gMnu1=202&gMnu2=20202" target="_blank">신청서 작성하기</a-button>
 				</a-flex>
 			</a-col>
-			<a-col class="ptb26 pl45 pr45 br5 w24 bg-ff6700">
+			<a-col class="ptb26 pl45 pr45 br5 w24 bg-FB6F3E">
 				<a-flex vertical>
 					<a-flex justify="space-between">
 						<span class="fw fs16 font-SCDream6 t-white">나의 출고지 주소</span>
@@ -29,7 +29,7 @@
 					<a-button type="ghost" class="h50 t-white fs12 font-SCDream5 bor-fafafa mt25" href="https://zh8g.com/library/html/PopAdd.asp?CTR_SEQ=1" target="_blank">나의 중국 출고지 주소</a-button>
 				</a-flex>
 			</a-col>
-      <a-col class="ptb26 pl45 pr45 br5 w24 bg-f8f100">
+      <a-col class="ptb26 pl45 pr45 br5 w24 bg-FEDB41">
         <a-flex vertical>
           <a-flex justify="space-between">
             <span class="fw fs16 font-SCDream6">배대지 비용 / 분실상품 찾기</span>
@@ -44,7 +44,7 @@
 				<a-flex vertical>
 					<a-flex justify="space-between">
 						<span class="fw fs16 font-SCDream5">배대지 공지사항</span>
-						<a-button class="color-ff6700 cp fs14 font-SCDream4 more" href="https://www.zh8g.com/Front/Board/Bbs_S.asp?gMnu1=205&gMnu2=20501&sBB_CODE=1" target="_blank">more</a-button>
+						<a-button class="color-FB6F3E cp fs14 font-SCDream4 more" href="https://www.zh8g.com/Front/Board/Bbs_S.asp?gMnu1=205&gMnu2=20501&sBB_CODE=1" target="_blank">more</a-button>
 					</a-flex>
 					<a-flex vertical class="mt25 font-SCDream5 fs12">
 						<span class="mb14">
@@ -77,7 +77,7 @@
             <template v-else>
               <span class="font-SCDream6 fs14 mr10">{{ v.rq2 }}</span>
             </template>
-            <span class="font-SCDream4 fs10 br15 mr30 p5 bg-f8f100 t-black">반입예정</span>
+            <span class="font-SCDream4 fs10 br15 mr30 p5 bg-FEDB41 t-black">반입예정</span>
             <a-divider type="vertical" class="bg-white mr30"/>
             <template v-if="state.auth">
               <a-input class="font-SCDream6 fs14 mr10 color-fefefe" v-model:value="v.rq1" @blur="setTotalData(v)"></a-input>
@@ -85,7 +85,7 @@
             <template v-else>
               <span class="font-SCDream6 fs14 mr10">{{ v.rq1 }}</span>
             </template>
-            <span class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white">검사예정</span>
+            <span class="font-SCDream4 fs10 br15 p5 bg-2171E2 t-white">검사예정</span>
             <a-flex class="toggle-btn cp">
               <div @click="toggleTotal">통관일정 자세히&nbsp;∨</div>
             </a-flex>
@@ -114,19 +114,19 @@
                     </template>
                     <span class="font-SCDream4 color-hui ml5">입항 건</span>
                   </div>
-                  <div class="font-SCDream4 fs10 br15 p5 bg-f8f100 t-black t-c w30">반입예정</div>
+                  <div class="font-SCDream4 fs10 br15 p5 bg-FEDB41 t-black t-c w30">반입예정</div>
                 </a-flex>
                 <a-flex align="center" justify="space-between" class="fs14 mt5">
                   <div class="fl1">
                     <template v-if="state.auth">
-                      <a-input class="font-SCDream6 color-4f0ae7 w60" v-model:value="v.rq1" @blur="setTotalData(v)"></a-input>
+                      <a-input class="font-SCDream6 color-2171E2 w60" v-model:value="v.rq1" @blur="setTotalData(v)"></a-input>
                     </template>
                     <template v-else>
-                      <span class="font-SCDream6 color-4f0ae7">{{ v.rq1 }}</span>
+                      <span class="font-SCDream6 color-2171E2">{{ v.rq1 }}</span>
                     </template>
                     <span class="font-SCDream4 color-hui ml5">입항 건</span>
                   </div>
-                  <div class="font-SCDream4 fs10 br15 p5 bg-4f0ae7 t-white t-c w30">검사예정</div>
+                  <div class="font-SCDream4 fs10 br15 p5 bg-2171E2 t-white t-c w30">검사예정</div>
                 </a-flex>
               </a-flex>
             </template>
@@ -151,12 +151,12 @@
                     </template>
                     <span class="font-SCDream4 color-hui ml5">입항 건</span>
                   </div>
-                  <div class="font-SCDream4 fs10 br15 p5 bg-ff6700 t-white t-c w30">오픈예정</div>
+                  <div class="font-SCDream4 fs10 br15 p5 bg-FB6F3E t-white t-c w30">오픈예정</div>
                 </a-flex>
               </a-flex>
             </template>
           </template>
-          <a-flex vertical class="pt20 pb20 pl40 pr40 font-SCDream5 fs10 color-ff6700 center ">
+          <a-flex vertical class="pt20 pb20 pl40 pr40 font-SCDream5 fs10 color-FB6F3E center ">
             <span>*</span>
             <span>통관일정은 <span style="text-decoration: underline;">매일 오전 10시</span>에 업데이트되며</span>
             <span>통관업체의 사정에 따라 지연될 수 있습니다.</span>
@@ -173,7 +173,7 @@
           <a-flex wrap="wrap" class="mt15 tab-wrap">
             <div v-for="(v,k) in state.tabs.send.tab" :class="{active:k === state.tabs.send.active}" @click="tabToggle('send',k)">
               <span class="fs12 font-SCDream5">{{ v.text }}</span>
-              <span class="fs12 font-SCDream6 color-4f0ae7">{{ v.number }}건</span>
+              <span class="fs12 font-SCDream6 color-2171E2">{{ v.number }}건</span>
             </div>
           </a-flex>
         </a-flex>
@@ -187,7 +187,7 @@
           <a-flex wrap="wrap" class="mt15 tab-wrap tab-wrap2">
             <div v-for="(v,k) in state.tabs.error.tab" :class="{active:k == state.tabs.error.active}" @click="tabToggle('error',k)">
               <span class="fs12 font-SCDream5">{{ v.text }}</span>
-              <span class="fs12 font-SCDream6 color-ff6700">{{ v.number }}건</span>
+              <span class="fs12 font-SCDream6 color-FB6F3E">{{ v.number }}건</span>
             </div>
           </a-flex>
         </a-flex>
@@ -199,7 +199,7 @@
           <a-flex wrap="wrap" class="mt15 tab-wrap tab-wrap2">
             <div v-for="(v,k) in state.tabs.back.tab" :class="{active:k == state.tabs.back.active}" @click="tabToggle('back',k)">
               <span class="fs12 font-SCDream5">{{ v.text }}</span>
-              <span class="fs12 font-SCDream6 color-ff6700">{{ v.number }}건</span>
+              <span class="fs12 font-SCDream6 color-FB6F3E">{{ v.number }}건</span>
             </div>
           </a-flex>
         </a-flex>
@@ -233,7 +233,7 @@
 					v-for="(order, key) in state.bridgeList"
 					:key="key"
 				>
-					<a-flex class="header color-lan w100 font-SCDream5 fs14">
+					<a-flex class="header color-2171E2 w100 font-SCDream5 fs14">
 						<div class="w10 text-center">No.{{ order['id'] }}</div>
 						<div class="w10 text-center">{{ order['bridgeOrderId'] ?? '' }}</div>
 						<div class="w20 text-center">{{ order['insDate'] ?? '' }}</div>
@@ -732,17 +732,14 @@ onMounted(async () => {
 .color-hui{
 	color: #B8B8B8;
 }
-.color-lan{
-	color: #2071E4;
+.color-FEDB41{
+  color: #FEDB41;
 }
-.color-f8f100{
-  color: #f8f100;
+.color-2171E2{
+  color: #2171E2;
 }
-.color-4f0ae7{
-  color: #4f0ae7;
-}
-.color-ff6700{
-  color: #ff6700;
+.color-FB6F3E{
+  color: #FB6F3E;
 }
 .color-fefefe{
   color: #fefefe;
@@ -750,14 +747,14 @@ onMounted(async () => {
 .bg-hui{
 	background: #F0F0F0;
 }
-.bg-f8f100{
-  background: #f8f100;
+.bg-FEDB41{
+  background: #FEDB41;
 }
-.bg-4f0ae7{
-  background: #4f0ae7;
+.bg-2171E2{
+  background: #2171E2;
 }
-.bg-ff6700{
-  background: #ff6700;
+.bg-FB6F3E{
+  background: #FB6F3E;
 }
 .bg-434343{
   background: #434343;
@@ -814,8 +811,8 @@ a {
 	color: black;
 }
 .notice-title{
-  color: #ff2828;
-  border: 1px solid #ff2828;
+  color: #F9443D;
+  border: 1px solid #F9443D;
 }
 .tab-wrap > div{
   width: 120px;
@@ -831,10 +828,10 @@ a {
   cursor: pointer;
 }
 .tab-wrap > div.active{
-  border: 1px solid #4f0ae7;
+  border: 1px solid #2171E2;
 }
 .tab-wrap2 > div.active{
-  border: 1px solid #ff6700;
+  border: 1px solid #FB6F3E;
 }
 .toggle-wrap{
   position: relative;
