@@ -2,7 +2,7 @@
   <loading v-model:active="loading" :can-cancel="false" :is-full-page="true" />
   <div class="container" style="display: flex;height: 100vh">
     <div class="login-bg">
-<!--      <img src="../../assets/img/login_title.png" key="logo-light" alt="">-->
+      <img src="../../assets/img/login_title.png" key="logo-light" alt="">
     </div>
     <div class="login-form">
       <div class="login-content">
