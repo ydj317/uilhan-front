@@ -2,7 +2,7 @@
   <loading v-model:active="loading" :can-cancel="false" :is-full-page="true" />
   <div class="container" style="display: flex;height: 100vh">
     <div class="login-bg">
-      <img src="../../assets/img/login_title.png" key="logo-light" alt="">
+<!--      <img src="../../assets/img/login_title.png" key="logo-light" alt="">-->
     </div>
     <div class="login-form">
       <div class="login-content">
@@ -90,6 +90,7 @@ export default defineComponent ({
     }
   }
 })
+//background-image: url('../../assets/img/login_bg.jpg');
 </script>
 <style scoped>
 .container {
@@ -97,7 +98,7 @@ export default defineComponent ({
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  background-image: url('../../assets/img/login_bg.jpg');
+  background-color: rgb(255, 209, 23);
   height: 100vh;
   width: 100%;
 }
