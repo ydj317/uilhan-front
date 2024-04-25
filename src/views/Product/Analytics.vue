@@ -100,7 +100,7 @@
     />
   </a-card>
 
-  <a-modal v-model:open="state.modalOpen" title="상품 유입 데이터 차트" :footer="null" :closable="false" width="1000px">
+  <a-modal v-model:open="state.modalOpen" title="상품 유입 데이터 차트" :footer="null" :closable="false" width="1000px" @cancel="modalClose">
     <a-flex class="mt20" justify="center">
       <img :src="state.selectedProduct?.productThumbnails[0]" width="60" height="60" class="mr20" :alt="state.selectedProduct?.productName" style="border-radius: 10px">
       <a-flex vertical="vertical" style="width: 90%">
@@ -172,6 +172,9 @@ const state = reactive({
   accountList: [],
   modalOpen: false,
   modalTabsIndex: 0,
+  modalPageIndex:0,
+  modalStartTime:0,
+  modalEndTime:0,
   dailyData: {
     params: {
       period: "1week",
@@ -427,78 +430,82 @@ const modalChart = async (product) => {
   state.selectedProduct = product;
   loadChartDataLoading.value = true;
   try {
-    const result = await findProductVisits({ productId: product.productId })
-    const legend =  result.data.map(v => state.openMarketList[v.marketCode]);
-
     // 오늘 부터 15일전 데이터
-    const today = dayjs();
+    const today = dayjs().subtract(state.modalPageIndex, "month");
     let xAxis = Array.from({ length: 30 }, (v, k) => today.subtract(k, "day").format("YYYY-MM-DD")).reverse();
-
-    // group by marketCode
-    const groupByData = result.data.reduce((acc, cur) => {
-      if(acc[cur.marketCode]) {
-        acc[cur.marketCode].push(cur);
-      } else {
-        acc[cur.marketCode] = [cur];
-      }
-      return acc;
-    }, []);
-
+    state.modalStartTime = xAxis[0];
+    state.modalEndTime = xAxis[xAxis.length-1];
+    const result = await findProductVisits({ productId: product.productId,startTime:state.modalStartTime,endTime:state.modalEndTime })
+    let legend =  [];
     let series;
-    series = Object.keys(groupByData).map((v, k) => {
-      return {
-        name: state.openMarketList[v],
-        type: "bar",
-        stack: "visit",
-        data: xAxis.map(_v => {
-          const find = groupByData[v].find(_vv => dayjs(_vv.visitDate).format("YYYY-MM-DD") === _v);
-          return find ? find.visitCount : '-';
-        })
-      };
-    });
-
-    const stackInfo = {};
-    for (let i = 0; i < series[0].data.length; ++i) {
-      for (let j = 0; j < series.length; ++j) {
-        const stackName = series[j].stack;
-        if (!stackName) {
-          continue;
+    if(result.data.length){
+      legend =  result.data.map(v => state.openMarketList[v.marketCode]);
+      // group by marketCode
+      const groupByData = result.data.reduce((acc, cur) => {
+        if(acc[cur.marketCode]) {
+          acc[cur.marketCode].push(cur);
+        } else {
+          acc[cur.marketCode] = [cur];
         }
-        if (!stackInfo[stackName]) {
-          stackInfo[stackName] = {
-            stackStart: [],
-            stackEnd: []
+        return acc;
+      }, []);
+      series = Object.keys(groupByData).map((v, k) => {
+        return {
+          name: state.openMarketList[v],
+          type: "bar",
+          stack: "visit",
+          data: xAxis.map(_v => {
+            const find = groupByData[v].find(_vv => dayjs(_vv.visitDate).format("YYYY-MM-DD") === _v);
+            return find ? find.visitCount : '-';
+          })
+        };
+      });
+
+      const stackInfo = {};
+      for (let i = 0; i < series[0].data.length; ++i) {
+        for (let j = 0; j < series.length; ++j) {
+          const stackName = series[j].stack;
+          if (!stackName) {
+            continue;
+          }
+          if (!stackInfo[stackName]) {
+            stackInfo[stackName] = {
+              stackStart: [],
+              stackEnd: []
+            };
+          }
+          const info = stackInfo[stackName];
+          const data = series[j].data[i];
+          if (data && data !== '-') {
+            if (info.stackStart[i] == null) {
+              info.stackStart[i] = j;
+            }
+            info.stackEnd[i] = j;
+          }
+        }
+      }
+      for (let i = 0; i < series.length; ++i) {
+        const data = series[i].data;
+        const info = stackInfo[series[i].stack];
+        for (let j = 0; j < series[i].data.length; ++j) {
+          // const isStart = info.stackStart[j] === i;
+          const isEnd = info.stackEnd[j] === i;
+          const topBorder = isEnd ? 5 : 0;
+          const bottomBorder = 0;
+          data[j] = {
+            value: data[j],
+            itemStyle: {
+              borderRadius: [topBorder, topBorder, bottomBorder, bottomBorder]
+            }
           };
         }
-        const info = stackInfo[stackName];
-        const data = series[j].data[i];
-        if (data && data !== '-') {
-          if (info.stackStart[i] == null) {
-            info.stackStart[i] = j;
-          }
-          info.stackEnd[i] = j;
-        }
       }
     }
-    for (let i = 0; i < series.length; ++i) {
-      const data = series[i].data;
-      const info = stackInfo[series[i].stack];
-      for (let j = 0; j < series[i].data.length; ++j) {
-        // const isStart = info.stackStart[j] === i;
-        const isEnd = info.stackEnd[j] === i;
-        const topBorder = isEnd ? 5 : 0;
-        const bottomBorder = 0;
-        data[j] = {
-          value: data[j],
-          itemStyle: {
-            borderRadius: [topBorder, topBorder, bottomBorder, bottomBorder]
-          }
-        };
-      }
-    }
-
     setTimeout(() => {
       const myChart = echarts.init(modalCharts.value);
+      // 创建左右箭头的图标路径
+      const  leftArrowIcon= 'path://M25,6 L13,6 L13,0 L3,12 L13,24 L13,18 L25,18 L25,6 Z';
+      const  rightArrowIcon = 'path://M3,6 L15,6 L15,0 L25,12 L15,24 L15,18 L3,18 L3,6 Z';
       let option;
       option = {
         tooltip: {
@@ -514,7 +521,47 @@ const modalChart = async (product) => {
         yAxis: {
           type: "value"
         },
-        series: series
+        series: series,
+        // 其他配置项...
+        toolbox: {
+          show: true,
+          itemSize:60,
+          itemGap: 822,// 设置左箭头和右箭头之间的间隔
+          top:'30%',
+          showTitle:false,
+          feature: {
+            myLeftArrow: {
+              show: true,
+              title: '左箭头',
+              icon: leftArrowIcon, // 使用左箭头自定义组件作为图标
+              iconStyle: {
+                borderColor: 'black', // 设置图标颜色为灰色
+              },
+              onclick: function () {
+                // 左箭头点击事件的回调函数
+                state.modalPageIndex += 1;
+                modalChart(product);
+              }
+            },
+            myRightArrow: {
+              show: true,
+              title: '右箭头',
+              icon: rightArrowIcon, // 使用右箭头自定义组件作为图标
+              iconStyle: {
+                borderColor: state.modalPageIndex == 0 ? '#f0f0f0' : 'black', // 设置图标颜色为灰色
+              },
+              onclick: function () {
+                // 右箭头点击事件的回调函数
+                if(state.modalPageIndex - 1 < 0){
+                  state.modalPageIndex = 0;
+                  return;
+                }
+                state.modalPageIndex = state.modalPageIndex - 1;
+                modalChart(product);
+              }
+            }
+          },
+        }
       };
       option && myChart.setOption(option);
     });
@@ -527,6 +574,7 @@ const modalChart = async (product) => {
 const modalClose = () => {
   state.selectedProduct.value = null;
   state.modalOpen = false;
+  state.modalPageIndex = 0;
 };
 
 const getViewCountZeroProduct = async () => {
