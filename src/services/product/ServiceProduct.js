@@ -195,7 +195,7 @@ export class ServiceProduct {
     })
 
     if(failedItem.length > 0) {
-      message.warning(`스마트스토어 금지어: [${failedItem.map((item) => item.cate_name).join(', ')}] 상품태그 수정후 마켓연동해 주세요.`)
+      message.warning(`스마트스토어 금지어: [${failedItem.map((item) => item.cate_name).join(', ')}] 상품태그 수정 후 다시 등록해 주세요.`)
       return false;
     }
     return true;
