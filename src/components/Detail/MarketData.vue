@@ -58,7 +58,7 @@
                 <template v-else> <!-- 非 loading 的情况 -->
                   <!-- 显示选择分类时, cascader(readonly) 起到了 전시 카테고리 미설정 文字的作用 -->
                   <div
-                    v-if="displayCategories[market.accountName].visible || (product.item_disp_cate && product.item_disp_cate[market.accountName])"
+                    v-if="displayCategories[market.accountName].visible || (product.item_disp_cate && Object.keys(product.item_disp_cate[market.accountName]).length > 0)"
                     style="display: flex;align-items: flex-end;gap: 10px;"
                   >
                     <MarketDisplayCategorys
@@ -71,7 +71,7 @@
                   </div>
                   <div
                     v-else
-                    v-show="! product.item_disp_cate || ! product.item_disp_cate[market.accountName]"
+                    v-show="!product.item_disp_cate || Object.keys(product.item_disp_cate[market.accountName]).length === 0"
                     style="color: #999999;margin-top: 10px;"
                   >전시 카테고리 미설정</div>
                 </template>
@@ -224,11 +224,24 @@ export default {
 
         const params = { market_code: marketInfo.market_code, search_keyword: search_keyword }
         queue.push(
-          useCategoryApi().getAutoRecommendCategoryNames(params).then(res => {
-            if(res.data.length){
+          useCategoryApi().getAutoRecommendCategoryNames(params).then(async res => {
+            if (res.data.length) {
               this.categories[marketInfo.accountName].value = res.data[0]['cate_names'].join('/');
-            }else{
+              this.product.item_cate[marketInfo.accountName] = {
+                marketCode: marketInfo.market_code,
+                cateId: res.data[0]['cate_ids'][res.data[0]['cate_ids'].length - 1],
+                categoryNames: res.data[0]['cate_names'].join('/')
+              }
+              if (this.displayCategoryMarkets.includes(marketInfo.market_code)) {
+                await this.getDisplayCategory(marketInfo.market_code, res.data[0]['cate_ids'], marketInfo.seller_id, marketInfo.accountName)
+              }
+            } else {
+              this.product.item_cate[marketInfo.accountName] = {};
               this.categories[marketInfo.accountName].value = [];
+
+              this.displayCategories[marketInfo.accountName].list = []
+              this.displayCategories[marketInfo.accountName].visible = false
+              this.product.item_disp_cate[marketInfo.accountName] = {};
             }
             this.searchCategories[marketInfo.accountName] = res.data
           })
@@ -255,24 +268,7 @@ export default {
       if(this.displayCategoryMarkets.includes(marketCode)) {
         const cateId = item.cate_ids;
         this.displayCategories[accountName].loading = true
-        return useCategoryApi().getDisplayCategorys({ market_code: marketCode, seller_id: sellerId, cate_id: cateId }).then(res => {
-          if(res.status !== "2000") {
-            message.error(res.message)
-            this.displayCategories[accountName].list = []
-            this.displayCategories[accountName].visible = false
-            this.displayCategories = {}
-            return false;
-          }
-          this.displayCategories[accountName].list = res.data
-          this.displayCategories[accountName].visible = true
-        }).catch(err => {
-          this.displayCategories[accountName].list = []
-          this.displayCategories[accountName].visible = false
-          message.error(err.message)
-          return false;
-        }).finally(() => {
-          this.displayCategories[accountName].loading = false
-        })
+        await this.getDisplayCategory(marketCode, cateId, sellerId, accountName)
       }
     },
 
@@ -322,25 +318,7 @@ export default {
         // 전시카테고리 마켓
         if(this.displayCategoryMarkets.includes(marketCode)) {
           const cateId = selectedOptions.map(o => o.cateId)
-          this.displayCategories[accountName].loading = true
-          return useCategoryApi().getDisplayCategorys({ market_code: marketCode, seller_id: sellerId, cate_id: cateId }).then(res => {
-            if(res.status !== "2000") {
-              this.displayCategories[accountName].list = []
-              this.displayCategories[accountName].visible = false
-              this.product.item_disp_cate = {}
-              message.error(res.message)
-              return false;
-            }
-            this.displayCategories[accountName].list = res.data
-            this.displayCategories[accountName].visible = true
-          }).catch(err => {
-            message.error(err.message)
-            this.displayCategories[accountName].list = []
-            this.displayCategories[accountName].visible = false
-            return false;
-          }).finally(()=> {
-            this.displayCategories[accountName].loading = false
-          })
+          await this.getDisplayCategory(marketCode, cateId, sellerId, accountName)
         }
 
         return false;
@@ -350,6 +328,41 @@ export default {
     getMarketCategory(marketCode) {
       return useCategoryApi().getMarketCategoryList({ market_code: marketCode })
     },
+
+    // 获取显示分类
+    async getDisplayCategory(marketCode, cateId, sellerId, accountName) {
+      this.displayCategories[accountName].loading = true
+      return await useCategoryApi().getDisplayCategorys({
+        market_code: marketCode,
+        seller_id: sellerId,
+        cate_id: cateId
+      }).then(res => {
+        if (res.status !== "2000") {
+          this.displayCategories[accountName].list = []
+          this.displayCategories[accountName].visible = false
+          this.product.item_disp_cate[accountName] = {};
+          message.error(res.message)
+          return false;
+        }
+
+        this.displayCategories[accountName].list = res.data
+        this.displayCategories[accountName].visible = true
+        this.product.item_disp_cate[accountName] = {
+          marketCode: marketCode,
+          cateId: res.data[0].cate_ids[res.data[0].cate_ids.length - 1],
+          categoryNames: res.data[0].cate_names.join(' / ')
+        }
+
+      }).catch(err => {
+        message.error(err.message)
+        this.displayCategories[accountName].list = []
+        this.displayCategories[accountName].visible = false
+        this.product.item_disp_cate[accountName] = {};
+        return false;
+      }).finally(() => {
+        this.displayCategories[accountName].loading = false
+      })
+    }
   },
 
   mounted() {
