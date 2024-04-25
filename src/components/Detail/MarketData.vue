@@ -258,15 +258,16 @@ export default {
         return useCategoryApi().getDisplayCategorys({ market_code: marketCode, seller_id: sellerId, cate_id: cateId }).then(res => {
           if(res.status !== "2000") {
             message.error(res.message)
-            console.log('getDisplayCategorys1', res.data)
+            this.displayCategories[accountName].list = []
+            this.displayCategories[accountName].visible = false
             this.displayCategories = {}
             return false;
           }
-          console.log('getDisplayCategorys2', res.data)
           this.displayCategories[accountName].list = res.data
           this.displayCategories[accountName].visible = true
         }).catch(err => {
-          console.log('getDisplayCategorys3', res.data)
+          this.displayCategories[accountName].list = []
+          this.displayCategories[accountName].visible = false
           message.error(err.message)
           return false;
         }).finally(() => {
