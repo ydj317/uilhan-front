@@ -33,7 +33,20 @@
       <Footer />
     </a-layout-footer>
   </a-layout>
-
+  <div class="fixed-wrap">
+    <a-float-button-group shape="circle" class="fixed-group">
+      <a-float-button class="fixed-button" href="https://open.kakao.com/o/gAfSJqmg" target="_blank">
+        <template #icon>
+          <img src="@/assets/img/chat.jpg" class="br50">
+        </template>
+      </a-float-button>
+      <a-float-button class="fixed-button" href="http://pf.kakao.com/_xodWxnG" target="_blank">
+        <template #icon>
+          <img src="@/assets/img/help-center.jpg" class="br50">
+        </template>
+      </a-float-button>
+    </a-float-button-group>
+  </div>
 </template>
 
 <script setup>
@@ -62,12 +75,18 @@ router.afterEach((to, from) => {
 })
 
 onMounted(() => {
+
   // window title
   const site = lib.isWorldLink() ? `월드링크` : '유일';
   document.title = site + ' - ' + router.currentRoute.value.meta.title;
 })
 </script>
-
+<style>
+.fixed-wrap .ant-float-btn-body{
+  width: 56px!important;
+  height: 56px!important;
+}
+</style>
 <style scoped>
 .logo {
   display: flex;
@@ -105,5 +124,20 @@ onMounted(() => {
 .ant-layout-sider {
   background: #fff;
 }
-
+.fixed-wrap .fixed-group{
+  right:26px;
+  bottom:100px;
+  width:56px;
+  z-index: 9999999;
+}
+.fixed-wrap .fixed-group .fixed-button{
+  width: 56px!important;
+  height: 56px!important;
+}
+.fixed-wrap .fixed-group .fixed-button img{
+  width: 56px;height: 56px;position:fixed;right:26px;bottom:100px;
+}
+.fixed-wrap .fixed-group .fixed-button:first-child img{
+  bottom: 172px;
+}
 </style>
