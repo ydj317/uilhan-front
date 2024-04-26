@@ -114,7 +114,11 @@
     </a-flex>
     <a-divider />
     <a-skeleton :active="loadChartDataLoading" :loading="loadChartDataLoading">
-      <div class="mt20" ref="modalCharts" style="width: 100%;height: 400px;"></div>
+      <div class="chart-wrap">
+        <LeftOutlined class="left-arrow" @click="prevProductVisits" />
+        <div class="mt20" ref="modalCharts" style="width: 100%;height: 400px;"></div>
+        <RightOutlined class="right-arrow" @click="nextProductVisits" />
+      </div>
     </a-skeleton>
     <a-flex justify="flex-end" class="mt20">
       <a-button type="default" @click="modalClose">닫기</a-button>
@@ -133,7 +137,7 @@ import { findProductVisits, getProductVisits } from "@/api/productVisits";
 import dayjs from "dayjs";
 import { useMarketAccountApi } from "@/api/marketAccount";
 import {useProductApi} from "@/api/product";
-import {FileTextOutlined} from "@ant-design/icons-vue";
+import {FileTextOutlined,LeftOutlined,RightOutlined} from "@ant-design/icons-vue";
 import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
 
 defineEmits(['editMemo'])
@@ -522,46 +526,6 @@ const modalChart = async (product) => {
           type: "value"
         },
         series: series,
-        // 其他配置项...
-        toolbox: {
-          show: true,
-          itemSize:60,
-          itemGap: 822,// 设置左箭头和右箭头之间的间隔
-          top:'30%',
-          showTitle:false,
-          feature: {
-            myLeftArrow: {
-              show: true,
-              title: '左箭头',
-              icon: leftArrowIcon, // 使用左箭头自定义组件作为图标
-              iconStyle: {
-                borderColor: 'black', // 设置图标颜色为灰色
-              },
-              onclick: function () {
-                // 左箭头点击事件的回调函数
-                state.modalPageIndex += 1;
-                modalChart(product);
-              }
-            },
-            myRightArrow: {
-              show: true,
-              title: '右箭头',
-              icon: rightArrowIcon, // 使用右箭头自定义组件作为图标
-              iconStyle: {
-                borderColor: state.modalPageIndex == 0 ? '#f0f0f0' : 'black', // 设置图标颜色为灰色
-              },
-              onclick: function () {
-                // 右箭头点击事件的回调函数
-                if(state.modalPageIndex - 1 < 0){
-                  state.modalPageIndex = 0;
-                  return;
-                }
-                state.modalPageIndex = state.modalPageIndex - 1;
-                modalChart(product);
-              }
-            }
-          },
-        }
       };
       option && myChart.setOption(option);
     });
@@ -595,6 +559,19 @@ const getViewCountZeroProduct = async () => {
     console.error(e);
   }
 }
+const prevProductVisits = () =>{
+  state.modalPageIndex += 1;
+  modalChart(state.selectedProduct);
+}
+
+const nextProductVisits = () =>{
+  if(state.modalPageIndex - 1 < 0){
+    state.modalPageIndex = 0;
+    return;
+  }
+  state.modalPageIndex = state.modalPageIndex - 1;
+  modalChart(state.selectedProduct);
+}
 </script>
 <style scoped>
 .range {
@@ -614,5 +591,24 @@ const getViewCountZeroProduct = async () => {
 
 .tab-wrap .ant-btn-default {
   border: 1px solid #ffd117;
+}
+.chart-wrap{
+  position: relative;
+}
+.chart-wrap .left-arrow{
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 9;
+}
+.chart-wrap .right-arrow{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 9;
 }
 </style>

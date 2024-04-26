@@ -58,7 +58,7 @@
                 <template v-else> <!-- 非 loading 的情况 -->
                   <!-- 显示选择分类时, cascader(readonly) 起到了 전시 카테고리 미설정 文字的作用 -->
                   <div
-                    v-if="displayCategories[market.accountName].visible || (product.item_disp_cate && Object.keys(product.item_disp_cate[market.accountName]).length > 0)"
+                    v-if="displayCategories[market.accountName].visible || (product.item_disp_cate && product.item_disp_cate[market.accountName])"
                     style="display: flex;align-items: flex-end;gap: 10px;"
                   >
                     <MarketDisplayCategorys
@@ -71,7 +71,7 @@
                   </div>
                   <div
                     v-else
-                    v-show="!product.item_disp_cate || Object.keys(product.item_disp_cate[market.accountName]).length === 0"
+                    v-show="! product.item_disp_cate || ! product.item_disp_cate[market.accountName]"
                     style="color: #999999;margin-top: 10px;"
                   >전시 카테고리 미설정</div>
                 </template>
@@ -366,6 +366,8 @@ export default {
   },
 
   mounted() {
+    this.product.item_cate = this.product.item_cate || {};
+    this.product.item_disp_cate = this.product.item_disp_cate || {};
     if (Array.isArray(this.product?.item_sync_market)) {
       const queue = []
 
