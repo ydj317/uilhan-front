@@ -100,7 +100,7 @@
     />
   </a-card>
 
-  <a-modal v-model:open="state.modalOpen" title="상품 유입 데이터 차트" :footer="null" :closable="false" width="1000px">
+  <a-modal v-model:open="state.modalOpen" title="상품 유입 데이터 차트" :footer="null" :closable="false" width="1000px" @cancel="modalClose">
     <a-flex class="mt20" justify="center">
       <img :src="state.selectedProduct?.productThumbnails[0]" width="60" height="60" class="mr20" :alt="state.selectedProduct?.productName" style="border-radius: 10px">
       <a-flex vertical="vertical" style="width: 90%">
@@ -114,7 +114,11 @@
     </a-flex>
     <a-divider />
     <a-skeleton :active="loadChartDataLoading" :loading="loadChartDataLoading">
-      <div class="mt20" ref="modalCharts" style="width: 100%;height: 400px;"></div>
+      <div class="chart-wrap">
+        <LeftOutlined class="left-arrow" @click="prevProductVisits" />
+        <div class="mt20" ref="modalCharts" style="width: 100%;height: 400px;"></div>
+        <RightOutlined class="right-arrow" @click="nextProductVisits" />
+      </div>
     </a-skeleton>
     <a-flex justify="flex-end" class="mt20">
       <a-button type="default" @click="modalClose">닫기</a-button>
@@ -133,7 +137,7 @@ import { findProductVisits, getProductVisits } from "@/api/productVisits";
 import dayjs from "dayjs";
 import { useMarketAccountApi } from "@/api/marketAccount";
 import {useProductApi} from "@/api/product";
-import {FileTextOutlined} from "@ant-design/icons-vue";
+import {FileTextOutlined,LeftOutlined,RightOutlined} from "@ant-design/icons-vue";
 import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
 
 defineEmits(['editMemo'])
@@ -172,6 +176,9 @@ const state = reactive({
   accountList: [],
   modalOpen: false,
   modalTabsIndex: 0,
+  modalPageIndex:0,
+  modalStartTime:0,
+  modalEndTime:0,
   dailyData: {
     params: {
       period: "1week",
@@ -427,78 +434,82 @@ const modalChart = async (product) => {
   state.selectedProduct = product;
   loadChartDataLoading.value = true;
   try {
-    const result = await findProductVisits({ productId: product.productId })
-    const legend =  result.data.map(v => state.openMarketList[v.marketCode]);
-
     // 오늘 부터 15일전 데이터
-    const today = dayjs();
+    const today = dayjs().subtract(state.modalPageIndex, "month");
     let xAxis = Array.from({ length: 30 }, (v, k) => today.subtract(k, "day").format("YYYY-MM-DD")).reverse();
-
-    // group by marketCode
-    const groupByData = result.data.reduce((acc, cur) => {
-      if(acc[cur.marketCode]) {
-        acc[cur.marketCode].push(cur);
-      } else {
-        acc[cur.marketCode] = [cur];
-      }
-      return acc;
-    }, []);
-
+    state.modalStartTime = xAxis[0];
+    state.modalEndTime = xAxis[xAxis.length-1];
+    const result = await findProductVisits({ productId: product.productId,startTime:state.modalStartTime,endTime:state.modalEndTime })
+    let legend =  [];
     let series;
-    series = Object.keys(groupByData).map((v, k) => {
-      return {
-        name: state.openMarketList[v],
-        type: "bar",
-        stack: "visit",
-        data: xAxis.map(_v => {
-          const find = groupByData[v].find(_vv => dayjs(_vv.visitDate).format("YYYY-MM-DD") === _v);
-          return find ? find.visitCount : '-';
-        })
-      };
-    });
-
-    const stackInfo = {};
-    for (let i = 0; i < series[0].data.length; ++i) {
-      for (let j = 0; j < series.length; ++j) {
-        const stackName = series[j].stack;
-        if (!stackName) {
-          continue;
+    if(result.data.length){
+      legend =  result.data.map(v => state.openMarketList[v.marketCode]);
+      // group by marketCode
+      const groupByData = result.data.reduce((acc, cur) => {
+        if(acc[cur.marketCode]) {
+          acc[cur.marketCode].push(cur);
+        } else {
+          acc[cur.marketCode] = [cur];
         }
-        if (!stackInfo[stackName]) {
-          stackInfo[stackName] = {
-            stackStart: [],
-            stackEnd: []
+        return acc;
+      }, []);
+      series = Object.keys(groupByData).map((v, k) => {
+        return {
+          name: state.openMarketList[v],
+          type: "bar",
+          stack: "visit",
+          data: xAxis.map(_v => {
+            const find = groupByData[v].find(_vv => dayjs(_vv.visitDate).format("YYYY-MM-DD") === _v);
+            return find ? find.visitCount : '-';
+          })
+        };
+      });
+
+      const stackInfo = {};
+      for (let i = 0; i < series[0].data.length; ++i) {
+        for (let j = 0; j < series.length; ++j) {
+          const stackName = series[j].stack;
+          if (!stackName) {
+            continue;
+          }
+          if (!stackInfo[stackName]) {
+            stackInfo[stackName] = {
+              stackStart: [],
+              stackEnd: []
+            };
+          }
+          const info = stackInfo[stackName];
+          const data = series[j].data[i];
+          if (data && data !== '-') {
+            if (info.stackStart[i] == null) {
+              info.stackStart[i] = j;
+            }
+            info.stackEnd[i] = j;
+          }
+        }
+      }
+      for (let i = 0; i < series.length; ++i) {
+        const data = series[i].data;
+        const info = stackInfo[series[i].stack];
+        for (let j = 0; j < series[i].data.length; ++j) {
+          // const isStart = info.stackStart[j] === i;
+          const isEnd = info.stackEnd[j] === i;
+          const topBorder = isEnd ? 5 : 0;
+          const bottomBorder = 0;
+          data[j] = {
+            value: data[j],
+            itemStyle: {
+              borderRadius: [topBorder, topBorder, bottomBorder, bottomBorder]
+            }
           };
         }
-        const info = stackInfo[stackName];
-        const data = series[j].data[i];
-        if (data && data !== '-') {
-          if (info.stackStart[i] == null) {
-            info.stackStart[i] = j;
-          }
-          info.stackEnd[i] = j;
-        }
       }
     }
-    for (let i = 0; i < series.length; ++i) {
-      const data = series[i].data;
-      const info = stackInfo[series[i].stack];
-      for (let j = 0; j < series[i].data.length; ++j) {
-        // const isStart = info.stackStart[j] === i;
-        const isEnd = info.stackEnd[j] === i;
-        const topBorder = isEnd ? 5 : 0;
-        const bottomBorder = 0;
-        data[j] = {
-          value: data[j],
-          itemStyle: {
-            borderRadius: [topBorder, topBorder, bottomBorder, bottomBorder]
-          }
-        };
-      }
-    }
-
     setTimeout(() => {
       const myChart = echarts.init(modalCharts.value);
+      // 创建左右箭头的图标路径
+      const  leftArrowIcon= 'path://M25,6 L13,6 L13,0 L3,12 L13,24 L13,18 L25,18 L25,6 Z';
+      const  rightArrowIcon = 'path://M3,6 L15,6 L15,0 L25,12 L15,24 L15,18 L3,18 L3,6 Z';
       let option;
       option = {
         tooltip: {
@@ -514,7 +525,7 @@ const modalChart = async (product) => {
         yAxis: {
           type: "value"
         },
-        series: series
+        series: series,
       };
       option && myChart.setOption(option);
     });
@@ -527,6 +538,7 @@ const modalChart = async (product) => {
 const modalClose = () => {
   state.selectedProduct.value = null;
   state.modalOpen = false;
+  state.modalPageIndex = 0;
 };
 
 const getViewCountZeroProduct = async () => {
@@ -547,6 +559,19 @@ const getViewCountZeroProduct = async () => {
     console.error(e);
   }
 }
+const prevProductVisits = () =>{
+  state.modalPageIndex += 1;
+  modalChart(state.selectedProduct);
+}
+
+const nextProductVisits = () =>{
+  if(state.modalPageIndex - 1 < 0){
+    state.modalPageIndex = 0;
+    return;
+  }
+  state.modalPageIndex = state.modalPageIndex - 1;
+  modalChart(state.selectedProduct);
+}
 </script>
 <style scoped>
 .range {
@@ -566,5 +591,24 @@ const getViewCountZeroProduct = async () => {
 
 .tab-wrap .ant-btn-default {
   border: 1px solid #ffd117;
+}
+.chart-wrap{
+  position: relative;
+}
+.chart-wrap .left-arrow{
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 9;
+}
+.chart-wrap .right-arrow{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 9;
 }
 </style>

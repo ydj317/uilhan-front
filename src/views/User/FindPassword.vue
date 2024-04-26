@@ -2,11 +2,11 @@
   <loading v-model:active="loading" :can-cancel="false" :is-full-page="true" />
   <div class="container" style="display: flex;height: 100vh">
     <div class="login-bg">
-      <img style="margin: 50px" src="../../assets/logo_login.png" key="logo-white" alt="">
+      <img src="../../assets/img/login_title.png" key="logo-light" alt="">
     </div>
     <div class="login-form">
-      <div style="display: flex;flex-direction: column; justify-content: center;align-items: center;width: 362px;">
-        <img style="margin: 40px" src="../../assets/logo_icon.png" key="logo-light" alt="">
+      <div class="login-content">
+        <img style="margin: 90px;width: 60px;height: 60px" src="../../assets/logo_icon.png" key="logo-light" alt="">
         <div style="text-align:center;display: flex;flex-direction: column;justify-content: center;margin:20px 0;width: 100%">
           <h3>비밀번호를 잊어버리셨나요?</h3>
           <p style="color: #b0b0b0;font-weight: normal;font-size: 12px">아이디와 가입된 이메일을 인증하시면 비밀번호를 리셋할 수 있습니다.</p>
@@ -16,10 +16,10 @@
           <a-input v-model:value="formState.email" placeholder="E-mail" class="user-email"></a-input>
         </div>
         <div style="display: flex;gap:10px;flex-direction: column; justify-content: center;width: 100%;margin-top: 20px;align-items: center;">
-          <a-button type="primary" class="loginButton" @click.prevent="handleSubmit" style="width: 100%;height: 43px;font-size: 16px;font-weight: bold;color: #1a1a1a">
+          <a-button class="loginButton" @click.prevent="handleSubmit" style="background-color: #1a1a1a; width: 100%;height: 43px;font-size: 16px;font-weight: bold;color: #f8f100;border: none">
             이메일 전송
           </a-button>
-          <a-divider style="color: #dddddd;"> Or </a-divider>
+          <a-divider style="color: #1a1a1a;"> Or </a-divider>
           <router-link to="/user/login" style="font-size: 12px;color: #1a1a1a;">로그인화면 돌아가기</router-link>
         </div>
       </div>
@@ -90,6 +90,7 @@ export default defineComponent ({
     }
   }
 })
+
 </script>
 <style scoped>
 .container {
@@ -97,6 +98,8 @@ export default defineComponent ({
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  background-image: url('../../assets/img/login_bg.jpg');
+  background-size: cover;
   height: 100vh;
   width: 100%;
 }
@@ -105,24 +108,33 @@ export default defineComponent ({
   flex: 6;
   height: 100%;
   width: 100%;
-  background-color: #ffdb41;
   display:flex;
   justify-content: center;
   align-items: center;
 }
 
-.login-bg>img{
-  width:15%;
-}
 
 .login-form {
   flex: 4;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   height: 100%;
 }
+
+.login-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  padding: 30px 80px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
 .user-name{
   height: 43px;font-size: 16px;
   border-bottom: none;

@@ -70,8 +70,14 @@ export function useMarketApi() {
                 method: "get",
                 params: data,
             });
-        }
-        
+        },
 
+        getMarketFilterList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/filterList",
+                method: "get",
+                params: data,
+            });
+        },
     }
 }

@@ -2,31 +2,36 @@
   <loading v-model:active="loading" :can-cancel="false" :is-full-page="true"/>
   <div class="container" style="display: flex;height: 100vh">
     <div class="login-bg">
-      <img style="margin: 50px" src="../../assets/logo_login.png" key="logo-white" alt="">
+      <img src="../../assets/img/login_title.png" key="logo-light" alt="">
     </div>
     <div class="login-form">
-      <div style="display: flex;flex-direction: column; justify-content: center;align-items: center;width: 362px;">
-        <img style="margin: 50px" src="../../assets/logo_icon.png" key="logo-light" alt="">
+      <div class="login-content">
+        <img style="margin: 90px;width: 60px;height: 60px" src="../../assets/logo_icon.png" key="logo-light" alt="" >
         <div style="display: flex;flex-direction: column;width: 100%;">
             <a-input v-model:value="formState.username" placeholder="아이디" class="user-name" ></a-input>
             <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password"></a-input-password>
         </div>
         <div style="display: flex;justify-content: space-between;font-size: 12px;align-items: center;width: 100%;margin-top: 5px">
-          <a-checkbox v-model:checked="checked" style="font-size: 12px;">아이디 저장하기</a-checkbox>
+          <!-- checkbox use icon -->
+
+          <div @click="handleSaveId" style="cursor: pointer ">
+            <check-circle-two-tone :two-tone-color="checked ? '#52c41a' : '#bdbdbd'"/> 아이디 저장
+          </div>
+
           <div style="display: flex;gap: 5px;align-items: center">
           <span>관리자</span>
-          <a-switch v-model:checked="user_type" size="small" style="color: #1a1a1a"/>
+          <a-switch v-model:checked="user_type" size="small" style="color: #1a1a1a;background-color: #1a1a1a"/>
           </div>
         </div>
         <div style="display: flex;justify-content: center;width: 100%;margin-top: 20px;">
-          <a-button type="primary" html-type="submit" class="loginButton" @click="handleFinish" style="width: 100%;height: 43px;font-size: 16px;font-weight: bold;color: #1a1a1a">
+          <a-button html-type="submit" class="loginButton" @click="handleFinish" style="background-color: #1a1a1a; width: 100%;height: 43px;font-size: 16px;font-weight: bold;color: #f8f100;border: none">
             로그인
           </a-button>
         </div>
         <div style="height: 30px"></div>
         <div style="display: flex;justify-content: center;gap: 10px;width: 100%;align-items: center">
           <a-button type="link" @click="info" style="font-size: 14px;color: #1a1a1a;font-weight: bold">비밀번호 찾기</a-button>
-          <a-divider type="vertical" style="height: 12px;"></a-divider>
+          <a-divider type="vertical" style="height: 12px;color: #1a1a1a;background-color: #1a1a1a"></a-divider>
           <a-button type="link" @click="redirectRegister" style="font-size: 14px;color: #1a1a1a;font-weight: bold">회원가입</a-button>
         </div>
       </div>
@@ -40,7 +45,7 @@ import Loading from "vue-loading-overlay";
 import router, {setFilterRouteList} from "router/index.js";
 import {LoginRequest} from 'util/request';
 import {defineComponent, reactive, onBeforeMount, ref, onMounted} from 'vue';
-import {UserOutlined, LockOutlined} from '@ant-design/icons-vue';
+import {UserOutlined, LockOutlined, CheckCircleTwoTone} from '@ant-design/icons-vue';
 import Cookie from "js-cookie";
 import {isLogin, cookieInit} from "util/auth";
 import {message} from 'ant-design-vue';
@@ -52,6 +57,7 @@ export default defineComponent({
     UserOutlined,
     LockOutlined,
     Loading,
+    CheckCircleTwoTone
   },
   setup() {
     onBeforeMount(() => {
@@ -155,6 +161,10 @@ export default defineComponent({
     const info = () => {
       router.push("/user/find/password");
     };
+
+    const handleSaveId = () => {
+      checked.value = !checked.value;
+    };
     return {
       loading,
       checked,
@@ -163,6 +173,7 @@ export default defineComponent({
       handleFinish,
       handleFinishFailed,
       redirectRegister,
+      handleSaveId,
       info,
       lib,
       user_type
@@ -183,6 +194,8 @@ export default defineComponent({
 </script>
 <style scoped>
 .container {
+  background-image: url('../../assets/img/login_bg.jpg');
+  background-size: cover;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -195,14 +208,9 @@ export default defineComponent({
   flex: 6;
   height: 100%;
   width: 100%;
-  background-color: #ffdb41;
   display:flex;
   justify-content: center;
   align-items: center;
-}
-
-.login-bg>img{
-  width:15%;
 }
 
 .login-form {
@@ -210,8 +218,19 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   height: 100%;
+}
+.login-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  padding: 30px 80px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 }
 .user-name{
   height: 43px;font-size: 16px;

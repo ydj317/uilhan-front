@@ -56,7 +56,7 @@
         </div>
       </div>
       <div class="spec-box">
-        <table v-for="(option, optionIndex) in product.item_option" :key="optionIndex" :data-index="optionIndex">
+        <table v-for="(option, optionIndex) in this.options" :key="optionIndex" :data-index="optionIndex">
           <!--옵션그룹,옵션일괄설정-->
           <thead>
           <!--그룹명 영역-->
@@ -181,7 +181,24 @@ export default {
         }
       },
       deep: true
-    }
+    },
+
+    "product.sku.length": {
+      handler: function(val) {
+        this.options = this.$store.state.product.detail.item_option.map(option => {
+          option.checkAll = false;
+          option.oldName = option.name;
+          option.data = option.data.map(item => {
+            item.oldName = item.name;
+            item.checked = false;
+            return item;
+          });
+          return option;
+        });
+      },
+      deep: true
+    },
+
   },
   components: { PlusOutlined, MinusOutlined },
   data() {
