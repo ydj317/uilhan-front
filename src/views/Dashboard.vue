@@ -622,6 +622,33 @@ const barChartOption = ref({
 
 
 const radarChart = ref({
+  tooltip: {
+    trigger: 'item',
+    formatter: function (params) {
+      const maxLength = 15;
+      let displayName = params.name;
+      if (displayName.length > maxLength) {
+        displayName = displayName.substring(0, maxLength) + '...';
+      }
+
+      let tooltipContent = `<div><strong>${displayName}</strong><br>
+        <table style="width:100%;">`;
+
+      if (params.value && Array.isArray(params.value)) {
+        params.value.forEach((value, index) => {
+          if (params.componentType === 'series' && radarChart.value.radar.indicator[index]) {
+            tooltipContent += `<tr>
+              <td style="text-align: left;">${params.marker}${radarChart.value.radar.indicator[index].name}:</td>
+              <td style="text-align: right;">${value}</td>
+              </tr>`;
+          }
+        });
+      }
+      tooltipContent += "</table></div>";
+      return tooltipContent;
+    }
+  },
+
   legend: {
     orient: 'vertical',
 
@@ -963,7 +990,6 @@ onBeforeUnmount(() => {
 .chart_area .box {
   position: relative;
   background: #f0f0f0;
-  overflow: hidden;
 }
 
 .chart_area .title {
