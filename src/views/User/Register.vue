@@ -944,6 +944,11 @@ export default defineComponent({
 			  return false;
 		  }
 
+		  if (!!!formState.password) {
+			  message.warning('비밀번호를 입력해주십시오');
+			  return false;
+		  }
+
 		  if (!!!formState.email) {
 			  message.warning('Email을 입력해주십시오');
 			  return false;
