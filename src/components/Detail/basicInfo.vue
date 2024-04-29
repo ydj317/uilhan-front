@@ -238,7 +238,7 @@ export default {
       const params = {keyword: this.keyword.search_value}
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/naver/keywords", params).then(res => {
         this.initKeywords(res.data.keywords)
-        this.$emit('suggestCategory', res.data.category)
+        //this.$emit('suggestCategory', res.data.category)
       }).catch(() => {
         message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
       }).finally(() => {
