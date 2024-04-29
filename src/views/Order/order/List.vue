@@ -101,23 +101,12 @@
 
 
         <a-button @click.prevent="downLoadSaleHistory">
-          매출내역 다운로드
+          순수익 계산기
         </a-button>
 
-        <a-tooltip>
-          <template #title>EXCEL 다운로드</template>
-          <a-button @click.prevent="excelDownload">
-            <template #icon>
-              <DownloadOutlined/>
-            </template>
-          </a-button>
-        </a-tooltip>
 
-        <a-button @click.prevent="syncBridgeStatus" :loading="state.tableData.syncBridgeStatusLoading">
-          <template #icon>
-            <RedoOutlined/>
-          </template>
-          배대지 상태 동기화
+        <a-button @click.prevent="excelDownload">
+          주문내역 다운로드
         </a-button>
       </div>
     </div>
@@ -349,7 +338,6 @@ const state = reactive({
     page: 1,
     pageSize: 10,
     loading: false,
-    syncBridgeStatusLoading: false,
     params: {
       order_date: [moment().subtract(15, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
       account_ids: [],
@@ -839,23 +827,6 @@ const downLoadSaleHistory = () => {
     downloadElement.click(); // 点击下载
     document.body.removeChild(downloadElement); // 下载完成移除元素
     url.revokeObjectURL(href);
-  });
-};
-
-const syncBridgeStatus = () => {
-  state.tableData.syncBridgeStatusLoading = true;
-  useMarketOrderApi().syncBridgeStatus({}).then(res => {
-    state.tableData.syncBridgeStatusLoading = false;
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-    state.syncStatusShow = true;
-    message.success("수집완료 되였습니다.");
-    getTableData();
-  }).catch(() => {
-    message.success("서버연결에 실패 하였습니다.");
-    return false;
   });
 };
 
