@@ -6,11 +6,12 @@
         <colgroup>
           <col style="width: 150px;">
           <col >
-          <col style="width: 200px;">
+<!--          <col style="width: 200px;">-->
         </colgroup>
         <tr>
           <th></th>
-          <td colspan="2" >
+<!--          <td colspan="2" >-->
+          <td style="display: flex;flex-direction: column; gap: 5px" >
             <div style="display: flex;gap: 5px;">
               <a-input
                 placeholder="검색 카테고리를 입력하세요."
@@ -80,21 +81,21 @@
             </template>
             <a-spin v-else spinning><a-input /></a-spin>
           </td>
-          <td style="display: flex;align-items: flex-start;">
-            <div style="display: flex;justify-content: flex-end;align-items: flex-start; gap: 5px">
-              <a-input
-                v-model:value="search_keyword_by_market[market.accountName]" placeholder="검색 카테고리를 입력하세요."
-                @keyup.enter="searchCategoryByMarket(market, search_keyword_by_market[market.accountName])"
-                style="width: 200px"
-                allow-clear
-              />
-              <a-button
-                type="primary"
-                style="background-color: #1e44ff;color: white"
-                @click="searchCategoryByMarket(market,search_keyword_by_market[market.accountName])"
-              >검색</a-button>
-            </div>
-          </td>
+<!--          <td style="display: flex;align-items: flex-start;">-->
+<!--            <div style="display: flex;justify-content: flex-end;align-items: flex-start; gap: 5px">-->
+<!--              <a-input-->
+<!--                v-model:value="search_keyword_by_market[market.accountName]" placeholder="검색 카테고리를 입력하세요."-->
+<!--                @keyup.enter="searchCategoryByMarket(market, search_keyword_by_market[market.accountName])"-->
+<!--                style="width: 200px"-->
+<!--                allow-clear-->
+<!--              />-->
+<!--              <a-button-->
+<!--                type="primary"-->
+<!--                style="background-color: #1e44ff;color: white"-->
+<!--                @click="searchCategoryByMarket(market,search_keyword_by_market[market.accountName])"-->
+<!--              >검색</a-button>-->
+<!--            </div>-->
+<!--          </td>-->
         </tr>
       </table>
     </div>
