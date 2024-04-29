@@ -47,7 +47,7 @@
         <a-col :span="3" class="center bg-fa">수령자</a-col>
         <a-col :span="21" class="pt10">
           <a-row class="mb10">
-            <a-col :span="4" class="center">한글</a-col>
+            <a-col :span="4" class="center">한글<span class="red">*</span></a-col>
             <a-col :span="15" class="center">
               <a-input v-model:value="state.form.receiver_name" />
             </a-col>
@@ -66,7 +66,7 @@
         </a-col>
       </a-row>
       <a-row class="bottom-border">
-        <a-col :span="3" class="center bg-fa">수령자 정보</a-col>
+        <a-col :span="3" class="center bg-fa">수령자 정보<span class="red">*</span></a-col>
         <a-col :span="21" class="mt10 mb10">
           <a-row class="center">
             <a-col :span="9" class="pl70">
@@ -79,7 +79,7 @@
                     <QuestionCircleOutlined/>
                   </a-tooltip>
                 </a-radio>
-                <a-radio value="2">사업자등록번호</a-radio>
+                <a-radio value="3">사업자등록번호</a-radio>
               </a-radio-group>
             </a-col>
             <a-col :span="10">
@@ -102,13 +102,13 @@
         <a-col :span="3" class="center bg-fa">연락처 및주소</a-col>
         <a-col :span="21" class="pt10">
           <a-row class="mb10">
-            <a-col :span="4" class="center">연락처</a-col>
+            <a-col :span="4" class="center">연락처<span class="red">*</span></a-col>
             <a-col :span="15" class="center">
               <a-input v-model:value="state.form.receiver_tel1" />
             </a-col>
           </a-row>
           <a-row class="mb10">
-            <a-col :span="4" class="center">우편번호</a-col>
+            <a-col :span="4" class="center">우편번호<span class="red">*</span></a-col>
             <a-col :span="15" class="center">
               <a-input v-model:value="state.form.receiver_post_code" />
             </a-col>
@@ -117,7 +117,7 @@
             </a-col>
           </a-row>
           <a-row class="mb10">
-            <a-col :span="4" class="center">한글주소</a-col>
+            <a-col :span="4" class="center">한글주소<span class="red">*</span></a-col>
             <a-col :span="15">
               <a-input v-model:value="state.form.receiver_addr1" placeholder="※ 시, 군, 구를 띄어쓰기로 정확히 입력해주세요."/>
             </a-col>
@@ -128,7 +128,7 @@
             <a-col :span="10" class="fs12">* 주소는 시,군,구를 띄어쓰기하여 정확히 입력해주시기 바랍니다. ex) 서울시 강남구 일원동 741</a-col>
           </a-row>
           <a-row class="mb10">
-            <a-col :span="4" class="center">상세주소</a-col>
+            <a-col :span="4" class="center">상세주소<span class="red">*</span></a-col>
             <a-col :span="15">
               <a-input v-model:value="state.form.receiver_addr2" placeholder="※ 도로명 주소를 입력해주세요."/>
             </a-col>
@@ -206,7 +206,7 @@
           </a-col>
         </a-row>
         <a-row class="bottom-border">
-          <a-col :span="3" class="center bg-fa">오더번호</a-col>
+          <a-col :span="3" class="center bg-fa">오더번호<span class="red">*</span></a-col>
           <a-col :span="21" class="pt10">
             <a-row class="mb10">
               <a-col :span="1"></a-col>
@@ -308,7 +308,7 @@
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
-              <a-col :span="6" class="step4-right-text pl30">옵션<span class="red">*</span></a-col>
+              <a-col :span="6" class="step4-right-text pl30">옵션</a-col>
               <a-col :span="2" class="center">색상</a-col>
               <a-col :span="6">
                 <a-input v-model:value="item.option_color"/>
@@ -319,7 +319,7 @@
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
-              <a-col :span="6" class="step4-right-text pl30">모멜명/재질/규격/사이즈<span class="red">*</span></a-col>
+              <a-col :span="6" class="step4-right-text pl30">모멜명/재질/규격/사이즈</a-col>
               <a-col :span="8">
                 <a-input v-model:value="item.option_size" placeholder="예 : KF94/100ML*30支/水20ML乳20ML"/>
               </a-col>
@@ -357,7 +357,7 @@
               </a-col>
             </a-row>
             <a-row class="mb10">
-              <a-col :span="6" class="step4-right-text pl30">상품 URL<span class="red">*</span></a-col>
+              <a-col :span="6" class="step4-right-text pl30">상품 URL</a-col>
               <a-col :span="18">
                 <a-input v-model:value="item.prdUrl" placeholder="※ 배송대행 상품금액 세관신고 증명서류입니다. 중국쇼핑몰 URL 추천합니다."/>
               </a-col>
@@ -487,7 +487,7 @@
 					고급 폴리백포장&nbsp;<a-tag color="red">1,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="95">
-					기본뿌뿌이&nbsp;<a-tag color="red">1,000원</a-tag>
+          기본 뽁뽁이&nbsp;<a-tag color="red">1,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="104">
 					나무 특수포장&nbsp;<a-tag color="red">30,000원</a-tag>
@@ -657,7 +657,7 @@ const state = reactive({
 		req_2: "", // 물류요청사항
 
 		importation_mode: "3", // 수입방식
-		receiver_info_type :"1", // 받는 사람 정보 (1:개인통관고유번호, 2:사업자등록번호)
+		receiver_info_type :"1", // 받는 사람 정보 (1:개인통관고유번호, 3:사업자등록번호)
 		avatar: "", // 이미지 URL
 		messageType: "", // 배송 요청사항
 		carePrice: 0, // 보험료?
@@ -980,13 +980,22 @@ const handleOk = () => {
     return false;
   }
 
-  if (!state.form.personal_customs_clearance_code) {
-    message.error("개인통관고유부호를 입력해 주세요.");
-    return false;
+  if (state.form.receiver_info_type === '1') {
+	  if (!state.form.personal_customs_clearance_code) {
+		  message.error("개인통관고유부호를 입력해 주세요.");
+		  return false;
+	  }
+	  if (state.checkPersonalCustomsClearanceCode === false) {
+		  message.error("개인통관고유부호를 확인해 주세요.");
+		  return false;
+	  }
   }
-  if (state.checkPersonalCustomsClearanceCode === false) {
-    message.error("개인통관고유부호를 확인해 주세요.");
-    return false;
+
+  if (state.form.receiver_info_type === '3') {
+	  if (!state.form.personal_customs_clearance_code) {
+		  message.error("사업자등록번호를 입력해 주세요.");
+		  return false;
+	  }
   }
 
   if (!state.form.receiver_tel1) {

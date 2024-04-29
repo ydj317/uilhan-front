@@ -12,7 +12,7 @@
           <a-checkbox v-model:checked="this.showOptionTable" @change="handleOptionTableToggle">옵션테이블</a-checkbox>
         </a-space>
       </div>
-      <div class="editorToolbar">
+      <div class="editorToolbar" ref="editorToolbar">
         <a-space>
           <a-button class="originalDetailTrans" type="default" @click="showPreview">미리보기</a-button>
           <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역
@@ -59,6 +59,26 @@ import { message } from "ant-design-vue";
 import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
+function checkShow(element, showCallback, hideCallback) {
+  const options = {
+    root: null,
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      try {
+        if (entry.isIntersecting) {
+          showCallback();
+        } else {
+          hideCallback()
+        }
+      } catch (e) {}
+    });
+  }, options);
+
+  observer.observe(element);
+}
 
 export default {
   name: "productDetailDescription",
@@ -132,6 +152,16 @@ export default {
   mounted() {
     this.fetchData();
     this.getGuide();
+
+    checkShow(this.$refs.editorToolbar, function () {
+      window.postMessage({
+        showEditorToolbar: true
+      }, '*');
+    }, function () {
+      window.postMessage({
+        showEditorToolbar: false
+      }, '*');
+    })
 
     this.$nextTick(() => {
       watch(() => this.showVideo, (newValue) => {
@@ -250,7 +280,7 @@ export default {
     setOptionTableContent() {
       setTimeout(() => {
         if (window.tinymce.editors && window.tinymce.editors[0]) {
-          let doc = window.tinymce.editors[0].dom.doc;
+          let doc = window.tinymce.editors[0]?.dom?.doc;
           let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
           if (this.showOptionTable === false) {
 
