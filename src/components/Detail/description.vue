@@ -59,6 +59,7 @@ import { message } from "ant-design-vue";
 import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
+console.log('RUN description.vue');
 
 export default {
   name: "productDetailDescription",
