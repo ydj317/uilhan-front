@@ -153,11 +153,14 @@ export default {
     this.fetchData();
     this.getGuide();
 
-    console.log('RUN description.vue mounted', this.$refs.editorToolbar);
     checkShow(this.$refs.editorToolbar, function () {
-      console.log('editorToolbar show')
+      window.postMessage({
+        showEditorToolbar: true
+      }, '*');
     }, function () {
-      console.log('editorToolbar hide')
+      window.postMessage({
+        showEditorToolbar: false
+      }, '*');
     })
 
     this.$nextTick(() => {
