@@ -169,7 +169,12 @@ export default {
 
           // 옵션정보 초기화 여부 초기화
           this.product.resetOption = false;
+
+          if (!this.isFirstLoad) {
+            this.restoreInitialOptions();
+          }
         }
+
       },
       deep: true
     },
@@ -185,6 +190,11 @@ export default {
 
     "product.sku.length": {
       handler: function(val) {
+        if (this.isFirstLoad) {
+          this.isFirstLoad = false;
+          return;
+        }
+
         this.options = this.$store.state.product.detail.item_option.map(option => {
           option.checkAll = false;
           option.oldName = option.name;
@@ -218,8 +228,10 @@ export default {
         return option;
       }),
       options: [],
-      selectedRows: this.$store.state.product.detail.item_option.map(option => [])
+      selectedRows: this.$store.state.product.detail.item_option.map(option => []),
       // restOption : this.$store.state.resetOption,
+
+      isFirstLoad: true,
     };
   },
   methods: {
@@ -298,6 +310,7 @@ export default {
 
     updateSelectAll(item, option, optionIndex) {
       // item 에서 checked 가 true 일때 selectedRows 에 추가
+      this.selectedRows[optionIndex] = [];
       if (item.checked === true) {
         this.selectedRows[optionIndex].push(item.key);
       } else {
@@ -413,8 +426,27 @@ export default {
 
     },
     setBeforeOldOptionData() {
-      this.options = cloneDeep(this.oldOptionData);
+      if (this.isFirstLoad) {
+        this.isFirstLoad = false;
+        return;
+      }
+      this.restoreInitialOptions();
     },
+
+    restoreInitialOptions() {
+      this.options = this.$store.state.product.detail.item_option.map(option => {
+        option.checkAll = false;
+        option.name = option.oldName;
+        option.data = option.data.map(item => {
+          item.name = item.oldName;
+          item.checked = false;
+          return item;
+        });
+        return option;
+      });
+    },
+
+
     _getNextLetter(letter) {
       let nextLetter = "";
       let carry = true;
