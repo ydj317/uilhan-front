@@ -487,7 +487,7 @@
 					고급 폴리백포장&nbsp;<a-tag color="red">1,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="95">
-					기본뿌뿌이&nbsp;<a-tag color="red">1,000원</a-tag>
+          기본 뽁뽁이&nbsp;<a-tag color="red">1,000원</a-tag>
 				</a-checkbox>
 				<a-checkbox class="mr15" value="104">
 					나무 특수포장&nbsp;<a-tag color="red">30,000원</a-tag>
