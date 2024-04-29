@@ -199,7 +199,7 @@
           <!--이미지-->
           <template v-else-if="column.key === 'img'">
             <div class="col center image-pic">
-              <div>
+              <div class="big-img-wrap">
                 <a-image
                     :width="100"
                     :height="100"
@@ -208,6 +208,7 @@
                     :src="record.img"
                     @click="translatePopup(record, record.img)"
                 />
+                <img :src="record.img" class="big-img">
               </div>
               <a-button
                   class="sku_image_button"
@@ -1073,5 +1074,20 @@ export default defineComponent({
 :deep(.ant-table-cell:nth-child(6)){
   text-align: -webkit-center;
 }
-
+.big-img-wrap{
+  position: relative;
+}
+.big-img-wrap .big-img{
+  width: 800px;
+  height: 850px;
+  position: fixed;
+  z-index: 99;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+.big-img-wrap:hover .big-img{
+  display: block;
+}
 </style>
