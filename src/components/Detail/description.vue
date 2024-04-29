@@ -280,7 +280,7 @@ export default {
     setOptionTableContent() {
       setTimeout(() => {
         if (window.tinymce.editors && window.tinymce.editors[0]) {
-          let doc = window.tinymce.editors[0].dom.doc;
+          let doc = window.tinymce.editors[0]?.dom?.doc;
           let optionTableDoc = doc.querySelector(`div#${this.optionTableId}`);
           if (this.showOptionTable === false) {
 
