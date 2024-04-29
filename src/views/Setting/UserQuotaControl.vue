@@ -319,6 +319,12 @@ const onChange = (iCurrent, iPageSize) => {
 
 const columns = [
   {
+    title: "No.",
+    dataIndex: "No",
+    key: "No",
+    align: "center",
+  },
+  {
     title: "아이디",
     dataIndex: "user_name",
     key: "user_name",
@@ -593,8 +599,8 @@ const search = () => {
 
     total.value = Number(data.total);
 
-    dataSource.value = data.list.map((item) => {
-
+    dataSource.value = data.list.map((item,key) => {
+      item.No = total.value - (current.value - 1) * pageSize.value - key
       return {...item};
     })
 

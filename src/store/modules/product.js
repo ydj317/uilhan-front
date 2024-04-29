@@ -57,6 +57,7 @@ const actions = {
                     return false;
                 }
                 res.data.item_is_free_delivery = res.data.item_is_free_delivery === "T";
+                res.data.item_mandatory = res.data.item_mandatory === "" ? '기타' : res.data.item_mandatory;
                 commit("setDetail", res.data);
                 commit('setDataLoaded', true); // 数据加载成功
             }).finally(() => {
