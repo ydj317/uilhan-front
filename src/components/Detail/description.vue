@@ -154,11 +154,11 @@ export default {
     this.getGuide();
 
     console.log('RUN description.vue mounted', this.$refs.editorToolbar);
-    // checkShow(this.$refs.editor, function () {
-    //   console.log('show')
-    // }, function () {
-    //   console.log('hide')
-    // })
+    checkShow(this.$refs.editorToolbar, function () {
+      console.log('editorToolbar show')
+    }, function () {
+      console.log('editorToolbar hide')
+    })
 
     this.$nextTick(() => {
       watch(() => this.showVideo, (newValue) => {
