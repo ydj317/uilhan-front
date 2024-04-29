@@ -230,7 +230,11 @@
               <!--              <a-space class="mt10"-->
               <!--                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">-->
               <a-space class="mt10">
-                <a-button size="small" style="width: 70px;" @click.prevent="showBridgeForm({record: item, type:'shipagent'})">배송대행</a-button>
+                <a-button size="small"
+						  style="width: 70px;"
+						  @click.prevent="showBridgeForm({record: item, type:'shipagent'})"
+						  v-if="item['isSendBridge'] === 0"
+				>배송대행</a-button>
                 <a-button size="small"
                           style="width: 70px;"
                           v-if="(item.status === 'shippingAddress' || item.status === 'paid') && item.marketCode === 'sk11st'"
