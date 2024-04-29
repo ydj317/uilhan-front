@@ -59,6 +59,27 @@ import { message } from "ant-design-vue";
 import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
+function checkShow(element, showCallback, hideCallback) {
+  const options = {
+    root: null,
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      try {
+        if (entry.isIntersecting) {
+          showCallback();
+        } else {
+          hideCallback()
+        }
+      } catch (e) {}
+    });
+  }, options);
+
+  observer.observe(element);
+}
+
 export default {
   name: "productDetailDescription",
 
@@ -139,6 +160,10 @@ export default {
         this.setVideoContent();
       });
     })
+  },
+
+  updated() {
+    console.log('RUN description.vue updated');
   },
 
   methods: {
