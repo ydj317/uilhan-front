@@ -153,12 +153,12 @@ export default {
     this.fetchData();
     this.getGuide();
 
-    console.log('RUN description.vue mounted');
-    checkShow(this.$refs.editor, function () {
-      console.log('show')
-    }, function () {
-      console.log('hide')
-    })
+    console.log('RUN description.vue mounted', this.$refs.editor);
+    // checkShow(this.$refs.editor, function () {
+    //   console.log('show')
+    // }, function () {
+    //   console.log('hide')
+    // })
 
     this.$nextTick(() => {
       watch(() => this.showVideo, (newValue) => {
