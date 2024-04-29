@@ -154,16 +154,17 @@ export default {
     this.getGuide();
 
     console.log('RUN description.vue mounted');
+    checkShow(this.$refs.editor, function () {
+      console.log('show')
+    }, function () {
+      console.log('hide')
+    })
 
     this.$nextTick(() => {
       watch(() => this.showVideo, (newValue) => {
         this.setVideoContent();
       });
     })
-  },
-
-  updated() {
-    console.log('RUN description.vue updated');
   },
 
   methods: {
