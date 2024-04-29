@@ -73,7 +73,7 @@
     </div>
     <template #title>
       <div style="display: flex;justify-content: space-between;align-items:center;padding: 0 20px;">
-        상세이미지 번역
+        이미지 편집
 <!--        <div style="display: flex;gap: 5px;">-->
 <!--          <a-button @click="onCancel">-->
 <!--            전체 이미지 다운로드-->
