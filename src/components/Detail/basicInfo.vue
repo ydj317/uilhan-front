@@ -485,10 +485,19 @@ export default {
       this.translateImageList = aImagesUrl;
     },
     updateTranslateImageList(imageList) {
-      for (const k in imageList) {
-        this.product.item_thumbnails[k].url =  imageList[k].url;
-        if (imageList[k].translate_status === true) {
-          this.product.item_thumbnails[k].url =  imageList[k].translate_url;
+      let imgLength = this.product.item_thumbnails.length - imageList.length;
+      if(imgLength >= 0){
+        for (let i = 0; i < imageList.length; i++) {
+          this.product.item_thumbnails[i].url = imageList[i].url;
+          if (imageList[i].translate_status === true) {
+            this.product.item_thumbnails[i].url = imageList[i].translate_url;
+          }
+        }
+        this.product.item_thumbnails.splice(imageList.length,imgLength);
+      }else{
+        let index = this.product.item_thumbnails.length;
+        for (let i = 0; i < -imgLength; i++) {
+          this.product.item_thumbnails.push({name:index + i,url:imageList[index + i].url});
         }
       }
     },

@@ -40,6 +40,28 @@
               </div>
             </div>
           </template>
+          <template #footer v-if="(!isMany && !localTranslateImageList.length) || isMany">
+            <div
+                class="eModelTitle_1_conent_group"
+                key="all"
+                style="border:2px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 120px;width: 120px;border-radius: 10px;"
+            >
+              <a-upload
+                  name="file"
+                  :headers="HEADER"
+                  :multiple="true"
+                  :showUploadList="false"
+                  :beforeUpload="validateUploadImage"
+                  :customRequest="uploadImage"
+              >
+                <div style="display: flex;flex-direction: column;gap: 5px;justify-content: center;align-items: center">
+                  <PlusOutlined/>
+                  이미지 업로드
+                </div>
+              </a-upload>
+            </div>
+
+          </template>
         </draggable>
       </a-card>
       <a-card style="flex: 4;height: 760px;">
@@ -118,6 +140,7 @@ import {
 } from "@ant-design/icons-vue";
 import NewXiangJi from "@/components/Detail/newXiangJi.vue";
 import {useProductApi} from "@/api/product";
+import ImageUpload from "@/components/Detail/ImageUpload.vue";
 
 export default defineComponent({
   components: {
@@ -128,6 +151,7 @@ export default defineComponent({
     PlusOutlined,
     DeleteOutlined,
     CloseOutlined,
+    ImageUpload,
   },
 
   computed: {
@@ -171,6 +195,10 @@ export default defineComponent({
     translateImageList: {
       type: Array,
       default: () => [],
+    },
+    isMany: {
+      type: Boolean,
+      default: true,
     },
   },
   emits: ["update:visible", "update:translateImageList"],
@@ -373,6 +401,59 @@ export default defineComponent({
     onCancel() {
       console.log('cancel');
       this.$emit("update:visible", false);
+    },
+    // 图片上传
+    uploadImage(option) {
+      const formData = new FormData();
+      formData.append("file", option.file);
+      formData.append("image_type", "product");
+      formData.append("relation_type", "product");
+      formData.append("product_idx", this.product.item_id);
+      AuthRequest.post(
+          process.env.VUE_APP_API_URL + "/api/image",
+          formData
+      ).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+
+        let response = res.data;
+        if (lib.isEmpty(response)) {
+          message.error("upload failed");
+          return false;
+        }
+        let aItemThumbnails = this.product.item_thumbnails;
+        let iItemThumbnailsLength = 0;
+        if (lib.isArray(aItemThumbnails, true) === true) {
+          iItemThumbnailsLength = aItemThumbnails.length;
+        }
+        let tmp = {
+          checked: false,
+          order: iItemThumbnailsLength + 1,
+          url: response.img_url,
+        };
+        if(this.isMany != 0){
+          tmp.checked = true;
+          tmp.order = 0;
+        }
+        this.localTranslateImageList.push(tmp);
+      });
+    },
+
+    // 检查上传的图片
+    validateUploadImage(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isJPEG = file.type === "image/jpeg";
+      const isGIF = file.type === "image/gif";
+      const isPNG = file.type === "image/png";
+
+      if (!(isJPG || isJPEG || isPNG || isGIF)) {
+        message.warning("허용되는 이미지 격식이 아닙니다.");
+        return false;
+      }
+
+      return true;
     },
   },
 
