@@ -226,8 +226,8 @@ export default {
           return;
         }
 
-        const beforeCont = `<div id="${this.guideBeforeId}" ><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
-        const afterCont = `<div id="${this.guideAfterId}" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
+        const beforeCont = `<div id="${this.guideBeforeId}" class="guide-content"><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
+        const afterCont = `<div id="${this.guideAfterId}" class="guide-content" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
         if (this.product.user.description_option.top_bottom_image.top_image_url !== "") {
           this.product.item_detail = beforeCont + this.product.item_detail;
         }
@@ -548,5 +548,13 @@ export default {
   margin: 0 auto; /* 이미지 상하 마진 0, 좌우 마진 자동으로 설정하여 중앙 정렬 */
   max-width: 100%; /* 이미지가 모달 너비를 초과하지 않도록 설정 */
   height: auto; /* 이미지의 원래 비율을 유지 */
+}
+
+.guide-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>

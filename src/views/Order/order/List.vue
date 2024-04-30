@@ -101,23 +101,12 @@
 
 
         <a-button @click.prevent="downLoadSaleHistory">
-          매출내역 다운로드
+          순수익 계산기
         </a-button>
 
-        <a-tooltip>
-          <template #title>EXCEL 다운로드</template>
-          <a-button @click.prevent="excelDownload">
-            <template #icon>
-              <DownloadOutlined/>
-            </template>
-          </a-button>
-        </a-tooltip>
 
-        <a-button @click.prevent="syncBridgeStatus" :loading="state.tableData.syncBridgeStatusLoading">
-          <template #icon>
-            <RedoOutlined/>
-          </template>
-          배대지 상태 동기화
+        <a-button @click.prevent="excelDownload">
+          주문내역 다운로드
         </a-button>
       </div>
     </div>
@@ -159,8 +148,7 @@
           <td :rowspan="order.items.length > 0 && _key === 0 ? order.items.length : 1" v-if="_key === 0"
               style="text-align: center;">
             <div style="display: flex;flex-direction: column;gap: 3px;">
-<!--              <span><router-link :to="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</router-link></span>-->
-              <span><a-button type="link" target="_blank" :href="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</a-button></span>
+<!--              <span><a-button type="link" target="_blank" :href="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</a-button></span>-->
               <a-popover placement="top" trigger="hover" :overlayStyle="{width: '140px'}">
                 <template #content>
                   <a-button size="small" @click="openMarketAdminPage(order.marketCode)">판매처</a-button>
@@ -169,7 +157,7 @@
                 <template #title>
                   <span>주문상세 바로가기</span>
                 </template>
-                <a style="color: #1890ff">{{ order.orderNo }} (new)</a>
+                <a style="color: #1890ff">{{ order.orderNo }}</a>
               </a-popover>
               <span style="color: #999999">({{ order.orderDate }})</span>
             </div>
@@ -241,7 +229,11 @@
               <!--              <a-space class="mt10"-->
               <!--                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">-->
               <a-space class="mt10">
-                <a-button size="small" style="width: 70px;" @click.prevent="showBridgeForm({record: item, type:'shipagent'})">배송대행</a-button>
+                <a-button size="small"
+						  style="width: 70px;"
+						  @click.prevent="showBridgeForm({record: item, type:'shipagent'})"
+						  v-if="item['isSendBridge'] === 0"
+				>배송대행</a-button>
                 <a-button size="small"
                           style="width: 70px;"
                           v-if="(item.status === 'shippingAddress' || item.status === 'paid') && item.marketCode === 'sk11st'"
@@ -349,7 +341,6 @@ const state = reactive({
     page: 1,
     pageSize: 10,
     loading: false,
-    syncBridgeStatusLoading: false,
     params: {
       order_date: [moment().subtract(15, "days").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
       account_ids: [],
@@ -839,23 +830,6 @@ const downLoadSaleHistory = () => {
     downloadElement.click(); // 点击下载
     document.body.removeChild(downloadElement); // 下载完成移除元素
     url.revokeObjectURL(href);
-  });
-};
-
-const syncBridgeStatus = () => {
-  state.tableData.syncBridgeStatusLoading = true;
-  useMarketOrderApi().syncBridgeStatus({}).then(res => {
-    state.tableData.syncBridgeStatusLoading = false;
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-    state.syncStatusShow = true;
-    message.success("수집완료 되였습니다.");
-    getTableData();
-  }).catch(() => {
-    message.success("서버연결에 실패 하였습니다.");
-    return false;
   });
 };
 

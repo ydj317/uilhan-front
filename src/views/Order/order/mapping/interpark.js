@@ -7,7 +7,7 @@ export class Interpark {
 
   getOrderParam() {
     const { items } = this.mappingItems();
-
+    console.log('11111', this.#orderData.orgData)
     const { PAY_DTS,MOBILE_TEL,DELI_COMMENT } = this.#orderData.orgData || {};
 
     const {
@@ -36,7 +36,7 @@ export class Interpark {
       invoiceNumber: invoiceNumber || '-',
       payDate: PAY_DTS,
       payLocation: '-',
-      message: DELI_COMMENT.join(', ') || '-',
+      message: DELI_COMMENT || '-',
       items: items,
       key: this.#orderData.key,
       ordererName: this.#orderData.ordererName,

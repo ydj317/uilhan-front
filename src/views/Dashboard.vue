@@ -173,6 +173,8 @@
             <div v-if="!hasData" style="font-size:18px;color:#000">데이터가 없습니다.</div>
           </div>
         </div>
+        <div id="main" style="width: 600px;height:400px;"></div>
+        <div id="customLegend"></div>
       </a-card>
     </a-col>
     <a-col :span="8">
@@ -622,6 +624,62 @@ const barChartOption = ref({
 
 
 const radarChart = ref({
+  tooltip: {
+    trigger: 'item',
+    formatter: function (params) {
+      const maxLength = 15;
+      let displayName = params.name;
+      if (displayName.length > maxLength) {
+        displayName = displayName.substring(0, maxLength) + '...';
+      }
+
+      let tooltipContent = `<div><strong>${displayName}</strong><br>
+        <table style="width:100%;">`;
+
+      if (params.value && Array.isArray(params.value)) {
+        params.value.forEach((value, index) => {
+          if (params.componentType === 'series' && radarChart.value.radar.indicator[index]) {
+            tooltipContent += `<tr>
+              <td style="text-align: left;">${params.marker}${radarChart.value.radar.indicator[index].name}:</td>
+              <td style="text-align: right;">${value}</td>
+              </tr>`;
+          }
+        });
+      }
+
+      if (params.componentType === 'legend') {
+        return params.name;
+      }
+
+      tooltipContent += "</table></div>";
+      return tooltipContent;
+    },
+    position: function (point, params, dom, rect, size) {
+      // 获取tooltip的宽度和高度
+      const tooltipWidth = size.contentSize[0];
+      const tooltipHeight = size.contentSize[1];
+
+      const mouseX = point[0];
+      const mouseY = point[1];
+
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      let posX = mouseX;
+      let posY = mouseY;
+
+      if (posX + tooltipWidth > windowWidth) {
+        posX -= tooltipWidth;
+      }
+
+      if (posY + tooltipHeight > windowHeight) {
+        posY -= tooltipHeight;
+      }
+
+      return [posX, posY];
+    }
+  },
+
   legend: {
     orient: 'vertical',
 
@@ -629,13 +687,13 @@ const radarChart = ref({
     data: [],
     left: 'left',
     top: 'bottom',
-    formatter: function (name) {
-      const maxLength = 5;
-      if (name.length > maxLength) {
-        return name.substring(0, maxLength) + '...';
-      } else {
-        return name;
-      }
+    textStyle: {
+      overflow: 'truncate',
+      ellipsis: '...',
+      width: 80
+    },
+    tooltip: {
+      show: true
     }
   },
   radar: {
@@ -650,7 +708,7 @@ const radarChart = ref({
       type: 'radar',
 
       //商品名&&market总浏览量
-      data: []
+      data: [],
     }
   ]
 });
@@ -963,7 +1021,6 @@ onBeforeUnmount(() => {
 .chart_area .box {
   position: relative;
   background: #f0f0f0;
-  overflow: hidden;
 }
 
 .chart_area .title {

@@ -6,10 +6,11 @@
         <colgroup>
           <col style="width: 150px;">
           <col >
+          <col style="width: 200px;">
         </colgroup>
         <tr>
           <th></th>
-          <td style="display: flex;flex-direction: column; gap: 5px">
+          <td colspan="2" >
             <div style="display: flex;gap: 5px;">
               <a-input
                 placeholder="검색 카테고리를 입력하세요."
@@ -78,6 +79,21 @@
               </template>
             </template>
             <a-spin v-else spinning><a-input /></a-spin>
+          </td>
+          <td style="display: flex;align-items: flex-start;">
+            <div style="display: flex;justify-content: flex-end;align-items: flex-start; gap: 5px">
+              <a-input
+                v-model:value="search_keyword_by_market[market.accountName]" placeholder="검색 카테고리를 입력하세요."
+                @keyup.enter="searchCategoryByMarket(market, search_keyword_by_market[market.accountName])"
+                style="width: 200px"
+                allow-clear
+              />
+              <a-button
+                type="primary"
+                style="background-color: #1e44ff;color: white"
+                @click="searchCategoryByMarket(market,search_keyword_by_market[market.accountName])"
+              >검색</a-button>
+            </div>
           </td>
         </tr>
       </table>
@@ -153,6 +169,8 @@ export default {
               categoryNames: item.cate_names.join(' / ')
             }
           }))
+
+          this.search_keyword_by_market[marketInfo.accountName] = val[val.length - 1]
         })
         await Promise.all(queue)
       } catch(e) {
@@ -203,6 +221,9 @@ export default {
         // market_code|seller_id: {loading: false, visible: false, list: [] }
       },
       search_keyword: '',
+      search_keyword_by_market: {
+        // market_code|seller_id: ''
+      },
       searchCategories: {
         // market_code|seller_id: []
       }
@@ -246,8 +267,39 @@ export default {
             this.searchCategories[marketInfo.accountName] = res.data
           })
         )
+        this.search_keyword_by_market[marketInfo.accountName] = search_keyword
       })
       return Promise.all(queue).then(() => {
+        this.loading = false
+      })
+    },
+
+    searchCategoryByMarket(market, searchInput) {
+      if (! searchInput) return
+      this.loading = true
+
+      const params = { market_code: market.market_code, search_keyword: searchInput }
+      useCategoryApi().getAutoRecommendCategoryNames(params).then(async res => {
+        if (res.data.length) {
+          this.categories[market.accountName].value = res.data[0]['cate_names'].join('/');
+          this.product.item_cate[market.accountName] = {
+            marketCode: market.market_code,
+            cateId: res.data[0]['cate_ids'][res.data[0]['cate_ids'].length - 1],
+            categoryNames: res.data[0]['cate_names'].join('/')
+          }
+          if (this.displayCategoryMarkets.includes(market.market_code)) {
+            await this.getDisplayCategory(market.market_code, res.data[0]['cate_ids'], market.seller_id, market.accountName)
+          }
+        } else {
+          this.product.item_cate[market.accountName] = {};
+          this.categories[market.accountName].value = [];
+
+          this.displayCategories[market.accountName].list = []
+          this.displayCategories[market.accountName].visible = false
+          this.product.item_disp_cate[market.accountName] = {};
+        }
+        this.searchCategories[market.accountName] = res.data
+      }).finally(() => {
         this.loading = false
       })
     },
@@ -264,6 +316,7 @@ export default {
 
       this.product.item_cate[accountName] = { marketCode, cateId: item.cate_ids[item.cate_ids.length - 1], categoryNames: this.categories[accountName].value }
       this.searchCategories[accountName] = []
+      this.search_keyword_by_market[accountName] = ''
 
       if(this.displayCategoryMarkets.includes(marketCode)) {
         const cateId = item.cate_ids;
@@ -385,6 +438,7 @@ export default {
         }
         this.displayCategories[accountName] = {loading: false, visible: false, list: [] }
         this.searchCategories[accountName] = []
+        this.search_keyword_by_market[accountName] = ''
         // 加载初始数据
         queue.push(
           this.getMarketCategory(market.market_code).then(res => {

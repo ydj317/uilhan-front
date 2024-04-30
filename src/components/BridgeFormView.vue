@@ -1044,6 +1044,12 @@ const handleOk = () => {
     return false;
   }
 
+	// check amount
+	if (parseFloat(state.form.total_amount) <= 0 ) {
+		message.error("금액을 0이상 입력해 주세요.");
+		return false;
+	}
+
   showConfirm();
 };
 

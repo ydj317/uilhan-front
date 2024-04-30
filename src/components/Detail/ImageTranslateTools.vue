@@ -349,15 +349,24 @@ export default defineComponent({
     // 편집
     async editorImage() {
       const { request_id } = this.selectedCollection
-      // 이미지 번역이 안된 이미지는 번역부터 진행
       if(request_id === undefined || request_id === ''){
-        const option = {
-          isTranslate: false // 편집만함
+        // 자동번역된 이미지 url 에   request_id 가 있음
+        let url = new URL(this.selectedCollection.url);
+        let requestId = url.searchParams.get('request_id');
+        if (requestId) {
+          // 자동번역된 이미지이면 request_id 를 넣고 is_translate 를 true 로 설정
+          this.localTranslateImageList.find(item => item.checked === true).request_id = requestId;
+          this.localTranslateImageList.find(item => item.checked === true).is_translate = true;
+        } else {
+          // 이미지 번역이 안된 이미지는 번역부터 진행
+          const option = {
+            isTranslate: false // 편집만함
+          }
+          await this.translateImage(option)
         }
-        await this.translateImage(option)
       }
 
-      this.requestIds = [this.selectedCollection.request_id];
+      this.requestIds = [this.selectedCollection.request_id ?? ''];
       this.isOpen = true;
     },
 

@@ -91,10 +91,13 @@ function openMarketPopup(marketInfo) {
     }
     url = `${channelInfo.url}/products/${market_prd_code}`;
   } else if (marketInfo.market_code === 'coupang') {
+    let vendor_item_id = '';
     if (marketInfo.front_code !== undefined) {
-      market_prd_code = marketInfo.front_code
+      let parts = marketInfo.front_code.split(":");
+      market_prd_code = parts[0]
+      vendor_item_id = parts[1]
     }
-    url = marketDetailUrls.value[marketInfo.market_code] + market_prd_code;
+    url = marketDetailUrls.value[marketInfo.market_code] + market_prd_code + '?vendorItemId=' + vendor_item_id;
   } else {
     url = marketDetailUrls.value[marketInfo.market_code] + market_prd_code;
   }
