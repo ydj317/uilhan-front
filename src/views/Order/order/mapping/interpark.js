@@ -7,7 +7,6 @@ export class Interpark {
 
   getOrderParam() {
     const { items } = this.mappingItems();
-    console.log('11111', this.#orderData.orgData)
     const { PAY_DTS,MOBILE_TEL,DELI_COMMENT } = this.#orderData.orgData || {};
 
     const {
