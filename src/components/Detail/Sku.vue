@@ -322,7 +322,7 @@
       </a-table>
     </div>
   </div>
-  <image-translate-tools v-model:visible="imageTranslateToolsVisible"
+  <image-translate-tools v-model:visible="imageTranslateToolsVisible" :isMany="false"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
                          @update:translateImageList="updateTranslateImageList" />
 </template>
@@ -413,6 +413,7 @@ export default defineComponent({
       item_price_change_value : 0,
       imageTranslateToolsVisible: false,
       translateImageList: [],
+      translateSkuCode: false
     };
   },
 
@@ -799,15 +800,18 @@ export default defineComponent({
       ];
       this.imageTranslateToolsVisible = true;
       this.translateImageList = aImagesUrl;
+      this.translateSkuCode = record.code;
     },
     updateTranslateImageList(imageList) {
-      if (imageList[0].translate_status === true) {
-        this.product.sku.map((v,k)=>{
-            if(v.img == imageList[0].url){
-              v.img = imageList[0].translate_url;
-            }
-        });
-      }
+      this.product.sku.map((v,k)=>{
+        if(v.code == this.translateSkuCode){
+          v.img = imageList[0].url;
+          if (imageList[0].translate_status === true) {
+            v.img = imageList[0].translate_url;
+          }
+        }
+      });
+
     },
   },
 
