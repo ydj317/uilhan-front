@@ -732,9 +732,10 @@ const sendDelayGuide = () => {
       state.delayGuideData.loading = false;
       state.loading = false;
       resetDelayData();
-    }).finally(() => {
-      getTableData();
-    });
+    })
+    //     .finally(() => {
+    //   getTableData();
+    // });
   }).catch(() => {
     message.error("필수항목을 입력해주세요.");
   });
