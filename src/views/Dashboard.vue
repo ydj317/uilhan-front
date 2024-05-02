@@ -59,15 +59,6 @@
       <div>
       주문현황
       </div>
-      <div>
-        <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
-        <a-tooltip>
-          <template #title>
-            <div>자동수집을 체크하면 실시간 주문현황을 확인할 수 있습니다.</div>
-          </template>
-          <QuestionCircleOutlined />
-        </a-tooltip>
-      </div>
     </div>
     <a-card :loading="orderLoading" :bodyStyle="orderLoading ? {overflow: 'hidden'} : {padding: 0, overflow: 'hidden'}">
         <a-table :data-source="account.orderData.data" :pagination="false" class="table">
@@ -267,7 +258,6 @@ let productLoading = ref(false);
 let orderLoading = ref(false);
 let boardLoading = ref(false);
 let dailySaleLoading = ref(false);
-const isAutoCollect = ref(false);
 
 const marketSellerUrl = {
   "11st": 'https://login.11st.co.kr/auth/front/selleroffice/login.tmall',
@@ -561,17 +551,6 @@ const handleBeforeUnload = () => {
 };
 
 let intervalId = null;
-const handleAutoCollectChange = (e) => {
-  const minute = 1;
-  if(e.target.checked === true) {
-    intervalId = setInterval(() => {
-      getTableList();
-      handleCollect();
-    }, minute * 60 * 1000);
-  } else {
-    clearInterval(intervalId);
-  }
-}
 
 const barChartxAxisData = computed(() => {
   const xAxisData = [];
