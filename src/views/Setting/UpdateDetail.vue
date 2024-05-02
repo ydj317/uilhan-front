@@ -131,7 +131,7 @@
                   checked-children="on" un-checked-children="off" />
         <a-descriptions bordered size="small" class="mt15" :column="4">
           <a-descriptions-item :label="market" v-for="(market,index) in formState.marketList" :key="index">
-            <a-input-number v-model:value.number="formState.settingDatas.commission_rate.markets[index]" addon-after="%"
+            <a-input-number v-model:value.number="formState.settingDatas.margin_weight.markets[index]" addon-after="%"
                             :min="0" :max="300" size="small" style="width: 150px" defaultValue="0"
                             :disabled="!formState.settingDatas.margin_weight.is_use"/>
           </a-descriptions-item>
@@ -291,10 +291,6 @@ const formState = reactive({
       markets: {},
     },
 
-    commission_rate: {
-      markets: {},
-    },
-
 
     description_option:{
       top_bottom_image : {
@@ -403,7 +399,7 @@ const checkValidation = () => {
 
 function checkCommissionRates() {
   if (formState.settingDatas.margin_weight.is_use) {
-    for (const [index, rate] of Object.entries(formState.settingDatas.commission_rate.markets)) {
+    for (const [index, rate] of Object.entries(formState.settingDatas.margin_weight.markets)) {
       if (rate === null || rate === undefined || rate === '') {
         message.error("마켓별 수수료율을 입력해주세요.");
         return false;
@@ -606,11 +602,6 @@ async function getUserInfoData() {
       return false;
     }
 
-    if (user_data.commission_rate === undefined) {
-      formState.loading = false;
-      return false;
-    }
-
     if (user_data.description_option === undefined) {
       formState.loading = false;
       return false;
@@ -620,12 +611,6 @@ async function getUserInfoData() {
     if (Array.isArray(user_data.margin_weight.markets) && user_data.margin_weight.markets.length === 0) {
       user_data.margin_weight.markets = {};
     }
-
-    // 빈 json 일때 백앤드에선 []로 저장되기에 추후에 버그가 생길수 있어서 프론트단에서 []받을시 강제로 {}로 전환
-    if (Array.isArray(user_data.commission_rate.markets) && user_data.commission_rate.markets.length === 0) {
-      user_data.commission_rate.markets = {};
-    }
-
 
     //ImageDetail
 
