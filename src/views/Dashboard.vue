@@ -73,50 +73,50 @@
           </a-table-column>
           <a-table-column title="결제완료" dataIndex="paid" key="paid" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record?.paidNew">{{ record?.paidNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.paidNew">{{ record.paid }}</span>
+<!--              <span class="highlight" v-if="record?.paidNew">{{ record?.paidNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.paid }}</span>
             </template>
           </a-table-column>
           <a-table-column title="배송준비중" dataIndex="shippingAddress" key="shippingAddress" align="center">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.shippingAddressNew">{{ record.shippingAddressNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.shippingAddressNew">{{ record.shippingAddress }}</span>
+<!--              <span class="highlight" v-if="record.shippingAddressNew">{{ record.shippingAddressNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.shippingAddress }}</span>
             </template>
           </a-table-column>
           <a-table-column title="배송중" dataIndex="shipping" key="shipping" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.shippingNew">{{ record.shippingNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.shippingNew">{{ record.shipping }}</span>
+<!--              <span class="highlight" v-if="record.shippingNew">{{ record.shippingNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.shipping }}</span>
             </template>
           </a-table-column>
           <a-table-column title="배송완료" dataIndex="shippingComplete" key="shippingComplete" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.shippingCompleteNew">{{ record.shippingCompleteNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.shippingCompleteNew">{{ record.shippingComplete }}</span>
+<!--              <span class="highlight" v-if="record.shippingCompleteNew">{{ record.shippingCompleteNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.shippingComplete }}</span>
             </template>
           </a-table-column>
           <a-table-column title="취소요청" dataIndex="cancelRequest" key="cancelRequest" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.cancelRequestNew">{{ record.cancelRequestNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.cancelRequestNew">{{ record.cancelRequest }}</span>
+<!--              <span class="highlight" v-if="record.cancelRequestNew">{{ record.cancelRequestNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.cancelRequest }}</span>
             </template>
           </a-table-column>
           <a-table-column title="취소완료" dataIndex="cancelComplete" key="cancelComplete" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.cancelCompleteNew">{{ record.cancelCompleteNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.cancelCompleteNew">{{ record.cancelComplete }}</span>
+<!--              <span class="highlight" v-if="record.cancelCompleteNew">{{ record.cancelCompleteNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.cancelComplete }}</span>
             </template>
           </a-table-column>
           <a-table-column title="반품요청" dataIndex="returnRequest" key="returnRequest" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.returnRequestNew">{{ record.returnRequestNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.returnRequestNew">{{ record.returnRequest }}</span>
+<!--              <span class="highlight" v-if="record.returnRequestNew">{{ record.returnRequestNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.returnRequest }}</span>
             </template>
           </a-table-column>
           <a-table-column title="반품완료" dataIndex="returnComplete" key="returnComplete" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.returnCompleteNew">{{ record.returnCompleteNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.returnCompleteNew">{{ record.returnComplete }}</span>
+<!--              <span class="highlight" v-if="record.returnCompleteNew">{{ record.returnCompleteNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.returnComplete }}</span>
             </template>
           </a-table-column>
           <template #summary>
@@ -485,7 +485,6 @@ const getTableList = async () => {
     } else {
       orderDataView = list
     }
-
     account.orderData.data = orderDataView;
     account.orderData.list = list
     account.orderData.total = total;
