@@ -183,17 +183,19 @@
           </td>
           <td :rowspan="calculateRowspan(order, _key)"
               v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
-            <a-badge color="blue" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-if="item.status === 'paid'"/>
-            <a-badge color="yellow" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-else-if="item.status === 'shippingAddress'"/>
-            <a-badge color="orange" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-else-if="item.status === 'shipping'"/>
-            <a-badge color="green" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-else-if="item.status === 'shippingComplete'"/>
-            <a-badge color="red" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
-                     v-else/>
-            <a-tag color="volcano" v-if="!item.prdImage">마켓상품</a-tag>
+            <a-flex vertical>
+              <a-badge color="blue" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
+                       v-if="item.status === 'paid'"/>
+              <a-badge color="yellow" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
+                       v-else-if="item.status === 'shippingAddress'"/>
+              <a-badge color="orange" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
+                       v-else-if="item.status === 'shipping'"/>
+              <a-badge color="green" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
+                       v-else-if="item.status === 'shippingComplete'"/>
+              <a-badge color="red" :text="state.allStatus.filter(it => it.value === item.status)[0].label"
+                       v-else/>
+              <a-tag color="volcano" v-if="!item.prdImage">마켓상품</a-tag>
+            </a-flex>
           </td>
           <td :rowspan="calculateRowspan(order, _key)"
               v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
@@ -214,9 +216,7 @@
           <td :rowspan="calculateRowspan(order, _key)"
               v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
             <div style="display: grid;">
-              <a-space >
-                <div >
-
+              <a-flex >
                   <a-button size="small"
                             style="width: 70px;"
                             @click.prevent="showHistory({title: item.prdName + ' - ' + item.prdOptionName, type: 'order', index_id: item.id})">
@@ -228,10 +228,7 @@
                   <a-button class="ml10" style="width: 70px;" type="primary" size="small" v-if="item.status === 'shippingAddress'"
                             @click.prevent="deliveryOrder(item.id, item.courierName, item.invoiceNumber)">배송
                   </a-button>
-
-                </div>
-
-              </a-space>
+              </a-flex>
               <!--              <a-space class="mt10"-->
               <!--                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">-->
               <a-space class="mt10">
