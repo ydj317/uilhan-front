@@ -22,7 +22,7 @@
           >
             <a-select-option value="">전체</a-select-option>
 
-            <a-select-option v-for="(item,index) in plans" :value="index">{{ index }}</a-select-option>
+            <a-select-option v-for="(item,index) in plans" :value="index">{{ planTypeMap[index] }}</a-select-option>
 
           </a-select>
         </a-descriptions-item>
@@ -73,7 +73,7 @@
             <a-button type="primary" :disabled="!hasMoreSelected" size="small" @click="handleDelAll" class="ml5">서비스플랜 일괄삭제</a-button>
             <a-modal v-model:open="openModel" :title="`서비스플랜 추가[${checkedUserName.join()}]`" @ok="handleAdd" :closable="false">
               <a-radio-group v-model:value="plan">
-                <a-radio v-for="(item, index) in plans" :key="index" :style="radioStyle" :value="index">{{ index }}</a-radio>
+                <a-radio v-for="(item, index) in plans" :key="index" :style="radioStyle" :value="index">{{ planTypeMap[index] }}</a-radio>
               </a-radio-group>
             </a-modal>
             <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(5)" class="ml10">서비스 사용기한 5일 연장</a-button>
@@ -115,7 +115,7 @@
             <span>{{ text === true ? '사용함' : '사용안함'}}</span>
           </template>
 
-          <template v-if="column.key === 'plan_type'">
+          <template v-if="column.key === 'plan_type_label'">
             <a-tooltip :title="text">
               <span style="width: 120px;display: block;white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">{{ text }}</span>
             </a-tooltip>
@@ -160,7 +160,7 @@
           </a-form-item>
 
           <a-form-item label="서비스">
-            <a-input :disabled="true" :value="editableData.plan_type" />
+            <a-input :disabled="true" :value="editableData.plan_type_label" />
           </a-form-item>
 
           <a-form-item has-feedback label="상품 수집수" name="taobao_count">
@@ -345,8 +345,8 @@ const columns = [
   },
   {
     title: "서비스",
-    dataIndex: "plan_type",
-    key: "plan_type",
+    dataIndex: "plan_type_label",
+    key: "plan_type_label",
     align: "center",
     ellipsis:true
   },
@@ -564,6 +564,23 @@ const checkUserRowKeys = (id) => {
       return res.user_id;
     }
   }
+}
+
+const planTypeMap = {
+  DefaultPlan: '기본플랜',
+  PreviewPlan: '베타버전',
+  BasicPlan1Month: '기본서비스 1개월',
+  BasicPlan6Month: '기본서비스 6개월',
+  BasicPlan12Month: '기본서비스 12개월',
+  Extra1PlanAutoImage: '이미지 자동번 번역',
+  Extra2PlanGPT100: 'AI GPT 서비스 100개',
+  Extra2PlanGPT150: 'AI GPT 서비스 150개',
+  Extra2PlanGPT200: 'AI GPT 서비스 200개',
+  Extra2PlanGPT300: 'AI GPT 서비스 300개',
+  Extra3PlanMarketCollect100: 'ESM 원클릭 수집 100',
+  Extra3PlanMarketCollect150: 'ESM 원클릭 수집 150',
+  Extra3PlanMarketCollect200: 'ESM 원클릭 수집 200',
+  Extra3PlanMarketCollect300: 'ESM 원클릭 수집 300'
 }
 
 const search = () => {

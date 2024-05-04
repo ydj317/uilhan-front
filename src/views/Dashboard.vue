@@ -59,15 +59,6 @@
       <div>
       주문현황
       </div>
-      <div>
-        <a-checkbox v-model:checked="isAutoCollect" class="ml10" @change="handleAutoCollectChange">자동수집</a-checkbox>
-        <a-tooltip>
-          <template #title>
-            <div>자동수집을 체크하면 실시간 주문현황을 확인할 수 있습니다.</div>
-          </template>
-          <QuestionCircleOutlined />
-        </a-tooltip>
-      </div>
     </div>
     <a-card :loading="orderLoading" :bodyStyle="orderLoading ? {overflow: 'hidden'} : {padding: 0, overflow: 'hidden'}">
         <a-table :data-source="account.orderData.data" :pagination="false" class="table">
@@ -82,50 +73,50 @@
           </a-table-column>
           <a-table-column title="결제완료" dataIndex="paid" key="paid" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record?.paidNew">{{ record?.paidNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.paidNew">{{ record.paid }}</span>
+<!--              <span class="highlight" v-if="record?.paidNew">{{ record?.paidNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.paid }}</span>
             </template>
           </a-table-column>
           <a-table-column title="배송준비중" dataIndex="shippingAddress" key="shippingAddress" align="center">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.shippingAddressNew">{{ record.shippingAddressNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.shippingAddressNew">{{ record.shippingAddress }}</span>
+<!--              <span class="highlight" v-if="record.shippingAddressNew">{{ record.shippingAddressNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.shippingAddress }}</span>
             </template>
           </a-table-column>
           <a-table-column title="배송중" dataIndex="shipping" key="shipping" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.shippingNew">{{ record.shippingNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.shippingNew">{{ record.shipping }}</span>
+<!--              <span class="highlight" v-if="record.shippingNew">{{ record.shippingNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.shipping }}</span>
             </template>
           </a-table-column>
           <a-table-column title="배송완료" dataIndex="shippingComplete" key="shippingComplete" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.shippingCompleteNew">{{ record.shippingCompleteNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.shippingCompleteNew">{{ record.shippingComplete }}</span>
+<!--              <span class="highlight" v-if="record.shippingCompleteNew">{{ record.shippingCompleteNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.shippingComplete }}</span>
             </template>
           </a-table-column>
           <a-table-column title="취소요청" dataIndex="cancelRequest" key="cancelRequest" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.cancelRequestNew">{{ record.cancelRequestNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.cancelRequestNew">{{ record.cancelRequest }}</span>
+<!--              <span class="highlight" v-if="record.cancelRequestNew">{{ record.cancelRequestNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.cancelRequest }}</span>
             </template>
           </a-table-column>
           <a-table-column title="취소완료" dataIndex="cancelComplete" key="cancelComplete" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.cancelCompleteNew">{{ record.cancelCompleteNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.cancelCompleteNew">{{ record.cancelComplete }}</span>
+<!--              <span class="highlight" v-if="record.cancelCompleteNew">{{ record.cancelCompleteNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.cancelComplete }}</span>
             </template>
           </a-table-column>
           <a-table-column title="반품요청" dataIndex="returnRequest" key="returnRequest" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.returnRequestNew">{{ record.returnRequestNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.returnRequestNew">{{ record.returnRequest }}</span>
+<!--              <span class="highlight" v-if="record.returnRequestNew">{{ record.returnRequestNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.returnRequest }}</span>
             </template>
           </a-table-column>
           <a-table-column title="반품완료" dataIndex="returnComplete" key="returnComplete" :align="'center'">
             <template #default="{ record }">
-              <span class="highlight" v-if="record.returnCompleteNew">{{ record.returnCompleteNew }}</span>
-              <span style="color: #000000D9;" v-if="!record.returnCompleteNew">{{ record.returnComplete }}</span>
+<!--              <span class="highlight" v-if="record.returnCompleteNew">{{ record.returnCompleteNew }}</span>-->
+              <span style="color: #000000D9;" >{{ record.returnComplete }}</span>
             </template>
           </a-table-column>
           <template #summary>
@@ -267,7 +258,6 @@ let productLoading = ref(false);
 let orderLoading = ref(false);
 let boardLoading = ref(false);
 let dailySaleLoading = ref(false);
-const isAutoCollect = ref(false);
 
 const marketSellerUrl = {
   "11st": 'https://login.11st.co.kr/auth/front/selleroffice/login.tmall',
@@ -495,7 +485,6 @@ const getTableList = async () => {
     } else {
       orderDataView = list
     }
-
     account.orderData.data = orderDataView;
     account.orderData.list = list
     account.orderData.total = total;
@@ -561,17 +550,6 @@ const handleBeforeUnload = () => {
 };
 
 let intervalId = null;
-const handleAutoCollectChange = (e) => {
-  const minute = 1;
-  if(e.target.checked === true) {
-    intervalId = setInterval(() => {
-      getTableList();
-      handleCollect();
-    }, minute * 60 * 1000);
-  } else {
-    clearInterval(intervalId);
-  }
-}
 
 const barChartxAxisData = computed(() => {
   const xAxisData = [];
