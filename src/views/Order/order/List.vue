@@ -233,27 +233,23 @@
                             @click.prevent="deliveryOrder(item.id, item.courierName, item.invoiceNumber)">배송
                   </a-button>
               </a-flex>
-              <!--              <a-space class="mt10"-->
-              <!--                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 0 && state.is_bridge_sync === true && item.prdImage">-->
               <a-space class="mt10">
                 <a-button size="small"
-						  style="width: 70px;"
+						  style="width: 100%;"
 						  @click.prevent="showBridgeForm({record: item, type:'shipagent'})"
-						  v-if="item['isSendBridge'] === 0"
+						  v-if="item['isSendBridge'] === 0 && item.status === 'shippingAddress' && state.is_bridge_sync === true"
 				>배송대행</a-button>
                 <a-button size="small"
-                          style="width: 70px;"
+                          style="width: 100%;"
                           v-if="(item.status === 'shippingAddress' || item.status === 'paid') && item.marketCode === 'sk11st'"
                           @click.prevent="openDelayForm(item)">발송지연
                 </a-button>
               </a-space>
 
               <a-space class="mt10"
-                       v-if="item.status === 'shippingAddress' && item.isSendBridge === 1 && state.is_bridge_sync === true && item.prdImage"
+                       v-if="item.status === 'shippingAddress' && item['isSendBridge'] === 1 && state.is_bridge_sync === true"
                        direction="vertical" align="center">
-                <a-tag color="pink">- 신청서 작성완료 -</a-tag>
-                <a-tag size="small" color="#15803d" v-if="state.syncStatusShow">{{ item.bridgeStatus }}</a-tag>
-                <a-tag size="small" v-else> -</a-tag>
+                <a-tag color="pink">배송대행 신청완료</a-tag>
               </a-space>
             </div>
           </td>
