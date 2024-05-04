@@ -1419,7 +1419,6 @@ watchEffect(() => {
       newItem.cn_order_id = parseMarketOrderData.orderData.orderNo;
       newItem.unitPrice = item.price;
       newItem.prd_name_cn = item.prdName;
-      newItem.prd_name_cn = item.prdName;
       newItem.prdUrl = item.prdUrl;
       newItem.prdImage = item.imgUrl;
       newItem.option_color = item.sku;
