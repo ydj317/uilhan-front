@@ -235,14 +235,21 @@
 				>
 					<a-flex class="header color-2171E2 w100 font-SCDream5 fs14">
 						<div class="w10 text-center">No.{{ order['id'] }}</div>
-						<div class="w10 text-center">{{ order['bridgeOrderId'] ?? '' }}</div>
-						<div class="w20 text-center">{{ order['insDate'] ?? '' }}</div>
+						<div class="w40 text-left">{{ order['bridgeOrderId'] ?? '' }} {{ order['items'][0]['orderNo'] ? '(판매처 주문번호:' + order['items'][0]['orderNo'] + ')' : '' }}</div>
+						<div class="w20 text-left">{{ order['insDate'] ?? '' }}</div>
+						<a-button
+							v-if="order['bridgeOrderStatus'] === '결제대기'"
+							style="margin-left: auto;margin-top: -7px;"
+							@click="moveToPay"
+						>
+							결제하기
+						</a-button>
 					</a-flex>
 					<a-flex class="content w100" align="center" v-for="(item, index) in order['items']" :key="index">
 						<div><img :src="item['prdImage']" class="br5" :alt="order['id']"/></div>
 						<a-flex vertical style="text-align: left;">
-							<div class="mb10 fs14 font-SCDream5">{{ item['prdName'] ?? '' }}</div>
-							<div class="fs10 font-SCDream4">{{ item['prdOptionName'] ?? '' }}</div>
+							<div class="mb10 fs14 font-SCDream5">{{ item['prd_name_en'] || item['prdName'] || '' }}</div>
+							<div class="fs10 font-SCDream4">{{ getOptionName(item) }}</div>
 						</a-flex>
 						<div class="fs14 font-SCDream4">{{ item['quantity'] ?? 0 }}</div>
 						<div class="fs14 font-SCDream4">{{ item['tracking_no'] ?? ''}}</div>
@@ -374,7 +381,6 @@ const state = reactive({
   tabs:{
       send:{
         tab:[
-          {text:'접수대기',number:0},
           {text:'접수신청',number:0},
           {text:'입고완료',number:0},
           {text:'결제대기',number:0},
@@ -572,6 +578,24 @@ const setTotalData = (v) =>{
     }
   }).finally(() => {
   });
+}
+
+const getOptionName = (item) => {
+	let optionName = '';
+	if (item['option_color']) {
+		optionName = item['option_color'];
+		if (item['option_size']) {
+			optionName += '/' + item['option_size'];
+		}
+	} else {
+		optionName = item['prdOptionName'] ?? '';
+	}
+
+	return optionName;
+}
+
+const moveToPay = () => {
+	window.open('https://www.baidu.com');
 }
 
 watch(() => state.modal.open, () => {

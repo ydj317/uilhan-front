@@ -49,7 +49,7 @@
           <a-row class="mb10">
             <a-col :span="4" class="center">한글<span class="red">*</span></a-col>
             <a-col :span="15" class="center">
-              <a-input v-model:value="state.form.receiver_name" />
+              <a-input v-model:value="state.form.receiver_name" @input="fnHanEng2(state.form.receiver_name, 'receiver_name_en')"/>
             </a-col>
           </a-row>
           <a-row class="mb5">
@@ -119,7 +119,7 @@
           <a-row class="mb10">
             <a-col :span="4" class="center">한글주소<span class="red">*</span></a-col>
             <a-col :span="15">
-              <a-input v-model:value="state.form.receiver_addr1" placeholder="※ 시, 군, 구를 띄어쓰기로 정확히 입력해주세요."/>
+              <a-input v-model:value="state.form.receiver_addr1" placeholder="※ 시, 군, 구를 띄어쓰기로 정확히 입력해주세요." @input="fnHanEng2(state.form.receiver_addr1, 'receiver_addr1_en')"/>
             </a-col>
             <a-col :span="5" class="center"></a-col>
           </a-row>
@@ -130,7 +130,7 @@
           <a-row class="mb10">
             <a-col :span="4" class="center">상세주소<span class="red">*</span></a-col>
             <a-col :span="15">
-              <a-input v-model:value="state.form.receiver_addr2" placeholder="※ 도로명 주소를 입력해주세요."/>
+              <a-input v-model:value="state.form.receiver_addr2" placeholder="※ 도로명 주소를 입력해주세요." @input="fnHanEng2(state.form.receiver_addr2, 'receiver_addr2_en')"/>
             </a-col>
             <a-col :span="5" class="center"></a-col>
           </a-row>
@@ -1418,6 +1418,7 @@ watchEffect(() => {
       const newItem = {...initItem};
       newItem.cn_order_id = parseMarketOrderData.orderData.orderNo;
       newItem.unitPrice = item.price;
+      newItem.prd_name_cn = item.prdName;
       newItem.prd_name_cn = item.prdName;
       newItem.prdUrl = item.prdUrl;
       newItem.prdImage = item.imgUrl;
