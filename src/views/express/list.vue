@@ -235,7 +235,7 @@
 				>
 					<a-flex class="header color-2171E2 w100 font-SCDream5 fs14">
 						<div class="w10 text-center">No.{{ order['id'] }}</div>
-						<div class="w40 text-left">{{ order['bridgeOrderId'] ?? '' }} {{ order['items'][0]['orderNo'] ? '(판매처 주문번호:' + order['items'][0]['orderNo'] + ')' : '' }}</div>
+						<div class="w40 text-left"><a class="color-2171E2" href="https://zh8g.com/Front/Member/MyPage.asp" target="_blank" >{{ order['bridgeOrderId'] ?? '' }}</a> {{ order['items'][0]['orderNo'] ? '(판매처 주문번호:' + order['items'][0]['orderNo'] + ')' : '' }}</div>
 						<div class="w20 text-left">{{ order['insDate'] ?? '' }}</div>
 						<a-button
 							v-if="order['bridgeOrderStatus'] === '결제대기'"
@@ -595,7 +595,7 @@ const getOptionName = (item) => {
 }
 
 const moveToPay = () => {
-	window.open('https://www.baidu.com');
+	window.open('https://zh8g.com/Front/Acting/Pay_S4.asp');
 }
 
 watch(() => state.modal.open, () => {

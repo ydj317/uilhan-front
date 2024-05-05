@@ -21,7 +21,7 @@
           <a-radio-group v-model:value="state.form.ctr_seq">
             <a-radio value="1">위해-인천1자가장치장</a-radio>
             <a-radio value="2019">위해항공</a-radio>
-            <a-radio value="2030">위해-평택해운</a-radio>
+<!--            <a-radio value="2030">위해-평택해운</a-radio>-->
             <a-radio value="2031">위해-인천2지정장치장</a-radio>
           </a-radio-group>
           <a-textarea disabled :rows="2" class="mt10 mb10 textarea2"/>
