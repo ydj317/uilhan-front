@@ -129,9 +129,10 @@ onMounted(() => {
   background: #fff;
 }
 .fixed-wrap .fixed-group{
+  position: fixed;
   right:26px;
-  bottom:100px;
-  width:56px;
+  bottom:30px;
+  width:60px;
   z-index: 9999;
 }
 .fixed-wrap .fixed-group .fixed-button{
@@ -143,12 +144,12 @@ onMounted(() => {
   width: 40px;
   height: 40px;
   position:fixed;
-  right:32px;
+  right:36px;
 }
 .fixed-wrap .fixed-group .chat img{
-  bottom: 186px;
+  bottom: 116px;
 }
 .fixed-wrap .fixed-group .help-center img{
-  bottom: 110px;
+  bottom: 40px;
 }
 </style>
