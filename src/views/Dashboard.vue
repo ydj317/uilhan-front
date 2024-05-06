@@ -357,13 +357,10 @@ const getSaleList = async () => {
 
       const seriesData = [];
       barChartxAxisData.value.forEach((date) => {
-        const keys = Object.keys(res.data[item])[0]
-        if(dayjs(date).isSame(dayjs(keys))) {
-          seriesData.push([date, res.data[item][date]]);
-        } else {
-          seriesData.push([date, 0]);
-        }
-      })
+        const dateStr = dayjs(date).format('YYYY-MM-DD');
+        const value = res.data[item][dateStr] || 0;
+        seriesData.push([date, value]);
+      });
 
       const series = {
         data: seriesData,
