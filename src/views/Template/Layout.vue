@@ -33,20 +33,18 @@
       <Footer />
     </a-layout-footer>
   </a-layout>
-  <div class="fixed-wrap">
-    <a-float-button-group shape="circle" class="fixed-group">
-      <a-float-button class="fixed-button chat" href="https://open.kakao.com/o/gAfSJqmg" target="_blank">
-        <template #icon>
-          <img src="@/assets/img/chat.jpg" class="br50">
-        </template>
-      </a-float-button>
-      <a-float-button class="fixed-button help-center" href="http://pf.kakao.com/_xodWxnG" target="_blank">
-        <template #icon>
-          <img src="@/assets/img/help-center.jpg" class="br50">
-        </template>
-      </a-float-button>
-    </a-float-button-group>
-  </div>
+  <a-float-button-group shape="circle" class="fixed-wrap">
+    <a-float-button href="https://open.kakao.com/o/gAfSJqmg" target="_blank">
+      <template #icon>
+        <img src="@/assets/img/chat.jpg">
+      </template>
+    </a-float-button>
+    <a-float-button href="http://pf.kakao.com/_xodWxnG" target="_blank">
+      <template #icon>
+        <img src="@/assets/img/help-center.jpg">
+      </template>
+    </a-float-button>
+  </a-float-button-group>
 </template>
 
 <script setup>
@@ -82,13 +80,20 @@ onMounted(() => {
 })
 </script>
 <style>
-.fixed-wrap .ant-float-btn-body{
+.fixed-wrap{
+  width:auto;
+  z-index: 9999;
+}
+.fixed-wrap .ant-float-btn,.fixed-wrap .ant-float-btn-body{
   width: 60px!important;
   height: 60px!important;
   background: #FAE100;
 }
 .fixed-wrap .ant-float-btn-body:hover{
   background: #FAE100;
+}
+.fixed-wrap .ant-float-btn-icon{
+  width: auto!important;
 }
 </style>
 <style scoped>
@@ -128,28 +133,9 @@ onMounted(() => {
 .ant-layout-sider {
   background: #fff;
 }
-.fixed-wrap .fixed-group{
-  position: fixed;
-  right:26px;
-  bottom:30px;
-  width:60px;
-  z-index: 9999;
-}
-.fixed-wrap .fixed-group .fixed-button{
-  width: 60px!important;
-  height: 60px!important;
-}
-
-.fixed-wrap .fixed-group img{
+.fixed-wrap img{
   width: 40px;
   height: 40px;
-  position:fixed;
-  right:36px;
-}
-.fixed-wrap .fixed-group .chat img{
-  bottom: 116px;
-}
-.fixed-wrap .fixed-group .help-center img{
-  bottom: 40px;
+  border-radius: 50%;
 }
 </style>
