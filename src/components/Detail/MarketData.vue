@@ -35,17 +35,22 @@
           </th>
           <td>
             <template v-if="initialize">
-              <a-cascader
+
+
+              <a-select
                 v-model:value="categories[market.accountName].value"
-                :options="categories[market.accountName].options"
                 placeholder="마켓별 카테고리를 선택해 주세요."
                 change-on-select style="width: 100%"
-                :field-names="{ label: 'cateName', value: 'cateId' }"
-                :load-data="d => loadData(d, market)"
-                @change="(val, info) => handleCascaderChange(val, info, market)"
+                :default-active-first-option="false"
+                :field-names="{label: 'cate_names', value: 'cate_ids'}"
+                :show-arrow="false"
+                :filter-option="false"
+                :not-found-content="null"
                 :disabled="market.market_prd_code !== ''"
+                :options="categories[market.accountName].options"
+                @change="(val, info) => handleCascaderChange(val, info, market)"
                 @reset="removeCategory(market.accountName)"
-              />
+              ></a-select>
 
               <!-- disp 的情况 -->
               <template v-if="displayCategoryMarkets.includes(market.market_code)">
@@ -86,6 +91,7 @@
                 v-model:value="search_keyword_by_market[market.accountName]" placeholder="검색 카테고리를 입력하세요."
                 @keyup.enter="searchCategoryByMarket(market, search_keyword_by_market[market.accountName])"
                 style="width: 200px"
+                :disabled="market.market_prd_code !== ''"
                 allow-clear
               />
               <a-button
@@ -138,45 +144,7 @@ export default {
   },
   watch: {
     // 应用 搜索 keywords 得到的推荐分类
-    async suggestCategory(val) {
-      if (val.length === 0) return
-      this.loading = true
-      try {
-        // 根据叶子分类搜索匹配的类目 (搜索结果保存到了 this.searchCategories)
-        await this.searchMarketCategory(val[val.length - 1])
-        await this.$nextTick()
-
-        // 遍历每个 market, 确认 this.searchCategories 中对应的搜索结果
-        const queue = []
-        this.marketList.forEach(marketInfo => {
-          // 如果没有搜索到，返回
-          const cateList = this.searchCategories[marketInfo.accountName]
-          if (! Array.isArray(cateList) || cateList.length === 0) return
-
-          // 应用搜索结果的第一条, 应用后，如果是 lotteon ，直接应用匹配的第一个 disp 分类
-          queue.push(this.settingCategory(cateList[0], marketInfo).then(() => {
-            if (! this.displayCategories[marketInfo.accountName]) return
-            if (this.displayCategories[marketInfo.accountName].list.length === 0) return
-
-            const item = this.displayCategories[marketInfo.accountName].list[0]
-            if (!this.product.item_disp_cate) {
-              this.product.item_disp_cate = {}
-            }
-
-            this.product.item_disp_cate[marketInfo.accountName] = {
-              marketCode: marketInfo.market_code,
-              cateId: item.cate_ids[item.cate_ids.length - 1],
-              categoryNames: item.cate_names.join(' / ')
-            }
-          }))
-
-          this.search_keyword_by_market[marketInfo.accountName] = val[val.length - 1]
-        })
-        await Promise.all(queue)
-      } catch(e) {
-        console.log('MarketData:suggestCategory', e)
-      }
-      this.loading = false
+    async suggestCategory() {
     }
   },
   setup() {
@@ -238,7 +206,7 @@ export default {
     // search input 搜索
     searchMarketCategory(search_keyword) {
       if (! search_keyword) return
-      this.loading = true
+      //this.loading = true
       const queue = []
       this.marketList.forEach(marketInfo => {
         if (marketInfo.market_prd_code !== '') return
@@ -246,6 +214,12 @@ export default {
         const params = { market_code: marketInfo.market_code, search_keyword: search_keyword }
         queue.push(
           useCategoryApi().getAutoRecommendCategoryNames(params).then(async res => {
+            this.categories[marketInfo.accountName].options = res.data.map(item => {
+              return {
+                cate_ids: item.cate_ids[item.cate_ids.length - 1],
+                cate_names: item.cate_names.join(' / '),
+              }
+            })
             if (res.data.length) {
               this.categories[marketInfo.accountName].value = res.data[0]['cate_names'].join('/');
               this.product.item_cate[marketInfo.accountName] = {
@@ -270,7 +244,7 @@ export default {
         this.search_keyword_by_market[marketInfo.accountName] = search_keyword
       })
       return Promise.all(queue).then(() => {
-        this.loading = false
+        //this.loading = false
       })
     },
 
@@ -333,25 +307,6 @@ export default {
       }
     },
 
-    // 分类级联加载子分类
-    loadData(selectedOptions, marketInfo) {
-      const targetOption = selectedOptions[selectedOptions.length - 1];
-      targetOption.loading = true;
-
-      // load options lazily
-      setTimeout(() => {
-        targetOption.loading = false;
-        useCategoryApi().getMarketCategoryList({
-          market_code: marketInfo.market_code,
-          cate_id: targetOption.cateId
-        }).then(res => {
-          targetOption.children = res.data
-        })
-        const accountName = marketInfo.accountName
-        this.categories[accountName].options = [...this.categories[accountName].options]
-      }, 100);
-    },
-
     async handleCascaderChange(value, selectedOptions, marketInfo) {
       if (! value) return
       const marketCode = marketInfo.market_code
@@ -376,10 +331,6 @@ export default {
 
         return false;
       }
-    },
-
-    getMarketCategory(marketCode) {
-      return useCategoryApi().getMarketCategoryList({ market_code: marketCode })
     },
 
     // 获取显示分类
@@ -419,6 +370,7 @@ export default {
   },
 
   mounted() {
+    this.search_keyword = '망치'
     this.product.item_cate = this.product.item_cate || {};
     this.product.item_disp_cate = this.product.item_disp_cate || {};
     if (Array.isArray(this.product?.item_sync_market)) {
@@ -439,18 +391,23 @@ export default {
         this.displayCategories[accountName] = {loading: false, visible: false, list: [] }
         this.searchCategories[accountName] = []
         this.search_keyword_by_market[accountName] = ''
-        // 加载初始数据
-        queue.push(
-          this.getMarketCategory(market.market_code).then(res => {
-            this.categories[accountName].options = res.data
-            // initMarketCategory
-            if (this.product.item_cate && this.product.item_cate[accountName]) {
-              this.categories[accountName].value = this.product.item_cate[accountName].categoryNames
-            }
-          }).finally(()=> {
-            this.categories[accountName].loading = false
-          })
-        )
+
+        if (this.product.item_cate && this.product.item_cate[accountName]) {
+          this.categories[accountName].value = this.product.item_cate[accountName].categoryNames
+        }
+
+        // // 加载初始数据
+        // queue.push(
+        //   this.getMarketCategory(market.market_code,this.search_keyword).then(res => {
+        //     this.categories[accountName].options = res.data
+        //     // initMarketCategory
+        //     if (this.product.item_cate && this.product.item_cate[accountName]) {
+        //       this.categories[accountName].value = this.product.item_cate[accountName].categoryNames
+        //     }
+        //   }).finally(()=> {
+        //     this.categories[accountName].loading = false
+        //   })
+        // )
       })
 
       Promise.all(queue).finally(() => {

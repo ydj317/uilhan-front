@@ -335,7 +335,6 @@ export default defineComponent({
         item_disp_cate: JSON.stringify(oProduct.item_disp_cate),
         discount_rate: oProduct.item_discount_rate,
       });
-
       return oForm;
     },
 
@@ -635,6 +634,7 @@ export default defineComponent({
      * @returns {boolean}
      */
     async onSubmit() {
+
       if (this.validateFilterProductWords() === false) return false;
 
       this.product.loading = true;
