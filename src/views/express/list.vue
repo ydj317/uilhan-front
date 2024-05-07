@@ -207,8 +207,9 @@
     </a-flex>
 		<a-flex class="search-wrap" justify="space-between">
 			<a-flex justify="space-between" align="center" class="mb20">
-        <div class="fw fs16 font-SCDream5 mr30">배송대행 신청 내역</div>
-        <a-button type="primary" class="fs14 font-SCDream6" @click="state.modal.open = true">필터</a-button>
+				<div class="fw fs16 font-SCDream5 mr30">배송대행 신청 내역</div>
+				<a-button type="primary" class="fs14 font-SCDream6" @click="state.modal.open = true">필터</a-button>
+				<a-button id="qna" type="primary" class="fs14 font-SCDream6 m2 bg-2171E2 t-white" @click="moveToQna">문의하기</a-button>
 			</a-flex>
       <a-input-search
           class="search-btn"
@@ -820,6 +821,10 @@ const moveToPay = () => {
 	window.open('https://zh8g.com/Front/Acting/Pay_S4.asp');
 }
 
+const moveToQna = () => {
+	window.open('https://pf.kakao.com/_HxgyZG');
+}
+
 watch(() => state.modal.open, () => {
 	// 处理 open 属性的变化
 	initSearchParams()
@@ -1134,5 +1139,8 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+#qna:hover{
+	background-color: #3399ff;
 }
 </style>
