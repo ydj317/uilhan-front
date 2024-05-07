@@ -311,6 +311,7 @@ export default defineComponent({
 
     getForm(oForm) {
       let oProduct = this.product;
+      console.log(oProduct);
       oForm = this.setForm(oForm, {
         id: oProduct["item_id"],
         sku: JSON.stringify(oProduct.sku),
@@ -335,6 +336,7 @@ export default defineComponent({
         item_disp_cate: JSON.stringify(oProduct.item_disp_cate),
         discount_rate: oProduct.item_discount_rate,
       });
+      console.log(oForm);
       return oForm;
     },
 
@@ -359,26 +361,6 @@ export default defineComponent({
         return false;
       })
 
-    },
-    checkSmartStoreCategory(accountList) {
-      const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
-
-      let faildItem = [];
-      if(smartstoreAccounts.length === 0) {
-        return true;
-      }
-
-      if (this.product.item_sync_keyword !== undefined && this.product.item_sync_keyword !== null) {
-        faildItem = this.smartStoreCategory.filter((item) => {
-          return this.product.item_sync_keyword.includes(item.cate_name);
-        })
-      }
-
-      if(faildItem.length > 0) {
-        message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
-        return false;
-      }
-      return true;
     },
 
     setResultPopData(isOpen, data) {
@@ -463,10 +445,6 @@ export default defineComponent({
         return false;
       }
 
-      const checkSmartStore = this.checkSmartStoreCategory(accountList);
-      if(checkSmartStore === false) {
-        return false
-      }
       this.product.loading = true;
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
