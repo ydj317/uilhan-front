@@ -235,7 +235,7 @@
 				>
 					<a-flex class="header color-2171E2 w100 font-SCDream5 fs14">
 						<div class="w10 text-center">No.{{ order['id'] }}</div>
-						<div class="w40 text-left"><span class="cp" @click="state.expressModal.open=true">{{ order['bridgeOrderId'] ?? '' }}</span> {{ order['items'][0]['orderNo'] ? '(판매처 주문번호:' + order['items'][0]['orderNo'] + ')' : '' }}</div>
+						<div class="w40 text-left"><span class="cp" @click="state.expressModalOpen=true">{{ order['bridgeOrderId'] ?? '' }}</span> {{ order['items'][0]['orderNo'] ? '(판매처 주문번호:' + order['items'][0]['orderNo'] + ')' : '' }}</div>
 						<div class="w20 text-left">{{ order['insDate'] ?? '' }}</div>
 						<a-button
 							v-if="order['bridgeOrderStatus'] === '결제대기'"
@@ -346,7 +346,7 @@
 				</a-form-item>
 			</a-flex>
 		</a-modal>
-    <a-modal width="100%" wrap-class-name="full-modal" class="expressForm" :footer="null" v-model:open="state.expressModal.open">
+    <a-modal width="100%" wrap-class-name="full-modal" class="expressForm" :footer="null" v-model:open="state.expressModalOpen">
       <a-flex>
         <span class="fs18 fw">배대지 신청 현황 정보</span>
       </a-flex>
@@ -562,7 +562,7 @@
           <a-button>ID : 8a8b000008<CopyOutlined class="color-2071E1" /></a-button>
         </a-flex>
         <a-space>
-          <a-button class="fs14 fw">닫기</a-button>
+          <a-button class="fs14 fw" @click="state.expressModalOpen=false">닫기</a-button>
           <a-button type="primary"  class="fs14 fw">결제하기</a-button>
         </a-space>
       </a-flex>
@@ -636,9 +636,7 @@ const state = reactive({
   toggleTotalActive:true,
   auth:false,
   totalList:[],
-  expressModal:{
-    open:true
-  }
+  expressModalOpen:false
 });
 state.auth = Cookie.get("member_name") == 'jwli' ? true :false;
 const dateValue = computed( () => {
