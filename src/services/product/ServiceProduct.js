@@ -123,11 +123,6 @@ export class ServiceProduct {
       return false;
     }
 
-    const checkSmartStore = this.checkSmartStoreCategory(productList, accountList, smartStoreCategory);
-    if(checkSmartStore === false) {
-      return false
-    }
-
     return true
   }
 
@@ -171,33 +166,4 @@ export class ServiceProduct {
     }
   }
 
-  static checkSmartStoreCategory(productList, accountList, smartStoreCategory) {
-    const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
-    if(smartstoreAccounts.length === 0) {
-      return true;
-    }
-
-    let failedItem = [];
-
-
-    function escapeRegExp(string) {
-      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-    productList.forEach((prdItem) => {
-      smartStoreCategory.forEach((item) => {
-        const boundary = "(?:\\s|^|$)";
-        const regexPattern = `${boundary}${escapeRegExp(item.cate_name)}${boundary}`;
-        const regex = new RegExp(regexPattern, 'i');
-        if (prdItem.item_sync_keyword && regex.test(prdItem.item_sync_keyword)) {
-          failedItem.push(item);
-        }
-      });
-    })
-
-    if(failedItem.length > 0) {
-      message.warning(`스마트스토어 금지어: [${failedItem.map((item) => item.cate_name).join(', ')}] 상품태그 수정 후 다시 등록해 주세요.`)
-      return false;
-    }
-    return true;
-  }
 }

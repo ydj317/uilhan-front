@@ -43,7 +43,7 @@
                 <a-table-column title="노출상태" dataIndex="isUse" key="isUse" align="center">
                     <template #customRender="scope, record, index">
                         <a-switch v-model:checked="scope.record.isUse" @change="changeIsUse(scope.record)" :checkedValue="1"
-                            :unCheckedValue="0" checked-children="On" un-checked-children="Off" :disabled="scope.record.total && !auth" />
+                            :unCheckedValue="0" checked-children="On" un-checked-children="Off" :disabled="!!(scope.record.total && !auth)" />
                     </template>
                 </a-table-column>
                 <a-table-column title="등록일자" dataIndex="insDate" key="insDate" align="center">
@@ -54,7 +54,7 @@
                 <a-table-column title="관리" dataIndex="manage" key="manage" align="center">
                     <template #customRender="scope, record, index">
                         <RouterLink :to="`/market/accounts/register/${scope.record['id']}`">
-                            <a-button type="primary" :disabled="scope.record.total && !auth">수정</a-button>
+                            <a-button type="primary" :disabled="!!(scope.record.total && !auth)">수정</a-button>
                         </RouterLink>
 
                         <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No"

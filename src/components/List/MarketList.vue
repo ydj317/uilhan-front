@@ -123,11 +123,6 @@ export default {
         return false;
       }
 
-      const checkSmartStore = this.checkSmartStoreCategory(accountList);
-      if(checkSmartStore === false) {
-        return false
-      }
-
       this.marketAccount.data.indicator = true;
 
       try {
@@ -167,28 +162,6 @@ export default {
         return false;
       }
 
-    },
-
-    checkSmartStoreCategory(accountList) {
-      const smartstoreAccounts = accountList.filter((item) => item.market_code === 'smartstore')
-      const checkedPrdList = this.marketAccount.data.prdlist.filter((item) => item.checked === true);
-
-      let faildItem = [];
-      if(smartstoreAccounts.length === 0) {
-        return true;
-      }
-
-      checkedPrdList.map((prdItem) => {
-        faildItem = this.smartStoreCategory.filter((item) => {
-          return prdItem.item_sync_keyword.includes(item.cate_name);
-        })
-      })
-
-      if(faildItem.length > 0) {
-        message.warning(`스마트스토어 금지어: [${faildItem.map((item) => item.cate_name).join(', ')}] 상품명 수정후 마켓연동해 주세요.`)
-        return false;
-      }
-      return true;
     },
 
     async getSmartstoreCategory() {

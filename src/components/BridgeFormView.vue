@@ -1422,6 +1422,9 @@ watchEffect(() => {
       newItem.prdUrl = item.prdUrl;
       newItem.prdImage = item.imgUrl;
       newItem.option_color = item.sku;
+      newItem.prdCode = state.form.items[0].prdCode ?? '';
+      newItem.orderNo = state.form.items[0].orderNo ?? '';
+
       return newItem;
     });
     calculateTotal();
