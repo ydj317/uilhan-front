@@ -311,7 +311,6 @@ export default defineComponent({
 
     getForm(oForm) {
       let oProduct = this.product;
-      console.log(oProduct);
       oForm = this.setForm(oForm, {
         id: oProduct["item_id"],
         sku: JSON.stringify(oProduct.sku),
@@ -336,7 +335,6 @@ export default defineComponent({
         item_disp_cate: JSON.stringify(oProduct.item_disp_cate),
         discount_rate: oProduct.item_discount_rate,
       });
-      console.log(oForm);
       return oForm;
     },
 

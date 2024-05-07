@@ -510,7 +510,6 @@ export default {
   mounted() {
     this.getUserInfo();
     this.getMandatory();
-    console.log(this.product);
     //首次进来以空格分隔显示
     if(this.product.item_sync_keyword){
       this.product.item_sync_keyword = this.product.item_sync_keyword.split(/,\s*|\s+/).join(' ');
