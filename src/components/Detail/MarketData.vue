@@ -370,7 +370,7 @@ export default {
   },
 
   mounted() {
-    this.search_keyword = '망치'
+    //this.search_keyword = '망치'
     this.product.item_cate = this.product.item_cate || {};
     this.product.item_disp_cate = this.product.item_disp_cate || {};
     if (Array.isArray(this.product?.item_sync_market)) {
