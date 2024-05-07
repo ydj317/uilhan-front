@@ -35,12 +35,12 @@
   </a-layout>
   <div class="fixed-wrap">
     <a-float-button-group shape="circle" class="fixed-group">
-      <a-float-button class="fixed-button chat" href="https://open.kakao.com/o/gAfSJqmg" target="_blank">
+      <a-float-button class="fixed-button chat" href="https://open.kakao.com/o/gAfSJqmg" @click="openNewWindowOpen">
         <template #icon>
           <img src="@/assets/img/chat.jpg" class="br50">
         </template>
       </a-float-button>
-      <a-float-button class="fixed-button help-center" href="http://pf.kakao.com/_xodWxnG" target="_blank">
+      <a-float-button class="fixed-button help-center" href="http://pf.kakao.com/_xodWxnG" @click="openNewWindowPf">
         <template #icon>
           <img src="@/assets/img/help-center.jpg" class="br50">
         </template>
@@ -73,6 +73,14 @@ router.afterEach((to, from) => {
   const title = !to.meta.title ? '' : to.meta.title;
   document.title = site + ' - ' + title;
 })
+
+const openNewWindowOpen =() => {
+  window.open("https://open.kakao.com/o/gAfSJqmg", "_blank");
+}
+
+const openNewWindowPf =() => {
+  window.open("https://open.kakao.com/o/gAfSJqmg", "_blank");
+}
 
 onMounted(() => {
 
