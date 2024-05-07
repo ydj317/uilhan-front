@@ -34,7 +34,7 @@
     </a-layout-footer>
   </a-layout>
   <div class="fixed-wrap">
-    <a-float-button-group shape="circle" class="fixed-group">
+    <a-float-button-group shape="circle">
       <a-float-button class="fixed-button chat" href="https://open.kakao.com/o/gAfSJqmg" @click="openNewWindowOpen">
         <template #icon>
           <img src="@/assets/img/chat.jpg" class="br50">
@@ -93,6 +93,9 @@ onMounted(() => {
 .fixed-wrap{
   width:auto;
   z-index: 9999;
+}
+.fixed-wrap .ant-float-btn-group{
+  width: auto;
 }
 .fixed-wrap .ant-float-btn,.fixed-wrap .ant-float-btn-body{
   width: 60px!important;
