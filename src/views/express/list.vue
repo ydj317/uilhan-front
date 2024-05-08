@@ -900,7 +900,7 @@ onMounted(async () => {
 	margin-top: 40px;
 }
 .expressForm .ant-modal-content{
-  padding: 65px 150px;
+  padding: 20px 224px;
   height: auto;
   min-height: 100vh;
 }
