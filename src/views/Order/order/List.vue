@@ -440,6 +440,7 @@ const onCheckMarketChange = () => {
 const onCheckAllChange = e => {
   state.indeterminate = false;
   state.tableData.checkedMarket = e.target.checked ? Object.keys(state.marketList) : [];
+  onCheckMarketChange();
 };
 const getMarketList = async () => {
   try {
@@ -731,7 +732,7 @@ const sendDelayGuide = () => {
         return false;
       }
 
-      message.success(res.message === "" ? "발송지연안내 성공 하었습니다." : res.data.message);
+      message.success(res.message);
       state.delayGuideData.loading = false;
       state.loading = false;
       resetDelayData();

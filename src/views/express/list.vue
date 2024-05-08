@@ -348,6 +348,7 @@
 			</a-flex>
 		</a-modal>
     <a-modal width="100%" wrap-class-name="full-modal" class="expressForm" :footer="null" v-model:open="state.expressModalOpen">
+      <div style="padding: 0 100px; height: calc(100vh - 100px) ;overflow-y: scroll; margin-right: 20px;">
       <a-flex>
         <span class="fs18 fw">배대지 신청 현황 정보</span>
       </a-flex>
@@ -567,6 +568,7 @@
           <a-button type="primary"  class="fs14 fw">결제하기</a-button>
         </a-space>
       </a-flex>
+      </div>
     </a-modal>
 	</div>
 </template>
@@ -899,11 +901,7 @@ onMounted(async () => {
 .modal-wrap .ant-modal-footer{
 	margin-top: 40px;
 }
-.expressForm .ant-modal-content{
-  padding: 20px 224px;
-  height: auto;
-  min-height: 100vh;
-}
+
 .expressForm .area-wrap .ant-descriptions-item-content{
   padding: 0;
 }
