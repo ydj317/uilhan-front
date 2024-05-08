@@ -440,6 +440,7 @@ const onCheckMarketChange = () => {
 const onCheckAllChange = e => {
   state.indeterminate = false;
   state.tableData.checkedMarket = e.target.checked ? Object.keys(state.marketList) : [];
+  onCheckMarketChange();
 };
 const getMarketList = async () => {
   try {
