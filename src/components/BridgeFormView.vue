@@ -1275,7 +1275,7 @@ const getCategory = async (arc_seq, index) => {
 		}
 
 		state.form.items[index].prd_name_en = ArcSeqInfo['EN'] ?? '';
-		state.form.items[index].hs_code = ArcSeqInfo['HS'][0]['CODE'] ?? '';
+		state.form.items[index].hs_code = ArcSeqInfo['HS'][0]['CODE'].substring(0, 6) ?? '';
 
 	}).catch(err => {
 		message.error(err);
