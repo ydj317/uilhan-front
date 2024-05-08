@@ -146,22 +146,65 @@
 					<SelectElement :options="sendMethodList"
 								   v-model:value="state.formData.send_method"
 								   :style="'width:250px;'"
+                         @change="handleSendMethodChange"
 					/>
 				</a-form-item>
 
-				<a-form-item name="send_normal" label="평일"
+				<a-form-item :name="send_normal_save_name" label="평일"
 							 :rules="[{ required: true, message: '평일을 선택해 주세요.' }]" :label-col="{ span: 5 }"
 							 :wrapper-col="{ span: 19 }">
-					오늘 주문완료 건&nbsp;
-					<SelectElement :options="sendDayList"
-								   v-model:value="state.formData.send_normal"
-								   :style="'width:150px;'"
-					/>
-					&nbsp;일 내 발송처리
+
+          <!-- 오늘발송-->
+          <span v-if="state.formData.send_method === '02'">
+					<SelectElement :options="sendTimeList"
+                         v-model:value="state.formData.send_today_end_time"
+                         :style="'width:150px;'"
+          />
+            &nbsp;까지 주문완료 건 당일 발송처리
+          </span>
+
+          <!--일반배송-->
+          <span v-else-if="state.formData.send_method === '01'">
+            오늘 주문완료 건&nbsp;
+					<SelectElement :options="Object.fromEntries(Object.entries(sendDayList).slice(0, 2))"
+                         v-model:value="state.formData.send_normal"
+                         :style="'width:150px;'"
+          />
+            &nbsp; 내 발송처리
+          </span>
+
+
+          <!--재고확인후 -->
+          <span v-else-if="state.formData.send_method === '03'">
+            오늘 주문완료 건&nbsp;
+					<SelectElement :options="Object.fromEntries(Object.entries(sendDayList).slice(2))"
+                         v-model:value="state.formData.send_normal"
+                         :style="'width:150px;'"
+          />
+            &nbsp; 내 발송처리
+          </span>
+
 				</a-form-item>
+
 				<a-form-item name="send_saturday" label="토요일" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
 					<a-checkbox v-model:checked="state.formData.send_saturday" value="Y">발송함</a-checkbox>
 				</a-form-item>
+
+        <a-form-item
+            v-if="state.formData.send_method === '02' && state.formData.send_saturday === true"
+            name="send_saturday_end_time"
+            :rules="[{ required: true, message: '토요일 마감시간을 선택해 주세요.' }]"
+            label="토요일 마감시간"
+            :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
+        <span >
+            <SelectElement :options="sendTimeList"
+                           v-model:value="state.formData.send_saturday_end_time"
+                           :style="'width:150px;'"
+            />
+            &nbsp;까지 주문완료 건 당일 발송처리
+          </span>
+        </a-form-item>
+
 				<a-form-item name="send_default_time">
 					<a-checkbox v-model:checked="state.formData.send_default_time" value="Y" name="send_default_time">대표 마감시간으로 설정</a-checkbox>
 				</a-form-item>
@@ -205,8 +248,8 @@ const placePurchaseList = {
 
 // TODO 해외직구일 경우 03만 선택 가능함
 const sendMethodList = {
-	// '01' : '일반발송',
-	// '02' : '오늘발송',
+  '02' : '오늘발송',
+  '01' : '일반발송',
 	'03' : '재고확인 후 순차발송(소량재고/주문제작)',
 }
 
@@ -227,8 +270,8 @@ const sendTimeList = {
 }
 
 const sendDayList = {
-	// '1' : '1일',
-	// '2' : '2일',
+	'1' : '1일 (내일)',
+	'2' : '2일',
 	'3' : '3일',
 	'4' : '4일',
 	'5' : '5일',
@@ -241,6 +284,21 @@ const sendDayList = {
 	'12' : '12일',
 	'13' : '13일',
 	'14' : '14일',
+}
+
+let send_normal_save_name = 'send_normal';
+
+const handleSendMethodChange = (value) => {
+  state.formData.send_normal = '';
+  state.formData.send_today_end_time = '';
+  state.formData.send_saturday_end_time = '';
+  state.formData.send_default_time = false;
+
+  if (value === '02') {
+    send_normal_save_name ='send_today_end_time';
+  } else {
+    send_normal_save_name ='send_normal';
+  }
 }
 
 const router = useRouter();
@@ -315,7 +373,9 @@ const initFormData = () => {
 		state.formData.place_purchase = accountInfo['marketData']?.place_purchase;
 		state.formData.send_method = accountInfo['marketData']?.send_method;
 		state.formData.send_normal = accountInfo['marketData']?.send_normal;
+		state.formData.send_today_end_time = accountInfo['marketData']?.send_today_end_time;
 		state.formData.send_saturday = accountInfo['marketData']?.send_saturday;
+		state.formData.send_saturday_end_time = accountInfo['marketData']?.send_saturday_end_time;
 		state.formData.send_default_time = accountInfo['marketData']?.send_default_time;
 	}
 }
