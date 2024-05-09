@@ -150,7 +150,7 @@
 					/>
 				</a-form-item>
 
-				<a-form-item :name="send_normal_save_name" label="평일"
+				<a-form-item v-if="state.formData.send_method" :name="send_normal_save_name" label="평일"
 							 :rules="[{ required: true, message: '평일을 선택해 주세요.' }]" :label-col="{ span: 5 }"
 							 :wrapper-col="{ span: 19 }">
 
@@ -292,7 +292,6 @@ const handleSendMethodChange = (value) => {
   state.formData.send_normal = '';
   state.formData.send_today_end_time = '';
   state.formData.send_saturday_end_time = '';
-  state.formData.send_default_time = false;
 
   if (value === '02') {
     send_normal_save_name ='send_today_end_time';
@@ -377,6 +376,8 @@ const initFormData = () => {
 		state.formData.send_saturday = accountInfo['marketData']?.send_saturday;
 		state.formData.send_saturday_end_time = accountInfo['marketData']?.send_saturday_end_time;
 		state.formData.send_default_time = accountInfo['marketData']?.send_default_time;
+
+    send_normal_save_name = accountInfo['marketData']?.send_method === '02' ?'send_today_end_time' :'send_normal';
 	}
 }
 
