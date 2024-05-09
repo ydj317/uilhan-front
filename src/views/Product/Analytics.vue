@@ -163,6 +163,7 @@ const state = reactive({
       sort: "up",
       sortOrder:"desc",
       sortField: "", // 初始排序字段为空
+      salesCount: "",
     }
   },
   loading: false,
@@ -322,15 +323,15 @@ const tableColumns = [
     align: "center",
     sorter: true,
   },
-  {
-    title: "판매수",
-    key: "sales",
-    dataIndex: "sales",
-    width: "10%",
-    align: "center",
-    sorter: true,
-    customRender: ({ text }) => text || '-'
-  },
+  // {
+  //   title: "판매수",
+  //   key: "totalSalesCount",
+  //   dataIndex: "totalSalesCount",
+  //   width: "10%",
+  //   align: "center",
+  //   sorter: true,
+  //   customRender: ({ text }) => (text !== undefined && text !== null) ? text : '-'
+  // },
   {
     title: "마켓연동일",
     key: "insTime",
