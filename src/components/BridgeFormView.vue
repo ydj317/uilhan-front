@@ -583,8 +583,7 @@
       </a-row>
       <a-row class="bg-black footer-wrap pt30 pb30 mt20">
         <a-col :span="24" class="center pt25 pb25 pl20">
-          <div class="mb5"><span class="red">※</span>입고된 물품은 수정이 <span class="under-line">불가능</span>합니다. 트래킹번호 추가 등 수정이
-            필요하신 경우 <span class="under-line">접수대기</span>를 선택해주세요.<span class="red">※</span></div>
+          <div class="mb5"><span class="red">※</span>입고된 물품은 수정이 <span class="under-line">불가능</span>합니다. <span class="red">※</span></div>
           <div><span class="red">※</span><span class="under-line">접수신청</span>을 완료하신 후 부득이한 사유로 요청서 <span
               class="under-line">수정</span>이 필요한 경우 <span class="under-line">1:1문의</span>해주세요.<span class="red">※</span>
           </div>

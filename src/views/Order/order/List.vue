@@ -174,7 +174,7 @@
               <a-button v-if="item.prdUrl" class="link_to_buy" @click="openBuyPage(item.prdUrl)">구매링크</a-button>
             </div>
           </td>
-          <td style="min-width: 350px">
+          <td style="min-width: 350px; max-width: 450px;">
             <span> {{ item.prdName }}</span>
             <br/>
             <span style="font-size: 12px;color: #999999;"> {{ item.prdOptionName }}</span>
@@ -440,6 +440,7 @@ const onCheckMarketChange = () => {
 const onCheckAllChange = e => {
   state.indeterminate = false;
   state.tableData.checkedMarket = e.target.checked ? Object.keys(state.marketList) : [];
+  onCheckMarketChange();
 };
 const getMarketList = async () => {
   try {

@@ -349,9 +349,11 @@ const getSaleList = async () => {
       let seriesName = '';
       if(item === 'amount') {
         seriesName = '판매금액';
-      } else if(item === 'count') {
-        seriesName = '판매건수';
-      } else if(item === 'quantity') {
+      }
+      // else if(item === 'count') {
+      //   seriesName = '판매건수';
+      // }
+      else if(item === 'quantity') {
         seriesName = '판매수량';
       }
 
@@ -577,7 +579,7 @@ const barChartOption = ref({
   },
   legend: {
     orient: 'horizontal',
-    data: ['판매금액', '판매건수', '판매수량'],
+    data: ['판매금액', '판매수량'],
     left: 'left',
     top: 'top',
     selectedMode: 'single'
