@@ -18,19 +18,19 @@
 				<img v-else src="@/assets/img/express-ing.png" class="mr15" alt="ing">
 				<a-flex vertical>
 					<div class="fs20">{{state.bridgeOrderDetail['bridgeOrderStatus']}}</div>
-<!--					TODO-->
-<!--					<div class="fs10">해당 상품이 고객님에게 배송이 완료되었습니다.</div>-->
 				</a-flex>
 			</a-flex>
-			<a-button class="fw fs14" @click="state.historyModal = true">배송 히스토리</a-button>
+<!--			<a-button class="fw fs14" @click="state.historyModal = true">배송 히스토리</a-button>-->
 		</a-flex>
 
 		<a-flex vertical>
-			<a-descriptions title="배송정보" :column="2" bordered class="mt40">
-				<a-descriptions-item label="운송방식">{{state.bridgeOrderDetail['ctrSeq']}}</a-descriptions-item>
-				<a-descriptions-item label="포장방식">일반</a-descriptions-item>
+			<a-descriptions title="주문정보" :column="2" bordered class="mt40">
+				<a-descriptions-item label="주문번호">{{state.bridgeOrderDetail['bridgeOrderId']}}</a-descriptions-item>
 				<a-descriptions-item label="진행상태">{{state.bridgeOrderDetail['bridgeOrderStatus']}}</a-descriptions-item>
-				<a-descriptions-item label="결제정보">{{state.bridgeOrderDetail['isPaid'] ? '결제완료' : '결제대기'}}</a-descriptions-item>
+				<a-descriptions-item label="물류센터">{{state.bridgeOrderDetail['ctrSeq']}}</a-descriptions-item>
+				<a-descriptions-item label="운송방식">
+					{{state.bridgeOrderDetail['ctrSeq'] === '위해 항공' ? '항공운송' : '해운운송'}}
+				</a-descriptions-item>
 			</a-descriptions>
 			<a-flex class="fs12 mt10 color-bababa">
 				*항공운송은 사이즈에 따른 추가금이 발생할 수 있으며 추후 예치금 자동 결제될 수 있습니다.<br>
@@ -42,16 +42,13 @@
 		<a-flex vertical>
 			<a-descriptions title="국내 배송정보" :column="2" bordered class="area-wrap mt40">
 				<a-descriptions-item label="택배사">
-					<div class="row-content bottom-border-f0f0f0"
-						 v-for="(item, index) in state.bridgeOrderDetail.items" :key="index">
-						{{state.bridgeOrderDetail['ctrSeq'] === '인천1 해운' ? '한진택배' : 'CJ대한통운'}}
+					<div class="row-content bottom-border-f0f0f0 m10">
+						{{state.bridgeOrderDetail['items'][0]['ctrSeq'] === '인천1 해운' ? '한진택배' : 'CJ대한통운'}}
 					</div>
-<!--					<div class="row-content">건영택배(화물)</div>-->
 				</a-descriptions-item>
 				<a-descriptions-item label="송장번호" :contentStyle="{color:'#2071E1'}">
-					<div class="row-content bottom-border-f0f0f0" style="text-decoration: underline;"
-						 v-for="(item, index) in state.bridgeOrderDetail.items" :key="index">
-						{{item['invoice_no']}}
+					<div class="row-content bottom-border-f0f0f0 m10" style="text-decoration: underline;">
+						{{state.bridgeOrderDetail['items'][0]['invoice_no']}}
 					</div>
 				</a-descriptions-item>
 			</a-descriptions>
@@ -62,13 +59,12 @@
 
 		<a-flex vertical>
 			<a-descriptions title="받는사람 정보" :column="2" bordered class="mt40">
-				<a-descriptions-item label="인적정보">개인</a-descriptions-item>
 				<a-descriptions-item label="이름">{{state.bridgeOrderDetail['receiverName']}}</a-descriptions-item>
-				<a-descriptions-item label="휴대전화번호">{{state.bridgeOrderDetail['receiverTel1']}}</a-descriptions-item>
 				<a-descriptions-item label="개인통관부호">{{state.bridgeOrderDetail['personalCustomsClearanceCode']}}</a-descriptions-item>
-				<a-descriptions-item label="우편번호" :span="3">{{state.bridgeOrderDetail['receiverPostCode']}}</a-descriptions-item>
-				<a-descriptions-item label="주소" :span="3">{{state.bridgeOrderDetail['receiverAddr1']}}</a-descriptions-item>
-				<a-descriptions-item label="상세주소" :span="3">{{state.bridgeOrderDetail['receiverAddr2']}}</a-descriptions-item>
+				<a-descriptions-item label="휴대전화번호">{{state.bridgeOrderDetail['receiverTel1']}}</a-descriptions-item>
+				<a-descriptions-item label="우편번호">{{state.bridgeOrderDetail['receiverPostCode']}}</a-descriptions-item>
+				<a-descriptions-item label="주소">{{state.bridgeOrderDetail['receiverAddr1']}}</a-descriptions-item>
+				<a-descriptions-item label="상세주소">{{state.bridgeOrderDetail['receiverAddr2']}}</a-descriptions-item>
 				<a-descriptions-item label="배송 요청사항" :span="3">{{state.bridgeOrderDetail['message']}}</a-descriptions-item>
 			</a-descriptions>
 		</a-flex>
@@ -85,20 +81,16 @@
 						<div class="w50 fl-tc pl20">{{item['tracking_no']}}</div>
 					</a-flex>
 					<a-flex class="bottom-border-f0f0f0 h54">
-						<div class="bg-fafafa fw w50 fl-tc pl20">중국 주문번호</div>
+						<div class="bg-fafafa fw w50 fl-tc pl20">오더번호</div>
 						<div class="w50 fl-tc plr10">
 							<a-input placeholder="주문번호 입력 (order No.)" class="h40" readonly :value="item['cn_order_id']"/>
 						</div>
 					</a-flex>
 					<a-flex class="bottom-border-f0f0f0 h54">
-						<div class="bg-fafafa fw w50 fl-tc pl20">국내 주문번호</div>
+						<div class="bg-fafafa fw w50 fl-tc pl20">오픈마켓 주문번호</div>
 						<div class="w50 fl-tc plr10">
 							<a-input placeholder="주문번호 입력 (order No.)" class="h40" readonly :value="item['orderNo']"/>
 						</div>
-					</a-flex>
-					<a-flex class="bottom-border-f0f0f0 h54">
-						<div class="bg-fafafa fw w50 fl-tc pl20">수량</div>
-						<div class="w50 fl-tc pl20">{{item['quantity']}}</div>
 					</a-flex>
 				</a-flex>
 				<a-flex class="w50 bottom-border-f0f0f0">
@@ -111,8 +103,8 @@
 			<a-flex class="bottom-border-f0f0f0 h54">
 				<div class="bg-fafafa fw w25 fl-tc pl20">가격 (위안)</div>
 				<div class="w25 fl-tc pl20">¥ {{item['unitPrice']}}</div>
-				<div class="bg-fafafa fw w25 fl-tc pl20">가격 (달러)</div>
-				<div class="w25 fl-tc pl20">$ 48.14</div>
+				<div class="bg-fafafa fw w25 fl-tc pl20">수량</div>
+				<div class="w25 fl-tc pl20">{{item['quantity']}}</div>
 			</a-flex>
 			<a-flex class="bottom-border-f0f0f0 h54">
 				<div class="bg-fafafa fw w25 fl-tc pl20">통관 품목</div>
@@ -138,18 +130,12 @@
 				<div class="bg-fafafa fw w25 fl-tc pl20">상품 URL</div>
 				<div class="w75 fl-tc pl20">{{item['prdUrl'] ?? ''}}</div>
 			</a-flex>
-			<a-flex class="bottom-border-f0f0f0 h54">
-				<div class="bg-fafafa fw w25 fl-tc pl20">썸네일 이미지 URL</div>
-				<div class="w75 fl-tc pl20">{{item['prdUrl_kr'] ?? ''}}</div>
-			</a-flex>
 		</a-flex>
 		</span>
 		<a-flex vertical>
 			<a-descriptions title="세관신고 금액정보" :column="2" bordered class="mt40">
-				<a-descriptions-item label="총 수량">1개</a-descriptions-item>
-				<a-descriptions-item label="이름">홍길동</a-descriptions-item>
-				<a-descriptions-item label="통관정보">목록통관</a-descriptions-item>
-				<a-descriptions-item label="총 금액 (달러)">$ 48.14</a-descriptions-item>
+				<a-descriptions-item label="총 수량">{{state.totalCount}}</a-descriptions-item>
+				<a-descriptions-item label="총 금액 (달러)">{{state.totalAmount}}</a-descriptions-item>
 			</a-descriptions>
 			<a-flex vertical class="fs12 mt10 color-bababa">
 				<span style="color: #F9443E">*달러 금액은 환율 변동에 따라 변경이 있을 수 있으며 문제 발생 시 책임지지 않습니다.</span>
@@ -162,13 +148,12 @@
 
 		<a-flex vertical>
 			<a-descriptions title="부가서비스 정보" :column="2" bordered class="mt40">
-				<a-descriptions-item label="관부가세 남부자">고객 (구매자)</a-descriptions-item>
-				<a-descriptions-item label="화물배송 착불">고객 (구매자)</a-descriptions-item>
-				<a-descriptions-item label="검수 옵션" :span="3">기본검수</a-descriptions-item>
-				<a-descriptions-item label="제거 옵션" :span="3">-</a-descriptions-item>
-				<a-descriptions-item label="포장 옵션" :span="3">-</a-descriptions-item>
-				<a-descriptions-item label="통관 옵션" :span="3">목록통관</a-descriptions-item>
-				<a-descriptions-item label="기타 옵션" :span="3">-</a-descriptions-item>
+				<a-descriptions-item label="검수 옵션" :span="3">{{setEtcOptions('EtcDlvr1')}}</a-descriptions-item>
+				<a-descriptions-item label="제거 옵션" :span="3">{{setEtcOptions('EtcDlvr3')}}</a-descriptions-item>
+				<a-descriptions-item label="포장 옵션" :span="3">{{setEtcOptions('EtcDlvr2')}}</a-descriptions-item>
+				<a-descriptions-item label="통관 옵션" :span="3">{{setEtcOptions('EtcDlvr4')}}</a-descriptions-item>
+				<a-descriptions-item label="기타 옵션" :span="3">{{setEtcOptions('EtcDlvr5')}}</a-descriptions-item>
+				<a-descriptions-item label="물류 요청사항" :span="3">{{state.bridgeOrderDetail['req2']}}</a-descriptions-item>
 			</a-descriptions>
 		</a-flex>
 
@@ -186,52 +171,52 @@
 			상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요
 		</a-flex>
 
-		<a-flex class="mt40">
-			<span class="fs14 fw">결제정보</span>
-		</a-flex>
-		<a-divider class="top-border-000 mtb10" />
-		<a-flex class="mt10">
-			<span class="fs14">선결제 정보</span>
-		</a-flex>
-		<a-descriptions :column="1" bordered class="mt10">
-			<a-descriptions-item label="선결제 금액">5,830 원 (기본료 5,300원 + 부가세 530원)</a-descriptions-item>
-		</a-descriptions>
-		<a-flex class="fs12 mt10 color-bababa">
-			*선결제 금액은 추가결제 금액의 배송대행료에서 제외됩니다.
-		</a-flex>
-		<a-flex class="mt10">
-			<span class="fs14">추가결제 정보</span>
-		</a-flex>
-		<a-descriptions :column="2" bordered class="mt10">
-			<a-descriptions-item label="추가결제 금액" :span="3">6,160 원</a-descriptions-item>
-			<a-descriptions-item label="배송대행료">5,600 원</a-descriptions-item>
-			<a-descriptions-item label="실측 범위">고객 (구매자)</a-descriptions-item>
-			<a-descriptions-item label="도서산간 추가배송비" :span="3">0 원</a-descriptions-item>
-			<a-descriptions-item label="검수 옵션" :span="3">0 원 (기본검수 0원)</a-descriptions-item>
-			<a-descriptions-item label="제거 옵션" :span="3">0 원</a-descriptions-item>
-			<a-descriptions-item label="포장 옵션" :span="3">0 원</a-descriptions-item>
-			<a-descriptions-item label="통관 옵션" :span="3">0 원 (목록통관 0원)</a-descriptions-item>
-			<a-descriptions-item label="기타 옵션" :span="3">0 원</a-descriptions-item>
-			<a-descriptions-item label="부가세" :span="3">560 원</a-descriptions-item>
-		</a-descriptions>
-		<a-flex class="mt10">
-			<span class="fs14">총 결제 정보</span>
-		</a-flex>
-		<a-descriptions :column="1" bordered class="mt10">
-			<a-descriptions-item label="총 결제 금액">11,990 원 (10,900원 + 부가세 1,090원)</a-descriptions-item>
-		</a-descriptions>
-		<a-flex class="fs12 mt10 color-bababa">
-			*선결제 금액과 추가결제 금액이 합쳐진 금액입니다.
-		</a-flex>
-		<a-flex justify="center" class="mt60">
-			<a-flex style="display: none;">
-				<a-button>ID : 8a8b000008<CopyOutlined class="color-2071E1" /></a-button>
-			</a-flex>
-			<a-space>
-				<a-button class="fs14 fw" @click="emit('close')">닫기</a-button>
-				<a-button type="primary"  class="fs14 fw">결제하기</a-button>
-			</a-space>
-		</a-flex>
+<!--		<a-flex class="mt40">-->
+<!--			<span class="fs14 fw">결제정보</span>-->
+<!--		</a-flex>-->
+<!--		<a-divider class="top-border-000 mtb10" />-->
+<!--		<a-flex class="mt10">-->
+<!--			<span class="fs14">선결제 정보</span>-->
+<!--		</a-flex>-->
+<!--		<a-descriptions :column="1" bordered class="mt10">-->
+<!--			<a-descriptions-item label="선결제 금액">5,830 원 (기본료 5,300원 + 부가세 530원)</a-descriptions-item>-->
+<!--		</a-descriptions>-->
+<!--		<a-flex class="fs12 mt10 color-bababa">-->
+<!--			*선결제 금액은 추가결제 금액의 배송대행료에서 제외됩니다.-->
+<!--		</a-flex>-->
+<!--		<a-flex class="mt10">-->
+<!--			<span class="fs14">추가결제 정보</span>-->
+<!--		</a-flex>-->
+<!--		<a-descriptions :column="2" bordered class="mt10">-->
+<!--			<a-descriptions-item label="추가결제 금액" :span="3">6,160 원</a-descriptions-item>-->
+<!--			<a-descriptions-item label="배송대행료">5,600 원</a-descriptions-item>-->
+<!--			<a-descriptions-item label="실측 범위">고객 (구매자)</a-descriptions-item>-->
+<!--			<a-descriptions-item label="도서산간 추가배송비" :span="3">0 원</a-descriptions-item>-->
+<!--			<a-descriptions-item label="검수 옵션" :span="3">0 원 (기본검수 0원)</a-descriptions-item>-->
+<!--			<a-descriptions-item label="제거 옵션" :span="3">0 원</a-descriptions-item>-->
+<!--			<a-descriptions-item label="포장 옵션" :span="3">0 원</a-descriptions-item>-->
+<!--			<a-descriptions-item label="통관 옵션" :span="3">0 원 (목록통관 0원)</a-descriptions-item>-->
+<!--			<a-descriptions-item label="기타 옵션" :span="3">0 원</a-descriptions-item>-->
+<!--			<a-descriptions-item label="부가세" :span="3">560 원</a-descriptions-item>-->
+<!--		</a-descriptions>-->
+<!--		<a-flex class="mt10">-->
+<!--			<span class="fs14">총 결제 정보</span>-->
+<!--		</a-flex>-->
+<!--		<a-descriptions :column="1" bordered class="mt10">-->
+<!--			<a-descriptions-item label="총 결제 금액">11,990 원 (10,900원 + 부가세 1,090원)</a-descriptions-item>-->
+<!--		</a-descriptions>-->
+<!--		<a-flex class="fs12 mt10 color-bababa">-->
+<!--			*선결제 금액과 추가결제 금액이 합쳐진 금액입니다.-->
+<!--		</a-flex>-->
+<!--		<a-flex justify="center" class="mt60">-->
+<!--			<a-flex style="display: none;">-->
+<!--				<a-button>ID : 8a8b000008<CopyOutlined class="color-2071E1" /></a-button>-->
+<!--			</a-flex>-->
+<!--			<a-space>-->
+<!--				<a-button class="fs14 fw" @click="emit('close')">닫기</a-button>-->
+<!--				<a-button type="primary"  class="fs14 fw">결제하기</a-button>-->
+<!--			</a-space>-->
+<!--		</a-flex>-->
 	</a-modal>
 
 	<a-modal
@@ -271,6 +256,8 @@ const state = reactive({
 	loading: false,
 	bridgeOrderDetail: {},
 	historyModal: false,
+	totalAmount: 0,
+	totalCount: 0,
 })
 
 let visible = computed({
@@ -278,9 +265,33 @@ let visible = computed({
 	set: (value) => emit("close") // setter
 });
 
+const setEtcOptions = (type) => {
+	if (Array.isArray(state.bridgeOrderDetail['options'][type])) {
+		return state.bridgeOrderDetail['options'][type].join(',');
+	}
+
+	return '-';
+}
+
+const setTotal = (items, type) => {
+	let total = 0;
+	let typeByKey = {
+		amount: 'unitPrice',
+		count: 'quantity'
+	}
+	if (Array.isArray(items)) {
+		items.forEach(item => total += item[typeByKey[type]] ?? 0);
+	}
+
+	return total;
+}
+
 watchEffect(() => {
     if (visible.value) {
         state.bridgeOrderDetail = bridgeDetail.value;
+
+		state.totalAmount = setTotal(state.bridgeOrderDetail['items'] ?? [], 'amount');
+		state.totalCount = setTotal(state.bridgeOrderDetail['items'] ?? [], 'count');
     }
 })
 
