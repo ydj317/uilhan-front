@@ -24,7 +24,7 @@
 		</a-flex>
 
 		<a-flex vertical>
-			<a-descriptions title="주문정보" :column="2" bordered class="mt40">
+			<a-descriptions title="주문정보" :column="2" bordered class="mt40" :label-style="{width:'20%'}">
 				<a-descriptions-item label="주문번호">{{state.bridgeOrderDetail['bridgeOrderId']}}</a-descriptions-item>
 				<a-descriptions-item label="진행상태">{{state.bridgeOrderDetail['bridgeOrderStatus']}}</a-descriptions-item>
 				<a-descriptions-item label="물류센터">{{state.bridgeOrderDetail['ctrSeq']}}</a-descriptions-item>
@@ -40,14 +40,15 @@
 		</a-flex>
 
 		<a-flex vertical>
-			<a-descriptions title="국내 배송정보" :column="2" bordered class="area-wrap mt40">
+			<a-descriptions title="국내 배송정보" bordered class="area-wrap mt40" :label-style="{width:'20%'}">
 				<a-descriptions-item label="택배사">
-					<div class="row-content bottom-border-f0f0f0 m10">
+<!--				下划线	bottom-border-f0f0f0 -->
+					<div class="row-content m10">
 						{{state.bridgeOrderDetail['items'][0]['ctrSeq'] === '인천1 해운' ? '한진택배' : 'CJ대한통운'}}
 					</div>
 				</a-descriptions-item>
 				<a-descriptions-item label="송장번호" :contentStyle="{color:'#2071E1'}">
-					<div class="row-content bottom-border-f0f0f0 m10" style="text-decoration: underline;">
+					<div class="row-content m10" style="text-decoration: underline;">
 						{{state.bridgeOrderDetail['items'][0]['invoice_no']}}
 					</div>
 				</a-descriptions-item>
@@ -58,7 +59,7 @@
 		</a-flex>
 
 		<a-flex vertical>
-			<a-descriptions title="받는사람 정보" :column="2" bordered class="mt40">
+			<a-descriptions title="받는사람 정보" :column="2" bordered class="mt40" :label-style="{width:'20%'}">
 				<a-descriptions-item label="이름">{{state.bridgeOrderDetail['receiverName']}}</a-descriptions-item>
 				<a-descriptions-item label="개인통관부호">{{state.bridgeOrderDetail['personalCustomsClearanceCode']}}</a-descriptions-item>
 				<a-descriptions-item label="휴대전화번호">{{state.bridgeOrderDetail['receiverTel1']}}</a-descriptions-item>
@@ -77,65 +78,67 @@
 			<a-flex>
 				<a-flex vertical class="w50">
 					<a-flex class="bottom-border-f0f0f0 h54">
-						<div class="bg-fafafa fw w50 fl-tc pl20">트래킹번호</div>
+						<div class="bg-fafafa fw w40 fl-tc pl20">트래킹번호</div>
 						<div class="w50 fl-tc pl20">{{item['tracking_no']}}</div>
 					</a-flex>
 					<a-flex class="bottom-border-f0f0f0 h54">
-						<div class="bg-fafafa fw w50 fl-tc pl20">오더번호</div>
+						<div class="bg-fafafa fw w40 fl-tc pl20">오더번호</div>
 						<div class="w50 fl-tc plr10">
 							<a-input placeholder="주문번호 입력 (order No.)" class="h40" readonly :value="item['cn_order_id']"/>
 						</div>
 					</a-flex>
 					<a-flex class="bottom-border-f0f0f0 h54">
-						<div class="bg-fafafa fw w50 fl-tc pl20">오픈마켓 주문번호</div>
+						<div class="bg-fafafa fw w40 fl-tc pl20">오픈마켓 주문번호</div>
 						<div class="w50 fl-tc plr10">
 							<a-input placeholder="주문번호 입력 (order No.)" class="h40" readonly :value="item['orderNo']"/>
 						</div>
 					</a-flex>
 				</a-flex>
 				<a-flex class="w50 bottom-border-f0f0f0">
-					<div class="bg-fafafa fw fl-cc w50">상품 이미지</div>
+					<div class="bg-fafafa fw fl-cc w40">상품 이미지</div>
 					<div class="w50 fl-cc">
 						<img :src="item['prdImage']" class="br5" width="140" height="140" alt="">
 					</div>
 				</a-flex>
 			</a-flex>
 			<a-flex class="bottom-border-f0f0f0 h54">
-				<div class="bg-fafafa fw w25 fl-tc pl20">가격 (위안)</div>
-				<div class="w25 fl-tc pl20">¥ {{item['unitPrice']}}</div>
-				<div class="bg-fafafa fw w25 fl-tc pl20">수량</div>
+				<div class="bg-fafafa fw w20 fl-tc pl20">가격 (위안)</div>
+				<div class="w30 fl-tc pl20">¥ {{item['unitPrice']}}</div>
+				<div class="bg-fafafa fw w20 fl-tc pl20">수량</div>
 				<div class="w25 fl-tc pl20">{{item['quantity']}}</div>
 			</a-flex>
 			<a-flex class="bottom-border-f0f0f0 h54">
-				<div class="bg-fafafa fw w25 fl-tc pl20">통관 품목</div>
-				<div class="w75 fl-tc pl20">{{item['arc_seq']}}</div>
+				<div class="bg-fafafa fw w20 fl-tc pl20">통관 품목</div>
+				<div class="w30 fl-tc pl20">{{item['arc_seq']}}</div>
+				<div class="bg-fafafa fw w20 fl-tc pl20">HS 코드</div>
+				<div class="w25 fl-tc pl20">{{item['hs_code']}}</div>
 			</a-flex>
 			<a-flex class="bottom-border-f0f0f0 h54">
-				<div class="bg-fafafa fw w25 fl-tc pl20">영문 상품명</div>
+				<div class="bg-fafafa fw w20 fl-tc pl20">영문 상품명</div>
 				<div class="w75 fl-tc pl20">{{item['prd_name_en']}}</div>
 			</a-flex>
 			<a-flex class="bottom-border-f0f0f0 h54">
-				<div class="bg-fafafa fw w25 fl-tc pl20">중국어 상품명</div>
+				<div class="bg-fafafa fw w20 fl-tc pl20">중국어 상품명</div>
 				<div class="w75 fl-tc pl20">{{item['prd_name_cn'] ?? ''}}</div>
 			</a-flex>
 			<a-flex class="bottom-border-f0f0f0 h54">
-				<div class="bg-fafafa fw w25 fl-tc pl20">한국어 상품명</div>
+				<div class="bg-fafafa fw w20 fl-tc pl20">한국어 상품명</div>
 				<div class="w75 fl-tc pl20">{{item['prdName'] ?? ''}}</div>
 			</a-flex>
 			<a-flex class="bottom-border-f0f0f0 h54">
-				<div class="bg-fafafa fw w25 fl-tc pl20">옵션명</div>
+				<div class="bg-fafafa fw w20 fl-tc pl20">옵션명</div>
 				<div class="w75 fl-tc pl20">{{item['prdOptionName'] ?? ''}}</div>
 			</a-flex>
 			<a-flex class="bottom-border-f0f0f0 h54">
-				<div class="bg-fafafa fw w25 fl-tc pl20">상품 URL</div>
+				<div class="bg-fafafa fw w20 fl-tc pl20">상품 URL</div>
 				<div class="w75 fl-tc pl20">{{item['prdUrl'] ?? ''}}</div>
 			</a-flex>
 		</a-flex>
 		</span>
 		<a-flex vertical>
-			<a-descriptions title="세관신고 금액정보" :column="2" bordered class="mt40">
+			<a-descriptions title="세관신고 금액정보" :column="2" bordered class="mt40" :label-style="{width:'20%'}">
 				<a-descriptions-item label="총 수량">{{state.totalCount}}</a-descriptions-item>
-				<a-descriptions-item label="총 금액 (달러)">{{state.totalAmount}}</a-descriptions-item>
+				<a-descriptions-item label="총 금액 (위안)">{{state.totalAmount}}</a-descriptions-item>
 			</a-descriptions>
 			<a-flex vertical class="fs12 mt10 color-bababa">
 				<span style="color: #F9443E">*달러 금액은 환율 변동에 따라 변경이 있을 수 있으며 문제 발생 시 책임지지 않습니다.</span>
@@ -147,7 +150,7 @@
 		</a-flex>
 
 		<a-flex vertical>
-			<a-descriptions title="부가서비스 정보" :column="2" bordered class="mt40">
+			<a-descriptions title="부가서비스 정보" :column="2" bordered class="mt20" :label-style="{width:'20%'}">
 				<a-descriptions-item label="검수 옵션" :span="3">{{setEtcOptions('EtcDlvr1')}}</a-descriptions-item>
 				<a-descriptions-item label="제거 옵션" :span="3">{{setEtcOptions('EtcDlvr3')}}</a-descriptions-item>
 				<a-descriptions-item label="포장 옵션" :span="3">{{setEtcOptions('EtcDlvr2')}}</a-descriptions-item>
@@ -157,19 +160,19 @@
 			</a-descriptions>
 		</a-flex>
 
-		<a-flex class="mt40">
-			<span class="fs18 fw">입고상품 검수 이미지</span>
-		</a-flex>
+<!--		<a-flex class="mt40">-->
+<!--			<span class="fs18 fw">입고상품 검수 이미지</span>-->
+<!--		</a-flex>-->
 
-		<a-flex class="mt25 top-border-000 bottom-border-f0f0f0 fl-tc">
-			<div class="fs14 bg-fafafa mr40 h90 fl-cc fw" style="width: 180px;">검수 이미지</div>
-			<img src="@/assets/img/express-success.png" class="br5 mr15" width="70" height="70">
-			<img src="@/assets/img/express-fail.png" class="br5 mr15" width="70" height="70">
-			<img src="@/assets/img/express-ing.png" class="br5" width="70" height="70">
-		</a-flex>
-		<a-flex class="fs12 mt10 color-bababa">
-			상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요
-		</a-flex>
+<!--		<a-flex class="mt25 top-border-000 bottom-border-f0f0f0 fl-tc">-->
+<!--			<div class="fs14 bg-fafafa mr40 h90 fl-cc fw" style="width: 180px;">검수 이미지</div>-->
+<!--			<img src="@/assets/img/express-success.png" class="br5 mr15" width="70" height="70">-->
+<!--			<img src="@/assets/img/express-fail.png" class="br5 mr15" width="70" height="70">-->
+<!--			<img src="@/assets/img/express-ing.png" class="br5" width="70" height="70">-->
+<!--		</a-flex>-->
+<!--		<a-flex class="fs12 mt10 color-bababa">-->
+<!--			상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요-->
+<!--		</a-flex>-->
 
 <!--		<a-flex class="mt40">-->
 <!--			<span class="fs14 fw">결제정보</span>-->
@@ -217,6 +220,9 @@
 <!--				<a-button type="primary"  class="fs14 fw">결제하기</a-button>-->
 <!--			</a-space>-->
 <!--		</a-flex>-->
+		<div style="display: flex; justify-content: center">
+			<a-button class="m10" @click="visible = false">닫기</a-button>
+		</div>
 	</a-modal>
 
 	<a-modal
@@ -297,6 +303,61 @@ watchEffect(() => {
 
 </script>
 <style>
+.express-wrap .default .ant-badge-count{
+	background: #F6F6F6;
+	color: #9F9F9F;
+	padding: 0 12px;
+}
+.express-wrap .blue .ant-badge-count{
+	background: #2270E3;
+	color: white;
+}
+.express-wrap .orange .ant-badge-count{
+	background: #FB6F3E;
+	color: white;
+}
+.express-wrap .red .ant-badge-count{
+	background: #F9433F;
+	color: white;
+}
+.express-wrap .search-wrap .ant-input-search{
+	width: 300px!important;
+}
+.express-wrap .total-main .ant-input{
+	background: none;
+	width: 10%;
+}
+.express-wrap .board-wrap a.ant-btn{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.express-wrap .board-wrap .more.ant-btn{
+	background: none;
+	box-shadow: none;
+	border: 0;
+	padding: 0;
+	height: inherit;
+}
+.modal-wrap .ant-btn.reset{
+	background: #2270E3;
+	color: white;
+}
+.modal-wrap .ant-modal-content{
+	padding: 30px 50px;
+}
+.modal-wrap .ant-picker-input{
+	height: 34px;
+}
+.modal-wrap .date-wrap .ant-divider{
+	background: #FEEA91;
+}
+.modal-wrap .date-wrap .ant-btn-background-ghost{
+	color: black;
+}
+.modal-wrap .ant-modal-footer{
+	margin-top: 40px;
+}
 .expressForm .ant-modal-content{
 	padding: 65px 150px;
 	height: auto;
@@ -305,4 +366,210 @@ watchEffect(() => {
 .expressForm .area-wrap .ant-descriptions-item-content{
 	padding: 0;
 }
+.expressForm .ant-modal-content{
+	padding: 65px 150px;
+	height: auto;
+	min-height: 100vh;
+}
+.expressForm .area-wrap .ant-descriptions-item-content{
+	padding: 0;
+}
+</style>
+<style scoped>
+.font-SCDream1{
+	font-family: 'SCDream1';
+}
+.font-SCDream2{
+	font-family: 'SCDream2';
+}
+.font-SCDream3{
+	font-family: 'SCDream3';
+}
+.font-SCDream4{
+	font-family: 'SCDream4';
+}
+.font-SCDream5{
+	font-family: 'SCDream5';
+}
+.font-SCDream6{
+	font-family: 'SCDream6';
+}
+.font-SCDream7{
+	font-family: 'SCDream7';
+}
+.font-SCDream8{
+	font-family: 'SCDream8';
+}
+.font-SCDream9{
+	font-family: 'SCDream9';
+}
+.bor{
+	border: 1px solid #F0F0F0;
+}
+.bor-black{
+	border: 1px solid black;
+}
+.bor-fafafa{
+	border: 1px solid #fafafa;
+}
+.bor-0505050f{
+	border: 1px solid #0505050f;
+}
+.bottom-border{
+	height: 2px;
+	background: black;
+}
+.top-border-000{
+	border-top: 2px solid #000;
+}
+.bottom-border-f0f0f0{
+	border-bottom: 2px solid #f0f0f0;
+}
+.color-huang{
+	color: #FFDB40;
+}
+.color-hui{
+	color: #B8B8B8;
+}
+.color-FEDB41{
+	color: #FEDB41;
+}
+.color-2171E2{
+	color: #2171E2;
+}
+.color-FB6F3E{
+	color: #FB6F3E;
+}
+.color-fefefe{
+	color: #fefefe;
+}
+.color-bababa{
+	color: #bababa;
+}
+.color-2071E1{
+	color: #2071E1;
+}
+.bg-hui{
+	background: #F0F0F0;
+}
+.bg-FEDB41{
+	background: #FEDB41;
+}
+.bg-2171E2{
+	background: #2171E2;
+}
+.bg-FB6F3E{
+	background: #FB6F3E;
+}
+.bg-434343{
+	background: #434343;
+}
+.bg-fafafa{
+	background: #fafafa;
+}
+.he100{
+	height: 100%;
+}
+.header-wrap > div,.content > div{
+	text-align: center;
+}
+.header-wrap > div:nth-of-type(1),.header-wrap > div:nth-of-type(4),.header-wrap > div:nth-of-type(5),.header-wrap > div:nth-of-type(6),.header-wrap > div:nth-of-type(7),.header-wrap > div:nth-of-type(8),.header-wrap > div:nth-of-type(9),.content > div:nth-of-type(1),.content > div:nth-of-type(4),.content > div:nth-of-type(5),.content > div:nth-of-type(6),.content > div:nth-of-type(7),.content > div:nth-of-type(8),.content > div:nth-of-type(9){
+	width: 10%;
+}
+.header-wrap > div:nth-of-type(2),.content > div:nth-of-type(2){
+	width: 20%;
+}
+.header-wrap > div:nth-of-type(3),.content > div:nth-of-type(3){
+	width: 5%;
+}
+.content-wrap .header{
+	background: #FAFAFA;
+	height: 40px;
+	padding: 10px 0;
+}
+.content-wrap .content{
+	padding: 10px 0;
+}
+.content-wrap .content img{
+	width: 70px;
+	height: 70px;
+}
+.content-wrap .content:not(:last-child){
+	position: relative;
+}
+.content-wrap .content:not(:last-child):before{
+	position: absolute;
+	content: '';
+	left: 0;
+	bottom: 0;
+	width: 50%;
+	background: #F2F2F2;
+	height: 1px;
+}
+.modal-wrap input{
+	height: 40px;
+}
+.modal-wrap .date-wrap{
+	height: 40px;
+}
+a {
+	color: black;
+}
+.notice-title{
+	color: #F9443D;
+	border: 1px solid #F9443D;
+}
+.tab-wrap > div{
+	width: 120px;
+	height: 46px;
+	border: 1px solid #f0f0f0;
+	border-radius: 10px;
+	background: #fff;
+	padding: 12px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin:0 8px 8px 0;
+	cursor: pointer;
+}
+.tab-wrap > div.active{
+	border: 1px solid #2171E2;
+}
+.tab-wrap2 > div.active{
+	border: 1px solid #FB6F3E;
+}
+.toggle-wrap{
+	position: relative;
+}
+.toggle-wrap .toggle-btn{
+	position: absolute;
+	content: '';
+	right: 10px;
+	top: 18px;
+}
+.fade-enter-active, .fade-leave-active {
+	transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+	opacity: 0;
+}
+.total-wrap{
+	box-shadow: 6px 6px 6px #B8B8B8;
+}
+.status-wrap img{
+	width: 20px;
+	height: 20px;
+}
+.status-wrap button{
+	padding: 12px 46px;
+	height: auto;
+	border: 1px solid #FFDB41;
+}
+.expressForm .area-wrap .row-content{
+	height: 45px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 </style>
