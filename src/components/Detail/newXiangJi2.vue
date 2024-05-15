@@ -25,9 +25,7 @@ export default defineComponent({
   name: "newxiangJi",
 
   emits: ["callbackReceived", "update:isOpen"],
-  mounted() {
-    console.log('mounted')
-  },
+
   computed: {
     localvisible: {
       get() {
@@ -52,48 +50,36 @@ export default defineComponent({
       type: String,
       default: "imgTranslate",
     },
-    recharge: {
-      type: String,
-      default: "0",
-    },
   },
   data() {
     return {
       translateTypes: {
-        imgTranslate: ["XJ_IMAGE_EDITOR_REQUESTIDS","XJ_IMAGE_EDITOR_URL"],
-        imgMatting: ["XJ_KOUTU_REQUESTIDS","XJ_KOUTU_RESULT"],
+        imgTranslate: ["XJ_IMAGE_EDITOR_REQUESTIDS", "XJ_IMAGE_EDITOR_URL"],
+        imgMatting: ["XJ_KOUTU_REQUESTIDS", "XJ_KOUTU_RESULT"],
       },
-      iframeSrc: "http://localhost:3000/image-editor/#/",
+      iframeSrc: "https://www.xiangjifanyi.com/image-editor/#/?lang=KOR",
       iframeKoutuSrc: "https://www.xiangjifanyi.com/koutu/",
     };
   },
   methods: {
     // 이미지 불러오기
     iframeOnload() {
-      let sendData = {
-        requestIds: Object.values(this.requestIds),
-        recharge:this.recharge,
-        type:'edit'
-      };
-      console.log('象寄载入数据',sendData)
-      this.sendMessage(sendData);
-    },
-    sendMessage(sendData) {
-      console.log('sendData数据',sendData)
-      sendData.name = this.translateTypes[this.translateType][0];
+
       const iframe = document.querySelector("#xiangji-image-editor");
       iframe.contentWindow.postMessage(
-          sendData,
+          {
+            name: this.translateTypes[this.translateType][0],
+            requestIds: Object.values(this.requestIds),
+          },
           "*"
       );
     },
 
     // 이미지 편집기 적용후 처리
     receiveMessage(e) {
-      // console.log('receiveMessage', e)
       const self = this;
       e = e || window.event;
-      if (e.origin === 'http://localhost:3000' && e.data.name === this.translateTypes[this.translateType][1]) {
+      if (e.origin === 'https://www.xiangjifanyi.com' && e.data.name === this.translateTypes[this.translateType][1]) {
         self.$emit("callbackReceived", e.data);
       }
     },
@@ -102,11 +88,10 @@ export default defineComponent({
   watch: {
     isOpen: {
       handler(val) {
-        console.log('watch-isOpen',val)
         if (val === true) {
           window.addEventListener("message", this.receiveMessage);
           this.$nextTick(() => {
-            this.iframeSrc = "http://localhost:3000/image-editor/#/";
+            this.iframeSrc = "https://www.xiangjifanyi.com/image-editor/#/?lang=KOR";
           });
         } else {
           window.removeEventListener("message", this.receiveMessage);
