@@ -10,7 +10,7 @@
 			<span class="fs18 fw">배대지 신청 현황 정보</span>
 		</a-flex>
 
-		<a-flex class="status-wrap fl-lb p30 mt25 top-border-000 bottom-border-f0f0f0">
+		<a-flex class="status-wrap fl-lb p30 mt25 top-border-000 bottom-border-f0f0f0 bg-fafafa">
 			<a-flex class="fl-tc">
 				<img v-if="state.bridgeOrderDetail['bridgeOrderStatus'] === '배송완료'"
 					src="@/assets/img/express-success.png" class="mr15" alt="success">
@@ -24,7 +24,7 @@
 		</a-flex>
 
 		<a-flex vertical>
-			<a-descriptions title="주문정보" :column="2" bordered class="mt40" :label-style="{width:'20%'}">
+			<a-descriptions title="주문정보" :column="2" bordered class="mt40" :label-style="{width:'20%'}" :content-style="{width:'30%'}">
 				<a-descriptions-item label="주문번호">{{state.bridgeOrderDetail['bridgeOrderId']}}</a-descriptions-item>
 				<a-descriptions-item label="진행상태">{{state.bridgeOrderDetail['bridgeOrderStatus']}}</a-descriptions-item>
 				<a-descriptions-item label="물류센터">{{state.bridgeOrderDetail['ctrSeq']}}</a-descriptions-item>
@@ -40,17 +40,17 @@
 		</a-flex>
 
 		<a-flex vertical>
-			<a-descriptions title="국내 배송정보" bordered class="area-wrap mt40" :label-style="{width:'20%'}">
+			<a-descriptions title="국내 배송정보" bordered class="area-wrap mt40"  :label-style="{width:'20%'}" :content-style="{width:'30%'}">
 				<a-descriptions-item label="택배사">
 <!--				下划线	bottom-border-f0f0f0 -->
-					<div class="row-content m10">
+<!--					<div class="row-content m10">-->
 						{{state.bridgeOrderDetail['items'][0]['ctrSeq'] === '인천1 해운' ? '한진택배' : 'CJ대한통운'}}
-					</div>
+<!--					</div>-->
 				</a-descriptions-item>
 				<a-descriptions-item label="송장번호" :contentStyle="{color:'#2071E1'}">
-					<div class="row-content m10" style="text-decoration: underline;">
+<!--					<div class="row-content m10" style="text-decoration: underline;">-->
 						{{state.bridgeOrderDetail['items'][0]['invoice_no']}}
-					</div>
+<!--					</div>-->
 				</a-descriptions-item>
 			</a-descriptions>
 			<a-flex class="fs12 mt10 color-bababa">
@@ -59,7 +59,7 @@
 		</a-flex>
 
 		<a-flex vertical>
-			<a-descriptions title="받는사람 정보" :column="2" bordered class="mt40" :label-style="{width:'20%'}">
+			<a-descriptions title="받는사람 정보" :column="2" bordered class="mt40"  :label-style="{width:'20%'}" :content-style="{width:'30%'}">
 				<a-descriptions-item label="이름">{{state.bridgeOrderDetail['receiverName']}}</a-descriptions-item>
 				<a-descriptions-item label="개인통관부호">{{state.bridgeOrderDetail['personalCustomsClearanceCode']}}</a-descriptions-item>
 				<a-descriptions-item label="휴대전화번호">{{state.bridgeOrderDetail['receiverTel1']}}</a-descriptions-item>
@@ -74,7 +74,7 @@
 		<a-flex class="mt40">
 			<span class="fs14 fw">상품정보 0{{index + 1}}</span>
 		</a-flex>
-		<a-flex vertical class="info-wrap mt15 bor-0505050f br5">
+		<a-flex vertical class="info-wrap mt15 bor-bottom-0505050f top-border-000 ">
 			<a-flex>
 				<a-flex vertical class="w50">
 					<a-flex class="bottom-border-f0f0f0 h54">
@@ -136,7 +136,7 @@
 		</a-flex>
 		</span>
 		<a-flex vertical>
-			<a-descriptions title="세관신고 금액정보" :column="2" bordered class="mt40" :label-style="{width:'20%'}">
+			<a-descriptions title="세관신고 금액정보" :column="2" bordered class="mt40"  :label-style="{width:'20%'}" :content-style="{width:'30%'}">
 				<a-descriptions-item label="총 수량">{{state.totalCount}}</a-descriptions-item>
 				<a-descriptions-item label="총 금액 (위안)">{{state.totalAmount}}</a-descriptions-item>
 			</a-descriptions>
@@ -150,13 +150,13 @@
 		</a-flex>
 
 		<a-flex vertical>
-			<a-descriptions title="부가서비스 정보" :column="2" bordered class="mt20" :label-style="{width:'20%'}">
-				<a-descriptions-item label="검수 옵션" :span="3">{{setEtcOptions('EtcDlvr1')}}</a-descriptions-item>
-				<a-descriptions-item label="제거 옵션" :span="3">{{setEtcOptions('EtcDlvr3')}}</a-descriptions-item>
-				<a-descriptions-item label="포장 옵션" :span="3">{{setEtcOptions('EtcDlvr2')}}</a-descriptions-item>
-				<a-descriptions-item label="통관 옵션" :span="3">{{setEtcOptions('EtcDlvr4')}}</a-descriptions-item>
-				<a-descriptions-item label="기타 옵션" :span="3">{{setEtcOptions('EtcDlvr5')}}</a-descriptions-item>
-				<a-descriptions-item label="물류 요청사항" :span="3">{{state.bridgeOrderDetail['req2']}}</a-descriptions-item>
+			<a-descriptions title="부가서비스 정보" :column="1" bordered class="mt20" :label-style="{width:'20%'}" :content-style="{width:'80%'}">
+				<a-descriptions-item label="검수 옵션">{{setEtcOptions('EtcDlvr1')}}</a-descriptions-item>
+				<a-descriptions-item label="제거 옵션">{{setEtcOptions('EtcDlvr3')}}</a-descriptions-item>
+				<a-descriptions-item label="포장 옵션">{{setEtcOptions('EtcDlvr2')}}</a-descriptions-item>
+				<a-descriptions-item label="통관 옵션">{{setEtcOptions('EtcDlvr4')}}</a-descriptions-item>
+				<a-descriptions-item label="기타 옵션">{{setEtcOptions('EtcDlvr5')}}</a-descriptions-item>
+				<a-descriptions-item label="물류 요청사항">{{state.bridgeOrderDetail['req2']}}</a-descriptions-item>
 			</a-descriptions>
 		</a-flex>
 
@@ -181,7 +181,7 @@
 <!--		<a-flex class="mt10">-->
 <!--			<span class="fs14">선결제 정보</span>-->
 <!--		</a-flex>-->
-<!--		<a-descriptions :column="1" bordered class="mt10">-->
+<!--		<a-descriptions :column="1" bordered class="mt10" :label-style="{width:'20%'}" :content-style="{width:'80%'}">-->
 <!--			<a-descriptions-item label="선결제 금액">5,830 원 (기본료 5,300원 + 부가세 530원)</a-descriptions-item>-->
 <!--		</a-descriptions>-->
 <!--		<a-flex class="fs12 mt10 color-bababa">-->
@@ -205,7 +205,7 @@
 <!--		<a-flex class="mt10">-->
 <!--			<span class="fs14">총 결제 정보</span>-->
 <!--		</a-flex>-->
-<!--		<a-descriptions :column="1" bordered class="mt10">-->
+<!--		<a-descriptions :column="1" bordered class="mt10" :label-style="{width:'20%'}" :content-style="{width:'80%'}">-->
 <!--			<a-descriptions-item label="총 결제 금액">11,990 원 (10,900원 + 부가세 1,090원)</a-descriptions-item>-->
 <!--		</a-descriptions>-->
 <!--		<a-flex class="fs12 mt10 color-bababa">-->
@@ -363,16 +363,15 @@ watchEffect(() => {
 	height: auto;
 	min-height: 100vh;
 }
-.expressForm .area-wrap .ant-descriptions-item-content{
+/*.expressForm .area-wrap .ant-descriptions-item-content{
 	padding: 0;
-}
-.expressForm .ant-modal-content{
-	padding: 65px 150px;
-	height: auto;
-	min-height: 100vh;
-}
-.expressForm .area-wrap .ant-descriptions-item-content{
-	padding: 0;
+}*/
+.expressForm .ant-descriptions-view{
+  border-top: 2px solid #000!important;
+  border-bottom: 1px solid #0505050f!important;
+  border-left: none!important;
+  border-right: none!important;
+  border-radius: 0!important;
 }
 </style>
 <style scoped>
@@ -412,8 +411,8 @@ watchEffect(() => {
 .bor-fafafa{
 	border: 1px solid #fafafa;
 }
-.bor-0505050f{
-	border: 1px solid #0505050f;
+.bor-bottom-0505050f{
+	border-bottom: 1px solid #0505050f;
 }
 .bottom-border{
 	height: 2px;
@@ -565,11 +564,11 @@ a {
 	height: auto;
 	border: 1px solid #FFDB41;
 }
-.expressForm .area-wrap .row-content{
+/*.expressForm .area-wrap .row-content{
 	height: 45px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-}
+}*/
 
 </style>
