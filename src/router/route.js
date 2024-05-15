@@ -438,7 +438,7 @@ export const menus = [{
             name: "product_analytics",
             component: () => import("@/views/Product/Analytics.vue"),
             meta: {
-                title: "애널리틱스",
+                title: "매출데이터",
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: GiftOutlined
