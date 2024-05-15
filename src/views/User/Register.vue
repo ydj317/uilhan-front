@@ -121,6 +121,25 @@
         </a-descriptions-item>
 
         <a-descriptions-item>
+          <span class="required"><strong>사업자 등록증 첨부</strong></span>
+          <a-upload
+              name="business_license_image"
+              list-type="picture-card"
+              :show-upload-list="false"
+              :before-upload="validateUploadImage"
+              :custom-request="uploadImage"
+          >
+            <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%"/>
+            <div v-else>
+              <loading-outlined v-if="loading"></loading-outlined>
+              <plus-outlined v-else></plus-outlined>
+              <div class="ant-upload-text">Upload</div>
+            </div>
+          </a-upload>
+        </a-descriptions-item>
+
+
+        <a-descriptions-item>
           <span class="required"><strong>사업장 전화번호</strong></span>
           <div class="center init-pmbo" style="align-items: flex-start !important;">
             <a-form-item name="com_phone1" class="w32 mr12" has-feedback>
@@ -306,12 +325,12 @@
 import router, {setFilterRouteList} from "router/index.js";
 import {AuthRequest, LoginRequest, NoAuthAjax} from "util/request";
 import {defineComponent, reactive, onBeforeMount, ref} from "vue";
-import {UserOutlined, LockOutlined} from "@ant-design/icons-vue";
+import {UserOutlined, LockOutlined, PlusOutlined, LoadingOutlined, CloseCircleOutlined} from "@ant-design/icons-vue";
 import Cookie from "js-cookie";
 import {isLogin, cookieInit} from "util/auth";
 import {useForm} from "ant-design-vue/es/form";
 import Loading from "vue-loading-overlay";
-import {message} from "ant-design-vue";
+import {message,Upload,Modal} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
 import {lib} from "@/util/lib";
 import {useRoute} from "vue-router";
@@ -322,17 +341,24 @@ import { useStore } from 'vuex';
 
 export default defineComponent({
   components: {
+    CloseCircleOutlined,
+    LoadingOutlined,
     Loading,
     UserOutlined,
     LockOutlined,
     Policy,
-    Express
+    Express,
+    'a-upload': Upload,
+    'plus-outlined': PlusOutlined
   },
 
   setup() {
     let showFirstPhoneGuide = ref(true)
     let showFirstComPhoneGuide = ref(true)
 
+    const headers = reactive({
+      token: Cookie.get("token")
+    });
 
     onBeforeMount(() => {
       if (isLogin() === true) {
@@ -404,6 +430,7 @@ export default defineComponent({
       detailAddress:'',
       //快递条款弹窗
       expressModal:false,
+      business_license_image: ''
     });
 
     const tooltip = {
@@ -450,6 +477,7 @@ export default defineComponent({
         zone_code: formState.zoneCode,
         address: formState.address,
         detail_address: formState.detailAddress,
+        business_license_image:formState.business_license_image
       };
       NoAuthAjax.post(
           process.env.VUE_APP_API_URL + "/api/register", user).then((res) => {
@@ -518,6 +546,7 @@ export default defineComponent({
             process.env.VUE_APP_API_URL + "/api/checkname", value).then((res) => {
           return res.data;
         });
+
 
         if (returnData === undefined || returnData.status === undefined) {
           message.warning("서버장애로 인해 회원가입에 실패하였습니다. \n 잠시후 시도해주시길 바랍니다.");
@@ -970,7 +999,7 @@ export default defineComponent({
 				  const result = res.data.data;
 				  if ('MEM_CODE' in result) {
 					  message.error("배대지 동시가입 가능 합니다. 회원가입 진행 해주세요.");
-					  bridge_sync_pass.value = false;
+					  bridge_sync_pass.value = false ;
 
 					  return false;
 				  }
@@ -1003,6 +1032,48 @@ export default defineComponent({
         }
       }).open();
     }
+
+
+
+    // const avatarUrl = ref('');
+    const loading= ref(false);
+
+    function validateUploadImage(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isJPEG = file.type === "image/jpeg";
+      const isGIF = file.type === "image/gif";
+      const isPNG = file.type === "image/png";
+
+      if (!(isJPG || isJPEG || isPNG || isGIF)) {
+        message.warning("허용되는 이미지 격식이 아닙니다.");
+        return false;
+      }
+      return true;
+    }
+
+    function uploadImage(options) {
+      const { onSuccess, onError, file } = options;
+      const formData = new FormData();
+      formData.append("file", file);
+
+      loading.value = true;
+
+      NoAuthAjax.post(
+          process.env.VUE_APP_API_URL + "/api/register/uploadImage",
+          formData
+          ).then(response => {
+        formState.business_license_image = response.data.data?.img_url;
+        onSuccess(response);
+      }).catch((error) => {
+        if (error.response) {
+
+          message.error(`Upload failed: ${error.response.data.message}`);
+        } else {
+          message.error(`Upload failed: ${error.message}`);
+        }
+      });
+    }
+
 
     return {
       checked,
@@ -1041,7 +1112,14 @@ export default defineComponent({
       onExpressAgree,
       showExpressModal,
       showFirstPhoneGuide,
-      showFirstComPhoneGuide
+      showFirstComPhoneGuide,
+
+
+      // avatarUrl,
+      loading,
+      validateUploadImage,
+      uploadImage,
+      headers
     };
   }
 });
