@@ -428,7 +428,7 @@ export const menus = [{
             component: () => import("@/views/User/ServicePayAi.vue"),
             meta: {
                 title: "️AI 서비스 결제",
-                isHide: false,
+                isHide: true,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: RobotOutlined
             },
@@ -438,7 +438,7 @@ export const menus = [{
             name: "product_analytics",
             component: () => import("@/views/Product/Analytics.vue"),
             meta: {
-                title: "애널리틱스",
+                title: "매출데이터",
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: GiftOutlined

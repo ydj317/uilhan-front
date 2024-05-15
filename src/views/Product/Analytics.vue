@@ -1,6 +1,6 @@
 <template>
 
-  <a-card title="애널리틱스">
+  <a-card title="매출데이터">
     <a-descriptions bordered :column="1" size="middle">
       <a-descriptions-item label="계정">
         <div>
