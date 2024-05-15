@@ -249,19 +249,19 @@ export default {
       if (this.showGuideImage === false) {
         return;
       }
-      // 기존에 있는지 업는지 판단소스를 써줘
-      const regexBefore = new RegExp(`<div id="${this.guideBeforeId}"><\\/div>`, "ig");
-      const regexAfter = new RegExp(`<div id="${this.guideAfterId}"><\\/div>`, "ig");
+      // 기존에 있는지 업는지 판단소스를 써줘``
+      const regexBefore = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "ig");
+      const regexAfter = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "ig");
       const matchBefore = regexBefore.exec(this.product.item_detail);
       const matchAfter = regexAfter.exec(this.product.item_detail);
 
       if (matchBefore === null) {
-        const beforeCont = `<div id="${this.guideBeforeId}"></div>`;
+        const beforeCont = `<div id="${this.guideBeforeId}" class="guide-content"></div>`;
         this.product.item_detail = beforeCont + this.product.item_detail;
       }
 
       if (matchAfter === null) {
-        const afterCont = `<div id="${this.guideBeforeId}"></div>`;
+        const afterCont = `<div id="${this.guideBeforeId}" class="guide-content"></div>`;
         this.product.item_detail = this.product.item_detail + afterCont;
       }
 
