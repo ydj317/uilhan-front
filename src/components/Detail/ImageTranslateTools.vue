@@ -4,6 +4,7 @@
       translateType="imgTranslate"
       :requestIds="requestIds"
       :recharge="product.recharge"
+      :type="type"
       :key="requestIds[0]"
       @update:isOpen="onCancel"
       @callbackReceived="handleTranslateCallback"
@@ -55,6 +56,7 @@ export default defineComponent({
     return {
       localTranslateImageList: this.translateImageList,
       requestIds: [],
+      type: '',
     };
   },
 
@@ -62,13 +64,14 @@ export default defineComponent({
     //图片处理回调
     async handleTranslateCallback(oTranslateInfo) {
       const {requestId,all,url,type,option} = oTranslateInfo;
+      this.type = type;
       if(type == 'upload'){//图片上传
         await this.uploadImage(option);
       }
       if(type == 'translate'){//翻译
 
       }
-      if(type == 'edit'){//完成编辑
+      if(type == 'finish'){//完成编辑
         if(requestId === undefined){
           message.error("이미지 번역 실패");
           return false;
@@ -81,7 +84,7 @@ export default defineComponent({
           checkedImage.translate_url = url;
           checkedImage.url = url;
         }
-        this.onSubmit();
+        // this.onSubmit();
       }
     },
 
@@ -194,13 +197,10 @@ export default defineComponent({
 
       });
       // await this.translateImageBatch();
-      this.requestIds = ['91e295fb75284cc5'];
-      let sendData = {
-        requestIds: Object.values(this.requestIds),
-        recharge:this.product.recharge,
-        type:'upload'
-      };
-      this.$refs.newXiangJi.sendMessage(sendData);
+      // this.requestIds = ['91e295fb75284cc5'];
+      this.requestIds.push('91e295fb75284cc5');
+      this.product.recharge -= 1;
+      this.$refs.newXiangJi.sendMessage();
     },
     //base64-文件对象
     base64toFileObj(base64, filename='tmp.png') {
@@ -218,16 +218,16 @@ export default defineComponent({
   },
 
   watch: {
-    visible(val) {
-      console.log('watch-visible',val)
-      if(val){
-        this.localTranslateImageList = this.translateImageList;
-        this.translateImageBatch();
-      }
-      setInterval(()=>{
-        this.requestIds = ['5dd9c851347d226b','5dd9c851347d226b'];
-      },5000);
-    },
+    visible:{
+      handler(val) {
+        console.log('watch-visible',val)
+        if(val){
+          this.localTranslateImageList = this.translateImageList;
+          this.translateImageBatch();
+        }
+      },
+      immediate: true,
+    }
   },
 });
 </script>

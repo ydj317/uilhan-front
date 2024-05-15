@@ -1,13 +1,13 @@
 <template>
 
-  <a-modal class="xiangJi" v-model:open="localvisible" :closable="false"
+  <a-modal class="xiangJi" v-model:open="isOpen" :closable="false"
            :cancel-button-props="{ ghost: true, disabled: true }" :footer="null">
 
     <!-- 模板HTML 不可修改 -->
     <div id="xiangji-app">
       <div id="some-dialog">
-        <div class="logo-hide"></div>
-        <div class="close-btn" @click="localvisible = false">닫기</div>
+<!--        <div class="logo-hide"></div>-->
+        <div class="close-btn" @click="onCancel">취소</div>
         <iframe id="xiangji-image-editor" title="象寄图片精修工具"
                 :src="iframeSrc"
                 ref="iframeRef"
@@ -23,22 +23,7 @@ import "@/util/jQuery_v1.10.2";
 
 export default defineComponent({
   name: "newxiangJi",
-
   emits: ["callbackReceived", "update:isOpen"],
-  mounted() {
-    console.log('mounted')
-  },
-  computed: {
-    localvisible: {
-      get() {
-        return this.isOpen;
-      },
-      set(value) {
-        this.$emit("update:isOpen", value);
-      },
-    },
-  },
-
   props: {
     isOpen: {
       type: Boolean,
@@ -56,6 +41,10 @@ export default defineComponent({
       type: String,
       default: "0",
     },
+    type: {
+      type: String,
+      default: "",
+    }
   },
   data() {
     return {
@@ -70,35 +59,34 @@ export default defineComponent({
   methods: {
     // 이미지 불러오기
     iframeOnload() {
+      console.log('象寄载入数据')
+      this.sendMessage();
+    },
+    sendMessage() {
       let sendData = {
+        name: this.translateTypes[this.translateType][0],
         requestIds: Object.values(this.requestIds),
         recharge:this.recharge,
-        type:'edit'
+        type:this.type
       };
-      console.log('象寄载入数据',sendData)
-      this.sendMessage(sendData);
-    },
-    sendMessage(sendData) {
       console.log('sendData数据',sendData)
-      sendData.name = this.translateTypes[this.translateType][0];
       const iframe = document.querySelector("#xiangji-image-editor");
       iframe.contentWindow.postMessage(
           sendData,
           "*"
       );
     },
-
-    // 이미지 편집기 적용후 처리
     receiveMessage(e) {
-      // console.log('receiveMessage', e)
       const self = this;
       e = e || window.event;
       if (e.origin === 'http://localhost:3000' && e.data.name === this.translateTypes[this.translateType][1]) {
         self.$emit("callbackReceived", e.data);
       }
     },
+    onCancel() {
+      this.$emit("update:isOpen", false);
+    },
   },
-
   watch: {
     isOpen: {
       handler(val) {
@@ -132,12 +120,13 @@ export default defineComponent({
 .close-btn {
   padding: 4px 20px 6px;
   position: absolute;
-  top: 32px;
-  right: 130px;
-  background: #2055f3;
-  border-radius: 20px;
-  color: #fff;
+  bottom: 122px;
+  right: 540px;
+  //background: #2055f3;
+  border-radius: 5px;
+  //color: #fff;
   cursor: pointer;
+  border: 1px solid #f2f2f2;
 }
 
 .closeBtn:hover {
