@@ -3,20 +3,20 @@
           class="market_form">
     <a-form-item name="seller_id" label="스마트스토어ID" :rules="[{ required: true, message: '스마트스토어ID를 입력해 주세요.' }]">
 <!--      <a-input v-model:value="state.formData.seller_id" :disabled="state.formData.sync_market_status"/>-->
-      <a-input v-model:value="state.formData.seller_id" :disabled="!auth"/>
+      <a-input v-model:value="state.formData.seller_id" :disabled="!auth && registerId !== ''"/>
     </a-form-item>
 
     <a-form-item name="client_id" @keyup="handleResetSyncStatus" label="애플리케이션ID"
                  :rules="[{ required: true, message: '애플리케이션ID를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.client_id" :disabled="!auth"/>
+      <a-input v-model:value="state.formData.client_id" :disabled="!auth && registerId !== ''"/>
     </a-form-item>
 
     <a-form-item name="client_secret" label="애플리케이션 시크릿" @keyup="handleResetSyncStatus"
                  :rules="[{ required: true, message: '애플리케이션 시크릿을 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.client_secret" :disabled="!auth"/>
+      <a-input v-model:value="state.formData.client_secret" :disabled="!auth && registerId !== ''"/>
     </a-form-item>
 
-    <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading" :disabled="!auth">
+    <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
       <template #icon v-if="state.formData.sync_market_status">
         <CheckCircleOutlined style="color:#67C23A;"/>
       </template>
@@ -130,6 +130,10 @@ const props = defineProps({
   accountInfo: {
     type: Object,
     default: {}
+  },
+  registerId: {
+    type: String,
+    default: ''
   }
 });
 
