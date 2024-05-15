@@ -226,8 +226,8 @@ export default {
           return;
         }
 
-        const beforeCont = `<div id="${this.guideBeforeId}" class="guide-content"><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
-        const afterCont = `<div id="${this.guideAfterId}" class="guide-content" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
+        const beforeCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
+        const afterCont = `<div id="${this.guideAfterId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
         if (this.product.user.description_option.top_bottom_image.top_image_url !== "") {
           this.product.item_detail = beforeCont + this.product.item_detail;
         }
@@ -256,12 +256,12 @@ export default {
       const matchAfter = regexAfter.exec(this.product.item_detail);
 
       if (matchBefore === null) {
-        const beforeCont = `<div id="${this.guideBeforeId}" class="guide-content"></div>`;
+        const beforeCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
         this.product.item_detail = beforeCont + this.product.item_detail;
       }
 
       if (matchAfter === null) {
-        const afterCont = `<div id="${this.guideBeforeId}" class="guide-content"></div>`;
+        const afterCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
         this.product.item_detail = this.product.item_detail + afterCont;
       }
 
