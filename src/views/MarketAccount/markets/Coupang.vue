@@ -2,22 +2,22 @@
     <a-form ref="marketFormRef" :model="state.formData" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
         class="market_form">
         <a-form-item name="seller_id" label="쿠팡ID" :rules="[{ required: true, message: '쿠팡ID를 입력해 주세요.' }]">
-            <a-input v-model:value="state.formData.seller_id" :disabled="!auth" />
+            <a-input v-model:value="state.formData.seller_id" :disabled="!auth && registerId !== ''" />
         </a-form-item>
 
         <a-form-item name="vendor_id" label="업체코드" @keyup="handleResetSyncStatus" :rules="[{ required: true, message: '업체코드를 입력해 주세요.' }]">
-            <a-input v-model:value="state.formData.vendor_id" :disabled="!auth"/>
+            <a-input v-model:value="state.formData.vendor_id" :disabled="!auth && registerId !== ''"/>
         </a-form-item>
 
         <a-form-item name="access_key" label="accessKey" @keyup="handleResetSyncStatus" :rules="[{ required: true, message: 'AccessKey를 입력해 주세요.' }]">
-            <a-input v-model:value="state.formData.access_key" :disabled="!auth"/>
+            <a-input v-model:value="state.formData.access_key" :disabled="!auth && registerId !== ''"/>
         </a-form-item>
 
         <a-form-item name="secret_key" label="secretKey" @keyup="handleResetSyncStatus" :rules="[{ required: true, message: 'AccessKey를 입력해 주세요.' }]">
-            <a-input v-model:value="state.formData.secret_key" :disabled="!auth"/>
+            <a-input v-model:value="state.formData.secret_key" :disabled="!auth && registerId !== ''"/>
         </a-form-item>
 
-        <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading" :disabled="!auth">
+        <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
             <template #icon v-if="state.formData.sync_market_status">
                 <CheckCircleOutlined style="color:#67C23A;" />
             </template>
@@ -170,9 +170,12 @@ const props = defineProps({
     accountInfo: {
         type: Object,
         default: {}
+    },
+    registerId: {
+      type: String,
+      default: ''
     }
 });
-
 const router = useRouter();
 const popoverVisible = ref(false);
 const marketFormRef = ref(null);

@@ -2,47 +2,47 @@
   <a-form ref="marketFormRef" :model="state.formData" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
           class="market_form">
     <a-form-item name="seller_id" label="인터파크ID" :rules="[{ required: true, message: '인터파크ID를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.seller_id" :disabled="!auth" />
+      <a-input v-model:value="state.formData.seller_id" :disabled="!auth && registerId !== ''" />
     </a-form-item>
     <!-- 상품등록 -->
     <a-form-item name="prd_register_client_id" @keyup="handleResetSyncStatus" label="상품등록 인증키"
                  :rules="[{ required: true, message: '상품등록 인증키를 입력해 주세요.' }]">
-      <a-input class=".half-width-input" v-model:value="state.formData.prd_register_client_id" :disabled="!auth" />
+      <a-input class=".half-width-input" v-model:value="state.formData.prd_register_client_id" :disabled="!auth && registerId !== ''" />
     </a-form-item>
 
     <a-form-item name="prd_register_client_secret" @keyup="handleResetSyncStatus" label="상품등록 비밀키"
                  :rules="[{ required: true, message: '상품등록 비밀키를 입력해 주세요.' }]">
-      <a-input class=".half-width-input" v-model:value="state.formData.prd_register_client_secret" :disabled="!auth" />
+      <a-input class=".half-width-input" v-model:value="state.formData.prd_register_client_secret" :disabled="!auth && registerId !== ''" />
     </a-form-item>
 
     <!-- 상품수정 -->
     <a-form-item name="prd_update_client_id" @keyup="handleResetSyncStatus" label="상품수정 인증키"
                  :rules="[{ required: true, message: '상품수정 인증키를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.prd_update_client_id" :disabled="!auth" />
+      <a-input v-model:value="state.formData.prd_update_client_id" :disabled="!auth && registerId !== ''" />
     </a-form-item>
 
     <a-form-item name="prd_update_client_secret" @keyup="handleResetSyncStatus" label="상품수정 비밀키"
                  :rules="[{ required: true, message: '상품수정 비밀키를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.prd_update_client_secret" :disabled="!auth" />
+      <a-input v-model:value="state.formData.prd_update_client_secret" :disabled="!auth && registerId !== ''" />
     </a-form-item>
 
     <!-- 배송비정책조회 -->
     <a-form-item name="return_address_client_id" @keyup="handleResetSyncStatus" label="반품배송지 인증키"
                  :rules="[{ required: true, message: '반품배송지 인증키를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.return_address_client_id"  :disabled="!auth" />
+      <a-input v-model:value="state.formData.return_address_client_id"  :disabled="!auth && registerId !== ''" />
     </a-form-item>
 
     <a-form-item name="return_address_client_secret" @keyup="handleResetSyncStatus" label="반품배송지 비밀키"
                  :rules="[{ required: true, message: '반품배송지 비밀키를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.return_address_client_secret" :disabled="!auth" />
+      <a-input v-model:value="state.formData.return_address_client_secret" :disabled="!auth && registerId !== ''" />
     </a-form-item>
 
     <a-form-item name="supply_seq" @keyup="handleResetSyncStatus" label="업체/공급계약번호"
                  :rules="[{ required: true, message: '업체/공급계약번호를 입력해 주세요.' }]">
-      <a-input v-model:value="state.formData.supply_seq" placeholder="판매자 센터->판매자정보관리->관리계정(ID)관리->업체/공급계약번호->1000********/1" :disabled="!auth"/>
+      <a-input v-model:value="state.formData.supply_seq" placeholder="판매자 센터->판매자정보관리->관리계정(ID)관리->업체/공급계약번호->1000********/1" :disabled="!auth && registerId !== ''"/>
     </a-form-item>
 
-    <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading" :disabled="!auth">
+    <a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
       <template #icon v-if="state.formData.sync_market_status">
         <CheckCircleOutlined style="color:#67C23A;" />
       </template>
@@ -139,6 +139,10 @@ const props = defineProps({
   accountInfo: {
     type: Object,
     default: {}
+  },
+  registerId: {
+    type: String,
+    default: ''
   }
 });
 

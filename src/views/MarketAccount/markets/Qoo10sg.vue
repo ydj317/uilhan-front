@@ -2,21 +2,21 @@
 	<a-form ref="marketFormRef" :model="state.formData" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
 			class="market_form">
 		<a-form-item name="seller_id" label="판매자 ID" :rules="[{ required: true, message: '큐텐 판매자 ID를 입력해 주세요.' }]">
-			<a-input v-model:value="state.formData.seller_id" placeholder="큐텐 판매자 ID를 입력해 주세요." :disabled="!auth"/>
+			<a-input v-model:value="state.formData.seller_id" placeholder="큐텐 판매자 ID를 입력해 주세요." :disabled="!auth && registerId !== ''"/>
 		</a-form-item>
 
 		<a-form-item name="seller_pwd" label="비밀번호" :rules="[{ required: true, message: '큐텐 비밀번호를 입력해 주세요.' }]">
-			<a-input-password v-model:value="state.formData.seller_pwd" placeholder="큐텐 비밀번호를 입력해 주세요." :disabled="!auth"/>
+			<a-input-password v-model:value="state.formData.seller_pwd" placeholder="큐텐 비밀번호를 입력해 주세요." :disabled="!auth && registerId !== ''"/>
 		</a-form-item>
 
 		<a-form-item name="api_token" @keyup="handleResetSyncStatus" label="API 인증키"
 					 :rules="[{ required: true, message: 'API 인증키를 입력해 주세요.' }]">
-			<a-input v-model:value="state.formData.api_token" placeholder="API 인증키를 입력해주세요." :disabled="!auth"/>
+			<a-input v-model:value="state.formData.api_token" placeholder="API 인증키를 입력해주세요." :disabled="!auth && registerId !== ''"/>
 		</a-form-item>
 
 		<a-input type="hidden" name="access_token" v-model:value="state.formData.access_token" />
 
-		<a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading" :disabled="!auth">
+		<a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
 			<template #icon v-if="state.formData.sync_market_status">
 				<CheckCircleOutlined style="color:#67C23A;"/>
 			</template>
@@ -101,7 +101,11 @@ const props = defineProps({
 	accountInfo: {
 		type: Object,
 		default: {}
-	}
+	},
+  registerId: {
+    type: String,
+    default: ''
+  }
 });
 
 const router = useRouter();

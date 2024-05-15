@@ -23,7 +23,7 @@
                     </a-col>
                 </a-row>
                 <component :is="market_code" v-if="market_code" :accountInfo="accountInfo" :key="market_code"
-                    :market_code="market_code"></component>
+                    :market_code="market_code" :registerId="this.getAccountId()"></component>
 
             </div>
         </a-card>

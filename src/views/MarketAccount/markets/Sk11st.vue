@@ -2,15 +2,15 @@
 	<a-form ref="marketFormRef" :model="state.formData" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
 			class="market_form">
 		<a-form-item name="seller_id" label="판매자 ID" :rules="[{ required: true, message: '11번가 판매자 ID를 입력해 주세요.' }]">
-			<a-input v-model:value="state.formData.seller_id" placeholder="11번가 판매자 ID를 입력해 주세요." :disabled="!auth"/>
+			<a-input v-model:value="state.formData.seller_id" placeholder="11번가 판매자 ID를 입력해 주세요." :disabled="!auth && registerId !== ''"/>
 		</a-form-item>
 
 		<a-form-item name="access_token" @keyup="handleResetSyncStatus" label="OPEN API KEY"
 					 :rules="[{ required: true, message: 'OPEN API KEY 를 입력해 주세요.' }]">
-			<a-input v-model:value="state.formData.access_token" placeholder="OPEN API KEY 를 입력해주세요." :disabled="!auth"/>
+			<a-input v-model:value="state.formData.access_token" placeholder="OPEN API KEY 를 입력해주세요." :disabled="!auth && registerId !== ''"/>
 		</a-form-item>
 
-		<a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading" :disabled="!auth">
+		<a-button class="mt15" @click="handleSyncMarketCheck" :loading="state.syncCheckLoading">
 			<template #icon v-if="state.formData.sync_market_status">
 				<CheckCircleOutlined style="color:#67C23A;"/>
 			</template>
@@ -235,7 +235,11 @@ const props = defineProps({
 	accountInfo: {
 		type: Object,
 		default: {}
-	}
+	},
+  registerId: {
+    type: String,
+    default: ''
+  }
 });
 
 const placePurchaseList = {
