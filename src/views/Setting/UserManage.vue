@@ -23,8 +23,8 @@
       <template #bodyCell="{ column, record }">
 
         <template v-if="column.title === '추천코드'">
-          <a-button @click="copyText(record.recommend_code)">
-            {{ record.recommend_code }}
+          <a-button @click="copyText(record.username)">
+            {{ record.username }}
             <CopyOutlined />
           </a-button>
         </template>
@@ -73,7 +73,7 @@ const searchKeyword = ref([
   },
   {
     key: "parent_user",
-    label: "대리점아이디"
+    label: "추천아이디"
   }
 ]);
 
@@ -95,7 +95,7 @@ const tableColumns = ref([
     width: '10%',
   },
   {
-    title: '대리점아이디',
+    title: '추천아이디',
     dataIndex: 'parent_user',
     width: '13%',
   },
