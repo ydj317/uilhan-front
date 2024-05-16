@@ -97,19 +97,21 @@ onBeforeMount(() => {
   <a-card :bordered="false" :loading="loading">
     <a-row type="flex" justify="space-between" :wrap="false" :style="{marginBottom:'10px'}">
       <a-col>
-        <a-button type="primary" danger :loading="deleteLoading" @click="deleteSelectedData"
-                  v-if="Array.isArray(selectedRowKeys) && selectedRowKeys.length === 0" disabled>
-          <template #icon>
-            <delete-outlined/>
-          </template>
-          선택삭제
-        </a-button>
-        <a-button type="primary" danger :loading="deleteLoading" @click="deleteSelectedData" v-else>
-          <template #icon>
-            <delete-outlined/>
-          </template>
-          선택삭제
-        </a-button>
+        <a-popconfirm
+            title="선택한 공지사항을 삭제하시겠습니까?"
+            ok-text="네"
+            cancel-text="아니요"
+            @confirm="deleteSelectedData"
+            :disabled="Array.isArray(selectedRowKeys) && selectedRowKeys.length === 0"
+        >
+          <a-button type="primary" :loading="deleteLoading"
+                     :disabled="Array.isArray(selectedRowKeys) && selectedRowKeys.length === 0">
+            <template #icon>
+              <delete-outlined/>
+            </template>
+            선택삭제
+          </a-button>
+        </a-popconfirm>
       </a-col>
       <a-col>
         <router-link to="/board/form">
