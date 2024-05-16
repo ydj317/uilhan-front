@@ -57,6 +57,29 @@
                 <a-input v-model:value="formState.com_number" placeholder="사업자번호를 입력해주시오"/>
             </a-form-item>
 
+            <a-form-item label="사업자등록증" name="business_license_image" has-feedback class="upload">
+              <a-upload
+                  name="business_license_image"
+                  list-type="picture-card"
+                  :show-upload-list="false"
+                  :before-upload="validateUploadImage"
+                  :custom-request="uploadImage"
+              >
+                <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%;height:100%; object-fit: contain;" @click="showBigImageOnClick($event)" />
+                <div v-else>
+                  <loading-outlined v-if="loading"></loading-outlined>
+                  <plus-outlined v-else></plus-outlined>
+                  <div class="ant-upload-text">업로드</div>
+                </div>
+                <template v-if="formState.business_license_image">
+                  <close-circle-outlined class="delete-image" @click="removeLicenseImage($event)" />
+                </template>
+              </a-upload>
+              <div v-if="showBigImage" class="big-image" @click="showBigImage = false">
+                <img :src="formState.business_license_image" alt="Big Business License" />
+              </div>
+            </a-form-item>
+
             <a-form-item label="사업장 전화번호" name="com_phone1">
                 <a-row :gutter="10">
                     <a-col style="width: 160px;">
@@ -193,18 +216,18 @@
 <script setup>
     import {AuthRequest} from "@/util/request";
     import {
-        CopyOutlined
+      CloseCircleOutlined,
+      CopyOutlined, LoadingOutlined, PlusOutlined
     } from "@ant-design/icons-vue";
-    import {onMounted, reactive} from "vue";
+    import {onMounted, reactive, ref} from "vue";
     import router from "@/router";
     import {message} from "ant-design-vue";
     import {useUserApi} from "@/api/user";
-	import BindBridge from "@/views/Setting/BindBridge.vue";
+	  import BindBridge from "@/views/Setting/BindBridge.vue";
+    import Cookie from "js-cookie";
 
-	import "vue-loading-overlay/dist/vue-loading.css";
+	  import "vue-loading-overlay/dist/vue-loading.css";
     import Loading from "vue-loading-overlay";
-
-
 
     const formState = reactive({
         username: "",
@@ -253,12 +276,18 @@
 			bind_bridge_phone: '',
 			bind_bridge_email: '',
 			is_bridge_sync: false,
-		}
+		},
+      business_license_image: '',
+      imageUploaded: false, // 图片是否已上传
     });
 
 	const handleFormUpdate = (data) => {
 		formState.bridgeData = data;
 	};
+
+    const headers = reactive({
+      token: Cookie.get("token")
+    });
 
     const copyText = (recommend_code) => {
         var textArea = document.createElement("textarea");
@@ -522,6 +551,13 @@
                 validator: validatePassConfirm,
                 trigger: "blur"
             }
+        ],
+        business_license_image:[
+          {
+            required: true,
+            // validator:validateLicenseImage,
+            trigger: "blur"
+          },
         ]
     });
 
@@ -540,6 +576,7 @@
 			bind_bridge_phone: formState.bridgeData.bind_bridge_phone,
 			bind_bridge_email: formState.bridgeData.bind_bridge_email,
 			is_bridge_sync: formState.bridgeData.is_bridge_sync,
+          business_license_image: formState.business_license_image
         };
 
         AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
@@ -578,6 +615,40 @@
         }
     }
 
+
+    const loading= ref(false);
+
+    function validateUploadImage(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isJPEG = file.type === "image/jpeg";
+      const isGIF = file.type === "image/gif";
+      const isPNG = file.type === "image/png";
+
+      if (!(isJPG || isJPEG || isPNG || isGIF)) {
+        message.warning("허용되는 이미지 격식이 아닙니다.");
+        return false;
+      }
+      return true;
+    }
+
+    function uploadImage(options) {
+      const { onSuccess, onError, file } = options;
+      const formData = new FormData();
+      formData.append("file", file);
+
+      loading.value = true;
+
+      AuthRequest.post(
+          process.env.VUE_APP_API_URL + "/api/setting/uploadImage",
+          formData
+      ).then(response => {
+        formState.business_license_image = response.data.img_url;
+        formState.imageUploaded = true;
+        onSuccess(response);
+      });
+    }
+
+
     function getUserInfoData() {
         formState.loading = true;
         useUserApi().getUserInfoData({}).then((res) => {
@@ -596,6 +667,7 @@
             splitPhone('com_phone', res.data.com_phone)
             formState.com_ceo = res.data.com_ceo;
             formState.recommend_code = res.data.recommend_code;
+            formState.business_license_image = res.data.business_license_image
             splitPhone('tel', res.data.tel)
 
             setTimeout(() => {
@@ -604,6 +676,21 @@
 
         });
     }
+
+    const showBigImage = ref(false);
+
+    function removeLicenseImage(event){
+      formState.business_license_image = "";
+      formState.imageUploaded = false;
+      message.error("사업자등록증을 첨부해 주세요.");
+      event.stopPropagation();
+      loading.value=false;
+    }
+    function showBigImageOnClick(event) {
+      showBigImage.value = true;
+      event.stopPropagation();
+    }
+
 
     onMounted(() => {
         getUserInfoData();
@@ -763,6 +850,42 @@
     .user_form .phone .ant-form-item-control:nth-last-child {
         border-bottom: none;
     }
+
+    .upload .ant-form-item-required{
+      height:100% !important;
+    }
+
+    .ant-upload-wrapper.ant-upload-picture-card-wrapper{
+      margin-bottom:20px;
+    }
+    .ant-upload-wrapper.ant-upload-picture-card-wrapper .ant-upload.ant-upload-select{
+      position: relative;
+    }
+    .delete-image{
+      position: absolute;
+      right:-14px;
+      top:0;
+      color:red;
+    }
+
+    .big-image {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .big-image img {
+      max-width: 90%;
+      max-height: 90%;
+    }
+
 </style>
 <style scoped>
 
