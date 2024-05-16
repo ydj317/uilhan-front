@@ -19,7 +19,7 @@
 
     </div>
 
-    <a-table :dataSource="userData" :columns="tableColumns">
+    <a-table :dataSource="userData" :columns="tableColumns" :pagination="false">
       <template #bodyCell="{ column, record }">
 
         <template v-if="column.title === '추천코드'">
@@ -35,6 +35,14 @@
 
       </template>
     </a-table>
+    <a-pagination
+        style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 15px;"
+        v-model:current="searchFrom.page"
+        v-model:page-size="searchFrom.pageSize"
+        @change="onPageChange"
+        :total="searchFrom.total"
+        :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
+    />
 
   </a-card>
 </template>
@@ -55,6 +63,10 @@ const tableLoading = ref(false);
 const indicator = ref(false);
 
 const searchFrom = reactive({
+  page: 1,
+  pageSize: 10,
+  total: 0,
+  loading: false,
   search_key: "username",
   search_value: ""
 })
@@ -123,6 +135,12 @@ const tableColumns = ref([
     title: 'Action',
   }
 ]);
+
+const onPageChange = (page, pageSize) => {
+  searchFrom.page = page;
+  searchFrom.pageSize = pageSize;
+  getUserList();
+};
 
 const copyText = (recommend_code) => {
   var textArea = document.createElement("textarea");
@@ -193,6 +211,8 @@ function getUserList() {
       tableLoading.value = false;
       return false;
     }
+
+    searchFrom.total = res.data.total;
 
     userData.value = res.data.userList.map((item, index) => {
       // 创建一个Date对象
