@@ -19,7 +19,7 @@
 
     </div>
 
-    <a-table :dataSource="userData" :columns="tableColumns">
+    <a-table :dataSource="userData" :columns="tableColumns" :pagination="false">
       <template #bodyCell="{ column, record }">
 
         <template v-if="column.title === '추천코드'">
@@ -35,6 +35,14 @@
 
       </template>
     </a-table>
+    <a-pagination
+        style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 15px;"
+        v-model:current="searchFrom.page"
+        v-model:page-size="searchFrom.pageSize"
+        @change="onPageChange"
+        :total="searchFrom.total"
+        :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
+    />
 
   </a-card>
 </template>
@@ -55,6 +63,10 @@ const tableLoading = ref(false);
 const indicator = ref(false);
 
 const searchFrom = reactive({
+  page: 1,
+  pageSize: 10,
+  total: 0,
+  loading: false,
   search_key: "username",
   search_value: ""
 })
@@ -73,7 +85,7 @@ const searchKeyword = ref([
   },
   {
     key: "parent_user",
-    label: "추천아이디"
+    label: "추천인 아이디"
   }
 ]);
 
@@ -95,9 +107,14 @@ const tableColumns = ref([
     width: '10%',
   },
   {
-    title: '추천아이디',
+    title: '추천인 아이디',
     dataIndex: 'parent_user',
     width: '13%',
+  },
+  {
+    title: '추천 횟수',
+    dataIndex: 'recommend_count',
+    width: '10%',
   },
   {
     title: '사용자명',
@@ -123,6 +140,12 @@ const tableColumns = ref([
     title: 'Action',
   }
 ]);
+
+const onPageChange = (page, pageSize) => {
+  searchFrom.page = page;
+  searchFrom.pageSize = pageSize;
+  getUserList();
+};
 
 const copyText = (recommend_code) => {
   var textArea = document.createElement("textarea");
@@ -194,9 +217,11 @@ function getUserList() {
       return false;
     }
 
+    searchFrom.total = res.data.total;
+
     userData.value = res.data.userList.map((item, index) => {
       // 创建一个Date对象
-      const date = new Date(item.insDate);
+      const date = new Date(item[0].insDate);
 
       // 提取年月日时分秒
       const year = date.getFullYear();
@@ -209,7 +234,7 @@ function getUserList() {
       // 格式化输出
       const formattedCreatedAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-      return {...item, key: index + 1, ins_date: formattedCreatedAt };
+      return {...item[0], key: searchFrom.total - index, ins_date: formattedCreatedAt, recommend_count: item['childCount'] };
     });
 
     tableLoading.value = false;
