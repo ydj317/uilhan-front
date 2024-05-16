@@ -121,7 +121,7 @@
         </a-descriptions-item>
 
         <a-descriptions-item>
-          <span class="required"><strong>사업자 등록증 첨부</strong></span>
+          <span class="required"><strong>사업자등록증 첨부</strong></span>
           <a-upload
               name="business_license_image"
               list-type="picture-card"
@@ -129,12 +129,15 @@
               :before-upload="validateUploadImage"
               :custom-request="uploadImage"
           >
-            <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%"/>
+            <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%;height:100%; object-fit: contain;" />
             <div v-else>
               <loading-outlined v-if="loading"></loading-outlined>
               <plus-outlined v-else></plus-outlined>
-              <div class="ant-upload-text">Upload</div>
+              <div class="ant-upload-text">업로드</div>
             </div>
+            <template v-if="formState.business_license_image">
+              <close-circle-outlined class="delete-image" @click="removeLicenseImage" />
+            </template>
           </a-upload>
         </a-descriptions-item>
 
@@ -1033,8 +1036,6 @@ export default defineComponent({
       }).open();
     }
 
-
-
     // const avatarUrl = ref('');
     const loading= ref(false);
 
@@ -1072,6 +1073,11 @@ export default defineComponent({
           message.error(`Upload failed: ${error.message}`);
         }
       });
+    }
+
+    function removeLicenseImage(){
+      formState.business_license_image = "";
+      loading.value=false
     }
 
 
@@ -1119,7 +1125,8 @@ export default defineComponent({
       loading,
       validateUploadImage,
       uploadImage,
-      headers
+      headers,
+      removeLicenseImage
     };
   }
 });
@@ -1269,5 +1276,16 @@ export default defineComponent({
 }
 .address .ant-form-item{
   width: 50%;
+}
+
+
+.ant-upload-wrapper.ant-upload-picture-card-wrapper .ant-upload.ant-upload-select{
+  position: relative;
+}
+.delete-image{
+  position: absolute;
+  right:-14px;
+  top:0;
+  color:red;
 }
 </style>
