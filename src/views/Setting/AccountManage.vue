@@ -15,8 +15,8 @@
             </a-form-item>
 
             <a-form-item label="추천코드">
-                <a-button @click="copyText(formState.recommend_code)">
-                    {{ formState.recommend_code }}
+                <a-button @click="copyText(formState.username)">
+                    {{ formState.username }}
                     <CopyOutlined/>
                 </a-button>
             </a-form-item>
