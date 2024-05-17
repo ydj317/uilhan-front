@@ -85,7 +85,7 @@ const searchKeyword = ref([
   },
   {
     key: "parent_user",
-    label: "추천아이디"
+    label: "추천인 아이디"
   }
 ]);
 
@@ -107,9 +107,14 @@ const tableColumns = ref([
     width: '10%',
   },
   {
-    title: '추천아이디',
+    title: '추천인 아이디',
     dataIndex: 'parent_user',
     width: '13%',
+  },
+  {
+    title: '추천 횟수',
+    dataIndex: 'recommend_count',
+    width: '10%',
   },
   {
     title: '사용자명',
@@ -216,7 +221,7 @@ function getUserList() {
 
     userData.value = res.data.userList.map((item, index) => {
       // 创建一个Date对象
-      const date = new Date(item.insDate);
+      const date = new Date(item[0].insDate);
 
       // 提取年月日时分秒
       const year = date.getFullYear();
@@ -229,7 +234,7 @@ function getUserList() {
       // 格式化输出
       const formattedCreatedAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-      return {...item, key: index + 1, ins_date: formattedCreatedAt };
+      return {...item[0], key: searchFrom.total - index, ins_date: formattedCreatedAt, recommend_count: item['childCount'] };
     });
 
     tableLoading.value = false;
