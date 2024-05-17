@@ -264,6 +264,7 @@
         formRef:"",
         //注册账户
         regLoading:false,
+
         regOpen:false,
         reg_new_password: "",
         reg_password_confirm: "",
@@ -361,6 +362,48 @@
 
         return Promise.resolve();
     };
+
+
+    let validateTelFirst = async (rule, value) => {
+      if (value === "") {
+        return Promise.resolve();
+      } else {
+        let regPhone = /^\d{2,3}$/;
+        if (regPhone.test(value) !== true) {
+          return Promise.reject("숫자를 입력해주십시오");
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+
+    let _validateTel = async (rule, value) => {
+      if (value === "") {
+        return Promise.resolve();
+      } else {
+        let regPhone = /^\d{4}$/;
+        if (regPhone.test(value) !== true) {
+          return Promise.reject("숫자를 입력해주십시오");
+        }
+      }
+
+      return Promise.resolve();
+    };
+
+    let validateTel = async (rule, value) => {
+      if (value === "") {
+        return Promise.resolve();
+      } else {
+        let regPhone = /^\d{4}$/;
+        if (regPhone.test(value) !== true) {
+          return Promise.reject("숫자를 입력해주십시오");
+        }
+      }
+
+      return Promise.resolve();
+    };
+
 
     let validateComname = async (rule, value) => {
         if (value === "") {
@@ -514,19 +557,19 @@
         ],
         tel1: [
             {
-                validator: validatePhoneFirst,
+                validator: validateTelFirst,
                 trigger: "blur"
             }
         ],
         tel2: [
             {
-                validator: _validatePhone,
+                validator: _validateTel,
                 trigger: "blur"
             }
         ],
         tel3: [
             {
-                validator: validatePhone,
+                validator: validateTel,
                 trigger: "blur"
             }
         ],
@@ -850,7 +893,7 @@
       height:100%;
     }
 
-    .ant-form-item .ant-form-item-label >label:before{
+    .upload .ant-form-item-label >label:before{
       display: inline-block;
       margin-inline-end: 4px;
       color: #ff4d4f;
@@ -885,7 +928,6 @@
       align-items: center;
       z-index: 9999;
     }
-
     .big-image img {
       max-width: 90%;
       max-height: 90%;
