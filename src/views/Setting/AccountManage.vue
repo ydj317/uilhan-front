@@ -885,7 +885,6 @@
       align-items: center;
       z-index: 9999;
     }
-
     .big-image img {
       max-width: 90%;
       max-height: 90%;
