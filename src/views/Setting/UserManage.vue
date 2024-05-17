@@ -210,13 +210,6 @@ function userLogin(record) {
 
 function searchList() {
   searchFrom.page = 1;
-  searchFrom.search_value = searchFrom.search_value.trim();
-
-  if (searchFrom.search_value === "") {
-    message.error('검색어를 입력해주세요.');
-    return false;
-  }
-
   getUserList();
 }
 
