@@ -321,7 +321,8 @@ const tableColumns = [
     dataIndex: "totalVisitCount",
     width: "10%",
     align: "center",
-    sorter: true,
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => a.totalVisitCount - b.totalVisitCount
   },
   // {
   //   title: "판매수",
