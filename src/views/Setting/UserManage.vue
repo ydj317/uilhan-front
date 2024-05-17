@@ -234,7 +234,7 @@ function getUserList() {
       // 格式化输出
       const formattedCreatedAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-      return {...item[0], key: searchFrom.total - index, ins_date: formattedCreatedAt, recommend_count: item['childCount'] };
+      return {...item[0], key: searchFrom.total - (searchFrom.page * searchFrom.pageSize) - index, ins_date: formattedCreatedAt, recommend_count: item['childCount'] };
     });
 
     tableLoading.value = false;
