@@ -264,6 +264,7 @@
         formRef:"",
         //注册账户
         regLoading:false,
+
         regOpen:false,
         reg_new_password: "",
         reg_password_confirm: "",
