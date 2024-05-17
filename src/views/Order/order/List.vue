@@ -580,6 +580,7 @@ const onOrderCheckAllChange = e => {
 const onPageChange = (page, pageSize) => {
   state.tableData.page = page;
   state.tableData.pageSize = pageSize;
+  getTableData();
 };
 // 주문 상태 리스트
 const getMarketStatusList = async () => {
