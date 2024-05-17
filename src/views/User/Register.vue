@@ -121,7 +121,7 @@
         </a-descriptions-item>
 
         <a-descriptions-item>
-          <span class="required"><strong>사업자등록증 첨부</strong></span>
+          <span class="required"><strong>사업자등록증</strong></span>
           <a-upload
               name="business_license_image"
               list-type="picture-card"
@@ -129,18 +129,22 @@
               :before-upload="validateUploadImage"
               :custom-request="uploadImage"
           >
-            <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%;height:100%; object-fit: contain;" />
+            <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%;height:100%; object-fit: contain;" @click="showBigImageOnClick($event)" />
             <div v-else>
               <loading-outlined v-if="loading"></loading-outlined>
               <plus-outlined v-else></plus-outlined>
               <div class="ant-upload-text">업로드</div>
             </div>
             <template v-if="formState.business_license_image">
-              <close-circle-outlined class="delete-image" @click="removeLicenseImage" />
+              <close-circle-outlined class="delete-image" @click="removeLicenseImage($event)" />
             </template>
           </a-upload>
-        </a-descriptions-item>
 
+          <!-- 이미지 크게보임-->
+          <div v-if="showBigImage" class="big-image" @click="showBigImage = false">
+            <img :src="formState.business_license_image" alt="Big Business License" />
+          </div>
+        </a-descriptions-item>
 
         <a-descriptions-item>
           <span class="required"><strong>사업장 전화번호</strong></span>
@@ -1036,7 +1040,6 @@ export default defineComponent({
       }).open();
     }
 
-    // const avatarUrl = ref('');
     const loading= ref(false);
 
     function validateUploadImage(file) {
@@ -1075,9 +1078,15 @@ export default defineComponent({
       });
     }
 
-    function removeLicenseImage(){
+    const showBigImage = ref(false);
+    function removeLicenseImage(event){
       formState.business_license_image = "";
-      loading.value=false
+      event.stopPropagation();
+      loading.value=false;
+    }
+    function showBigImageOnClick(event) {
+      showBigImage.value = true;
+      event.stopPropagation();
     }
 
 
@@ -1120,13 +1129,13 @@ export default defineComponent({
       showFirstPhoneGuide,
       showFirstComPhoneGuide,
 
-
-      // avatarUrl,
       loading,
       validateUploadImage,
       uploadImage,
       headers,
-      removeLicenseImage
+      showBigImage,
+      removeLicenseImage,
+      showBigImageOnClick
     };
   }
 });
@@ -1279,6 +1288,9 @@ export default defineComponent({
 }
 
 
+.ant-upload-wrapper.ant-upload-picture-card-wrapper{
+  margin-bottom:20px;
+}
 .ant-upload-wrapper.ant-upload-picture-card-wrapper .ant-upload.ant-upload-select{
   position: relative;
 }
@@ -1288,4 +1300,23 @@ export default defineComponent({
   top:0;
   color:red;
 }
+
+.big-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.big-image img {
+  max-width: 90%;
+  max-height: 90%;
+}
+
 </style>
