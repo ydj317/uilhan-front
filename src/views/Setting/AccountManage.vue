@@ -278,7 +278,6 @@
 			is_bridge_sync: false,
 		},
       business_license_image: '',
-      imageUploaded: false, // 图片是否已上传
     });
 
 	const handleFormUpdate = (data) => {
@@ -552,13 +551,6 @@
                 trigger: "blur"
             }
         ],
-        business_license_image:[
-          {
-            required: true,
-            // validator:validateLicenseImage,
-            trigger: "blur"
-          },
-        ]
     });
 
     const onFinish = () => {
@@ -579,11 +571,16 @@
           business_license_image: formState.business_license_image
         };
 
-        AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
-            if (res.status !== '2000') {
-                message.error(res.message)
-                return false;
-            }
+      if (formState.business_license_image === "") {
+        message.error("사업자등록증을 첨부해 주세요.");
+        return false;
+      }
+
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", user).then((res) => {
+          if (res.status !== '2000') {
+            message.error(res.message)
+            return false;
+          }
 
             message.success(res.message);
             getUserInfoData();
@@ -681,8 +678,6 @@
 
     function removeLicenseImage(event){
       formState.business_license_image = "";
-      formState.imageUploaded = false;
-      message.error("사업자등록증을 첨부해 주세요.");
       event.stopPropagation();
       loading.value=false;
     }
@@ -851,8 +846,18 @@
         border-bottom: none;
     }
 
-    .upload .ant-form-item-required{
-      height:100% !important;
+    .ant-form-item .ant-form-item-label >label{
+      height:100%;
+    }
+
+    .ant-form-item .ant-form-item-label >label:before{
+      display: inline-block;
+      margin-inline-end: 4px;
+      color: #ff4d4f;
+      font-size: 14px;
+      font-family: SimSun, sans-serif;
+      line-height: 1;
+      content: "*";
     }
 
     .ant-upload-wrapper.ant-upload-picture-card-wrapper{
@@ -884,6 +889,14 @@
     .big-image img {
       max-width: 90%;
       max-height: 90%;
+    }
+
+    .ant-form-show-help{
+      display:none;
+    }
+
+    .ant-upload-wrapper.ant-upload-picture-card-wrapper{
+      margin-bottom: 0;
     }
 
 </style>
