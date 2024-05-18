@@ -334,11 +334,9 @@ export default {
       if (!this.product.item_cate) {
         this.product.item_cate = {};
       }
-
       this.product.item_cate[accountName] = {
         marketCode: marketCode,
-
-        cateId: value[value.length - 1],
+        cateId: value,
         categoryNames: selectedOptions.cate_names
       };
 
