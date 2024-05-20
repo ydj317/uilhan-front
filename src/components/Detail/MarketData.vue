@@ -262,6 +262,13 @@ export default {
 
       const params = { market_code: market.market_code, search_keyword: searchInput };
       useCategoryApi().getAutoRecommendCategoryNames(params).then(async res => {
+        this.categories[market.accountName].options = res.data.map(item => {
+          return {
+            cate_ids: item.cate_ids[item.cate_ids.length - 1],
+            cate_names: item.cate_names.join(" / ")
+          };
+        });
+
         if (res.data.length) {
           this.categories[market.accountName].value = res.data[0]["cate_names"].join("/");
           this.product.item_cate[market.accountName] = {
@@ -327,11 +334,9 @@ export default {
       if (!this.product.item_cate) {
         this.product.item_cate = {};
       }
-
       this.product.item_cate[accountName] = {
         marketCode: marketCode,
-
-        cateId: value[value.length - 1],
+        cateId: value,
         categoryNames: selectedOptions.cate_names
       };
 

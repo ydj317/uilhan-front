@@ -12,7 +12,7 @@
         </a-select>
         <a-input v-model:value="searchFrom.search_value" placeholder="검색어" style="width: 200px;"/>
 
-        <a-button @click="getUserList" style="width: 80px;" type="primary">
+        <a-button @click="searchList" style="width: 80px;" type="primary">
           검색
         </a-button>
       </a-input-group>
@@ -206,6 +206,11 @@ function userLogin(record) {
       window.location.href = "/dashboard";
     }, 1000)
   });
+}
+
+function searchList() {
+  searchFrom.page = 1;
+  getUserList();
 }
 
 function getUserList() {
