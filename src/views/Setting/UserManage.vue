@@ -12,7 +12,7 @@
         </a-select>
         <a-input v-model:value="searchFrom.search_value" placeholder="검색어" style="width: 200px;"/>
 
-        <a-button @click="getUserList" style="width: 80px;" type="primary">
+        <a-button @click="searchList" style="width: 80px;" type="primary">
           검색
         </a-button>
       </a-input-group>
@@ -208,6 +208,11 @@ function userLogin(record) {
   });
 }
 
+function searchList() {
+  searchFrom.page = 1;
+  getUserList();
+}
+
 function getUserList() {
   tableLoading.value = true;
   useUserApi().getUserList(searchFrom).then((res) => {
@@ -234,7 +239,7 @@ function getUserList() {
       // 格式化输出
       const formattedCreatedAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-      return {...item[0], key: searchFrom.total - index, ins_date: formattedCreatedAt, recommend_count: item['childCount'] };
+      return {...item[0], key: searchFrom.total - (searchFrom.page * searchFrom.pageSize) - index, ins_date: formattedCreatedAt, recommend_count: item['childCount'] };
     });
 
     tableLoading.value = false;
