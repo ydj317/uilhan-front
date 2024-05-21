@@ -387,8 +387,14 @@ export default {
 
   mounted() {
     //this.search_keyword = '망치'
-    this.product.item_cate = this.product.item_cate || {};
-    this.product.item_disp_cate = this.product.item_disp_cate || {};
+    if (this.product.item_cate === null || this.product.item_cate === undefined || Object.keys(this.product.item_cate).length === 0) {
+      this.product.item_cate = {};
+    }
+
+    if (this.product.item_disp_cate === null || this.product.item_disp_cate === undefined || Object.keys(this.product.item_disp_cate).length === 0) {
+      this.product.item_disp_cate = {};
+    }
+
     if (Array.isArray(this.product?.item_sync_market)) {
       const queue = [];
 
