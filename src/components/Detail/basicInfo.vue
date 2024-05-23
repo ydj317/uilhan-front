@@ -470,7 +470,7 @@ export default {
 
         this.ai_loading = false;
 
-        message.success('상품명과 키워드가 성공적으로 업데이트 되었습니다. ');
+        message.success('상품명이 성공적으로 업데이트 되었습니다.');
       });
 
     },
