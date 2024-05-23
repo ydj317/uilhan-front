@@ -457,13 +457,14 @@ export default {
           this.product.item_trans_name = res.data.product_name;
         }
 
-        if (res.data && Array.isArray(res.data.keywords)) {
-          this.product.item_sync_keyword = res.data.keywords.join(' ');
-          let prd_name_keyword = res.data.keywords.join(' ');
-          this.product.item_trans_name += ' ' + prd_name_keyword.replace(/,/g, ' ')
-        } else {
-          this.product.item_sync_keyword = '';
-        }
+        // 키워드 ai 기능 안쓴대서 주석
+        // if (res.data && Array.isArray(res.data.keywords)) {
+        //   this.product.item_sync_keyword = res.data.keywords.join(' ');
+        //   let prd_name_keyword = res.data.keywords.join(' ');
+        //   this.product.item_trans_name += ' ' + prd_name_keyword.replace(/,/g, ' ')
+        // } else {
+        //   this.product.item_sync_keyword = '';
+        // }
 
         this.validateFilterWord(null,this.product.item_trans_name)
 
