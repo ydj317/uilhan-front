@@ -8,8 +8,7 @@
             <span>AI추천모드 사용</span>
             <a-tooltip>
               <template #title>
-                AI 추천모드는 챗GPT 유료서비스로 충전 후 설정이 가능하고 사용함으로 설정하면 AI가 추천하는 상품명과 키워드로 상품을 등록하게 됩니다.<br>
-                챗GPT 충전 관련 문의는 관리자에게 하시기 바랍니다.
+                AI 추천모드를 사용함으로 설정하면 챗 GPT로부터 상품명을 추천받을 수 있습니다.
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
