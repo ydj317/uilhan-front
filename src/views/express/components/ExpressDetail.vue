@@ -133,6 +133,20 @@
 				<div class="bg-fafafa fw w20 fl-tc pl20">상품 URL</div>
 				<div class="w75 fl-tc pl20">{{item['prdUrl'] ?? ''}}</div>
 			</a-flex>
+
+			<a-flex class="mt40" v-if="item['bridge_order_images']">
+				<span class="fs18 fw">입고상품 검수 이미지</span>
+			</a-flex>
+
+			<a-flex class="mt25 top-border-000 bottom-border-f0f0f0 fl-tc" v-if="item['bridge_order_images']">
+				<div class="fs14 bg-fafafa mr40 h90 fl-cc fw" style="width: 180px;">검수 이미지</div>
+				<span v-for="(url, index) in item['bridge_order_images']" :key="index">
+					<img :src="url" class="br5 mr15" width="70" height="70" alt="">
+				</span>
+			</a-flex>
+			<a-flex class="fs12 mt10 color-bababa">
+				상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요
+			</a-flex>
 		</a-flex>
 		</span>
 		<a-flex vertical>
@@ -159,20 +173,6 @@
 				<a-descriptions-item label="물류 요청사항">{{state.bridgeOrderDetail['req2']}}</a-descriptions-item>
 			</a-descriptions>
 		</a-flex>
-
-<!--		<a-flex class="mt40">-->
-<!--			<span class="fs18 fw">입고상품 검수 이미지</span>-->
-<!--		</a-flex>-->
-
-<!--		<a-flex class="mt25 top-border-000 bottom-border-f0f0f0 fl-tc">-->
-<!--			<div class="fs14 bg-fafafa mr40 h90 fl-cc fw" style="width: 180px;">검수 이미지</div>-->
-<!--			<img src="@/assets/img/express-success.png" class="br5 mr15" width="70" height="70">-->
-<!--			<img src="@/assets/img/express-fail.png" class="br5 mr15" width="70" height="70">-->
-<!--			<img src="@/assets/img/express-ing.png" class="br5" width="70" height="70">-->
-<!--		</a-flex>-->
-<!--		<a-flex class="fs12 mt10 color-bababa">-->
-<!--			상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요-->
-<!--		</a-flex>-->
 
 <!--		<a-flex class="mt40">-->
 <!--			<span class="fs14 fw">결제정보</span>-->
