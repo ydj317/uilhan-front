@@ -58,7 +58,7 @@
               />
             </a-spin>
             </div>
-            <a-button type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
+            <a-button v-if="this.use_ai" type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
           <div style="display: flex; gap: 5px;">
             <a-tag
@@ -436,6 +436,8 @@ export default {
           message.error(res.message);
           return false;
         }
+
+        this.use_ai = res.data.user_data.use_ai;
       });
     },
 
