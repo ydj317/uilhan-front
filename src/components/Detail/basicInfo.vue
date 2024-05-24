@@ -58,7 +58,7 @@
               />
             </a-spin>
             </div>
-            <a-button type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
+            <a-button v-if="this.use_ai" type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
           <div style="display: flex; gap: 5px;">
             <a-tag
@@ -265,9 +265,9 @@ export default {
     initKeywords(keywords,type = 1) {
       if (! Array.isArray(keywords)) return
       if (keywords.length === 0) return
-      // 最多显示 40 个
+      // 最多显示 50 个
       if(type == 1){
-        this.keyword.list = keywords.slice(0, 40).map(item => {
+        this.keyword.list = keywords.slice(0, 50).map(item => {
           return {
             id: lib.uuid(),
             word: item.word,
@@ -276,8 +276,8 @@ export default {
             is_using: this.isUsingKeyword(item.word),
           }
         })
-        //超过40个 剩下未注册的插入关键词,关键词最多20个
-        keywords.slice(40).map(item => {
+        //超过50个 剩下未注册的插入关键词,关键词最多20个
+        keywords.slice(50).map(item => {
           //最多20个tags
           let tagsLength = this.product.item_sync_keyword.split(' ').length;
           if(tagsLength < 20 && item.reg == 0){
@@ -286,7 +286,7 @@ export default {
         })
       }
       if(type == 2){
-        this.tagKeyword.list = keywords.slice(0, 40).map(item => {
+        this.tagKeyword.list = keywords.slice(0, 50).map(item => {
           return {
             id: lib.uuid(),
             word: item.word,
@@ -436,6 +436,8 @@ export default {
           message.error(res.message);
           return false;
         }
+
+        this.use_ai = res.data.user_data.use_ai;
       });
     },
 
@@ -455,19 +457,20 @@ export default {
           this.product.item_trans_name = res.data.product_name;
         }
 
-        if (res.data && Array.isArray(res.data.keywords)) {
-          this.product.item_sync_keyword = res.data.keywords.join(' ');
-          let prd_name_keyword = res.data.keywords.join(' ');
-          this.product.item_trans_name += ' ' + prd_name_keyword.replace(/,/g, ' ')
-        } else {
-          this.product.item_sync_keyword = '';
-        }
+        // 키워드 ai 기능 안쓴대서 주석
+        // if (res.data && Array.isArray(res.data.keywords)) {
+        //   this.product.item_sync_keyword = res.data.keywords.join(' ');
+        //   let prd_name_keyword = res.data.keywords.join(' ');
+        //   this.product.item_trans_name += ' ' + prd_name_keyword.replace(/,/g, ' ')
+        // } else {
+        //   this.product.item_sync_keyword = '';
+        // }
 
         this.validateFilterWord(null,this.product.item_trans_name)
 
         this.ai_loading = false;
 
-        message.success('상품명과 키워드가 성공적으로 업데이트 되었습니다. ');
+        message.success('상품명이 성공적으로 업데이트 되었습니다.');
       });
 
     },
