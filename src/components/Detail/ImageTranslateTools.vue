@@ -72,8 +72,7 @@ export default defineComponent({
   methods: {
     //图片处理回调
     handleTranslateCallback(oTranslateInfo) {
-      const {requestId,all,url,action,option} = oTranslateInfo;
-      console.log('完成编辑結果：：',oTranslateInfo);
+      const {requestId,all,allSort,url,action,option} = oTranslateInfo;
       this.action = action;
       this.requestIds = [];//该行代码可让子组件获取到修改值
       if(action == 'upload'){//图片上传
@@ -101,20 +100,21 @@ export default defineComponent({
           message.error("이미지 번역 실패");
           return false;
         }
-        this.localTranslateImageList = this.localTranslateImageList.map(item=>{
-          for (const allKey in all) {
-            if (allKey === item.request_id) {
-              if (item.translate_status === true) {
-                item.translate_url = all[allKey];
-              } else {
-                item.translate_url = all[allKey];
-                item.url = all[allKey];
-              }
-            }
+        this.localTranslateImageList = allSort.map(v=>{
+          const requestId = Object.keys(v)[0];
+          let item = this.localTranslateImageList.find(v2=>v2.request_id == requestId);
+          if (item.translate_status === true) {
+            item.translate_url = v[requestId];
+          } else {
+            item.translate_url = v[requestId];
+            item.url = v[requestId];
           }
           return item;
         });
         this.onSubmit();
+      }
+      if(action == 'cancel'){
+        this.onCancel();
       }
     },
     async translateImage(option,back=function (){}) {

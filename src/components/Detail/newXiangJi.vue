@@ -6,7 +6,7 @@
     <div id="xiangji-app">
       <div id="some-dialog">
 <!--        <div class="logo-hide"></div>-->
-        <div class="close-btn" @click="onCancel">취소</div>
+<!--        <div class="close-btn" @click="onCancel">취소</div>-->
         <iframe id="xiangji-image-editor" title="象寄图片精修工具"
                 :src="iframeSrc"
                 ref="iframeRef"
@@ -77,7 +77,6 @@ export default defineComponent({
         currentIndex:this.currentIndex,
         isMany:this.isMany,
       };
-      console.log('sendData数据',sendData)
       const iframe = document.querySelector("#xiangji-image-editor");
       iframe.contentWindow.postMessage(
           sendData,
