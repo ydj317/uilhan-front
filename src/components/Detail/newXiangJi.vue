@@ -2,7 +2,6 @@
 
   <a-modal class="xiangJi" v-model:open="isOpen" :closable="false"
            :cancel-button-props="{ ghost: true, disabled: true }" :footer="null">
-
     <!-- 模板HTML 不可修改 -->
     <div id="xiangji-app">
       <div id="some-dialog">
@@ -41,10 +40,18 @@ export default defineComponent({
       type: String,
       default: "0",
     },
-    type: {
+    action: {
       type: String,
       default: "",
-    }
+    },
+    currentIndex: {
+      type: Number,
+      default: 0,
+    },
+    isMany: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -59,7 +66,6 @@ export default defineComponent({
   methods: {
     // 이미지 불러오기
     iframeOnload() {
-      console.log('象寄载入数据')
       this.sendMessage();
     },
     sendMessage() {
@@ -67,7 +73,9 @@ export default defineComponent({
         name: this.translateTypes[this.translateType][0],
         requestIds: Object.values(this.requestIds),
         recharge:this.recharge,
-        type:this.type
+        action:this.action,
+        currentIndex:this.currentIndex,
+        isMany:this.isMany,
       };
       console.log('sendData数据',sendData)
       const iframe = document.querySelector("#xiangji-image-editor");
@@ -90,7 +98,6 @@ export default defineComponent({
   watch: {
     isOpen: {
       handler(val) {
-        console.log('watch-isOpen',val)
         if (val === true) {
           window.addEventListener("message", this.receiveMessage);
           this.$nextTick(() => {

@@ -798,12 +798,12 @@ export default defineComponent({
       let aImagesUrl = [
         {checked: true, order: 0, url: record.img}
       ];
-      this.imageTranslateToolsVisible = true;
       this.translateImageList = aImagesUrl;
       this.translateSkuCode = record.code;
+      this.imageTranslateToolsVisible = true;
     },
     updateTranslateImageList(imageList) {
-      this.product.sku.map((v,k)=>{
+      this.product.sku.map(v=>{
         if(v.code == this.translateSkuCode){
           v.img = imageList[0].url;
           if (imageList[0].translate_status === true) {
@@ -811,7 +811,6 @@ export default defineComponent({
           }
         }
       });
-
     },
   },
 

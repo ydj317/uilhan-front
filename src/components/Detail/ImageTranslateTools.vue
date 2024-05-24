@@ -4,7 +4,9 @@
       translateType="imgTranslate"
       :requestIds="requestIds"
       :recharge="product.recharge"
-      :type="type"
+      :action="action"
+      :currentIndex="currentIndex"
+      :isMany="isMany"
       :key="requestIds[0]"
       @update:isOpen="onCancel"
       @callbackReceived="handleTranslateCallback"
@@ -33,8 +35,8 @@ export default defineComponent({
     ...mapState({
       product: (state) => state.product.detail,
     }),
-    selectedCollection() {
-      return this.localTranslateImageList.find(item => item.checked === true);
+    getRequestIds() {
+      return this.localTranslateImageList.map(item => item.request_id)
     }
   },
   props: {
@@ -56,80 +58,115 @@ export default defineComponent({
     return {
       localTranslateImageList: this.translateImageList,
       requestIds: [],
-      type: '',
+      localRequestIds:[
+        "ac33dee8039ac161",
+        "15f21d43dcf05434",
+        "8b11c71b2ff966cd",
+        "25c0a9465c668c90"
+      ],
+      action: '',
+      currentIndex:0
     };
   },
 
   methods: {
     //图片处理回调
-    async handleTranslateCallback(oTranslateInfo) {
-      const {requestId,all,url,type,option} = oTranslateInfo;
-      this.type = type;
-      if(type == 'upload'){//图片上传
-        await this.uploadImage(option);
+    handleTranslateCallback(oTranslateInfo) {
+      const {requestId,all,url,action,option} = oTranslateInfo;
+      console.log('完成编辑結果：：',oTranslateInfo);
+      this.action = action;
+      this.requestIds = [];//该行代码可让子组件获取到修改值
+      if(action == 'upload'){//图片上传
+        this.uploadImage(option,()=>{
+          this.translateImage({isTranslate: false,type: 2},()=>{
+            this.$refs.newXiangJi.sendMessage();
+          });
+        });
+        //本地无法获取requestId 手动添加
+        // this.localTranslateImageList[this.localTranslateImageList.length] = this.localTranslateImageList.length % 2 == 0 ? this.localTranslateImageList[0] : this.localTranslateImageList[1];
+        // this.localTranslateImageList[this.localTranslateImageList.length-1]['request_id'] = this.localRequestIds[this.localTranslateImageList.length-1]
+        // console.log('本地无法获取requestId2',this.localTranslateImageList)
+        // this.requestIds = this.getRequestIds;
+        // this.product.recharge -= 1;
+        // console.log('this.requestIds::',this.requestIds,this.product.recharge)
+        // this.$refs.newXiangJi.sendMessage();
       }
-      if(type == 'translate'){//翻译
-
+      if(action == 'translate'){//翻译
+        this.translateImage({isTranslate: true,type: 3,requestId:option},()=>{
+          this.$refs.newXiangJi.sendMessage();
+        });
       }
-      if(type == 'finish'){//完成编辑
+      if(action == 'finish'){//完成编辑
         if(requestId === undefined){
           message.error("이미지 번역 실패");
           return false;
         }
-
-        const checkedImage = this.localTranslateImageList.find(item => item.request_id === requestId);
-        if(checkedImage.translate_status === true){
-          checkedImage.translate_url = url;
-        } else {
-          checkedImage.translate_url = url;
-          checkedImage.url = url;
-        }
-        // this.onSubmit();
+        this.localTranslateImageList = this.localTranslateImageList.map(item=>{
+          for (const allKey in all) {
+            if (allKey === item.request_id) {
+              if (item.translate_status === true) {
+                item.translate_url = all[allKey];
+              } else {
+                item.translate_url = all[allKey];
+                item.url = all[allKey];
+              }
+            }
+          }
+          return item;
+        });
+        this.onSubmit();
       }
     },
-
-    // 批量翻译
-    async translateImageBatch() {
-      // if(!Cookie.get("localTranslateImageList")){
-        const aImagesInfo = this.localTranslateImageList.filter(item => item.translate_status !== true);
-        if(aImagesInfo.length === 0){
-          message.info("번역할 이미지가 없습니다.");
+    async translateImage(option,back=function (){}) {
+      const {isTranslate = true,type,requestId} = option;
+      const oParam = {
+        from: "zh",
+        to: "ko",
+        list: [],
+        isTranslate,
+      }
+      //默认不翻译只获取requestId
+      let images = this.localTranslateImageList.filter(item => item.translate_status !== true);
+      if(type == 2){//新增图片不翻译获取requestId
+        images = this.localTranslateImageList[this.localTranslateImageList.length-1];
+      }
+      if(type == 3){//翻译图片
+        images = this.localTranslateImageList.filter(item =>item.request_id === requestId);
+        if (images.translate_status === true) {
+          message.error("이미 번역된 이미지입니다.");
           return false;
         }
-        const oParam = {
-          from: "zh",
-          to: "ko",
-          list: [],
-          isTranslate: true
-        }
-        aImagesInfo.forEach((item,index) => {
-          oParam.list.push({
-            msg: "",
-            key: index,
-            name: item.name || "",
-            order: item.order || "",
-            checked: item.checked,
-            visible: item.visible,
-            original_url: item.url,
-            translate_url: item.translate_url || '',
-            translate_status: item.translate_status,
-            request_id: item.request_id || '',
-            is_translate: true,
-          })
+        this.currentIndex = this.localTranslateImageList.findIndex(value => value.request_id === requestId);
+      }
+      images.forEach((item,i) => {
+        oParam.list.push({
+          msg: "",
+          key: i,
+          name: item.name || "",
+          order: item.order || "",
+          checked: item.checked,
+          visible: item.visible,
+          original_url: item.url,
+          translate_url: item.translate_url || '',
+          translate_status: item.translate_status,
+          request_id: item.request_id || '',
+          is_translate: isTranslate,
         })
-        console.log('翻译前',aImagesInfo)
-        await useProductApi().translateImageBatch(oParam, (oTranslateInfo) => {
-          console.log('翻译结果',oTranslateInfo.data)
-          const { list,recharge } = oTranslateInfo.data;
-          this.localTranslateImageList = list
-          this.product.recharge = recharge;
-          this.requestIds = this.localTranslateImageList.map(item => item.request_id);
+      })
+      await useProductApi().translateImage(oParam, (oTranslateInfo) => {
+        if (oTranslateInfo.status !== "2000") {
+          message.error(oTranslateInfo.message);
+          return false;
+        }
+        const {list, recharge} = oTranslateInfo.data;
+        this.localTranslateImageList = this.localTranslateImageList.map(item=>{
+          let thisItem = list.find(item2=>item2.original_url == item.url);
+          return thisItem ? Object.assign(item, thisItem) : item;
         });
-      // }
-      // else{
-      //   this.requestIds = Cookie.get("requestIds").split(',');
-      // }
-      console.log('this.requestIds2::',this.requestIds)
+        this.requestIds = this.getRequestIds;
+        this.product.recharge = recharge;
+        back();
+      });
     },
 
     // 查看剩余的首次翻译数量
@@ -150,15 +187,19 @@ export default defineComponent({
       );
     },
     onSubmit() {
+      this.action = '';
+      this.currentIndex = 0;
       this.$emit("update:translateImageList", this.localTranslateImageList);
       this.$emit("update:visible", false);
     },
     onCancel() {
-      console.log('cancel');
+      this.action = '';
+      this.currentIndex = 0;
       this.$emit("update:visible", false);
     },
     // 图片上传
-    async uploadImage(file) {
+    uploadImage(file,back) {
+      back = back || function (){};
       let fileObj = this.base64toFileObj(file);
       const formData = new FormData();
       formData.append("file", fileObj);
@@ -179,28 +220,14 @@ export default defineComponent({
           message.error("upload failed");
           return false;
         }
-        let aItemThumbnails = this.product.item_thumbnails;
-        let iItemThumbnailsLength = 0;
-        if (lib.isArray(aItemThumbnails, true) === true) {
-          iItemThumbnailsLength = aItemThumbnails.length;
-        }
         let tmp = {
           checked: false,
-          order: iItemThumbnailsLength + 1,
+          order: this.localTranslateImageList.length,
           url: response.img_url,
         };
-        if(this.isMany != 0){
-          tmp.checked = true;
-          tmp.order = 0;
-        }
         this.localTranslateImageList.push(tmp);
-
+        back();
       });
-      // await this.translateImageBatch();
-      // this.requestIds = ['91e295fb75284cc5'];
-      this.requestIds.push('91e295fb75284cc5');
-      this.product.recharge -= 1;
-      this.$refs.newXiangJi.sendMessage();
     },
     //base64-文件对象
     base64toFileObj(base64, filename='tmp.png') {
@@ -220,14 +247,21 @@ export default defineComponent({
   watch: {
     visible:{
       handler(val) {
-        console.log('watch-visible',val)
         if(val){
           this.localTranslateImageList = this.translateImageList;
-          this.translateImageBatch();
+          this.translateImage({isTranslate: false,type: 1});
         }
       },
       immediate: true,
-    }
+    },
+    // requestIds:{
+    //   handler(val,oldVal) {
+    //     if(val != oldVal){
+    //       this.localRequestIds = [...val,...this.localRequestIds];
+    //     }
+    //   },
+    //   immediate: true,
+    // }
   },
 });
 </script>

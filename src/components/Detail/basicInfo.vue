@@ -485,21 +485,12 @@ export default {
       this.translateImageList = aImagesUrl;
     },
     updateTranslateImageList(imageList) {
-      let imgLength = this.product.item_thumbnails.length - imageList.length;
-      if(imgLength >= 0){
-        for (let i = 0; i < imageList.length; i++) {
-          this.product.item_thumbnails[i].url = imageList[i].url;
-          if (imageList[i].translate_status === true) {
-            this.product.item_thumbnails[i].url = imageList[i].translate_url;
-          }
-        }
-        this.product.item_thumbnails.splice(imageList.length,imgLength);
-      }else{
-        let index = this.product.item_thumbnails.length;
-        for (let i = 0; i < -imgLength; i++) {
-          this.product.item_thumbnails.push({name:index + i,url:imageList[index + i].url});
-        }
+      let item_thumbnails = [];
+      for (let i = 0; i < imageList.length; i++) {
+        let url = imageList[i].translate_status === true ? imageList[i].translate_url :  imageList[i].url;
+        item_thumbnails.push({'name':i,'url':url});
       }
+      this.product.item_thumbnails = item_thumbnails;
     },
     tagKeywordBlur(e,type){
       this.blurIndex.type = type;
