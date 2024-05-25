@@ -8,7 +8,8 @@ import {
     LayoutOutlined,
     ShoppingCartOutlined,
     BellOutlined,
-    RobotOutlined
+    RobotOutlined,
+    ReadOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -464,6 +465,17 @@ export const menus = [{
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: GiftOutlined
+            },
+        },
+        {
+            path: "https://classic-radium-bbe.notion.site/AI-712da71f7fdb45a5a0b7b78e0215772d",
+            name: "guide",
+            meta: {
+                title: "사용자 가이드",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: ReadOutlined,
+                active: false
             },
         }
     ]

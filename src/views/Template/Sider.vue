@@ -4,6 +4,7 @@
             v-model:openKeys = "state.openKeys"
             mode="inline"
             style="border: none;"
+            @select="handleSelect"
             @openChange="onOpenChange"
     >
       <template v-for="(menu, index) in state.menuList" :key="index">
@@ -64,6 +65,12 @@ const selectActive = computed(() => {
   }
   return path
 })
+
+const handleSelect = (item) => {
+  if (item.key=== 'guide') {
+    state.selectedKeys = [route.path]
+  }
+}
 
 state.selectedKeys = [selectActive.value];
 onBeforeMount(() => {
