@@ -338,20 +338,11 @@ function changeUseAutoSave() {
 }
 
 function changeUseAutoTranslate() {
-  if (formState.userInfo.is_vip_time === false || formState.userInfo.is_vip === false) {
+  if (formState.userInfo.is_vip_time === false || formState.userInfo.is_vip === false  || formState.userInfo.quota_auto_trans_image === false) {
     formState.settingDatas.use_auto_translate = false;
     message.error('이미지 자동 번역은 유료서비스로 결제후 사용이 가능합니다.');
     return false;
   }
-
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", {
-    use_auto_translate: formState.settingDatas.use_auto_translate,
-  }).then((res) => {
-    if (res.status !== '2000') {
-      message.error(res.message)
-      return false;
-    }
-  });
 }
 
 

@@ -67,11 +67,11 @@ export default defineComponent({
 
       const iframe = document.querySelector("#xiangji-image-editor");
       iframe.contentWindow.postMessage(
-          {
-            name: this.translateTypes[this.translateType][0],
-            requestIds: Object.values(this.requestIds),
-          },
-          "*"
+        {
+          name: this.translateTypes[this.translateType][0],
+          requestIds: Object.values(this.requestIds),
+        },
+        "*"
       );
     },
 

@@ -3,32 +3,32 @@
     <div style="display: flex;padding: 0 20px;gap: 10px">
       <a-card style="flex: 6;height: 760px;overflow-y: scroll">
         <draggable
-            style="display: grid; /* 세 개의 행, 각각 높이가 1:2:1 비율로 정의 */
+          style="display: grid; /* 세 개의 행, 각각 높이가 1:2:1 비율로 정의 */
             grid-template-columns: repeat(4, 1fr); gap: 5px;"
-            item-key="order"
-            v-bind="DRAG_OPTIONS"
-            v-model="localTranslateImageList"
-            :component-data="DRAG_CONFIG"
+          item-key="order"
+          v-bind="DRAG_OPTIONS"
+          v-model="localTranslateImageList"
+          :component-data="DRAG_CONFIG"
         >
           <template #item="{ element, index }">
             <div
-                class="eModelTitle_1_conent_group"
-                style="width: 120px;height: 120px;"
-                :key="index"
+              class="eModelTitle_1_conent_group"
+              style="width: 120px;height: 120px;"
+              :key="index"
             >
               <div style="position: relative;">
                 <!--이미지-->
                 <div
-                    class="imageList"
-                    style="background-color: white;width: 120px;height: 120px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
-                    :style="{backgroundImage: `url(${element.url})`}"
-                    :key="index"
-                    :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
-                    @click="activedImage(element, index)"
+                  class="imageList"
+                  style="background-color: white;width: 120px;height: 120px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
+                  :style="{backgroundImage: `url(${element.url})`}"
+                  :key="index"
+                  :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
+                  @click="activedImage(element, index)"
                 >
                   <div
-                      style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
-                      v-if="element.translate_status"
+                    style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
+                    v-if="element.translate_status"
                   >
                     <CheckCircleOutlined style="color: #059669"/>
                   </div>
@@ -42,17 +42,17 @@
           </template>
           <template #footer v-if="(!isMany && !localTranslateImageList.length) || isMany">
             <div
-                class="eModelTitle_1_conent_group"
-                key="all"
-                style="border:2px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 120px;width: 120px;border-radius: 10px;"
+              class="eModelTitle_1_conent_group"
+              key="all"
+              style="border:2px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 120px;width: 120px;border-radius: 10px;"
             >
               <a-upload
-                  name="file"
-                  :headers="HEADER"
-                  :multiple="true"
-                  :showUploadList="false"
-                  :beforeUpload="validateUploadImage"
-                  :customRequest="uploadImage"
+                name="file"
+                :headers="HEADER"
+                :multiple="true"
+                :showUploadList="false"
+                :beforeUpload="validateUploadImage"
+                :customRequest="uploadImage"
               >
                 <div style="display: flex;flex-direction: column;gap: 5px;justify-content: center;align-items: center">
                   <PlusOutlined/>
@@ -75,18 +75,18 @@
           </div>
         </div>
         <section
-            id="preview"
-            style="display: flex;justify-content: center;align-items: center; width: 100%;height: 700px; margin-top: 10px"
+          id="preview"
+          style="display: flex;justify-content: center;align-items: center; width: 100%;height: 700px; margin-top: 10px"
         >
           <div
-              v-if="translateImageLoading"
+            v-if="translateImageLoading"
           >
             <a-spin size="large"/>
           </div>
           <div
-              v-else
-              style="background-color: white;width: 100%;height: 600px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
-              :style="selectedCollectionBackgroundImage"
+            v-else
+            style="background-color: white;width: 100%;height: 600px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
+            :style="selectedCollectionBackgroundImage"
           >
 
           </div>
@@ -114,12 +114,12 @@
     </template>
   </a-modal>
   <NewXiangJi
-      :isOpen="isOpen"
-      @update:isOpen="isOpen = false"
-      :requestIds="requestIds"
-      translateType="imgTranslate"
-      :key="requestIds[0]"
-      @callbackReceived="handleTranslateCallback"
+    :isOpen="isOpen"
+    @update:isOpen="isOpen = false"
+    :requestIds="requestIds"
+    translateType="imgTranslate"
+    :key="Math.random()"
+    @callbackReceived="handleTranslateCallback"
   />
 </template>
 
@@ -200,6 +200,7 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+
   },
   emits: ["update:visible", "update:translateImageList"],
   data() {
@@ -367,6 +368,7 @@ export default defineComponent({
       }
 
       this.requestIds = [this.selectedCollection.request_id ?? ''];
+      console.log(this.requestIds);
       this.isOpen = true;
     },
 
@@ -389,18 +391,18 @@ export default defineComponent({
     // 최초 번역 남은 회수 조회
     getRecharge() {
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
-          (res) => {
-            if (res.status !== "2000" || res.data === undefined) {
-              message.error(res.message);
-              return false;
-            }
-
-            try {
-              this.product.recharge = res.data.recharge;
-            } catch (e) {
-              message.error("남은회수 호출 실패");
-            }
+        (res) => {
+          if (res.status !== "2000" || res.data === undefined) {
+            message.error(res.message);
+            return false;
           }
+
+          try {
+            this.product.recharge = res.data.recharge;
+          } catch (e) {
+            message.error("남은회수 호출 실패");
+          }
+        }
       );
     },
     onSubmit() {
@@ -419,8 +421,8 @@ export default defineComponent({
       formData.append("relation_type", "product");
       formData.append("product_idx", this.product.item_id);
       AuthRequest.post(
-          process.env.VUE_APP_API_URL + "/api/image",
-          formData
+        process.env.VUE_APP_API_URL + "/api/image",
+        formData
       ).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
