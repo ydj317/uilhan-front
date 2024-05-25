@@ -118,7 +118,7 @@
 
                 <div style="display: flex;flex-direction: column;justify-content: flex-start;width: 100%">
                   <a-input class="input-size" v-model:value="item.name" size="default" placeholder="옵션명"
-                           @input="handleInputChange" style="width: 100%" />
+                           @input="handleInputChange" style="width: 100%" :maxlength="25" />
 
                   <span style="color: #999999">{{ item.oldName }}</span>
                 </div>

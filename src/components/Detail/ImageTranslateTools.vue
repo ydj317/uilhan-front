@@ -368,7 +368,10 @@ export default defineComponent({
       }
 
       this.requestIds = [this.selectedCollection.request_id ?? ''];
-      console.log(this.requestIds);
+      if(!this.requestIds.length || this.requestIds[0] === ''){
+        message.info("이미지 번역/편집툴 초기화 실패! 관리자와 연락해 주세요.");
+        return false;
+      }
       this.isOpen = true;
     },
 
