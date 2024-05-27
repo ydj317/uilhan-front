@@ -8,11 +8,11 @@
           </div>
           <a-space v-else>
             <div>
-              <img src="../../assets/img/chn.png" style="width:20px;"/> 1위안
+              <img src="../../assets/img/chn2.png" style="width:20px; vertical-align: text-top" /> 1위안
             </div>
             <span>⇋</span>
             <div>
-              <img src="../../assets/img/kor.png" style="width:20px;"/> {{ rate }}원
+              <img src="../../assets/img/kor2.png" style="width:20px; vertical-align: text-top" /> {{ rate }}원
             </div>
           </a-space>
         </div>
@@ -21,15 +21,19 @@
 <!--          <a-button type="link" size="small" @click="worldLinkGuide">가이드북</a-button>-->
 <!--        </div>-->
         <div>
-          <a-button type="link" @click.prevent="extensionDown" size="small">크롬 확장 프로그램
-            <DownloadOutlined />
+          <a-button type="link" @click.prevent="extensionDown" size="small">
+            <span class="mr10">
+              <img src="../../assets/img/download.png" style="vertical-align: -3px" />
+            </span>
+            크롬 확장 프로그램
           </a-button>
           <a-spin v-if="indicator"/>
         </div>
         <div id="setting" class="">
-          <div class="center pointer" @click="settingVisible" style="display: flex;align-items: center;">
-            <img src="@/assets/img/child_icon.png" width="16" height="16" style="border-radius: 50px;margin-top: 3px;" alt="">
-            <h3 class="m10">{{ user_name }}</h3>
+          <div class="center pointer pl20 pr20" @click="settingVisible" style="display: flex;align-items: center;border-radius:18px;background-color: #434343">
+            <img src="@/assets/img/user2.png" width="16" height="16" style="border-radius: 50px;" alt="">
+            <h3 class="mt10 mr30 mb14 ml10 p5" style="color:#fff;line-height:5px;">{{ user_name }}</h3>
+            <DownOutlined />
           </div>
           <a-select class="absolute" v-if="setting_visible" :default-open="true" :autofocus="true" ref="select"
                     v-model:value="setting" @select="seletedSetting" @blur="settingVisible"
@@ -73,7 +77,7 @@
 </template>
 
 <script>
-import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined} from "@ant-design/icons-vue";
+import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined,DownOutlined} from "@ant-design/icons-vue";
 import {AuthRequest} from "@/util/request";
 import Cookie from "js-cookie";
 import {cookieInit} from "@/util/auth";
@@ -88,7 +92,8 @@ export default {
     UserOutlined,
     SettingOutlined,
     LogoutOutlined,
-    DownloadOutlined
+    DownloadOutlined,
+    DownOutlined
   },
 
   computed: {
@@ -226,5 +231,13 @@ export default {
 /* 선택창 정상노출 */
 .ant-select-dropdown {
   width: auto !important;
+}
+
+.ant-divider-vertical{
+  background-color:#0e0e0e;
+}
+
+.pointer .anticon-down{
+  color:#fff;
 }
 </style>
