@@ -286,7 +286,7 @@ const setTotal = (items, type) => {
 		count: 'quantity'
 	}
 	if (Array.isArray(items)) {
-		items.forEach(item => total += item[typeByKey[type]] ?? 0);
+		items.forEach(item => total += Number(item[typeByKey[type]]) ?? 0);
 	}
 
 	return total;
