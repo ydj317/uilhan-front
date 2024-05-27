@@ -54,8 +54,8 @@ export default defineComponent({
   data() {
     return {
       translateTypes: {
-        imgTranslate: ["XJ_IMAGE_EDITOR_REQUESTIDS","XJ_IMAGE_EDITOR_URL"],
-        imgMatting: ["XJ_KOUTU_REQUESTIDS","XJ_KOUTU_RESULT"],
+        imgTranslate: ["XJ_IMAGE_EDITOR_REQUESTIDS", "XJ_IMAGE_EDITOR_URL"],
+        imgMatting: ["XJ_KOUTU_REQUESTIDS", "XJ_KOUTU_RESULT"],
       },
       iframeSrc: "https://www.xiangjifanyi.com/image-editor/#/?lang=KOR",
       iframeKoutuSrc: "https://www.xiangjifanyi.com/koutu/",
@@ -67,11 +67,11 @@ export default defineComponent({
 
       const iframe = document.querySelector("#xiangji-image-editor");
       iframe.contentWindow.postMessage(
-          {
-            name: this.translateTypes[this.translateType][0],
-            requestIds: Object.values(this.requestIds),
-          },
-          "*"
+        {
+          name: this.translateTypes[this.translateType][0],
+          requestIds: Object.values(this.requestIds),
+        },
+        "*"
       );
     },
 

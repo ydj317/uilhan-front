@@ -265,9 +265,9 @@ export default {
     initKeywords(keywords,type = 1) {
       if (! Array.isArray(keywords)) return
       if (keywords.length === 0) return
-      // 最多显示 40 个
+      // 最多显示 50 个
       if(type == 1){
-        this.keyword.list = keywords.slice(0, 40).map(item => {
+        this.keyword.list = keywords.slice(0, 50).map(item => {
           return {
             id: lib.uuid(),
             word: item.word,
@@ -276,8 +276,8 @@ export default {
             is_using: this.isUsingKeyword(item.word),
           }
         })
-        //超过40个 剩下未注册的插入关键词,关键词最多20个
-        keywords.slice(40).map(item => {
+        //超过50个 剩下未注册的插入关键词,关键词最多20个
+        keywords.slice(50).map(item => {
           //最多20个tags
           let tagsLength = this.product.item_sync_keyword.split(' ').length;
           if(tagsLength < 20 && item.reg == 0){
@@ -286,7 +286,7 @@ export default {
         })
       }
       if(type == 2){
-        this.tagKeyword.list = keywords.slice(0, 40).map(item => {
+        this.tagKeyword.list = keywords.slice(0, 50).map(item => {
           return {
             id: lib.uuid(),
             word: item.word,
@@ -488,21 +488,12 @@ export default {
       this.translateImageList = aImagesUrl;
     },
     updateTranslateImageList(imageList) {
-      let imgLength = this.product.item_thumbnails.length - imageList.length;
-      if(imgLength >= 0){
-        for (let i = 0; i < imageList.length; i++) {
-          this.product.item_thumbnails[i].url = imageList[i].url;
-          if (imageList[i].translate_status === true) {
-            this.product.item_thumbnails[i].url = imageList[i].translate_url;
-          }
-        }
-        this.product.item_thumbnails.splice(imageList.length,imgLength);
-      }else{
-        let index = this.product.item_thumbnails.length;
-        for (let i = 0; i < -imgLength; i++) {
-          this.product.item_thumbnails.push({name:index + i,url:imageList[index + i].url});
-        }
+      let item_thumbnails = [];
+      for (let i = 0; i < imageList.length; i++) {
+        let url = imageList[i].translate_status === true ? imageList[i].translate_url :  imageList[i].url;
+        item_thumbnails.push({'name':i,'url':url});
       }
+      this.product.item_thumbnails = item_thumbnails;
     },
     tagKeywordBlur(e,type){
       this.blurIndex.type = type;

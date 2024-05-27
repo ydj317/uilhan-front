@@ -77,7 +77,7 @@
             <a-tooltip>
               <template #title>
                 <div class="mb10">내가 남기고 싶은 수익률을 기입해주세요!</div>
-                <div>원가 + (원가환율)*(카드수수료+퍼센트수익))+최소 수익 + 해외배송비 • 알리익스프레스의 경우 별도로 해외배송비용이 없음</div>
+                <div>원가 + (원가환율)*(카드수수료+퍼센트수익)+최소 수익 + 해외배송비 • 알리익스프레스의 경우 별도로 해외배송비용이 없음</div>
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>
@@ -338,20 +338,11 @@ function changeUseAutoSave() {
 }
 
 function changeUseAutoTranslate() {
-  if (formState.userInfo.is_vip_time === false || formState.userInfo.is_vip === false) {
+  if (formState.userInfo.is_vip_time === false || formState.userInfo.is_vip === false  || formState.userInfo.quota_auto_trans_image === false) {
     formState.settingDatas.use_auto_translate = false;
     message.error('이미지 자동 번역은 유료서비스로 결제후 사용이 가능합니다.');
     return false;
   }
-
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/updateUserDetail", {
-    use_auto_translate: formState.settingDatas.use_auto_translate,
-  }).then((res) => {
-    if (res.status !== '2000') {
-      message.error(res.message)
-      return false;
-    }
-  });
 }
 
 

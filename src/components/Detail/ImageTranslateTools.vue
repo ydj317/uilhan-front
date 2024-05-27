@@ -3,32 +3,32 @@
     <div style="display: flex;padding: 0 20px;gap: 10px">
       <a-card style="flex: 6;height: 760px;overflow-y: scroll">
         <draggable
-            style="display: grid; /* 세 개의 행, 각각 높이가 1:2:1 비율로 정의 */
+          style="display: grid; /* 세 개의 행, 각각 높이가 1:2:1 비율로 정의 */
             grid-template-columns: repeat(4, 1fr); gap: 5px;"
-            item-key="order"
-            v-bind="DRAG_OPTIONS"
-            v-model="localTranslateImageList"
-            :component-data="DRAG_CONFIG"
+          item-key="order"
+          v-bind="DRAG_OPTIONS"
+          v-model="localTranslateImageList"
+          :component-data="DRAG_CONFIG"
         >
           <template #item="{ element, index }">
             <div
-                class="eModelTitle_1_conent_group"
-                style="width: 120px;height: 120px;"
-                :key="index"
+              class="eModelTitle_1_conent_group"
+              style="width: 120px;height: 120px;"
+              :key="index"
             >
               <div style="position: relative;">
                 <!--이미지-->
                 <div
-                    class="imageList"
-                    style="background-color: white;width: 120px;height: 120px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
-                    :style="{backgroundImage: `url(${element.url})`}"
-                    :key="index"
-                    :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
-                    @click="activedImage(element, index)"
+                  class="imageList"
+                  style="background-color: white;width: 120px;height: 120px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
+                  :style="{backgroundImage: `url(${element.url})`}"
+                  :key="index"
+                  :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
+                  @click="activedImage(element, index)"
                 >
                   <div
-                      style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
-                      v-if="element.translate_status"
+                    style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
+                    v-if="element.translate_status"
                   >
                     <CheckCircleOutlined style="color: #059669"/>
                   </div>
@@ -42,17 +42,17 @@
           </template>
           <template #footer v-if="(!isMany && !localTranslateImageList.length) || isMany">
             <div
-                class="eModelTitle_1_conent_group"
-                key="all"
-                style="border:2px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 120px;width: 120px;border-radius: 10px;"
+              class="eModelTitle_1_conent_group"
+              key="all"
+              style="border:2px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 120px;width: 120px;border-radius: 10px;"
             >
               <a-upload
-                  name="file"
-                  :headers="HEADER"
-                  :multiple="true"
-                  :showUploadList="false"
-                  :beforeUpload="validateUploadImage"
-                  :customRequest="uploadImage"
+                name="file"
+                :headers="HEADER"
+                :multiple="true"
+                :showUploadList="false"
+                :beforeUpload="validateUploadImage"
+                :customRequest="uploadImage"
               >
                 <div style="display: flex;flex-direction: column;gap: 5px;justify-content: center;align-items: center">
                   <PlusOutlined/>
@@ -75,18 +75,18 @@
           </div>
         </div>
         <section
-            id="preview"
-            style="display: flex;justify-content: center;align-items: center; width: 100%;height: 700px; margin-top: 10px"
+          id="preview"
+          style="display: flex;justify-content: center;align-items: center; width: 100%;height: 700px; margin-top: 10px"
         >
           <div
-              v-if="translateImageLoading"
+            v-if="translateImageLoading"
           >
             <a-spin size="large"/>
           </div>
           <div
-              v-else
-              style="background-color: white;width: 100%;height: 600px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
-              :style="selectedCollectionBackgroundImage"
+            v-else
+            style="background-color: white;width: 100%;height: 600px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
+            :style="selectedCollectionBackgroundImage"
           >
 
           </div>
@@ -96,14 +96,14 @@
     <template #title>
       <div style="display: flex;justify-content: space-between;align-items:center;padding: 0 20px;">
         이미지 편집
-<!--        <div style="display: flex;gap: 5px;">-->
-<!--          <a-button @click="onCancel">-->
-<!--            전체 이미지 다운로드-->
-<!--          </a-button>-->
-<!--          <a-popconfirm title="리스트의 전체 이미지가 번역됩니다. 계속 진행 하시겠습니까?" ok-text="확인" cancel-text="취소" @confirm="translateImageBatch">-->
-<!--            <a-button :loading="translateImageBatchLoading">전체 이미지 번역</a-button>-->
-<!--          </a-popconfirm>-->
-<!--        </div>-->
+        <!--        <div style="display: flex;gap: 5px;">-->
+        <!--          <a-button @click="onCancel">-->
+        <!--            전체 이미지 다운로드-->
+        <!--          </a-button>-->
+        <!--          <a-popconfirm title="리스트의 전체 이미지가 번역됩니다. 계속 진행 하시겠습니까?" ok-text="확인" cancel-text="취소" @confirm="translateImageBatch">-->
+        <!--            <a-button :loading="translateImageBatchLoading">전체 이미지 번역</a-button>-->
+        <!--          </a-popconfirm>-->
+        <!--        </div>-->
       </div>
     </template>
     <template #footer>
@@ -114,12 +114,12 @@
     </template>
   </a-modal>
   <NewXiangJi
-      :isOpen="isOpen"
-      @update:isOpen="isOpen = false"
-      :requestIds="requestIds"
-      translateType="imgTranslate"
-      :key="requestIds[0]"
-      @callbackReceived="handleTranslateCallback"
+    :isOpen="isOpen"
+    @update:isOpen="isOpen = false"
+    :requestIds="requestIds"
+    translateType="imgTranslate"
+    :key="Math.random()"
+    @callbackReceived="handleTranslateCallback"
   />
 </template>
 
@@ -200,6 +200,7 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+
   },
   emits: ["update:visible", "update:translateImageList"],
   data() {
@@ -234,15 +235,15 @@ export default defineComponent({
   methods: {
 
     handleTranslateCallback(oTranslateInfo) {
-      const {requestId,all,url} = oTranslateInfo;
+      const {requestId, all, url} = oTranslateInfo;
 
-      if(requestId === undefined){
+      if (requestId === undefined) {
         message.error("이미지 번역 실패");
         return false;
       }
 
       const checkedImage = this.localTranslateImageList.find(item => item.request_id === requestId);
-      if(checkedImage.translate_status === true){
+      if (checkedImage.translate_status === true) {
         checkedImage.translate_url = url;
       } else {
         checkedImage.translate_url = url;
@@ -252,7 +253,7 @@ export default defineComponent({
 
     // 단건 이미지 번역
     async translateImage(option) {
-      const { isTranslate = true } = option;
+      const {isTranslate = true} = option;
       const checkedImage = this.localTranslateImageList.find(item => item.checked === true);
       const index = this.localTranslateImageList.findIndex(item => item.checked === true);
       if (checkedImage === undefined) {
@@ -260,7 +261,7 @@ export default defineComponent({
         return false;
       }
 
-      if(checkedImage.translate_status === true){
+      if (checkedImage.translate_status === true) {
         message.error("이미 번역된 이미지입니다.");
         return false;
       }
@@ -292,8 +293,8 @@ export default defineComponent({
           return false;
         }
 
-        const { list,recharge } = oTranslateInfo.data;
-        this.localTranslateImageList[index] = {...this.localTranslateImageList[index],...list.find(item => item.key === index)}
+        const {list, recharge} = oTranslateInfo.data;
+        this.localTranslateImageList[index] = {...this.localTranslateImageList[index], ...list.find(item => item.key === index)}
         this.product.recharge = recharge;
       }).finally(() => {
         this.translateImageLoading = false;
@@ -306,7 +307,7 @@ export default defineComponent({
 
       // 이미지 번역이 안된 이미지만 번역
       const aImagesInfo = this.localTranslateImageList.filter(item => item.translate_status !== true);
-      if(aImagesInfo.length === 0){
+      if (aImagesInfo.length === 0) {
         message.info("번역할 이미지가 없습니다.");
         return false;
       }
@@ -319,7 +320,7 @@ export default defineComponent({
         isTranslate: true
       }
 
-      aImagesInfo.forEach((item,index) => {
+      aImagesInfo.forEach((item, index) => {
         oParam.list.push({
           msg: "",
           key: index,
@@ -337,7 +338,7 @@ export default defineComponent({
 
       this.translateImageBatchLoading = true;
       await useProductApi().translateImageBatch(oParam, (oTranslateInfo) => {
-        const { list,recharge } = oTranslateInfo.data;
+        const {list, recharge} = oTranslateInfo.data;
         this.localTranslateImageList = list
         this.product.recharge = recharge;
       }).finally(() => {
@@ -348,8 +349,8 @@ export default defineComponent({
 
     // 편집
     async editorImage() {
-      const { request_id } = this.selectedCollection
-      if(request_id === undefined || request_id === ''){
+      const {request_id} = this.selectedCollection
+      if (request_id === undefined || request_id === '') {
         // 자동번역된 이미지 url 에   request_id 가 있음
         let url = new URL(this.selectedCollection.url);
         let requestId = url.searchParams.get('request_id');
@@ -367,13 +368,17 @@ export default defineComponent({
       }
 
       this.requestIds = [this.selectedCollection.request_id ?? ''];
+      if(!this.requestIds.length || this.requestIds[0] === ''){
+        message.info("이미지 번역/편집툴 초기화 실패! 관리자와 연락해 주세요.");
+        return false;
+      }
       this.isOpen = true;
     },
 
     deleteImages(index) {
       this.localTranslateImageList.splice(index, 1)
 
-      if(this.localTranslateImageList.find(item => item.checked === true) === undefined){
+      if (this.localTranslateImageList.find(item => item.checked === true) === undefined) {
         this.localTranslateImageList[0].checked = true;
       }
     },
@@ -389,18 +394,18 @@ export default defineComponent({
     // 최초 번역 남은 회수 조회
     getRecharge() {
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
-          (res) => {
-            if (res.status !== "2000" || res.data === undefined) {
-              message.error(res.message);
-              return false;
-            }
-
-            try {
-              this.product.recharge = res.data.recharge;
-            } catch (e) {
-              message.error("남은회수 호출 실패");
-            }
+        (res) => {
+          if (res.status !== "2000" || res.data === undefined) {
+            message.error(res.message);
+            return false;
           }
+
+          try {
+            this.product.recharge = res.data.recharge;
+          } catch (e) {
+            message.error("남은회수 호출 실패");
+          }
+        }
       );
     },
     onSubmit() {
@@ -419,8 +424,8 @@ export default defineComponent({
       formData.append("relation_type", "product");
       formData.append("product_idx", this.product.item_id);
       AuthRequest.post(
-          process.env.VUE_APP_API_URL + "/api/image",
-          formData
+        process.env.VUE_APP_API_URL + "/api/image",
+        formData
       ).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
@@ -442,7 +447,7 @@ export default defineComponent({
           order: iItemThumbnailsLength + 1,
           url: response.img_url,
         };
-        if(this.isMany != 0){
+        if (this.isMany != 0) {
           tmp.checked = true;
           tmp.order = 0;
         }
@@ -483,14 +488,14 @@ export default defineComponent({
 <style scoped>
 
 .checkedEl {
-  border:2px solid dodgerblue;
+  border: 2px solid dodgerblue;
   border-radius: 10px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   padding: 0;
 }
 
 .checkedNot {
-  border:2px solid #cccccc;
+  border: 2px solid #cccccc;
   border-radius: 10px;
   padding: 0;
 }
