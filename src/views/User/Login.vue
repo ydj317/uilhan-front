@@ -8,8 +8,8 @@
       <div class="login-content">
         <img style="margin: 90px;width: 60px;height: 60px" src="../../assets/logo_icon.png" key="logo-light" alt="" >
         <div style="display: flex;flex-direction: column;width: 100%;">
-            <a-input v-model:value="formState.username" placeholder="아이디" class="user-name" ></a-input>
-            <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password"></a-input-password>
+            <a-input v-model:value="formState.username" placeholder="아이디" class="user-name" @keyup.enter="handleFinish"></a-input>
+            <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password" @keyup.enter="handleFinish"></a-input-password>
         </div>
         <div style="display: flex;justify-content: space-between;font-size: 12px;align-items: center;width: 100%;margin-top: 5px">
           <!-- checkbox use icon -->
