@@ -32,7 +32,7 @@
         <div id="setting" class="">
           <div class="center pointer pl20 pr20" @click="settingVisible" style="display: flex;align-items: center;border-radius:18px;background-color: #434343">
             <img src="@/assets/img/user2.png" width="16" height="16" style="border-radius: 50px;" alt="">
-            <h3 class="mt10 mr30 mb14 ml10 p5" style="color:#fff;line-height:5px;">{{ user_name }}</h3>
+            <h3 class="mt8 mr30 mb10 ml10 p5" style="color:#fff;line-height:0;">{{ user_name }}</h3>
             <DownOutlined />
           </div>
           <a-select class="absolute" v-if="setting_visible" :default-open="true" :autofocus="true" ref="select"
