@@ -6,7 +6,8 @@
 		:footer="null"
 		v-model:open="visible"
 	>
-		<a-flex>
+    <div style="padding: 0 200px; height: calc(100vh - 100px) ;overflow-y: scroll; margin-right: 20px;">
+    <a-flex>
 			<span class="fs18 fw">배대지 신청 현황 정보</span>
 		</a-flex>
 
@@ -223,6 +224,7 @@
 		<div style="display: flex; justify-content: center">
 			<a-button class="m10" @click="visible = false">닫기</a-button>
 		</div>
+    </div>
 	</a-modal>
 
 	<a-modal
@@ -359,7 +361,7 @@ watchEffect(() => {
 	margin-top: 40px;
 }
 .expressForm .ant-modal-content{
-	padding: 65px 150px;
+	padding: 50px 20px;
 	height: auto;
 	min-height: 100vh;
 }
