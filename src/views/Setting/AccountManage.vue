@@ -132,21 +132,62 @@
 
     </a-card>
     <!--     表格  -->
-<!--    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'">-->
-<!--        <template #extra>-->
-<!--            <a-button type="primary" @click="showModal2">계정 등록</a-button>-->
-<!--        </template>-->
-<!--        <a-table :columns="columns" :data-source="data" bordered :pagination="false">-->
-<!--            <template #headerCell="{ column }">-->
-<!--            </template>-->
-<!--            <template #bodyCell="{ column, record }">-->
-<!--                <template v-if="column.key === 'action'">-->
-<!--                    <a-button type="primary" html-type="submit" class="mr20">수정</a-button>-->
-<!--                    <a-button type="default" html-type="submit">삭제</a-button>-->
-<!--                </template>-->
-<!--            </template>-->
-<!--        </a-table>-->
-<!--    </a-card>-->
+    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'">
+        <template #extra>
+            <a-button type="primary" @click="showEmployeeModal(0)">계정 등록</a-button>
+        </template>
+        <a-table :columns="columns" :data-source="formState.employeeList" bordered :pagination="false">
+            <template #headerCell="{ column }">
+            </template>
+            <template #bodyCell="{ column, record }">
+                <template v-if="column.key === 'action'">
+                    <a-button type="primary" class="mr20" @click="showEmployeeModal(record)">수정</a-button>
+                  <a-popconfirm
+                    title="삭제하시겠습니까?"
+                    ok-text="Yes"
+                    cancel-text="No"
+                    @confirm="deleteEmployee(record.id)"
+                  >
+                    <a-button type="default">삭제</a-button>
+                  </a-popconfirm>
+                </template>
+            </template>
+        </a-table>
+    </a-card>
+  <a-modal class="add-employee" v-model:open="formState.employeeModal.open" :title="formState.employeeModal.id ? '직원 편집' : '직원 추가'" width="600px"  :footer="null" :closable="false">
+    <a-form
+      :rules="employeeRulesRef"
+      :model="formState.employeeModal"
+      name="addEmployee"
+      :label-col="{ span: 6 }"
+      :wrapper-col="{ span: 18 }"
+      autocomplete="off"
+      @finish="addEmployee"
+    >
+      <a-form-item label="아이디" name="username" has-feedback>
+        <a-input v-model:value="formState.employeeModal.username" placeholder="아이디를 입력해주세요" />
+      </a-form-item>
+      <a-form-item label="비밀번호" name="password" has-feedback>
+        <a-input-password v-model:value="formState.employeeModal.password" :placeholder="formState.employeeModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
+      </a-form-item>
+      <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback>
+        <a-input-password v-model:value="formState.employeeModal.password_confirm" :placeholder="formState.employeeModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
+      </a-form-item>
+      <a-form-item label="권한" name="auth" has-feedback>
+      <a-select
+        v-model:value="formState.employeeModal.auth"
+        style="width: 100%"
+        @change="selectEmployeeAuth"
+        placeholder="권한을 선택해주세요">
+        <a-select-option :value="item" v-for="item in formState.employeeModal.authList">{{ item }}</a-select-option>
+      </a-select>
+      </a-form-item>
+      <div style="display: flex;justify-content: center;margin-top: 20px;">
+        <a-button type="primary" html-type="submit" :loading="formState.employeeModal.loading">저장</a-button>
+        <a-button style="margin-left: 10px" @click="formState.employeeModal.open = false">취소</a-button>
+      </div>
+    </a-form>
+  </a-modal>
     
     <!--    修改密码-->
 <!--    <a-modal v-model:open="formState.pwdOpen" width="1000px"  :footer="null" :closable="false">-->
@@ -279,6 +320,17 @@
 			is_bridge_sync: false,
 		},
       business_license_image: '',
+      employeeList:[],
+      employeeModal:{
+          open:false,
+          loading:false,
+          authList:['auth1','auth2'],
+          id:0,
+          username:'',
+          password:'',
+          password_confirm:'',
+          auth:'',
+      },
     });
 
 	const handleFormUpdate = (data) => {
@@ -732,6 +784,8 @@
 
     onMounted(() => {
         getUserInfoData();
+        getEmployeeList();
+        formState.employeeModal.auth = formState.employeeModal.authList[0];
     });
     const columns = [
         {
@@ -742,26 +796,26 @@
         },
         {
             title: '직원 아이디',
-            dataIndex: 'ID',
-            key: 'ID',
-            width:'20%',
+            dataIndex: 'username',
+            key: 'username',
+            width:'30%',
         },
-        {
-            title: '비밀번호',
-            dataIndex: 'pwd',
-            key: 'pwd',
-            width:'20%',
-        },
+        // {
+        //     title: '비밀번호',
+        //     dataIndex: 'password',
+        //     key: 'password',
+        //     width:'20%',
+        // },
         {
             title: '권한',
-            key: 'auth',
-            dataIndex: 'auth',
-            width:'20%',
+            key: 'roles',
+            dataIndex: 'roles',
+            width:'30%',
         },
         {
             title: '계정 등록시간',
-            key: 'insDate',
-            dataIndex: 'insDate',
+            key: 'ins_date',
+            dataIndex: 'ins_date',
             width:'20%',
         },
         {
@@ -769,24 +823,6 @@
             key: 'action',
             width:'15%',
         }
-    ];
-    const data = [
-        {
-            key: '1',
-            No: 9999,
-            ID: '직원1직원1직원1',
-            pwd: '密码1密码1密码1密码1密码1密码',
-            auth: 'auth1auth1auth1',
-            insDate: '2023-12-20',
-        },
-        {
-            key: '2',
-            No: 2,
-            ID: '직원2',
-            pwd: '密码2',
-            auth: 'auth2auth2au',
-            insDate: '2023-12-20',
-        },
     ];
 
     //修改密码模态框
@@ -854,6 +890,128 @@
     const onFinishFailed3 = errorInfo => {
         console.log("Failed:", errorInfo);
     };
+    //add user-------------
+    //显示添加员工弹层
+    const showEmployeeModal = (item)=>{
+      formState.employeeModal.id = 0;
+      formState.employeeModal.username = '';
+      formState.employeeModal.password = '';
+      formState.employeeModal.password_confirm = '';
+      formState.employeeModal.auth = formState.employeeModal.authList[0];
+      if(item){
+        formState.employeeModal.id = item.id;
+        formState.employeeModal.username = item.username;
+        formState.employeeModal.auth = item.roles;
+      }
+      formState.employeeModal.open = true;
+    }
+    //员工列表
+    const getEmployeeList = () => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employeeList", {}).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+        formState.employeeList = res.data;
+      });
+    }
+    let employeeUserValidateName = async (rule, value) => {
+      if (value === "") {
+        return Promise.reject("아이디를 입력해주세요");
+      } else {
+        if (value.length < 5 || value.length > 20) {
+          return Promise.reject("아이디는 최소 5자 최대 20자까지 입력해주세요.");
+        }
+      }
+      return Promise.resolve();
+    };
+    let employeeValidatePass = async (rule, value) => {
+      if (value === "") {
+        if(!formState.employeeModal.id){
+          return Promise.reject("비밀번호를 입력 해주세요");
+        }
+      } else {
+        if (value.length < 8 || value.length > 20) {
+          return Promise.reject("비밀번호는 8자 이상, 20자 이내로 입력해주세요.");
+        }
+      }
+      return Promise.resolve();
+    };
+    let employeeValidatePassConfirm = async (rule, value) => {
+      if (value === "") {
+        if(!formState.employeeModal.id || (formState.employeeModal.id && formState.employeeModal.password !== '')){
+          return Promise.reject("비밀번호가 일치하지 않습니다");
+        }
+      } else if (value !== formState.employeeModal.password) {
+        return Promise.reject("비밀번호가 일치하지 않습니다");
+      } else {
+        return Promise.resolve();
+      }
+    };
+    //表单验证
+    const employeeRulesRef = reactive({
+      username: [
+        {
+          required: true,
+          validator: employeeUserValidateName,
+          trigger: "blur"
+        }
+      ],
+      password: [
+        {
+          required: true,
+          validator: employeeValidatePass,
+          trigger: "blur"
+        }
+      ],
+      password_confirm: [
+        {
+          required: true,
+          validator: employeeValidatePassConfirm,
+          trigger: "blur"
+        }
+      ],
+    });
+    //选择权限
+    const selectEmployeeAuth = value => {
+      formState.employeeModal.auth = value;
+    };
+    //添加员工
+    const addEmployee = () => {
+      let user = {
+        username: formState.employeeModal.username,
+        password: formState.employeeModal.password,
+        auth: formState.employeeModal.auth,
+      };
+      let url = "/api/addEmployee";
+      if(formState.employeeModal.id){
+        user.id = formState.employeeModal.id;
+        url = "/api/editEmployee";
+      }
+      formState.employeeModal.loading = true;
+      AuthRequest.post(process.env.VUE_APP_API_URL + url, user).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          formState.employeeModal.loading = false;
+          return false;
+        }
+        message.success(res.message);
+        formState.employeeModal.loading = false;
+        formState.employeeModal.open = false;
+        getEmployeeList();
+      });
+    };
+    //删除员工
+    const deleteEmployee = (id) =>{
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/delEmployee", { id }).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+        message.success(res.message);
+        getEmployeeList();
+      });
+    }
 </script>
 <style>
     .user_form .ant-form-item {
@@ -940,7 +1098,12 @@
     .ant-upload-wrapper.ant-upload-picture-card-wrapper{
       margin-bottom: 0;
     }
-
+    .add-employee .ant-form-show-help{
+      display:block;
+    }
+    .add-employee .ant-form-item-label{
+      height: fit-content;
+    }
 </style>
 <style scoped>
 
