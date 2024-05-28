@@ -343,9 +343,6 @@ const getSaleList = async () => {
       message.error(res.message);
       return false;
     }
-
-    barChartSeriesData.value = [];
-
     for (const item in res.data) {
 
       let seriesName = '';
@@ -814,15 +811,15 @@ const  getProductVisitRadar = async () => {
 onMounted(async () => {
   await getTableList()
   await getMarketList()
+  await getAccountList();
+  await getProductVisitRadar();
   handleBeforeUnload();
   //getOrder();
-  Promise.all([getBoard(), getSaleList(), getMarketAdminUrls(), getHeaderCount(), getAccountList()])
+  Promise.all([getBoard(), getSaleList(), getMarketAdminUrls(), getHeaderCount()])
     .catch((e) => {
       message.error(e.message)
       return false;
     });
-
-  await getProductVisitRadar();
 });
 
 onBeforeUnmount(() => {
