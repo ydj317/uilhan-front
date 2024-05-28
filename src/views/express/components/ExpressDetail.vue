@@ -45,7 +45,7 @@
 				<a-descriptions-item label="택배사">
 <!--				下划线	bottom-border-f0f0f0 -->
 <!--					<div class="row-content m10">-->
-						{{state.bridgeOrderDetail['items'][0]['ctrSeq'] === '인천1 해운' ? '한진택배' : 'CJ대한통운'}}
+						{{state.bridgeOrderDetail['ctrSeq'] === '인천1 해운' ? '한진택배' : 'CJ대한통운'}}
 <!--					</div>-->
 				</a-descriptions-item>
 				<a-descriptions-item label="송장번호" :contentStyle="{color:'#2071E1'}">
