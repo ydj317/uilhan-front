@@ -572,7 +572,7 @@ const planTypeMap = {
   BasicPlan1Month: '기본서비스 1개월',
   BasicPlan6Month: '기본서비스 6개월',
   BasicPlan12Month: '기본서비스 12개월',
-  Extra1PlanAutoImage: '이미지 자동번 번역',
+  Extra1PlanAutoImage: '이미지 자동 번역',
   Extra2PlanGPT100: 'AI GPT 서비스 100개',
   Extra2PlanGPT150: 'AI GPT 서비스 150개',
   Extra2PlanGPT200: 'AI GPT 서비스 200개',
