@@ -153,7 +153,7 @@
 		<a-flex vertical>
 			<a-descriptions title="세관신고 금액정보" :column="2" bordered class="mt40"  :label-style="{width:'20%'}" :content-style="{width:'30%'}">
 				<a-descriptions-item label="총 수량">{{state.totalCount}}</a-descriptions-item>
-				<a-descriptions-item label="총 금액 (위안)">{{state.totalAmount}}</a-descriptions-item>
+				<a-descriptions-item label="총 금액 (위안)">¥ {{state.totalAmount}}</a-descriptions-item>
 			</a-descriptions>
 			<a-flex vertical class="fs12 mt10 color-bababa">
 				<span style="color: #F9443E">*달러 금액은 환율 변동에 따라 변경이 있을 수 있으며 문제 발생 시 책임지지 않습니다.</span>
