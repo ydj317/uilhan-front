@@ -159,13 +159,13 @@ const copyText = (recommend_code) => {
 
 // 로컬스토리지 저장
 const checked = ref(localStorage.save_user_name === 'T');
-const tempSave = () => {
+const tempSave = (record) => {
   delete localStorage.save_user_name;
   delete localStorage.user_name;
 
   if (checked.value) {
     localStorage.save_user_name = 'T';
-    localStorage.user_name = formState.username;
+    localStorage.user_name = record.username;
   }
 }
 
@@ -194,7 +194,7 @@ function userLogin(record) {
     // });
 
     // 아이디 저장하기
-    tempSave();
+    tempSave(record);
 
     Cookie.set('member_name', res.data.member_name);
     Cookie.set('member_roles', res.data.member_roles);
