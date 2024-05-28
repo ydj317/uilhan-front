@@ -344,6 +344,8 @@ const getSaleList = async () => {
       return false;
     }
 
+    barChartSeriesData.value = [];
+
     for (const item in res.data) {
 
       let seriesName = '';
@@ -577,6 +579,11 @@ const barChartOption = ref({
       type: 'shadow'
     }
   },
+  grid: {
+    left: '5%',
+    containLabel: true
+  },
+
   legend: {
     orient: 'horizontal',
     data: ['판매금액', '판매수량'],
