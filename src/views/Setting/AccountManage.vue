@@ -136,7 +136,7 @@
         <template #extra>
             <a-button type="primary" @click="showEmployeeModal(0)">계정 등록</a-button>
         </template>
-        <a-table :columns="columns" :data-source="formState.employeeList" bordered :pagination="false">
+        <a-table :columns="columns" :data-source="formState.employeeList" :scroll="formState.employeeList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
             <template #headerCell="{ column }">
             </template>
             <template #bodyCell="{ column, record }">
