@@ -105,7 +105,7 @@
       <img :src="state.selectedProduct?.productThumbnails[0]" width="60" height="60" class="mr20" :alt="state.selectedProduct?.productName" style="border-radius: 10px">
       <a-flex vertical="vertical" style="width: 90%">
         <a-flex justify="space-between" align="center">
-          <span>{{ state.selectedProduct?.productName}}</span>
+          <span>{{ state.selectedProduct?.productTransName}}</span>
         </a-flex>
         <a-flex vertical="vertical">
           <span>마켓연동일：{{ state.selectedProduct && !!state.selectedProduct?.insTime ? dayjs(state.selectedProduct.insTime).format("YYYY-MM-DD") :'-' }}</span>
