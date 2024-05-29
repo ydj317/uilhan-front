@@ -205,7 +205,8 @@
               v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
             <div style="display: flex;flex-direction: column;gap: 5px;"
                  v-if="item.status === 'shippingAddress'">
-              <a-select v-model:value="item.courierName" placeholder="택배사를 선택해주세요.">
+              <a-select v-model:value="item.courierCode" placeholder="택배사를 선택해주세요." @change="updateCourierInfo(item)">
+                <a-select-option value="">- 택배사를 선택해주세요 -</a-select-option>
                 <a-select-option :value="key" :key="key"
                                  v-for="(company, key) in state.marketDeliveryCompany[order.marketCode]">
                   {{ company }}
@@ -230,7 +231,7 @@
                             type="primary" @click.prevent="receiverOneOrder(item.id)">발주
                   </a-button>
                   <a-button class="ml10" style="width: 70px;" type="primary" size="small" v-if="item.status === 'shippingAddress'"
-                            @click.prevent="deliveryOrder(item.id, item.courierName, item.invoiceNumber)">배송
+                            @click.prevent="deliveryOrder(item.id, item.courierCode, item.courierName, item.invoiceNumber)">배송
                   </a-button>
               </a-flex>
               <a-space class="mt10">
@@ -403,6 +404,11 @@ const showDetail = async (orderData) => {
 
 }
 
+const updateCourierInfo = (item) => {
+  const {marketCode} = item;
+  item.courierName = state.marketDeliveryCompany[marketCode][item.courierCode]
+};
+
 const statusTabChange = (key) => {
   rowSelection.value.selectedRowKeys = [];
   state.activeKey = key;
@@ -521,8 +527,7 @@ const getTableData = async () => {
     }
 
     const groupedByOrderNo = res.data.reduce((acc, cur) => {
-      const {orderNo, sellerId, marketCode, orderDate, status, totalPaymentAmount} = cur;
-
+      const {orderNo, sellerId, marketCode, orderDate, status, totalPaymentAmount, courierName} = cur;
       if (!acc[orderNo]) {
         acc[orderNo] = [];
         acc[orderNo]["totalPrice"] = 0;
@@ -532,6 +537,14 @@ const getTableData = async () => {
       if (marketSetting[marketCode] && marketSetting[marketCode].orderType === "order") {
         acc[orderNo]["is_group"] = true;
         acc[orderNo]["totalPrice"] = totalPaymentAmount;
+      }
+
+      // 택배사이름만 있어서 택배사 이름이 있을시 코드를 매핑해서 넣어줌
+      cur["courierCode"] = '';
+      if (courierName) {
+        // state.marketDeliveryCompany[marketCode][courierName key value  翻转
+        const courierNameValues = Object.fromEntries(Object.entries(state.marketDeliveryCompany[marketCode]).map(([key, value]) => [value, key]));
+        cur["courierCode"] = courierNameValues[courierName] || '';
       }
 
       acc[orderNo]["orderNo"] = orderNo;
@@ -676,19 +689,16 @@ const receiverOneOrder = (id) => {
 };
 
 // 배송처리
-const deliveryOrder = (id, courierName, invoiceNumber) => {
-  if (!courierName) {
-    message.error("택배사를 선택해주세요.");
-    return false;
-  }
+const deliveryOrder = (id, courierCode, courierName, invoiceNumber) => {
 
-  if (!invoiceNumber) {
+  if ( !courierName || !invoiceNumber) {
     message.error("운송장번호를 입력해주세요.");
     return false;
   }
 
   useMarketOrderApi().deliveryOrder({
     id: id,
+    courierCode: courierCode,
     courierName: courierName,
     invoiceNumber: invoiceNumber
   }).then(res => {
