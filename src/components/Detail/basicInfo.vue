@@ -436,7 +436,7 @@ export default {
           message.error(res.message);
           return false;
         }
-
+        this.product.recharge = res.data.recharge;
         this.use_ai = res.data.user_data.use_ai;
       });
     },

@@ -224,18 +224,18 @@ export const menus = [{
                         icon: ''
                     },
                 },
-                {
-                    path: "/user/manage",
-                    name: "user_manage",
-                    component: () => import("@/views/User/Manage"),
-                    meta: {
-                        title: "이미지 번역 회수",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN"],
-                        icon: '',
-                        ids: ["jwli"],
-                    }
-                },
+                // {
+                //     path: "/user/manage",
+                //     name: "user_manage",
+                //     component: () => import("@/views/User/Manage"),
+                //     meta: {
+                //         title: "이미지 번역 회수",
+                //         isHide: false,
+                //         roles: ["ROLE_ADMIN"],
+                //         icon: '',
+                //         ids: ["jwli"],
+                //     }
+                // },
                 {
                     path: "/board/list",
                     name: "board_list",
