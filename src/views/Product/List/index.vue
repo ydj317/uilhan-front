@@ -16,7 +16,7 @@
       <div class="search">
         <a-input-search
           v-model:value="searchParams.keyword"
-          placeholder="검색어를 입력하세요" enter-button="검색" style="width: 300px"
+          placeholder="상품명을 입력하세요" enter-button="검색" style="width: 300px"
           @search="searchByKeyword"
         />
       </div>

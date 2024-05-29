@@ -213,7 +213,7 @@
 			</a-flex>
       <a-input-search
           class="search-btn"
-          placeholder="검색어를 입력해 주세요."
+          placeholder="상품명을 입력해 주세요."
           enter-button="검색"
           @search="searchKeyword"
           v-model:value="state.searchParams.keyword"
