@@ -857,9 +857,10 @@ const submitForm = () => {
 
         let oParam = { ...editableData };
 
-        const start_time = Math.floor(Date.parse(editableData['start_time']) / 1000);
-        const end_time = Math.floor(Date.parse(editableData['end_time']) / 1000);
-
+        // const start_time = Math.floor(Date.parse(editableData['start_time']) / 1000);
+        // const end_time = Math.floor(Date.parse(editableData['end_time']) / 1000);
+        const start_time = editableData['start_time'];
+        const end_time = editableData['end_time'];
         oParam = {...oParam, user_quota_ids: [oParam.id], start_time, end_time}
 
 
