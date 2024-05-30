@@ -16,6 +16,12 @@
         <template #content>
           <div style="display: flex;flex-direction: column;gap: 3px;width: 120px;">
             <div style="display: flex;gap: 3px;align-items: center">
+              <a-button style="padding: 0;width: 100%" size="small" @click="copyItemID(props.product.item_id)">
+                {{props.product.item_id}}
+                <CopyOutlined />
+              </a-button>
+            </div>
+            <div style="display: flex;gap: 3px;align-items: center">
               <a-button
                 type="default" style="padding: 0;width: 100%" size="small"
                 @click.prevent.stop="historyVisible = true;">히스토리</a-button>
@@ -51,7 +57,8 @@ import {computed, ref} from "vue";
 import BtnDelete from "@/views/Product/List/Ctrls/BtnDelete.vue";
 import BtnClone from "@/views/Product/List/Ctrls/BtnClone.vue";
 import HistoryView from "@/components/HistoryView.vue";
-import {FileTextOutlined} from "@ant-design/icons-vue";
+import {FileTextOutlined, CopyOutlined} from "@ant-design/icons-vue";
+import {message} from "ant-design-vue";
 
 const props = defineProps(['product'])
 defineEmits(['detailOption', 'detailDesc', 'editMemo', 'send'])
@@ -65,6 +72,16 @@ const historyData = computed(() => {
     index_id: props.product.item_id
   }
 })
+
+const copyItemID = (item_id) => {
+  const el = document.createElement('textarea');
+  el.value = item_id;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+  message.success('상품코드를 복사 하였습니다.');
+}
 
 
 </script>
