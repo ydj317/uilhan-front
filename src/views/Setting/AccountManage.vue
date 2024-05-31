@@ -808,8 +808,8 @@
         // },
         {
             title: '권한',
-            key: 'roles',
-            dataIndex: 'roles',
+            key: 'auth',
+            dataIndex: 'auth',
             width:'30%',
         },
         {
@@ -901,13 +901,13 @@
       if(item){
         formState.employeeModal.id = item.id;
         formState.employeeModal.username = item.username;
-        formState.employeeModal.auth = item.roles;
+        formState.employeeModal.auth = item.auth;
       }
       formState.employeeModal.open = true;
     }
     //员工列表
     const getEmployeeList = () => {
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employeeList", {}).then((res) => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employee/list", {}).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
@@ -983,13 +983,11 @@
         password: formState.employeeModal.password,
         auth: formState.employeeModal.auth,
       };
-      let url = "/api/addEmployee";
       if(formState.employeeModal.id){
         user.id = formState.employeeModal.id;
-        url = "/api/editEmployee";
       }
       formState.employeeModal.loading = true;
-      AuthRequest.post(process.env.VUE_APP_API_URL + url, user).then((res) => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/employee/set', user).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           formState.employeeModal.loading = false;
@@ -1003,7 +1001,7 @@
     };
     //删除员工
     const deleteEmployee = (id) =>{
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/delEmployee", { id }).then((res) => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employee/del", { id }).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
