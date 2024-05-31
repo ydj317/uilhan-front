@@ -260,9 +260,10 @@
 						<div class="fs14 font-SCDream4">{{ item['invoice_no'] ?? ''}}</div>
 						<template v-if="index === 0">
 							<div class="fs14 font-SCDream4">{{ order['bridgeOrderStatus'] ?? '' }}</div>
-							<div class="fs14 font-SCDream4">{{ order['isPaid'] === 1 ? '결제완료' : '입금대기'}}</div>
-							<div class="fs14 font-SCDream4">{{ order['ctrSeq'] ?? '' }}</div>
-							<div class="fs14 font-SCDream4">{{ order['fee'] ?? 0 }}원</div>
+<!--							<div class="fs14 font-SCDream4">{{ order['isPaid'] === 1 ? '결제완료' : '입금대기'}}</div>-->
+<!--							<div class="fs14 font-SCDream4">{{ order['ctrSeq'] ?? '' }}</div>-->
+							<div class="fs14 font-SCDream4"></div>
+<!--							<div class="fs14 font-SCDream4">{{ order['fee'] ?? 0 }}원</div>-->
 							<div class="fs14 font-SCDream4">{{ order['receiverName'] ?? '' }}</div>
 						</template>
 					</a-flex>
@@ -374,7 +375,8 @@ const openDetail = (bridgeOrderId) => {
 }
 
 const state = reactive({
-	header: ['No','상품정보','수량','트래킹번호','운송장번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
+	// header: ['No','상품정보','수량','트래킹번호','운송장번호','주문상태','결제상태','운송방식','배송대행료','수취인'],
+	header: ['No','상품정보','수량','트래킹번호','운송장번호','주문상태','운송방식','수취인'],
 	bridgeList: [],
 	total: 0,
 	listLoading: false,
