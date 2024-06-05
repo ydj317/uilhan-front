@@ -19,7 +19,7 @@
         >
             <a
               href="javascript:void(0)"
-              @click="openDetailPopup(product.item_id, '1')"
+              @click="openDetailPopup(product, '1')"
               style="color: white;font-weight: bold;">편집</a>
           <btn-link-market :product="product" />
         </div>
@@ -28,28 +28,27 @@
           @change="$emit('select')"
           style="position: absolute;left: 5px;top: 8px;"
         />
-        <div v-if="product.item_image_trans_status === 'P'" style="position: absolute;right: 5px;top: 8px;">
-          <a-tag color="processing">
-            <template #icon>
-              <SyncOutlined :spin="true" />
-            </template>
-            이미지 번역중
-          </a-tag>
+
+        <div style="position: absolute; right: 5px; top: 8px;" v-for="(tag, key) in translateStatus" :key="key" >
+          <div v-if="isShowTag(product, tag)">
+            <a-tag :color="tag.color">
+              <template v-if="tag.spinning" #icon>
+                <SyncOutlined :spin="true" />
+              </template>
+              {{ tag.text }}
+            </a-tag>
+          </div>
         </div>
-        <div v-else-if="product.item_image_trans_status === 'W'" style="position: absolute;right: 5px;top: 8px;">
-          <a-tag color="orange">
-            이미지 번역대기
-          </a-tag>
-        </div>
+
       </div>
     </div>
-    <item-title :product="product" @popup="openDetailPopup(product.item_id, '1')" />
+    <item-title :product="product" @popup="openDetailPopup(product, '1', product.item_image_trans_status)" />
     <item-price :product="product" @popup="openMarketPopup"/>
     <a-divider style="margin: 5px 0;"/>
     <item-ctrl-bar
       :product="product"
-      @detail-option="openDetailPopup(product.item_id, '2')"
-      @detail-desc="openDetailPopup(product.item_id, '3')"
+      @detail-option="openDetailPopup(product, '2')"
+      @detail-desc="openDetailPopup(product, '3')"
       @edit-memo="$emit('memo')"
       @send="$emit('send')"
     />
@@ -74,34 +73,41 @@ const DEFAULT_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAY
 const props = defineProps(['product', 'selected', 'marketDetailUrls'])
 const emit = defineEmits(['select', 'detail', 'memo', 'send'])
 const {selected, product, marketDetailUrls} = toRefs(props)
+const translateStatus = reactive([
+  { status:'W', color: 'orange', text: '이미지 번역대기' },
+  { status:'P', color: 'processing', text: '이미지 번역중', spinning: true },
+  { status:'S', color: 'success', text: '이미지 번역 성공' },
+  { status:'F', color: 'error', text: '이미지 번역 실패' }
+])
 
-async function openDetailPopup(itemId, tab) {
-
-  await useProductApi().getPrdImageTransStatus({'prd_id': itemId}).then(res => {
-    if (res.status !== "2000") {
-      message.error(res.message);
+const isShowTag = (product, tag) => {
+  if (product.item_image_trans_status === tag.status) {
+    // 성공, 실패인 상품 연동이력이 있으면 미노출
+    if (['S', 'F'].includes(tag.status) && product.item_sync_code === '1') {
       return false;
     }
+    return true;
+  }
 
-    const status = res.data[0].productImageTransStatus;
+  return false;
+}
 
-    if (status === 'W') {
+async function openDetailPopup(product, tab) {
+  const itemId = product.item_id;
+  const transStatus = product.item_image_trans_status;
+    if (transStatus === 'W') {
       message.warning('이미지 번역 대기중입니다. 상품정보 편집 시 번역전의 이미지로 뒤덮일 수 있습니다.');
     }
+
     // 자동이미지 번역중일때  컴펌
-    if (status === 'P') {
+    if (transStatus === 'P') {
       const confirmed = confirm(`이미지 번역중입니다. 상품정보 편집 시 번역전의 이미지로 뒤덮일 수 있습니다. 상품정보 편집을 진행하시겠습니까?`);
       if (!confirmed) {
-        return;
-      } else {
-        emit('detail', {itemId, tab})
-        return;
+        return false;
       }
     }
 
-    emit('detail', {itemId, tab})
-  })
-  // 자동이미지 번역 대기중일때 얼럿
+  emit('detail', {itemId, tab})
 }
 
 function openMarketPopup(marketInfo) {
