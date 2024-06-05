@@ -131,6 +131,38 @@
         </a-form>
 
     </a-card>
+
+  <!--    修改密码-->
+  <a-modal v-model:open="formState.pwdOpen" width="1000px"  :footer="null" :closable="false">
+    <a-card :bordered="false" :title="'비밀번호 변경'">
+
+      <a-form :rules="rulesRef" :model="formState" name="user_form2" class="user_form" autocomplete="off"
+              @finish="onFinish2" @finishFailed="onFinishFailed2">
+
+        <a-form-item label="기존 비밀번호" name="password" has-feedback>
+          <a-input-password v-model:value="formState.password"
+                            type="password" placeholder="기존 비밀번호를 입력해주십시오" />
+        </a-form-item>
+
+        <a-form-item label="새로운 비밀번호" name="new_password" has-feedback>
+          <a-input-password v-model:value="formState.new_password"
+                            type="password" placeholder="새로운 비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오" />
+        </a-form-item>
+
+        <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback>
+          <a-input-password v-model:value="formState.password_confirm"
+                            type="password" placeholder="새로운 비밀번호를 한번 더 입력해주십시오" />
+        </a-form-item>
+
+        <div style="display: flex;justify-content: center;margin-top: 20px;">
+          <a-button  @click="handleCancel">취 소</a-button>
+          <a-button style="margin-left: 10px" type="primary" html-type="submit" :loading="formState.pwdLoading">저장</a-button>
+        </div>
+      </a-form>
+
+    </a-card>
+  </a-modal>
+
     <!--     表格  -->
 <!--    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'">-->
 <!--        <template #extra>-->
@@ -147,37 +179,7 @@
 <!--            </template>-->
 <!--        </a-table>-->
 <!--    </a-card>-->
-    
-    <!--    修改密码-->
-<!--    <a-modal v-model:open="formState.pwdOpen" width="1000px"  :footer="null" :closable="false">-->
-<!--        <a-card :bordered="false" :title="'비밀번호 변경'">-->
 
-<!--            <a-form :rules="rulesRef" :model="formState" name="user_form2" class="user_form" autocomplete="off"-->
-<!--                    @finish="onFinish2" @finishFailed="onFinishFailed2">-->
-
-<!--                <a-form-item label="기존 비밀번호" name="password" has-feedback>-->
-<!--                    <a-input-password v-model:value="formState.password"-->
-<!--                                      type="password" placeholder="기존 비밀번호를 입력해주십시오" />-->
-<!--                </a-form-item>-->
-
-<!--                <a-form-item label="새로운 비밀번호" name="new_password" has-feedback>-->
-<!--                    <a-input-password v-model:value="formState.new_password"-->
-<!--                                      type="password" placeholder="새로운 비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오" />-->
-<!--                </a-form-item>-->
-
-<!--                <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback>-->
-<!--                    <a-input-password v-model:value="formState.password_confirm"-->
-<!--                                      type="password" placeholder="새로운 비밀번호를 한번 더 입력해주십시오" />-->
-<!--                </a-form-item>-->
-
-<!--                <div style="display: flex;justify-content: center;margin-top: 20px;">-->
-<!--                    <a-button  @click="handleCancel">취 소</a-button>-->
-<!--                    <a-button style="margin-left: 10px" type="primary" html-type="submit" :loading="formState.pwdLoading">저장</a-button>-->
-<!--                </div>-->
-<!--            </a-form>-->
-
-<!--        </a-card>-->
-<!--    </a-modal>-->
     <!--    注冊账户-->
 <!--    <a-modal v-model:open="formState.regOpen" width="1000px"  :footer="null" :closable="false">-->
 <!--        <a-card :bordered="false" :title="'직원 계정 등록'">-->
