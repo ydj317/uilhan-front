@@ -584,7 +584,6 @@ export default {
 
     //点击a-tag同时删除对应的input中的name
     removeWordFromInputs(option, wordToRemove) {
-      console.log(123);
       option.data.forEach(item => {
         item.name = item.name.split(" ").filter(word => word !== wordToRemove).join(" ");
       });
