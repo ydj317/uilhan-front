@@ -78,5 +78,14 @@ export function useProductApi() {
                 data: data,
             });
         },
+
+        getPrdImageTransStatus : (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/getPrdImageTransStatus",
+                method: "post",
+                data: data,
+            });
+        }
+
     }
 }

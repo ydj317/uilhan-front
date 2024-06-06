@@ -80,7 +80,7 @@
 </template>
 
 <script setup>
-import {onMounted, provide, ref} from "vue";
+import {onMounted, provide, reactive, ref} from "vue";
 import {useMarketApi} from "@/api/market";
 import {useUserInfo} from "@/hooks/useUserInfo";
 import {useSelection} from "@/hooks/useSelection";
@@ -100,6 +100,8 @@ import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
 import {useCategoryApi} from "@/api/category";
 import ModalSingleSync from "@/views/Product/List/ModalSingleSync/ModalSingleSync.vue";
 import ModalSyncResult from "@/views/Product/List/ModalSyncResult/ModalSyncResult.vue";
+import Cookie from "js-cookie";
+import {EventSourcePolyfill} from "event-source-polyfill";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 
@@ -113,6 +115,7 @@ const detailPrd = ref(0)
 const detailActive = ref('1')
 const searchParams = ref(ServiceProduct.getCacheParams())
 const productList = ref([])
+const transImagePrdList = ref([])
 const searchCount = ref(0)
 const totalCount = ref(0)
 const {userInfo} = useUserInfo({}, checkUserPermission)
@@ -132,6 +135,7 @@ const defaultSyncResult = {
   marketSyncFailedCode: "",
 }
 const syncResult = ref({...defaultSyncResult})
+let imageTransStateEvent = ref(null)
 
 provide('search', {searchParams})
 
@@ -168,6 +172,8 @@ async function getList() {
   indicator.value = false // 当显示 list loading, 则不需要显示全局 loading
   listLoading.value = true
   return ServiceProduct.getList({...searchParams.value}).then((res) => {
+    // item_image_trans_status 가 P 혹은  W 인 값들만 빼옴
+    transImagePrdList.value = res.data.list.filter(d => d.item_image_trans_status === 'P' || d.item_image_trans_status === 'W')
     productList.value = res.data.list;
     searchParams.value.page = parseInt(res.data.page);
     searchParams.value.limit = parseInt(res.data.limit);
@@ -178,7 +184,66 @@ async function getList() {
     resetList(productList.value.map(d => d['item_id']))
   }).finally(() => {
     listLoading.value = false
+    if (transImagePrdList.value.length !== 0) {
+      getImageTransStatusConnectSSE();
+    }
   })
+}
+
+function getImageTransStatusConnectSSE() {
+    if (!window.EventSource) {
+      console.log('Your browser does not support server-sent events');
+      return false;
+    }
+
+    let url = process.env.VUE_APP_API_URL + "/api/prd/transImageStatus"
+    // url 뒤에  transImagePrdList.value를 값으로 붙여줌 json 으로
+    if (Cookie.get('XDEBUG_SESSION')) {
+      url += '?XDEBUG_SESSION_START=PHPSTORM' + "&prd_ids=" + JSON.stringify({ ids: transImagePrdList.value.map(d => d.item_id) });
+    } else {
+      url += "?prd_ids=" + JSON.stringify({ ids: transImagePrdList.value.map(d => d.item_id) })
+    }
+
+    const headers = {token: Cookie.get("token")}
+    imageTransStateEvent = new EventSourcePolyfill(url , {
+      headers: headers
+    });
+
+    imageTransStateEvent.onopen = () => {
+      console.log('SSE connection opened');
+    };
+
+    // 결과 받고 업데이트
+    imageTransStateEvent.onmessage  = (e) => {
+      const data = JSON.parse(e.data)
+      if (data.code !== '2000') {
+        return false;
+      }
+      // data.data 와 productList.value item_image_trans_status 업데이트
+      if (data.data.length > 0 ) {
+        for (let i = 0; i < productList.value.length; i++) {
+          const item = productList.value[i]
+          if (transImagePrdList.value.find(d => d.item_id === item.item_id)) {
+            productList.value[i].item_image_trans_status = data.data.find(d => d.item_id === item.item_id).item_image_trans_status
+          }
+        }
+      }
+
+      if (data.action === 'close') {
+        console.log('SSE connection closed');
+        imageTransStateEvent.close();
+      }
+    };
+
+    // 에러
+    imageTransStateEvent.onerror = (e) => {
+      const data = JSON.parse(e.data)
+      if (data.event === 'close') {
+        console.log('SSE connection closed');
+        imageTransStateEvent.close();
+      }
+      console.log('error', e)
+    };
 }
 
 function onChangePage(page) {
