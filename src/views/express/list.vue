@@ -256,7 +256,13 @@
 							<div class="fs10 font-SCDream4">{{ getOptionName(item) }}</div>
 						</a-flex>
 						<div class="fs14 font-SCDream4">{{ item['quantity'] ?? 0 }}</div>
-						<div class="fs14 font-SCDream4">{{ item['tracking_no'] ?? ''}}</div>
+            <a-flex class="fs14 font-SCDream4">
+              <a-input v-model:value="item['tracking_no']">
+                  <template #addonAfter>
+                    <SettingOutlined @click="updateTracking(item, order['bridgeOrderId'])"/>
+                  </template>
+              </a-input>
+            </a-flex>
 						<div class="fs14 font-SCDream4">{{ item['invoice_no'] ?? ''}}</div>
 						<template v-if="index === 0">
 							<div class="fs14 font-SCDream4">{{ order['bridgeOrderStatus'] ?? '' }}</div>
@@ -361,7 +367,7 @@ import {computed, onBeforeUpdate, onMounted, reactive, ref, watch} from "vue";
 import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
 import moment from "moment";
-import { InfoCircleFilled,ExclamationCircleOutlined,CopyOutlined } from '@ant-design/icons-vue';
+import { InfoCircleFilled,ExclamationCircleOutlined,SettingOutlined  } from '@ant-design/icons-vue';
 import {useExpressApi} from "@/api/express";
 import Cookie from "js-cookie";
 import ExpressDetail from "@/views/express/components/ExpressDetail.vue";
@@ -619,6 +625,30 @@ const moveToPay = () => {
 
 const moveToQna = () => {
 	window.open('https://pf.kakao.com/_HxgyZG');
+}
+
+const updateTracking = (item, bridgeOrderId) => {
+  if (!item['tracking_no'] || item['tracking_no'].trim() === '') {
+    message.error('트래킹번호를 입력해주세요');
+
+    return false;
+  }
+
+  state.listLoading = true;
+  useBridgeApi().updateBridgeOrderItems({...item, bridgeOrderId}).then((res) => {
+    if (res.status !== "2000") {
+      throw new Error('트래킹번호 업데이트 실패');
+    }
+
+    message.success('트래킹번호 업데이트 성공');
+
+  }).catch((e) => {
+    message.error(e.message);
+
+    return false;
+  }).finally(() => {
+    state.listLoading = false;
+  });
 }
 
 watch(() => state.modal.open, () => {

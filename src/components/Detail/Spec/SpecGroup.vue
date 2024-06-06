@@ -542,21 +542,10 @@ export default {
     },
 
     handleInputChange() {
-      const repeats = document.getElementsByClassName("repeat");
-      for (const el of repeats) {
-        el.style.height = "auto";
-      }
+      this.autoHeight();
       this.adjustRepeatHeights();
-
     },
-
-
-    //点击a-tag同时删除对应的input中的name
-    removeWordFromInputs(option, wordToRemove) {
-      option.data.forEach(item => {
-        item.name = item.name.split(" ").filter(word => word !== wordToRemove).join(" ");
-      });
-
+    autoHeight(){
       const repeats = document.getElementsByClassName("repeat");
       for (const el of repeats) {
         el.style.height = "auto"; // 重置高度
@@ -564,7 +553,36 @@ export default {
       this.adjustRepeatHeights();
     },
 
+    validateOptName(){
+      let hasError = false;
+      this.options.forEach(option => {
+        option.data.forEach(item => {
+          if (item.name.length > 25) {
+            hasError = true;
+          }
+        });
+      });
+
+      if (hasError) {
+        this.$message.warn('옵션값은 25자 이내로 입력해 주세요. ');
+        return true;
+      }
+      return false;
+    },
+
+    //点击a-tag同时删除对应的input中的name
+    removeWordFromInputs(option, wordToRemove) {
+      option.data.forEach(item => {
+        item.name = item.name.split(" ").filter(word => word !== wordToRemove).join(" ");
+      });
+      this.autoHeight();
+    },
+
     saveOption() {
+      if (this.validateOptName()) {
+        return;
+      }
+
       if (!this.product || !this.product.item_option) {
         return;
       }
@@ -592,7 +610,6 @@ export default {
 
       this.product.item_option = this.options;
       this.$store.commit("product/setShowOptionModify", false);
-
     },
 
     _checkOptionGroup() {
