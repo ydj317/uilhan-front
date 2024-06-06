@@ -620,6 +620,23 @@ export default defineComponent({
       return true;
     },
 
+    checkWordCount(){
+      let itemOption = this.product.item_option;
+      let checkWordCountOk = true;
+      for (let i = 0; i < itemOption.length; i++) {
+        for (let j = 0; j < itemOption[i].data.length; j++){
+           if (itemOption[i].data[j].name.length > 25) {
+             checkWordCountOk = false
+           }
+        }
+
+      }
+      if(checkWordCountOk === false){
+        message.warning("옵션값은 25자 이내로 입력해 주세요.");
+      }
+      return checkWordCountOk;
+    },
+
     /**
      * 상품저장
      * @returns {boolean}
@@ -639,6 +656,11 @@ export default defineComponent({
       // 주문옵션 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능
       let checkSellingPrice = this.checkSellingPrice();
       if (checkSellingPrice === false) {
+        this.product.loading = false;
+        return false;
+      }
+
+      if (this.checkWordCount() === false) {
         this.product.loading = false;
         return false;
       }
@@ -736,6 +758,12 @@ export default defineComponent({
       this.product.item_detail = sItemDetail;
 
       let sycnMarkets = []
+
+      if (this.checkWordCount() === false) {
+        this.product.loading = false;
+        return false;
+      }
+
       try {
         const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/get_sync_market", {
           'prd_id': this.product.item_id
