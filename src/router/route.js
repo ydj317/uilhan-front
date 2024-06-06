@@ -9,7 +9,8 @@ import {
     ShoppingCartOutlined,
     BellOutlined,
     RobotOutlined,
-    ReadOutlined
+    ReadOutlined,
+    AppstoreOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -275,6 +276,18 @@ export const menus = [{
             ]
         },
         {
+            path: "/product/domeggook",
+            name: "prd_domeggook",
+            component: () => import("@/views/Product/Domeggook"),
+            meta: {
+                title: "도매꾹",
+                isHide: false,
+                roles: [],
+                ids: ["jwli"],
+                icon: AppstoreOutlined,
+            },
+        },
+        {
             path: "/board/notice",
             name: "board_notice",
             component: () => import("@/views/Board/NoticeList.vue"),
@@ -329,18 +342,7 @@ export const menus = [{
                 },
             ]
         },
-        // {
-        //     path: "/product/domeggook",
-        //     name: "prd_domeggook",
-        //     component: () => import("@/views/Product/Domeggook"),
-        //     meta: {
-        //         title: "도매꾹",
-        //         isHide: false,
-        //         roles: [],
-        //         ids: ["jwli", "haeju"],
-        //         icon: AppstoreOutlined,
-        //     },
-        // },
+
         // {
         //     path: "/product/vvic",
         //     name: "product_vvic",
