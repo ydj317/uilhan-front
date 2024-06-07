@@ -462,7 +462,11 @@
             }
 
             if (formState.password_confirm !== "") {
-                formState.formRef.validateFields("password_confirm");
+              try {
+                await formState.formRef.validateFields(['password_confirm']);
+              } catch (error) {
+
+              }
             }
 
             return Promise.resolve();

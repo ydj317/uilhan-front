@@ -9,7 +9,7 @@
           </template>
           <span
             class="item-market-icon"
-            :class="market_info.status"
+            :class="getLogoClass(market_info)"
             @click="$emit('popup', market_info)"
           ><img :src="getLogoSrc('market-logo', market_info.market_code)" alt=""></span>
         </a-tooltip>
@@ -23,6 +23,14 @@ import {getLogoSrc} from "@/util/functions";
 
 defineProps(['product'])
 defineEmits(['popup'])
+
+const getLogoClass = (market_info) => {
+  if (!market_info.market_prd_code) {
+    return 'unsync'
+  } else {
+    return 'sync'
+  }
+}
 
 </script>
 
@@ -43,9 +51,7 @@ defineEmits(['popup'])
   opacity: 1;
 }
 
-.failed img,
-.success img,
-.sending img {
+.sync img {
   cursor: pointer;
   filter: grayscale(0%);
   opacity: 1;
