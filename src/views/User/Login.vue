@@ -78,9 +78,9 @@ export default defineComponent({
     });
 
     const formState = reactive({
-      manager:'jwli',
-      username: 'test4',
-      password: '123123123'
+      manager:'',
+      username: '',
+      password: ''
     });
     let loading = ref(false);
     const handleFinish = () => {
