@@ -140,6 +140,11 @@
             <template #headerCell="{ column }">
             </template>
             <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'menu_name'">
+                <a-space wrap>
+                  <a-tag v-for="menu in record.menu_name">{{ menu }}</a-tag>
+                </a-space>
+              </template>
                 <template v-if="column.key === 'action'">
                     <a-button type="primary" class="mr20" @click="showEmployeeModal(record)">수정</a-button>
                   <a-popconfirm
@@ -174,13 +179,25 @@
         <a-input-password v-model:value="formState.employeeModal.password_confirm" :placeholder="formState.employeeModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
       </a-form-item>
       <a-form-item label="권한" name="auth" has-feedback>
-      <a-select
-        v-model:value="formState.employeeModal.auth"
-        style="width: 100%"
-        @change="selectEmployeeAuth"
-        placeholder="권한을 선택해주세요">
-        <a-select-option :value="item" v-for="item in formState.employeeModal.authList">{{ item }}</a-select-option>
-      </a-select>
+        <a-collapse>
+          <a-collapse-panel
+            v-for="(item, index) in formState.employeeModal.menuList"
+            :key="item.id"
+            :header="panelHeader(item, index)"
+          >
+            <template v-if="item.child && item.child.length">
+              <a-collapse ghost>
+                <a-collapse-panel
+                  v-for="(child, childIndex) in item.child"
+                  :key="child.id"
+                  :header="panelHeader(child, childIndex, index)"
+                  :showArrow="false"
+                >
+                </a-collapse-panel>
+              </a-collapse>
+            </template>
+          </a-collapse-panel>
+        </a-collapse>
       </a-form-item>
       <div style="display: flex;justify-content: center;margin-top: 20px;">
         <a-button type="primary" html-type="submit" :loading="formState.employeeModal.loading">저장</a-button>
@@ -258,11 +275,11 @@
     import {AuthRequest} from "@/util/request";
     import {
       CloseCircleOutlined,
-      CopyOutlined, LoadingOutlined, PlusOutlined
+      CopyOutlined, LoadingOutlined, PlusOutlined,
     } from "@ant-design/icons-vue";
-    import {onMounted, reactive, ref} from "vue";
+    import {onMounted, reactive, ref,h} from "vue";
     import router from "@/router";
-    import {message} from "ant-design-vue";
+    import {message,Checkbox} from "ant-design-vue";
     import {useUserApi} from "@/api/user";
 	  import BindBridge from "@/views/Setting/BindBridge.vue";
     import Cookie from "js-cookie";
@@ -324,12 +341,12 @@
       employeeModal:{
           open:false,
           loading:false,
-          authList:['auth1','auth2'],
+          menuList: [],
           id:0,
           username:'',
           password:'',
           password_confirm:'',
-          auth:'',
+          menu_id:[],
       },
     });
 
@@ -785,7 +802,7 @@
     onMounted(() => {
         getUserInfoData();
         getEmployeeList();
-        formState.employeeModal.auth = formState.employeeModal.authList[0];
+        getMenuList();
     });
     const columns = [
         {
@@ -808,8 +825,8 @@
         // },
         {
             title: '권한',
-            key: 'auth',
-            dataIndex: 'auth',
+            key: 'menu_name',
+            dataIndex: 'menu_name',
             width:'30%',
         },
         {
@@ -891,18 +908,58 @@
         console.log("Failed:", errorInfo);
     };
     //add user-------------
+    //菜单列表
+    const getMenuList = () => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/menu/list", {}).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+        res.data.map(item=>{
+          item.checked=false
+          if(item.child){
+            item.child.map(item2=>{
+              item2.checked=false
+              return item2;
+            })
+          }
+          return item;
+        })
+        formState.employeeModal.menuList = res.data;
+      });
+    }
     //显示添加员工弹层
-    const showEmployeeModal = (item)=>{
+    const showEmployeeModal = (v)=>{
       formState.employeeModal.id = 0;
       formState.employeeModal.username = '';
       formState.employeeModal.password = '';
       formState.employeeModal.password_confirm = '';
-      formState.employeeModal.auth = formState.employeeModal.authList[0];
-      if(item){
-        formState.employeeModal.id = item.id;
-        formState.employeeModal.username = item.username;
-        formState.employeeModal.auth = item.auth;
+      formState.employeeModal.menu_id = [];
+      if(v){
+        formState.employeeModal.id = v.id;
+        formState.employeeModal.username = v.username;
+        if(v.menu_id){
+          formState.employeeModal.menu_id = v.menu_id;
+        }
+        formState.employeeModal.menuList.map(item=>{
+          item.checked=false
+          if(v.menu_id.includes(item.id)){
+            item.checked = true;
+          }
+          if(item.child.length){
+            let num = 0;
+            item.child.map(item2=>{
+              item2.checked=false
+              if(v.menu_id.includes(item2.id)){
+                item2.checked=true
+                num++;
+              }
+              return item2;
+            })
+          }
+        })
       }
+
       formState.employeeModal.open = true;
     }
     //员工列表
@@ -972,16 +1029,12 @@
         }
       ],
     });
-    //选择权限
-    const selectEmployeeAuth = value => {
-      formState.employeeModal.auth = value;
-    };
     //添加员工
     const addEmployee = () => {
       let user = {
         username: formState.employeeModal.username,
         password: formState.employeeModal.password,
-        auth: formState.employeeModal.auth,
+        menu_id: formState.employeeModal.menu_id,
       };
       if(formState.employeeModal.id){
         user.id = formState.employeeModal.id;
@@ -1010,6 +1063,89 @@
         getEmployeeList();
       });
     }
+    const updateParentCheck = (parentIndex) => {
+      console.log('updateParentCheck');
+      const parent = formState.employeeModal.menuList[parentIndex];
+      parent.checked = parent.child.every(child => child.checked); // 如果所有子项都选中，则父项选中
+
+      // 如果至少一个子项被选中，则父项也选中
+      if (parent.child.some(child => child.checked)) {
+        parent.checked = true;
+        if (!formState.employeeModal.menu_id.includes(parent.id)) {
+          formState.employeeModal.menu_id.push(parent.id);
+        }
+      } else {
+        const parentIndexInMenuId = formState.employeeModal.menu_id.indexOf(parent.id);
+        if (parentIndexInMenuId !== -1) {
+          formState.employeeModal.menu_id.splice(parentIndexInMenuId, 1);
+        }
+      }
+    };
+
+    const handleParentCheck = (index, event) => {
+      console.log('点击了父菜单');
+      event.stopPropagation();
+      const parent = formState.employeeModal.menuList[index];
+      parent.checked = !parent.checked;
+      parent.child.forEach(child => {
+        child.checked = parent.checked;
+        if (child.checked) {
+          if (!formState.employeeModal.menu_id.includes(child.id)) {
+            formState.employeeModal.menu_id.push(child.id);
+          }
+        } else {
+          const childIndexInMenuId = formState.employeeModal.menu_id.indexOf(child.id);
+          if (childIndexInMenuId !== -1) {
+            formState.employeeModal.menu_id.splice(childIndexInMenuId, 1);
+          }
+        }
+      });
+      // 更新父项在menu_id中的状态
+      if (parent.checked) {
+        if (!formState.employeeModal.menu_id.includes(parent.id)) {
+          formState.employeeModal.menu_id.push(parent.id);
+        }
+      } else {
+        const parentIndexInMenuId = formState.employeeModal.menu_id.indexOf(parent.id);
+        if (parentIndexInMenuId !== -1) {
+          formState.employeeModal.menu_id.splice(parentIndexInMenuId, 1);
+        }
+      }
+    };
+
+    const handleChildCheck = (parentIndex, childIndex, event) => {
+      console.log('点击了子菜单');
+      event.stopPropagation();
+      const parent = formState.employeeModal.menuList[parentIndex];
+      const child = parent.child[childIndex];
+      child.checked = !child.checked;
+      if (child.checked) {
+        if (!formState.employeeModal.menu_id.includes(child.id)) {
+          formState.employeeModal.menu_id.push(child.id);
+        }
+      } else {
+        const childIndexInMenuId = formState.employeeModal.menu_id.indexOf(child.id);
+        if (childIndexInMenuId !== -1) {
+          formState.employeeModal.menu_id.splice(childIndexInMenuId, 1);
+        }
+      }
+      updateParentCheck(parentIndex);
+    };
+
+    const panelHeader = (item, index, parentIndex = null) => {
+      return h('div', { class: 'panel-header' }, [
+        h(Checkbox, {
+          checked: item.checked,
+          onChange: parentIndex === null
+            ? (event) => handleParentCheck(index, event)
+            : (event) => handleChildCheck(parentIndex, index, event),
+          onClick: (event) => event.stopPropagation() // 防止点击复选框时展开/折叠
+        }, () => ''),
+        h('span', { class: 'header-text' }, item.title)
+      ]);
+    };
+
+
 </script>
 <style>
     .user_form .ant-form-item {
@@ -1102,7 +1238,34 @@
     .add-employee .ant-form-item-label{
       height: fit-content;
     }
+    .add-employee .ant-collapse{
+      background: inherit;
+    }
+    .add-employee .ant-collapse-header{
+      padding: 2px 16px!important;
+    }
+    .add-employee .ant-collapse-content-box .ant-collapse-header{
+      padding-left: 50px!important;
+    }
+    .add-employee .ant-collapse-content-box{
+      padding: 2px 16px!important;
+    }
+    .add-employee .ant-collapse-content{
+      border-top: 0!important;
+    }
+    .add-employee .ant-collapse-item:not(:last-child){
+      border-bottom: 0!important;
+    }
+    .add-employee .ant-collapse-content-box .ant-collapse-item{
+      height: 26px;
+    }
 </style>
 <style scoped>
-
+.panel-header {
+  display: flex;
+  align-items: center;
+}
+.header-text {
+  margin-left: 10px;
+}
 </style>

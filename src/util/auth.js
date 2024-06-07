@@ -42,6 +42,9 @@ export function cookieInit() {
   Cookie.remove('member_name');
   Cookie.remove('member_roles');
   Cookie.remove('ch-session');
+  Cookie.remove('employee_id');
+  Cookie.remove('employee_name');
+  Cookie.remove('employee_menu_names');
 }
 
 export function getUserInfo() {

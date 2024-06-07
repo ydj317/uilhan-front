@@ -8,6 +8,7 @@
       <div class="login-content">
         <img style="margin: 90px;width: 60px;height: 60px" src="../../assets/logo_icon.png" key="logo-light" alt="" >
         <div style="display: flex;flex-direction: column;width: 100%;">
+            <a-input v-model:value="formState.manager" placeholder="관리자 아이디" class="user-name" v-if="!user_type" ></a-input>
             <a-input v-model:value="formState.username" placeholder="아이디" class="user-name" ></a-input>
             <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password"></a-input-password>
         </div>
@@ -19,8 +20,8 @@
           </div>
 
           <div style="display: flex;gap: 5px;align-items: center">
-          <span>관리자</span>
-          <a-switch v-model:checked="user_type" size="small" style="color: #1a1a1a;background-color: #1a1a1a"/>
+          <span>{{user_type?'관리자':'직원'}}</span>
+          <a-switch v-model:checked="user_type" size="small"/>
           </div>
         </div>
         <div style="display: flex;justify-content: center;width: 100%;margin-top: 20px;">
@@ -43,7 +44,7 @@
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
 import router, {setFilterRouteList} from "router/index.js";
-import {LoginRequest} from 'util/request';
+import { AuthRequest, LoginRequest } from "util/request";
 import {defineComponent, reactive, onBeforeMount, ref, onMounted} from 'vue';
 import {UserOutlined, LockOutlined, CheckCircleTwoTone} from '@ant-design/icons-vue';
 import Cookie from "js-cookie";
@@ -77,8 +78,9 @@ export default defineComponent({
     });
 
     const formState = reactive({
-      username: '',
-      password: ''
+      manager:'jwli',
+      username: 'test4',
+      password: '123123123'
     });
     let loading = ref(false);
     const handleFinish = () => {
@@ -86,14 +88,23 @@ export default defineComponent({
         message.warning('아이디 또는 비밀번호을  입력해주시오');
         return true
       }
-
+      var url = '/api/login';
       let user = {
         username: formState.username,
         password: formState.password,
       };
+      if(!user_type.value){
+        if (formState.manager === '') {
+          message.warning('관리자 아이디를 입력해주세요');
+          return true
+        }
+        user.manager = formState.manager;
+        url = '/employee/login';
+      }
+
       loading.value = true;
       LoginRequest.post(
-          process.env.VUE_APP_API_URL + '/api/login', user).then((res) => {
+          process.env.VUE_APP_API_URL + url, user).then((res) => {
         if (res.status === 400 || res.status === 401) {
           message.warning('아이디 또는 비밀번호가 잘못 입력 되었습니다.');
           loading.value = false;
@@ -123,14 +134,26 @@ export default defineComponent({
 
         // 아이디 저장하기
         tempSave();
-
-        Cookie.set('member_name', res.data.member_name);
-        Cookie.set('member_roles', res.data.member_roles);
-        const menuList = setFilterRouteList();
-        router.addRoute(menuList[0])
-        router.push("/dashboard");
-        loading.value = false;
-        return false;
+        //获取员工菜单
+        AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employee/userInfo", {}).then((res2) => {
+          console.log('res2',res2);
+          if (res2.status !== "2000") {
+            message.error(res.message);
+            return false;
+          }
+          if(res2.data.id){
+            Cookie.set('employee_id', res2.data.id);
+            Cookie.set('employee_name', res2.data.name);
+            Cookie.set('employee_menu_names', res2.data.menu_names);
+          }
+          Cookie.set('member_name', res.data.member_name);
+          Cookie.set('member_roles', res.data.member_roles);
+          const menuList = setFilterRouteList();
+          router.addRoute(menuList[0])
+          router.push("/dashboard");
+          loading.value = false;
+          return false;
+        });
       });
     };
 
