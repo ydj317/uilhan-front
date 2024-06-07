@@ -26,9 +26,7 @@ export function setFilterRouteList() {
   // console.log('userInfosRoles',userInfosRoles);
   // console.log('userInfosIds',userInfosIds);
   // console.log('menus[0].children',menus[0].children);
-  console.log('employeeMenus',employeeMenus);
   const FilterRoutes = setFilterHasRolesMenu(menus[0].children, userInfosRoles, userInfosIds,employeeMenus);
-  console.log('FilterRoutes',FilterRoutes);
   const defaultRoutes = [{
     path: "/",
     name: "dashboard",

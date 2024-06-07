@@ -136,7 +136,6 @@ export default defineComponent({
         tempSave();
         //获取员工菜单
         AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employee/userInfo", {}).then((res2) => {
-          console.log('res2',res2);
           if (res2.status !== "2000") {
             message.error(res.message);
             return false;
