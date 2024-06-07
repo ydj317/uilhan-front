@@ -14,6 +14,9 @@
           <!--세팅버튼-->
           <div class="setting header-button" style="display: flex;padding-right: 15px; position: relative; left: 10px;">
 
+            <a-button @click="cutOptName" class="spec-right-button"
+                      size="middle">25자로 자르기
+            </a-button>
             <a-button @click="setTrim" class="spec-right-button"
                       size="middle">빈칸제거
             </a-button>
@@ -48,9 +51,6 @@
 
             <a-button type="primary" size="middle" @click="handleReplaceOptionGroup()">
               글자변경
-            </a-button>
-            <a-button @click="cutOptName" class="spec-right-button"
-                      size="middle">옵션명 짤림
             </a-button>
             <a-button @click="setBeforeOldOptionData" class="spec-right-button reset-button" type="primary"
                       size="middle">옵션명 초기화
@@ -313,9 +313,14 @@ export default {
 
     updateSelectAll(item, option, optionIndex) {
       // item 에서 checked 가 true 일때 selectedRows 에 추가
-      this.selectedRows[optionIndex] = [];
-      if (item.checked === true) {
-        this.selectedRows[optionIndex].push(item.key);
+      if (!this.selectedRows[optionIndex]) {
+        this.selectedRows[optionIndex] = [];
+      }
+
+      if (item.checked) {
+        if (!this.selectedRows[optionIndex].includes(item.key)) {
+          this.selectedRows[optionIndex].push(item.key);
+        }
       } else {
         // item 에서 checked 가 false 일때 selectedRows 에서 제거
         this.selectedRows[optionIndex] = this.selectedRows[optionIndex].filter(key => key !== item.key);
@@ -364,7 +369,7 @@ export default {
         message.warning("특문을 제거할 옵션명을 선택하세요.");
         return false;
       }
-      const specialChars = /[@#$%^&*"?<>\\ ㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡®ªº㉾＄％￦Ｆ′″℃Å￠￡￥¤℉‰€㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．／：；？＾＿｀｜￣、。·…¨〃­―∥＼∼～ˇ˘˝˚˙¸˛¿ː]+/g;
+      const specialChars = /[@#$%^&*"?<>\\;,./{}() ㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡®ªº㉾＄％￦Ｆ′″℃Å￠￡￥¤℉‰€㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．／：；？＾＿｀｜￣、。·…¨〃­―∥＼∼～ˇ˘˝˚˙¸˛¿ː]+/g;
       this.options.forEach(option => {
         option.data.forEach(item => {
           if (selectItems.includes(item.key)) {
@@ -436,13 +441,23 @@ export default {
     },
 
     cutOptName(){
+      let selectItems = this.selectedRows.flat();
+      if (selectItems.length === 0) {
+        message.warning("25자로 자를 옵션명을 선택하세요.");
+        return false;
+      }
+
       this.options.forEach(option => {
         option.data.forEach(item => {
-          if (item.name.length > 25) {
-            item.name = item.name.substring(0,25);
+          if (selectItems.includes(item.key)) {
+            if (item.name.length > 25) {
+              item.name = item.name.substring(0, 25);
+            }
           }
         });
       });
+      this.autoHeight();
+      this._setCheckBoxInit();
     },
 
     restoreInitialOptions() {
@@ -555,7 +570,6 @@ export default {
 
     handleInputChange() {
       this.autoHeight();
-      this.adjustRepeatHeights();
     },
     autoHeight(){
       const repeats = document.getElementsByClassName("repeat");
@@ -584,16 +598,11 @@ export default {
 
     //点击a-tag同时删除对应的input中的name
     removeWordFromInputs(option, wordToRemove) {
-      console.log(123);
       option.data.forEach(item => {
         item.name = item.name.split(" ").filter(word => word !== wordToRemove).join(" ");
       });
 
-      const repeats = document.getElementsByClassName("repeat");
-      for (const el of repeats) {
-        el.style.height = "auto"; // 重置高度
-      }
-      this.adjustRepeatHeights();
+      this.autoHeight();
     },
 
     saveOption() {
