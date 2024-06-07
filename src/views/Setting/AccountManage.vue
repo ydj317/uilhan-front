@@ -131,27 +131,22 @@
         </a-form>
 
     </a-card>
-    <!--     表格  -->
-    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'">
+    <!--     子账号表格  -->
+    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'">
         <template #extra>
-            <a-button type="primary" @click="showEmployeeModal(0)">계정 등록</a-button>
+            <a-button type="primary" @click="showAccountModal(0,1)">서브계정 등록</a-button>
         </template>
-        <a-table :columns="columns" :data-source="formState.employeeList" :scroll="formState.employeeList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
+        <a-table :columns="columnsSubAccount" :data-source="formState.subAccountList" :scroll="formState.subAccountList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
             <template #headerCell="{ column }">
             </template>
             <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'menu_name'">
-                <a-space wrap>
-                  <a-tag v-for="menu in record.menu_name">{{ menu }}</a-tag>
-                </a-space>
-              </template>
                 <template v-if="column.key === 'action'">
-                    <a-button type="primary" class="mr20" @click="showEmployeeModal(record)">수정</a-button>
+                    <a-button type="primary" class="mr20" @click="showAccountModal(record,1)">수정</a-button>
                   <a-popconfirm
                     title="삭제하시겠습니까?"
                     ok-text="Yes"
                     cancel-text="No"
-                    @confirm="deleteEmployee(record.id)"
+                    @confirm="deleteAccount(record.id)"
                   >
                     <a-button type="default">삭제</a-button>
                   </a-popconfirm>
@@ -159,29 +154,58 @@
             </template>
         </a-table>
     </a-card>
-  <a-modal class="add-employee" v-model:open="formState.employeeModal.open" :title="formState.employeeModal.id ? '직원 편집' : '직원 추가'" width="600px"  :footer="null" :closable="false">
+  <!--     员工表格  -->
+  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'">
+    <template #extra>
+      <a-button type="primary" @click="showAccountModal(0,2)">계정 등록</a-button>
+    </template>
+    <a-table :columns="columns" :data-source="formState.employeeList" :scroll="formState.employeeList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
+      <template #headerCell="{ column }">
+      </template>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'menu_name'">
+          <a-space wrap>
+            <a-tag v-for="menu in record.menu_name">{{ menu }}</a-tag>
+          </a-space>
+        </template>
+        <template v-if="column.key === 'action'">
+          <a-button type="primary" class="mr20" @click="showAccountModal(record,2)">수정</a-button>
+          <a-popconfirm
+            title="삭제하시겠습니까?"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="deleteAccount(record.id)"
+          >
+            <a-button type="default">삭제</a-button>
+          </a-popconfirm>
+        </template>
+      </template>
+    </a-table>
+  </a-card>
+  <a-modal class="add-account" v-model:open="formState.accountModal.open" :title="formState.accountModal.id ? '계정 수정' : '계정을 추가'" width="600px"  :footer="null" :closable="false" @cancel="accountModalClose">
     <a-form
-      :rules="employeeRulesRef"
-      :model="formState.employeeModal"
-      name="addEmployee"
+      :rules="accountRulesRef"
+      :model="formState.accountModal"
+      name="addAccount"
+      ref="addAccountRef"
       :label-col="{ span: 6 }"
       :wrapper-col="{ span: 18 }"
       autocomplete="off"
-      @finish="addEmployee"
+      @finish="addAccount"
     >
       <a-form-item label="아이디" name="username" has-feedback>
-        <a-input v-model:value="formState.employeeModal.username" placeholder="아이디를 입력해주세요" />
+        <a-input v-model:value="formState.accountModal.username" placeholder="아이디를 입력해주세요" />
       </a-form-item>
       <a-form-item label="비밀번호" name="password" has-feedback>
-        <a-input-password v-model:value="formState.employeeModal.password" :placeholder="formState.employeeModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
+        <a-input-password v-model:value="formState.accountModal.password" v-model:visible="formState.accountModal.password_visible" :placeholder="formState.accountModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
       </a-form-item>
       <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback>
-        <a-input-password v-model:value="formState.employeeModal.password_confirm" :placeholder="formState.employeeModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
+        <a-input-password v-model:value="formState.accountModal.password_confirm" v-model:visible="formState.accountModal.password_confirm_visible" :placeholder="formState.accountModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
       </a-form-item>
-      <a-form-item label="권한" name="auth" has-feedback>
-        <a-collapse>
+      <a-form-item label="권한" name="auth" has-feedback v-if="formState.modalType==2">
+        <a-collapse v-model:activeKey="formState.accountModal.activePanel">
           <a-collapse-panel
-            v-for="(item, index) in formState.employeeModal.menuList"
+            v-for="(item, index) in formState.accountModal.menuList"
             :key="item.id"
             :header="panelHeader(item, index)"
           >
@@ -200,8 +224,8 @@
         </a-collapse>
       </a-form-item>
       <div style="display: flex;justify-content: center;margin-top: 20px;">
-        <a-button type="primary" html-type="submit" :loading="formState.employeeModal.loading">저장</a-button>
-        <a-button style="margin-left: 10px" @click="formState.employeeModal.open = false">취소</a-button>
+        <a-button type="primary" html-type="submit" :loading="formState.accountModal.loading">저장</a-button>
+        <a-button style="margin-left: 10px" @click="accountModalClose">취소</a-button>
       </div>
     </a-form>
   </a-modal>
@@ -338,7 +362,9 @@
 		},
       business_license_image: '',
       employeeList:[],
-      employeeModal:{
+      subAccountList:[],
+      modalType:0,//1=子账号,2=员工账号
+      accountModal:{
           open:false,
           loading:false,
           menuList: [],
@@ -346,7 +372,10 @@
           username:'',
           password:'',
           password_confirm:'',
+          password_visible:false,
+          password_confirm_visible:false,
           menu_id:[],
+          activePanel:[],
       },
     });
 
@@ -801,7 +830,7 @@
 
     onMounted(() => {
         getUserInfoData();
-        getEmployeeList();
+        getAccountList();
         getMenuList();
     });
     const columns = [
@@ -817,12 +846,6 @@
             key: 'username',
             width:'30%',
         },
-        // {
-        //     title: '비밀번호',
-        //     dataIndex: 'password',
-        //     key: 'password',
-        //     width:'20%',
-        // },
         {
             title: '권한',
             key: 'menu_name',
@@ -840,6 +863,31 @@
             key: 'action',
             width:'15%',
         }
+    ];
+    const columnsSubAccount = [
+      {
+        title: 'No.',
+        dataIndex: 'No',
+        key: 'No',
+        width:'5%',
+      },
+      {
+        title: '직원 아이디',
+        dataIndex: 'username',
+        key: 'username',
+        width:'40%',
+      },
+      {
+        title: '계정 등록시간',
+        key: 'ins_date',
+        dataIndex: 'ins_date',
+        width:'40%',
+      },
+      {
+        title: '관리',
+        key: 'action',
+        width:'15%',
+      }
     ];
 
     //修改密码模态框
@@ -925,45 +973,74 @@
           }
           return item;
         })
-        formState.employeeModal.menuList = res.data;
+        formState.accountModal.menuList = res.data;
       });
     }
-    //显示添加员工弹层
-    const showEmployeeModal = (v)=>{
-      formState.employeeModal.id = 0;
-      formState.employeeModal.username = '';
-      formState.employeeModal.password = '';
-      formState.employeeModal.password_confirm = '';
-      formState.employeeModal.menu_id = [];
-      if(v){
-        formState.employeeModal.id = v.id;
-        formState.employeeModal.username = v.username;
-        if(v.menu_id){
-          formState.employeeModal.menu_id = v.menu_id;
+    const addAccountRef = ref();
+    //显示添加账户弹层
+    const showAccountModal = (v,type)=>{
+      formState.modalType = type;
+      formState.accountModal.id = 0;
+      formState.accountModal.username = '';
+      formState.accountModal.password = '';
+      formState.accountModal.password_confirm = '';
+      formState.accountModal.menu_id = [];
+      formState.accountModal.menuList.map(item=>{
+        item.checked=false
+        if(item.child.length){
+          item.child.map(item2=>{
+            item2.checked=false
+            return item2;
+          })
         }
-        formState.employeeModal.menuList.map(item=>{
-          item.checked=false
-          if(v.menu_id.includes(item.id)){
-            item.checked = true;
+      })
+      if(v){
+        formState.accountModal.id = v.id;
+        formState.accountModal.username = v.username;
+        if(formState.modalType == 2){
+          if(v.menu_id){
+            formState.accountModal.menu_id = v.menu_id;
           }
-          if(item.child.length){
-            let num = 0;
-            item.child.map(item2=>{
-              item2.checked=false
-              if(v.menu_id.includes(item2.id)){
-                item2.checked=true
-                num++;
-              }
-              return item2;
-            })
-          }
-        })
+          formState.accountModal.menuList.map(item=>{
+            item.checked=false
+            if(v.menu_id.includes(item.id)){
+              item.checked = true;
+            }
+            if(item.child.length){
+              let num = 0;
+              item.child.map(item2=>{
+                item2.checked=false
+                if(v.menu_id.includes(item2.id)){
+                  item2.checked=true
+                  num++;
+                }
+                return item2;
+              })
+            }
+          })
+        }
       }
-
-      formState.employeeModal.open = true;
+      formState.accountModal.open = true;
     }
-    //员工列表
-    const getEmployeeList = () => {
+    //关闭添加账户弹层
+    const accountModalClose = ()=>{
+      formState.accountModal.open = false
+      formState.accountModal.activePanel = []
+      formState.accountModal.password_visible = false;
+      formState.accountModal.password_confirm_visible = false;
+      addAccountRef.value.resetFields();
+    }
+
+    const getAccountList = () => {
+      //子账号列表
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/subAccount/list", {}).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+        formState.subAccountList = res.data;
+      });
+      //员工账号列表
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employee/list", {}).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
@@ -972,7 +1049,8 @@
         formState.employeeList = res.data;
       });
     }
-    let employeeUserValidateName = async (rule, value) => {
+    
+    let accountValidateName = async (rule, value) => {
       if (value === "") {
         return Promise.reject("아이디를 입력해주세요");
       } else {
@@ -982,9 +1060,9 @@
       }
       return Promise.resolve();
     };
-    let employeeValidatePass = async (rule, value) => {
+    let accountValidatePass = async (rule, value) => {
       if (value === "") {
-        if(!formState.employeeModal.id){
+        if(!formState.accountModal.id){
           return Promise.reject("비밀번호를 입력 해주세요");
         }
       } else {
@@ -994,139 +1072,145 @@
       }
       return Promise.resolve();
     };
-    let employeeValidatePassConfirm = async (rule, value) => {
+    let accountValidatePassConfirm = async (rule, value) => {
       if (value === "") {
-        if(!formState.employeeModal.id || (formState.employeeModal.id && formState.employeeModal.password !== '')){
+        if(!formState.accountModal.id || (formState.accountModal.id && formState.accountModal.password !== '')){
           return Promise.reject("비밀번호가 일치하지 않습니다");
         }
-      } else if (value !== formState.employeeModal.password) {
+      } else if (value !== formState.accountModal.password) {
         return Promise.reject("비밀번호가 일치하지 않습니다");
       } else {
         return Promise.resolve();
       }
     };
     //表单验证
-    const employeeRulesRef = reactive({
+    const accountRulesRef = reactive({
       username: [
         {
           required: true,
-          validator: employeeUserValidateName,
+          validator: accountValidateName,
           trigger: "blur"
         }
       ],
       password: [
         {
           required: true,
-          validator: employeeValidatePass,
+          validator: accountValidatePass,
           trigger: "blur"
         }
       ],
       password_confirm: [
         {
           required: true,
-          validator: employeeValidatePassConfirm,
+          validator: accountValidatePassConfirm,
           trigger: "blur"
         }
       ],
     });
-    //添加员工
-    const addEmployee = () => {
+    //添加账号
+    const addAccount = () => {
       let user = {
-        username: formState.employeeModal.username,
-        password: formState.employeeModal.password,
-        menu_id: formState.employeeModal.menu_id,
+        username: formState.accountModal.username,
+        password: formState.accountModal.password,
       };
-      if(formState.employeeModal.id){
-        user.id = formState.employeeModal.id;
+      let url = '/api/subAccount/set';
+      if(formState.modalType == 2){
+        user.menu_id = formState.accountModal.menu_id;
+        url = '/api/employee/set';
       }
-      formState.employeeModal.loading = true;
-      AuthRequest.post(process.env.VUE_APP_API_URL + '/api/employee/set', user).then((res) => {
+      if(formState.accountModal.id){
+        user.id = formState.accountModal.id;
+      }
+      formState.accountModal.loading = true;
+      AuthRequest.post(process.env.VUE_APP_API_URL + url, user).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
-          formState.employeeModal.loading = false;
+          formState.accountModal.loading = false;
           return false;
         }
         message.success(res.message);
-        formState.employeeModal.loading = false;
-        formState.employeeModal.open = false;
-        getEmployeeList();
+        formState.accountModal.activePanel = []
+        formState.accountModal.loading = false;
+        formState.accountModal.open = false;
+        formState.accountModal.password_visible = false;
+        formState.accountModal.password_confirm_visible = false;
+        addAccountRef.value.resetFields();
+        getAccountList();
       });
     };
-    //删除员工
-    const deleteEmployee = (id) =>{
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employee/del", { id }).then((res) => {
+    //删除账户
+    const deleteAccount = (id) =>{
+      let url = formState.modalType == 1 ? '/api/subAccount/del' : "/api/employee/del";
+      AuthRequest.post(process.env.VUE_APP_API_URL + url, { id }).then((res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
         }
         message.success(res.message);
-        getEmployeeList();
+        getAccountList();
       });
     }
     const updateParentCheck = (parentIndex) => {
-      console.log('updateParentCheck');
-      const parent = formState.employeeModal.menuList[parentIndex];
+      const parent = formState.accountModal.menuList[parentIndex];
       parent.checked = parent.child.every(child => child.checked); // 如果所有子项都选中，则父项选中
 
       // 如果至少一个子项被选中，则父项也选中
       if (parent.child.some(child => child.checked)) {
         parent.checked = true;
-        if (!formState.employeeModal.menu_id.includes(parent.id)) {
-          formState.employeeModal.menu_id.push(parent.id);
+        if (!formState.accountModal.menu_id.includes(parent.id)) {
+          formState.accountModal.menu_id.push(parent.id);
         }
       } else {
-        const parentIndexInMenuId = formState.employeeModal.menu_id.indexOf(parent.id);
+        const parentIndexInMenuId = formState.accountModal.menu_id.indexOf(parent.id);
         if (parentIndexInMenuId !== -1) {
-          formState.employeeModal.menu_id.splice(parentIndexInMenuId, 1);
+          formState.accountModal.menu_id.splice(parentIndexInMenuId, 1);
         }
       }
     };
 
     const handleParentCheck = (index, event) => {
-      console.log('点击了父菜单');
       event.stopPropagation();
-      const parent = formState.employeeModal.menuList[index];
+      const parent = formState.accountModal.menuList[index];
       parent.checked = !parent.checked;
       parent.child.forEach(child => {
         child.checked = parent.checked;
         if (child.checked) {
-          if (!formState.employeeModal.menu_id.includes(child.id)) {
-            formState.employeeModal.menu_id.push(child.id);
+          if (!formState.accountModal.menu_id.includes(child.id)) {
+            formState.accountModal.menu_id.push(child.id);
           }
         } else {
-          const childIndexInMenuId = formState.employeeModal.menu_id.indexOf(child.id);
+          const childIndexInMenuId = formState.accountModal.menu_id.indexOf(child.id);
           if (childIndexInMenuId !== -1) {
-            formState.employeeModal.menu_id.splice(childIndexInMenuId, 1);
+            formState.accountModal.menu_id.splice(childIndexInMenuId, 1);
           }
         }
       });
       // 更新父项在menu_id中的状态
       if (parent.checked) {
-        if (!formState.employeeModal.menu_id.includes(parent.id)) {
-          formState.employeeModal.menu_id.push(parent.id);
+        if (!formState.accountModal.menu_id.includes(parent.id)) {
+          formState.accountModal.menu_id.push(parent.id);
         }
       } else {
-        const parentIndexInMenuId = formState.employeeModal.menu_id.indexOf(parent.id);
+        const parentIndexInMenuId = formState.accountModal.menu_id.indexOf(parent.id);
         if (parentIndexInMenuId !== -1) {
-          formState.employeeModal.menu_id.splice(parentIndexInMenuId, 1);
+          formState.accountModal.menu_id.splice(parentIndexInMenuId, 1);
         }
       }
     };
 
     const handleChildCheck = (parentIndex, childIndex, event) => {
-      console.log('点击了子菜单');
       event.stopPropagation();
-      const parent = formState.employeeModal.menuList[parentIndex];
+      const parent = formState.accountModal.menuList[parentIndex];
       const child = parent.child[childIndex];
       child.checked = !child.checked;
       if (child.checked) {
-        if (!formState.employeeModal.menu_id.includes(child.id)) {
-          formState.employeeModal.menu_id.push(child.id);
+        if (!formState.accountModal.menu_id.includes(child.id)) {
+          formState.accountModal.menu_id.push(child.id);
         }
       } else {
-        const childIndexInMenuId = formState.employeeModal.menu_id.indexOf(child.id);
+        const childIndexInMenuId = formState.accountModal.menu_id.indexOf(child.id);
         if (childIndexInMenuId !== -1) {
-          formState.employeeModal.menu_id.splice(childIndexInMenuId, 1);
+          formState.accountModal.menu_id.splice(childIndexInMenuId, 1);
         }
       }
       updateParentCheck(parentIndex);
@@ -1232,31 +1316,31 @@
     .ant-upload-wrapper.ant-upload-picture-card-wrapper{
       margin-bottom: 0;
     }
-    .add-employee .ant-form-show-help{
+    .add-account .ant-form-show-help{
       display:block;
     }
-    .add-employee .ant-form-item-label{
+    .add-account .ant-form-item-label{
       height: fit-content;
     }
-    .add-employee .ant-collapse{
+    .add-account .ant-collapse{
       background: inherit;
     }
-    .add-employee .ant-collapse-header{
+    .add-account .ant-collapse-header{
       padding: 2px 16px!important;
     }
-    .add-employee .ant-collapse-content-box .ant-collapse-header{
+    .add-account .ant-collapse-content-box .ant-collapse-header{
       padding-left: 50px!important;
     }
-    .add-employee .ant-collapse-content-box{
+    .add-account .ant-collapse-content-box{
       padding: 2px 16px!important;
     }
-    .add-employee .ant-collapse-content{
+    .add-account .ant-collapse-content{
       border-top: 0!important;
     }
-    .add-employee .ant-collapse-item:not(:last-child){
+    .add-account .ant-collapse-item:not(:last-child){
       border-bottom: 0!important;
     }
-    .add-employee .ant-collapse-content-box .ant-collapse-item{
+    .add-account .ant-collapse-content-box .ant-collapse-item{
       height: 26px;
     }
 </style>
