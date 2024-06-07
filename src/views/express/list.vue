@@ -259,7 +259,7 @@
             <a-flex class="fs14 font-SCDream4">
               <a-input v-model:value="item['tracking_no']">
                   <template #addonAfter>
-                    <SettingOutlined @click="updateTracking(item, order['bridgeOrderId'])"/>
+                    <CheckOutlined @click="updateTracking(item, order['bridgeOrderId'])"/>
                   </template>
               </a-input>
             </a-flex>
@@ -366,7 +366,7 @@ import {computed, onBeforeUpdate, onMounted, reactive, ref, watch} from "vue";
 import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
 import moment from "moment";
-import { InfoCircleFilled,ExclamationCircleOutlined,SettingOutlined  } from '@ant-design/icons-vue';
+import { InfoCircleFilled,ExclamationCircleOutlined,CheckOutlined } from '@ant-design/icons-vue';
 import {useExpressApi} from "@/api/express";
 import Cookie from "js-cookie";
 import ExpressDetail from "@/views/express/components/ExpressDetail.vue";
@@ -647,6 +647,23 @@ const updateTracking = (item, bridgeOrderId) => {
   }).finally(() => {
     state.listLoading = false;
   });
+}
+
+const updateBridgeOrder = (item, bridgeOrderId) => {
+	useBridgeApi().updateBridgeOrder({...item, bridge_order_id: bridgeOrderId}).then((res) => {
+		if (res.status !== "2000") {
+			throw new Error('신청서 업데이트 실패');
+		}
+
+		message.success('신청서 업데이트 성공');
+
+	}).catch((e) => {
+		message.error(e.message);
+
+		return false;
+	}).finally(() => {
+		state.listLoading = false;
+	});
 }
 
 watch(() => state.modal.open, () => {
