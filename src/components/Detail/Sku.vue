@@ -146,6 +146,7 @@
             <a-button @click="showOptionPop" >옵션 수정</a-button>
             <a-button type="primary" @click="resetOption" class="reset">옵션정보 초기화</a-button>
           </a-space>
+          <SpecGroup ref="specGroupRef" :options="product.item_option" v-if="specGroupVisible" />
         </div>
       </div>
     </div>
@@ -335,11 +336,12 @@ import {message, Modal} from "ant-design-vue";
 import {defineComponent} from "vue";
 import {EditOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
+import SpecGroup from '@/components/Detail/Spec/SpecGroup.vue';
 
 
 export default defineComponent({
   name: "productDetailSku",
-  components: {ImageTranslateTools, QuestionCircleOutlined,EditOutlined},
+  components: {ImageTranslateTools, QuestionCircleOutlined,EditOutlined,SpecGroup},
 
   computed: {
     ...mapState({
@@ -413,7 +415,8 @@ export default defineComponent({
       item_price_change_value : 0,
       imageTranslateToolsVisible: false,
       translateImageList: [],
-      translateSkuCode: false
+      translateSkuCode: false,
+      specGroupVisible:true
     };
   },
 
@@ -743,7 +746,8 @@ export default defineComponent({
 
     showOptionPop() {
       // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModify = true 로 설정
-      this.$store.commit('product/setShowOptionModify', true)
+      this.$store.commit('product/setShowOptionModify', true);
+      this.$refs.specGroupRef.autoHeight();
     },
 
     // 옵션 초기화  (수집시 옵션으로)
