@@ -276,7 +276,7 @@ export default {
           }
         });
       });
-
+      this.autoHeight();
       this._setCheckBoxInit();
     },
     deleteSpecGroup(optionIndex) {
@@ -360,6 +360,7 @@ export default {
           }
         });
       });
+      this.autoHeight();
       this._setCheckBoxInit();
     },
     replaceSpecialChars() {
@@ -377,6 +378,7 @@ export default {
           }
         });
       });
+      this.autoHeight();
       this._setCheckBoxInit();
     },
 
@@ -395,6 +397,7 @@ export default {
         });
       });
 
+      this.autoHeight();
       this._setCheckBoxInit();
     },
 
