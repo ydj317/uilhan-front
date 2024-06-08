@@ -433,7 +433,7 @@ export default {
           }
         });
       });
-
+      this.autoHeight();
     },
     setBeforeOldOptionData() {
       if (this.isFirstLoad) {
