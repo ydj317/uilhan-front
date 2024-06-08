@@ -438,6 +438,7 @@ export default {
         return;
       }
       this.restoreInitialOptions();
+      this.autoHeight();
     },
 
     cutOptName(){
@@ -449,8 +450,10 @@ export default {
 
       this.options.forEach(option => {
         option.data.forEach(item => {
+          if (selectItems.includes(item.key)) {
             if (item.name.length > 25) {
               item.name = item.name.substring(0, 25);
+            }
           }
         });
       });
