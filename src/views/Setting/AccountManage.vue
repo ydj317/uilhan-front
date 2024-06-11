@@ -132,28 +132,28 @@
 
     </a-card>
     <!--     子账号表格  -->
-    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'" v-if="!member_pid">
-        <template #extra>
-            <a-button type="primary" @click="showAccountModal(0,1)">서브계정 등록</a-button>
-        </template>
-        <a-table :columns="columnsSubAccount" :data-source="formState.subAccountList" :scroll="formState.subAccountList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
-            <template #headerCell="{ column }">
-            </template>
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'action'">
-                    <a-button type="primary" class="mr20" @click="showAccountModal(record,1)">수정</a-button>
-                  <a-popconfirm
-                    title="삭제하시겠습니까?"
-                    ok-text="Yes"
-                    cancel-text="No"
-                    @confirm="deleteAccount(record.id)"
-                  >
-                    <a-button type="default">삭제</a-button>
-                  </a-popconfirm>
-                </template>
-            </template>
-        </a-table>
-    </a-card>
+<!--    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'" v-if="!member_pid">-->
+<!--        <template #extra>-->
+<!--            <a-button type="primary" @click="showAccountModal(0,1)">서브계정 등록</a-button>-->
+<!--        </template>-->
+<!--        <a-table :columns="columnsSubAccount" :data-source="formState.subAccountList" :scroll="formState.subAccountList.length > 10 ? { y: 650 } : null" bordered :pagination="false">-->
+<!--            <template #headerCell="{ column }">-->
+<!--            </template>-->
+<!--            <template #bodyCell="{ column, record }">-->
+<!--                <template v-if="column.key === 'action'">-->
+<!--                    <a-button type="primary" class="mr20" @click="showAccountModal(record,1)">수정</a-button>-->
+<!--                  <a-popconfirm-->
+<!--                    title="삭제하시겠습니까?"-->
+<!--                    ok-text="Yes"-->
+<!--                    cancel-text="No"-->
+<!--                    @confirm="deleteAccount(record.id)"-->
+<!--                  >-->
+<!--                    <a-button type="default">삭제</a-button>-->
+<!--                  </a-popconfirm>-->
+<!--                </template>-->
+<!--            </template>-->
+<!--        </a-table>-->
+<!--    </a-card>-->
   <!--     员工表格  -->
   <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'" v-if="!member_pid">
     <template #extra>
@@ -1117,6 +1117,10 @@
       if(formState.modalType == 2){
         user.menu_id = formState.accountModal.menu_id;
         url = '/api/employee/set';
+        if(!user.menu_id.length){
+          message.error('권한을 추가해주세요');
+          return false;
+        }
       }
       if(formState.accountModal.id){
         user.id = formState.accountModal.id;
@@ -1150,42 +1154,12 @@
         getAccountList();
       });
     }
-    const updateParentCheck = (parentIndex) => {
-      const parent = formState.accountModal.menuList[parentIndex];
-      parent.checked = parent.child.every(child => child.checked); // 如果所有子项都选中，则父项选中
-
-      // 如果至少一个子项被选中，则父项也选中
-      if (parent.child.some(child => child.checked)) {
-        parent.checked = true;
-        if (!formState.accountModal.menu_id.includes(parent.id)) {
-          formState.accountModal.menu_id.push(parent.id);
-        }
-      } else {
-        const parentIndexInMenuId = formState.accountModal.menu_id.indexOf(parent.id);
-        if (parentIndexInMenuId !== -1) {
-          formState.accountModal.menu_id.splice(parentIndexInMenuId, 1);
-        }
-      }
-    };
-
     const handleParentCheck = (index, event) => {
       event.stopPropagation();
       const parent = formState.accountModal.menuList[index];
       parent.checked = !parent.checked;
-      parent.child.forEach(child => {
-        child.checked = parent.checked;
-        if (child.checked) {
-          if (!formState.accountModal.menu_id.includes(child.id)) {
-            formState.accountModal.menu_id.push(child.id);
-          }
-        } else {
-          const childIndexInMenuId = formState.accountModal.menu_id.indexOf(child.id);
-          if (childIndexInMenuId !== -1) {
-            formState.accountModal.menu_id.splice(childIndexInMenuId, 1);
-          }
-        }
-      });
-      // 更新父项在menu_id中的状态
+
+      // 更新 menu_id 中的状态
       if (parent.checked) {
         if (!formState.accountModal.menu_id.includes(parent.id)) {
           formState.accountModal.menu_id.push(parent.id);
@@ -1203,6 +1177,8 @@
       const parent = formState.accountModal.menuList[parentIndex];
       const child = parent.child[childIndex];
       child.checked = !child.checked;
+
+      // 更新 menu_id 中的状态
       if (child.checked) {
         if (!formState.accountModal.menu_id.includes(child.id)) {
           formState.accountModal.menu_id.push(child.id);
@@ -1213,7 +1189,6 @@
           formState.accountModal.menu_id.splice(childIndexInMenuId, 1);
         }
       }
-      updateParentCheck(parentIndex);
     };
 
     const panelHeader = (item, index, parentIndex = null) => {
@@ -1228,8 +1203,6 @@
         h('span', { class: 'header-text' }, item.title)
       ]);
     };
-
-
 </script>
 <style>
     .user_form .ant-form-item {
