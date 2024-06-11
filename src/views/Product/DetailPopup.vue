@@ -1,21 +1,25 @@
 <template>
   <a-modal class="pro-detail" v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="true">
-    <a-tabs v-model:activeKey="activeKey"
-            :tabBarGutter="0"
-            type="card"
-    >
-      <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange">
-        <template #tab>
-          <div :style="{color: activeKey === pane.key ? '#ffffff' : '#000000'}">
-            {{pane.tab}}
-          </div>
-
-        </template>
-        <keep-alive>
-          <component :is="pane.component" v-show="activeKey === pane.key" style="height: calc(100vh - 180px);overflow-y: scroll" />
-        </keep-alive>
-      </a-tab-pane>
-    </a-tabs>
+    <div class="container">
+      <div class="tabs-wrapper">
+        <a-tabs v-model:activeKey="activeKey"
+                :tabBarGutter="0"
+                type="card"
+        >
+          <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange">
+            <template #tab>
+              <div :style="{color: activeKey === pane.key ? '#ffffff' : '#000000'}">
+                {{pane.tab}}
+              </div>
+            </template>
+            <keep-alive>
+              <component :is="pane.component" v-show="activeKey === pane.key" style="height: calc(100vh - 180px);overflow-y: scroll" />
+            </keep-alive>
+          </a-tab-pane>
+        </a-tabs>
+        <a-button class="item-id" type="primary" style="color: #2170df; border: 1px solid #2170df;" ghost  @click="copyItemId(product.item_id)">상품코드 : {{ product.item_id }} <CopyOutlined /></a-button>
+      </div>
+    </div>
     <template #footer>
       <div style="display: flex; justify-content: center">
         <a-button @click="onCancel">취소</a-button>
@@ -98,7 +102,7 @@
 <script>
 
 import { defineAsyncComponent, defineComponent, markRaw, ref } from "vue";
-import { AndroidOutlined,ProfileOutlined } from '@ant-design/icons-vue';
+import { AndroidOutlined,ProfileOutlined, CopyOutlined } from '@ant-design/icons-vue';
 import DefaultTab from "@/views/Product/Tab/DefaultTab.vue";
 import OptionTab from "@/views/Product/Tab/OptionTab.vue";
 import DetailInfoTab from "@/views/Product/Tab/DetailInfoTab.vue";
@@ -112,7 +116,9 @@ import {useUserApi} from "@/api/user";
 
 export default defineComponent({
   name: "productDetailPopup",
-
+  components: {
+    CopyOutlined,
+  },
   data() {
     return {
       activeKey: '1',
@@ -204,6 +210,15 @@ export default defineComponent({
   emits: ['update:visible'],
 
   methods: {
+    copyItemId : function(item_id) {
+      const el = document.createElement('textarea');
+      el.value = item_id;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      message.success('상품코드를 복사 하였습니다.');
+    },
 
     autoSave: throttle(async function() {
       message.success('자동 저장중...')
@@ -605,6 +620,23 @@ export default defineComponent({
       return true;
     },
 
+    checkWordCount(){
+      let itemOption = this.product.item_option;
+      let checkWordCountOk = true;
+      for (let i = 0; i < itemOption.length; i++) {
+        for (let j = 0; j < itemOption[i].data.length; j++){
+           if (itemOption[i].data[j].name.length > 25) {
+             checkWordCountOk = false
+           }
+        }
+
+      }
+      if(checkWordCountOk === false){
+        message.warning("옵션값은 25자 이내로 입력해 주세요.");
+      }
+      return checkWordCountOk;
+    },
+
     /**
      * 상품저장
      * @returns {boolean}
@@ -624,6 +656,11 @@ export default defineComponent({
       // 주문옵션 추가금액은 본 상품 판매가의 -50% ~ 50%까지 입력 가능
       let checkSellingPrice = this.checkSellingPrice();
       if (checkSellingPrice === false) {
+        this.product.loading = false;
+        return false;
+      }
+
+      if (this.checkWordCount() === false) {
         this.product.loading = false;
         return false;
       }
@@ -721,6 +758,12 @@ export default defineComponent({
       this.product.item_detail = sItemDetail;
 
       let sycnMarkets = []
+
+      if (this.checkWordCount() === false) {
+        this.product.loading = false;
+        return false;
+      }
+
       try {
         const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/get_sync_market", {
           'prd_id': this.product.item_id
@@ -905,5 +948,22 @@ export default defineComponent({
 
 .pro-detail .tox-tinymce{
   height:700px !important;
+}
+.container {
+  position: relative;
+}
+
+.tabs-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.item-id {
+  position: absolute;
+  right: 20px;
+  top: 1.3rem;
+  transform: translateY(-50%);
+  padding-left: 16px;
 }
 </style>

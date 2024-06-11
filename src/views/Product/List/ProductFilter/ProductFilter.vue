@@ -38,13 +38,13 @@
         <date-range v-model:start="searchParams.item_upd_start" v-model:end="searchParams.item_upd_end" />
       </div>
       <div>
-        <h3 style="font-weight: bold;">상품코드</h3>
+        <h3 style="font-weight: bold;">마켓상품코드</h3>
         <a-input v-model:value="searchParams.prd_code" style="width: 100%" placeholder="다중검색은 콤마,로 구분하세요." />
       </div>
 
       <div>
-        <h3 style="font-weight: bold;">품목코드</h3>
-        <a-input v-model:value="searchParams.item_no" style="width: 100%" placeholder="다중검색은 콤마,로 구분하세요." />
+        <h3 style="font-weight: bold;">유일상품코드</h3>
+        <a-input v-model:value="searchParams.prd_id" style="width: 100%" placeholder="다중검색은 콤마,로 구분하세요." />
       </div>
     </div>
   </a-modal>

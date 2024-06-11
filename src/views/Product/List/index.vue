@@ -1,86 +1,87 @@
 <template>
-  <FullPageLoading v-model:show="indicator" />
+  <FullPageLoading v-model:show="indicator"/>
   <div class="product-list-container">
-    <product-list-title />
+    <product-list-title/>
     <div class="action-tool" :class="{disabled: listLoading}">
       <div class="button-group">
         <a-checkbox :indeterminate="isSelectPart()" :checked="isSelectAll()" @change="toggleSelectAll"/>
         <a-button type="primary" @click="showFilter = true">필터</a-button>
         <a-divider type="vertical"/>
         <div><strong>선택한 상품</strong></div>
-        <btn-delete :delete-items="productList.filter(d => selection.includes(d.item_id))" />
+        <btn-delete :delete-items="productList.filter(d => selection.includes(d.item_id))"/>
         <btn-clone :selection="selection"></btn-clone>
         <a-button type="default" @click="MarketListPop">상품등록</a-button>
-        <btn-ai-replace v-if="userInfo?.user_data?.use_ai===true || userInfo?.user_data?.use_ai==='true'" :selection="selection"></btn-ai-replace>
+        <btn-ai-replace v-if="userInfo?.user_data?.use_ai===true || userInfo?.user_data?.use_ai==='true'"
+                        :selection="selection"></btn-ai-replace>
       </div>
       <div class="search">
         <a-input-search
-          v-model:value="searchParams.keyword"
-          placeholder="검색어를 입력하세요" enter-button="검색" style="width: 300px"
-          @search="searchByKeyword"
+            v-model:value="searchParams.keyword"
+            placeholder="상품명을 입력하세요" enter-button="검색" style="width: 300px"
+            @search="searchByKeyword"
         />
       </div>
     </div>
-    <product-filter v-model:is-show="showFilter" @search="searchByFilter" />
+    <product-filter v-model:is-show="showFilter" @search="searchByFilter"/>
     <a-spin size="large" :spinning="listLoading">
       <div class="product-list">
         <product-item
-          v-for="(product,key) in productList"
-          :key="key"
-          :product="product"
-          :selected="isSelect(product.item_id)"
-          :market-detail-urls="marketDetailUrls"
-          @select="() => toggleSelect(product.item_id)"
-          @detail="openDetailPopup"
-          @memo="editPrdMemo(product)"
-          @send="sendMarketSingle(product)"
+            v-for="(product,key) in productList"
+            :key="key"
+            :product="product"
+            :selected="isSelect(product.item_id)"
+            :market-detail-urls="marketDetailUrls"
+            @select="() => toggleSelect(product.item_id)"
+            @detail="openDetailPopup"
+            @memo="editPrdMemo(product)"
+            @send="sendMarketSingle(product)"
         />
       </div>
     </a-spin>
     <a-pagination
-      :disabled="listLoading"
-      style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 15px;"
-      v-model:current="searchParams.page"
-      v-model:page-size="searchParams.limit"
-      show-size-changer
-      @show-size-change="onChangeLimit"
-      @change="onChangePage"
-      :total="searchCount"
-      :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
+        :disabled="listLoading"
+        style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 15px;"
+        v-model:current="searchParams.page"
+        v-model:page-size="searchParams.limit"
+        show-size-changer
+        @show-size-change="onChangeLimit"
+        @change="onChangePage"
+        :total="searchCount"
+        :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
     />
   </div>
   <MarketList
-    v-model:show="MarketListVisible"
-    :smart-store-category="smartStoreCategory"
-    :options="options"
-    :product-list="productList"
-    :selection="selection"
-    @result="showSyncResult"
+      v-model:show="MarketListVisible"
+      :smart-store-category="smartStoreCategory"
+      :options="options"
+      :product-list="productList"
+      :selection="selection"
+      @result="showSyncResult"
   />
   <modal-single-sync
-    v-model:show="singleSyncPop"
-    :product="singleDetail"
-    :smart-store-category="smartStoreCategory"
-    @result="showSyncResult"
-    @close="clearSingleSendData"
+      v-model:show="singleSyncPop"
+      :product="singleDetail"
+      :smart-store-category="smartStoreCategory"
+      @result="showSyncResult"
+      @close="clearSingleSendData"
   />
   <modal-sync-result
-    :sync-result="syncResult"
-    v-model:show="syncResult.marketSyncPop"
-    @close="closeSyncResult"
-    @search-fail="searchFail"
+      :sync-result="syncResult"
+      v-model:show="syncResult.marketSyncPop"
+      @close="closeSyncResult"
+      @search-fail="searchFail"
   />
   <DetailPopup
-    :visible="showDetail"
-    @update:visible="handleUpdateVisible"
-    :prdId="detailPrd"
-    :active-tab="detailActive"
+      :visible="showDetail"
+      @update:visible="handleUpdateVisible"
+      :prdId="detailPrd"
+      :active-tab="detailActive"
   />
-  <ModalMemo v-model:memo-data="memoForm" @before-save="indicator = true" @after-save="reloadList" />
+  <ModalMemo v-model:memo-data="memoForm" @before-save="indicator = true" @after-save="reloadList"/>
 </template>
 
 <script setup>
-import {onMounted, provide, ref} from "vue";
+import {onMounted, provide, reactive, ref} from "vue";
 import {useMarketApi} from "@/api/market";
 import {useUserInfo} from "@/hooks/useUserInfo";
 import {useSelection} from "@/hooks/useSelection";
@@ -100,6 +101,8 @@ import ModalMemo from "@/views/Product/List/Ctrls/ModalMemo.vue";
 import {useCategoryApi} from "@/api/category";
 import ModalSingleSync from "@/views/Product/List/ModalSingleSync/ModalSingleSync.vue";
 import ModalSyncResult from "@/views/Product/List/ModalSyncResult/ModalSyncResult.vue";
+import Cookie from "js-cookie";
+import {EventSourcePolyfill} from "event-source-polyfill";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 
@@ -113,11 +116,12 @@ const detailPrd = ref(0)
 const detailActive = ref('1')
 const searchParams = ref(ServiceProduct.getCacheParams())
 const productList = ref([])
+const transImagePrdList = ref([])
 const searchCount = ref(0)
 const totalCount = ref(0)
 const {userInfo} = useUserInfo({}, checkUserPermission)
 const {selection, resetList, isSelect, isSelectAll, isSelectPart, toggleSelect, toggleSelectAll} = useSelection([])
-const memoForm = ref({ show: false, item_id: -1, memo: '' })
+const memoForm = ref({show: false, item_id: -1, memo: ''})
 const options = ref([])    // 用于登录商品
 const MarketListVisible = ref(false)  // 是否显示批量登录商品弹窗
 const singleSyncPop = ref(false)    // 是否显示登录单个商品弹窗
@@ -132,6 +136,7 @@ const defaultSyncResult = {
   marketSyncFailedCode: "",
 }
 const syncResult = ref({...defaultSyncResult})
+let imageTransStateEvent = null;
 
 provide('search', {searchParams})
 
@@ -168,6 +173,8 @@ async function getList() {
   indicator.value = false // 当显示 list loading, 则不需要显示全局 loading
   listLoading.value = true
   return ServiceProduct.getList({...searchParams.value}).then((res) => {
+    // item_image_trans_status 가 P 혹은  W 인 값들만 빼옴
+    transImagePrdList.value = res.data.list.filter(d => d.item_image_trans_status === 'P' || d.item_image_trans_status === 'W')
     productList.value = res.data.list;
     searchParams.value.page = parseInt(res.data.page);
     searchParams.value.limit = parseInt(res.data.limit);
@@ -178,7 +185,80 @@ async function getList() {
     resetList(productList.value.map(d => d['item_id']))
   }).finally(() => {
     listLoading.value = false
+    // 번역중 혹은 대기 상태인 상품이 있을경우 sse 열어줌
+    if (transImagePrdList.value.length !== 0) {
+      getImageTransStatusConnectSSE();
+    }
   })
+}
+
+// 자동 이미지 번역 상태 업데이트 SSE
+function getImageTransStatusConnectSSE() {
+  if (!window.EventSource) {
+    console.log('Your browser does not support server-sent events');
+    return false;
+  }
+
+  // url 조합
+  let url = process.env.VUE_APP_API_URL + "/api/prd/transImageStatus"
+  if (Cookie.get('XDEBUG_SESSION')) {
+    url += '?XDEBUG_SESSION_START=PHPSTORM' + "&prd_ids=" + JSON.stringify({ids: transImagePrdList.value.map(d => d.item_id)});
+  } else {
+    url += "?prd_ids=" + JSON.stringify({ids: transImagePrdList.value.map(d => d.item_id)})
+  }
+
+  const headers = {token: Cookie.get("token")}
+  if (!imageTransStateEvent || imageTransStateEvent.readyState === imageTransStateEvent.CLOSED) {
+    imageTransStateEvent = new EventSourcePolyfill(url, {
+      headers: headers
+    });
+  }
+
+  imageTransStateEvent.onopen = () => {
+    console.log('SSE connection opened');
+  };
+
+  // 결과 받고 업데이트
+  imageTransStateEvent.onmessage = (e) => {
+    const resultData = JSON.parse(e.data)
+    if (resultData.code !== '2000') {
+      return false;
+    }
+    // data.data 와 productList.value item_image_trans_status 업데이트
+    if (resultData.data.length > 0) {
+      for (let i = 0; i < productList.value.length; i++) {
+        const item = productList.value[i]
+        if (transImagePrdList.value.find(d => d.item_id === item.item_id)) {
+          productList.value[i].item_image_trans_status = resultData.data.find(d => d.item_id === item.item_id).item_image_trans_status
+        }
+      }
+
+      let bComplete = true;
+      // resultData.data 를 루프하여 P 혹은 W 상태가 있으면 bComplete = false
+      for (let i = 0; i < resultData.data.length; i++) {
+        if (resultData.data[i].item_image_trans_status === 'P' || resultData.data[i].item_image_trans_status === 'W') {
+          bComplete = false;
+          break;
+        }
+      }
+      if (bComplete) {
+        console.log('image trans complete and close SSE');
+        imageTransStateEvent.close();
+      }
+    }
+
+    if (resultData.action === 'close') {
+      console.log('SSE connection closed');
+      imageTransStateEvent.close();
+    }
+  };
+
+// 에러
+  imageTransStateEvent.onerror = (e) => {
+    console.log('error', e)
+    console.log('SSE connection closed');
+    imageTransStateEvent.close();
+  };
 }
 
 function onChangePage(page) {
@@ -260,6 +340,7 @@ async function getMarketList() {
     return false;
   });
 }
+
 async function getMarketDetailUrls() {
   await useMarketApi().getMarketDetailUrls({}).then((res) => {
     if (res.status !== "2000") {
@@ -313,6 +394,7 @@ const handleUpdateVisible = () => {
   flex-direction: column;
   gap: 10px;
 }
+
 .product-list {
   padding: 20px;
   display: grid;
@@ -322,6 +404,7 @@ const handleUpdateVisible = () => {
   width: 100%;
   min-height: 310px;
 }
+
 .action-tool {
   display: flex;
   justify-content: space-between;

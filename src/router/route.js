@@ -8,7 +8,9 @@ import {
     LayoutOutlined,
     ShoppingCartOutlined,
     BellOutlined,
-    RobotOutlined
+    RobotOutlined,
+    ReadOutlined,
+    AppstoreOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -223,18 +225,18 @@ export const menus = [{
                         icon: ''
                     },
                 },
-                {
-                    path: "/user/manage",
-                    name: "user_manage",
-                    component: () => import("@/views/User/Manage"),
-                    meta: {
-                        title: "이미지 번역 회수",
-                        isHide: false,
-                        roles: ["ROLE_ADMIN"],
-                        icon: '',
-                        ids: ["jwli"],
-                    }
-                },
+                // {
+                //     path: "/user/manage",
+                //     name: "user_manage",
+                //     component: () => import("@/views/User/Manage"),
+                //     meta: {
+                //         title: "이미지 번역 회수",
+                //         isHide: false,
+                //         roles: ["ROLE_ADMIN"],
+                //         icon: '',
+                //         ids: ["jwli"],
+                //     }
+                // },
                 {
                     path: "/board/list",
                     name: "board_list",
@@ -272,6 +274,18 @@ export const menus = [{
                 },
 
             ]
+        },
+        {
+            path: "/product/domeggook",
+            name: "prd_domeggook",
+            component: () => import("@/views/Product/Domeggook"),
+            meta: {
+                title: "도매꾹",
+                isHide: false,
+                roles: [],
+                ids: ["jwli"],
+                icon: AppstoreOutlined,
+            },
         },
         {
             path: "/board/notice",
@@ -328,18 +342,7 @@ export const menus = [{
                 },
             ]
         },
-        // {
-        //     path: "/product/domeggook",
-        //     name: "prd_domeggook",
-        //     component: () => import("@/views/Product/Domeggook"),
-        //     meta: {
-        //         title: "도매꾹",
-        //         isHide: false,
-        //         roles: [],
-        //         ids: ["jwli", "haeju"],
-        //         icon: AppstoreOutlined,
-        //     },
-        // },
+
         // {
         //     path: "/product/vvic",
         //     name: "product_vvic",
@@ -464,6 +467,17 @@ export const menus = [{
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: GiftOutlined
+            },
+        },
+        {
+            path: "https://classic-radium-bbe.notion.site/AI-712da71f7fdb45a5a0b7b78e0215772d",
+            name: "guide",
+            meta: {
+                title: "사용자 가이드",
+                isHide: false,
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
+                icon: ReadOutlined,
+                active: false
             },
         }
     ]

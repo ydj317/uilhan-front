@@ -368,8 +368,7 @@ export default defineComponent({
       }
 
       this.requestIds = [this.selectedCollection.request_id ?? ''];
-      console.log(this.requestIds);
-      if(!this.requestIds.length || this.requestIds[0] == ''){
+      if(!this.requestIds.length || this.requestIds[0] === ''){
         message.info("이미지 번역/편집툴 초기화 실패! 관리자와 연락해 주세요.");
         return false;
       }
@@ -392,23 +391,6 @@ export default defineComponent({
       this.localTranslateImageList[index].checked = !element.checked;
     },
 
-    // 최초 번역 남은 회수 조회
-    getRecharge() {
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/getrecharge").then(
-        (res) => {
-          if (res.status !== "2000" || res.data === undefined) {
-            message.error(res.message);
-            return false;
-          }
-
-          try {
-            this.product.recharge = res.data.recharge;
-          } catch (e) {
-            message.error("남은회수 호출 실패");
-          }
-        }
-      );
-    },
     onSubmit() {
       this.$emit("update:translateImageList", this.localTranslateImageList);
       this.$emit("update:visible", false);
@@ -470,10 +452,6 @@ export default defineComponent({
 
       return true;
     },
-  },
-
-  mounted() {
-    this.getRecharge();
   },
 
   watch: {

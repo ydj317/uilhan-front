@@ -332,7 +332,7 @@ import {mapState} from "vuex";
 import {lib} from "@/util/lib";
 import {cloneDeep, forEach} from "lodash";
 import {message, Modal} from "ant-design-vue";
-import {defineComponent} from "vue";
+import {defineComponent, nextTick} from "vue";
 import {EditOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 
@@ -413,7 +413,8 @@ export default defineComponent({
       item_price_change_value : 0,
       imageTranslateToolsVisible: false,
       translateImageList: [],
-      translateSkuCode: false
+      translateSkuCode: false,
+      specGroupVisible:true
     };
   },
 
@@ -743,7 +744,22 @@ export default defineComponent({
 
     showOptionPop() {
       // D:\xampp81\htdocs\worldlink-front\src\store\modules\product.js 의  showOptionModify = true 로 설정
-      this.$store.commit('product/setShowOptionModify', true)
+      this.$store.commit('product/setShowOptionModify', true);
+
+      const repeats = document.getElementsByClassName("repeat");
+      for (const el of repeats) {
+        el.style.height = "auto";
+      }
+      nextTick(() => {
+        let maxHeight = 0;
+        const repeats = document.getElementsByClassName("repeat");
+        for (const el of repeats) {
+          maxHeight = Math.max(el.clientHeight, maxHeight);
+        }
+        for (const el of repeats) {
+          el.style.height = maxHeight + "px";
+        }
+      });
     },
 
     // 옵션 초기화  (수집시 옵션으로)

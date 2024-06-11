@@ -76,8 +76,8 @@
             <span>수익률 설정</span>
             <a-tooltip>
               <template #title>
-                <div class="mb10">내가 남기고 싶은 수익률을 기입해주세요!</div>
-                <div>원가 + (원가환율)*(카드수수료+퍼센트수익)+최소 수익 + 해외배송비 • 알리익스프레스의 경우 별도로 해외배송비용이 없음</div>
+                <div class="mb10">원가X환율 + (원가X환율)*(카드수수료+퍼센트수익)+최소 수익 + 해외배송비</div>
+                <div>알리익스프레스의 경우 별도로 해외배송비용이 없습니다.</div>
               </template>
               <QuestionCircleOutlined/>
             </a-tooltip>

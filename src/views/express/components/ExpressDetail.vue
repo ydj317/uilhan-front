@@ -6,7 +6,8 @@
 		:footer="null"
 		v-model:open="visible"
 	>
-		<a-flex>
+    <div style="padding: 0 200px; height: calc(100vh - 100px) ;overflow-y: scroll; margin-right: 20px;">
+    <a-flex>
 			<span class="fs18 fw">배대지 신청 현황 정보</span>
 		</a-flex>
 
@@ -44,7 +45,7 @@
 				<a-descriptions-item label="택배사">
 <!--				下划线	bottom-border-f0f0f0 -->
 <!--					<div class="row-content m10">-->
-						{{state.bridgeOrderDetail['items'][0]['ctrSeq'] === '인천1 해운' ? '한진택배' : 'CJ대한통운'}}
+						{{state.bridgeOrderDetail['ctrSeq'] === '인천1 해운' ? '한진택배' : 'CJ대한통운'}}
 <!--					</div>-->
 				</a-descriptions-item>
 				<a-descriptions-item label="송장번호" :contentStyle="{color:'#2071E1'}">
@@ -133,12 +134,26 @@
 				<div class="bg-fafafa fw w20 fl-tc pl20">상품 URL</div>
 				<div class="w75 fl-tc pl20">{{item['prdUrl'] ?? ''}}</div>
 			</a-flex>
+
+			<a-flex class="mt40" v-if="item['bridge_order_images']">
+				<span class="fs18 fw">입고상품 검수 이미지</span>
+			</a-flex>
+
+			<a-flex class="mt25 top-border-000 bottom-border-f0f0f0 fl-tc" v-if="item['bridge_order_images']">
+				<div class="fs14 bg-fafafa mr40 h90 fl-cc fw" style="width: 180px;">검수 이미지</div>
+				<span v-for="(url, index) in item['bridge_order_images']" :key="index">
+					<img :src="url" class="br5 mr15" width="70" height="70" alt="">
+				</span>
+			</a-flex>
+			<a-flex class="fs12 mt10 color-bababa">
+				상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요
+			</a-flex>
 		</a-flex>
 		</span>
 		<a-flex vertical>
 			<a-descriptions title="세관신고 금액정보" :column="2" bordered class="mt40"  :label-style="{width:'20%'}" :content-style="{width:'30%'}">
 				<a-descriptions-item label="총 수량">{{state.totalCount}}</a-descriptions-item>
-				<a-descriptions-item label="총 금액 (위안)">{{state.totalAmount}}</a-descriptions-item>
+				<a-descriptions-item label="총 금액 (위안)">¥ {{state.totalAmount}}</a-descriptions-item>
 			</a-descriptions>
 			<a-flex vertical class="fs12 mt10 color-bababa">
 				<span style="color: #F9443E">*달러 금액은 환율 변동에 따라 변경이 있을 수 있으며 문제 발생 시 책임지지 않습니다.</span>
@@ -159,20 +174,6 @@
 				<a-descriptions-item label="물류 요청사항">{{state.bridgeOrderDetail['req2']}}</a-descriptions-item>
 			</a-descriptions>
 		</a-flex>
-
-<!--		<a-flex class="mt40">-->
-<!--			<span class="fs18 fw">입고상품 검수 이미지</span>-->
-<!--		</a-flex>-->
-
-<!--		<a-flex class="mt25 top-border-000 bottom-border-f0f0f0 fl-tc">-->
-<!--			<div class="fs14 bg-fafafa mr40 h90 fl-cc fw" style="width: 180px;">검수 이미지</div>-->
-<!--			<img src="@/assets/img/express-success.png" class="br5 mr15" width="70" height="70">-->
-<!--			<img src="@/assets/img/express-fail.png" class="br5 mr15" width="70" height="70">-->
-<!--			<img src="@/assets/img/express-ing.png" class="br5" width="70" height="70">-->
-<!--		</a-flex>-->
-<!--		<a-flex class="fs12 mt10 color-bababa">-->
-<!--			상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요-->
-<!--		</a-flex>-->
 
 <!--		<a-flex class="mt40">-->
 <!--			<span class="fs14 fw">결제정보</span>-->
@@ -223,23 +224,23 @@
 		<div style="display: flex; justify-content: center">
 			<a-button class="m10" @click="visible = false">닫기</a-button>
 		</div>
+    </div>
 	</a-modal>
 
 	<a-modal
 		v-model:open="state.historyModal"
 		:closable="true"
 		cancelText="닫기"
-		width="560px"
+		width="800px"
 		class="modal-wrap"
 		:footer="null"
 	>
 		<template #title>
-			<a-flex align="center" justify="space-between">
-				<div class="fw fs16">배송 히스토리</div>
-			</a-flex>
-			<a-flex vertical class="mt20">
-				<div><strong>주문번호</strong></div>
-				<div><strong>주문번호</strong></div>
+			<a-flex vertical>
+				<a-descriptions title="배송 히스토리" :column="2" bordered class="mt40" :label-style="{width:'30%'}" :content-style="{width:'70%'}">
+					<a-descriptions-item label="변경시간">{{state.bridgeOrderDetail['updDate']}}</a-descriptions-item>
+					<a-descriptions-item label="주문상태">{{state.bridgeOrderDetail['bridgeOrderStatus']}}</a-descriptions-item>
+				</a-descriptions>
 			</a-flex>
 		</template>
 	</a-modal>
@@ -286,7 +287,7 @@ const setTotal = (items, type) => {
 		count: 'quantity'
 	}
 	if (Array.isArray(items)) {
-		items.forEach(item => total += item[typeByKey[type]] ?? 0);
+		items.forEach(item => total += Number(item[typeByKey[type]]) ?? 0);
 	}
 
 	return total;
@@ -359,7 +360,7 @@ watchEffect(() => {
 	margin-top: 40px;
 }
 .expressForm .ant-modal-content{
-	padding: 65px 150px;
+	padding: 50px 20px;
 	height: auto;
 	min-height: 100vh;
 }
