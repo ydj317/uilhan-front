@@ -231,17 +231,16 @@
 		v-model:open="state.historyModal"
 		:closable="true"
 		cancelText="닫기"
-		width="560px"
+		width="800px"
 		class="modal-wrap"
 		:footer="null"
 	>
 		<template #title>
-			<a-flex align="center" justify="space-between">
-				<div class="fw fs16">배송 히스토리</div>
-			</a-flex>
-			<a-flex vertical class="mt20">
-				<div><strong>주문번호</strong></div>
-				<div><strong>주문번호</strong></div>
+			<a-flex vertical>
+				<a-descriptions title="배송 히스토리" :column="2" bordered class="mt40" :label-style="{width:'30%'}" :content-style="{width:'70%'}">
+					<a-descriptions-item label="변경시간">{{state.bridgeOrderDetail['updDate']}}</a-descriptions-item>
+					<a-descriptions-item label="주문상태">{{state.bridgeOrderDetail['bridgeOrderStatus']}}</a-descriptions-item>
+				</a-descriptions>
 			</a-flex>
 		</template>
 	</a-modal>

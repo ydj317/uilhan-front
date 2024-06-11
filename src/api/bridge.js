@@ -52,6 +52,14 @@ export function useBridgeApi() {
                 method: "POST",
                 data,
             });
+        },
+
+        updateBridgeOrder: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/bridge/update",
+                method: "POST",
+                data,
+            });
         }
     }
 }
