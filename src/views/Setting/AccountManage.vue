@@ -1,7 +1,7 @@
 <template>
 
 	<BindBridge @formUpdated="handleFormUpdate"/>
-    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
+    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'" v-if="!member_pid">
 
         <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
                 @finish="onFinish" @finishFailed="onFinishFailed">
@@ -132,7 +132,7 @@
 
     </a-card>
     <!--     子账号表格  -->
-    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'">
+    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'" v-if="!member_pid">
         <template #extra>
             <a-button type="primary" @click="showAccountModal(0,1)">서브계정 등록</a-button>
         </template>
@@ -155,7 +155,7 @@
         </a-table>
     </a-card>
   <!--     员工表格  -->
-  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'">
+  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'" v-if="!member_pid">
     <template #extra>
       <a-button type="primary" @click="showAccountModal(0,2)">계정 등록</a-button>
     </template>
@@ -310,7 +310,7 @@
 
 	  import "vue-loading-overlay/dist/vue-loading.css";
     import Loading from "vue-loading-overlay";
-
+    const member_pid = Cookie.get("member_pid") == 0 ? false : true;
     const formState = reactive({
         username: "",
         //[필수] 사용자명/사업자명

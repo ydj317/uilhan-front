@@ -22,10 +22,11 @@ const router = createRouter({
 export function setFilterRouteList() {
   const userInfosRoles = Cookie.get('member_roles') ? Cookie.get('member_roles').split(',') : [];
   const userInfosIds = Cookie.get('member_name') ? [Cookie.get('member_name')] : [];
-  const employeeMenus = Cookie.get('employee_menu_names') ? Cookie.get('employee_menu_names') : [];
+  const employeeMenus = Cookie.get('employee_menu_names') ? Cookie.get('employee_menu_names').split(',') : [];
   // console.log('userInfosRoles',userInfosRoles);
   // console.log('userInfosIds',userInfosIds);
   // console.log('menus[0].children',menus[0].children);
+  // console.log('employee_menu_names',employeeMenus);
   const FilterRoutes = setFilterHasRolesMenu(menus[0].children, userInfosRoles, userInfosIds,employeeMenus);
   const defaultRoutes = [{
     path: "/",

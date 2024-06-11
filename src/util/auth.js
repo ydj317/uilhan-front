@@ -25,7 +25,7 @@ export function isLogin() {
     return false;
   }
 
-  roles = roles.split(',');
+  roles = roles ? roles.split(',') : '';
   if (Array.isArray(roles) === false || roles.length === 0) {
     return false;
   }

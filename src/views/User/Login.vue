@@ -134,22 +134,39 @@ export default defineComponent({
 
         // 아이디 저장하기
         tempSave();
-        //获取员工菜单
-        AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employee/userInfo", {}).then((res2) => {
+        //管理者+子账号+员工账号
+        AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/list", {}).then((res2) => {
           if (res2.status !== "2000") {
-            message.error(res.message);
+            message.error(res2.message);
             return false;
           }
-          if(res2.data.id){
-            Cookie.set('employee_id', res2.data.id);
-            Cookie.set('employee_name', res2.data.name);
-            Cookie.set('employee_menu_names', res2.data.menu_names);
+          Cookie.set('account_list', JSON.stringify(res2.data.accountList));
+          Cookie.set('member_pid', res2.data.pid);
+          let goUrl = '/dashboard';
+          if(res2.data.employee){
+            Cookie.set('employee_name', res2.data.employee.username);
+            Cookie.set('employee_menu_names', res2.data.employee.menu_names);
+            //显示员工第一个有权限的菜单
+            for (const val of res2.data.employee.menu_names) {
+              if(val == 'product'){
+                goUrl = '/product';
+                break;
+              }
+              if(val == 'order_list'){
+                goUrl = '/order/list';
+                break;
+              }
+              if(val == 'express_list'){
+                goUrl = '/express/list';
+                break;
+              }
+            }
           }
           Cookie.set('member_name', res.data.member_name);
           Cookie.set('member_roles', res.data.member_roles);
           const menuList = setFilterRouteList();
           router.addRoute(menuList[0])
-          router.push("/dashboard");
+          router.push(goUrl);
           loading.value = false;
           return false;
         });
