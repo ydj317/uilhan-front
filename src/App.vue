@@ -2,6 +2,7 @@
   <a-config-provider :theme="{
       token: {
         colorPrimary: '#ffd117',
+        fontFamily: 'SCDream4',
         //colorPrimaryBg: '#ffd117',
       },
     }">
