@@ -239,6 +239,9 @@ async function loadSyncInfo() {
 }
 
 .market-code .anticon{
-  position:absolute;top:0;right:48px;
+  position:absolute;
+  top:-2px;
+  right:43px;
+  opacity:0.5;
 }
 </style>
