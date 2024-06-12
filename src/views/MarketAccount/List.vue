@@ -35,8 +35,8 @@
                 :pagination="false" bordered :row-class-name="(_record, index) => (_record.total && !auth ? 'bg-f0f0f0' : '')">
                 <a-table-column title="마켓" dataIndex="marketCode" key="marketCode" align="center">
                     <template #customRender="scope, record, index">
-                      <img :src="getLogoSrc('market-logo', scope.record.marketCode)" alt="" class="mr10" style="width: 20px;height: 20px">
-                      <span>{{scope.record.marketCode}}</span>
+                      <img :src="getLogoSrc('market-logo', scope.record.marketCode)" alt="" class="mr10" style="width: 25px;height: 25px;">
+<!--                      <span>{{scope.record.marketCode}}</span>-->
                     </template>
                 </a-table-column>
                 <a-table-column title="마켓ID" dataIndex="sellerId" key="sellerId" align="center"/>
