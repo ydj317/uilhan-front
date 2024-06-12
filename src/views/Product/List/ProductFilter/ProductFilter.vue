@@ -54,11 +54,26 @@
 import {inject, toRefs} from "vue";
 import DateRange from "@/views/Product/List/ProductFilter/DateRange.vue";
 import {ServiceProduct} from "@/services/product/ServiceProduct";
+import {onBeforeRouteLeave} from "vue-router";
 
 const props = defineProps(['isShow'])
 const emit = defineEmits(['update:isShow', 'search'])
 const {isShow} = toRefs(props)
 const {searchParams} = inject('search')
+
+// 상품페이지 나갈때 초기화
+onBeforeRouteLeave((to, from) => {
+  if (from.name === 'product') {
+    // 如果不直接提交，应该按下面的处理
+    const defaultParams = ServiceProduct.defaultParams()
+    // 保留分页信息，避免filter没有提交的情况下影响当前的 page 信息
+    defaultParams.page = searchParams.value.page
+    defaultParams.limit = searchParams.value.limit
+    // 保留商品名搜索的内容，提交时才清空。
+    searchParams.value = defaultParams
+    emit('search')
+  }
+})
 
 function resetParams() {
   // 清空所有搜索条件, 但保留 limit

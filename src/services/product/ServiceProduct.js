@@ -7,7 +7,7 @@ const KEY_PRD_LIST_PARAMS = "KEY_PRD_LIST_PARAMS";
 export class ServiceProduct {
   /**
    * 列表搜索的默认参数
-   * @return {{search_value: string, date_type: string, search_key: string, end_time: string, item_upd_end: string, market_code: string, item_sync_end: string, item_upd_start: string, item_no: string, start_time: string, item_ins_start: string, item_ins_end: string, item_sync_start: string, prd_code: string, limit: number, sync_status: string, page: number, keyword: string}}
+   * @return {{search_value: string, date_type: string, search_key: string, end_time: string, item_upd_end: string, market_code: string, item_sync_end: string, item_upd_start: string, prd_id: string, start_time: string, item_ins_start: string, item_ins_end: string, item_sync_start: string, prd_code: string, limit: number, sync_status: string, page: number, keyword: string}}
    */
   static defaultParams() {
     return {
@@ -31,7 +31,7 @@ export class ServiceProduct {
       item_upd_start: '',   // 수정조회 (日期)
       item_upd_end: '',     // 수정조회 (日期)
       prd_code: '',         // 상품코드
-      item_no: '',          // 품목코드
+      prd_id: '',          // 유일상품코드
       keyword: '',          // 右侧快捷搜索
 
       page: 1,
