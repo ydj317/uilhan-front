@@ -71,7 +71,7 @@ onBeforeRouteLeave((to, from) => {
     defaultParams.limit = searchParams.value.limit
     // 保留商品名搜索的内容，提交时才清空。
     searchParams.value = defaultParams
-    emit('search')
+    ServiceProduct.setCacheParams(searchParams.value)
   }
 })
 
