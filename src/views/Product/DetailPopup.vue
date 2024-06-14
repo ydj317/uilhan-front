@@ -1,12 +1,13 @@
 <template>
-  <a-modal class="pro-detail" v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="true">
+  <a-modal class="pro-detail" v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="true"  @cancel="handleCancel">
     <div class="container">
       <div class="tabs-wrapper">
         <a-tabs v-model:activeKey="activeKey"
                 :tabBarGutter="0"
                 type="card"
+                @change="handleTabChange"
         >
-          <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange">
+          <a-tab-pane v-for="pane in tabList" :key="pane.key">
             <template #tab>
               <div :style="{color: activeKey === pane.key ? '#ffffff' : '#000000'}">
                 {{pane.tab}}
@@ -110,7 +111,7 @@ import {lib} from "@/util/lib";
 import {message} from "ant-design-vue";
 import {AuthRequest} from "@/util/request";
 import { mapState} from "vuex";
-import {throttle} from "lodash";
+import {throttle,debounce} from "lodash";
 import {useCategoryApi} from "@/api/category";
 import {useUserApi} from "@/api/user";
 
@@ -221,8 +222,6 @@ export default defineComponent({
     },
 
     autoSave: throttle(async function() {
-      message.success('자동 저장중...')
-
       let oForm = new FormData();
       oForm = this.getForm(oForm);
 
@@ -231,11 +230,14 @@ export default defineComponent({
         message.error(res.message);
         return false;
       }
-
-      message.success('자동 저장 성공')
-    }, 5000, {
-      leading: false
-    }),
+      this.lastSaveTime = new Date().getTime();
+      this.showMessage();
+      return true;
+    }, 1000, { leading: true, trailing: false }),
+    showMessage: debounce(function() {
+      if (new Date().getTime() - this.lastSaveTime < 1000) return;
+      message.success('자동 저장 성공');
+    }, 1000),
 
     closeResultPop() {
       this.singleSyncPop = false;
@@ -293,9 +295,13 @@ export default defineComponent({
       }
     },
 
+    handleCancel() {
+      this.autoSave();
+    },
+
     handleTabChange(key) {
-      this.product.loading = true;
       this.activeKey = key;
+      this.autoSave();
     },
 
     setExpectedReturn() {
@@ -879,17 +885,18 @@ export default defineComponent({
   },
 
   watch: {
-    product: {
-      handler() {
-        this.productWatchCount++;
-        if (this.productWatchCount > 6 && this.useAutoSave) {
-          this.autoSave();
-        }
-      },
-
-      deep: true,
-      immediate: true
-    },
+    //监听商品信息修改时调用自动保存
+    // product: {
+    //   handler() {
+    //     this.productWatchCount++;
+    //     if (this.productWatchCount > 6 && this.useAutoSave) {
+    //       this.autoSave();
+    //     }
+    //   },
+    //
+    //   deep: true,
+    //   immediate: true
+    // },
 
     autosave: {
       handler() {
