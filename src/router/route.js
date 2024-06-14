@@ -432,7 +432,7 @@ export const menus = [{
             meta: {
                 title: "️AI 서비스 결제",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                roles: [],
                 ids: ["haeju"],
                 icon: RobotOutlined
             },
