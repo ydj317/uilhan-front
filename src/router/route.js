@@ -431,8 +431,9 @@ export const menus = [{
             component: () => import("@/views/User/ServicePayAi.vue"),
             meta: {
                 title: "️AI 서비스 결제",
-                isHide: true,
+                isHide: false,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
+                ids: ["haeju"],
                 icon: RobotOutlined
             },
         },
