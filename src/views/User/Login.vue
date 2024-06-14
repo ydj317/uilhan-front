@@ -140,12 +140,22 @@ export default defineComponent({
             message.error(res2.message);
             return false;
           }
-          Cookie.set('account_list', JSON.stringify(res2.data.accountList));
-          Cookie.set('member_pid', res2.data.pid);
+          Cookie.set('token',res2.data.token);
+          if(res2.data.loginUser){
+            Cookie.set('login_user', JSON.stringify(res2.data.loginUser));
+          }
+          if(res2.data.mainUser){
+            Cookie.set('main_user', JSON.stringify(res2.data.mainUser));
+          }
+          if(res2.data.employee){
+            Cookie.set('employee', JSON.stringify(res2.data.employee));
+          }
+          if(res2.data.accountList){
+            Cookie.set('account_list', JSON.stringify(res2.data.accountList));
+          }
           let goUrl = '/dashboard';
           if(res2.data.employee){
-            Cookie.set('employee_name', res2.data.employee.username);
-            Cookie.set('employee_menu_names', res2.data.employee.menu_names);
+            Cookie.set('member_name', res2.data.mainUser.username);
             //显示员工第一个有权限的菜单
             for (const val of res2.data.employee.menu_names) {
               if(val == 'product'){
@@ -161,8 +171,9 @@ export default defineComponent({
                 break;
               }
             }
+          }else{
+            Cookie.set('member_name', res.data.member_name);
           }
-          Cookie.set('member_name', res.data.member_name);
           Cookie.set('member_roles', res.data.member_roles);
           const menuList = setFilterRouteList();
           router.addRoute(menuList[0])

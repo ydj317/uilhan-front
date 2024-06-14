@@ -22,7 +22,7 @@ const router = createRouter({
 export function setFilterRouteList() {
   const userInfosRoles = Cookie.get('member_roles') ? Cookie.get('member_roles').split(',') : [];
   const userInfosIds = Cookie.get('member_name') ? [Cookie.get('member_name')] : [];
-  const employeeMenus = Cookie.get('employee_menu_names') ? Cookie.get('employee_menu_names').split(',') : [];
+  const employeeMenus = Cookie.get('employee') ? JSON.parse(Cookie.get('employee')).menu_names : [];
   // console.log('userInfosRoles',userInfosRoles);
   // console.log('userInfosIds',userInfosIds);
   // console.log('menus[0].children',menus[0].children);

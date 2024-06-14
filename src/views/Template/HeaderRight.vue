@@ -29,6 +29,21 @@
           </a-button>
           <a-spin v-if="indicator"/>
         </div>
+        <div class="employee_name" v-if="employee_name">
+          {{employee_name}}
+        </div>
+
+        <a-dropdown>
+          <template #overlay>
+            <a-menu @click="toggleAccount">
+              <a-menu-item :key="v.id" v-for="v in account_list">{{ v.username }}</a-menu-item>
+            </a-menu>
+          </template>
+          <a-button>
+            账号列表
+            <DownOutlined />
+          </a-button>
+        </a-dropdown>
         <div id="setting" class="">
           <div class="center pointer pl20 pr20" @click="settingVisible" style="display: flex;align-items: center;border-radius:18px;background-color: #434343">
             <img src="@/assets/img/user2.png" width="16" height="16" style="border-radius: 50px;" alt="">
@@ -38,6 +53,10 @@
           <a-select class="absolute" v-if="setting_visible" :default-open="true" :autofocus="true" ref="select"
                     v-model:value="setting" @select="seletedSetting" @blur="settingVisible"
                     style="right: 19px;top: 60px;width: 150px;">
+<!--            <a-select-option value="account-list">-->
+<!--              <UserSwitchOutlined />-->
+<!--              계정 목록-->
+<!--            </a-select-option>-->
             <a-select-option value="setting">
               <SettingOutlined/>
               설정
@@ -77,7 +96,7 @@
 </template>
 
 <script>
-import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined,DownOutlined} from "@ant-design/icons-vue";
+import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined,DownOutlined,UserSwitchOutlined} from "@ant-design/icons-vue";
 import {AuthRequest} from "@/util/request";
 import Cookie from "js-cookie";
 import {cookieInit} from "@/util/auth";
@@ -93,7 +112,8 @@ export default {
     SettingOutlined,
     LogoutOutlined,
     DownloadOutlined,
-    DownOutlined
+    DownOutlined,
+    UserSwitchOutlined
   },
 
   computed: {
@@ -117,7 +137,10 @@ export default {
       indicator: false,
 
       rate: 0,
-      rateLoading:false
+      rateLoading:false,
+
+      employee_name:Cookie.get('employee') ? JSON.parse(Cookie.get('employee')).username:'',
+      account_list:Cookie.get('account_list') ? JSON.parse(Cookie.get('account_list')):'',
     };
   },
 
@@ -205,6 +228,34 @@ export default {
       }).finally(() => {
         this.rateLoading = false;
       });
+    },
+    //切换账号
+    toggleAccount(e){
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/toggle", {toggleId:e.key}).then((res) => {
+        if(res.status !== '2000') {
+          message.error(res.message);
+          return false;
+        }
+        Cookie.set('token', res.data.token)
+        Cookie.set('member_name', res.data.member_name);
+        Cookie.set('member_roles', res.data.member_roles);
+        if(res.data.loginUser){
+          Cookie.set('login_user', JSON.stringify(res.data.loginUser));
+        }
+        if(res.data.mainUser){
+          Cookie.set('main_user', JSON.stringify(res.data.mainUser));
+        }
+        if(res.data.employee){
+          Cookie.set('employee', JSON.stringify(res.data.employee));
+        }
+        if(res.data.accountList){
+          Cookie.set('account_list', JSON.stringify(res.data.accountList));
+        }
+        window.location.reload();
+      }).catch((e) => {
+        message.error(e.message)
+        return false;
+      });
     }
   },
   mounted() {
@@ -239,5 +290,15 @@ export default {
 
 .pointer .anticon-down{
   color:#fff;
+}
+</style>
+<style scoped>
+.employee_name{
+  color: #fff;
+  height: 28px;
+  line-height: 28px;
+  padding: 0 10px;
+  background-color: #ffd117;
+  border-radius: 18px;
 }
 </style>

@@ -41,10 +41,10 @@ export function cookieInit() {
   Cookie.remove('member_name');
   Cookie.remove('member_roles');
   Cookie.remove('ch-session');
-  Cookie.remove('employee_name');
-  Cookie.remove('employee_menu_names');
+  Cookie.remove('login_user');
+  Cookie.remove('main_user');
+  Cookie.remove('employee');
   Cookie.remove('account_list');
-  Cookie.remove('member_pid');
 }
 
 export function getUserInfo() {
