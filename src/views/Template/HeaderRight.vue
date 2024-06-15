@@ -40,12 +40,11 @@
           </a>
           <template #overlay>
             <a-menu>
-
               <a-sub-menu key="sub1" title="계정 정보">
                 <a-menu-item @click="toggleAccount(v.id)" v-for="v in account_list">
-                  <div class="fl-tc">
+                  <div class="fl-tc fl-lb">
                     {{ v.username }}
-                    <a-badge :count="main_user.username == v.username ? '主账号':'子账号'" :number-style="{ backgroundColor: '#52c41a' }" class="ml10 fs10" />
+                    <a-badge :count="main_user.username == v.username ? '기본 계정':'하위 계정'" :number-style="{ backgroundColor: '#52c41a' }" class="ml10 fs10" />
                   </div>
                 </a-menu-item>
               </a-sub-menu>
@@ -221,8 +220,8 @@ export default {
       });
     },
     //切换账号
-    toggleAccount(e){
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/toggle", {toggleId:e.key}).then((res) => {
+    toggleAccount(id){
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/toggle", {toggleId:id}).then((res) => {
         if(res.status !== '2000') {
           message.error(res.message);
           return false;
