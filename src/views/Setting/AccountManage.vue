@@ -1,7 +1,7 @@
 <template>
 
 	<BindBridge @formUpdated="handleFormUpdate"/>
-    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'" v-if="!member_pid">
+    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'" v-if="isMainUser">
 
         <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
                 @finish="onFinish" @finishFailed="onFinishFailed">
@@ -132,30 +132,30 @@
 
     </a-card>
     <!--     子账号表格  -->
-<!--    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'" v-if="!member_pid">-->
-<!--        <template #extra>-->
-<!--            <a-button type="primary" @click="showAccountModal(0,1)">서브계정 등록</a-button>-->
-<!--        </template>-->
-<!--        <a-table :columns="columnsSubAccount" :data-source="formState.subAccountList" :scroll="formState.subAccountList.length > 10 ? { y: 650 } : null" bordered :pagination="false">-->
-<!--            <template #headerCell="{ column }">-->
-<!--            </template>-->
-<!--            <template #bodyCell="{ column, record }">-->
-<!--                <template v-if="column.key === 'action'">-->
-<!--                    <a-button type="primary" class="mr20" @click="showAccountModal(record,1)">수정</a-button>-->
-<!--                  <a-popconfirm-->
-<!--                    title="삭제하시겠습니까?"-->
-<!--                    ok-text="Yes"-->
-<!--                    cancel-text="No"-->
-<!--                    @confirm="deleteAccount(record.id)"-->
-<!--                  >-->
-<!--                    <a-button type="default">삭제</a-button>-->
-<!--                  </a-popconfirm>-->
-<!--                </template>-->
-<!--            </template>-->
-<!--        </a-table>-->
-<!--    </a-card>-->
+    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'" v-if="isMainUser" style="display: none;">
+        <template #extra>
+            <a-button type="primary" @click="showAccountModal(0,1)">서브계정 등록</a-button>
+        </template>
+        <a-table :columns="columnsSubAccount" :data-source="formState.subAccountList" :scroll="formState.subAccountList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
+            <template #headerCell="{ column }">
+            </template>
+            <template #bodyCell="{ column, record }">
+                <template v-if="column.key === 'action'">
+                    <a-button type="primary" class="mr20" @click="showAccountModal(record,1)">수정</a-button>
+                  <a-popconfirm
+                    title="삭제하시겠습니까?"
+                    ok-text="Yes"
+                    cancel-text="No"
+                    @confirm="deleteAccount(record.id)"
+                  >
+                    <a-button type="default">삭제</a-button>
+                  </a-popconfirm>
+                </template>
+            </template>
+        </a-table>
+    </a-card>
   <!--     员工表格  -->
-  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'" v-if="!member_pid">
+  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'" v-if="isMainUser">
     <template #extra>
       <a-button type="primary" @click="showAccountModal(0,2)">계정 등록</a-button>
     </template>
@@ -310,7 +310,9 @@
 
 	  import "vue-loading-overlay/dist/vue-loading.css";
     import Loading from "vue-loading-overlay";
-    const member_pid = Cookie.get("member_pid") == 0 ? false : true;
+    const main_user = Cookie.get('main_user') ? JSON.parse(Cookie.get('main_user')):''
+    const member_name = Cookie.get('member_name')
+    const isMainUser = main_user.username == member_name;
     const formState = reactive({
         username: "",
         //[필수] 사용자명/사업자명

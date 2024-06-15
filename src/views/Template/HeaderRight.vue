@@ -40,7 +40,7 @@
           </a>
           <template #overlay>
             <a-menu>
-              <a-sub-menu key="sub1" title="계정 정보">
+              <a-sub-menu key="sub1" title="계정 정보" v-if="Object.keys(this.account_list).length">
                 <a-menu-item @click="toggleAccount(v.id)" v-for="v in account_list">
                   <div class="fl-tc fl-lb">
                     {{ v.username }}
@@ -126,8 +126,8 @@ export default {
       rateLoading:false,
 
       employee_name:Cookie.get('employee') ? JSON.parse(Cookie.get('employee')).username:'',
-      account_list:Cookie.get('account_list') ? JSON.parse(Cookie.get('account_list')):'',
-      main_user:Cookie.get('main_user') ? JSON.parse(Cookie.get('main_user')):'',
+      account_list:Cookie.get('account_list') ? JSON.parse(Cookie.get('account_list')):{},
+      main_user:Cookie.get('main_user') ? JSON.parse(Cookie.get('main_user')):{},
     };
   },
 
