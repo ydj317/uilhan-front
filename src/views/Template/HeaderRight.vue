@@ -30,43 +30,30 @@
           <a-spin v-if="indicator"/>
         </div>
         <div class="employee_name" v-if="employee_name">
-          {{employee_name}}
+          직원：{{employee_name}}
         </div>
-
-        <a-dropdown>
+        <a-dropdown class="setting-wrap fl-tc fl-lb">
+          <a @click.prevent>
+            <img src="@/assets/img/user2.png">
+            <span class="ml20 fs16">{{ user_name }}</span>
+            <DownOutlined class="ml30" />
+          </a>
           <template #overlay>
-            <a-menu @click="toggleAccount">
-              <a-menu-item :key="v.id" v-for="v in account_list">{{ v.username }}</a-menu-item>
+            <a-menu>
+
+              <a-sub-menu key="sub1" title="계정 정보">
+                <a-menu-item @click="toggleAccount(v.id)" v-for="v in account_list">
+                  <div class="fl-tc">
+                    {{ v.username }}
+                    <a-badge :count="main_user.username == v.username ? '主账号':'子账号'" :number-style="{ backgroundColor: '#52c41a' }" class="ml10 fs10" />
+                  </div>
+                </a-menu-item>
+              </a-sub-menu>
+              <a-menu-item @click="go('/setting/updateDetail')"><SettingOutlined/><span class="ml5">설정</span></a-menu-item>
+              <a-menu-item @click="logout"><LogoutOutlined/><span class="ml5">로그아웃</span></a-menu-item>
             </a-menu>
           </template>
-          <a-button>
-            账号列表
-            <DownOutlined />
-          </a-button>
         </a-dropdown>
-        <div id="setting" class="">
-          <div class="center pointer pl20 pr20" @click="settingVisible" style="display: flex;align-items: center;border-radius:18px;background-color: #434343">
-            <img src="@/assets/img/user2.png" width="16" height="16" style="border-radius: 50px;" alt="">
-            <h3 class="mt8 mr30 mb10 ml10 p5" style="color:#fff;line-height:0;">{{ user_name }}</h3>
-            <DownOutlined />
-          </div>
-          <a-select class="absolute" v-if="setting_visible" :default-open="true" :autofocus="true" ref="select"
-                    v-model:value="setting" @select="seletedSetting" @blur="settingVisible"
-                    style="right: 19px;top: 60px;width: 150px;">
-<!--            <a-select-option value="account-list">-->
-<!--              <UserSwitchOutlined />-->
-<!--              계정 목록-->
-<!--            </a-select-option>-->
-            <a-select-option value="setting">
-              <SettingOutlined/>
-              설정
-            </a-select-option>
-            <a-select-option value="logout">
-              <LogoutOutlined/>
-              로그아웃
-            </a-select-option>
-          </a-select>
-        </div>
       </a-space>
 
       <!--      <div id="language">-->
@@ -141,6 +128,7 @@ export default {
 
       employee_name:Cookie.get('employee') ? JSON.parse(Cookie.get('employee')).username:'',
       account_list:Cookie.get('account_list') ? JSON.parse(Cookie.get('account_list')):'',
+      main_user:Cookie.get('main_user') ? JSON.parse(Cookie.get('main_user')):'',
     };
   },
 
@@ -182,6 +170,9 @@ export default {
       sessionStorage.setItem("orderData", "");
       router.push("/user/login");
       return false;
+    },
+    go(url){
+      location.href = url
     },
 
     extensionDown() {
@@ -293,12 +284,23 @@ export default {
 }
 </style>
 <style scoped>
-.employee_name{
-  color: #fff;
+#Header .employee_name{
   height: 28px;
   line-height: 28px;
-  padding: 0 10px;
+  padding: 0 20px;
   background-color: #ffd117;
   border-radius: 18px;
+}
+#Header .setting-wrap{
+  border-radius:18px;
+  background-color: #434343;
+  color: #fff;
+  padding: 0 20px;
+  line-height: 28px;
+}
+#Header .setting-wrap img{
+  width: 16px;
+  height: 16px;
+  border-radius: 50px;
 }
 </style>
