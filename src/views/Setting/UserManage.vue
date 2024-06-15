@@ -225,18 +225,6 @@ function getUserList() {
     searchFrom.total = res.data.total;
 
     userData.value = res.data.userList.map((item, index) => {
-      // 创建一个Date对象
-      const date = new Date(item[0].insDate);
-
-      // 提取年月日时分秒
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
-
-      // 格式化输出
       const formattedCreatedAt = getDate(item[0].insDate);
       item['children'] = item['children'].map(item2=>{
         return {...item2,ins_date:getDate(item2.insDate)}
@@ -246,9 +234,9 @@ function getUserList() {
     tableLoading.value = false;
   });
 }
+// 格式化输出
 function getDate(rq){
   const date = new Date(rq);
-
   // 提取年月日时分秒
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
