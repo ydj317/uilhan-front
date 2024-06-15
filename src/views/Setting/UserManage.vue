@@ -94,7 +94,7 @@ const tableColumns = ref([
   {
     title: 'No.',
     dataIndex: 'key',
-    width: '5%',
+    width: '6%',
   },
   {
     title: '아이디',
@@ -114,7 +114,7 @@ const tableColumns = ref([
   {
     title: '추천 횟수',
     dataIndex: 'recommend_count',
-    width: '10%',
+    width: '9%',
   },
   {
     title: '사용자명',
@@ -237,13 +237,28 @@ function getUserList() {
       const seconds = String(date.getSeconds()).padStart(2, '0');
 
       // 格式化输出
-      const formattedCreatedAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-      return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'] };
+      const formattedCreatedAt = getDate(item[0].insDate);
+      item['children'] = item['children'].map(item2=>{
+        return {...item2,ins_date:getDate(item2.insDate)}
+      })
+      return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'],children:item['children'] };
     });
-
     tableLoading.value = false;
   });
+}
+function getDate(rq){
+  const date = new Date(rq);
+
+  // 提取年月日时分秒
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  // 格式化输出
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 onMounted(() => {
