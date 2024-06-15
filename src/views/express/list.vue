@@ -96,7 +96,7 @@
         <a-flex class="mt30 pl40 pr30" gap="20" justify="space-between" v-show="state.toggleTotalActive">
           <template v-for="v in state.totalList" :key="v.id">
             <template v-if="v.type == 2">
-              <a-flex vertical class="total-wrap bg-white br10 p20 fl1">
+              <a-flex vertical class="bg-white br10 p20 fl1">
                 <template v-if="state.auth">
                   <a-input class="font-SCDream6 fs18 t-c w100" v-model:value="v.title" @blur="setTotalData(v)"></a-input>
                 </template>
@@ -133,7 +133,7 @@
           </template>
           <template v-for="v in state.totalList" :key="v.id">
             <template v-if="v.type == 3">
-              <a-flex vertical class="total-wrap bg-white br10 p20 fl1">
+              <a-flex vertical class="bg-white br10 p20 fl1">
                 <template v-if="state.auth">
                   <a-input class="font-SCDream6 fs18 t-c w100" v-model:value="v.title" @blur="setTotalData(v)"></a-input>
                 </template>
@@ -744,69 +744,6 @@ onMounted(async () => {
 }
 </style>
 <style scoped>
-@font-face {
-  font-family: 'SCDream1';
-  src: url('../../assets/font/SCDream1.woff');
-}
-@font-face {
-  font-family: 'SCDream2';
-  src: url('../../assets/font/SCDream2.woff');
-}
-@font-face {
-  font-family: 'SCDream3';
-  src: url('../../assets/font/SCDream3.woff');
-}
-@font-face {
-  font-family: 'SCDream4';
-  src: url('../../assets/font/SCDream4.woff');
-}
-@font-face {
-  font-family: 'SCDream5';
-  src: url('../../assets/font/SCDream5.woff');
-}
-@font-face {
-  font-family: 'SCDream6';
-  src: url('../../assets/font/SCDream6.woff');
-}
-@font-face {
-  font-family: 'SCDream7';
-  src: url('../../assets/font/SCDream7.woff');
-}
-@font-face {
-  font-family: 'SCDream8';
-  src: url('../../assets/font/SCDream8.woff');
-}
-@font-face {
-  font-family: 'SCDream9';
-  src: url('../../assets/font/SCDream9.woff');
-}
-.font-SCDream1{
-  font-family: 'SCDream1';
-}
-.font-SCDream2{
-  font-family: 'SCDream2';
-}
-.font-SCDream3{
-  font-family: 'SCDream3';
-}
-.font-SCDream4{
-  font-family: 'SCDream4';
-}
-.font-SCDream5{
-  font-family: 'SCDream5';
-}
-.font-SCDream6{
-  font-family: 'SCDream6';
-}
-.font-SCDream7{
-  font-family: 'SCDream7';
-}
-.font-SCDream8{
-  font-family: 'SCDream8';
-}
-.font-SCDream9{
-  font-family: 'SCDream9';
-}
 .bor{
 	border: 1px solid #F0F0F0;
 }
@@ -957,9 +894,7 @@ a {
 .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
   opacity: 0;
 }
-.total-wrap{
-  box-shadow: 6px 6px 6px #B8B8B8;
-}
+
 .status-wrap img{
   width: 20px;
   height: 20px;

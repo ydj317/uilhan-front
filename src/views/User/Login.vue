@@ -16,12 +16,13 @@
           <!-- checkbox use icon -->
 
           <div @click="handleSaveId" style="cursor: pointer ">
-            <check-circle-two-tone :two-tone-color="checked ? '#52c41a' : '#bdbdbd'"/> 아이디 저장
+            <check-circle-two-tone :two-tone-color="checked ? '#52c41a' : '#bdbdbd'"/>
+            <span class="font-SCDream3 ml3">아이디 저장</span>
           </div>
 
           <div style="display: flex;gap: 5px;align-items: center">
-          <span>{{user_type?'관리자':'직원'}}</span>
-          <a-switch v-model:checked="user_type" size="small"/>
+          <span class="font-SCDream3 mt2">{{user_type?'관리자':'직원'}}</span>
+          <a-switch v-model:checked="user_type" size="small" style="color: #1a1a1a;background-color: #1a1a1a"/>
           </div>
         </div>
         <div style="display: flex;justify-content: center;width: 100%;margin-top: 20px;">

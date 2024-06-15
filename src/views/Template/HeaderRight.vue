@@ -2,21 +2,21 @@
   <div id="Header" class="pr20">
     <div class="h60 right center">
       <a-space size="small">
-        <div>
-          <div v-if="rateLoading">
-            <a-spin />
-          </div>
-          <a-space v-else>
-            <div>
-              <img src="../../assets/img/chn2.png" style="width:20px; vertical-align: text-top" /> 1위안
-            </div>
-            <span>⇋</span>
-            <div>
-              <img src="../../assets/img/kor2.png" style="width:20px; vertical-align: text-top" /> {{ rate }}원
-            </div>
-          </a-space>
-        </div>
-        <a-divider type="vertical"/>
+<!--        <div>-->
+<!--          <div v-if="rateLoading">-->
+<!--            <a-spin />-->
+<!--          </div>-->
+<!--          <a-space v-else>-->
+<!--            <div>-->
+<!--              <img src="../../assets/img/chn2.png" style="width:20px; vertical-align: text-top" /> 1위안-->
+<!--            </div>-->
+<!--            <span>⇋</span>-->
+<!--            <div>-->
+<!--              <img src="../../assets/img/kor2.png" style="width:20px; vertical-align: text-top" /> {{ rate }}원-->
+<!--            </div>-->
+<!--          </a-space>-->
+<!--        </div>-->
+<!--        <a-divider type="vertical"/>-->
 <!--        <div>-->
 <!--          <a-button type="link" size="small" @click="worldLinkGuide">가이드북</a-button>-->
 <!--        </div>-->
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined,DownOutlined,UserSwitchOutlined} from "@ant-design/icons-vue";
+import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined,DownOutlined} from "@ant-design/icons-vue";
 import {AuthRequest} from "@/util/request";
 import Cookie from "js-cookie";
 import {cookieInit} from "@/util/auth";
@@ -98,8 +98,7 @@ export default {
     SettingOutlined,
     LogoutOutlined,
     DownloadOutlined,
-    DownOutlined,
-    UserSwitchOutlined
+    DownOutlined
   },
 
   computed: {
@@ -122,8 +121,8 @@ export default {
       setting_visible: false,
       indicator: false,
 
-      rate: 0,
-      rateLoading:false,
+      // rate: 0,
+      // rateLoading:false,
 
       employee_name:Cookie.get('employee') ? JSON.parse(Cookie.get('employee')).username:'',
       account_list:Cookie.get('account_list') ? JSON.parse(Cookie.get('account_list')):{},
@@ -203,22 +202,22 @@ export default {
       window.open("https://www.notion.so/worldlink/WORLD-LINK-0013348223c04c4792ed5d26b7c982ac", "_blank");
     },
 
-    getRate() {
-      this.rateLoading = true;
-      AuthRequest.get(process.env.VUE_APP_API_URL + "/api/getrate", {}).then((res) => {
-        if(res.status !== '2000') {
-          message.error(res.message);
-          return false;
-        }
-        const { ko } = res.data;
-        this.rate = ko
-      }).catch((e) => {
-        message.error(e.message)
-        return false;
-      }).finally(() => {
-        this.rateLoading = false;
-      });
-    },
+    // getRate() {
+    //   this.rateLoading = true;
+      // AuthRequest.get(process.env.VUE_APP_API_URL + "/api/getrate", {}).then((res) => {
+      //   if(res.status !== '2000') {
+      //     message.error(res.message);
+      //     return false;
+      //   }
+      //   const { ko } = res.data;
+      //   this.rate = ko
+      // }).catch((e) => {
+      //   message.error(e.message)
+      //   return false;
+      // }).finally(() => {
+      //   this.rateLoading = false;
+      // });
+    // }
     //切换账号
     toggleAccount(id){
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/toggle", {toggleId:id}).then((res) => {
@@ -248,9 +247,9 @@ export default {
       });
     }
   },
-  mounted() {
-    this.getRate()
-  }
+  // mounted() {
+  //   this.getRate()
+  // }
 };
 
 </script>

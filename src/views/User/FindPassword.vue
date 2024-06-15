@@ -8,8 +8,8 @@
       <div class="login-content">
         <img style="margin: 90px;width: 60px;height: 60px" src="../../assets/logo_icon.png" key="logo-light" alt="">
         <div style="text-align:center;display: flex;flex-direction: column;justify-content: center;margin:20px 0;width: 100%">
-          <h3>비밀번호를 잊어버리셨나요?</h3>
-          <p style="color: #b0b0b0;font-weight: normal;font-size: 12px">아이디와 가입된 이메일을 인증하시면 비밀번호를 리셋할 수 있습니다.</p>
+          <h3 class="font-SCDream3">비밀번호를 잊어버리셨나요?</h3>
+          <p style="color: #b0b0b0;font-weight: normal;font-size: 12px" class="font-SCDream3">아이디와 가입된 이메일을 인증하시면 비밀번호를 리셋할 수 있습니다.</p>
         </div>
         <div style="display: flex;flex-direction: column;width: 100%;">
           <a-input v-model:value="formState.username" placeholder="아이디" class="user-name" ></a-input>
@@ -20,7 +20,7 @@
             이메일 전송
           </a-button>
           <a-divider style="color: #1a1a1a;"> Or </a-divider>
-          <router-link to="/user/login" style="font-size: 12px;color: #1a1a1a;">로그인화면 돌아가기</router-link>
+          <router-link to="/user/login" style="font-size: 12px;color: #1a1a1a;" class="font-SCDream3">로그인화면 돌아가기</router-link>
         </div>
       </div>
     </div>

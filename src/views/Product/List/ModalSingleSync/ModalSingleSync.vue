@@ -20,10 +20,11 @@
       <template v-slot:bodyCell="{ text, record, index, column }">
         <!--연동계정-->
         <template v-if="column.key === 'market_account'">
-          <div style="text-align: left">
+          <div style="text-align: center;" class="market-code">
+            <a-tooltip :title="record.seller_id">
             <img :src="getLogoSrc('market-logo', record.market_code)"
-                 style="width: 16px; height: 16px; margin-right: 5px;" :alt="record.market_code">
-            {{ record.seller_id }}
+                 style="width: 25px; height: 25px;" :alt="record.market_code">
+            </a-tooltip>
             <a-tooltip v-if="record.market_code === 'lotteon'">
               <template #title>
                 <div>롯데ON의 경우 마켓 등록 재전송 필요합니다.(*기존 데이터 베이스가 없으므로 작업 후 기존 마켓들과 동일하게 업로드 가능)</div>
@@ -231,3 +232,16 @@ async function loadSyncInfo() {
 }
 
 </script>
+
+<style scoped>
+.market-code {
+  position: relative;
+}
+
+.market-code .anticon{
+  position:absolute;
+  top:-2px;
+  right:43px;
+  opacity:0.5;
+}
+</style>
