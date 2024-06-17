@@ -57,6 +57,9 @@
             <div v-else>{{ record.upd_time }}</div>
           </div>
         </template>
+        <template v-if="column.key === 'employee_name'">
+          <div>{{ record.employee_name }}</div>
+        </template>
       </template>
 
     </a-table>
@@ -92,6 +95,12 @@ const SYNC_COLUMNS_CONFIG = [
   {
     title: "등록시간",
     key: "ins_time",
+    width: "170px",
+    align: "center"
+  },
+  {
+    title: "처리자",
+    key: "employee_name",
     width: "170px",
     align: "center"
   }
