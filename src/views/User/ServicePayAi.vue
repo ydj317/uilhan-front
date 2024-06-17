@@ -161,7 +161,6 @@ const jsf__pay = (form) => {
 /* 인증완료시 재귀 함수  */
 const m_Completepayment = ( FormOrJson, closeEvent ) => {
 
-  console.log(FormOrJson);
   if( FormOrJson.res_cd.value == "0000" ) {
 
     // FormOrJson 데이터를 Server 에 전달하여 승인요청하기
