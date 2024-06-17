@@ -131,31 +131,31 @@
               </a-flex>
             </template>
           </template>
-          <template v-for="v in state.totalList" :key="v.id">
-            <template v-if="v.type == 3">
-              <a-flex vertical class="bg-white br10 p20 fl1">
-                <template v-if="state.auth">
-                  <a-input class="font-SCDream6 fs18 t-c w100" v-model:value="v.title" @blur="setTotalData(v)"></a-input>
-                </template>
-                <template v-else>
-                  <div class="font-SCDream6 fs18 t-c">{{ v.title }}</div>
-                </template>
-                <!--            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>-->
-                <a-flex align="center" justify="space-between" class="fs14 mt20">
-                  <div class="mr10">
-                    <template v-if="state.auth">
-                      <a-input class="font-SCDream6 w60" v-model:value="v.rq1" @blur="setTotalData(v)"></a-input>
-                    </template>
-                    <template v-else>
-                      <span class="font-SCDream6">{{ v.rq1 }}</span>
-                    </template>
-                    <span class="font-SCDream4 color-hui ml5">입항 건</span>
-                  </div>
-                  <div class="font-SCDream4 fs10 br15 p5 bg-FB6F3E t-white t-c">오픈예정</div>
-                </a-flex>
-              </a-flex>
-            </template>
-          </template>
+<!--          <template v-for="v in state.totalList" :key="v.id">-->
+<!--            <template v-if="v.type == 3">-->
+<!--              <a-flex vertical class="bg-white br10 p20 fl1">-->
+<!--                <template v-if="state.auth">-->
+<!--                  <a-input class="font-SCDream6 fs18 t-c w100" v-model:value="v.title" @blur="setTotalData(v)"></a-input>-->
+<!--                </template>-->
+<!--                <template v-else>-->
+<!--                  <div class="font-SCDream6 fs18 t-c">{{ v.title }}</div>-->
+<!--                </template>-->
+<!--                &lt;!&ndash;            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>&ndash;&gt;-->
+<!--                <a-flex align="center" justify="space-between" class="fs14 mt20">-->
+<!--                  <div class="mr10">-->
+<!--                    <template v-if="state.auth">-->
+<!--                      <a-input class="font-SCDream6 w60" v-model:value="v.rq1" @blur="setTotalData(v)"></a-input>-->
+<!--                    </template>-->
+<!--                    <template v-else>-->
+<!--                      <span class="font-SCDream6">{{ v.rq1 }}</span>-->
+<!--                    </template>-->
+<!--                    <span class="font-SCDream4 color-hui ml5">입항 건</span>-->
+<!--                  </div>-->
+<!--                  <div class="font-SCDream4 fs10 br15 p5 bg-FB6F3E t-white t-c">오픈예정</div>-->
+<!--                </a-flex>-->
+<!--              </a-flex>-->
+<!--            </template>-->
+<!--          </template>-->
           <a-flex vertical class="p20 font-SCDream5 fs10 color-FB6F3E center fl1">
             <span>*</span>
             <span>통관일정은 <span style="text-decoration: underline;">매일 오전 10시</span>에 업데이트되며</span>
