@@ -795,9 +795,11 @@ onMounted(async () => {
 }
 .bg-FEDB41{
   background: #FEDB41;
+  white-space: nowrap;
 }
 .bg-2171E2{
   background: #2171E2;
+  white-space: nowrap;
 }
 .bg-FB6F3E{
   background: #FB6F3E;
