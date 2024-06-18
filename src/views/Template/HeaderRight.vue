@@ -40,7 +40,11 @@
           </a>
           <template #overlay>
             <a-menu>
-              <a-sub-menu key="sub1" title="계정 정보" v-if="Object.keys(this.account_list).length">
+<!--              <a-menu-item @click="go('/user/my')"><UserOutlined/><span class="ml5">My Page</span></a-menu-item>-->
+              <a-sub-menu v-if="Object.keys(this.account_list).length">
+                <template #title>
+                  <UserSwitchOutlined/><span class="ml5">계정 정보</span>
+                </template>
                 <a-menu-item @click="toggleAccount(v.id)" v-for="v in account_list">
                   <div class="fl-tc fl-lb">
                     {{ v.username }}
@@ -82,7 +86,7 @@
 </template>
 
 <script>
-import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined,DownOutlined} from "@ant-design/icons-vue";
+import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined,DownOutlined,UserSwitchOutlined} from "@ant-design/icons-vue";
 import {AuthRequest} from "@/util/request";
 import Cookie from "js-cookie";
 import {cookieInit} from "@/util/auth";
@@ -98,7 +102,8 @@ export default {
     SettingOutlined,
     LogoutOutlined,
     DownloadOutlined,
-    DownOutlined
+    DownOutlined,
+    UserSwitchOutlined
   },
 
   computed: {

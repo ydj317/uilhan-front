@@ -1,159 +1,6 @@
 <template>
 
 	<BindBridge @formUpdated="handleFormUpdate"/>
-    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'" v-if="isMainUser">
-
-        <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
-                @finish="onFinish" @finishFailed="onFinishFailed">
-
-            <a-form-item label="아이디">
-                {{ formState.username }}
-            </a-form-item>
-            <a-form-item label="비밀번호">
-                <span class="mr30">*******</span>
-                <a-button type="primary" @click="showModal">비밀번호 변경</a-button>
-            </a-form-item>
-
-            <a-form-item label="추천코드">
-                <a-button @click="copyText(formState.username)">
-                    {{ formState.username }}
-                    <CopyOutlined/>
-                </a-button>
-            </a-form-item>
-
-            <a-form-item label="사용자명" name="name" has-feedback>
-                <a-input v-model:value="formState.name" placeholder="사용자명을 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="Email" name="email" has-feedback>
-                <a-input v-model:value="formState.email" placeholder="Email을 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="휴대전화" name="phone1">
-                <a-row :gutter="10">
-                    <a-col style="width: 160px;">
-                        <a-form-item name="phone1" class="phone" has-feedback>
-                            <a-input v-model:value="formState.phone1" placeholder="휴대전화"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="phone2" class="phone" has-feedback>
-                            <a-input v-model:value="formState.phone2" placeholder="휴대전화"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="phone3" class="phone" has-feedback>
-                            <a-input v-model:value="formState.phone3" placeholder="휴대전화"/>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-            </a-form-item>
-
-            <a-form-item label="업체명/사업자명" name="com_name" has-feedback>
-                <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명을 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="사업자번호" name="com_number" has-feedback>
-                <a-input v-model:value="formState.com_number" placeholder="사업자번호를 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="사업자등록증" name="business_license_image" has-feedback class="upload">
-              <a-upload
-                  name="business_license_image"
-                  list-type="picture-card"
-                  :show-upload-list="false"
-                  :before-upload="validateUploadImage"
-                  :custom-request="uploadImage"
-              >
-                <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%;height:100%; object-fit: contain;" @click="showBigImageOnClick($event)" />
-                <div v-else>
-                  <loading-outlined v-if="loading"></loading-outlined>
-                  <plus-outlined v-else></plus-outlined>
-                  <div class="ant-upload-text">업로드</div>
-                </div>
-                <template v-if="formState.business_license_image">
-                  <close-circle-outlined class="delete-image" @click="removeLicenseImage($event)" />
-                </template>
-              </a-upload>
-              <div v-if="showBigImage" class="big-image" @click="showBigImage = false">
-                <img :src="formState.business_license_image" alt="Big Business License" />
-              </div>
-            </a-form-item>
-
-            <a-form-item label="사업장 전화번호" name="com_phone1">
-                <a-row :gutter="10">
-                    <a-col style="width: 160px;">
-                        <a-form-item name="com_phone1" class="phone" has-feedback>
-                            <a-input v-model:value="formState.com_phone1" placeholder="전화번호"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="com_phone2" class="phone" has-feedback>
-                            <a-input v-model:value="formState.com_phone2" placeholder="전화번호"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="com_phone3" class="phone" has-feedback>
-                            <a-input v-model:value="formState.com_phone3" placeholder="전화번호"/>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-            </a-form-item>
-
-            <a-form-item label="대표자명" name="com_ceo" has-feedback>
-                <a-input v-model:value="formState.com_ceo" placeholder="대표자명을 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="유선전화" name="tel1">
-                <a-row :gutter="10">
-                    <a-col style="width: 160px;">
-                        <a-form-item name="tel1" class="phone" has-feedback>
-                            <a-input v-model:value="formState.tel1" placeholder="유선전화"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="tel2" class="phone" has-feedback>
-                            <a-input v-model:value="formState.tel2" placeholder="유선전화"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="tel3" class="phone" has-feedback>
-                            <a-input v-model:value="formState.tel3" placeholder="유선전화"/>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-            </a-form-item>
-
-            <div style="display: flex;justify-content: center;margin-top: 20px;">
-                <a-button type="primary" html-type="submit">저장</a-button>
-                <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>
-            </div>
-        </a-form>
-
-    </a-card>
-    <!--     子账号表格  -->
-    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'" v-if="isMainUser" style="display: none;">
-        <template #extra>
-            <a-button type="primary" @click="showAccountModal(0,1)">서브계정 등록</a-button>
-        </template>
-        <a-table :columns="columnsSubAccount" :data-source="formState.subAccountList" :scroll="formState.subAccountList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
-            <template #headerCell="{ column }">
-            </template>
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'action'">
-                    <a-button type="primary" class="mr20" @click="showAccountModal(record,1)">수정</a-button>
-                  <a-popconfirm
-                    title="삭제하시겠습니까?"
-                    ok-text="Yes"
-                    cancel-text="No"
-                    @confirm="deleteAccount(record.id)"
-                  >
-                    <a-button type="default">삭제</a-button>
-                  </a-popconfirm>
-                </template>
-            </template>
-        </a-table>
-    </a-card>
   <!--     员工表格  -->
   <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'" v-if="isMainUser">
     <template #extra>
@@ -181,6 +28,159 @@
         </template>
       </template>
     </a-table>
+  </a-card>
+    <!--     子账号表格  -->
+    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'" v-if="isMainUser" style="display: none;">
+        <template #extra>
+            <a-button type="primary" @click="showAccountModal(0,1)">서브계정 등록</a-button>
+        </template>
+        <a-table :columns="columnsSubAccount" :data-source="formState.subAccountList" :scroll="formState.subAccountList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
+            <template #headerCell="{ column }">
+            </template>
+            <template #bodyCell="{ column, record }">
+                <template v-if="column.key === 'action'">
+                    <a-button type="primary" class="mr20" @click="showAccountModal(record,1)">수정</a-button>
+                  <a-popconfirm
+                    title="삭제하시겠습니까?"
+                    ok-text="Yes"
+                    cancel-text="No"
+                    @confirm="deleteAccount(record.id)"
+                  >
+                    <a-button type="default">삭제</a-button>
+                  </a-popconfirm>
+                </template>
+            </template>
+        </a-table>
+    </a-card>
+  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'" v-if="isMainUser">
+
+    <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
+            @finish="onFinish" @finishFailed="onFinishFailed">
+
+      <a-form-item label="아이디">
+        {{ formState.username }}
+      </a-form-item>
+      <a-form-item label="비밀번호">
+        <span class="mr30">*******</span>
+        <a-button type="primary" @click="showModal">비밀번호 변경</a-button>
+      </a-form-item>
+
+      <a-form-item label="추천코드">
+        <a-button @click="copyText(formState.username)">
+          {{ formState.username }}
+          <CopyOutlined/>
+        </a-button>
+      </a-form-item>
+
+      <a-form-item label="사용자명" name="name" has-feedback>
+        <a-input v-model:value="formState.name" placeholder="사용자명을 입력해주시오"/>
+      </a-form-item>
+
+      <a-form-item label="Email" name="email" has-feedback>
+        <a-input v-model:value="formState.email" placeholder="Email을 입력해주시오"/>
+      </a-form-item>
+
+      <a-form-item label="휴대전화" name="phone1">
+        <a-row :gutter="10">
+          <a-col style="width: 160px;">
+            <a-form-item name="phone1" class="phone" has-feedback>
+              <a-input v-model:value="formState.phone1" placeholder="휴대전화"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="phone2" class="phone" has-feedback>
+              <a-input v-model:value="formState.phone2" placeholder="휴대전화"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="phone3" class="phone" has-feedback>
+              <a-input v-model:value="formState.phone3" placeholder="휴대전화"/>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <a-form-item label="업체명/사업자명" name="com_name" has-feedback>
+        <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명을 입력해주시오"/>
+      </a-form-item>
+
+      <a-form-item label="사업자번호" name="com_number" has-feedback>
+        <a-input v-model:value="formState.com_number" placeholder="사업자번호를 입력해주시오"/>
+      </a-form-item>
+
+      <a-form-item label="사업자등록증" name="business_license_image" has-feedback class="upload">
+        <a-upload
+          name="business_license_image"
+          list-type="picture-card"
+          :show-upload-list="false"
+          :before-upload="validateUploadImage"
+          :custom-request="uploadImage"
+        >
+          <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%;height:100%; object-fit: contain;" @click="showBigImageOnClick($event)" />
+          <div v-else>
+            <loading-outlined v-if="loading"></loading-outlined>
+            <plus-outlined v-else></plus-outlined>
+            <div class="ant-upload-text">업로드</div>
+          </div>
+          <template v-if="formState.business_license_image">
+            <close-circle-outlined class="delete-image" @click="removeLicenseImage($event)" />
+          </template>
+        </a-upload>
+        <div v-if="showBigImage" class="big-image" @click="showBigImage = false">
+          <img :src="formState.business_license_image" alt="Big Business License" />
+        </div>
+      </a-form-item>
+
+      <a-form-item label="사업장 전화번호" name="com_phone1">
+        <a-row :gutter="10">
+          <a-col style="width: 160px;">
+            <a-form-item name="com_phone1" class="phone" has-feedback>
+              <a-input v-model:value="formState.com_phone1" placeholder="전화번호"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="com_phone2" class="phone" has-feedback>
+              <a-input v-model:value="formState.com_phone2" placeholder="전화번호"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="com_phone3" class="phone" has-feedback>
+              <a-input v-model:value="formState.com_phone3" placeholder="전화번호"/>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <a-form-item label="대표자명" name="com_ceo" has-feedback>
+        <a-input v-model:value="formState.com_ceo" placeholder="대표자명을 입력해주시오"/>
+      </a-form-item>
+
+      <a-form-item label="유선전화" name="tel1">
+        <a-row :gutter="10">
+          <a-col style="width: 160px;">
+            <a-form-item name="tel1" class="phone" has-feedback>
+              <a-input v-model:value="formState.tel1" placeholder="유선전화"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="tel2" class="phone" has-feedback>
+              <a-input v-model:value="formState.tel2" placeholder="유선전화"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="tel3" class="phone" has-feedback>
+              <a-input v-model:value="formState.tel3" placeholder="유선전화"/>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <div style="display: flex;justify-content: center;margin-top: 20px;">
+        <a-button type="primary" html-type="submit">저장</a-button>
+        <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>
+      </div>
+    </a-form>
+
   </a-card>
   <a-modal class="add-account" v-model:open="formState.accountModal.open" :title="formState.accountModal.id ? '계정 수정' : '계정을 추가'" width="600px"  :footer="null" :closable="false" @cancel="accountModalClose">
     <a-form
@@ -967,6 +967,7 @@
         }
         res.data.map(item=>{
           item.checked=false
+          formState.accountModal.activePanel.push(item.id);
           if(item.child){
             item.child.map(item2=>{
               item2.checked=false
@@ -1027,7 +1028,6 @@
     //关闭添加账户弹层
     const accountModalClose = ()=>{
       formState.accountModal.open = false
-      formState.accountModal.activePanel = []
       formState.accountModal.password_visible = false;
       formState.accountModal.password_confirm_visible = false;
       addAccountRef.value.resetFields();
@@ -1135,7 +1135,6 @@
           return false;
         }
         message.success(res.message);
-        formState.accountModal.activePanel = []
         formState.accountModal.loading = false;
         formState.accountModal.open = false;
         formState.accountModal.password_visible = false;
@@ -1156,43 +1155,50 @@
         getAccountList();
       });
     }
+    // 处理父级复选框选中和取消选中
     const handleParentCheck = (index, event) => {
       event.stopPropagation();
       const parent = formState.accountModal.menuList[index];
       parent.checked = !parent.checked;
 
-      // 更新 menu_id 中的状态
-      if (parent.checked) {
-        if (!formState.accountModal.menu_id.includes(parent.id)) {
-          formState.accountModal.menu_id.push(parent.id);
-        }
-      } else {
-        const parentIndexInMenuId = formState.accountModal.menu_id.indexOf(parent.id);
-        if (parentIndexInMenuId !== -1) {
-          formState.accountModal.menu_id.splice(parentIndexInMenuId, 1);
-        }
+      // 更新子级的选中状态
+      if (parent.child && parent.child.length) {
+        parent.child.forEach(child => {
+          child.checked = parent.checked;
+          updateMenuId(child.id, child.checked);
+        });
       }
+
+      // 更新父级在 menu_id 中的状态
+      updateMenuId(parent.id, parent.checked);
     };
 
+    // 处理子级复选框选中和取消选中
     const handleChildCheck = (parentIndex, childIndex, event) => {
       event.stopPropagation();
       const parent = formState.accountModal.menuList[parentIndex];
       const child = parent.child[childIndex];
       child.checked = !child.checked;
 
-      // 更新 menu_id 中的状态
-      if (child.checked) {
-        if (!formState.accountModal.menu_id.includes(child.id)) {
-          formState.accountModal.menu_id.push(child.id);
+      // 更新子级在 menu_id 中的状态
+      updateMenuId(child.id, child.checked);
+    };
+
+    // 更新 menu_id 的状态
+    const updateMenuId = (id, checked) => {
+      if (checked) {
+        if (!formState.accountModal.menu_id.includes(id)) {
+          formState.accountModal.menu_id.push(id);
         }
       } else {
-        const childIndexInMenuId = formState.accountModal.menu_id.indexOf(child.id);
-        if (childIndexInMenuId !== -1) {
-          formState.accountModal.menu_id.splice(childIndexInMenuId, 1);
+        const index = formState.accountModal.menu_id.indexOf(id);
+        if (index !== -1) {
+          formState.accountModal.menu_id.splice(index, 1);
         }
       }
     };
 
+    // 定义面板标题的生成函数
     const panelHeader = (item, index, parentIndex = null) => {
       return h('div', { class: 'panel-header' }, [
         h(Checkbox, {
