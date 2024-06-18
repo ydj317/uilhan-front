@@ -52,7 +52,7 @@
             </template>
         </a-table>
     </a-card>
-  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'" v-if="isMainUser">
+  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정 수정'" v-if="isMainUser">
 
     <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">
@@ -182,7 +182,7 @@
     </a-form>
 
   </a-card>
-  <a-modal class="add-account" v-model:open="formState.accountModal.open" :title="formState.accountModal.id ? '계정 수정' : '계정을 추가'" width="600px"  :footer="null" :closable="false" @cancel="accountModalClose">
+  <a-modal class="add-account" v-model:open="formState.accountModal.open" :title="formState.accountModal.id ? '직원 계정 수정' : '직원 계정 등록'" width="600px"  :footer="null" :closable="false" @cancel="accountModalClose">
     <a-form
       :rules="accountRulesRef"
       :model="formState.accountModal"
@@ -196,10 +196,13 @@
       <a-form-item label="아이디" name="username" has-feedback>
         <a-input v-model:value="formState.accountModal.username" placeholder="아이디를 입력해주세요" />
       </a-form-item>
-      <a-form-item label="비밀번호" name="password" has-feedback>
+      <a-form-item label="비밀번호" v-if="formState.accountModal.id">
+        <a-button type="primary" @click="formState.accountModal.showPassword=!formState.accountModal.showPassword">비밀번호 변경</a-button>
+      </a-form-item>
+      <a-form-item label="비밀번호" name="password" has-feedback v-if="!formState.accountModal.showPassword">
         <a-input-password v-model:value="formState.accountModal.password" v-model:visible="formState.accountModal.password_visible" :placeholder="formState.accountModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
       </a-form-item>
-      <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback>
+      <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback v-if="!formState.accountModal.showPassword">
         <a-input-password v-model:value="formState.accountModal.password_confirm" v-model:visible="formState.accountModal.password_confirm_visible" :placeholder="formState.accountModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
       </a-form-item>
       <a-form-item label="권한" name="auth" has-feedback v-if="formState.modalType==2">
@@ -378,6 +381,7 @@
           password_confirm_visible:false,
           menu_id:[],
           activePanel:[],
+          showPassword:false,
       },
     });
 
@@ -988,6 +992,7 @@
       formState.accountModal.password = '';
       formState.accountModal.password_confirm = '';
       formState.accountModal.menu_id = [];
+      formState.accountModal.showPassword = false;
       formState.accountModal.menuList.map(item=>{
         item.checked=false
         if(item.child.length){
@@ -998,6 +1003,7 @@
         }
       })
       if(v){
+        formState.accountModal.showPassword = true;
         formState.accountModal.id = v.id;
         formState.accountModal.username = v.username;
         if(formState.modalType == 2){
