@@ -82,7 +82,7 @@ function deletePop() {
     deleteItems.value.flatMap(item => item['item_sync_market'])
     .reduce((acc, syncItem) => {
       const key = syncItem.id;
-      if (!acc[key] && syncItem.status !== 'unsync') {
+      if (!acc[key] && syncItem.status !== 'unsync' && syncItem.market_prd_code !== null) {
         acc[key] = {
           market_code: syncItem.market_code,
           label: syncItem.seller_id,

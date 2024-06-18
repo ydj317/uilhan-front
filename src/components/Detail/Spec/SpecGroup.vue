@@ -220,19 +220,20 @@ export default {
       option_group_find_str: "",
       option_group_replace_str: "",
       // 설정할 옵션안에 체크여부 판단필드를 넣어줌
-      oldOptionData: this.$store.state.product.detail.item_option.map(option => {
-        option.checkAll = false;
+      initOptionData: this.$store.state.product.detail.item_option.map(option => {
+        option.checkAll = true;
         option.oldName = option.name;
         option.data = option.data.map(item => {
           item.oldName = item.name;
-          item.checked = false;
+          item.checked = true;
           return item;
         });
         return option;
       }),
       options: [],
-      selectedRows: this.$store.state.product.detail.item_option.map(option => []),
-      // restOption : this.$store.state.resetOption,
+      selectedRows: this.$store.state.product.detail.item_option.map((option, index, arr) => [
+          ...option.data.map(item => item.key)
+      ]),
 
       isFirstLoad: true,
     };
@@ -276,8 +277,8 @@ export default {
           }
         });
       });
-
-      this._setCheckBoxInit();
+      this.autoHeight();
+      // this._setCheckBoxInit();
     },
     deleteSpecGroup(optionIndex) {
       if (this.product.item_option.length === 1) {
@@ -360,7 +361,8 @@ export default {
           }
         });
       });
-      this._setCheckBoxInit();
+      this.autoHeight();
+      // this._setCheckBoxInit();
     },
     replaceSpecialChars() {
       let selectItems = this.selectedRows.flat();
@@ -369,7 +371,7 @@ export default {
         message.warning("특문을 제거할 옵션명을 선택하세요.");
         return false;
       }
-      const specialChars = /[@#$%^&*"?<>\\;,./{}() ㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡®ªº㉾＄％￦Ｆ′″℃Å￠￡￥¤℉‰€㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．／：；？＾＿｀｜￣、。·…¨〃­―∥＼∼～ˇ˘˝˚˙¸˛¿ː]+/g;
+      const specialChars = /[@#$^&*"?<>\\;,/{}()ㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡®ªº㉾＄％￦Ｆ′″℃Å￠￡￥¤℉‰€㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．／：；？＾＿｀｜￣、。·…¨〃­―∥＼∼～ˇ˘˝˚˙¸˛¿ː]+/g;
       this.options.forEach(option => {
         option.data.forEach(item => {
           if (selectItems.includes(item.key)) {
@@ -377,7 +379,8 @@ export default {
           }
         });
       });
-      this._setCheckBoxInit();
+      this.autoHeight();
+      // this._setCheckBoxInit();
     },
 
     setAtoZ() {
@@ -395,7 +398,8 @@ export default {
         });
       });
 
-      this._setCheckBoxInit();
+      this.autoHeight();
+      // this._setCheckBoxInit();
     },
 
     handleMenuClick(type) {
@@ -430,7 +434,7 @@ export default {
           }
         });
       });
-
+      this.autoHeight();
     },
     setBeforeOldOptionData() {
       if (this.isFirstLoad) {
@@ -438,6 +442,7 @@ export default {
         return;
       }
       this.restoreInitialOptions();
+      this.autoHeight();
     },
 
     cutOptName(){
@@ -457,7 +462,7 @@ export default {
         });
       });
       this.autoHeight();
-      this._setCheckBoxInit();
+      // this._setCheckBoxInit();
     },
 
     restoreInitialOptions() {
@@ -681,7 +686,7 @@ export default {
     }
   },
   mounted() {
-    this.options = cloneDeep(this.oldOptionData);
+    this.options = cloneDeep(this.initOptionData);
     this.adjustRepeatHeights();
   }
 };

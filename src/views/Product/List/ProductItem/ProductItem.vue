@@ -29,15 +29,15 @@
           style="position: absolute;left: 5px;top: 8px;"
         />
 
-        <div style="position: absolute; right: 5px; top: 8px;" v-for="(tag, key) in translateStatus" :key="key" >
-          <div v-if="isShowTag(product, tag)">
-            <a-tag :color="tag.color">
-              <template v-if="tag.spinning" #icon>
-                <SyncOutlined :spin="true" />
-              </template>
-              {{ tag.text }}
-            </a-tag>
-          </div>
+        <div v-if="isShowTag(product)" style="position: absolute; right: 5px; top: 8px;">
+          <a-tag
+              :color="translateStatusMap[product.item_image_trans_status]?.color || 'default'"
+          >
+            <template v-if="translateStatusMap[product.item_image_trans_status]?.spinning" #icon>
+              <SyncOutlined :spin="true" />
+            </template>
+            {{ translateStatusMap[product.item_image_trans_status]?.text || 'Unknown Status' }}
+          </a-tag>
         </div>
 
       </div>
@@ -73,23 +73,27 @@ const DEFAULT_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAY
 const props = defineProps(['product', 'selected', 'marketDetailUrls'])
 const emit = defineEmits(['select', 'detail', 'memo', 'send'])
 const {selected, product, marketDetailUrls} = toRefs(props)
-const translateStatus = reactive([
-  { status:'W', color: 'orange', text: '이미지 번역대기' },
-  { status:'P', color: 'processing', text: '이미지 번역중', spinning: true },
-  { status:'S', color: 'success', text: '이미지 번역 성공' },
-  { status:'F', color: 'error', text: '이미지 번역 실패' }
-])
 
-const isShowTag = (product, tag) => {
-  if (product.item_image_trans_status === tag.status) {
+const translateStatusMap = reactive({
+  W: { color: 'orange', text: '이미지 번역대기' },
+  P: { color: 'processing', text: '이미지 번역중', spinning: true },
+  S: { color: 'success', text: '이미지 번역 성공' },
+  F: { color: 'error', text: '이미지 번역 실패' }
+})
+
+const isShowTag = (product) => {
+  let isShow = true;
+  let sendSuccessMarketList = product.item_sync_market.filter(market => market.status !== 'unsync');
+  if (translateStatusMap[product.item_image_trans_status]) {
     // 성공, 실패인 상품 연동이력이 있으면 미노출
-    if (['S', 'F'].includes(tag.status) && product.item_sync_code === '1') {
-      return false;
+    if (['S', 'F'].includes(product.item_image_trans_status) && sendSuccessMarketList.length > 0) {
+      isShow = false;
     }
-    return true;
+  } else {
+    isShow = false;
   }
 
-  return false;
+  return isShow;
 }
 
 async function openDetailPopup(product, tab) {

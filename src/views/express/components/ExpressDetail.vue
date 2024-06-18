@@ -393,33 +393,7 @@ watchEffect(() => {
 }
 </style>
 <style scoped>
-.font-SCDream1{
-	font-family: 'SCDream1';
-}
-.font-SCDream2{
-	font-family: 'SCDream2';
-}
-.font-SCDream3{
-	font-family: 'SCDream3';
-}
-.font-SCDream4{
-	font-family: 'SCDream4';
-}
-.font-SCDream5{
-	font-family: 'SCDream5';
-}
-.font-SCDream6{
-	font-family: 'SCDream6';
-}
-.font-SCDream7{
-	font-family: 'SCDream7';
-}
-.font-SCDream8{
-	font-family: 'SCDream8';
-}
-.font-SCDream9{
-	font-family: 'SCDream9';
-}
+
 .bor{
 	border: 1px solid #F0F0F0;
 }

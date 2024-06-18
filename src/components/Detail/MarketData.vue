@@ -32,8 +32,10 @@
         </tr>
         <tr v-for="market in marketList" :key="market.seller_id">
           <th style="text-align: right">
-            <img :src="getLogoSrc(market.market_code)" style="width: 18px;height: 18px;" />
-            {{ market.market_code }}:
+            <a-tooltip :title="market.seller_id">
+              <img :src="getLogoSrc(market.market_code)" style="width: 25px;height: 25px;" />
+            </a-tooltip>
+<!--            {{ market.market_code }}:-->
           </th>
           <td>
             <template v-if="initialize">

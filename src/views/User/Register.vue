@@ -7,7 +7,7 @@
         <img src="@/assets/logo_icon.png"  key="logo-light">
       </div>
       <div>
-        <h5>회원 기본정보</h5>
+        <h5 class="font-SCDream3">회원 기본정보</h5>
       </div>
       <!--      :rules="rulesRef"-->
       <a-form
