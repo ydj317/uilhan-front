@@ -242,6 +242,8 @@
 						</div>
 						<div class="w20 text-left">{{ order['insDate'] ?? '' }}</div>
 						<a-button
+							type="primary"
+							class="fs14 font-SCDream6"
 							v-if="order['bridgeOrderStatus'] === '결제대기'"
 							style="margin-left: auto;margin-top: -7px;"
 							@click="moveToPay"
