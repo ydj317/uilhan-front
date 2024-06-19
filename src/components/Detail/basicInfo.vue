@@ -237,7 +237,7 @@ export default {
       this.keyword.list = []
       const params = {keyword: this.keyword.search_value}
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/searchKeywords", params).then(res => {
-        this.initKeywords(res.data.keywords)
+        this.initKeywords(res.data)
         //this.$emit('suggestCategory', res.data.category)
       }).catch(() => {
         message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
@@ -250,7 +250,7 @@ export default {
       this.tagKeyword.list = []
       const params = {keyword: this.tagKeyword.search_value}
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/searchKeywords", params).then(res => {
-        this.initKeywords(res.data.keywords,2)
+        this.initKeywords(res.data,2)
       }).catch(() => {
         message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
       }).finally(() => {
