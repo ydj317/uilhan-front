@@ -143,6 +143,14 @@
               <a-input-number v-model:value.number="state.formData.returnChargeHigh" placeholder="최대 40000" style="width:160px" min="0" max="40000" step="1000"/>
             </a-form-item>
           </a-form-item>
+
+          <a-form-item name="deliveryCompany" label="출고지 택배사" :rules="[{ required: true, message: '출고지 택배사를 선택해주세요.' }]">
+            <a-select v-model:value="state.formData.deliveryCompany" style="width:260px;">
+              <a-select-option value="">- 선택해주세요 -</a-select-option>
+              <a-select-option v-for="(name, code) in state.deliveryCompanyList" :key="code" :value="code">{{ name }}</a-select-option>
+            </a-select>
+          </a-form-item>
+
         </div>
         <a-button class="mt15" @click="goBack">돌아가기</a-button>
         <a-button class="mt15 ml15" @click="handleSubmit" type="primary">저장</a-button>
@@ -161,6 +169,7 @@ import {
 } from '@ant-design/icons-vue';
 import { useRouter } from 'vue-router';
 import Cookie from "js-cookie";
+import {useMarketApi} from "@/api/market";
 const auth = Cookie.get("member_name") == 'jwli' ? true : false;
 const props = defineProps({
     market_code: {
@@ -198,6 +207,7 @@ const state = reactive({
         returnChargeLow: 0,
         returnChargeMedium: 0,
         returnChargeHigh: 0,
+        deliveryCompany: '',
     },
 
     syncCheckLoading: false,
@@ -214,6 +224,7 @@ const state = reactive({
     sync_return_address_status: 0,
     sync_return_address_date: null,
 
+    deliveryCompanyList: []
 })
 
 // 수정시 계정 데이터 설정
@@ -240,6 +251,8 @@ const initFormData = () => {
         state.formData.returnChargeLow = accountInfo.marketData.returnChargeLow;
         state.formData.returnChargeMedium = accountInfo.marketData.returnChargeMedium;
         state.formData.returnChargeHigh = accountInfo.marketData.returnChargeHigh;
+
+        state.formData.deliveryCompany = accountInfo.marketData.deliveryCompany || '';
 
     }
 }
@@ -426,7 +439,20 @@ const getOutboundAddressList = () => {
     });
 }
 
+// 택배사 목록
+const getMarketDeliveryCompany = async () => {
+  await useMarketApi().getMarketDeliveryCompany({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    state.deliveryCompanyList = res.data.coupang || [];
+  });
+};
+
 onMounted(() => {
+    getMarketDeliveryCompany()
     initFormData()
 
     // 연동확인후
