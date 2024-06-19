@@ -213,17 +213,17 @@ export const menus = [{
                 //         icon: ''
                 //     },
                 // },
-                // {
-                //     path: "/user/my",
-                //     name: "user_my",
-                //     component: () => import("@/views/User/my.vue"),
-                //     meta: {
-                //         title: "My Page",
-                //         isHide: true,
-                //         roles: ["ROLE_ADMIN", "ROLE_USER"],
-                //         icon: ''
-                //     },
-                // },
+                {
+                    path: "/user/my",
+                    name: "user_my",
+                    component: () => import("@/views/User/my.vue"),
+                    meta: {
+                        title: "My Page",
+                        isHide: true,
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
+                        icon: ''
+                    },
+                },
                 {
                     path: "/user/UserQuotaControl",
                     name: "user_userQuotaControl",

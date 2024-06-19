@@ -94,12 +94,12 @@ const tableColumns = ref([
   {
     title: 'No.',
     dataIndex: 'key',
-    width: '6%',
+    width: '10%',
   },
   {
     title: '아이디',
     dataIndex: 'username',
-    width: '13%',
+    width: '12%',
   },
   {
     title: '추천코드',
@@ -109,32 +109,32 @@ const tableColumns = ref([
   {
     title: '추천인 아이디',
     dataIndex: 'parent_user',
-    width: '13%',
+    width: '12%',
   },
   {
     title: '추천 횟수',
     dataIndex: 'recommend_count',
-    width: '9%',
+    width: '8%',
   },
   {
     title: '사용자명',
     dataIndex: 'name',
-    width: '13%',
+    width: '12%',
   },
   {
     title: 'Email',
     dataIndex: 'email',
-    width: '13%',
+    width: '12%',
   },
   {
     title: '휴대전화',
     dataIndex: 'phone',
-    width: '13%',
+    width: '12%',
   },
   {
     title: '가입시간',
     dataIndex: 'ins_date',
-    width: '13%',
+    width: '12%',
   },
   {
     title: 'Action',
@@ -229,7 +229,9 @@ function getUserList() {
       item['children'] = item['children'].map(item2=>{
         return {...item2,ins_date:getDate(item2.insDate)}
       })
-      return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'],children:item['children'] };
+      console.log(item['children']);
+      const children = item['children'].length ? item['children'] : '';
+      return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'],children };
     });
     tableLoading.value = false;
   });
