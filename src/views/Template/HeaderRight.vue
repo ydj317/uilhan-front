@@ -29,25 +29,34 @@
           </a-button>
           <a-spin v-if="indicator"/>
         </div>
-        <div id="setting" class="">
-          <div class="center pointer pl20 pr20" @click="settingVisible" style="display: flex;align-items: center;border-radius:18px;background-color: #434343">
-            <img src="@/assets/img/user2.png" width="16" height="16" style="border-radius: 50px;" alt="">
-            <h3 class="mt8 mr30 mb10 ml10 p5" style="color:#fff;line-height:0;">{{ user_name }}</h3>
-            <DownOutlined />
-          </div>
-          <a-select class="absolute" v-if="setting_visible" :default-open="true" :autofocus="true" ref="select"
-                    v-model:value="setting" @select="seletedSetting" @blur="settingVisible"
-                    style="right: 19px;top: 60px;width: 150px;">
-            <a-select-option value="setting">
-              <SettingOutlined/>
-              설정
-            </a-select-option>
-            <a-select-option value="logout">
-              <LogoutOutlined/>
-              로그아웃
-            </a-select-option>
-          </a-select>
+        <div class="employee_name" v-if="employee_name">
+          직원：{{employee_name}}
         </div>
+        <a-dropdown class="setting-wrap fl-tc fl-lb">
+          <a @click.prevent>
+            <img src="@/assets/img/user2.png">
+            <span class="ml20 fs16">{{ user_name }}</span>
+            <DownOutlined class="ml30" />
+          </a>
+          <template #overlay>
+            <a-menu>
+<!--              <a-menu-item @click="go('/user/my')"><UserOutlined/><span class="ml5">My Page</span></a-menu-item>-->
+              <a-sub-menu v-if="Object.keys(this.account_list).length">
+                <template #title>
+                  <UserSwitchOutlined/><span class="ml5">계정 정보</span>
+                </template>
+                <a-menu-item @click="toggleAccount(v.id)" v-for="v in account_list">
+                  <div class="fl-tc fl-lb">
+                    {{ v.username }}
+                    <a-badge :count="main_user.username == v.username ? '기본 계정':'하위 계정'" :number-style="{ backgroundColor: '#52c41a' }" class="ml10 fs10" />
+                  </div>
+                </a-menu-item>
+              </a-sub-menu>
+              <a-menu-item @click="go('/setting/updateDetail')"><SettingOutlined/><span class="ml5">설정</span></a-menu-item>
+              <a-menu-item @click="logout"><LogoutOutlined/><span class="ml5">로그아웃</span></a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
       </a-space>
 
       <!--      <div id="language">-->
@@ -77,7 +86,7 @@
 </template>
 
 <script>
-import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined,DownOutlined} from "@ant-design/icons-vue";
+import {UserOutlined, SettingOutlined, LogoutOutlined, LoadingOutlined,DownloadOutlined,DownOutlined,UserSwitchOutlined} from "@ant-design/icons-vue";
 import {AuthRequest} from "@/util/request";
 import Cookie from "js-cookie";
 import {cookieInit} from "@/util/auth";
@@ -93,7 +102,8 @@ export default {
     SettingOutlined,
     LogoutOutlined,
     DownloadOutlined,
-    DownOutlined
+    DownOutlined,
+    UserSwitchOutlined
   },
 
   computed: {
@@ -117,7 +127,11 @@ export default {
       indicator: false,
 
       // rate: 0,
-      // rateLoading:false
+      // rateLoading:false,
+
+      employee_name:Cookie.get('employee') ? JSON.parse(Cookie.get('employee')).username:'',
+      account_list:Cookie.get('account_list') ? JSON.parse(Cookie.get('account_list')):{},
+      main_user:Cookie.get('main_user') ? JSON.parse(Cookie.get('main_user')):{},
     };
   },
 
@@ -159,6 +173,9 @@ export default {
       sessionStorage.setItem("orderData", "");
       router.push("/user/login");
       return false;
+    },
+    go(url){
+      location.href = url
     },
 
     extensionDown() {
@@ -206,6 +223,34 @@ export default {
       //   this.rateLoading = false;
       // });
     // }
+    //切换账号
+    toggleAccount(id){
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/toggle", {toggleId:id}).then((res) => {
+        if(res.status !== '2000') {
+          message.error(res.message);
+          return false;
+        }
+        Cookie.set('token', res.data.token)
+        Cookie.set('member_name', res.data.member_name);
+        Cookie.set('member_roles', res.data.member_roles);
+        if(res.data.loginUser){
+          Cookie.set('login_user', JSON.stringify(res.data.loginUser));
+        }
+        if(res.data.mainUser){
+          Cookie.set('main_user', JSON.stringify(res.data.mainUser));
+        }
+        if(res.data.employee){
+          Cookie.set('employee', JSON.stringify(res.data.employee));
+        }
+        if(res.data.accountList){
+          Cookie.set('account_list', JSON.stringify(res.data.accountList));
+        }
+        window.location.reload();
+      }).catch((e) => {
+        message.error(e.message)
+        return false;
+      });
+    }
   },
   // mounted() {
   //   this.getRate()
@@ -239,5 +284,26 @@ export default {
 
 .pointer .anticon-down{
   color:#fff;
+}
+</style>
+<style scoped>
+#Header .employee_name{
+  height: 28px;
+  line-height: 28px;
+  padding: 0 20px;
+  background-color: #ffd117;
+  border-radius: 18px;
+}
+#Header .setting-wrap{
+  border-radius:18px;
+  background-color: #434343;
+  color: #fff;
+  padding: 0 20px;
+  line-height: 28px;
+}
+#Header .setting-wrap img{
+  width: 16px;
+  height: 16px;
+  border-radius: 50px;
 }
 </style>

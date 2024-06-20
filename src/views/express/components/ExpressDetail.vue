@@ -7,7 +7,7 @@
 		v-model:open="visible"
 	>
     <div style="padding: 0 200px; height: calc(100vh - 100px) ;overflow-y: scroll; margin-right: 20px;">
-    <a-flex>
+    	<a-flex>
 			<span class="fs18 fw">배대지 신청 현황 정보</span>
 		</a-flex>
 
@@ -21,7 +21,7 @@
 					<div class="fs20">{{state.bridgeOrderDetail['bridgeOrderStatus']}}</div>
 				</a-flex>
 			</a-flex>
-<!--			<a-button class="fw fs14" @click="state.historyModal = true">배송 히스토리</a-button>-->
+			<a-button class="fw fs14" @click="getHistory(state.bridgeOrderDetail['bridgeOrderId'])">배송 히스토리</a-button>
 		</a-flex>
 
 		<a-flex vertical>
@@ -73,7 +73,7 @@
 
 		<span v-for="(item, index) in state.bridgeOrderDetail['items']" :key="index">
 		<a-flex class="mt40">
-			<span class="fs14 fw">상품정보 0{{index + 1}}</span>
+			<span class="fs16 fw">상품정보 0{{index + 1}}</span>
 		</a-flex>
 		<a-flex vertical class="info-wrap mt15 bor-bottom-0505050f top-border-000 ">
 			<a-flex>
@@ -136,14 +136,21 @@
 			</a-flex>
 
 			<a-flex class="mt40" v-if="item['bridge_order_images']">
-				<span class="fs18 fw">입고상품 검수 이미지</span>
+				<span class="fs16 fw">입고상품 검수 이미지</span>
 			</a-flex>
 
 			<a-flex class="mt25 top-border-000 bottom-border-f0f0f0 fl-tc" v-if="item['bridge_order_images']">
-				<div class="fs14 bg-fafafa mr40 h90 fl-cc fw" style="width: 180px;">검수 이미지</div>
-				<span v-for="(url, index) in item['bridge_order_images']" :key="index">
-					<img :src="url" class="br5 mr15" width="70" height="70" alt="">
-				</span>
+				<div class="fs14 bg-fafafa mr40 h90 fl-cc fw" style="width: 20%;">검수 이미지</div>
+				<div class="big-img-wrap" v-for="(url, index) in item['bridge_order_images']" :key="index">
+					<a-image
+						class="br5 mr15"
+						:width=70
+						:height=70
+						alt=""
+						:src="url"
+					/>
+					<img :src="url" class="big-img" alt="">
+				</div>
 			</a-flex>
 			<a-flex class="fs12 mt10 color-bababa">
 				상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요
@@ -236,18 +243,23 @@
 		:footer="null"
 	>
 		<template #title>
-			<a-flex vertical>
-				<a-descriptions title="배송 히스토리" :column="2" bordered class="mt40" :label-style="{width:'30%'}" :content-style="{width:'70%'}">
-					<a-descriptions-item label="변경시간">{{state.bridgeOrderDetail['updDate']}}</a-descriptions-item>
-					<a-descriptions-item label="주문상태">{{state.bridgeOrderDetail['bridgeOrderStatus']}}</a-descriptions-item>
-				</a-descriptions>
+			<a-flex class="mt40">
+				<span class="fs14 fw">배송 히스토리</span>
+			</a-flex>
+			<a-flex vertical class="info-wrap mt15 bor-bottom-0505050f top-border-000 ">
+				<a-flex class="bottom-border-f0f0f0 h54" v-for="(item, index) in state.bridgeOrderStatusHistory" :key="index">
+					<div class="bg-fafafa fw w20 fl-tc pl20">변경시간</div>
+					<div class="w30 fl-tc pl20">{{item['insDate']}}</div>
+					<div class="bg-fafafa fw w20 fl-tc pl20">주문상태</div>
+					<div class="w25 fl-tc pl20">{{item['bridgeOrderStatus']}}</div>
+				</a-flex>
 			</a-flex>
 		</template>
 	</a-modal>
 </template>
 <script setup>
-import {CopyOutlined} from "@ant-design/icons-vue";
 import {computed, reactive, toRefs, watchEffect} from "vue";
+import {useBridgeApi} from "@/api/bridge";
 
 const props = defineProps({
 	visible: Boolean,
@@ -265,6 +277,7 @@ const state = reactive({
 	historyModal: false,
 	totalAmount: 0,
 	totalCount: 0,
+	bridgeOrderStatusHistory: [],
 })
 
 let visible = computed({
@@ -291,6 +304,17 @@ const setTotal = (items, type) => {
 	}
 
 	return total;
+}
+
+const getHistory = async (bridgeOrderId) => {
+	await useBridgeApi().getBridgeOrderStatusHistory({bridgeOrderId}).then((res) => {
+		if (res.status === "2000" && res.data) {
+			state.bridgeOrderStatusHistory = res.data;
+			console.log(state.bridgeOrderStatusHistory)
+		}
+	});
+
+	state.historyModal = true;
 }
 
 watchEffect(() => {
@@ -545,5 +569,22 @@ a {
 	align-items: center;
 	justify-content: center;
 }*/
+
+.big-img-wrap{
+	position: relative;
+}
+.big-img-wrap .big-img{
+	width: 500px;
+	height: 550px;
+	position: fixed;
+	z-index: 99;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: none;
+}
+.big-img-wrap:hover .big-img{
+	display: block;
+}
 
 </style>

@@ -60,6 +60,14 @@ export function useBridgeApi() {
                 method: "POST",
                 data,
             });
+        },
+
+        getBridgeOrderStatusHistory: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/bridgeOrderStatusHistory",
+                method: "POST",
+                data,
+            });
         }
     }
 }
