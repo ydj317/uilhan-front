@@ -1,5 +1,4 @@
 <template>
-
     <a-spin :spinning="loading">
     <div class="bg-white" style="margin-top:20px;">
       <h3><strong>카테고리</strong></h3>
