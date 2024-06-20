@@ -10,7 +10,7 @@
             {{ config.label }}
           </a-select-option>
         </a-select>
-        <a-input v-model:value="searchFrom.search_value" placeholder="검색어" style="width: 200px;"/>
+        <a-input v-model:value="searchFrom.search_value" placeholder="검색어" @keyup.enter="searchList" style="width: 200px;"/>
 
         <a-button @click="searchList" style="width: 80px;" type="primary">
           검색
@@ -94,12 +94,12 @@ const tableColumns = ref([
   {
     title: 'No.',
     dataIndex: 'key',
-    width: '5%',
+    width: '10%',
   },
   {
     title: '아이디',
     dataIndex: 'username',
-    width: '13%',
+    width: '12%',
   },
   {
     title: '추천코드',
@@ -109,32 +109,32 @@ const tableColumns = ref([
   {
     title: '추천인 아이디',
     dataIndex: 'parent_user',
-    width: '13%',
+    width: '12%',
   },
   {
     title: '추천 횟수',
     dataIndex: 'recommend_count',
-    width: '10%',
+    width: '8%',
   },
   {
     title: '사용자명',
     dataIndex: 'name',
-    width: '13%',
+    width: '12%',
   },
   {
     title: 'Email',
     dataIndex: 'email',
-    width: '13%',
+    width: '12%',
   },
   {
     title: '휴대전화',
     dataIndex: 'phone',
-    width: '13%',
+    width: '12%',
   },
   {
     title: '가입시간',
     dataIndex: 'ins_date',
-    width: '13%',
+    width: '12%',
   },
   {
     title: 'Action',
@@ -225,25 +225,30 @@ function getUserList() {
     searchFrom.total = res.data.total;
 
     userData.value = res.data.userList.map((item, index) => {
-      // 创建一个Date对象
-      const date = new Date(item[0].insDate);
-
-      // 提取年月日时分秒
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
-
-      // 格式化输出
-      const formattedCreatedAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-      return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'] };
+      const formattedCreatedAt = getDate(item[0].insDate);
+      item['children'] = item['children'].map(item2=>{
+        return {...item2,ins_date:getDate(item2.insDate)}
+      })
+      console.log(item['children']);
+      const children = item['children'].length ? item['children'] : '';
+      return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'],children };
     });
-
     tableLoading.value = false;
   });
+}
+// 格式化输出
+function getDate(rq){
+  const date = new Date(rq);
+  // 提取年月日时分秒
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  // 格式化输出
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 onMounted(() => {

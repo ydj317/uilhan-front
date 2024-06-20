@@ -1,185 +1,268 @@
 <template>
 
 	<BindBridge @formUpdated="handleFormUpdate"/>
-    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 정보 수정'">
-
-        <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
-                @finish="onFinish" @finishFailed="onFinishFailed">
-
-            <a-form-item label="아이디">
-                {{ formState.username }}
-            </a-form-item>
-            <a-form-item label="비밀번호">
-                <span class="mr30">*******</span>
-                <a-button type="primary" @click="showModal">비밀번호 변경</a-button>
-            </a-form-item>
-
-            <a-form-item label="추천코드">
-                <a-button @click="copyText(formState.username)">
-                    {{ formState.username }}
-                    <CopyOutlined/>
-                </a-button>
-            </a-form-item>
-
-            <a-form-item label="사용자명" name="name" has-feedback>
-                <a-input v-model:value="formState.name" placeholder="사용자명을 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="Email" name="email" has-feedback>
-                <a-input v-model:value="formState.email" placeholder="Email을 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="휴대전화" name="phone1">
-                <a-row :gutter="10">
-                    <a-col style="width: 160px;">
-                        <a-form-item name="phone1" class="phone" has-feedback>
-                            <a-input v-model:value="formState.phone1" placeholder="휴대전화"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="phone2" class="phone" has-feedback>
-                            <a-input v-model:value="formState.phone2" placeholder="휴대전화"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="phone3" class="phone" has-feedback>
-                            <a-input v-model:value="formState.phone3" placeholder="휴대전화"/>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-            </a-form-item>
-
-            <a-form-item label="업체명/사업자명" name="com_name" has-feedback>
-                <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명을 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="사업자번호" name="com_number" has-feedback>
-                <a-input v-model:value="formState.com_number" placeholder="사업자번호를 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="사업자등록증" name="business_license_image" has-feedback class="upload">
-              <a-upload
-                  name="business_license_image"
-                  list-type="picture-card"
-                  :show-upload-list="false"
-                  :before-upload="validateUploadImage"
-                  :custom-request="uploadImage"
-              >
-                <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%;height:100%; object-fit: contain;" @click="showBigImageOnClick($event)" />
-                <div v-else>
-                  <loading-outlined v-if="loading"></loading-outlined>
-                  <plus-outlined v-else></plus-outlined>
-                  <div class="ant-upload-text">업로드</div>
-                </div>
-                <template v-if="formState.business_license_image">
-                  <close-circle-outlined class="delete-image" @click="removeLicenseImage($event)" />
+  <!--     员工表格  -->
+  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'" v-if="isMainUser">
+    <template #extra>
+      <a-button type="primary" @click="showAccountModal(0,2)">계정 등록</a-button>
+    </template>
+    <a-table :columns="columns" :data-source="formState.employeeList" :scroll="formState.employeeList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
+      <template #headerCell="{ column }">
+      </template>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'menu_name'">
+          <a-space wrap>
+            <a-tag v-for="menu in record.menu_name">{{ menu }}</a-tag>
+          </a-space>
+        </template>
+        <template v-if="column.key === 'action'">
+          <a-button type="primary" class="mr20" @click="showAccountModal(record,2)">수정</a-button>
+          <a-popconfirm
+            title="삭제하시겠습니까?"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="deleteAccount(record.id)"
+          >
+            <a-button type="default">삭제</a-button>
+          </a-popconfirm>
+        </template>
+      </template>
+    </a-table>
+  </a-card>
+    <!--     子账号表格  -->
+    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'서브계정 관리'" v-if="isMainUser" style="display: none;">
+        <template #extra>
+            <a-button type="primary" @click="showAccountModal(0,1)">서브계정 등록</a-button>
+        </template>
+        <a-table :columns="columnsSubAccount" :data-source="formState.subAccountList" :scroll="formState.subAccountList.length > 10 ? { y: 650 } : null" bordered :pagination="false">
+            <template #headerCell="{ column }">
+            </template>
+            <template #bodyCell="{ column, record }">
+                <template v-if="column.key === 'action'">
+                    <a-button type="primary" class="mr20" @click="showAccountModal(record,1)">수정</a-button>
+                  <a-popconfirm
+                    title="삭제하시겠습니까?"
+                    ok-text="Yes"
+                    cancel-text="No"
+                    @confirm="deleteAccount(record.id)"
+                  >
+                    <a-button type="default">삭제</a-button>
+                  </a-popconfirm>
                 </template>
-              </a-upload>
-              <div v-if="showBigImage" class="big-image" @click="showBigImage = false">
-                <img :src="formState.business_license_image" alt="Big Business License" />
-              </div>
-            </a-form-item>
-
-            <a-form-item label="사업장 전화번호" name="com_phone1">
-                <a-row :gutter="10">
-                    <a-col style="width: 160px;">
-                        <a-form-item name="com_phone1" class="phone" has-feedback>
-                            <a-input v-model:value="formState.com_phone1" placeholder="전화번호"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="com_phone2" class="phone" has-feedback>
-                            <a-input v-model:value="formState.com_phone2" placeholder="전화번호"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="com_phone3" class="phone" has-feedback>
-                            <a-input v-model:value="formState.com_phone3" placeholder="전화번호"/>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-            </a-form-item>
-
-            <a-form-item label="대표자명" name="com_ceo" has-feedback>
-                <a-input v-model:value="formState.com_ceo" placeholder="대표자명을 입력해주시오"/>
-            </a-form-item>
-
-            <a-form-item label="유선전화" name="tel1">
-                <a-row :gutter="10">
-                    <a-col style="width: 160px;">
-                        <a-form-item name="tel1" class="phone" has-feedback>
-                            <a-input v-model:value="formState.tel1" placeholder="유선전화"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="tel2" class="phone" has-feedback>
-                            <a-input v-model:value="formState.tel2" placeholder="유선전화"/>
-                        </a-form-item>
-                    </a-col>
-                    <a-col style="width: 160px;">
-                        <a-form-item name="tel3" class="phone" has-feedback>
-                            <a-input v-model:value="formState.tel3" placeholder="유선전화"/>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-            </a-form-item>
-
-            <div style="display: flex;justify-content: center;margin-top: 20px;">
-                <a-button type="primary" html-type="submit">저장</a-button>
-                <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>
-            </div>
-        </a-form>
-
+            </template>
+        </a-table>
     </a-card>
+  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정 수정'" v-if="isMainUser">
 
-  <!--    修改密码-->
-  <a-modal v-model:open="formState.pwdOpen" width="1000px"  :footer="null" :closable="false">
-    <a-card :bordered="false" :title="'비밀번호 변경'">
+    <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
+            @finish="onFinish" @finishFailed="onFinishFailed">
 
-      <a-form :rules="rulesRef" :model="formState" name="user_form2" class="user_form" autocomplete="off"
-              @finish="onFinish2" @finishFailed="onFinishFailed2">
+      <a-form-item label="아이디">
+        {{ formState.username }}
+      </a-form-item>
+      <a-form-item label="비밀번호">
+        <span class="mr30">*******</span>
+        <a-button type="primary" @click="showModal">비밀번호 변경</a-button>
+      </a-form-item>
 
-        <a-form-item label="기존 비밀번호" name="password" has-feedback>
-          <a-input-password v-model:value="formState.password"
-                            type="password" placeholder="기존 비밀번호를 입력해주십시오" />
-        </a-form-item>
+      <a-form-item label="추천코드">
+        <a-button @click="copyText(formState.username)">
+          {{ formState.username }}
+          <CopyOutlined/>
+        </a-button>
+      </a-form-item>
 
-        <a-form-item label="새로운 비밀번호" name="new_password" has-feedback>
-          <a-input-password v-model:value="formState.new_password"
-                            type="password" placeholder="새로운 비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오" />
-        </a-form-item>
+      <a-form-item label="사용자명" name="name" has-feedback>
+        <a-input v-model:value="formState.name" placeholder="사용자명을 입력해주시오"/>
+      </a-form-item>
 
-        <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback>
-          <a-input-password v-model:value="formState.password_confirm"
-                            type="password" placeholder="새로운 비밀번호를 한번 더 입력해주십시오" />
-        </a-form-item>
+      <a-form-item label="Email" name="email" has-feedback>
+        <a-input v-model:value="formState.email" placeholder="Email을 입력해주시오"/>
+      </a-form-item>
 
-        <div style="display: flex;justify-content: center;margin-top: 20px;">
-          <a-button  @click="handleCancel">취 소</a-button>
-          <a-button style="margin-left: 10px" type="primary" html-type="submit" :loading="formState.pwdLoading">저장</a-button>
+      <a-form-item label="휴대전화" name="phone1">
+        <a-row :gutter="10">
+          <a-col style="width: 160px;">
+            <a-form-item name="phone1" class="phone" has-feedback>
+              <a-input v-model:value="formState.phone1" placeholder="휴대전화"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="phone2" class="phone" has-feedback>
+              <a-input v-model:value="formState.phone2" placeholder="휴대전화"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="phone3" class="phone" has-feedback>
+              <a-input v-model:value="formState.phone3" placeholder="휴대전화"/>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <a-form-item label="업체명/사업자명" name="com_name" has-feedback>
+        <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명을 입력해주시오"/>
+      </a-form-item>
+
+      <a-form-item label="사업자번호" name="com_number" has-feedback>
+        <a-input v-model:value="formState.com_number" placeholder="사업자번호를 입력해주시오"/>
+      </a-form-item>
+
+      <a-form-item label="사업자등록증" name="business_license_image" has-feedback class="upload">
+        <a-upload
+          name="business_license_image"
+          list-type="picture-card"
+          :show-upload-list="false"
+          :before-upload="validateUploadImage"
+          :custom-request="uploadImage"
+        >
+          <img v-if="formState.business_license_image" :src="formState.business_license_image" alt="business_license_image" style="width:100%;height:100%; object-fit: contain;" @click="showBigImageOnClick($event)" />
+          <div v-else>
+            <loading-outlined v-if="loading"></loading-outlined>
+            <plus-outlined v-else></plus-outlined>
+            <div class="ant-upload-text">업로드</div>
+          </div>
+          <template v-if="formState.business_license_image">
+            <close-circle-outlined class="delete-image" @click="removeLicenseImage($event)" />
+          </template>
+        </a-upload>
+        <div v-if="showBigImage" class="big-image" @click="showBigImage = false">
+          <img :src="formState.business_license_image" alt="Big Business License" />
         </div>
-      </a-form>
+      </a-form-item>
 
-    </a-card>
+      <a-form-item label="사업장 전화번호" name="com_phone1">
+        <a-row :gutter="10">
+          <a-col style="width: 160px;">
+            <a-form-item name="com_phone1" class="phone" has-feedback>
+              <a-input v-model:value="formState.com_phone1" placeholder="전화번호"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="com_phone2" class="phone" has-feedback>
+              <a-input v-model:value="formState.com_phone2" placeholder="전화번호"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="com_phone3" class="phone" has-feedback>
+              <a-input v-model:value="formState.com_phone3" placeholder="전화번호"/>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <a-form-item label="대표자명" name="com_ceo" has-feedback>
+        <a-input v-model:value="formState.com_ceo" placeholder="대표자명을 입력해주시오"/>
+      </a-form-item>
+
+      <a-form-item label="유선전화" name="tel1">
+        <a-row :gutter="10">
+          <a-col style="width: 160px;">
+            <a-form-item name="tel1" class="phone" has-feedback>
+              <a-input v-model:value="formState.tel1" placeholder="유선전화"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="tel2" class="phone" has-feedback>
+              <a-input v-model:value="formState.tel2" placeholder="유선전화"/>
+            </a-form-item>
+          </a-col>
+          <a-col style="width: 160px;">
+            <a-form-item name="tel3" class="phone" has-feedback>
+              <a-input v-model:value="formState.tel3" placeholder="유선전화"/>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <div style="display: flex;justify-content: center;margin-top: 20px;">
+        <a-button type="primary" html-type="submit">저장</a-button>
+        <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>
+      </div>
+    </a-form>
+
+  </a-card>
+  <a-modal class="add-account" v-model:open="formState.accountModal.open" :title="formState.accountModal.id ? '직원 계정 수정' : '직원 계정 등록'" width="600px"  :footer="null" :closable="false" @cancel="accountModalClose">
+    <a-form
+      :rules="accountRulesRef"
+      :model="formState.accountModal"
+      name="addAccount"
+      ref="addAccountRef"
+      :label-col="{ span: 6 }"
+      :wrapper-col="{ span: 18 }"
+      autocomplete="off"
+      @finish="addAccount"
+    >
+      <a-form-item label="아이디" name="username" has-feedback>
+        <a-input v-model:value="formState.accountModal.username" placeholder="아이디를 입력해주세요" />
+      </a-form-item>
+      <a-form-item label="비밀번호" v-if="formState.accountModal.id">
+        <a-button type="primary" @click="formState.accountModal.showPassword=!formState.accountModal.showPassword">비밀번호 변경</a-button>
+      </a-form-item>
+      <a-form-item label="비밀번호" name="password" has-feedback v-if="!formState.accountModal.showPassword">
+        <a-input-password v-model:value="formState.accountModal.password" v-model:visible="formState.accountModal.password_visible" :placeholder="formState.accountModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
+      </a-form-item>
+      <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback v-if="!formState.accountModal.showPassword">
+        <a-input-password v-model:value="formState.accountModal.password_confirm" v-model:visible="formState.accountModal.password_confirm_visible" :placeholder="formState.accountModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
+      </a-form-item>
+      <a-form-item label="권한" name="auth" has-feedback v-if="formState.modalType==2">
+        <a-collapse v-model:activeKey="formState.accountModal.activePanel">
+          <a-collapse-panel
+            v-for="(item, index) in formState.accountModal.menuList"
+            :key="item.id"
+            :header="panelHeader(item, index)"
+          >
+            <template v-if="item.child && item.child.length">
+              <a-collapse ghost>
+                <a-collapse-panel
+                  v-for="(child, childIndex) in item.child"
+                  :key="child.id"
+                  :header="panelHeader(child, childIndex, index)"
+                  :showArrow="false"
+                >
+                </a-collapse-panel>
+              </a-collapse>
+            </template>
+          </a-collapse-panel>
+        </a-collapse>
+      </a-form-item>
+      <div style="display: flex;justify-content: center;margin-top: 20px;">
+        <a-button type="primary" html-type="submit" :loading="formState.accountModal.loading">저장</a-button>
+        <a-button style="margin-left: 10px" @click="accountModalClose">취소</a-button>
+      </div>
+    </a-form>
   </a-modal>
+    
+    <!--    修改密码-->
+<!--    <a-modal v-model:open="formState.pwdOpen" width="1000px"  :footer="null" :closable="false">-->
+<!--        <a-card :bordered="false" :title="'비밀번호 변경'">-->
 
-    <!--     表格  -->
-<!--    <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정관리'">-->
-<!--        <template #extra>-->
-<!--            <a-button type="primary" @click="showModal2">계정 등록</a-button>-->
-<!--        </template>-->
-<!--        <a-table :columns="columns" :data-source="data" bordered :pagination="false">-->
-<!--            <template #headerCell="{ column }">-->
-<!--            </template>-->
-<!--            <template #bodyCell="{ column, record }">-->
-<!--                <template v-if="column.key === 'action'">-->
-<!--                    <a-button type="primary" html-type="submit" class="mr20">수정</a-button>-->
-<!--                    <a-button type="default" html-type="submit">삭제</a-button>-->
-<!--                </template>-->
-<!--            </template>-->
-<!--        </a-table>-->
-<!--    </a-card>-->
+<!--            <a-form :rules="rulesRef" :model="formState" name="user_form2" class="user_form" autocomplete="off"-->
+<!--                    @finish="onFinish2" @finishFailed="onFinishFailed2">-->
 
+<!--                <a-form-item label="기존 비밀번호" name="password" has-feedback>-->
+<!--                    <a-input-password v-model:value="formState.password"-->
+<!--                                      type="password" placeholder="기존 비밀번호를 입력해주십시오" />-->
+<!--                </a-form-item>-->
+
+<!--                <a-form-item label="새로운 비밀번호" name="new_password" has-feedback>-->
+<!--                    <a-input-password v-model:value="formState.new_password"-->
+<!--                                      type="password" placeholder="새로운 비밀번호 길이는 최소 8자 최대 20자 이내로 입력해주십시오" />-->
+<!--                </a-form-item>-->
+
+<!--                <a-form-item label="비밀번호 확인" name="password_confirm" has-feedback>-->
+<!--                    <a-input-password v-model:value="formState.password_confirm"-->
+<!--                                      type="password" placeholder="새로운 비밀번호를 한번 더 입력해주십시오" />-->
+<!--                </a-form-item>-->
+
+<!--                <div style="display: flex;justify-content: center;margin-top: 20px;">-->
+<!--                    <a-button  @click="handleCancel">취 소</a-button>-->
+<!--                    <a-button style="margin-left: 10px" type="primary" html-type="submit" :loading="formState.pwdLoading">저장</a-button>-->
+<!--                </div>-->
+<!--            </a-form>-->
+
+<!--        </a-card>-->
+<!--    </a-modal>-->
     <!--    注冊账户-->
 <!--    <a-modal v-model:open="formState.regOpen" width="1000px"  :footer="null" :closable="false">-->
 <!--        <a-card :bordered="false" :title="'직원 계정 등록'">-->
@@ -219,18 +302,20 @@
     import {AuthRequest} from "@/util/request";
     import {
       CloseCircleOutlined,
-      CopyOutlined, LoadingOutlined, PlusOutlined
+      CopyOutlined, LoadingOutlined, PlusOutlined,
     } from "@ant-design/icons-vue";
-    import {onMounted, reactive, ref} from "vue";
+    import {onMounted, reactive, ref,h} from "vue";
     import router from "@/router";
-    import {message} from "ant-design-vue";
+    import {message,Checkbox} from "ant-design-vue";
     import {useUserApi} from "@/api/user";
 	  import BindBridge from "@/views/Setting/BindBridge.vue";
     import Cookie from "js-cookie";
 
 	  import "vue-loading-overlay/dist/vue-loading.css";
     import Loading from "vue-loading-overlay";
-
+    const main_user = Cookie.get('main_user') ? JSON.parse(Cookie.get('main_user')):''
+    const member_name = Cookie.get('member_name')
+    const isMainUser = main_user.username == member_name;
     const formState = reactive({
         username: "",
         //[필수] 사용자명/사업자명
@@ -281,6 +366,23 @@
 			is_bridge_sync: false,
 		},
       business_license_image: '',
+      employeeList:[],
+      subAccountList:[],
+      modalType:0,//1=子账号,2=员工账号
+      accountModal:{
+          open:false,
+          loading:false,
+          menuList: [],
+          id:0,
+          username:'',
+          password:'',
+          password_confirm:'',
+          password_visible:false,
+          password_confirm_visible:false,
+          menu_id:[],
+          activePanel:[],
+          showPassword:false,
+      },
     });
 
 	const handleFormUpdate = (data) => {
@@ -462,11 +564,7 @@
             }
 
             if (formState.password_confirm !== "") {
-              try {
-                await formState.formRef.validateFields(['password_confirm']);
-              } catch (error) {
-
-              }
+                formState.formRef.validateFields("password_confirm");
             }
 
             return Promise.resolve();
@@ -738,6 +836,8 @@
 
     onMounted(() => {
         getUserInfoData();
+        getAccountList();
+        getMenuList();
     });
     const columns = [
         {
@@ -748,26 +848,20 @@
         },
         {
             title: '직원 아이디',
-            dataIndex: 'ID',
-            key: 'ID',
-            width:'20%',
-        },
-        {
-            title: '비밀번호',
-            dataIndex: 'pwd',
-            key: 'pwd',
-            width:'20%',
+            dataIndex: 'username',
+            key: 'username',
+            width:'30%',
         },
         {
             title: '권한',
-            key: 'auth',
-            dataIndex: 'auth',
-            width:'20%',
+            key: 'menu_name',
+            dataIndex: 'menu_name',
+            width:'30%',
         },
         {
             title: '계정 등록시간',
-            key: 'insDate',
-            dataIndex: 'insDate',
+            key: 'ins_date',
+            dataIndex: 'ins_date',
             width:'20%',
         },
         {
@@ -776,23 +870,30 @@
             width:'15%',
         }
     ];
-    const data = [
-        {
-            key: '1',
-            No: 9999,
-            ID: '직원1직원1직원1',
-            pwd: '密码1密码1密码1密码1密码1密码',
-            auth: 'auth1auth1auth1',
-            insDate: '2023-12-20',
-        },
-        {
-            key: '2',
-            No: 2,
-            ID: '직원2',
-            pwd: '密码2',
-            auth: 'auth2auth2au',
-            insDate: '2023-12-20',
-        },
+    const columnsSubAccount = [
+      {
+        title: 'No.',
+        dataIndex: 'No',
+        key: 'No',
+        width:'5%',
+      },
+      {
+        title: '직원 아이디',
+        dataIndex: 'username',
+        key: 'username',
+        width:'40%',
+      },
+      {
+        title: '계정 등록시간',
+        key: 'ins_date',
+        dataIndex: 'ins_date',
+        width:'40%',
+      },
+      {
+        title: '관리',
+        key: 'action',
+        width:'15%',
+      }
     ];
 
     //修改密码模态框
@@ -859,6 +960,262 @@
 
     const onFinishFailed3 = errorInfo => {
         console.log("Failed:", errorInfo);
+    };
+    //add user-------------
+    //菜单列表
+    const getMenuList = () => {
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/menu/list", {}).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+        res.data.map(item=>{
+          item.checked=false
+          formState.accountModal.activePanel.push(item.id);
+          if(item.child){
+            item.child.map(item2=>{
+              item2.checked=false
+              return item2;
+            })
+          }
+          return item;
+        })
+        formState.accountModal.menuList = res.data;
+      });
+    }
+    const addAccountRef = ref();
+    //显示添加账户弹层
+    const showAccountModal = (v,type)=>{
+      formState.modalType = type;
+      formState.accountModal.id = 0;
+      formState.accountModal.username = '';
+      formState.accountModal.password = '';
+      formState.accountModal.password_confirm = '';
+      formState.accountModal.menu_id = [];
+      formState.accountModal.showPassword = false;
+      formState.accountModal.menuList.map(item=>{
+        item.checked=false
+        if(item.child.length){
+          item.child.map(item2=>{
+            item2.checked=false
+            return item2;
+          })
+        }
+      })
+      if(v){
+        formState.accountModal.showPassword = true;
+        formState.accountModal.id = v.id;
+        formState.accountModal.username = v.username;
+        if(formState.modalType == 2){
+          if(v.menu_id){
+            formState.accountModal.menu_id = v.menu_id;
+          }
+          formState.accountModal.menuList.map(item=>{
+            item.checked=false
+            if(v.menu_id.includes(item.id)){
+              item.checked = true;
+            }
+            if(item.child.length){
+              let num = 0;
+              item.child.map(item2=>{
+                item2.checked=false
+                if(v.menu_id.includes(item2.id)){
+                  item2.checked=true
+                  num++;
+                }
+                return item2;
+              })
+            }
+          })
+        }
+      }
+      formState.accountModal.open = true;
+    }
+    //关闭添加账户弹层
+    const accountModalClose = ()=>{
+      formState.accountModal.open = false
+      formState.accountModal.password_visible = false;
+      formState.accountModal.password_confirm_visible = false;
+      addAccountRef.value.resetFields();
+    }
+
+    const getAccountList = () => {
+      //子账号列表
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/subAccount/list", {}).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+        formState.subAccountList = res.data;
+      });
+      //员工账号列表
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/employee/list", {}).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+        formState.employeeList = res.data;
+      });
+    }
+    
+    let accountValidateName = async (rule, value) => {
+      if (value === "") {
+        return Promise.reject("아이디를 입력해주세요");
+      } else {
+        if (value.length < 5 || value.length > 20) {
+          return Promise.reject("아이디는 최소 5자 최대 20자까지 입력해주세요.");
+        }
+      }
+      return Promise.resolve();
+    };
+    let accountValidatePass = async (rule, value) => {
+      if (value === "") {
+        if(!formState.accountModal.id){
+          return Promise.reject("비밀번호를 입력 해주세요");
+        }
+      } else {
+        if (value.length < 8 || value.length > 20) {
+          return Promise.reject("비밀번호는 8자 이상, 20자 이내로 입력해주세요.");
+        }
+      }
+      return Promise.resolve();
+    };
+    let accountValidatePassConfirm = async (rule, value) => {
+      if (value === "") {
+        if(!formState.accountModal.id || (formState.accountModal.id && formState.accountModal.password !== '')){
+          return Promise.reject("비밀번호가 일치하지 않습니다");
+        }
+      } else if (value !== formState.accountModal.password) {
+        return Promise.reject("비밀번호가 일치하지 않습니다");
+      } else {
+        return Promise.resolve();
+      }
+    };
+    //表单验证
+    const accountRulesRef = reactive({
+      username: [
+        {
+          required: true,
+          validator: accountValidateName,
+          trigger: "blur"
+        }
+      ],
+      password: [
+        {
+          required: true,
+          validator: accountValidatePass,
+          trigger: "blur"
+        }
+      ],
+      password_confirm: [
+        {
+          required: true,
+          validator: accountValidatePassConfirm,
+          trigger: "blur"
+        }
+      ],
+    });
+    //添加账号
+    const addAccount = () => {
+      let user = {
+        username: formState.accountModal.username,
+        password: formState.accountModal.password,
+      };
+      let url = '/api/subAccount/set';
+      if(formState.modalType == 2){
+        user.menu_id = formState.accountModal.menu_id;
+        url = '/api/employee/set';
+        if(!user.menu_id.length){
+          message.error('권한을 추가해주세요');
+          return false;
+        }
+      }
+      if(formState.accountModal.id){
+        user.id = formState.accountModal.id;
+      }
+      formState.accountModal.loading = true;
+      AuthRequest.post(process.env.VUE_APP_API_URL + url, user).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          formState.accountModal.loading = false;
+          return false;
+        }
+        message.success(res.message);
+        formState.accountModal.loading = false;
+        formState.accountModal.open = false;
+        formState.accountModal.password_visible = false;
+        formState.accountModal.password_confirm_visible = false;
+        addAccountRef.value.resetFields();
+        getAccountList();
+      });
+    };
+    //删除账户
+    const deleteAccount = (id) =>{
+      let url = formState.modalType == 1 ? '/api/subAccount/del' : "/api/employee/del";
+      AuthRequest.post(process.env.VUE_APP_API_URL + url, { id }).then((res) => {
+        if (res.status !== "2000") {
+          message.error(res.message);
+          return false;
+        }
+        message.success(res.message);
+        getAccountList();
+      });
+    }
+    // 处理父级复选框选中和取消选中
+    const handleParentCheck = (index, event) => {
+      event.stopPropagation();
+      const parent = formState.accountModal.menuList[index];
+      parent.checked = !parent.checked;
+
+      // 更新子级的选中状态
+      if (parent.child && parent.child.length) {
+        parent.child.forEach(child => {
+          child.checked = parent.checked;
+          updateMenuId(child.id, child.checked);
+        });
+      }
+
+      // 更新父级在 menu_id 中的状态
+      updateMenuId(parent.id, parent.checked);
+    };
+
+    // 处理子级复选框选中和取消选中
+    const handleChildCheck = (parentIndex, childIndex, event) => {
+      event.stopPropagation();
+      const parent = formState.accountModal.menuList[parentIndex];
+      const child = parent.child[childIndex];
+      child.checked = !child.checked;
+
+      // 更新子级在 menu_id 中的状态
+      updateMenuId(child.id, child.checked);
+    };
+
+    // 更新 menu_id 的状态
+    const updateMenuId = (id, checked) => {
+      if (checked) {
+        if (!formState.accountModal.menu_id.includes(id)) {
+          formState.accountModal.menu_id.push(id);
+        }
+      } else {
+        const index = formState.accountModal.menu_id.indexOf(id);
+        if (index !== -1) {
+          formState.accountModal.menu_id.splice(index, 1);
+        }
+      }
+    };
+
+    // 定义面板标题的生成函数
+    const panelHeader = (item, index, parentIndex = null) => {
+      return h('div', { class: 'panel-header' }, [
+        h(Checkbox, {
+          checked: item.checked,
+          onChange: parentIndex === null
+            ? (event) => handleParentCheck(index, event)
+            : (event) => handleChildCheck(parentIndex, index, event),
+          onClick: (event) => event.stopPropagation() // 防止点击复选框时展开/折叠
+        }, () => ''),
+        h('span', { class: 'header-text' }, item.title)
+      ]);
     };
 </script>
 <style>
@@ -946,8 +1303,40 @@
     .ant-upload-wrapper.ant-upload-picture-card-wrapper{
       margin-bottom: 0;
     }
-
+    .add-account .ant-form-show-help{
+      display:block;
+    }
+    .add-account .ant-form-item-label{
+      height: fit-content;
+    }
+    .add-account .ant-collapse{
+      background: inherit;
+    }
+    .add-account .ant-collapse-header{
+      padding: 2px 16px!important;
+    }
+    .add-account .ant-collapse-content-box .ant-collapse-header{
+      padding-left: 50px!important;
+    }
+    .add-account .ant-collapse-content-box{
+      padding: 2px 16px!important;
+    }
+    .add-account .ant-collapse-content{
+      border-top: 0!important;
+    }
+    .add-account .ant-collapse-item:not(:last-child){
+      border-bottom: 0!important;
+    }
+    .add-account .ant-collapse-content-box .ant-collapse-item{
+      height: 26px;
+    }
 </style>
 <style scoped>
-
+.panel-header {
+  display: flex;
+  align-items: center;
+}
+.header-text {
+  margin-left: 10px;
+}
 </style>

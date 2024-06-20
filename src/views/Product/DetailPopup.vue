@@ -31,6 +31,7 @@
   </a-modal>
   <!--제휴사 상품연동-->
   <a-modal width="1000px" title="상품등록" v-model:open="singleSyncPop" centered>
+    <loading style="z-index: 999" v-model:active="syncLoading" :can-cancel="false" :is-full-page="false" />
     <a-table
         class="tableSyncStatus"
         :dataSource="this.product.item_sync_market"
@@ -114,14 +115,17 @@ import { mapState} from "vuex";
 import {throttle,debounce} from "lodash";
 import {useCategoryApi} from "@/api/category";
 import {useUserApi} from "@/api/user";
+import Loading from "vue-loading-overlay";
 
 export default defineComponent({
   name: "productDetailPopup",
   components: {
+    Loading,
     CopyOutlined,
   },
   data() {
     return {
+      syncLoading : false,
       activeKey: '1',
       tabList: [
         {
@@ -464,7 +468,8 @@ export default defineComponent({
         return false;
       }
 
-      this.product.loading = true;
+      this.syncLoading = true;
+
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
           productList: this.product.item_id + "",
@@ -473,13 +478,13 @@ export default defineComponent({
 
         if (res.status !== "2000") {
           message.error(res.message);
-          this.product.loading = false;
+          this.syncLoading = false;
           return false;
         }
 
         if (res.data !== undefined && res.data.length === 0) {
           message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
-          this.product.loading = false;
+          this.syncLoading = false;
           return false;
         }
 
@@ -515,12 +520,12 @@ export default defineComponent({
           returnData.data
         ]);
 
-        this.product.loading = false;
+        this.syncLoading = false;
 
         return true;
       } catch (e) {
         message.error(e.message);
-        this.product.loading = false;
+        this.syncLoading = false;
         return false;
       }
     },
