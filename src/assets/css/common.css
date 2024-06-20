@@ -1909,6 +1909,12 @@
 .bg-fafafa{
     background: #fafafa;
 }
+.bg-f0f0f0{
+    background: #f0f0f0;
+}
 .he100{
     height: 100%;
+}
+.box-sha{
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
