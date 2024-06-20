@@ -37,8 +37,10 @@
             <div class="time-info">
               <span>수집일</span>
               <span>{{product.item_ins?.slice(0, 16)}}</span>
+              <span v-if="product.collect">{{product.collect.name}}</span>
               <span>연동일</span>
               <span>{{product.item_sync_date ? product.item_sync_date.slice(0, 16) : '—'}}</span>
+              <span v-if="product.register">{{product.register.name}}</span>
             </div>
             <div style="margin-top: 5px;">
               <a-button type="default" size="small" style="width: 100%" @click="product.moreActionVisible = false">닫기</a-button>
