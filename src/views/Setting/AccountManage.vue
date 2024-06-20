@@ -182,7 +182,7 @@
     </a-form>
 
   </a-card>
-  <a-modal class="add-account" v-model:open="formState.accountModal.open" :title="formState.accountModal.id ? '직원 계정 수정' : '직원 계정 등록'" width="600px"  :footer="null" :closable="false" @cancel="accountModalClose">
+  <a-modal class="add-account" v-model:open="formState.accountModal.open" :title="formState.accountModal.id ? '직원 계정 수정' : '직원 계정 등록'" width="1000px"  :footer="null" :closable="false" @cancel="accountModalClose">
     <a-form
       :rules="accountRulesRef"
       :model="formState.accountModal"
@@ -206,25 +206,20 @@
         <a-input-password v-model:value="formState.accountModal.password_confirm" v-model:visible="formState.accountModal.password_confirm_visible" :placeholder="formState.accountModal.id ? '비어 있으면 수정이 이루어지지 않습니다.' : '비밀번호를 입력 해주세요'" />
       </a-form-item>
       <a-form-item label="권한" name="auth" has-feedback v-if="formState.modalType==2">
-        <a-collapse v-model:activeKey="formState.accountModal.activePanel">
-          <a-collapse-panel
-            v-for="(item, index) in formState.accountModal.menuList"
-            :key="item.id"
-            :header="panelHeader(item, index)"
-          >
-            <template v-if="item.child && item.child.length">
-              <a-collapse ghost>
-                <a-collapse-panel
-                  v-for="(child, childIndex) in item.child"
-                  :key="child.id"
-                  :header="panelHeader(child, childIndex, index)"
-                  :showArrow="false"
-                >
-                </a-collapse-panel>
-              </a-collapse>
+        <a-flex v-for="(v, k) in formState.accountModal.menuList">
+          <template v-if="v.pid == 0">
+            <a-checkbox v-model:checked="v.checked" class="mr30" @click="parentCheck(v)">{{v.title}}</a-checkbox>
+          </template>
+          <template v-if="v.checked">
+            <template v-for="(v2, k2) in v.child">
+              <a-flex align="center">
+                <span class="mr5">{{v2.title}}</span>
+                <a-switch v-model:checked="v2.checked" checked-children="on" un-checked-children="off" @click="childCheck(v,v2)" />
+                <a-divider type="vertical" v-if="k2+1 != v.child.length" :class="{'mr20':k2+1 != v.child.length,'ml20':k2+1 != v.child.length}" />
+              </a-flex>
             </template>
-          </a-collapse-panel>
-        </a-collapse>
+          </template>
+        </a-flex>
       </a-form-item>
       <div style="display: flex;justify-content: center;margin-top: 20px;">
         <a-button type="primary" html-type="submit" :loading="formState.accountModal.loading">저장</a-button>
@@ -1164,75 +1159,50 @@
         getAccountList();
       });
     }
-    // 处理父级复选框选中和取消选中
-    const handleParentCheck = (index, event) => {
-      event.stopPropagation();
-      const parent = formState.accountModal.menuList[index];
-      parent.checked = !parent.checked;
-
-      // 更新子级的选中状态
-      if (parent.child && parent.child.length) {
-        parent.child.forEach(child => {
-          child.checked = parent.checked;
-          updateMenuId(child.id, child.checked);
-        });
-      }
-
-      // 更新父级在 menu_id 中的状态
-      updateMenuId(parent.id, parent.checked);
-    };
-
-    // 处理子级复选框选中和取消选中
-    const handleChildCheck = (parentIndex, childIndex, event) => {
-      event.stopPropagation();
-      const parent = formState.accountModal.menuList[parentIndex];
-      const child = parent.child[childIndex];
-      child.checked = !child.checked;
-
-      // 更新子级在 menu_id 中的状态
-      updateMenuId(child.id, child.checked);
-
-      // 检查所有子项的状态
-      const someChecked = parent.child.some(child => child.checked);
-
-      // 如果至少一个子项被选中，更新父级状态为选中
-      if (someChecked) {
-        parent.checked = true;
-      } else {
-        // 如果没有子项被选中，不强制改变父级的状态
-        // 父级状态保留原状
-      }
-
-      // 更新父级在 menu_id 中的状态
-      updateMenuId(parent.id, parent.checked);
-    };
-
-    // 更新 menu_id 的状态
-    const updateMenuId = (id, checked) => {
-      if (checked) {
-        if (!formState.accountModal.menu_id.includes(id)) {
-          formState.accountModal.menu_id.push(id);
+    // 父级全选
+    const parentCheck = (v) => {
+      v.checked = !v.checked;
+      if (v.checked) {
+        // 更新父级状态和menu_id
+        if (!formState.accountModal.menu_id.includes(v.id)) {
+          formState.accountModal.menu_id.push(v.id);
         }
       } else {
-        const index = formState.accountModal.menu_id.indexOf(id);
+        // 更新父级状态和menu_id
+        const index = formState.accountModal.menu_id.indexOf(v.id);
+        if (index !== -1) {
+          formState.accountModal.menu_id.splice(index, 1);
+        }
+        // 更新子级状态和menu_id
+        v.child.forEach(child => {
+          child.checked = false;
+          const childIndex = formState.accountModal.menu_id.indexOf(child.id);
+          if (childIndex !== -1) {
+            formState.accountModal.menu_id.splice(childIndex, 1);
+          }
+        });
+      }
+    };
+    // 下级选中
+    const childCheck = (parent, child) => {
+      if (child.checked) {
+        if (!formState.accountModal.menu_id.includes(child.id)) {
+          formState.accountModal.menu_id.push(child.id);
+        }
+      } else {
+        const index = formState.accountModal.menu_id.indexOf(child.id);
         if (index !== -1) {
           formState.accountModal.menu_id.splice(index, 1);
         }
       }
-    };
-
-    // 定义面板标题的生成函数
-    const panelHeader = (item, index, parentIndex = null) => {
-      return h('div', { class: 'panel-header' }, [
-        h(Checkbox, {
-          checked: item.checked,
-          onChange: parentIndex === null
-            ? (event) => handleParentCheck(index, event)
-            : (event) => handleChildCheck(parentIndex, index, event),
-          onClick: (event) => event.stopPropagation() // 防止点击复选框时展开/折叠
-        }, () => ''),
-        h('span', { class: 'header-text' }, item.title)
-      ]);
+      // 检查父级状态
+      const someChecked = parent.child.some(child => child.checked);
+      if (someChecked) {
+        parent.checked = true;
+        if (!formState.accountModal.menu_id.includes(parent.id)) {
+          formState.accountModal.menu_id.push(parent.id);
+        }
+      }
     };
 </script>
 <style>
