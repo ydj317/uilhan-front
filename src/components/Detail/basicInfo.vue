@@ -152,12 +152,12 @@ export default {
   watch: {
     "product.item_trans_name"() {
       this.keyword.list.forEach(d => {
-        d.is_using = this.isUsingKeyword(d.word)
+        d.is_using = this.isUsingKeyword(d.word, 1)
       })
     },
     "product.item_sync_keyword"() {
-      this.keyword.list.forEach(d => {
-        d.is_using = this.isUsingKeyword(d.word)
+      this.tagKeyword.list.forEach(d => {
+        d.is_using = this.isUsingKeyword(d.word, 2)
       })
     }
   },
@@ -274,10 +274,13 @@ export default {
         this.tagKeyword.loading = false
       })
     },
-    isUsingKeyword(word) {
-      const in_name = this.product.item_trans_name?.split(' ')?.includes(word)
-      const in_tags = this.product.item_sync_keyword?.split(' ')?.includes(word)
-      return in_name || in_tags
+    isUsingKeyword(word, type) {
+      if (type == 1) {
+        return this.product.item_trans_name?.split(' ')?.includes(word);
+      } else if (type == 2) {
+        return this.product.item_sync_keyword?.split(' ')?.includes(word);
+      }
+      return false;
     },
     initKeywords(keywords,type = 1) {
       if (! Array.isArray(keywords)) return
@@ -290,7 +293,7 @@ export default {
             word: item.word,
             brand: item.brand,
             reg: item.reg === 1,  // reg: 1|0
-            is_using: this.isUsingKeyword(item.word),
+            is_using: this.isUsingKeyword(item.word, type),
           }
         })
         //超过50个 剩下未注册的插入关键词,关键词最多20个
