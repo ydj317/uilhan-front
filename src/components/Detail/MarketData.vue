@@ -1,5 +1,6 @@
 <template>
-  <a-spin :spinning="loading">
+
+    <a-spin :spinning="loading">
     <div class="bg-white" style="margin-top:20px;">
       <h3><strong>카테고리</strong></h3>
       <table class="basic-info-table" style="width: 100%; border-collapse: collapse;">
