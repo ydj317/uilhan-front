@@ -28,7 +28,7 @@
             </div>
             <div v-show="keyword.list.length" style="color: #999999;">빨간색 라벨 키워드는 상표권에 등록된 단어입니다.</div>
             <a-spin v-model:spinning="keyword.loading">
-              <a-button v-if="this.showTrademarkBtn" size="small" type="primary" style="margin-bottom: 10px" @click="searchKeyword">상표권 확인</a-button>
+              <a-button v-if="this.showTrademarkBtn" size="small" type="primary" style="margin-bottom: 10px" @click="searchKeyword('', true)">상표권 확인</a-button>
               <div class="keyword-list" v-show="keyword.list.length > 0 || keyword.loading">
                 <a-tag
                   v-for="item in keyword.list" :key="item.id"
@@ -234,20 +234,21 @@ export default {
         this.product.item_sync_keyword = keyword.slice(0, 20).join(' ')
       }
     },
-    async searchKeyword() {
+    async searchKeyword(e = e, onlyDb = false) {
       if (this.keyword.search_value.trim().length === 0) {
         message.info('검색할 키워드를 입력해주세요.');
         return false;
       }
       this.keyword.loading = true
-      this.keyword.list = []
-      const params = {keyword: this.keyword.search_value}
+      const params = {keyword: this.keyword.search_value, onlyDb: onlyDb}
       AuthRequest.post(process.env.VUE_APP_API_URL + "/api/searchKeywords", params).then(res => {
         if (res.status !== '2000') {
-          message.error('키워드 검색중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
+          if ( onlyDb === false) {
+            message.error('키워드 검색중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
+          }
           return false;
         }
-
+        this.keyword.list = [];
         this.showTrademarkBtn = !res.data.formDB;
         this.initKeywords(res.data.keyword_data)
         //this.$emit('suggestCategory', res.data.category)
