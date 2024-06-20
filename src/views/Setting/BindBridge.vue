@@ -1,20 +1,34 @@
 
 <template>
-	<a-card :loading="formState.loading" :bordered="false" title="배대지 계정 연동">
-
+	<a-card :loading="formState.loading" :bordered="false">
+      <template #title>
+        배대지 계정 연동
+          <a-tooltip placement="right">
+            <template #title>
+              넥스트배송에 가입된 아이디,휴대전화,이메일을 모두 입력해 주세요.배대지 계정 연동후 배송대행 신청이 가능합니다.
+            </template>
+            <QuestionCircleOutlined/>
+          </a-tooltip>
+      </template>
 		<a-descriptions bordered :column="1" :labelStyle="{ width: '170px' }"
 						:contentStyle="{ width: 'auto' }">
 			<a-descriptions-item label="배대지 ID:" :labelStyle="{textAlign: 'right'}">
-				<a-input v-model:value="formState.settingData.bind_bridge_id" style="width: 200px;" allow-clear
+				<a-input v-model:value="formState.settingData.bind_bridge_id" style="width: 200px;" placeholder="배대지 ID를 입력해주세요" allow-clear
 						 @input="formState.settingData.is_bridge_sync = false" />
 			</a-descriptions-item>
 			<a-descriptions-item label="휴대전화:" :labelStyle="{textAlign: 'right'}">
-				<a-input v-model:value="formState.settingData.bind_bridge_phone" style="width: 200px;" allow-clear
-						 @input="formState.settingData.is_bridge_sync = false"
-				/>
+          <a-input v-model:value="formState.settingData.bind_bridge_phone1" style="width: 150px;" placeholder="휴대전화" allow-clear
+                   @input="formState.settingData.is_bridge_sync = false"
+          />
+          <a-input v-model:value="formState.settingData.bind_bridge_phone2" style="width: 150px;margin-left: 10px" placeholder="휴대전화" allow-clear
+                   @input="formState.settingData.is_bridge_sync = false"
+          />
+          <a-input v-model:value="formState.settingData.bind_bridge_phone3" style="width: 150px;margin-left: 10px" placeholder="휴대전화" allow-clear
+                   @input="formState.settingData.is_bridge_sync = false"
+          />
 			</a-descriptions-item>
 			<a-descriptions-item label="Email:" :labelStyle="{textAlign: 'right'}">
-				<a-input v-model:value="formState.settingData.bind_bridge_email" style="width: 200px;" allow-clear
+				<a-input v-model:value="formState.settingData.bind_bridge_email" style="width: 200px;" placeholder="Email을 입력해주세요" allow-clear
 						 @input="formState.settingData.is_bridge_sync = false"
 				/>
 			</a-descriptions-item>
@@ -48,11 +62,16 @@ import {useUserApi} from "@/api/user";
 import {message} from "ant-design-vue";
 import {useBridgeApi} from "@/api/bridge";
 import router from "@/router";
+import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {right} from "core-js/internals/array-reduce";
 
 const formState = reactive({
 	settingData: {
 		bind_bridge_id: '',
 		bind_bridge_mb_id: '',
+		bind_bridge_phone1: '',
+		bind_bridge_phone2: '',
+		bind_bridge_phone3: '',
 		bind_bridge_phone: '',
 		bind_bridge_email: '',
 		is_bridge_sync: false,
@@ -77,7 +96,10 @@ function getUserInfoData() {
 
 		formState.settingData.bind_bridge_id = bridge_id
 		formState.settingData.bind_bridge_mb_id = bridge_mb_id
-		formState.settingData.bind_bridge_phone = bridge_phone
+    formState.settingData.bind_bridge_phone1 = bridge_phone.split('-')[0]
+    formState.settingData.bind_bridge_phone2 = bridge_phone.split('-')[1]
+    formState.settingData.bind_bridge_phone3 = bridge_phone.split('-')[2]
+    formState.settingData.bind_bridge_phone = bridge_phone
 		formState.settingData.bind_bridge_email= bridge_email
 		formState.settingData.bind_bridge_password = ''
 		formState.settingData.is_bridge_sync = is_bridge_sync
@@ -132,7 +154,7 @@ const checkValidation = () => {
 		return false;
 	}
 
-	if (formState.settingData.bind_bridge_phone === '') {
+	if (formState.settingData.bind_bridge_phone1 === '' || formState.settingData.bind_bridge_phone2 === '' || formState.settingData.bind_bridge_phone3 === '') {
 		message.error("배대지 휴대전화를 입력해주세요.");
 		return false;
 	}
@@ -155,6 +177,9 @@ const handleFormUpdate = () => {
 		bind_bridge_id: formState.settingData.bind_bridge_id,
 		bind_bridge_mb_id: formState.settingData.bind_bridge_mb_id,
 		bind_bridge_phone: formState.settingData.bind_bridge_phone,
+		bind_bridge_phone1: formState.settingData.bind_bridge_phone1,
+		bind_bridge_phone2: formState.settingData.bind_bridge_phone2,
+		bind_bridge_phone3: formState.settingData.bind_bridge_phone3,
 		bind_bridge_email: formState.settingData.bind_bridge_email,
 		is_bridge_sync: formState.settingData.is_bridge_sync,
 	});

@@ -10,7 +10,7 @@
             {{ config.label }}
           </a-select-option>
         </a-select>
-        <a-input v-model:value="searchFrom.search_value" placeholder="검색어" style="width: 200px;"/>
+        <a-input v-model:value="searchFrom.search_value" placeholder="검색어" @keyup.enter="searchList" style="width: 200px;"/>
 
         <a-button @click="searchList" style="width: 80px;" type="primary">
           검색
@@ -80,7 +80,7 @@ const searchKeyword = ref([
     label: "사용자명"
   },
   {
-    key: "recommend_code",
+    key: "username",
     label: "추천코드"
   },
   {

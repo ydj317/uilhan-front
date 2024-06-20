@@ -198,6 +198,7 @@ export default {
         // market_code|seller_id: {loading: false, visible: false, list: [] }
       },
       search_keyword: "",
+      search_keyword_clone: "",
       search_keyword_by_market: {
         // market_code|seller_id: ''
       },
@@ -230,11 +231,13 @@ export default {
               };
             });
             if (res.data.length) {
+              this.search_keyword_clone = search_keyword;
               this.categories[marketInfo.accountName].value = res.data[0]["cate_names"].join("/");
               this.product.item_cate[marketInfo.accountName] = {
                 marketCode: marketInfo.market_code,
                 cateId: res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1],
-                categoryNames: res.data[0]["cate_names"].join("/")
+                categoryNames: res.data[0]["cate_names"].join("/"),
+                keyword: search_keyword
               };
 
               if (this.displayCategoryMarkets.includes(marketInfo.market_code)) {
@@ -276,7 +279,8 @@ export default {
           this.product.item_cate[market.accountName] = {
             marketCode: market.market_code,
             cateId: res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1],
-            categoryNames: res.data[0]["cate_names"].join("/")
+            categoryNames: res.data[0]["cate_names"].join("/"),
+            keyword: this.search_keyword_clone || searchInput
           };
           if (this.displayCategoryMarkets.includes(market.market_code)) {
             await this.getDisplayCategory(market.market_code, res.data[0]["cate_ids"], market.seller_id, market.accountName);
@@ -336,10 +340,12 @@ export default {
       if (!this.product.item_cate) {
         this.product.item_cate = {};
       }
+      let keyword = this.product.item_cate?.[accountName]?.keyword || this.search_keyword_clone;
       this.product.item_cate[accountName] = {
         marketCode: marketCode,
         cateId: value,
-        categoryNames: selectedOptions.cate_names
+        categoryNames: selectedOptions.cate_names,
+        keyword: keyword
       };
 
       // 전시카테고리 마켓

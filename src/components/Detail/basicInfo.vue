@@ -28,6 +28,7 @@
             </div>
             <div v-show="keyword.list.length" style="color: #999999;">빨간색 라벨 키워드는 상표권에 등록된 단어입니다.</div>
             <a-spin v-model:spinning="keyword.loading">
+              <a-button v-if="this.showTrademarkBtn" size="small" type="primary" style="margin-bottom: 10px" @click="searchKeyword('', true)">상표권 확인</a-button>
               <div class="keyword-list" v-show="keyword.list.length > 0 || keyword.loading">
                 <a-tag
                   v-for="item in keyword.list" :key="item.id"
@@ -151,12 +152,12 @@ export default {
   watch: {
     "product.item_trans_name"() {
       this.keyword.list.forEach(d => {
-        d.is_using = this.isUsingKeyword(d.word)
+        d.is_using = this.isUsingKeyword(d.word, 1)
       })
     },
     "product.item_sync_keyword"() {
-      this.keyword.list.forEach(d => {
-        d.is_using = this.isUsingKeyword(d.word)
+      this.tagKeyword.list.forEach(d => {
+        d.is_using = this.isUsingKeyword(d.word, 2)
       })
     }
   },
@@ -221,6 +222,7 @@ export default {
         index:false,
       },
       keywordMaxLength:20,
+      showTrademarkBtn: false,
     };
   },
 
@@ -232,12 +234,23 @@ export default {
         this.product.item_sync_keyword = keyword.slice(0, 20).join(' ')
       }
     },
-    async searchKeyword() {
+    async searchKeyword(e = e, onlyDb = false) {
+      if (this.keyword.search_value.trim().length === 0) {
+        message.info('검색할 키워드를 입력해주세요.');
+        return false;
+      }
       this.keyword.loading = true
-      this.keyword.list = []
-      const params = {keyword: this.keyword.search_value}
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/naver/keywords", params).then(res => {
-        this.initKeywords(res.data.keywords)
+      const params = {keyword: this.keyword.search_value, onlyDb: onlyDb}
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/searchKeywords", params).then(res => {
+        if (res.status !== '2000') {
+          if ( onlyDb === false) {
+            message.error('키워드 검색중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.');
+          }
+          return false;
+        }
+        this.keyword.list = [];
+        this.showTrademarkBtn = !res.data.formDB;
+        this.initKeywords(res.data.keyword_data)
         //this.$emit('suggestCategory', res.data.category)
       }).catch(() => {
         message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
@@ -246,34 +259,41 @@ export default {
       })
     },
     async searchTagKeyword() {
+      if (this.tagKeyword.search_value.trim().length === 0) {
+        message.info('검색할 상품태그를 입력해주세요.');
+        return false;
+      }
       this.tagKeyword.loading = true
       this.tagKeyword.list = []
       const params = {keyword: this.tagKeyword.search_value}
-      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/naver/keywords", params).then(res => {
-        this.initKeywords(res.data.keywords,2)
+      AuthRequest.post(process.env.VUE_APP_API_URL + "/api/searchKeywords", params).then(res => {
+        this.initKeywords(res.data.keyword_data,2)
       }).catch(() => {
         message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
       }).finally(() => {
         this.tagKeyword.loading = false
       })
     },
-    isUsingKeyword(word) {
-      const in_name = this.product.item_trans_name?.split(' ')?.includes(word)
-      const in_tags = this.product.item_sync_keyword?.split(' ')?.includes(word)
-      return in_name || in_tags
+    isUsingKeyword(word, type) {
+      if (type == 1) {
+        return this.product.item_trans_name?.split(' ')?.includes(word);
+      } else if (type == 2) {
+        return this.product.item_sync_keyword?.split(' ')?.includes(word);
+      }
+      return false;
     },
     initKeywords(keywords,type = 1) {
       if (! Array.isArray(keywords)) return
       if (keywords.length === 0) return
-      // 最多显示 50 个
+      // 最多显示 40 个
       if(type == 1){
-        this.keyword.list = keywords.slice(0, 50).map(item => {
+        this.keyword.list = keywords.slice(0, 40).map(item => {
           return {
             id: lib.uuid(),
             word: item.word,
             brand: item.brand,
             reg: item.reg === 1,  // reg: 1|0
-            is_using: this.isUsingKeyword(item.word),
+            is_using: this.isUsingKeyword(item.word, type),
           }
         })
         //超过50个 剩下未注册的插入关键词,关键词最多20个
@@ -286,15 +306,30 @@ export default {
         })
       }
       if(type == 2){
-        this.tagKeyword.list = keywords.slice(0, 50).map(item => {
+        this.tagKeyword.list = keywords.slice(0, 40).map(item => {
           return {
             id: lib.uuid(),
             word: item.word,
             brand: item.brand,
-            reg: item.reg === 1,  // reg: 1|0
-            is_using: this.isUsingKeyword(item.word),
+            reg: false,  // reg: 1|0
+            is_using: this.isUsingKeyword(item.word, type),
           }
         })
+
+        // 상품태그에 20개 안되면 넣어주기
+        if (this.product.item_sync_keyword.includes(',')) {
+          this.product.item_sync_keyword = this.product.item_sync_keyword.replace(/,/g, ' ').trim();
+        }
+        let productTags = this.product.item_sync_keyword.trim().split(' ');
+        if (productTags.length < 20) {
+            let addLength = 20 - productTags.length;
+            let addTags = this.tagKeyword.list.slice(0, addLength).map(item => {
+                return item.word
+            })
+            this.tagKeyword.list = this.tagKeyword.list.slice(addLength)
+            productTags = productTags.concat(addTags);
+            this.product.item_sync_keyword = productTags.join(' ').trim();
+        }
       }
     },
     addKeyword(keywordInfo,from = 1) {

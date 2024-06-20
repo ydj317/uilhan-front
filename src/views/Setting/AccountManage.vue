@@ -362,6 +362,9 @@
 			bind_bridge_id: '',
 			bind_bridge_mb_id: '',
 			bind_bridge_phone: '',
+			bind_bridge_phone1: '',
+			bind_bridge_phone2: '',
+			bind_bridge_phone3: '',
 			bind_bridge_email: '',
 			is_bridge_sync: false,
 		},
@@ -712,7 +715,7 @@
             com_ceo: formState.com_ceo,
 			bind_bridge_id: formState.bridgeData.bind_bridge_id,
 			bind_bridge_mb_id: formState.bridgeData.bind_bridge_mb_id,
-			bind_bridge_phone: formState.bridgeData.bind_bridge_phone,
+			bind_bridge_phone: formState.bridgeData.bind_bridge_phone1 + "-" + formState.bridgeData.bind_bridge_phone2 + "-" + formState.bridgeData.bind_bridge_phone3,
 			bind_bridge_email: formState.bridgeData.bind_bridge_email,
 			is_bridge_sync: formState.bridgeData.is_bridge_sync,
           business_license_image: formState.business_license_image
