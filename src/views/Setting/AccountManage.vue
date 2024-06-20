@@ -1191,6 +1191,20 @@
 
       // 更新子级在 menu_id 中的状态
       updateMenuId(child.id, child.checked);
+
+      // 检查所有子项的状态
+      const someChecked = parent.child.some(child => child.checked);
+
+      // 如果至少一个子项被选中，更新父级状态为选中
+      if (someChecked) {
+        parent.checked = true;
+      } else {
+        // 如果没有子项被选中，不强制改变父级的状态
+        // 父级状态保留原状
+      }
+
+      // 更新父级在 menu_id 中的状态
+      updateMenuId(parent.id, parent.checked);
     };
 
     // 更新 menu_id 的状态
