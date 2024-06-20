@@ -312,7 +312,7 @@ export default {
             word: item.word,
             brand: item.brand,
             reg: false,  // reg: 1|0
-            is_using: this.isUsingKeyword(item.word),
+            is_using: this.isUsingKeyword(item.word, type),
           }
         })
 
