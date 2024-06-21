@@ -223,7 +223,7 @@
       </a-form-item>
       <div style="display: flex;justify-content: center;margin-top: 20px;">
         <a-button type="primary" html-type="submit" :loading="formState.accountModal.loading">저장</a-button>
-        <a-button style="margin-left: 10px" @click="accountModalClose">취소</a-button>
+        <a-button style="margin-left: 10px" @click="accountModalClose">닫기</a-button>
       </div>
     </a-form>
   </a-modal>
