@@ -317,18 +317,20 @@ export default {
         })
 
         // 상품태그에 20개 안되면 넣어주기
-        if (this.product.item_sync_keyword.includes(',')) {
-          this.product.item_sync_keyword = this.product.item_sync_keyword.replace(/,/g, ' ').trim();
-        }
-        let productTags = this.product.item_sync_keyword.trim().split(' ');
-        if (productTags.length < 20) {
+        if (this.product.item_sync_keyword.length === 0) {
+          if (this.product.item_sync_keyword.includes(',')) {
+            this.product.item_sync_keyword = this.product.item_sync_keyword.replace(/,/g, ' ').trim();
+          }
+          let productTags = this.product.item_sync_keyword.trim().split(' ');
+          if (productTags.length < 20) {
             let addLength = 20 - productTags.length;
             let addTags = this.tagKeyword.list.slice(0, addLength).map(item => {
-                return item.word
+              return item.word
             })
             this.tagKeyword.list = this.tagKeyword.list.slice(addLength)
             productTags = productTags.concat(addTags);
             this.product.item_sync_keyword = productTags.join(' ').trim();
+          }
         }
       }
     },
