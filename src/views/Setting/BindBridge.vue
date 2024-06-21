@@ -94,15 +94,25 @@ function getUserInfoData() {
 
 		const { bridge_mb_id, is_bridge_sync, bridge_phone, bridge_email, bridge_id } = res.data;
 
-		formState.settingData.bind_bridge_id = bridge_id
-		formState.settingData.bind_bridge_mb_id = bridge_mb_id
-    formState.settingData.bind_bridge_phone1 = bridge_phone.split('-')[0]
-    formState.settingData.bind_bridge_phone2 = bridge_phone.split('-')[1]
-    formState.settingData.bind_bridge_phone3 = bridge_phone.split('-')[2]
-    formState.settingData.bind_bridge_phone = bridge_phone
-		formState.settingData.bind_bridge_email= bridge_email
-		formState.settingData.bind_bridge_password = ''
-		formState.settingData.is_bridge_sync = is_bridge_sync
+    formState.settingData.bind_bridge_id = bridge_id
+    formState.settingData.bind_bridge_mb_id = bridge_mb_id
+    formState.settingData.bind_bridge_email= bridge_email
+    formState.settingData.bind_bridge_password = ''
+    formState.settingData.is_bridge_sync = is_bridge_sync
+
+    //배대지 계정 bridge_phone 빈값일경우
+    if (bridge_phone) {
+      let phoneParts = bridge_phone.split('-');
+      formState.settingData.bind_bridge_phone1 = phoneParts[0] || '';
+      formState.settingData.bind_bridge_phone2 = phoneParts[1] || '';
+      formState.settingData.bind_bridge_phone3 = phoneParts[2] || '';
+      formState.settingData.bind_bridge_phone = bridge_phone;
+    } else {
+      formState.settingData.bind_bridge_phone1 = '';
+      formState.settingData.bind_bridge_phone2 = '';
+      formState.settingData.bind_bridge_phone3 = '';
+      formState.settingData.bind_bridge_phone = '';
+    }
 
 		setTimeout(() => {
 			formState.loading = false;
