@@ -223,7 +223,7 @@
 
           <!--스펙-->
           <template v-else-if="column.key === 'spec'">
-            <div :style="record.spec.length > 20 ? 'color: red' : ''">
+            <div>
               {{ record.spec }}
             </div>
             <div class="barcode barcode-option-height">
