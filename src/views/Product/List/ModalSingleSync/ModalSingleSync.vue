@@ -85,7 +85,7 @@ const SYNC_COLUMNS_CONFIG = [
     title: "마켓",
     key: "market_account",
     align: "center",
-    width: "180px",
+    width: "15%",
   },
   {
     title: "등록상태",
@@ -249,6 +249,8 @@ async function loadSyncInfo() {
 
 .market-code .anticon{
   position:absolute;
+  top:-1px;
+  right:27px;
   opacity:0.5;
 }
 </style>
