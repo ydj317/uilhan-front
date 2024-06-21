@@ -43,10 +43,10 @@
 
         <!--연동계정-->
         <template v-if="column.key === 'market_account'">
-          <div style="text-align: left">
-            <img :src="getLogoSrc('market-logo', record.market_code)"
-                 style="width: 16px; height: 16px; margin-right: 5px;">
-            {{ record.seller_id }}
+          <div>
+            <a-tooltip :title="record.seller_id">
+              <img :src="getLogoSrc('market-logo', record.market_code)" style="width: 25px;height: 25px;text-align: center;" />
+            </a-tooltip>
           </div>
         </template>
 
