@@ -130,6 +130,7 @@ const bridgeSyncCheck = () => {
 	if (checkValidation() === false) {
 		return false;
 	}
+  formState.settingData.bind_bridge_phone = formState.settingData.bind_bridge_phone1 + '-' + formState.settingData.bind_bridge_phone2 + '-' + formState.settingData.bind_bridge_phone3;
 	useBridgeApi().syncCheckIsMember(formState.settingData).then((res) => {
 		if (res.status !== "2000") {
 			message.error(res.message);
