@@ -80,7 +80,7 @@ const searchKeyword = ref([
     label: "사용자명"
   },
   {
-    key: "username",
+    key: "recommend_code",
     label: "추천코드"
   },
   {
