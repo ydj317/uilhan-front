@@ -104,7 +104,7 @@
                   <div class="font-SCDream6 fs18 t-c">{{ v.title }}</div>
                 </template>
                 <!--            <div class="font-SCDream4 fs9 color-hui mt5 t-c">2024.04.08 업데이트 기준</div>-->
-                <a-flex align="center" justify="space-between" class="fs14 mt20">
+                <a-flex align="center" justify="space-between" class="fs14 mt20 fixed-width">
                   <div class="mr10">
                     <template v-if="state.auth">
                       <a-input class="font-SCDream6 w60" v-model:value="v.rq2" @blur="setTotalData(v)"></a-input>
@@ -116,7 +116,7 @@
                   </div>
                   <div class="font-SCDream4 fs10 br15 p5 bg-FEDB41 t-black t-c">반입예정</div>
                 </a-flex>
-                <a-flex align="center" justify="space-between" class="fs14 mt5">
+                <a-flex align="center" justify="space-between" class="fs14 mt5 fixed-width">
                   <div class="mr10">
                     <template v-if="state.auth">
                       <a-input class="font-SCDream6 color-2171E2 w60" v-model:value="v.rq1" @blur="setTotalData(v)"></a-input>
@@ -847,5 +847,8 @@ a {
 }
 #qna:hover{
 	background-color: #3399ff;
+}
+.fixed-width{
+  white-space: nowrap;
 }
 </style>
