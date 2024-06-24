@@ -202,17 +202,17 @@ export const menus = [{
                 //         icon: ''
                 //     },
                 // },
-                // {
-                //     path: "/user/servicesPay",
-                //     name: "user_services_pay",
-                //     component: () => import("@/views/User/ServicesPay.vue"),
-                //     meta: {
-                //         title: "서비스 결제",
-                //         isHide: false,
-                //         roles: ["ROLE_ADMIN", "ROLE_USER"],
-                //         icon: ''
-                //     },
-                // },
+                {
+                    path: "/user/servicesPay",
+                    name: "user_services_pay",
+                    component: () => import("@/views/User/ServicesPay.vue"),
+                    meta: {
+                        title: "서비스 결제",
+                        isHide: false,
+                        roles: ["ROLE_ADMIN", "ROLE_USER"],
+                        icon: ''
+                    },
+                },
                 {
                     path: "/user/my",
                     name: "user_my",
