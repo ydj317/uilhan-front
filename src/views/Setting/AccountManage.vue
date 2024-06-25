@@ -177,7 +177,6 @@
 
       <div style="display: flex;justify-content: center;margin-top: 20px;">
         <a-button type="primary" html-type="submit">저장</a-button>
-        <a-button style="margin-left: 10px" @click="router.back()">취소</a-button>
       </div>
     </a-form>
 

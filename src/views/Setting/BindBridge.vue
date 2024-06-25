@@ -155,6 +155,9 @@ const bridgeSyncCheck = () => {
 		message.success('연동 성공');
 		formState.settingData.is_bridge_sync = true;
 		formState.settingData.bind_bridge_mb_id = res.data['MEM_CODE'];
+
+    // 调用更新用户详细信息的 API
+    return useBridgeApi().updateUserLinkDetail(formState.settingData);
 	});
 }
 
