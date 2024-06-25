@@ -119,6 +119,7 @@ export default defineComponent({
       }
       //默认不翻译只获取requestId
       let images = this.localTranslateImageList.filter(item => item.translate_status !== true);
+      console.log('this.localTranslateImageList',this.localTranslateImageList);
       if(type == 2){//新增图片不翻译获取requestId
         images = this.localTranslateImageList[this.localTranslateImageList.length-1];
       }
@@ -224,6 +225,7 @@ export default defineComponent({
           order: this.localTranslateImageList.length,
           url: response.img_url,
         };
+        console.log('tmp',tmp);
         this.localTranslateImageList.push(tmp);
         back();
       });
