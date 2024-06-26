@@ -69,8 +69,8 @@ export default defineComponent({
         imgTranslate: ["XJ_IMAGE_EDITOR_REQUESTIDS","XJ_IMAGE_EDITOR_URL"],
         imgMatting: ["XJ_KOUTU_REQUESTIDS","XJ_KOUTU_RESULT"],
       },
-      iframeSrc: "http://localhost:3000/#/?lang=KOR",
-      iframeKoutuSrc: "http://localhost:3000/koutu/",
+      iframeSrc: "https://image-tools.uilhan.co.kr/#/?lang=KOR",
+      iframeKoutuSrc: "https://image-tools.uilhan.co.kr/koutu/",
     };
   },
   methods: {
@@ -96,7 +96,7 @@ export default defineComponent({
     receiveMessage(e) {
       const self = this;
       e = e || window.event;
-      if (e.origin === 'http://localhost:3000' && e.data.name === this.translateTypes[this.translateType][1]) {
+      if (e.origin === 'https://image-tools.uilhan.co.kr' && e.data.name === this.translateTypes[this.translateType][1]) {
         self.$emit("callbackReceived", e.data);
       }
     },
@@ -110,7 +110,7 @@ export default defineComponent({
         if (val === true) {
           window.addEventListener("message", this.receiveMessage);
           this.$nextTick(() => {
-            this.iframeSrc = "http://localhost:3000/#/?lang=KOR";
+            this.iframeSrc = "https://image-tools.uilhan.co.kr/#/?lang=KOR";
           });
         } else {
           window.removeEventListener("message", this.receiveMessage);
