@@ -2,20 +2,20 @@
   <div class="express-wrap p30">
     <div class="fw mb20 fs18">배송대행지</div>
     <a-flex justify="space-between">
-      <a-col class="bor p30 br5 w24">
+      <a-col class="bor-F0F0F0 p30 br5 w24">
         <a-flex vertical>
           <a-flex justify="space-between">
             <span class="fw fs16">배송대행 신청서</span>
-            <span class="color-hui">비용확인</span>
+            <span class="color-B8B8B8">비용확인</span>
           </a-flex>
-          <a-button type="primary" class="mt40 fw h50 bg-black color-huang">신청서 작성하기</a-button>
+          <a-button type="primary" class="mt40 fw h50 bg-black color-FFDB40">신청서 작성하기</a-button>
         </a-flex>
       </a-col>
-      <a-col class="bor p30 br5 w24">
+      <a-col class="bor-F0F0F0 p30 br5 w24">
         <a-flex vertical>
           <a-flex justify="space-between">
             <span class="fw fs16">나의 예치금</span>
-            <span class="color-lan">90,000원</span>
+            <span class="color-2071E4">90,000원</span>
           </a-flex>
           <a-button type="primary" class="mt40 fw h50">신청서 작성하기</a-button>
         </a-flex>
@@ -23,16 +23,16 @@
       <a-col class="w24">
         <a-flex vertical justify="space-between" class="he100">
           <a-button type="primary" class="fw h77 fs16">중국 출고지 주소</a-button>
-          <a-button type="primary" class="fw h77 fs16 bg-hui">노 데이터</a-button>
+          <a-button type="primary" class="fw h77 fs16 bg-f0f0f0">노 데이터</a-button>
         </a-flex>
       </a-col>
-      <a-col class="bor p30 br5 w24">
+      <a-col class="bor-F0F0F0 p30 br5 w24">
         <a-flex vertical>
           <a-flex justify="space-between">
             <span class="fw fs16">배대지 공지사항</span>
             <span class="red cp">more</span>
           </a-flex>
-          <a-flex vertical class="color-hui mt20">
+          <a-flex vertical class="color-B8B8B8 mt20">
             <span class="mb5">[유일공지] 배송지연안내</span>
             <span class="mb5">[유일공지] 송장번호오류안내</span>
             <span>[유일공지] 마켓연동안내</span>
@@ -86,8 +86,8 @@
         </template>
       </a-flex>
       <a-divider/>
-      <a-flex wrap="wrap" class="content-wrap bor br5 mb20" v-for="(v,k) in state.dataSource">
-        <a-flex class="header color-lan w100">
+      <a-flex wrap="wrap" class="content-wrap bor-F0F0F0 br5 mb20" v-for="(v,k) in state.dataSource">
+        <a-flex class="header color-2071E4 w100">
           <div class="w10 text-center">{{ v.No }}</div>
           <div class="w10 text-center">{{ v.number }}</div>
           <div class="w20 text-center">{{ v.dateTime }}</div>
@@ -129,7 +129,7 @@
           <a-range-picker class="w100"/>
         </a-form-item>
       </a-flex>
-      <a-flex class="date-wrap bor br5" align="center" justify="center">
+      <a-flex class="date-wrap bor-F0F0F0 br5" align="center" justify="center">
         <a-button ghost>전체기간</a-button>
         <a-divider type="vertical"/>
         <a-button ghost>오늘</a-button>
@@ -281,27 +281,9 @@ onMounted(() => {
 }
 </style>
 <style scoped>
-.bor{
-  border: 1px solid #F0F0F0;
-}
 .bottom-border{
   height: 2px;
   background: black;
-}
-.color-huang{
-  color: #FFDB40;
-}
-.color-hui{
-  color: #B8B8B8;
-}
-.color-lan{
-  color: #2071E4;
-}
-.bg-hui{
-  background: #F0F0F0;
-}
-.he100{
-  height: 100%;
 }
 .header-wrap > div,.content > div{
   text-align: center;
