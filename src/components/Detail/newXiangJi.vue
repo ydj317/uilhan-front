@@ -1,25 +1,33 @@
 <template>
-
-  <a-modal class="xiangJi" v-model:open="isOpen" :closable="false"
-           :cancel-button-props="{ ghost: true, disabled: true }" :footer="null" width="100%" wrap-class-name="full-modal">
-    <!-- 模板HTML 不可修改 -->
-    <div id="xiangji-app">
-      <div id="some-dialog">
-        <iframe id="xiangji-image-editor" title="象寄图片精修工具"
-                :src="iframeSrc"
-                ref="iframeRef"
-                style="border:none;" @load="iframeOnload()"></iframe>
+  <div v-if="loading" style="width:100vw;height: 100vh;position: fixed;z-index: 9999999999;top: 0;left: 0; display: flex;justify-content: center;align-items:center;">
+    <a-spin v-if="loading" size="large"/>
+  </div>
+  <div v-else>
+    <a-modal class="xiangJi" v-model:open="isOpen" :closable="false"
+             :cancel-button-props="{ ghost: true, disabled: true }" :footer="null" width="100%" wrap-class-name="full-modal">
+      <!-- 模板HTML 不可修改 -->
+      <div id="xiangji-app">
+        <div id="some-dialog">
+          <iframe id="xiangji-image-editor" title="象寄图片精修工具"
+                  :src="iframeSrc"
+                  ref="iframeRef"
+                  style="border:none;" @load="iframeOnload()"></iframe>
+        </div>
       </div>
-    </div>
-  </a-modal>
+    </a-modal>
+  </div>
+
 </template>
 
 <script>
 import {defineComponent} from "vue";
 import "@/util/jQuery_v1.10.2";
+import MarketData from "@/components/Detail/MarketData.vue";
+import BasicInfo from "@/components/Detail/basicInfo.vue";
 
 export default defineComponent({
   name: "newxiangJi",
+  components: { BasicInfo, MarketData },
   emits: ["callbackReceived", "update:isOpen"],
   props: {
     isOpen: {
@@ -50,6 +58,10 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -57,8 +69,8 @@ export default defineComponent({
         imgTranslate: ["XJ_IMAGE_EDITOR_REQUESTIDS","XJ_IMAGE_EDITOR_URL"],
         imgMatting: ["XJ_KOUTU_REQUESTIDS","XJ_KOUTU_RESULT"],
       },
-      iframeSrc: "https://image-tools.uilhan.co.kr/#/?lang=KOR",
-      iframeKoutuSrc: "https://image-tools.uilhan.co.kr/koutu/",
+      iframeSrc: "http://localhost:3000/#/?lang=KOR",
+      iframeKoutuSrc: "http://localhost:3000/koutu/",
     };
   },
   methods: {
@@ -84,7 +96,7 @@ export default defineComponent({
     receiveMessage(e) {
       const self = this;
       e = e || window.event;
-      if (e.origin === 'https://image-tools.uilhan.co.kr' && e.data.name === this.translateTypes[this.translateType][1]) {
+      if (e.origin === 'http://localhost:3000' && e.data.name === this.translateTypes[this.translateType][1]) {
         self.$emit("callbackReceived", e.data);
       }
     },
@@ -98,7 +110,7 @@ export default defineComponent({
         if (val === true) {
           window.addEventListener("message", this.receiveMessage);
           this.$nextTick(() => {
-            this.iframeSrc = "https://image-tools.uilhan.co.kr/#/?lang=KOR";
+            this.iframeSrc = "http://localhost:3000/#/?lang=KOR";
           });
         } else {
           window.removeEventListener("message", this.receiveMessage);

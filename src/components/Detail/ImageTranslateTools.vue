@@ -1,6 +1,5 @@
 <template>
   <NewXiangJi
-      v-if="isShow"
       :isOpen="visible"
       translateType="imgTranslate"
       :requestIds="requestIds"
@@ -8,6 +7,7 @@
       :action="action"
       :currentIndex="currentIndex"
       :isMany="isMany"
+      :loading="loading"
       :key="Math.random()"
       @update:isOpen="onCancel"
       @callbackReceived="handleTranslateCallback"
@@ -62,7 +62,8 @@ export default defineComponent({
       requestIds: [],
       localRequestIds:[],
       action: '',
-      currentIndex:0
+      currentIndex:0,
+      loading:false
     };
   },
 
@@ -164,6 +165,9 @@ export default defineComponent({
         if(!this.isShow){
           this.isShow = true;
         }
+        if(this.loading){
+          this.loading = false;
+        }
       });
     },
 
@@ -249,6 +253,7 @@ export default defineComponent({
     visible:{
       handler(val) {
         if(val){
+          this.loading = true;
           this.localTranslateImageList = this.translateImageList;
           this.translateImage({isTranslate: false,type: 1});
         }
