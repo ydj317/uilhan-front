@@ -17,7 +17,7 @@
         <a-flex class="font-SCDream4 fs12 color-bababa mt10 cp" justify="flex-end">AI 프리미엄을 시작해보세요!&nbsp;&nbsp;></a-flex>
       </a-flex>
     </a-flex>
-    <a-divider class="bg-hui h2"></a-divider>
+    <a-divider class="bg-f0f0f0 h2"></a-divider>
     <a-flex class="card-wrap bg-fafafa br10" align="center" gap="40">
       <a-card :bordered="false">
         <a-flex align="center">
