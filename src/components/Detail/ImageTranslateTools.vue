@@ -223,7 +223,7 @@ export default defineComponent({
           return false;
         }
         //test
-        response.img_url = "https://qa-001.uilhan.co.kr/uploads/jwli/2024/06/42751__F__tmp-667b6ae0dea01.jpg";
+        //response.img_url = "https://qa-001.uilhan.co.kr/uploads/jwli/2024/06/42751__F__tmp-667b6ae0dea01.jpg";
         let tmp = {
           checked: false,
           order: this.localTranslateImageList.length,
