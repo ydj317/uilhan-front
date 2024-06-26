@@ -125,9 +125,9 @@
         </td>
       </tr>
     </table>
-    <image-translate-tools v-model:visible="imageTranslateToolsVisible"
+    <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                            @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                           @update:translateImageList="updateTranslateImageList" />
+                           @update:translateImageList="updateTranslateImageList" :requestIds="requestIds" />
   </div>
 </template>
 
@@ -223,6 +223,7 @@ export default {
       },
       keywordMaxLength:20,
       showTrademarkBtn: false,
+      requestIds:[],
     };
   },
 
@@ -565,6 +566,22 @@ export default {
     if (this.product.item_is_trans === true) {
       this.validateFilterWord(null,this.product.item_trans_name);
     }
+    //获取requestIds
+    let aImagesUrl = this.product.item_thumbnails;
+    aImagesUrl = aImagesUrl.map((item, index) => {
+      return {
+        checked: false,
+        order: index,
+        url: item.url
+      };
+    });
+    aImagesUrl[0].checked = true;
+    this.translateImageList = aImagesUrl;
+    console.log('获取requestIds',this.translateImageList);
+    this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,localTranslateImageList:this.translateImageList},(res)=>{
+      console.log('res',res)
+      this.requestIds = res;
+    });
   },
 };
 </script>

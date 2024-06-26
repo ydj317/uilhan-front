@@ -53,13 +53,17 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    requestIds: {
+      type: Array,
+      default: () => [],
+    },
   },
   emits: ["update:visible", "update:translateImageList"],
   data() {
     return {
       localTranslateImageList: this.translateImageList,
       isShow: false,
-      requestIds: [],
+      // requestIds: [],
       localRequestIds:[],
       action: '',
       currentIndex:0,
@@ -75,14 +79,6 @@ export default defineComponent({
         this.uploadImage(option,()=>{
           this.translateImage({isTranslate: false,type: 2,action});
         });
-        //本地无法获取requestId 手动添加
-        // this.localTranslateImageList[this.localTranslateImageList.length] = this.localTranslateImageList.length % 2 == 0 ? this.localTranslateImageList[0] : this.localTranslateImageList[1];
-        // this.localTranslateImageList[this.localTranslateImageList.length-1]['request_id'] = this.localRequestIds[this.localTranslateImageList.length-1]
-        // console.log('本地无法获取requestId2',this.localTranslateImageList)
-        // this.requestIds = this.getRequestIds;
-        // this.product.recharge -= 1;
-        // console.log('this.requestIds::',this.requestIds,this.product.recharge)
-        // this.$refs.newXiangJi.sendMessage();
       }
       if(action == 'translate'){//翻译
         this.translateImage({isTranslate: true,type: 3,requestId:requestId,action});
@@ -109,8 +105,13 @@ export default defineComponent({
         this.onCancel();
       }
     },
-    async translateImage(option) {
-      const {isTranslate = true,type,requestId,action=''} = option;
+    async translateImage(option,back) {
+      back = back || function (){};
+      const {isTranslate = true,type,requestId,action='',localTranslateImageList} = option;
+      console.log('translateImage-option',option);
+      if(localTranslateImageList){
+        this.localTranslateImageList = localTranslateImageList;
+      }
       const oParam = {
         from: "zh",
         to: "ko",
@@ -166,6 +167,7 @@ export default defineComponent({
         if(this.loading){
           this.loading = false;
         }
+        back(this.getRequestIds);
       });
     },
 
@@ -223,7 +225,7 @@ export default defineComponent({
           return false;
         }
         //test
-        //response.img_url = "https://qa-001.uilhan.co.kr/uploads/jwli/2024/06/42751__F__tmp-667b6ae0dea01.jpg";
+        //response.img_url = "https://img.alicdn.com/imgextra/i2/1085315961/O1CN017A8yTv1tuBrypAdbs_!!0-item_pic.jpg";
         let tmp = {
           checked: false,
           order: this.localTranslateImageList.length,
@@ -253,8 +255,8 @@ export default defineComponent({
       handler(val) {
         if(val){
           this.loading = true;
-          this.localTranslateImageList = this.translateImageList;
-          this.translateImage({isTranslate: false,type: 1});
+          // this.localTranslateImageList = this.translateImageList;
+          // this.translateImage({isTranslate: false,type: 1});
         }
       },
       immediate: true,
