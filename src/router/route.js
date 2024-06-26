@@ -470,17 +470,6 @@ export const menus = [{
                 icon: GiftOutlined
             },
         },
-        // {
-        //     path: "/express",
-        //     name: "express",
-        //     component: () => import("@/views/express/index.vue"),
-        //     meta: {
-        //         title: "가이드북",
-        //         isHide: false,
-        //         roles: ["ROLE_USER", "ROLE_ADMIN"],
-        //         icon: GiftOutlined
-        //     },
-        // },
         {
             path: "/express/list",
             name: "express_list",
