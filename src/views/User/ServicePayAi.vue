@@ -56,8 +56,8 @@
     <input type="hidden" name="buyr_mail" value="test@test.co.kr" /><!--주문자 이메일(선택)-->
 
     <!-- 가맹점 정보 설정-->
-    <input type="hidden" name="site_cd" value="T0000" />
-    <input type="hidden" name="site_name" value="TEST SITE" />
+    <input type="hidden" name="site_cd" value="GKRYJ" />
+    <input type="hidden" name="site_name" value="해주국제무역상사" />
 
     <!-- 결제수단 -->
     <input type="hidden" name="pay_method" value="100000000000" />
