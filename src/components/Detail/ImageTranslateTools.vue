@@ -111,7 +111,6 @@ export default defineComponent({
     },
     async translateImage(option) {
       const {isTranslate = true,type,requestId,action=''} = option;
-      console.log(option);
       const oParam = {
         from: "zh",
         to: "ko",
@@ -120,9 +119,8 @@ export default defineComponent({
       }
       //默认不翻译只获取requestId
       let images = this.localTranslateImageList.filter(item => item.translate_status !== true);
-      console.log('this.localTranslateImageList',this.localTranslateImageList);
       if(type == 2){//新增图片不翻译获取requestId
-        images = this.localTranslateImageList[this.localTranslateImageList.length-1];
+        images = [this.localTranslateImageList[this.localTranslateImageList.length-1]];
       }
       if(type == 3){//翻译图片
         images = this.localTranslateImageList.filter(item =>item.request_id === requestId);
@@ -224,12 +222,13 @@ export default defineComponent({
           message.error("upload failed");
           return false;
         }
+        //test
+        response.img_url = "https://qa-001.uilhan.co.kr/uploads/jwli/2024/06/42751__F__tmp-667b6ae0dea01.jpg";
         let tmp = {
           checked: false,
           order: this.localTranslateImageList.length,
           url: response.img_url,
         };
-        console.log('tmp',tmp);
         this.localTranslateImageList.push(tmp);
         back();
       });
