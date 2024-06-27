@@ -26,7 +26,7 @@
                 @click="searchKeyword"
               >키워드 검색</a-button>
             </div>
-            <div v-show="keyword.list.length" style="color: #999999;">빨간색 라벨 키워드는 상표권에 등록된 단어입니다.</div>
+            <div v-show="this.showKeywordTip" style="color: #999999;">빨간색 라벨 키워드는 상표권에 등록된 단어입니다.</div>
             <a-spin v-model:spinning="keyword.loading">
               <a-button v-if="this.showTrademarkBtn" size="small" type="primary" style="margin-bottom: 10px" @click="searchKeyword('', true)">상표권 확인</a-button>
               <div class="keyword-list" v-show="keyword.list.length > 0 || keyword.loading">
@@ -223,6 +223,7 @@ export default {
       },
       keywordMaxLength:20,
       showTrademarkBtn: false,
+      showKeywordTip: false,
     };
   },
 
@@ -249,7 +250,8 @@ export default {
           return false;
         }
         this.keyword.list = [];
-        this.showTrademarkBtn = !res.data.formDB;
+        this.showTrademarkBtn = res.data.needKipRis;
+        this.showKeywordTip = !res.data.needKipRis;
         this.initKeywords(res.data.keyword_data)
         //this.$emit('suggestCategory', res.data.category)
       }).catch(() => {
