@@ -24,6 +24,13 @@
 
     <a-divider></a-divider>
     <div v-if="state.formData.sync_market_status">
+      <div v-if="showIp" class="mb15">
+        <span style="font-size: 16px;">유일 서버 IP</span>
+        <a-tooltip title="롯데온 스토어센터에 접속하여 판매자정보 > OpenApi관리 - 서버 IP 등록에 유일 서버 IP를 추가하여주세요.">
+          <QuestionCircleOutlined style="color: black; margin:0 5px" />:
+        </a-tooltip>
+        <span>211.45.170.114</span>
+      </div>
       <div style="display:flex;justify-content:space-between;align-items:center;" class="mb15">
         <h3>마켓정보 불러오기</h3>
       </div>
@@ -91,7 +98,7 @@ import {useMarketAccountApi} from '@/api/marketAccount';
 import {useAccountJsonApi} from '@/api/accountJson';
 import {
   RedoOutlined,
-  CheckCircleOutlined
+  CheckCircleOutlined, QuestionCircleOutlined
 } from '@ant-design/icons-vue';
 import {useRoute, useRouter} from 'vue-router';
 import Cookie from "js-cookie";
@@ -115,6 +122,8 @@ const props = defineProps({
 const router = useRouter();
 
 const marketFormRef = ref(null);
+
+const showIp = ref(false);
 
 const state = reactive({
   formData: {
@@ -211,7 +220,9 @@ const handleSyncMarketCheck = () => {
       state.formData.id = account_id;
       // 출고지/반품지 수집실행
       syncOutboundAddress(account_id);
-      state.formData.sync_market_status = true
+      state.formData.sync_market_status = true;
+
+      showIp.value = true;
     });
   }).catch((error) => {
     console.log('error', error);
