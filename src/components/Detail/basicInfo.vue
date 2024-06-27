@@ -97,7 +97,7 @@
           <a-spin :spinning="ai_loading === true || tagKeyword.loading === true">
             <a-textarea v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " @input="itemSyncKeywordCountCheck" @change="itemSyncKeywordCountCheck" :showCount="false" @blur="tagKeywordBlur($event,2)"
             />
-            <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(' ').filter(d => !!d).length }} / {{keywordMaxLength}}</div>
+            <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(/,\s*|\s+/).filter(d => !!d).length }} / {{keywordMaxLength}}</div>
           </a-spin>
           <a-spin v-model:spinning="tagKeyword.loading">
             <div v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
@@ -228,9 +228,10 @@ export default {
   },
 
   methods: {
-    itemSyncKeywordCountCheck() {
-      const keyword = this.product.item_sync_keyword && this.product.item_sync_keyword.split(' ')
+    itemSyncKeywordCountCheck(event) {
+      const keyword = this.product.item_sync_keyword && this.product.item_sync_keyword.split(/,\s*|\s+/)
       if (keyword && keyword.length > 20) {
+        event.target.value = event.target.value.substring(0, event.target.value.lastIndexOf(' '));
         message.error('상품태그는 최대 20개까지 등록이 가능합니다.')
         this.product.item_sync_keyword = keyword.slice(0, 20).join(' ')
       }
@@ -325,7 +326,7 @@ export default {
           }
           let productTags = this.product.item_sync_keyword.trim().split(' ');
           if (productTags.length < 20) {
-            let addLength = 20 - productTags.length;
+            let addLength = 21 - productTags.length;
             let addTags = this.tagKeyword.list.slice(0, addLength).map(item => {
               return item.word
             })
