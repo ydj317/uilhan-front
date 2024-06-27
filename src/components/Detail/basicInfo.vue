@@ -8,7 +8,9 @@
       </colgroup>
       <tr>
         <th>
+          <a-spin v-model:spinning="imgLoading">
           <img :src="product.item_thumbnails[0]?.url" style="width: 100px;height: 100px" alt="" class="cp" @click="translatePopup"/>
+          </a-spin>
         </th>
         <td>
           <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
@@ -127,7 +129,7 @@
     </table>
     <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                            @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                           @update:translateImageList="updateTranslateImageList" :requestIds="requestIds" />
+                           @update:translateImageList="updateTranslateImageList" />
   </div>
 </template>
 
@@ -149,6 +151,12 @@ export default {
     }),
   },
   emits: ['suggestCategory'],
+  props: {
+    activeKey: {
+      type: String,
+      default: '1'
+    },
+  },
   watch: {
     "product.item_trans_name"() {
       this.keyword.list.forEach(d => {
@@ -159,7 +167,28 @@ export default {
       this.tagKeyword.list.forEach(d => {
         d.is_using = this.isUsingKeyword(d.word, 2)
       })
-    }
+    },
+    activeKey: {
+      handler() {
+        if(this.activeKey == 1){
+          this.imgLoading = true;
+          this.$nextTick(() => {
+            this.getRequestIds();
+          });
+        }
+      },
+    },
+    product: {
+      handler() {
+        if(this.activeKey == 1){
+          this.imgLoading = true;
+          this.$nextTick(() => {
+            this.getRequestIds();
+          });
+        }
+      },
+      immediate: true,
+    },
   },
 
   data() {
@@ -223,7 +252,7 @@ export default {
       },
       keywordMaxLength:20,
       showTrademarkBtn: false,
-      requestIds:[],
+      imgLoading:false,
     };
   },
 
@@ -513,17 +542,7 @@ export default {
 
     },
     translatePopup() {
-      let aImagesUrl = this.product.item_thumbnails;
-      aImagesUrl = aImagesUrl.map((item, index) => {
-        return {
-          checked: false,
-          order: index,
-          url: item.url
-        };
-      });
-      aImagesUrl[0].checked = true;
       this.imageTranslateToolsVisible = true;
-      this.translateImageList = aImagesUrl;
     },
     updateTranslateImageList(imageList) {
       let item_thumbnails = [];
@@ -536,6 +555,22 @@ export default {
     tagKeywordBlur(e,type){
       this.blurIndex.type = type;
       this.blurIndex.index = e.srcElement.selectionStart;
+    },
+    //获取图片requestIds
+    getRequestIds(){
+      let aImagesUrl = this.product.item_thumbnails;
+      aImagesUrl = aImagesUrl.map((item, index) => {
+        return {
+          checked: false,
+          order: index,
+          url: item.url
+        };
+      });
+      aImagesUrl[0].checked = true;
+      this.translateImageList = aImagesUrl;
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,localTranslateImageList:this.translateImageList},()=>{
+        this.imgLoading = false;
+      });
     }
   },
 
@@ -566,22 +601,6 @@ export default {
     if (this.product.item_is_trans === true) {
       this.validateFilterWord(null,this.product.item_trans_name);
     }
-    //获取requestIds
-    let aImagesUrl = this.product.item_thumbnails;
-    aImagesUrl = aImagesUrl.map((item, index) => {
-      return {
-        checked: false,
-        order: index,
-        url: item.url
-      };
-    });
-    aImagesUrl[0].checked = true;
-    this.translateImageList = aImagesUrl;
-    console.log('获取requestIds',this.translateImageList);
-    this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,localTranslateImageList:this.translateImageList},(res)=>{
-      console.log('res',res)
-      this.requestIds = res;
-    });
   },
 };
 </script>

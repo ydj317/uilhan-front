@@ -322,7 +322,7 @@
       </a-table>
     </div>
   </div>
-  <image-translate-tools v-model:visible="imageTranslateToolsVisible" :isMany="false"
+  <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible" :isMany="false"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
                          @update:translateImageList="updateTranslateImageList" />
 </template>
@@ -811,12 +811,16 @@ export default defineComponent({
       });
     },
     translateImg(record) {
+      this.imgLoading = true;
+      this.translateSkuCode = record.code;
       let aImagesUrl = [
         {checked: true, order: 0, url: record.img}
       ];
       this.translateImageList = aImagesUrl;
-      this.translateSkuCode = record.code;
-      this.imageTranslateToolsVisible = true;
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,localTranslateImageList:this.translateImageList},()=>{
+        this.imgLoading = false;
+        this.imageTranslateToolsVisible = true;
+      });
     },
     updateTranslateImageList(imageList) {
       this.product.sku.map(v=>{

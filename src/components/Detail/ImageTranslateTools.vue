@@ -7,7 +7,6 @@
       :action="action"
       :currentIndex="currentIndex"
       :isMany="isMany"
-      :loading="loading"
       :key="Math.random()"
       @update:isOpen="onCancel"
       @callbackReceived="handleTranslateCallback"
@@ -53,21 +52,15 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
-    requestIds: {
-      type: Array,
-      default: () => [],
-    },
   },
   emits: ["update:visible", "update:translateImageList"],
   data() {
     return {
       localTranslateImageList: this.translateImageList,
-      isShow: false,
-      // requestIds: [],
+      requestIds: [],
       localRequestIds:[],
       action: '',
       currentIndex:0,
-      loading:false
     };
   },
 
@@ -161,13 +154,7 @@ export default defineComponent({
         this.requestIds = this.getRequestIds;
         this.product.recharge = recharge;
         this.action = action;
-        if(!this.isShow){
-          this.isShow = true;
-        }
-        if(this.loading){
-          this.loading = false;
-        }
-        back(this.getRequestIds);
+        back();
       });
     },
 
@@ -191,14 +178,12 @@ export default defineComponent({
     onSubmit() {
       this.action = '';
       this.currentIndex = 0;
-      this.isShow = false;
       this.$emit("update:translateImageList", this.localTranslateImageList);
       this.$emit("update:visible", false);
     },
     onCancel() {
       this.action = '';
       this.currentIndex = 0;
-      this.isShow = false;
       this.$emit("update:visible", false);
     },
     // 图片上传
@@ -248,27 +233,6 @@ export default defineComponent({
 
   mounted() {
     this.getRecharge();
-  },
-
-  watch: {
-    visible:{
-      handler(val) {
-        if(val){
-          this.loading = true;
-          // this.localTranslateImageList = this.translateImageList;
-          // this.translateImage({isTranslate: false,type: 1});
-        }
-      },
-      immediate: true,
-    },
-    // requestIds:{
-    //   handler(val,oldVal) {
-    //     if(val != oldVal){
-    //       this.localRequestIds = [...val,...this.localRequestIds];
-    //     }
-    //   },
-    //   immediate: true,
-    // }
   },
 });
 </script>

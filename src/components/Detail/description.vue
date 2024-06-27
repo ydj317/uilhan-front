@@ -15,8 +15,10 @@
       <div class="editorToolbar" ref="editorToolbar">
         <a-space>
           <a-button class="originalDetailTrans" type="default" @click="showPreview">미리보기</a-button>
+          <a-spin v-model:spinning="imgLoading">
           <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역
           </a-button>
+          </a-spin>
 <!--          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기-->
 <!--          </a-button>-->
         </a-space>
@@ -34,7 +36,7 @@
       />
     </div>
   </div>
-  <image-translate-tools v-model:visible="imageTranslateToolsVisible"
+  <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
                          @update:translateImageList="updateTranslateImageList" />
   <!-- 미리보기 -->
@@ -89,7 +91,12 @@ export default {
     TEditor
   },
 
-
+  props: {
+    activeKey: {
+      type: String,
+      default: '1'
+    },
+  },
   computed: {
     ...mapState({
       product: (state) => state.product.detail,
@@ -112,7 +119,7 @@ export default {
       showGuideImage: false,
       showVideo: false,
       showOptionTable: false,
-
+      imgLoading:false,
     };
   },
   watch: {
@@ -147,6 +154,31 @@ export default {
       immediate: true,
       deep: true
     },
+    activeKey: {
+      handler() {
+        if(this.activeKey == 3){
+          this.imgLoading = true;
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.getRequestIds();
+            }, 500);
+          });
+        }
+      },
+    },
+    product: {
+      handler() {
+        if(this.activeKey == 3){
+          this.imgLoading = true;
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.getRequestIds();
+            }, 500);
+          });
+        }
+      },
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -169,6 +201,7 @@ export default {
       });
     })
   },
+
 
   methods: {
     setVideoContent() {
@@ -460,23 +493,7 @@ export default {
     },
 
     translatePopup() {
-      let aImagesUrl = this.getDetailContentsImage();
-      //이미지 없을 경우
-      if (aImagesUrl === false) {
-        return false;
-      }
-      // { order: ..., url: ...} 구조로 변경
-      aImagesUrl = aImagesUrl.map((item, index) => {
-        return {
-          checked: false,
-          order: index,
-          url: item.url
-        };
-      });
-      aImagesUrl[0].checked = true;
-
       this.imageTranslateToolsVisible = true;
-      this.translateImageList = aImagesUrl;
     },
     updateTranslateImageList(imageList) {
       this.$refs.editor.clear();
@@ -530,6 +547,28 @@ export default {
         this.showOptionTable = true;
       }
 
+    },
+    //获取图片requestIds
+    getRequestIds(){
+      let aImagesUrl = this.getDetailContentsImage();
+      //이미지 없을 경우
+      if (aImagesUrl === false) {
+        console.log('aImagesUrl',aImagesUrl);
+        return false;
+      }
+      // { order: ..., url: ...} 구조로 변경
+      aImagesUrl = aImagesUrl.map((item, index) => {
+        return {
+          checked: false,
+          order: index,
+          url: item.url
+        };
+      });
+      aImagesUrl[0].checked = true;
+      this.translateImageList = aImagesUrl;
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,localTranslateImageList:this.translateImageList},()=>{
+        this.imgLoading = false;
+      });
     }
   }
 };

@@ -1,21 +1,16 @@
 <template>
-  <div v-if="loading" style="width:100vw;height: 100vh;position: fixed;z-index: 9999999999;top: 0;left: 0; display: flex;justify-content: center;align-items:center;">
-    <a-spin v-if="loading" size="large"/>
-  </div>
-  <div v-else>
-    <a-modal class="xiangJi" v-model:open="isOpen" :closable="false"
-             :cancel-button-props="{ ghost: true, disabled: true }" :footer="null" width="100%" wrap-class-name="full-modal">
-      <!-- 模板HTML 不可修改 -->
-      <div id="xiangji-app">
-        <div id="some-dialog">
-          <iframe id="xiangji-image-editor" title="象寄图片精修工具"
-                  :src="iframeSrc"
-                  ref="iframeRef"
-                  style="border:none;" @load="iframeOnload()"></iframe>
-        </div>
+  <a-modal class="xiangJi" v-model:open="isOpen" :closable="false"
+           :cancel-button-props="{ ghost: true, disabled: true }" :footer="null" width="100%" wrap-class-name="full-modal">
+    <!-- 模板HTML 不可修改 -->
+    <div id="xiangji-app">
+      <div id="some-dialog">
+        <iframe id="xiangji-image-editor" title="象寄图片精修工具"
+                :src="iframeSrc"
+                ref="iframeRef"
+                style="border:none;" @load="iframeOnload()"></iframe>
       </div>
-    </a-modal>
-  </div>
+    </div>
+  </a-modal>
 
 </template>
 
@@ -57,10 +52,6 @@ export default defineComponent({
     isMany: {
       type: Boolean,
       default: true,
-    },
-    loading: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
