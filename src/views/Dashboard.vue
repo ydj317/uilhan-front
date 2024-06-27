@@ -429,8 +429,7 @@ const getTableList = async () => {
     let orderDataView = [];
     // 데이터를 조회해올때마다 루프 돌리며 판단하여 데이터 변경이 있는 애들을 찾아냄
     const oldOrderData = sessionStorage.getItem('orderData');
-
-    if (!!oldOrderData) {
+    if (isValidJson(oldOrderData)) {
       const oldOrderJson = JSON.parse(oldOrderData);
       oldOrderJson.forEach((item) => {
         const newData = findObjectById(item.id, list);
@@ -509,6 +508,24 @@ const getTableList = async () => {
     orderLoading.value = false;
   });
 };
+
+const isValidJson = (str) => {
+  try {
+    const parsed = JSON.parse(str);
+    // 检查解析后的结果是否为非空对象或数组
+    if (typeof parsed === 'object' && parsed !== null) {
+      // 检查是否是空对象或空数组
+      if (Array.isArray(parsed)) {
+        return parsed.length > 0; // 非空数组
+      } else {
+        return Object.keys(parsed).length > 0; // 非空对象
+      }
+    }
+    return true; // 是有效的 JSON 字符串，但不是对象或数组
+  } catch (e) {
+    return false;
+  }
+}
 
 // id에 근거하여 object 찾아서 리턴
 const findObjectById = (id, list) => {
