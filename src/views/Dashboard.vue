@@ -510,6 +510,10 @@ const getTableList = async () => {
 };
 
 const isValidJson = (str) => {
+  if (str === null || str === undefined) {
+    return false;
+  }
+
   try {
     const parsed = JSON.parse(str);
     // 检查解析后的结果是否为非空对象或数组
