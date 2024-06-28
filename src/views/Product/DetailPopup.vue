@@ -307,12 +307,16 @@ export default defineComponent({
     },
 
     handleCancel() {
-      this.autoSave();
+      if (this.autosave) {
+        this.autoSave();
+      }
     },
 
     handleTabChange(key) {
       this.activeKey = key;
-      this.autoSave();
+      if (this.autosave) {
+        this.autoSave();
+      }
     },
 
     setExpectedReturn() {
