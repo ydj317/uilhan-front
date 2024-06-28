@@ -38,7 +38,7 @@
   </div>
   <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" />
+                         @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams"/>
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
            title="상품 미리보기"
@@ -120,6 +120,13 @@ export default {
       showVideo: false,
       showOptionTable: false,
       imgLoading:false,
+      xjParams:{
+        isMany:true,
+        action:'',
+        currentIndex:0,
+        requestIds:[],
+        recharge:0
+      },
     };
   },
   watch: {
@@ -157,12 +164,14 @@ export default {
     activeKey: {
       handler() {
         if(this.activeKey == 3){
-          this.imgLoading = true;
-          this.$nextTick(() => {
-            setTimeout(() => {
-              this.getRequestIds();
-            }, 500);
-          });
+          if(!this.xjParams.requestIds.length){
+            this.imgLoading = true;
+            this.$nextTick(() => {
+              setTimeout(() => {
+                this.getRequestIds();
+              }, 200);
+            });
+          }
         }
       },
     },
@@ -173,7 +182,7 @@ export default {
           this.$nextTick(() => {
             setTimeout(() => {
               this.getRequestIds();
-            }, 500);
+            }, 200);
           });
         }
       },
@@ -553,22 +562,29 @@ export default {
       let aImagesUrl = this.getDetailContentsImage();
       //이미지 없을 경우
       if (aImagesUrl === false) {
-        console.log('aImagesUrl',aImagesUrl);
         return false;
       }
-      // { order: ..., url: ...} 구조로 변경
-      aImagesUrl = aImagesUrl.map((item, index) => {
-        return {
-          checked: false,
-          order: index,
-          url: item.url
-        };
-      });
-      aImagesUrl[0].checked = true;
-      this.translateImageList = aImagesUrl;
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,localTranslateImageList:this.translateImageList},()=>{
-        this.imgLoading = false;
-      });
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['url'] = item['url'].slice(0,pos-1);
+        }
+        return tmp;
+      })
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
+    },
+    setXjParams(params){
+      this.imgLoading = false;
+      this.xjParams = params;
     }
   }
 };

@@ -2,15 +2,10 @@
   <NewXiangJi
       :isOpen="visible"
       translateType="imgTranslate"
-      :requestIds="requestIds"
-      :recharge="product.recharge"
-      :action="action"
-      :currentIndex="currentIndex"
-      :isMany="isMany"
       :key="Math.random()"
       @update:isOpen="onCancel"
       @callbackReceived="handleTranslateCallback"
-      ref="newXiangJi"
+      :xjParams="xjParams"
   />
 </template>
 
@@ -48,19 +43,15 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
-    isMany: {
-      type: Boolean,
-      default: true,
+    xjParams: {
+      type: Object,
+      default: () => ({}),
     },
   },
-  emits: ["update:visible", "update:translateImageList"],
+  emits: ["update:visible", "update:translateImageList","update:xjParams"],
   data() {
     return {
       localTranslateImageList: this.translateImageList,
-      requestIds: [],
-      localRequestIds:[],
-      action: '',
-      currentIndex:0,
     };
   },
 
@@ -98,12 +89,11 @@ export default defineComponent({
         this.onCancel();
       }
     },
-    async translateImage(option,back) {
-      back = back || function (){};
-      const {isTranslate = true,type,requestId,action='',localTranslateImageList} = option;
+    async translateImage(option) {
+      const {isTranslate = true,type,requestId,action='',imglist} = option;
       console.log('translateImage-option',option);
-      if(localTranslateImageList){
-        this.localTranslateImageList = localTranslateImageList;
+      if(imglist){
+        this.localTranslateImageList = imglist;
       }
       const oParam = {
         from: "zh",
@@ -112,7 +102,7 @@ export default defineComponent({
         isTranslate,
       }
       //默认不翻译只获取requestId
-      let images = this.localTranslateImageList.filter(item => item.translate_status !== true);
+      let images = this.localTranslateImageList.filter(item => item.request_id == '');
       if(type == 2){//新增图片不翻译获取requestId
         images = [this.localTranslateImageList[this.localTranslateImageList.length-1]];
       }
@@ -123,39 +113,49 @@ export default defineComponent({
           return false;
         }
       }
-      images.forEach((item,i) => {
-        oParam.list.push({
-          msg: "",
-          key: i,
-          name: item.name || "",
-          order: item.order || "",
-          checked: item.checked,
-          visible: item.visible,
-          original_url: item.url,
-          translate_url: item.translate_url || '',
-          translate_status: item.translate_status,
-          request_id: item.request_id || '',
-          is_translate: isTranslate,
+      let xjParams = {
+        isMany:this.xjParams.isMany,
+        currentIndex:this.xjParams.currentIndex,
+        action:action,
+      };
+      if(!images.length){
+        xjParams.requestIds = this.getRequestIds;
+        xjParams.recharge = this.product.recharge;
+        this.$emit("update:xjParams", xjParams);
+      }else {
+        images.forEach((item,i) => {
+          oParam.list.push({
+            msg: "",
+            key: i,
+            name: item.name || "",
+            order: item.order || "",
+            checked: item.checked,
+            visible: item.visible,
+            original_url: item.url,
+            translate_url: item.translate_url || '',
+            translate_status: item.translate_status,
+            request_id: item.request_id || '',
+            is_translate: isTranslate,
+          })
         })
-      })
-      await useProductApi().translateImage(oParam, (oTranslateInfo) => {
-        if (oTranslateInfo.status !== "2000") {
-          message.error(oTranslateInfo.message);
-          return false;
-        }
-        if(type == 3){
-          this.currentIndex = this.localTranslateImageList.findIndex(value => value.request_id === requestId);
-        }
-        const {list, recharge} = oTranslateInfo.data;
-        this.localTranslateImageList = this.localTranslateImageList.map(item=>{
-          let thisItem = list.find(item2=>item2.original_url == item.url);
-          return thisItem ? Object.assign(item, thisItem) : item;
+        await useProductApi().translateImage(oParam, (oTranslateInfo) => {
+          if (oTranslateInfo.status !== "2000") {
+            message.error(oTranslateInfo.message);
+            return false;
+          }
+          if(type == 3){
+            xjParams.currentIndex = this.localTranslateImageList.findIndex(value => value.request_id === requestId);
+          }
+          const {list, recharge} = oTranslateInfo.data;
+          this.localTranslateImageList = this.localTranslateImageList.map(item=>{
+            let thisItem = list.find(item2=>item2.original_url == item.url);
+            return thisItem ? Object.assign(item, thisItem) : item;
+          });
+          xjParams.requestIds = this.getRequestIds;
+          xjParams.recharge = recharge;
+          this.$emit("update:xjParams", xjParams);
         });
-        this.requestIds = this.getRequestIds;
-        this.product.recharge = recharge;
-        this.action = action;
-        back();
-      });
+      }
     },
 
     // 查看剩余的首次翻译数量
@@ -176,14 +176,10 @@ export default defineComponent({
       );
     },
     onSubmit() {
-      this.action = '';
-      this.currentIndex = 0;
       this.$emit("update:translateImageList", this.localTranslateImageList);
       this.$emit("update:visible", false);
     },
     onCancel() {
-      this.action = '';
-      this.currentIndex = 0;
       this.$emit("update:visible", false);
     },
     // 图片上传
@@ -209,8 +205,6 @@ export default defineComponent({
           message.error("upload failed");
           return false;
         }
-        //test
-        //response.img_url = "https://img.alicdn.com/imgextra/i2/1085315961/O1CN017A8yTv1tuBrypAdbs_!!0-item_pic.jpg";
         let tmp = {
           checked: false,
           order: this.localTranslateImageList.length,

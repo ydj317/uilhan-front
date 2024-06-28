@@ -29,29 +29,13 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-    requestIds: {
-      type: Array,
-      default: () => [],
-    },
     translateType: {
       type: String,
       default: "imgTranslate",
     },
-    recharge: {
-      type: String,
-      default: "0",
-    },
-    action: {
-      type: String,
-      default: "",
-    },
-    currentIndex: {
-      type: Number,
-      default: 0,
-    },
-    isMany: {
-      type: Boolean,
-      default: true,
+    xjParams: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
@@ -60,8 +44,8 @@ export default defineComponent({
         imgTranslate: ["XJ_IMAGE_EDITOR_REQUESTIDS","XJ_IMAGE_EDITOR_URL"],
         imgMatting: ["XJ_KOUTU_REQUESTIDS","XJ_KOUTU_RESULT"],
       },
-      iframeSrc: "https://image-tools.uilhan.co.kr/#/?lang=KOR",
-      iframeKoutuSrc: "https://image-tools.uilhan.co.kr/koutu/",
+      iframeSrc: "http://localhost:3000/#/?lang=KOR",
+      iframeKoutuSrc: "http://localhost:3000/koutu/",
     };
   },
   methods: {
@@ -72,11 +56,7 @@ export default defineComponent({
     sendMessage() {
       let sendData = {
         name: this.translateTypes[this.translateType][0],
-        requestIds: Object.values(this.requestIds),
-        recharge:this.recharge,
-        action:this.action,
-        currentIndex:this.currentIndex,
-        isMany:this.isMany,
+        xjParams:JSON.stringify(this.xjParams),
       };
       const iframe = document.querySelector("#xiangji-image-editor");
       iframe.contentWindow.postMessage(
@@ -87,7 +67,7 @@ export default defineComponent({
     receiveMessage(e) {
       const self = this;
       e = e || window.event;
-      if (e.origin === 'https://image-tools.uilhan.co.kr' && e.data.name === this.translateTypes[this.translateType][1]) {
+      if (e.origin === 'http://localhost:3000' && e.data.name === this.translateTypes[this.translateType][1]) {
         self.$emit("callbackReceived", e.data);
       }
     },
@@ -101,7 +81,7 @@ export default defineComponent({
         if (val === true) {
           window.addEventListener("message", this.receiveMessage);
           this.$nextTick(() => {
-            this.iframeSrc = "https://image-tools.uilhan.co.kr/#/?lang=KOR";
+            this.iframeSrc = "http://localhost:3000/#/?lang=KOR";
           });
         } else {
           window.removeEventListener("message", this.receiveMessage);

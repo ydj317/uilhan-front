@@ -129,7 +129,7 @@
     </table>
     <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                            @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                           @update:translateImageList="updateTranslateImageList" />
+                           @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams" />
   </div>
 </template>
 
@@ -171,10 +171,12 @@ export default {
     activeKey: {
       handler() {
         if(this.activeKey == 1){
-          this.imgLoading = true;
-          this.$nextTick(() => {
-            this.getRequestIds();
-          });
+          if(!this.xjParams.requestIds.length){
+            this.imgLoading = true;
+            this.$nextTick(() => {
+              this.getRequestIds();
+            });
+          }
         }
       },
     },
@@ -253,6 +255,13 @@ export default {
       keywordMaxLength:20,
       showTrademarkBtn: false,
       imgLoading:false,
+      xjParams:{
+        isMany:true,
+        action:'',
+        currentIndex:0,
+        requestIds:[],
+        recharge:0
+      },
     };
   },
 
@@ -559,18 +568,27 @@ export default {
     //获取图片requestIds
     getRequestIds(){
       let aImagesUrl = this.product.item_thumbnails;
-      aImagesUrl = aImagesUrl.map((item, index) => {
-        return {
-          checked: false,
-          order: index,
-          url: item.url
-        };
-      });
-      aImagesUrl[0].checked = true;
-      this.translateImageList = aImagesUrl;
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,localTranslateImageList:this.translateImageList},()=>{
-        this.imgLoading = false;
-      });
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['url'] = item['url'].slice(0,pos-1);
+        }
+        return tmp;
+      })
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
+    },
+    setXjParams(params){
+      this.imgLoading = false;
+      this.xjParams = params;
     }
   },
 
