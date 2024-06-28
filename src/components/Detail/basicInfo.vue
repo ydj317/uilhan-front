@@ -357,8 +357,9 @@ export default {
         if (newName.length <= this.max_name_length) {
           this.product.item_trans_name = newName
           this.blurIndex.index += keywordInfo.word.length + 1;
+          use = true
         }
-        use = true
+
         this.validateFilterWord(null,this.product.item_trans_name)
       }
       if(from == 2) {
