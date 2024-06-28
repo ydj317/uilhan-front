@@ -254,6 +254,15 @@ export default {
         this.showTrademarkBtn = res.data.needKipRis;
         this.showKeywordTip = !res.data.needKipRis;
         this.initKeywords(res.data.keyword_data)
+
+        if (this.showTrademarkBtn === true && onlyDb === true) {
+          message.info('상표권 확인중입니다. 잠시후 다시 클릭하여 확인하여 주세요.');
+        }
+
+        if (this.showTrademarkBtn === false && onlyDb === true) {
+          message.success('상표권 확인완료 하였습니다.');
+        }
+
         //this.$emit('suggestCategory', res.data.category)
       }).catch(() => {
         message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
