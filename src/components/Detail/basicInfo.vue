@@ -554,6 +554,7 @@ export default {
       this.imageTranslateToolsVisible = true;
     },
     updateTranslateImageList(imageList) {
+      console.log('imageList',imageList);
       let item_thumbnails = [];
       for (let i = 0; i < imageList.length; i++) {
         let url = imageList[i].translate_status === true ? imageList[i].translate_url :  imageList[i].url;

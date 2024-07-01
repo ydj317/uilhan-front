@@ -57,41 +57,39 @@ export default defineComponent({
 
   methods: {
     //图片处理回调
-    handleTranslateCallback(oTranslateInfo) {
-      const {requestId,all,allSort,url,action,option} = oTranslateInfo;
-      if(action == 'upload'){//图片上传
-        this.uploadImage(option,()=>{
-          this.translateImage({isTranslate: false,type: 2,action});
-        });
-      }
-      if(action == 'translate'){//翻译
-        this.translateImage({isTranslate: true,type: 3,requestId:requestId,action});
-      }
-      if(action == 'finish'){//完成编辑
-        if(requestId === undefined){
-          message.error("이미지 번역 실패");
-          return false;
-        }
-        this.localTranslateImageList = allSort.map(v=>{
-          const requestId = Object.keys(v)[0];
-          let item = this.localTranslateImageList.find(v2=>v2.request_id == requestId);
-          if (item.translate_status === true) {
-            item.translate_url = v[requestId];
-          } else {
-            item.translate_url = v[requestId];
-            item.url = v[requestId];
-          }
-          return item;
-        });
-        this.onSubmit();
-      }
-      if(action == 'cancel'){
-        this.onCancel();
+    async handleTranslateCallback(oTranslateInfo) {
+      const {action,requestId,allSort,base64} = oTranslateInfo;
+      switch (action){
+        case 'upload':
+          this.uploadImage(base64,()=>{
+            this.translateImage({isTranslate: false,type: 2,action});
+          });
+          break;
+        case 'translate':
+          await this.translateImage({isTranslate: true,type: 3,requestId,action});
+          break;
+        case 'finish':
+          this.localTranslateImageList = allSort.map(v=>{
+            const requestId = Object.keys(v)[0];
+            let item = this.localTranslateImageList.find(v2=>v2.request_id == requestId);
+            if (item.translate_status === true) {
+              item.translate_url = v[requestId]+'?request_id='+requestId;
+            } else {
+              item.translate_url = v[requestId]+'?request_id='+requestId;
+              item.url = v[requestId]+'?request_id='+requestId;
+            }
+            return item;
+          });
+          this.onSubmit();
+          break;
+        case 'cancel':
+          this.onCancel();
+          break;
       }
     },
     async translateImage(option) {
       const {isTranslate = true,type,requestId,action='',imglist} = option;
-      console.log('translateImage-option',option);
+      // console.log('translateImage-option',option);
       if(imglist){
         this.localTranslateImageList = imglist;
       }
@@ -101,17 +99,22 @@ export default defineComponent({
         list: [],
         isTranslate,
       }
-      //默认不翻译只获取requestId
-      let images = this.localTranslateImageList.filter(item => item.request_id == '');
-      if(type == 2){//新增图片不翻译获取requestId
-        images = [this.localTranslateImageList[this.localTranslateImageList.length-1]];
-      }
-      if(type == 3){//翻译图片
-        images = this.localTranslateImageList.filter(item =>item.request_id === requestId);
-        if (images.translate_status === true) {
-          message.error("이미 번역된 이미지입니다.");
-          return false;
-        }
+      let images = [];
+      switch (type * 1){
+        case 1:
+          //默认不翻译只获取requestId
+          images = this.localTranslateImageList.filter(item => item.request_id == '');
+          break;
+        case 3://翻译图片
+          images = this.localTranslateImageList.filter(item =>item.request_id === requestId);
+          if (images.translate_status === true) {
+            message.error("이미 번역된 이미지입니다.");
+            return false;
+          }
+          break;
+        default:
+          images = [];
+          break;
       }
       let xjParams = {
         isMany:this.xjParams.isMany,
@@ -188,27 +191,20 @@ export default defineComponent({
       let fileObj = this.base64toFileObj(file);
       const formData = new FormData();
       formData.append("file", fileObj);
-      formData.append("image_type", "product");
-      formData.append("relation_type", "product");
-      formData.append("product_idx", this.product.item_id);
-      AuthRequest.post(
-          process.env.VUE_APP_API_URL + "/api/image",
-          formData
-      ).then((res) => {
+      useProductApi().uploadImage(formData, (res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
         }
-
-        let response = res.data;
-        if (lib.isEmpty(response)) {
+        if (lib.isEmpty(res.data.url)) {
           message.error("upload failed");
           return false;
         }
         let tmp = {
           checked: false,
           order: this.localTranslateImageList.length,
-          url: response.img_url,
+          url: res.data.url,
+          request_id: res.data.requestId,
         };
         this.localTranslateImageList.push(tmp);
         back();
