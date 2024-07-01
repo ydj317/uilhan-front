@@ -152,7 +152,7 @@
 					<img :src="url" class="big-img" alt="">
 				</div>
 			</a-flex>
-			<a-flex class="fs12 mt10 color-bababa">
+			<a-flex class="fs12 mt10 color-bababa hide-element">
 				상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요
 			</a-flex>
 		</a-flex>
@@ -524,6 +524,9 @@ a {
 }
 .big-img-wrap:hover .big-img{
 	display: block;
+}
+.hide-element{
+  display: none;
 }
 
 </style>
