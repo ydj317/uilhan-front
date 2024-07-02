@@ -199,6 +199,7 @@ function userLogin(record) {
     Cookie.set('member_name', res.data.member_name);
     Cookie.set('member_roles', res.data.member_roles);
     Cookie.set('token', res.data.token);
+    sessionStorage.clear();
     const menuList = setFilterRouteList();
     router.addRoute(menuList[0])
 

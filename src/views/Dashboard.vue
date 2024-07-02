@@ -429,6 +429,7 @@ const getTableList = async () => {
     let orderDataView = [];
     // 데이터를 조회해올때마다 루프 돌리며 판단하여 데이터 변경이 있는 애들을 찾아냄
     const oldOrderData = sessionStorage.getItem('orderData');
+
     if (isValidJson(oldOrderData)) {
       const oldOrderJson = JSON.parse(oldOrderData);
       oldOrderJson.forEach((item) => {
