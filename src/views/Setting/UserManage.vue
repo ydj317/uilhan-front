@@ -229,7 +229,6 @@ function getUserList() {
       item['children'] = item['children'].map(item2=>{
         return {...item2,ins_date:getDate(item2.insDate)}
       })
-      console.log(item['children']);
       const children = item['children'].length ? item['children'] : '';
       return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'],children };
     });
