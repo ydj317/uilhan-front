@@ -129,9 +129,9 @@
         <a-switch v-model:checked="formState.settingDatas.margin_weight.is_use"
                   checked-children="on" un-checked-children="off" />
         <a-descriptions bordered size="small" class="mt15" :column="4">
-          <a-descriptions-item :label="market" v-for="(market,index) in formState.marketList" :key="index">
+          <a-descriptions-item :label="market" v-for="(market,index) in formState.marketList" :key="index" :span="1">
             <a-input-number v-model:value.number="formState.settingDatas.margin_weight.markets[index]" addon-after="%"
-                            :min="0" :max="300" size="small" style="width: 150px" defaultValue="0"
+                            :min="0" :max="300" size="small" style="max-width:150px" defaultValue="0"
                             :disabled="!formState.settingDatas.margin_weight.is_use"/>
           </a-descriptions-item>
         </a-descriptions>
@@ -338,7 +338,7 @@ function changeUseAutoSave() {
 }
 
 function changeUseAutoTranslate() {
-  if (formState.userInfo.is_vip_time === false || formState.userInfo.is_vip === false  || formState.userInfo.quota_auto_trans_image === false) {
+  if (formState.userInfo.is_vip_time === false || formState.userInfo.is_vip === false  || formState.userInfo.use_quota_auto_trans_image_decide === false) {
     formState.settingDatas.use_auto_translate = false;
     message.error('이미지 자동 번역은 유료서비스로 결제후 사용이 가능합니다.');
     return false;

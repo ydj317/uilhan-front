@@ -19,6 +19,13 @@
 
 		<a-divider></a-divider>
 		<div v-if="state.formData.sync_market_status">
+      <div v-if="showIp" class="mb15">
+        <span style="font-size: 16px;">유일 서버 IP</span>
+        <a-tooltip title="11번가 Open Api Center > 서비스 등록•확인 > Seller API 정보 수정에서 개발서버IP/개발자PC/사용서버IP 에 유일 서버 IP를 추가하여 주세요.">
+          <QuestionCircleOutlined style="color: black; margin:0 5px" />:
+        </a-tooltip>
+        <span>211.45.170.114</span>
+      </div>
 			<div style="display:flex;justify-content:space-between;align-items:center;" class="mb15">
 				<h3>마켓정보 불러오기</h3>
 			</div>
@@ -222,7 +229,7 @@ import {reactive, onMounted, ref} from "vue";
 import {message} from "ant-design-vue";
 import {useMarketAccountApi} from '@/api/marketAccount';
 import {useAccountJsonApi} from '@/api/accountJson';
-import {CheckCircleOutlined} from '@ant-design/icons-vue';
+import {CheckCircleOutlined, QuestionCircleOutlined} from '@ant-design/icons-vue';
 import {useRouter} from 'vue-router';
 import SelectElement from '@/views/MarketAccount/components/SelectElement.vue'
 import Cookie from "js-cookie";
@@ -307,6 +314,8 @@ const handleSendMethodChange = (value) => {
 const router = useRouter();
 
 const marketFormRef = ref(null);
+
+const showIp = ref(false);
 
 const state = reactive({
 	formData: {
@@ -410,7 +419,9 @@ const handleSyncMarketCheck = () => {
 			syncOutboundAddress(account_id);
 			syncReturnAddress(account_id);
 
-			state.formData.sync_market_status = true
+			state.formData.sync_market_status = true;
+
+      showIp.value = true;
 		});
 
 	}).catch((error) => {
