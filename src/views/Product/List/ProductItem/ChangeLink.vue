@@ -54,7 +54,6 @@ const updateLink = async () => {
   if (link.value) {
     linkLoading.value = true;
     await useProductApi().updatePrdUrl(params).then(res => {
-      console.log(res)
       if (res.status !== "2000") {
         message.error(res.message);
         linkLoading.value = false;
