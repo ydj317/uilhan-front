@@ -133,10 +133,6 @@
 import Cookie from "js-cookie";
 import { reactive } from "vue";
 import {ClockCircleOutlined} from '@ant-design/icons-vue';
-import {useRoute, useRouter} from "vue-router";
-import router from "@/router";
-
-
 const state = reactive({
   cardList:[
     {img:'@/assets/img/order.png',title:'주문내역',money:'1,890원'},
@@ -200,7 +196,6 @@ const state = reactive({
   border-color:#000;
   background-color: transparent;
 }
-
 .my .money-wrap{
   width: 780px;
   height: 150px;
