@@ -209,6 +209,9 @@ const  numberFormat= (num) => {
 </script>
 
 <style scoped>
+.bottom-border-f0f0f0{
+  border-bottom: 2px solid #f0f0f0;
+}
 .border-top-f0f0f0-2{
   border-top: 2px solid #f0f0f0;
 }
