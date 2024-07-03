@@ -186,7 +186,7 @@ export const menus = [{
             component: () => import("@/views/User/ServicesPay.vue"),
             meta: {
                 title: "서비스 결제",
-                isHide: false,
+                isHide: true,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: MoneyCollectOutlined
             },
