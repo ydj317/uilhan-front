@@ -103,6 +103,7 @@ import ModalSingleSync from "@/views/Product/List/ModalSingleSync/ModalSingleSyn
 import ModalSyncResult from "@/views/Product/List/ModalSyncResult/ModalSyncResult.vue";
 import Cookie from "js-cookie";
 import {EventSourcePolyfill} from "event-source-polyfill";
+import emitter from "@/util/emitter";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 
@@ -384,6 +385,14 @@ const handleUpdateVisible = () => {
   showDetail.value = false;
   getList();
 };
+
+// 주문리스트 상품 구매관리 링크 없고 상품에도 없을경우 상품리스트에서 해당상품 검색
+emitter.on('set-product-filter',(prd_id)=>{
+  searchParams.value = ServiceProduct.getCacheParams()
+  searchParams.value.page = 1
+  searchParams.value.prd_id = prd_id
+  getList();
+})
 
 </script>
 
