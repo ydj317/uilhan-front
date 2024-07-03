@@ -40,7 +40,7 @@
           </a>
           <template #overlay>
             <a-menu>
-              <a-menu-item @click="go('/user/my')"><UserOutlined/><span class="ml5">My Page</span></a-menu-item>
+              <a-menu-item @click="go('/user/mypage')"><UserOutlined/><span class="ml5">My Page</span></a-menu-item>
               <a-sub-menu v-if="Object.keys(this.account_list).length">
                 <template #title>
                   <UserSwitchOutlined/><span class="ml5">계정 정보</span>

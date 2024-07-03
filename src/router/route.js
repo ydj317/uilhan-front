@@ -214,7 +214,7 @@ export const menus = [{
                 //     },
                 // },
                 {
-                    path: "/user/my",
+                    path: "/user/mypage",
                     name: "user_my",
                     component: () => import("@/views/User/my.vue"),
                     meta: {
