@@ -28,7 +28,7 @@
                 @click="searchKeyword"
               >키워드 검색</a-button>
             </div>
-            <div v-show="keyword.list.length" style="color: #999999;">빨간색 라벨 키워드는 상표권에 등록된 단어입니다.</div>
+            <div v-show="this.showKeywordTip" style="color: #999999;">빨간색 라벨 키워드는 상표권에 등록된 단어입니다.</div>
             <a-spin v-model:spinning="keyword.loading">
               <a-button v-if="this.showTrademarkBtn" size="small" type="primary" style="margin-bottom: 10px" @click="searchKeyword('', true)">상표권 확인</a-button>
               <div class="keyword-list" v-show="keyword.list.length > 0 || keyword.loading">
@@ -99,7 +99,7 @@
           <a-spin :spinning="ai_loading === true || tagKeyword.loading === true">
             <a-textarea v-model:value="product.item_sync_keyword" placeholder="상품태그는 '콤마(,)' 혹은 '띄어쓰기'로 구분하여 작성해 주시고 최대 20개까지 등록이 가능합니다. " @input="itemSyncKeywordCountCheck" @change="itemSyncKeywordCountCheck" :showCount="false" @blur="tagKeywordBlur($event,2)"
             />
-            <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(' ').filter(d => !!d).length }} / {{keywordMaxLength}}</div>
+            <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(/,\s*|\s+/).filter(d => !!d).length }} / {{keywordMaxLength}}</div>
           </a-spin>
           <a-spin v-model:spinning="tagKeyword.loading">
             <div v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
@@ -254,6 +254,7 @@ export default {
       },
       keywordMaxLength:20,
       showTrademarkBtn: false,
+      showKeywordTip: false,
       imgLoading:false,
       xjParams:{
         isMany:true,
@@ -266,9 +267,10 @@ export default {
   },
 
   methods: {
-    itemSyncKeywordCountCheck() {
-      const keyword = this.product.item_sync_keyword && this.product.item_sync_keyword.split(' ')
+    itemSyncKeywordCountCheck(event) {
+      const keyword = this.product.item_sync_keyword && this.product.item_sync_keyword.split(/,\s*|\s+/)
       if (keyword && keyword.length > 20) {
+        event.target.value = event.target.value.substring(0, event.target.value.lastIndexOf(' '));
         message.error('상품태그는 최대 20개까지 등록이 가능합니다.')
         this.product.item_sync_keyword = keyword.slice(0, 20).join(' ')
       }
@@ -288,8 +290,18 @@ export default {
           return false;
         }
         this.keyword.list = [];
-        this.showTrademarkBtn = !res.data.formDB;
+        this.showTrademarkBtn = res.data.needKipRis;
+        this.showKeywordTip = !res.data.needKipRis;
         this.initKeywords(res.data.keyword_data)
+
+        if (this.showTrademarkBtn === true && onlyDb === true) {
+          message.info('상표권 확인중입니다. 잠시후 다시 클릭하여 확인하여 주세요.');
+        }
+
+        if (this.showTrademarkBtn === false && onlyDb === true) {
+          message.success('상표권 확인완료 하였습니다.');
+        }
+
         //this.$emit('suggestCategory', res.data.category)
       }).catch(() => {
         message.error("처리중 오류가 발생하였습니다. 오류가 지속될경우 관리자에게 문의하시길 바랍니다.")
@@ -362,7 +374,7 @@ export default {
           }
           let productTags = this.product.item_sync_keyword.trim().split(' ');
           if (productTags.length < 20) {
-            let addLength = 20 - productTags.length;
+            let addLength = 21 - productTags.length;
             let addTags = this.tagKeyword.list.slice(0, addLength).map(item => {
               return item.word
             })
@@ -393,8 +405,9 @@ export default {
         if (newName.length <= this.max_name_length) {
           this.product.item_trans_name = newName
           this.blurIndex.index += keywordInfo.word.length + 1;
+          use = true
         }
-        use = true
+
         this.validateFilterWord(null,this.product.item_trans_name)
       }
       if(from == 2) {

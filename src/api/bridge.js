@@ -68,6 +68,14 @@ export function useBridgeApi() {
                 method: "POST",
                 data,
             });
+        },
+
+        updateUserLinkDetail: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/user/updateLinkDetail",
+                method: "POST",
+                data,
+            });
         }
     }
 }

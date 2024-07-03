@@ -43,9 +43,15 @@
 
         <!--연동계정-->
         <template v-if="column.key === 'market_account'">
-          <div>
+          <div class="market-code">
             <a-tooltip :title="record.seller_id">
               <img :src="getLogoSrc('market-logo', record.market_code)" style="width: 25px;height: 25px;text-align: center;" />
+            </a-tooltip>
+            <a-tooltip v-if="record.market_code === 'lotteon'">
+              <template #title>
+                <div>롯데ON의 경우 마켓 등록 재전송 필요합니다.(*기존 데이터 베이스가 없으므로 작업 후 기존 마켓들과 동일하게 업로드 가능)</div>
+              </template>
+              <ExclamationCircleOutlined />
             </a-tooltip>
           </div>
         </template>
@@ -104,7 +110,7 @@
 <script>
 
 import { defineAsyncComponent, defineComponent, markRaw, ref } from "vue";
-import { AndroidOutlined,ProfileOutlined, CopyOutlined } from '@ant-design/icons-vue';
+import {AndroidOutlined, ProfileOutlined, CopyOutlined, ExclamationCircleOutlined} from '@ant-design/icons-vue';
 import DefaultTab from "@/views/Product/Tab/DefaultTab.vue";
 import OptionTab from "@/views/Product/Tab/OptionTab.vue";
 import DetailInfoTab from "@/views/Product/Tab/DetailInfoTab.vue";
@@ -120,6 +126,7 @@ import Loading from "vue-loading-overlay";
 export default defineComponent({
   name: "productDetailPopup",
   components: {
+    ExclamationCircleOutlined,
     Loading,
     CopyOutlined,
   },
@@ -154,7 +161,7 @@ export default defineComponent({
         {
           title: "마켓",
           key: "market_account",
-          width: "230px",
+          width: "15%",
           align: "center"
         },
         {
@@ -300,12 +307,16 @@ export default defineComponent({
     },
 
     handleCancel() {
-      this.autoSave();
+      if (this.autosave) {
+        this.autoSave();
+      }
     },
 
     handleTabChange(key) {
       this.activeKey = key;
-      this.autoSave();
+      if (this.autosave) {
+        this.autoSave();
+      }
     },
 
     setExpectedReturn() {
@@ -977,5 +988,16 @@ export default defineComponent({
   top: 1.3rem;
   transform: translateY(-50%);
   padding-left: 16px;
+}
+
+.market-code {
+  position: relative;
+}
+
+.market-code .anticon{
+  position:absolute;
+  top:-1px;
+  right:27px;
+  opacity:0.5;
 }
 </style>
