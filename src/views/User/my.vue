@@ -181,6 +181,9 @@ const state = reactive({
 }
 </style>
 <style scoped>
+.bottom-border-f0f0f0{
+  border-bottom: 2px solid #f0f0f0;
+}
 .my .info-wrap{
   height: 244px;
 }
