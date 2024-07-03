@@ -223,7 +223,7 @@
 
           <!--스펙-->
           <template v-else-if="column.key === 'spec'">
-            <div :style="record.spec.length > 20 ? 'color: red' : ''">
+            <div>
               {{ record.spec }}
             </div>
             <div class="barcode barcode-option-height">
@@ -322,9 +322,9 @@
       </a-table>
     </div>
   </div>
-  <image-translate-tools v-model:visible="imageTranslateToolsVisible" :isMany="false"
+  <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" />
+                         @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams"/>
 </template>
 
 <script>
@@ -414,7 +414,14 @@ export default defineComponent({
       imageTranslateToolsVisible: false,
       translateImageList: [],
       translateSkuCode: false,
-      specGroupVisible:true
+      specGroupVisible:true,
+      xjParams:{
+        isMany:false,
+        action:'',
+        currentIndex:0,
+        requestIds:[],
+        recharge:0
+      },
     };
   },
 
@@ -810,14 +817,6 @@ export default defineComponent({
         this.watchExpectedReturn('selling_price', index)
       });
     },
-    translateImg(record) {
-      let aImagesUrl = [
-        {checked: true, order: 0, url: record.img}
-      ];
-      this.translateImageList = aImagesUrl;
-      this.translateSkuCode = record.code;
-      this.imageTranslateToolsVisible = true;
-    },
     updateTranslateImageList(imageList) {
       this.product.sku.map(v=>{
         if(v.code == this.translateSkuCode){
@@ -828,6 +827,33 @@ export default defineComponent({
         }
       });
     },
+    translateImg(record) {
+      this.translateSkuCode = record.code;
+      let aImagesUrl = [
+        {url: record.img}
+      ];
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['url'] = item['url'].slice(0,pos-1);
+        }
+        return tmp;
+      })
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
+    },
+    setXjParams(params){
+      this.xjParams = params;
+      this.imageTranslateToolsVisible = true;
+    }
   },
 
   mounted() {

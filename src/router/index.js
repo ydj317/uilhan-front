@@ -5,6 +5,7 @@ import findLast from "lodash/findLast";
 import {cookieInit, isLogin} from "util/auth";
 import Cookie from "js-cookie";
 import {menus, notFoundAndNoPower, staticRoutes} from "@/router/route";
+import emitter from "@/util/emitter";
 
 /**
  * @TODO vuex로 처리해야함
@@ -22,8 +23,12 @@ const router = createRouter({
 export function setFilterRouteList() {
   const userInfosRoles = Cookie.get('member_roles') ? Cookie.get('member_roles').split(',') : [];
   const userInfosIds = Cookie.get('member_name') ? [Cookie.get('member_name')] : [];
-
-  const FilterRoutes = setFilterHasRolesMenu(menus[0].children, userInfosRoles, userInfosIds);
+  const employeeMenus = Cookie.get('employee') ? JSON.parse(Cookie.get('employee')).menu_names : [];
+  // console.log('userInfosRoles',userInfosRoles);
+  // console.log('userInfosIds',userInfosIds);
+  // console.log('menus[0].children',menus[0].children);
+  // console.log('employee_menu_names',employeeMenus);
+  const FilterRoutes = setFilterHasRolesMenu(menus[0].children, userInfosRoles, userInfosIds,employeeMenus);
   const defaultRoutes = [{
     path: "/",
     name: "dashboard",
@@ -63,17 +68,21 @@ export function hasIds(ids, route) {
  * @param routes 当前路由 children
  * @param roles 用户权限标识，在 userInfos（用户信息）的 roles（登录页登录时缓存到浏览器）数组
  * @param ids ['admin'] 可以根据 用户ID 判断权限
+ * @param employeeMenus 员工拥有的菜单
  * @returns 返回有权限的路由数组 `meta.roles` 中控制
  */
-export function setFilterHasRolesMenu(routes, roles, ids = []) {
-  const menu = [];
+export function setFilterHasRolesMenu(routes, roles, ids = [],employeeMenus) {
+  let menu = [];
   routes.forEach((route) => {
     const item = {...route};
     if (hasRoles(roles, item) || ((item.meta && item.meta.ids) && hasIds(ids, item))) {
-      if (item.children) item.children = setFilterHasRolesMenu(item.children, roles, ids);
+      if (item.children) item.children = setFilterHasRolesMenu(item.children, roles, ids,employeeMenus);
       menu.push(item);
     }
   });
+  if(employeeMenus.length){
+    menu = menu.filter(item=>employeeMenus.includes(item.name));
+  }
   return menu;
 }
 
@@ -83,6 +92,10 @@ router.beforeEach((to, form, next) => {
   if (to.path === '/user/login' && status === true) {
     next({path: "/dashboard"});
     return false;
+  }
+
+  if (to.path === '/product' && to.query.id !== undefined) {
+    emitter.emit('change-selected-keys','/product')
   }
 
   const record = findLast(to.matched, (record) => record.meta.roles);
@@ -100,7 +113,10 @@ router.beforeEach((to, form, next) => {
 });
 
 
-router.afterEach(() => {
+router.afterEach((to, form) => {
+  if (to.path === '/product' && to.query.id !== undefined) {
+    emitter.emit('set-product-filter',to.query.id)
+  }
   nProgress.done();
 });
 

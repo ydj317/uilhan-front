@@ -5,7 +5,7 @@
   </div>
   <div v-show="!product.loading">
     <!--상세페이지-->
-    <Description></Description>
+    <Description :activeKey="activeKey"></Description>
   </div>
   </div>
 </template>
@@ -28,6 +28,11 @@ export default defineComponent({
   methods: {
 
   },
-
+  props: {
+    activeKey: {
+      type: String,
+      default: '1'
+    },
+  },
 })
 </script>

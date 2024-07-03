@@ -1,19 +1,20 @@
 <template>
-  <a-modal class="pro-detail" v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="true">
+  <a-modal class="pro-detail" v-model:open="localvisible" title="상품상세" width="100%" wrap-class-name="full-modal" centered :maskClosable="true"  @cancel="handleCancel">
     <div class="container">
       <div class="tabs-wrapper">
         <a-tabs v-model:activeKey="activeKey"
                 :tabBarGutter="0"
                 type="card"
+                @change="handleTabChange"
         >
-          <a-tab-pane v-for="pane in tabList" :key="pane.key" @tabClick="handleTabChange">
+          <a-tab-pane v-for="pane in tabList" :key="pane.key">
             <template #tab>
               <div :style="{color: activeKey === pane.key ? '#ffffff' : '#000000'}">
                 {{pane.tab}}
               </div>
             </template>
             <keep-alive>
-              <component :is="pane.component" v-show="activeKey === pane.key" style="height: calc(100vh - 180px);overflow-y: scroll" />
+              <component :is="pane.component" v-show="activeKey === pane.key" :activeKey="activeKey" style="height: calc(100vh - 180px);overflow-y: scroll" />
             </keep-alive>
           </a-tab-pane>
         </a-tabs>
@@ -30,6 +31,7 @@
   </a-modal>
   <!--제휴사 상품연동-->
   <a-modal width="1000px" title="상품등록" v-model:open="singleSyncPop" centered>
+    <loading style="z-index: 999" v-model:active="syncLoading" :can-cancel="false" :is-full-page="false" />
     <a-table
         class="tableSyncStatus"
         :dataSource="this.product.item_sync_market"
@@ -41,10 +43,16 @@
 
         <!--연동계정-->
         <template v-if="column.key === 'market_account'">
-          <div style="text-align: left">
-            <img :src="getLogoSrc('market-logo', record.market_code)"
-                 style="width: 16px; height: 16px; margin-right: 5px;">
-            {{ record.seller_id }}
+          <div class="market-code">
+            <a-tooltip :title="record.seller_id">
+              <img :src="getLogoSrc('market-logo', record.market_code)" style="width: 25px;height: 25px;text-align: center;" />
+            </a-tooltip>
+            <a-tooltip v-if="record.market_code === 'lotteon'">
+              <template #title>
+                <div>롯데ON의 경우 마켓 등록 재전송 필요합니다.(*기존 데이터 베이스가 없으므로 작업 후 기존 마켓들과 동일하게 업로드 가능)</div>
+              </template>
+              <ExclamationCircleOutlined />
+            </a-tooltip>
           </div>
         </template>
 
@@ -102,7 +110,7 @@
 <script>
 
 import { defineAsyncComponent, defineComponent, markRaw, ref } from "vue";
-import { AndroidOutlined,ProfileOutlined, CopyOutlined } from '@ant-design/icons-vue';
+import {AndroidOutlined, ProfileOutlined, CopyOutlined, ExclamationCircleOutlined} from '@ant-design/icons-vue';
 import DefaultTab from "@/views/Product/Tab/DefaultTab.vue";
 import OptionTab from "@/views/Product/Tab/OptionTab.vue";
 import DetailInfoTab from "@/views/Product/Tab/DetailInfoTab.vue";
@@ -110,17 +118,21 @@ import {lib} from "@/util/lib";
 import {message} from "ant-design-vue";
 import {AuthRequest} from "@/util/request";
 import { mapState} from "vuex";
-import {throttle} from "lodash";
+import {throttle,debounce} from "lodash";
 import {useCategoryApi} from "@/api/category";
 import {useUserApi} from "@/api/user";
+import Loading from "vue-loading-overlay";
 
 export default defineComponent({
   name: "productDetailPopup",
   components: {
+    ExclamationCircleOutlined,
+    Loading,
     CopyOutlined,
   },
   data() {
     return {
+      syncLoading : false,
       activeKey: '1',
       tabList: [
         {
@@ -149,7 +161,7 @@ export default defineComponent({
         {
           title: "마켓",
           key: "market_account",
-          width: "230px",
+          width: "15%",
           align: "center"
         },
         {
@@ -221,8 +233,6 @@ export default defineComponent({
     },
 
     autoSave: throttle(async function() {
-      message.success('자동 저장중...')
-
       let oForm = new FormData();
       oForm = this.getForm(oForm);
 
@@ -231,11 +241,14 @@ export default defineComponent({
         message.error(res.message);
         return false;
       }
-
-      message.success('자동 저장 성공')
-    }, 5000, {
-      leading: false
-    }),
+      this.lastSaveTime = new Date().getTime();
+      this.showMessage();
+      return true;
+    }, 1000, { leading: true, trailing: false }),
+    showMessage: debounce(function() {
+      if (new Date().getTime() - this.lastSaveTime < 1000) return;
+      message.success('자동 저장 성공');
+    }, 1000),
 
     closeResultPop() {
       this.singleSyncPop = false;
@@ -293,9 +306,17 @@ export default defineComponent({
       }
     },
 
+    handleCancel() {
+      if (this.autosave) {
+        this.autoSave();
+      }
+    },
+
     handleTabChange(key) {
-      this.product.loading = true;
       this.activeKey = key;
+      if (this.autosave) {
+        this.autoSave();
+      }
     },
 
     setExpectedReturn() {
@@ -458,7 +479,8 @@ export default defineComponent({
         return false;
       }
 
-      this.product.loading = true;
+      this.syncLoading = true;
+
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/send_market", {
           productList: this.product.item_id + "",
@@ -467,13 +489,13 @@ export default defineComponent({
 
         if (res.status !== "2000") {
           message.error(res.message);
-          this.product.loading = false;
+          this.syncLoading = false;
           return false;
         }
 
         if (res.data !== undefined && res.data.length === 0) {
           message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
-          this.product.loading = false;
+          this.syncLoading = false;
           return false;
         }
 
@@ -509,12 +531,12 @@ export default defineComponent({
           returnData.data
         ]);
 
-        this.product.loading = false;
+        this.syncLoading = false;
 
         return true;
       } catch (e) {
         message.error(e.message);
-        this.product.loading = false;
+        this.syncLoading = false;
         return false;
       }
     },
@@ -879,17 +901,18 @@ export default defineComponent({
   },
 
   watch: {
-    product: {
-      handler() {
-        this.productWatchCount++;
-        if (this.productWatchCount > 6 && this.useAutoSave) {
-          this.autoSave();
-        }
-      },
-
-      deep: true,
-      immediate: true
-    },
+    //监听商品信息修改时调用自动保存
+    // product: {
+    //   handler() {
+    //     this.productWatchCount++;
+    //     if (this.productWatchCount > 6 && this.useAutoSave) {
+    //       this.autoSave();
+    //     }
+    //   },
+    //
+    //   deep: true,
+    //   immediate: true
+    // },
 
     autosave: {
       handler() {
@@ -965,5 +988,16 @@ export default defineComponent({
   top: 1.3rem;
   transform: translateY(-50%);
   padding-left: 16px;
+}
+
+.market-code {
+  position: relative;
+}
+
+.market-code .anticon{
+  position:absolute;
+  top:-1px;
+  right:27px;
+  opacity:0.5;
 }
 </style>

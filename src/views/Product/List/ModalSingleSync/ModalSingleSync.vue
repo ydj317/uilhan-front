@@ -1,6 +1,6 @@
 <template>
-  <FullPageLoading v-model:show="loading" />
   <a-modal width="1000px" :open="show" @update:open="$emit('update:show', false)" centered>
+    <loading style="z-index: 999" v-model:active="syncLoading" :can-cancel="false" :is-full-page="false" />
     <template #title>
       선택상품 등록
       <a-tooltip>
@@ -57,6 +57,9 @@
             <div v-else>{{ record.upd_time }}</div>
           </div>
         </template>
+        <template v-if="column.key === 'employee_name'">
+          <div>{{ record.employee_name }}</div>
+        </template>
       </template>
 
     </a-table>
@@ -74,15 +77,15 @@ import {ref, toRefs, watch} from "vue";
 import {getLogoSrc} from "@/util/functions";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
-import FullPageLoading from "@/components/FullPageLoading.vue";
 import {ServiceProduct} from "@/services/product/ServiceProduct";
+import Loading from "vue-loading-overlay";
 
 const SYNC_COLUMNS_CONFIG = [
   {
     title: "마켓",
     key: "market_account",
     align: "center",
-    width: "180px",
+    width: "15%",
   },
   {
     title: "등록상태",
@@ -92,6 +95,12 @@ const SYNC_COLUMNS_CONFIG = [
   {
     title: "등록시간",
     key: "ins_time",
+    width: "170px",
+    align: "center"
+  },
+  {
+    title: "처리자",
+    key: "employee_name",
     width: "170px",
     align: "center"
   }
@@ -106,7 +115,7 @@ watch(show, val => {
   }
 })
 
-const loading = ref(false)
+const syncLoading = ref(false)
 const syncSelectedRowKeys = ref([])
 
 function onSyncSelectChange(selectedRowKeys) {
@@ -114,7 +123,7 @@ function onSyncSelectChange(selectedRowKeys) {
 }
 
 async function approvalCheck(market_id) {
-  loading.value = true;
+  syncLoading.value = true;
 
   try {
     let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/approval_check", {
@@ -123,19 +132,19 @@ async function approvalCheck(market_id) {
 
     if (res.status !== "2000") {
       message.error(res.message);
-      loading.value = false;
+      syncLoading.value = false;
       return false;
     }
 
     if (res.data !== undefined && res.data.length === 0) {
       message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
-      loading.value = false;
+      syncLoading.value = false;
       return false;
     }
 
     if (res.data.message !== undefined && res.data.message !== '') {
       message.warning(res.data.message);
-      loading.value = false;
+      syncLoading.value = false;
       return false;
     }
 
@@ -159,12 +168,12 @@ async function approvalCheck(market_id) {
       }
     }
 
-    loading.value = false;
+    syncLoading.value = false;
 
     return true;
   } catch (e) {
     message.error(e.message);
-    loading.value = false;
+    syncLoading.value = false;
     return false;
   }
 }
@@ -182,13 +191,13 @@ async function sendMarket() {
     return
   }
 
-  loading.value = true
+  syncLoading.value = true
   const result = await ServiceProduct.sendMarket(productList, accountList, props.smartStoreCategory)
   if (result !== false) {
     emit('result', result)
     closeModal()
   }
-  loading.value = false
+  syncLoading.value = false
 }
 
 async function loadSyncInfo() {
@@ -240,8 +249,8 @@ async function loadSyncInfo() {
 
 .market-code .anticon{
   position:absolute;
-  top:-2px;
-  right:43px;
+  top:-1px;
+  right:27px;
   opacity:0.5;
 }
 </style>

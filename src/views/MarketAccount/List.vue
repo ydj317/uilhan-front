@@ -218,9 +218,6 @@ const getLogoSrc = (fileName, marketCode) => {
     .user_form .phone .ant-form-item-control:nth-last-child {
         border-bottom: none;
     }
-    .bg-f0f0f0{
-      background-color: #f0f0f0;
-    }
 </style>
 <style scoped>
 

@@ -511,6 +511,10 @@ export default defineComponent({
             Cookie.remove("token");
             Cookie.remove("member_name");
             Cookie.remove("member_roles");
+            Cookie.remove('login_user');
+            Cookie.remove('main_user');
+            Cookie.remove('employee');
+            Cookie.remove('account_list');
             router.push("/user/login");
             return false;
           }
@@ -521,6 +525,10 @@ export default defineComponent({
             Cookie.remove("token");
             Cookie.remove("member_name");
             Cookie.remove("member_roles");
+            Cookie.remove('login_user');
+            Cookie.remove('main_user');
+            Cookie.remove('employee');
+            Cookie.remove('account_list');
             router.push("/user/login");
             return false;
           }

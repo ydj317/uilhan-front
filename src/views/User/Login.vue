@@ -8,8 +8,9 @@
       <div class="login-content">
         <img style="margin: 90px;width: 60px;height: 60px" src="../../assets/logo_icon.png" key="logo-light" alt="" >
         <div style="display: flex;flex-direction: column;width: 100%;">
-            <a-input v-model:value="formState.username" placeholder="아이디" class="user-name" @keyup.enter="handleFinish"></a-input>
-            <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password" @keyup.enter="handleFinish"></a-input-password>
+            <a-input v-model:value="formState.manager" placeholder="관리자 아이디" class="user-name" v-if="!user_type" ></a-input>
+            <a-input v-model:value="formState.username" placeholder="아이디" class="user-name" ></a-input>
+            <a-input-password v-model:value="formState.password" placeholder="비밀번호" class="user-password"></a-input-password>
         </div>
         <div style="display: flex;justify-content: space-between;font-size: 12px;align-items: center;width: 100%;margin-top: 5px">
           <!-- checkbox use icon -->
@@ -20,7 +21,7 @@
           </div>
 
           <div style="display: flex;gap: 5px;align-items: center">
-          <span class="font-SCDream3 mt2">관리자</span>
+          <span class="font-SCDream3 mt2">{{user_type?'관리자':'직원'}}</span>
           <a-switch v-model:checked="user_type" size="small" style="color: #1a1a1a;background-color: #1a1a1a"/>
           </div>
         </div>
@@ -44,7 +45,7 @@
 import "vue-loading-overlay/dist/vue-loading.css";
 import Loading from "vue-loading-overlay";
 import router, {setFilterRouteList} from "router/index.js";
-import {LoginRequest} from 'util/request';
+import { AuthRequest, LoginRequest } from "util/request";
 import {defineComponent, reactive, onBeforeMount, ref, onMounted} from 'vue';
 import {UserOutlined, LockOutlined, CheckCircleTwoTone} from '@ant-design/icons-vue';
 import Cookie from "js-cookie";
@@ -78,6 +79,7 @@ export default defineComponent({
     });
 
     const formState = reactive({
+      manager:'',
       username: '',
       password: ''
     });
@@ -87,14 +89,23 @@ export default defineComponent({
         message.warning('아이디 또는 비밀번호을  입력해주시오');
         return true
       }
-
+      var url = '/api/login';
       let user = {
         username: formState.username,
         password: formState.password,
       };
+      if(!user_type.value){
+        if (formState.manager === '') {
+          message.warning('관리자 아이디를 입력해주세요');
+          return true
+        }
+        user.manager = formState.manager;
+        url = '/employee/login';
+      }
+
       loading.value = true;
       LoginRequest.post(
-          process.env.VUE_APP_API_URL + '/api/login', user).then((res) => {
+          process.env.VUE_APP_API_URL + url, user).then((res) => {
         if (res.status === 400 || res.status === 401) {
           message.warning('아이디 또는 비밀번호가 잘못 입력 되었습니다.');
           loading.value = false;
@@ -124,14 +135,53 @@ export default defineComponent({
 
         // 아이디 저장하기
         tempSave();
-
-        Cookie.set('member_name', res.data.member_name);
-        Cookie.set('member_roles', res.data.member_roles);
-        const menuList = setFilterRouteList();
-        router.addRoute(menuList[0])
-        router.push("/dashboard");
-        loading.value = false;
-        return false;
+        //管理者+子账号+员工账号
+        AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/list", {}).then((res2) => {
+          if (res2.status !== "2000") {
+            message.error(res2.message);
+            return false;
+          }
+          Cookie.set('token',res2.data.token);
+          if(res2.data.loginUser){
+            Cookie.set('login_user', JSON.stringify(res2.data.loginUser));
+          }
+          if(res2.data.mainUser){
+            Cookie.set('main_user', JSON.stringify(res2.data.mainUser));
+          }
+          if(res2.data.employee){
+            Cookie.set('employee', JSON.stringify(res2.data.employee));
+          }
+          if(res2.data.accountList){
+            Cookie.set('account_list', JSON.stringify(res2.data.accountList));
+          }
+          let goUrl = '/dashboard';
+          if(res2.data.employee){
+            Cookie.set('member_name', res2.data.mainUser.username);
+            //显示员工第一个有权限的菜单
+            for (const val of res2.data.employee.menu_names) {
+              if(val == 'product'){
+                goUrl = '/product';
+                break;
+              }
+              if(val == 'order_list'){
+                goUrl = '/order/list';
+                break;
+              }
+              if(val == 'express_list'){
+                goUrl = '/express/list';
+                break;
+              }
+            }
+          }else{
+            Cookie.set('member_name', res.data.member_name);
+          }
+          Cookie.set('member_roles', res.data.member_roles);
+          const menuList = setFilterRouteList();
+          router.addRoute(menuList[0])
+          router.push(goUrl);
+          loading.value = false;
+          return false;
+        });
       });
     };
 

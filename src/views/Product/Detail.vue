@@ -96,7 +96,7 @@ export default defineComponent({
 
   data() {
     return {
-      useAutoSave: false,
+      // useAutoSave: false,
       productWatchCount: 0,
     };
   },
@@ -154,22 +154,22 @@ export default defineComponent({
       return oForm;
     },
 
-    autoSave: throttle(async function() {
-      message.success('자동 저장중...')
-
-      let oForm = new FormData();
-      oForm = this.getForm(oForm);
-
-      const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm);
-      if (res.status === undefined || res.status !== "2000") {
-        message.error(res.message);
-        return false;
-      }
-
-      message.success('자동 저장 성공')
-    }, 5000, {
-      leading: false
-    }),
+    // autoSave: throttle(async function() {
+    //   message.success('자동 저장중...')
+    //
+    //   let oForm = new FormData();
+    //   oForm = this.getForm(oForm);
+    //
+    //   const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/prdup", oForm);
+    //   if (res.status === undefined || res.status !== "2000") {
+    //     message.error(res.message);
+    //     return false;
+    //   }
+    //
+    //   message.success('자동 저장 성공')
+    // }, 5000, {
+    //   leading: false
+    // }),
 
     getProduct() {
       const route = useRoute();
@@ -285,18 +285,18 @@ export default defineComponent({
     },
   },
 
-  watch: {
-    'product': {
-      handler() {
-        this.productWatchCount++;
-        if (this.productWatchCount > 10 && this.useAutoSave) {
-          this.autoSave()
-        }
-      },
-      deep: true, // 深度监听，如果 product 是对象或数组，需要设置为 true
-      immediate: false, // 立即执行一次
-    },
-  },
+  // watch: {
+  //   'product': {
+  //     handler() {
+  //       this.productWatchCount++;
+  //       if (this.productWatchCount > 10 && this.useAutoSave) {
+  //         this.autoSave()
+  //       }
+  //     },
+  //     deep: true, // 深度监听，如果 product 是对象或数组，需要设置为 true
+  //     immediate: false, // 立即执行一次
+  //   },
+  // },
 
 
   mounted() {

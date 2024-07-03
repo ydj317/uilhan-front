@@ -603,9 +603,9 @@ const planTypeMap = {
     Extra3PlanMarketCollect150: 'ESM 원클릭 수집 150',
     Extra3PlanMarketCollect200: 'ESM 원클릭 수집 200',
     Extra3PlanMarketCollect300: 'ESM 원클릭 수집 300',
-    Extra1PlanAutoImageCount100: 'Extra1PlanAutoImageCount100',
-    Extra1PlanAutoImageCount200: 'Extra1PlanAutoImageCount200',
-    Extra1PlanAutoImageCount300: 'Extra1PlanAutoImageCount300',
+    Extra1PlanAutoImageCount100: '이미지 자동번역100',
+    Extra1PlanAutoImageCount200: '이미지 자동번역200',
+    Extra1PlanAutoImageCount300: '이미지 자동번역300',
 }
 
 const search = () => {
@@ -834,6 +834,10 @@ const getAllplan = () => {
         }
 
         console.log(res.data)
+        /**
+         * 자동이미지 숨김 폰론트단에서 처리
+         */
+        delete res.data['Extra1PlanAutoImage']
 
         plans.value = res.data;
         plan.value = Object.keys(res.data)[0];
