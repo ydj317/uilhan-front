@@ -4,7 +4,7 @@
     <a-spin v-if="product.loading" size="large"/>
   </div>
   <div v-else>
-  <BasicInfo @suggest-category="handleSuggestCategory"></BasicInfo>
+  <BasicInfo @suggest-category="handleSuggestCategory" :activeKey="activeKey"></BasicInfo>
   <MarketData :suggest-category="suggestCategory"> </MarketData>
   </div>
   </div>
@@ -32,12 +32,17 @@ export default {
       product: state => state.product.detail
     }),
   },
+  props: {
+    activeKey: {
+      type: String,
+      default: '1'
+    },
+  },
   watch: {
     "product.item_id"() {
       this.suggestCategory = []
     }
   },
-
   methods: {
     handleSuggestCategory(categories) {
       if (! Array.isArray(categories)) {

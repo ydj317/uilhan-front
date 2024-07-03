@@ -23,6 +23,11 @@
             </div>
             <div style="display: flex;gap: 3px;align-items: center">
               <a-button
+                  type="default" style="padding: 0;width: 100%" size="small"
+                  @click="changLinkVisible = true; product.moreActionVisible = false;">구매링크 수정</a-button>
+            </div>
+            <div style="display: flex;gap: 3px;align-items: center">
+              <a-button
                 type="default" style="padding: 0;width: 100%" size="small"
                 @click.prevent.stop="historyVisible = true;">히스토리</a-button>
             </div>
@@ -52,19 +57,23 @@
     </div>
   </div>
   <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData"/>
+  <change-link :product="product" :visible="changLinkVisible"  @update:updateData="changeLinkDataUpdate" />
 </template>
 
 <script setup>
-import {computed, ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import BtnDelete from "@/views/Product/List/Ctrls/BtnDelete.vue";
 import BtnClone from "@/views/Product/List/Ctrls/BtnClone.vue";
 import HistoryView from "@/components/HistoryView.vue";
 import {FileTextOutlined, CopyOutlined} from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
+import ChangeLink from "@/views/Product/List/ProductItem/ChangeLink.vue";
+
 
 const props = defineProps(['product'])
 defineEmits(['detailOption', 'detailDesc', 'editMemo', 'send'])
 
+let changLinkVisible = ref(false)
 const historyVisible = ref(false)
 const historyData = computed(() => {
   return {
@@ -85,6 +94,14 @@ const copyItemID = (item_id) => {
   message.success('상품코드를 복사 하였습니다.');
 }
 
+const changeLinkDataUpdate = (data) => {
+  changLinkVisible.value = data.visible;
+  if (data.item_url) {
+    props.product.item_url = data.item_url;
+    props.product.item_code = data.item_code;
+    props.product.item_market = data.item_market;
+  }
+}
 
 </script>
 

@@ -4,7 +4,7 @@
     <a-flex class="info-wrap mt32 plr44 br10 primary-bg-color" justify="space-between" align="center">
       <a-flex class="name fl00" vertical justify="flex-end">
         <span class="font-SCDream5 fs30">{{ Cookie.get('member_name') }}님, 안녕하세요.</span>
-        <span class="btn font-SCDream4 fs12 br15 mt35 bor-black cp">내 정보 관리</span>
+        <a-button class="btn font-SCDream4 fs12 br15 mt35 bor-black" href="/setting/AccountManage">내 정보 관리</a-button>
       </a-flex>
       <a-flex class="money-wrap br15 box-sha" justify="center" vertical>
         <a-flex class="bottom-border-f0f0f0 pb25 font-SCDream6 fs30" align="center" justify="space-between">
@@ -14,53 +14,63 @@
           </a-flex>
           <span class="number color-FB6F3E">1,900 원</span>
         </a-flex>
-        <a-flex class="font-SCDream4 fs12 color-bababa mt10 cp" justify="flex-end">AI 프리미엄을 시작해보세요!&nbsp;&nbsp;></a-flex>
+        <a-flex class="font-SCDream4 fs12 color-bababa mt10 cp" justify="flex-end">
+<!--          <span @click="toServicePay">AI 프리미엄을 시작해보세요!&nbsp;&nbsp;></span>-->
+          <a-button type="link" class="btn font-SCDream4" href="/user/servicesPay">AI 프리미엄을 시작해보세요!&nbsp;&nbsp;></a-button>
+        </a-flex>
       </a-flex>
     </a-flex>
     <a-divider class="bg-f0f0f0 h2"></a-divider>
-    <a-flex class="card-wrap bg-fafafa br10" align="center" gap="40">
-      <a-card :bordered="false">
-        <a-flex align="center">
-          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/order.png"></a-flex>
-          <a-flex vertical class="ml15">
-            <div class="font-SCDream6 fs18">주문내역</div>
-            <div class="font-SCDream6 fs16 primary-color">1,890원</div>
-          </a-flex>
-        </a-flex>
-      </a-card>
-      <a-card :bordered="false" >
-        <a-flex align="center">
-          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/cart.png"></a-flex>
-          <a-flex vertical class="ml15">
-            <div class="font-SCDream6 fs18">주문내역</div>
-            <div class="font-SCDream6 fs16 primary-color">1,890원</div>
-          </a-flex>
-        </a-flex>
-      </a-card>
-      <a-card :bordered="false">
-        <a-flex align="center">
-          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/send.png"></a-flex>
-          <a-flex vertical class="ml15">
-            <div class="font-SCDream6 fs18">주문내역</div>
-            <div class="font-SCDream6 fs16 primary-color">1,890원</div>
-          </a-flex>
-        </a-flex>
-      </a-card>
-      <a-card :bordered="false">
-        <a-flex align="center">
-          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/coupon.png"></a-flex>
-          <a-flex vertical class="ml15">
-            <div class="font-SCDream6 fs18">주문내역</div>
-            <div class="font-SCDream6 fs16 primary-color">1,890원</div>
-          </a-flex>
-        </a-flex>
-      </a-card>
-    </a-flex>
+<!--    <a-flex class="card-wrap bg-fafafa br10" align="center" gap="40">-->
+<!--      <a-card :bordered="false">-->
+<!--        <a-flex align="center">-->
+<!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/order.png"></a-flex>-->
+<!--          <a-flex vertical class="ml15">-->
+<!--            <div class="font-SCDream6 fs18">주문내역</div>-->
+<!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
+<!--          </a-flex>-->
+<!--        </a-flex>-->
+<!--      </a-card>-->
+<!--      <a-card :bordered="false" >-->
+<!--        <a-flex align="center">-->
+<!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/cart.png"></a-flex>-->
+<!--          <a-flex vertical class="ml15">-->
+<!--            <div class="font-SCDream6 fs18">주문내역</div>-->
+<!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
+<!--          </a-flex>-->
+<!--        </a-flex>-->
+<!--      </a-card>-->
+<!--      <a-card :bordered="false">-->
+<!--        <a-flex align="center">-->
+<!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/send.png"></a-flex>-->
+<!--          <a-flex vertical class="ml15">-->
+<!--            <div class="font-SCDream6 fs18">주문내역</div>-->
+<!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
+<!--          </a-flex>-->
+<!--        </a-flex>-->
+<!--      </a-card>-->
+<!--      <a-card :bordered="false">-->
+<!--        <a-flex align="center">-->
+<!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/coupon.png"></a-flex>-->
+<!--          <a-flex vertical class="ml15">-->
+<!--            <div class="font-SCDream6 fs18">주문내역</div>-->
+<!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
+<!--          </a-flex>-->
+<!--        </a-flex>-->
+<!--      </a-card>-->
+<!--    </a-flex>-->
     <a-flex class="intro-wrap mt30 fs18 font-SCDream6" gap="30">
       <a-card :bordered="false" class="bg-fafafa">
         <template #title>
-          <img src="@/assets/img/order-small.png">
-          <span class="ml20">주문내역</span>
+          <div class="title-container">
+            <div class="left-content">
+              <img src="@/assets/img/order-small.png">
+              <span class="ml20">주문내역</span>
+            </div>
+            <div class="right-content">
+              <a-button class="detail bg-FEDB41">상세보기</a-button>
+            </div>
+          </div>
         </template>
         <div class="text fs16 font-SCDream4">메인서비스 : 2024.03.24 - 2024.03.23<br>
           GPT 자동화 : 2024.03.24 - 2024.03.23<br>
@@ -68,8 +78,15 @@
       </a-card>
       <a-card :bordered="false" class="bg-fafafa">
         <template #title>
-          <img src="@/assets/img/cart-small.png">
-          <span class="ml20">장바구니</span>
+          <div class="title-container">
+            <div class="left-content">
+              <img src="@/assets/img/cart-small.png">
+              <span class="ml20">장바구니</span>
+            </div>
+            <div class="right-content">
+              <a-button class="pay bg-FB6F3E" href="/user/servicesPay">결제페이지로 이동</a-button>
+            </div>
+          </div>
         </template>
         <div class="text fs16 font-SCDream4">메인서비스 : 6개월<br>
           GPT 자동화 : 1개월<br>
@@ -77,8 +94,15 @@
       </a-card>
       <a-card :bordered="false" class="bg-fafafa">
         <template #title>
-          <img src="@/assets/img/clock-small.png">
-          <span class="ml20">환불내역</span>
+          <div class="title-container">
+            <div class="left-content">
+              <img src="@/assets/img/clock-small.png">
+              <span class="ml20">환불내역</span>
+            </div>
+            <div class="right-content">
+              <a-button class="detail bg-FEDB41">상세보기</a-button>
+            </div>
+          </div>
         </template>
         <div class="text fs16 font-SCDream4">메인서비스 : 2024.03.24 - 2024.03.23<br>
           GPT 자동화 : 2024.03.24 - 2024.03.23<br>
@@ -157,6 +181,9 @@ const state = reactive({
 }
 </style>
 <style scoped>
+.bottom-border-f0f0f0{
+  border-bottom: 2px solid #f0f0f0;
+}
 .my .info-wrap{
   height: 244px;
 }
@@ -164,9 +191,13 @@ const state = reactive({
   height: inherit;
   padding-bottom: 50px;
 }
-.my .btn{
+.my .name .btn{
   width: fit-content;
+  height:24px;
   padding: 2px 6px;
+  color:#000;
+  border-color:#000;
+  background-color: transparent;
 }
 .my .money-wrap{
   width: 780px;
@@ -177,6 +208,11 @@ const state = reactive({
 .my .money-wrap img{
   width: 24px;
   height: 25px;
+}
+.my .money-wrap .color-bababa .btn{
+  padding:0;
+  font-size: 12px;
+  color: #bababa;
 }
 .my .card-wrap{
   height: 250px;
@@ -200,4 +236,32 @@ const state = reactive({
 .my .question-wrap{
   margin-bottom: 130px;
 }
+
+.title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-content {
+  display: flex;
+  align-items: center;
+}
+
+.right-content .detail{
+  color: #000;
+}
+
+.right-content .pay{
+  color: #fff;
+}
+
+.right-content .ant-btn{
+  height:26px;
+  padding:3px 15px;
+  font-weight:bold;
+  border:none;
+  border-radius: 20px;
+}
+
 </style>

@@ -14,7 +14,7 @@
               </div>
             </template>
             <keep-alive>
-              <component :is="pane.component" v-show="activeKey === pane.key" style="height: calc(100vh - 180px);overflow-y: scroll" />
+              <component :is="pane.component" v-show="activeKey === pane.key" :activeKey="activeKey" style="height: calc(100vh - 180px);overflow-y: scroll" />
             </keep-alive>
           </a-tab-pane>
         </a-tabs>

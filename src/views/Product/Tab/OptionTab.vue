@@ -5,7 +5,7 @@
   </div>
   <div v-else>
     <!--Sku-->
-    <Sku></Sku>
+    <Sku :activeKey="activeKey"></Sku>
 
     <!--New Spec-->
     <NewSpec></NewSpec>
@@ -26,6 +26,12 @@ export default {
     ...mapState({
       product: state => state.product.detail
     }),
+  },
+  props: {
+    activeKey: {
+      type: String,
+      default: '1'
+    },
   },
 }
 </script>

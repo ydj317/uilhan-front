@@ -400,6 +400,12 @@ watchEffect(() => {
 }
 </style>
 <style scoped>
+.top-border-000{
+  border-top: 2px solid #000;
+}
+.bottom-border-f0f0f0{
+  border-bottom: 2px solid #f0f0f0;
+}
 .bor-bottom-0505050f{
 	border-bottom: 1px solid #0505050f;
 }
