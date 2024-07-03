@@ -62,8 +62,11 @@ export default defineComponent({
       switch (action){
         case 'upload':
           this.uploadImage(base64,()=>{
-            this.translateImage({isTranslate: false,type: 2,action});
+            this.translateImage({type: 2,action});
           });
+          break;
+        case 'delete':
+          this.translateImage({type: 4,requestId});
           break;
         case 'translate':
           await this.translateImage({isTranslate: true,type: 3,requestId,action});
@@ -111,6 +114,9 @@ export default defineComponent({
             message.error("이미 번역된 이미지입니다.");
             return false;
           }
+          break;
+        case 4://删除图片
+          this.localTranslateImageList = this.localTranslateImageList.filter(item =>item.request_id != requestId);
           break;
         default:
           images = [];
