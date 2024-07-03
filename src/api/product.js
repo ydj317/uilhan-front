@@ -85,7 +85,15 @@ export function useProductApi() {
                 method: "post",
                 data: data,
             });
-        }
+        },
+
+        updatePrdUrl: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/updatePrdUrl",
+                method: "post",
+                data: data,
+            });
+        },
 
     }
 }
