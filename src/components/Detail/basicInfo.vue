@@ -102,7 +102,7 @@
             <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(/,\s*|\s+/).filter(d => !!d).length }} / {{keywordMaxLength}}</div>
           </a-spin>
           <a-spin v-model:spinning="tagKeyword.loading">
-            <div v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
+            <div class="keyword-list" v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="margin-bottom: 10px">
               <a-tag
                   v-for="item in tagKeyword.list" :key="item.id"
                   :color="item.reg ? 'red' : ''"
@@ -663,7 +663,7 @@ export default {
 }
 
 .keyword-list {
-  background-color: #eeeeee;
+  background-color: #fafafa;
   padding: 10px;
   display: grid;
   grid-template-columns: repeat(12,1fr);
