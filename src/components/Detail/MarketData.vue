@@ -19,7 +19,7 @@
                 @keyup.enter="searchMarketCategory(search_keyword)"
               />
               <a-button
-                type="primary" style="background-color: #1e44ff;color: white"
+                type="primary" style="background-color: #2171e2;color: white"
                 @click="searchMarketCategory(search_keyword)"
               >카테고리 검색
               </a-button>
@@ -104,7 +104,7 @@
               />
               <a-button
                 type="primary"
-                style="background-color: #1e44ff;color: white"
+                style="background-color: #2171e2;color: white"
                 @click="searchCategoryByMarket(market,search_keyword_by_market[market.accountName])"
               >검색
               </a-button>
