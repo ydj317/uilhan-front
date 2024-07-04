@@ -1,12 +1,12 @@
 <template>
 
-  <div style="font-size: 18px; font-weight: bold; padding-bottom: 10px;">MQ현황</div>
+  <div style="font-size: 18px; font-weight: bold; padding-bottom: 10px;">MQ리스트</div>
   <a-card :loading="mqLoading" :bodyStyle="mqLoading ? {overflow: 'hidden'} : {padding: 0, overflow: 'hidden'}">
       <a-table :data-source="mqReportData" :pagination="false">
         <a-table-column title="구분" :width="300" dataIndex="title" key="title" />
         <a-table-column title="이름" :width="300" dataIndex="name" key="name" />
         <a-table-column title="대기중" dataIndex="ready" key="ready" />
-        <a-table-column title="처리중" dataIndex="running" key="running" />
+        <a-table-column title="처리중" dataIndex="unacked" key="unacked" />
         <a-table-column title="전체" dataIndex="total" key="total" />
       </a-table>
   </a-card>

@@ -26,7 +26,7 @@ export const menus = [{
             component: () => import("@/views/Mqlist.vue"),
             meta: {
                 title: "MQ리스트",
-                isHide: false,
+                isHide: true,
                 roles: [],
                 ids: ["jwli"],
                 icon: LayoutOutlined
