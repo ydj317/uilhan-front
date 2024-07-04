@@ -40,7 +40,7 @@ const getTableList = async () => {
       return false;
     }
 
-    mqReportData = res.data;
+    mqReportData.value = res.data;
 
     lastSuccessTime.value = new Date().toLocaleString(); // 记录成功获取数据的时间
   }).catch((e) => {
