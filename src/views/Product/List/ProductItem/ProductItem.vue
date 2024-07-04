@@ -21,7 +21,9 @@
               href="javascript:void(0)"
               @click="openDetailPopup(product, '1')"
               style="color: white;font-weight: bold;">편집</a>
-          <btn-link-market :product="product" />
+          <btn-link-market v-if="product.item_url" :product="product" />
+          <change-link :product="product" :visible="changLinkVisible"  @update:updateData="changeLinkDataUpdate" />
+          <a-button v-if="!product.item_url" class="btn-chang-link" type="primary" @click="openChangLinkPopup()"> 구매링크 추가 </a-button>
         </div>
         <a-checkbox
           :checked="selected"
@@ -57,9 +59,10 @@
 
 <script setup>
 import {lib} from "@/util/lib";
-import {reactive, toRefs} from "vue";
+import {reactive, toRefs, ref} from "vue";
 import {message} from "ant-design-vue";
 import BtnLinkMarket from "@/views/Product/List/ProductItem/BtnLinkMarket.vue";
+import ChangeLink from "@/views/Product/List/ProductItem/ChangeLink.vue";
 import ItemTitle from "@/views/Product/List/ProductItem/ItemTitle.vue";
 import ItemPrice from "@/views/Product/List/ProductItem/ItemPrice.vue";
 import ItemCtrlBar from "@/views/Product/List/ProductItem/ItemCtrlBar.vue";
@@ -81,6 +84,16 @@ const translateStatusMap = reactive({
   F: { color: 'error', text: '이미지 번역 실패' }
 })
 
+let changLinkVisible = ref(false);
+
+const changeLinkDataUpdate = (data) => {
+  changLinkVisible.value = data.visible;
+  if (data.item_url) {
+    product.value.item_url = data.item_url;
+    product.value.item_code = data.item_code;
+    product.value.item_market = data.item_market;
+  }
+}
 const isShowTag = (product) => {
   let isShow = true;
   let sendSuccessMarketList = product.item_sync_market.filter(market => market.status !== 'unsync');
@@ -157,6 +170,10 @@ function openMarketPopup(marketInfo) {
   window.open(url)
 }
 
+function openChangLinkPopup(product) {
+  changLinkVisible.value = true;
+}
+
 </script>
 
 <style scoped>
@@ -196,5 +213,20 @@ function openMarketPopup(marketInfo) {
   top: 0;
   left: 0;
   transition: all 0.2s ease-in-out;
+}
+
+.btn-chang-link {
+  position: absolute;
+  bottom: 5px;
+  width: 226px;
+  overflow: hidden;
+  display: flex;
+  gap: 10px;
+  padding: 5px 10px;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 </style>

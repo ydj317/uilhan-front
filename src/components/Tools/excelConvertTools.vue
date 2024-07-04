@@ -76,9 +76,6 @@ const submitForm = function () {
       process.env.VUE_APP_API_URL + "/api/tools/convert",
       JSON.stringify(formStat)
   ).then((res) => {
-
-    console.log(res);
-
     if (res.status !== "2000") {
       alert(res.message);
       return false;

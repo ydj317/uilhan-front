@@ -446,8 +446,6 @@ const downloadGroupItemsExcel = async (record) => {
 const downloadSearchItemsExcel = async () => {
   state.indicator.loading = true;
   await useCustomOrderApi().downloadSearchItemsExcel(state.shipmentTable.params).then(res => {
-    console.log(res)
-
     if (res === undefined || res.status !== "2000") {
       state.indicator.loading = false;
       message.error(res.message);
