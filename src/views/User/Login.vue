@@ -124,7 +124,6 @@ export default defineComponent({
           return false;
         }
 
-
         // ChannelIO('boot', {
         //   "pluginKey": "33974dfe-4ab5-4a61-8d67-748faed23416",
         //   "memberId": res.data.member_name,

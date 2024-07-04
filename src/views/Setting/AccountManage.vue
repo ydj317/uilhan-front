@@ -52,7 +52,7 @@
             </template>
         </a-table>
     </a-card>
-  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'직원 계정 수정'" v-if="isMainUser">
+  <a-card class="mt20" :loading="formState.loading" :bordered="false" :title="'계정 수정'" v-if="isMainUser">
 
     <a-form :rules="rulesRef" :model="formState" name="user_form" class="user_form" autocomplete="off"
             @finish="onFinish" @finishFailed="onFinishFailed">

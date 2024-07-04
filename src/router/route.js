@@ -21,6 +21,18 @@ export const menus = [{
     redirect: "/dashboard",
     children: [
         {
+            path: "/mqlist",
+            name: "mqlist",
+            component: () => import("@/views/Mqlist.vue"),
+            meta: {
+                title: "MQ리스트",
+                isHide: true,
+                roles: [],
+                ids: ["jwli"],
+                icon: LayoutOutlined
+            }
+        },
+        {
             path: "/dashboard",
             name: "dashboard",
             component: () => import("@/views/Dashboard.vue"),

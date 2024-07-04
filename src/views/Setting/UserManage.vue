@@ -199,6 +199,7 @@ function userLogin(record) {
     Cookie.set('member_name', res.data.member_name);
     Cookie.set('member_roles', res.data.member_roles);
     Cookie.set('token', res.data.token);
+    sessionStorage.clear();
     const menuList = setFilterRouteList();
     router.addRoute(menuList[0])
 
@@ -229,7 +230,6 @@ function getUserList() {
       item['children'] = item['children'].map(item2=>{
         return {...item2,ins_date:getDate(item2.insDate)}
       })
-      console.log(item['children']);
       const children = item['children'].length ? item['children'] : '';
       return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'],children };
     });

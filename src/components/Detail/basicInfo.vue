@@ -24,7 +24,7 @@
               <a-button
                 :loading="keyword.loading"
                 type="primary"
-                style="background-color: #1e44ff;color: white"
+                style="background-color: #2171e2;color: white"
                 @click="searchKeyword"
               >키워드 검색</a-button>
             </div>
@@ -61,7 +61,7 @@
               />
             </a-spin>
             </div>
-            <a-button v-if="this.use_ai" type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
+            <a-button v-if="this.use_ai" type="primary" style="background-color: #2171e2;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
           <div style="display: flex; gap: 5px;">
             <a-tag
@@ -91,7 +91,7 @@
               <a-button
                   :loading="tagKeyword.loading"
                   type="primary"
-                  style="background-color: #1e44ff;color: white"
+                  style="background-color: #2171e2;color: white"
                   @click="searchTagKeyword"
               >상품태그 추천</a-button>
             </div>
