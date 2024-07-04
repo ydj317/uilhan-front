@@ -38,6 +38,7 @@ import {useRoute, useRouter} from "vue-router";
 import { setFilterRouteList } from "@/router"
 import SubMenu from "@/views/Template/SubMenu.vue";
 import {lib} from "@/util/lib";
+import emitter from "@/util/emitter";
 
 const router = useRouter()
 const route = useRoute()
@@ -48,6 +49,11 @@ const state = reactive({
   selectedKeys: ['/main'],
   openKeys: [],
 });
+
+// 绑定事件
+emitter.on('change-selected-keys',(value)=>{
+  state.selectedKeys = [value]
+})
 
 const onOpenChange = (openKeys) => {
   const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key));

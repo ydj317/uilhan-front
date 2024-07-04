@@ -15,9 +15,11 @@
       <div class="editorToolbar" ref="editorToolbar">
         <a-space>
           <a-button class="originalDetailTrans" type="default" @click="showPreview">미리보기</a-button>
-          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역
+          <a-spin v-model:spinning="imgLoading">
+          <a-button type="primary" @click="translatePopup" style="background-color: #2171e2;color: white">상세 이미지번역
           </a-button>
-<!--          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기-->
+          </a-spin>
+<!--          <a-button type="primary" @click="translatePopup" style="background-color: #2171e2;color: white">통상세 만들기-->
 <!--          </a-button>-->
         </a-space>
 
@@ -34,9 +36,9 @@
       />
     </div>
   </div>
-  <image-translate-tools v-model:visible="imageTranslateToolsVisible"
+  <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" />
+                         @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams"/>
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
            title="상품 미리보기"
@@ -89,7 +91,12 @@ export default {
     TEditor
   },
 
-
+  props: {
+    activeKey: {
+      type: String,
+      default: '1'
+    },
+  },
   computed: {
     ...mapState({
       product: (state) => state.product.detail,
@@ -112,7 +119,14 @@ export default {
       showGuideImage: false,
       showVideo: false,
       showOptionTable: false,
-
+      imgLoading:false,
+      xjParams:{
+        isMany:true,
+        action:'',
+        currentIndex:0,
+        requestIds:[],
+        recharge:0
+      },
     };
   },
   watch: {
@@ -147,6 +161,33 @@ export default {
       immediate: true,
       deep: true
     },
+    activeKey: {
+      handler() {
+        if(this.activeKey == 3){
+          if(!this.xjParams.requestIds.length){
+            this.imgLoading = true;
+            this.$nextTick(() => {
+              setTimeout(() => {
+                this.getRequestIds();
+              }, 200);
+            });
+          }
+        }
+      },
+    },
+    product: {
+      handler() {
+        if(this.activeKey == 3){
+          this.imgLoading = true;
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.getRequestIds();
+            }, 200);
+          });
+        }
+      },
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -169,6 +210,7 @@ export default {
       });
     })
   },
+
 
   methods: {
     setVideoContent() {
@@ -460,23 +502,7 @@ export default {
     },
 
     translatePopup() {
-      let aImagesUrl = this.getDetailContentsImage();
-      //이미지 없을 경우
-      if (aImagesUrl === false) {
-        return false;
-      }
-      // { order: ..., url: ...} 구조로 변경
-      aImagesUrl = aImagesUrl.map((item, index) => {
-        return {
-          checked: false,
-          order: index,
-          url: item.url
-        };
-      });
-      aImagesUrl[0].checked = true;
-
       this.imageTranslateToolsVisible = true;
-      this.translateImageList = aImagesUrl;
     },
     updateTranslateImageList(imageList) {
       this.$refs.editor.clear();
@@ -530,6 +556,35 @@ export default {
         this.showOptionTable = true;
       }
 
+    },
+    //获取图片requestIds
+    getRequestIds(){
+      let aImagesUrl = this.getDetailContentsImage();
+      //이미지 없을 경우
+      if (aImagesUrl === false) {
+        return false;
+      }
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['url'] = item['url'].slice(0,pos-1);
+        }
+        return tmp;
+      })
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
+    },
+    setXjParams(params){
+      this.imgLoading = false;
+      this.xjParams = params;
     }
   }
 };

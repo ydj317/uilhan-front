@@ -5,6 +5,7 @@ import findLast from "lodash/findLast";
 import {cookieInit, isLogin} from "util/auth";
 import Cookie from "js-cookie";
 import {menus, notFoundAndNoPower, staticRoutes} from "@/router/route";
+import emitter from "@/util/emitter";
 
 /**
  * @TODO vuex로 처리해야함
@@ -93,6 +94,10 @@ router.beforeEach((to, form, next) => {
     return false;
   }
 
+  if (to.path === '/product' && to.query.id !== undefined) {
+    emitter.emit('change-selected-keys','/product')
+  }
+
   const record = findLast(to.matched, (record) => record.meta.roles);
 
   if (record) {
@@ -108,7 +113,10 @@ router.beforeEach((to, form, next) => {
 });
 
 
-router.afterEach(() => {
+router.afterEach((to, form) => {
+  if (to.path === '/product' && to.query.id !== undefined) {
+    emitter.emit('set-product-filter',to.query.id)
+  }
   nProgress.done();
 });
 

@@ -1852,15 +1852,6 @@
 .bor-0505050f{
     border: 1px solid #0505050f;
 }
-.top-border-000{
-    border-top: 2px solid #000;
-}
-.bottom-border-f0f0f0{
-    border-bottom: 2px solid #f0f0f0;
-}
-.color-FFDB40{
-    color: #FFDB40;
-}
 .color-B8B8B8{
     color: #B8B8B8;
 }
@@ -1879,14 +1870,8 @@
 .color-bababa{
     color: #bababa;
 }
-.color-2071E1{
-    color: #2071E1;
-}
 .color-f0f0f0{
     color: #f0f0f0;
-}
-.color-2071E4{
-    color: #2071E4;
 }
 .bg-FEDB41{
     background: #FEDB41;
@@ -1905,6 +1890,9 @@
 }
 .bg-f0f0f0{
     background: #f0f0f0;
+}
+.bg-F0F8FE{
+    background: #F0F8FE;
 }
 .he100{
     height: 100%;

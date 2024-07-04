@@ -193,6 +193,17 @@ export const menus = [{
             ]
         },
         {
+            path: "/user/servicesPay",
+            name: "user_services_pay",
+            component: () => import("@/views/User/ServicesPay.vue"),
+            meta: {
+                title: "서비스 결제",
+                isHide: true,
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                icon: MoneyCollectOutlined
+            },
+        },
+        {
             path: "/user",
             name: "user",
             meta: {
@@ -214,19 +225,8 @@ export const menus = [{
                 //         icon: ''
                 //     },
                 // },
-                // {
-                //     path: "/user/servicesPay",
-                //     name: "user_services_pay",
-                //     component: () => import("@/views/User/ServicesPay.vue"),
-                //     meta: {
-                //         title: "서비스 결제",
-                //         isHide: false,
-                //         roles: ["ROLE_ADMIN", "ROLE_USER"],
-                //         icon: ''
-                //     },
-                // },
                 {
-                    path: "/user/my",
+                    path: "/user/mypage",
                     name: "user_my",
                     component: () => import("@/views/User/my.vue"),
                     meta: {
@@ -482,17 +482,6 @@ export const menus = [{
                 icon: GiftOutlined
             },
         },
-        // {
-        //     path: "/express",
-        //     name: "express",
-        //     component: () => import("@/views/express/index.vue"),
-        //     meta: {
-        //         title: "가이드북",
-        //         isHide: false,
-        //         roles: ["ROLE_USER", "ROLE_ADMIN"],
-        //         icon: GiftOutlined
-        //     },
-        // },
         {
             path: "/express/list",
             name: "express_list",

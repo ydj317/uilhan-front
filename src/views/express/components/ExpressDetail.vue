@@ -152,7 +152,7 @@
 					<img :src="url" class="big-img" alt="">
 				</div>
 			</a-flex>
-			<a-flex class="fs12 mt10 color-bababa">
+			<a-flex class="fs12 mt10 color-bababa hide-element">
 				상품 오염/파손 문제로 중국 내 반품이 필요하신가요?  네, 상품에 문제가 있어요
 			</a-flex>
 		</a-flex>
@@ -400,6 +400,12 @@ watchEffect(() => {
 }
 </style>
 <style scoped>
+.top-border-000{
+  border-top: 2px solid #000;
+}
+.bottom-border-f0f0f0{
+  border-bottom: 2px solid #f0f0f0;
+}
 .bor-bottom-0505050f{
 	border-bottom: 1px solid #0505050f;
 }
@@ -524,6 +530,9 @@ a {
 }
 .big-img-wrap:hover .big-img{
 	display: block;
+}
+.hide-element{
+  display: none;
 }
 
 </style>

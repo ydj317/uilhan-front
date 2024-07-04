@@ -85,7 +85,24 @@ export function useProductApi() {
                 method: "post",
                 data: data,
             });
-        }
+        },
+
+        updatePrdUrl: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/updatePrdUrl",
+                method: "post",
+                data: data,
+            });
+        },
+        async uploadImage(data, callback) {
+            return await AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/xjUploadImage",
+                method: "post",
+                data: data,
+            }).then((res) => {
+                callback(res);
+            });
+        },
 
     }
 }

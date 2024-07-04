@@ -8,7 +8,9 @@
       </colgroup>
       <tr>
         <th>
+          <a-spin v-model:spinning="imgLoading">
           <img :src="product.item_thumbnails[0]?.url" style="width: 100px;height: 100px" alt="" class="cp" @click="translatePopup"/>
+          </a-spin>
         </th>
         <td>
           <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
@@ -22,7 +24,7 @@
               <a-button
                 :loading="keyword.loading"
                 type="primary"
-                style="background-color: #1e44ff;color: white"
+                style="background-color: #2171e2;color: white"
                 @click="searchKeyword"
               >키워드 검색</a-button>
             </div>
@@ -59,7 +61,7 @@
               />
             </a-spin>
             </div>
-            <a-button v-if="this.use_ai" type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
+            <a-button v-if="this.use_ai" type="primary" style="background-color: #2171e2;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
           <div style="display: flex; gap: 5px;">
             <a-tag
@@ -89,7 +91,7 @@
               <a-button
                   :loading="tagKeyword.loading"
                   type="primary"
-                  style="background-color: #1e44ff;color: white"
+                  style="background-color: #2171e2;color: white"
                   @click="searchTagKeyword"
               >상품태그 추천</a-button>
             </div>
@@ -125,9 +127,9 @@
         </td>
       </tr>
     </table>
-    <image-translate-tools v-model:visible="imageTranslateToolsVisible"
+    <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                            @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                           @update:translateImageList="updateTranslateImageList" />
+                           @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams" />
   </div>
 </template>
 
@@ -149,6 +151,12 @@ export default {
     }),
   },
   emits: ['suggestCategory'],
+  props: {
+    activeKey: {
+      type: String,
+      default: '1'
+    },
+  },
   watch: {
     "product.item_trans_name"() {
       this.keyword.list.forEach(d => {
@@ -159,7 +167,30 @@ export default {
       this.tagKeyword.list.forEach(d => {
         d.is_using = this.isUsingKeyword(d.word, 2)
       })
-    }
+    },
+    activeKey: {
+      handler() {
+        if(this.activeKey == 1){
+          if(!this.xjParams.requestIds.length){
+            this.imgLoading = true;
+            this.$nextTick(() => {
+              this.getRequestIds();
+            });
+          }
+        }
+      },
+    },
+    product: {
+      handler() {
+        if(this.activeKey == 1){
+          this.imgLoading = true;
+          this.$nextTick(() => {
+            this.getRequestIds();
+          });
+        }
+      },
+      immediate: true,
+    },
   },
 
   data() {
@@ -224,6 +255,14 @@ export default {
       keywordMaxLength:20,
       showTrademarkBtn: false,
       showKeywordTip: false,
+      imgLoading:false,
+      xjParams:{
+        isMany:true,
+        action:'',
+        currentIndex:0,
+        requestIds:[],
+        recharge:0
+      },
     };
   },
 
@@ -525,17 +564,7 @@ export default {
 
     },
     translatePopup() {
-      let aImagesUrl = this.product.item_thumbnails;
-      aImagesUrl = aImagesUrl.map((item, index) => {
-        return {
-          checked: false,
-          order: index,
-          url: item.url
-        };
-      });
-      aImagesUrl[0].checked = true;
       this.imageTranslateToolsVisible = true;
-      this.translateImageList = aImagesUrl;
     },
     updateTranslateImageList(imageList) {
       let item_thumbnails = [];
@@ -548,6 +577,31 @@ export default {
     tagKeywordBlur(e,type){
       this.blurIndex.type = type;
       this.blurIndex.index = e.srcElement.selectionStart;
+    },
+    //获取图片requestIds
+    getRequestIds(){
+      let aImagesUrl = this.product.item_thumbnails;
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['url'] = item['url'].slice(0,pos-1);
+        }
+        return tmp;
+      })
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
+    },
+    setXjParams(params){
+      this.imgLoading = false;
+      this.xjParams = params;
     }
   },
 
