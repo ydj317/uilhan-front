@@ -16,10 +16,10 @@
         <a-space>
           <a-button class="originalDetailTrans" type="default" @click="showPreview">미리보기</a-button>
           <a-spin v-model:spinning="imgLoading">
-          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역
+          <a-button type="primary" @click="translatePopup" style="background-color: #2171e2;color: white">상세 이미지번역
           </a-button>
           </a-spin>
-<!--          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기-->
+<!--          <a-button type="primary" @click="translatePopup" style="background-color: #2171e2;color: white">통상세 만들기-->
 <!--          </a-button>-->
         </a-space>
 
