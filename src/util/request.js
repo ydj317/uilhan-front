@@ -23,6 +23,8 @@ function isDebug(config) {
 
 function systemErrorSetting(error) {
     //console.log('error', {code: error.response.status, message: error.response.message})
+    console.log('==0==')
+    console.log(error)
     if (error.response.data.message === 'Token expired') {
         cookieInit();
         sessionStorage.clear();
