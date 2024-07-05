@@ -357,7 +357,6 @@ export default defineComponent({
       handler() {
         if(this.activeKey == 2){
           const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
-          console.log('requestIdsLength-sku',requestIdsLength);
           if(!requestIdsLength){
             this.$nextTick(() => {
               this.getRequestIds();
@@ -840,16 +839,6 @@ export default defineComponent({
         this.watchExpectedReturn('selling_price', index)
       });
     },
-    updateTranslateImageList(imageList) {
-      this.product.sku.map(v=>{
-        if(v.code == this.translateSkuCode){
-          v.img = imageList[0].url;
-          if (imageList[0].translate_status === true) {
-            v.img = imageList[0].translate_url;
-          }
-        }
-      });
-    },
     translateImg(record) {
       this.translateSkuCode = record.code;
       let aImagesUrl = [
@@ -871,8 +860,19 @@ export default defineComponent({
         }
         return tmp;
       })
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
-      this.imageTranslateToolsVisible = true;
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
+        this.imageTranslateToolsVisible = true;
+      });
+    },
+    updateTranslateImageList(imageList) {
+      this.product.sku.map(v=>{
+        if(v.code == this.translateSkuCode){
+          v.img = imageList[0].url;
+          if (imageList[0].translate_status === true) {
+            v.img = imageList[0].translate_url;
+          }
+        }
+      });
     },
     //获取图片requestIds
     getRequestIds(){

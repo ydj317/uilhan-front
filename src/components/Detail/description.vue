@@ -38,7 +38,10 @@
   </div>
   <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" :isMany="true" />
+                         @update:translateImageList="updateTranslateImageList"/>
+  <old-image-translate-tools ref="oldImageTranslateTools" v-model:visible="visible"
+                         @update:visible="visible = false" :translateImageList="translateImageList"
+                         @update:translateImageList="updateTranslateImageList" @update:editorImage="editorImage"/>
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
            title="상품 미리보기"
@@ -60,6 +63,7 @@ import { watch, watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
+import OldImageTranslateTools from "@/components/Detail/OldImageTranslateTools.vue";
 
 function checkShow(element, showCallback, hideCallback) {
   const options = {
@@ -88,7 +92,8 @@ export default {
   components: {
     ImageTranslateTools,
     QuestionCircleOutlined,
-    TEditor
+    TEditor,
+    OldImageTranslateTools
   },
 
   props: {
@@ -113,6 +118,7 @@ export default {
       videoId: "editor_video_content",
 
       imageTranslateToolsVisible: false,
+      visible: false,
       translateImageList: [],
       previewVisible: false,
       modalContent: "",
@@ -154,33 +160,33 @@ export default {
       immediate: true,
       deep: true
     },
-    activeKey: {
-      handler() {
-        if(this.activeKey == 3){
-          const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
-          console.log('requestIdsLength-desc',requestIdsLength);
-          if(!requestIdsLength){
-            this.$nextTick(() => {
-              setTimeout(() => {
-                this.getRequestIds();
-              }, 200);
-            });
-          }
-        }
-      },
-    },
-    product: {
-      handler() {
-        if(this.activeKey == 3){
-          this.$nextTick(() => {
-            setTimeout(() => {
-              this.getRequestIds();
-            }, 200);
-          });
-        }
-      },
-      immediate: true,
-    },
+    // activeKey: {
+    //   handler() {
+    //     if(this.activeKey == 3){
+    //       const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
+    //       console.log('requestIdsLength-desc',requestIdsLength);
+    //       if(!requestIdsLength){
+    //         this.$nextTick(() => {
+    //           setTimeout(() => {
+    //             this.getRequestIds();
+    //           }, 200);
+    //         });
+    //       }
+    //     }
+    //   },
+    // },
+    // product: {
+    //   handler() {
+    //     if(this.activeKey == 3){
+    //       this.$nextTick(() => {
+    //         setTimeout(() => {
+    //           this.getRequestIds();
+    //         }, 200);
+    //       });
+    //     }
+    //   },
+    //   immediate: true,
+    // },
   },
 
   mounted() {
@@ -493,25 +499,6 @@ export default {
 
       return srcArr;
     },
-
-    translatePopup() {
-      this.imageTranslateToolsVisible = true;
-    },
-    updateTranslateImageList(imageList) {
-      this.$refs.editor.clear();
-      let content = "<p>";
-      imageList.forEach((item) => {
-        if (item.translate_status === true) {
-          content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
-        } else {
-          const nUrl = item.translate_url || item.url;
-          content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
-        }
-      });
-      content += "</p>";
-      this.$refs.editor.contentValue = content;
-      this.product.item_detail = content;
-    },
     showPreview() {
       this.modalContent = cloneDeep(this.product.item_detail);
       this.previewVisible = true;
@@ -524,7 +511,7 @@ export default {
       const matchBefore = regexBefore.exec(this.product.item_detail);
       const matchAfter = regexAfter.exec(this.product.item_detail);
       if (matchBefore === null && matchAfter === null) {
-          this.showGuideImage = false;
+        this.showGuideImage = false;
       }else{
         this.showGuideImage = true;
       }
@@ -549,6 +536,81 @@ export default {
         this.showOptionTable = true;
       }
 
+    },
+
+    translatePopup() {
+      let aImagesUrl = this.getDetailContentsImage();
+      //이미지 없을 경우
+      if (aImagesUrl === false) {
+        return false;
+      }
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['url'] = item['url'].slice(0,pos-1);
+        }
+        return tmp;
+      })
+      this.translateImageList = imgList;
+      this.visible = true;
+    },
+    editorImage(res) {
+      let aImagesUrl = [
+        {url: res.url}
+      ];
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['url'] = item['url'].slice(0,pos-1);
+        }
+        return tmp;
+      })
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
+        this.imageTranslateToolsVisible = true;
+      });
+    },
+    updateTranslateImageList(imageList) {
+      this.$refs.editor.clear();
+      let content = "<p>";
+      imageList.forEach((item) => {
+        if (item.translate_status === true) {
+          content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
+        } else {
+          const nUrl = item.translate_url || item.url;
+          content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
+        }
+        this.translateImageList = this.translateImageList.map((v)=>{
+          if(v.url == item.original_url){
+            if(item.translate_status === true){
+              v.url = item.translate_url;
+            }else{
+              v.url = item.url;
+            }
+          }
+          return v;
+        })
+      });
+      content += "</p>";
+      this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
     },
     //获取图片requestIds
     getRequestIds(){
@@ -577,7 +639,6 @@ export default {
       this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
         this.imgLoading = false;
       });
-
     }
   }
 };

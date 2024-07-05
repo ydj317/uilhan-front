@@ -35,6 +35,11 @@ export default defineComponent({
       return this.localTranslateImageList.map(item => item.request_id)
     }
   },
+  watch: {
+    "product.recharge"(val) {
+      this.xjParams.recharge = val;
+    },
+  },
   props: {
     visible: {
       type: Boolean,
@@ -101,7 +106,7 @@ export default defineComponent({
     async translateImage(option,back) {
       back = back || function(){}
       const {type,isTranslate = false,requestId,action='',imglist} = option;
-      console.log('translateImage-option',option);
+      // console.log('translateImage-option',option);
       if(imglist){
         this.localTranslateImageList = imglist;
       }
@@ -164,11 +169,10 @@ export default defineComponent({
           });
           this.xjParams.requestIds = this.getRequestIds;
           this.xjParams.recharge = recharge;
-          console.log('useProductApi-xjParams-if',this.xjParams);
+          this.product.recharge = recharge;
           back();
         });
       }else{
-        console.log('this.xjParams-else',this.xjParams);
         back();
       }
       if(this.visible){

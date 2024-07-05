@@ -172,7 +172,6 @@ export default {
       handler() {
         if(this.activeKey == 1){
           const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
-          console.log('requestIdsLength-basic',requestIdsLength);
           if(!requestIdsLength){
             this.$nextTick(() => {
               this.getRequestIds();
@@ -556,6 +555,10 @@ export default {
       });
 
     },
+    tagKeywordBlur(e,type){
+      this.blurIndex.type = type;
+      this.blurIndex.index = e.srcElement.selectionStart;
+    },
     translatePopup() {
       this.imageTranslateToolsVisible = true;
     },
@@ -566,10 +569,6 @@ export default {
         item_thumbnails.push({'name':i,'url':url});
       }
       this.product.item_thumbnails = item_thumbnails;
-    },
-    tagKeywordBlur(e,type){
-      this.blurIndex.type = type;
-      this.blurIndex.index = e.srcElement.selectionStart;
     },
     //获取图片requestIds
     getRequestIds(){
