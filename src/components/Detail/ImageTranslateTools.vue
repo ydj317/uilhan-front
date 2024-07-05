@@ -98,7 +98,8 @@ export default defineComponent({
           break;
       }
     },
-    async translateImage(option) {
+    async translateImage(option,back) {
+      back = back || function(){}
       const {type,isTranslate = false,requestId,action='',imglist} = option;
       console.log('translateImage-option',option);
       if(imglist){
@@ -164,9 +165,11 @@ export default defineComponent({
           this.xjParams.requestIds = this.getRequestIds;
           this.xjParams.recharge = recharge;
           console.log('useProductApi-xjParams-if',this.xjParams);
+          back();
         });
       }else{
         console.log('this.xjParams-else',this.xjParams);
+        back();
       }
       if(this.visible){
         this.$refs.NewXiangJi.sendMessage();

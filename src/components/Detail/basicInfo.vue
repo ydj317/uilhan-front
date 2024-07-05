@@ -591,8 +591,9 @@ export default {
         }
         return tmp;
       })
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
-      this.imgLoading = false;
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
+        this.imgLoading = false;
+      });
     }
   },
 
