@@ -6,6 +6,7 @@
       @update:isOpen="onCancel"
       @callbackReceived="handleTranslateCallback"
       :xjParams="xjParams"
+      ref="NewXiangJi"
   />
 </template>
 
@@ -43,15 +44,22 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
-    xjParams: {
-      type: Object,
-      default: () => ({}),
+    isMany: {
+      type: Boolean,
+      default: false,
     },
   },
-  emits: ["update:visible", "update:translateImageList","update:xjParams"],
+  emits: ["update:visible", "update:translateImageList"],
   data() {
     return {
       localTranslateImageList: this.translateImageList,
+      xjParams:{
+        isMany:this.isMany,
+        currentIndex:0,
+        action:'',
+        requestIds:[],
+        recharge:0
+      },
     };
   },
 
@@ -66,10 +74,10 @@ export default defineComponent({
           });
           break;
         case 'delete':
-          this.translateImage({type: 4,requestId});
+          this.translateImage({type: 4,requestId,action});
           break;
         case 'translate':
-          await this.translateImage({isTranslate: true,type: 3,requestId,action});
+          await this.translateImage({type: 3,isTranslate: true,requestId,action});
           break;
         case 'finish':
           this.localTranslateImageList = allSort.map(v=>{
@@ -91,8 +99,8 @@ export default defineComponent({
       }
     },
     async translateImage(option) {
-      const {isTranslate = true,type,requestId,action='',imglist} = option;
-      // console.log('translateImage-option',option);
+      const {type,isTranslate = false,requestId,action='',imglist} = option;
+      console.log('translateImage-option',option);
       if(imglist){
         this.localTranslateImageList = imglist;
       }
@@ -105,15 +113,11 @@ export default defineComponent({
       let images = [];
       switch (type * 1){
         case 1:
-          //默认不翻译只获取requestId
+          //获取没有request_id的图片
           images = this.localTranslateImageList.filter(item => item.request_id == '');
           break;
         case 3://翻译图片
           images = this.localTranslateImageList.filter(item =>item.request_id === requestId);
-          if (images.translate_status === true) {
-            message.error("이미 번역된 이미지입니다.");
-            return false;
-          }
           break;
         case 4://删除图片
           this.localTranslateImageList = this.localTranslateImageList.filter(item =>item.request_id != requestId);
@@ -122,16 +126,13 @@ export default defineComponent({
           images = [];
           break;
       }
-      let xjParams = {
-        isMany:this.xjParams.isMany,
-        currentIndex:this.xjParams.currentIndex,
-        action:action,
-      };
-      if(!images.length){
-        xjParams.requestIds = this.getRequestIds;
-        xjParams.recharge = this.product.recharge;
-        this.$emit("update:xjParams", xjParams);
-      }else {
+      if(!this.product.recharge){
+        this.getRecharge();
+      }
+      this.xjParams.recharge = this.product.recharge;
+      this.xjParams.requestIds = this.getRequestIds;
+      this.xjParams.action = action;
+      if(images.length){
         images.forEach((item,i) => {
           oParam.list.push({
             msg: "",
@@ -153,17 +154,22 @@ export default defineComponent({
             return false;
           }
           if(type == 3){
-            xjParams.currentIndex = this.localTranslateImageList.findIndex(value => value.request_id === requestId);
+            this.xjParams.currentIndex = this.localTranslateImageList.findIndex(value => value.request_id === requestId);
           }
           const {list, recharge} = oTranslateInfo.data;
           this.localTranslateImageList = this.localTranslateImageList.map(item=>{
             let thisItem = list.find(item2=>item2.original_url == item.url);
             return thisItem ? Object.assign(item, thisItem) : item;
           });
-          xjParams.requestIds = this.getRequestIds;
-          xjParams.recharge = recharge;
-          this.$emit("update:xjParams", xjParams);
+          this.xjParams.requestIds = this.getRequestIds;
+          this.xjParams.recharge = recharge;
+          console.log('useProductApi-xjParams-if',this.xjParams);
         });
+      }else{
+        console.log('this.xjParams-else',this.xjParams);
+      }
+      if(this.visible){
+        this.$refs.NewXiangJi.sendMessage();
       }
     },
 
@@ -175,7 +181,6 @@ export default defineComponent({
               message.error(res.message);
               return false;
             }
-
             try {
               this.product.recharge = res.data.recharge;
             } catch (e) {
@@ -225,10 +230,6 @@ export default defineComponent({
       }
       return new File([u8arr], filename, {type:mime});
     }
-  },
-
-  mounted() {
-    this.getRecharge();
   },
 });
 </script>

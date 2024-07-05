@@ -38,7 +38,7 @@
   </div>
   <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams"/>
+                         @update:translateImageList="updateTranslateImageList" :isMany="true" />
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
            title="상품 미리보기"
@@ -120,13 +120,6 @@ export default {
       showVideo: false,
       showOptionTable: false,
       imgLoading:false,
-      xjParams:{
-        isMany:true,
-        action:'',
-        currentIndex:0,
-        requestIds:[],
-        recharge:0
-      },
     };
   },
   watch: {
@@ -164,8 +157,9 @@ export default {
     activeKey: {
       handler() {
         if(this.activeKey == 3){
-          if(!this.xjParams.requestIds.length){
-            this.imgLoading = true;
+          const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
+          console.log('requestIdsLength-desc',requestIdsLength);
+          if(!requestIdsLength){
             this.$nextTick(() => {
               setTimeout(() => {
                 this.getRequestIds();
@@ -178,7 +172,6 @@ export default {
     product: {
       handler() {
         if(this.activeKey == 3){
-          this.imgLoading = true;
           this.$nextTick(() => {
             setTimeout(() => {
               this.getRequestIds();
@@ -564,6 +557,7 @@ export default {
       if (aImagesUrl === false) {
         return false;
       }
+      this.imgLoading = true;
       let imgList =aImagesUrl.map((item,index)=>{
         let tmp = [];
         tmp['checked'] = false;
@@ -581,10 +575,7 @@ export default {
         return tmp;
       })
       this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
-    },
-    setXjParams(params){
       this.imgLoading = false;
-      this.xjParams = params;
     }
   }
 };

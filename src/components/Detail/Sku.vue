@@ -324,7 +324,7 @@
   </div>
   <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams"/>
+                         @update:translateImageList="updateTranslateImageList"/>
 </template>
 
 <script>
@@ -346,7 +346,37 @@ export default defineComponent({
       product: (state) => state.product.detail,
     }),
   },
-
+  props: {
+    activeKey: {
+      type: String,
+      default: '1'
+    },
+  },
+  watch: {
+    activeKey: {
+      handler() {
+        if(this.activeKey == 2){
+          const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
+          console.log('requestIdsLength-sku',requestIdsLength);
+          if(!requestIdsLength){
+            this.$nextTick(() => {
+              this.getRequestIds();
+            });
+          }
+        }
+      },
+    },
+    product: {
+      handler() {
+        if(this.activeKey == 2){
+          this.$nextTick(() => {
+            this.getRequestIds();
+          });
+        }
+      },
+      immediate: true,
+    },
+  },
   data() {
     return {
       selected_sku_image_key: 0,
@@ -415,13 +445,6 @@ export default defineComponent({
       translateImageList: [],
       translateSkuCode: false,
       specGroupVisible:true,
-      xjParams:{
-        isMany:false,
-        action:'',
-        currentIndex:0,
-        requestIds:[],
-        recharge:0
-      },
     };
   },
 
@@ -849,10 +872,11 @@ export default defineComponent({
         return tmp;
       })
       this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
-    },
-    setXjParams(params){
-      this.xjParams = params;
       this.imageTranslateToolsVisible = true;
+    },
+    //获取图片requestIds
+    getRequestIds(){
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:[]});
     }
   },
 

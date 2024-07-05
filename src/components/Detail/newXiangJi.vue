@@ -7,7 +7,7 @@
         <iframe id="xiangji-image-editor" title="象寄图片精修工具"
                 :src="iframeSrc"
                 ref="iframeRef"
-                style="border:none;" @load="iframeOnload()"></iframe>
+                style="border:none;" @load="sendMessage()"></iframe>
       </div>
     </div>
   </a-modal>
@@ -49,10 +49,6 @@ export default defineComponent({
     };
   },
   methods: {
-    // 이미지 불러오기
-    iframeOnload() {
-      this.sendMessage();
-    },
     sendMessage() {
       let sendData = {
         name: this.translateTypes[this.translateType][0],
@@ -60,8 +56,8 @@ export default defineComponent({
       };
       const iframe = document.querySelector("#xiangji-image-editor");
       iframe.contentWindow.postMessage(
-          sendData,
-          "*"
+        sendData,
+        "*"
       );
     },
     receiveMessage(e) {

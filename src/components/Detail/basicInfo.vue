@@ -129,7 +129,7 @@
     </table>
     <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                            @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                           @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams" />
+                           @update:translateImageList="updateTranslateImageList" :isMany="true" />
   </div>
 </template>
 
@@ -171,8 +171,9 @@ export default {
     activeKey: {
       handler() {
         if(this.activeKey == 1){
-          if(!this.xjParams.requestIds.length){
-            this.imgLoading = true;
+          const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
+          console.log('requestIdsLength-basic',requestIdsLength);
+          if(!requestIdsLength){
             this.$nextTick(() => {
               this.getRequestIds();
             });
@@ -183,7 +184,6 @@ export default {
     product: {
       handler() {
         if(this.activeKey == 1){
-          this.imgLoading = true;
           this.$nextTick(() => {
             this.getRequestIds();
           });
@@ -256,13 +256,6 @@ export default {
       showTrademarkBtn: false,
       showKeywordTip: false,
       imgLoading:false,
-      xjParams:{
-        isMany:true,
-        action:'',
-        currentIndex:0,
-        requestIds:[],
-        recharge:0
-      },
     };
   },
 
@@ -580,6 +573,7 @@ export default {
     },
     //获取图片requestIds
     getRequestIds(){
+      this.imgLoading = true;
       let aImagesUrl = this.product.item_thumbnails;
       let imgList =aImagesUrl.map((item,index)=>{
         let tmp = [];
@@ -598,10 +592,7 @@ export default {
         return tmp;
       })
       this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
-    },
-    setXjParams(params){
       this.imgLoading = false;
-      this.xjParams = params;
     }
   },
 
