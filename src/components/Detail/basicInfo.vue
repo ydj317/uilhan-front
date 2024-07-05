@@ -24,7 +24,7 @@
               <a-button
                 :loading="keyword.loading"
                 type="primary"
-                style="background-color: #1e44ff;color: white"
+                style="background-color: #2171e2;color: white"
                 @click="searchKeyword"
               >키워드 검색</a-button>
             </div>
@@ -61,7 +61,7 @@
               />
             </a-spin>
             </div>
-            <a-button v-if="this.use_ai" type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
+            <a-button v-if="this.use_ai" type="primary" style="background-color: #2171e2;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
           <div style="display: flex; gap: 5px;">
             <a-tag
@@ -91,7 +91,7 @@
               <a-button
                   :loading="tagKeyword.loading"
                   type="primary"
-                  style="background-color: #1e44ff;color: white"
+                  style="background-color: #2171e2;color: white"
                   @click="searchTagKeyword"
               >상품태그 추천</a-button>
             </div>
@@ -102,7 +102,7 @@
             <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(/,\s*|\s+/).filter(d => !!d).length }} / {{keywordMaxLength}}</div>
           </a-spin>
           <a-spin v-model:spinning="tagKeyword.loading">
-            <div v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
+            <div class="keyword-list" v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="margin-bottom: 10px">
               <a-tag
                   v-for="item in tagKeyword.list" :key="item.id"
                   :color="item.reg ? 'red' : ''"
@@ -654,7 +654,7 @@ export default {
 }
 
 .keyword-list {
-  background-color: #eeeeee;
+  background-color: #fafafa;
   padding: 10px;
   display: grid;
   grid-template-columns: repeat(12,1fr);

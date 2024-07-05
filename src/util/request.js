@@ -3,6 +3,8 @@ import axios from 'axios';
 import Cookie from "js-cookie";
 import {JSEncrypt} from 'jsencrypt';
 import {pub} from './encript';
+import { cookieInit } from "@/util/auth";
+import router from "@/router";
 
 // 로그인 등 인증이 필요없는 페이지에서 사용
 function isLocalServer(config) {
@@ -21,6 +23,15 @@ function isDebug(config) {
 
 function systemErrorSetting(error) {
     //console.log('error', {code: error.response.status, message: error.response.message})
+    if (error.response.data.message === 'Token expired') {
+        cookieInit();
+        sessionStorage.clear();
+        router.push("/user/login");
+        return {
+            status: error.response.status,
+            message: "인증키의 유효기간이 만료되었습니다. 다시 로그인해 주시기 바랍니다."
+        };
+    }
 
     return {
         status: error.response.status,
@@ -90,8 +101,8 @@ export const AuthRequest = (function () {
     });
 
     AuthRequest.interceptors.response.use(function (res) {
-        if (res.length > 0) {
-            Cookie.set('token', res);
+        if (res.data.token !== undefined && res.data.token !== null && res.data.token.length > 0) {
+            Cookie.set('token', res.data.token);
         }
 
         // DEBUG
