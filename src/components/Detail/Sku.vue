@@ -598,7 +598,7 @@ export default defineComponent({
           // if (["original_price_ko"].includes(columns.key)) {
           //   this.product.sku[i]["original_price_ko"] = Number(this.product.sku[0]["original_price_ko"]);
           // }
-          if (!["checked", "code", "spec", "img", "is_option_reference_price"].includes(columns.key)) {
+          if (!["checked", "code", "spec", "img", "is_option_reference_price", "original_price_cn"].includes(columns.key)) {
             this.product.sku[i][columns.key] = this.product.sku[0][columns.key];
             // this.product.sku[i].price_kor = this.product.sku[0].price_kor;
             this.product.sku[i].expected_return = (Number(this.product.sku[i].selling_price) - Number(this.product.sku[i].original_price_ko)).toFixed(0);
