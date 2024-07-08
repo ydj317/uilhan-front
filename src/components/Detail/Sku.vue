@@ -117,7 +117,7 @@
         <!--품목삭제-->
         <a-button @click="deleteSku" >삭제</a-button>
         <!--일괄적용-->
-        <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 구매원가, 판매가)" @confirm="skuBatch">
+        <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 판매가)" @confirm="skuBatch">
           <a-button>일괄변경</a-button>
         </a-popconfirm>
         <div style="display: flex;gap: 5px">
@@ -617,12 +617,13 @@ export default defineComponent({
             this.product.sku[i]["custom_" + columns.key] = Number(this.product.sku[0]["custom_" + columns.key]);
           }
           //original_price_ko
-          if (["original_price_ko"].includes(columns.key)) {
-            this.product.sku[i]["original_price_ko"] = Number(this.product.sku[0]["original_price_ko"]);
-          }
-          if (!["checked", "code", "spec", "img", "is_option_reference_price"].includes(columns.key)) {
+          // if (["original_price_ko"].includes(columns.key)) {
+          //   this.product.sku[i]["original_price_ko"] = Number(this.product.sku[0]["original_price_ko"]);
+          // }
+          if (!["checked", "code", "spec", "img", "is_option_reference_price", "original_price_cn"].includes(columns.key)) {
             this.product.sku[i][columns.key] = this.product.sku[0][columns.key];
             // this.product.sku[i].price_kor = this.product.sku[0].price_kor;
+            this.product.sku[i].expected_return = (Number(this.product.sku[i].selling_price) - Number(this.product.sku[i].original_price_ko)).toFixed(0);
           }
         });
       });
