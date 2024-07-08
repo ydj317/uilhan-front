@@ -553,6 +553,7 @@ export default {
         tmp['order'] = index;
         tmp['request_id'] = '';
         tmp['url'] = item['url'];
+        tmp['old_url'] = item['url'];
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
           tmp['request_id'] = item['url'].slice(pos+11);
@@ -565,7 +566,7 @@ export default {
     },
     editorImage(res) {
       let aImagesUrl = [
-        {url: res.url}
+        {url: res.url,old_url:res.old_url}
       ];
       let imgList =aImagesUrl.map((item,index)=>{
         let tmp = [];
@@ -576,6 +577,7 @@ export default {
         tmp['order'] = index;
         tmp['request_id'] = '';
         tmp['url'] = item['url'];
+        tmp['old_url'] = item['old_url'];
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
           tmp['request_id'] = item['url'].slice(pos+11);
@@ -598,7 +600,7 @@ export default {
           content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
         }
         this.translateImageList = this.translateImageList.map((v)=>{
-          if(v.url == item.original_url){
+          if(v.old_url == item.old_url){
             if(item.translate_status === true){
               v.url = item.translate_url;
             }else{
