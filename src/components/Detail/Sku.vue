@@ -130,7 +130,7 @@
 
           <a-tooltip class="ml5">
             <template #title>
-              <div>옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 비활성화 합니다.</div>
+              <div>옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 삭제 합니다.</div>
             </template>
             <QuestionCircleOutlined/>
           </a-tooltip>
