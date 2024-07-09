@@ -9,6 +9,7 @@ export default createStore({
       isOptionApplied: false,
     },
     isModalOpen: false,
+    isRefundModalOpen: false,
   },
   mutations: {
     //bottonBanner옵션적용
@@ -22,7 +23,12 @@ export default createStore({
 
     //用于修改 isModalOpen 的值。
     setIsModalOpen(state, value) {
+      console.log(123,value)
       state.isModalOpen = value;
+    },
+
+    setIsRefundModalOpen(state, value) {
+      state.isRefundModalOpen = value;
     }
   },
   actions: {
