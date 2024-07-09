@@ -23,7 +23,6 @@ export default createStore({
 
     //用于修改 isModalOpen 的值。
     setIsModalOpen(state, value) {
-      console.log(123,value)
       state.isModalOpen = value;
     },
 
