@@ -84,13 +84,15 @@
               <span class="ml20">장바구니</span>
             </div>
             <div class="right-content">
-              <a-button class="pay bg-FB6F3E" href="/user/servicesPay">결제페이지로 이동</a-button>
+              <a-button class="pay bg-FB6F3E" @click="goServicesPay">결제페이지로 이동</a-button>
             </div>
           </div>
         </template>
-        <div class="text fs16 font-SCDream4">메인서비스 : 6개월<br>
-          GPT 자동화 : 1개월<br>
-          이미지 자동번역 : 1개월</div>
+        <div class="text fs16 font-SCDream4">
+          <template v-for="(v,k) in selectedServices" :key="k">
+            <template v-if="v !== ''">{{ servicesMapping[k] }} : {{ v.title || v.text }}<br></template>
+          </template>
+        </div>
       </a-card>
       <a-card :bordered="false" class="bg-fafafa">
         <template #title>
@@ -131,8 +133,27 @@
 
 <script setup>
 import Cookie from "js-cookie";
-import { reactive } from "vue";
+import { onMounted, ref, reactive } from "vue";
 import {ClockCircleOutlined} from '@ant-design/icons-vue';
+import { useRouter } from "vue-router";
+
+const selectedServices = ref({});
+const router = useRouter();
+
+onMounted(() => {
+  const jsonString = localStorage.getItem('selectedServices');
+  if (jsonString) {
+    selectedServices.value = JSON.parse(jsonString);
+  }
+})
+
+const servicesMapping = {
+  'basic' : '메인서비스',
+  'autoTranslateImg' : '이미지 자동번역',
+  'gptAutomaticTitle' : 'GPT 자동화',
+  'autoESMSalesData' : 'ESM 판매데이터 자동수집'
+}
+
 const state = reactive({
   cardList:[
     {img:'@/assets/img/order.png',title:'주문내역',money:'1,890원'},
@@ -141,6 +162,31 @@ const state = reactive({
     {img:'@/assets/img/coupon.png',title:'보유쿠폰',money:'1,000원'},
   ]
 });
+
+const goServicesPay = () => {
+
+  const seviceObj = {};
+  if (selectedServices.value.basic !== undefined){
+    seviceObj.basic = selectedServices.value.basic.value;
+  }
+  if (selectedServices.value.autoTranslateImg !== undefined){
+    seviceObj.autoTranslateImg = selectedServices.value.autoTranslateImg.planName;
+  }
+  if (selectedServices.value.gptAutomaticTitle !== undefined){
+    seviceObj.gptAutomaticTitle = selectedServices.value.gptAutomaticTitle.planName;
+  }
+  if (selectedServices.value.autoESMSalesData !== undefined){
+    seviceObj.autoESMSalesData = selectedServices.value.autoESMSalesData.planName;
+  }
+
+  router.push({
+    name:'user_services_pay',
+    query:{
+      ...seviceObj
+    }
+  })
+}
+
 </script>
 <style>
 .my .card-wrap .ant-card{

@@ -1,9 +1,16 @@
 <template>
+
+  <Loading
+    v-model:active="loading"
+    :can-cancel="false"
+    :is-full-page="true"
+  />
+
   <div class="pay-wrap">
     <a-page-header title="유일 AI 플랜" class="font-SCDream6 fs16" />
     <a-flex align="center" justify="space-between" class="title bg-fafafa">
       <span class="fs18">AI 플랜 기능설명</span>
-      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>
+<!--      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>-->
     </a-flex>
     <a-flex class="check-wrap mt30" wrap="wrap">
       <a-flex align="center" class="check-list" v-for="v in state.checkList">
@@ -14,17 +21,30 @@
     <a-flex class="rq-wrap mt30">
       <a-radio-group v-model:value="state.selectedList.basic" name="basic" class="radio-wrap w100 fl">
         <template v-for="(v,i) in state.basicList">
-          <a-radio :value="i" :class="{'bg-FEDB41':i == state.selectedList.basic}" :disabled="Object.keys(state.basicInfo).length">
-            <a-flex vertical class="font-SCDream5">
-              <a-flex align="center" class="fs30">
-                <div class="ml10 font-SCDream5">{{v.title}}</div>
-                <div class="ml10 color-FB6F3E font-SCDream4 fs14 bg-f0f0f0 br15 p8" v-if="v.subTitle">{{v.subTitle}}</div>
+          <a-radio :value="i" :class="{'bg-FEDB41':i == state.selectedList.basic,'bg-FB6F3E color-f0f0f0': i === 0 && !state.isPay}" :disabled="!state.isPay">
+            <template v-if="v.value !== 0">
+              <a-flex vertical class="font-SCDream5">
+                <a-flex align="center" class="fs30">
+                  <div class="ml10 font-SCDream5">{{v.title}}</div>
+                  <div class="ml10 color-FB6F3E font-SCDream4 fs14 bg-f0f0f0 br15 p8" v-if="v.subTitle">{{v.subTitle}}</div>
+                </a-flex>
+                <a-flex vertical align="flex-end" class="fs30">
+                  <div class="font-SCDream5 fs26">{{numberFormat(v.money)}}원</div>
+                  <div class="font-SCDream4 fs20" v-if="v.monthMoney">월&nbsp;{{numberFormat(v.monthMoney)}}원</div>
+                </a-flex>
               </a-flex>
-              <a-flex vertical align="flex-end" class="fs30">
-                <div class="font-SCDream5 fs26">{{numberFormat(v.money)}}원</div>
-                <div class="font-SCDream4 fs20" v-if="v.monthMoney">월&nbsp;{{numberFormat(v.monthMoney)}}원</div>
+            </template>
+            <template v-else-if="v.value === 0">
+              <a-flex vertical class="font-SCDream5">
+                <a-flex align="center" class="fs22">
+                  <div class="ml10 font-SCDream5">{{v.title}}</div>
+                </a-flex>
+                <a-flex vertical justify="flex-end" class="ml60 fs14 ml10 color-FB6F3E font-SCDream4 bg-f0f0f0 br15 p8">
+                  <div v-if="v.subTitle">{{v.subTitle}}</div>
+                  <div v-if="v.time">{{v.time}}</div>
+                </a-flex>
               </a-flex>
-            </a-flex>
+            </template>
           </a-radio>
         </template>
       </a-radio-group>
@@ -47,7 +67,7 @@
           <a-flex wrap="wrap" gap="30" class="mt30" v-if="v.radioList">
             <a-radio-group v-model:value="state.selectedList['advanced'+(i+1)]" :name="'advanced'+i" class="radio-wrap w100 fl-w">
               <template v-for="(v3,i3) in v.radioList">
-                <a-radio :value="i3" :class="{'bg-FEDB41':i3 == state.selectedList['advanced'+(i+1)]}">
+                <a-radio :value="i3" :class="{'bg-FEDB41':i3 == state.selectedList['advanced'+(i+1)]}" :disabled="!state.isPay">
                   <a-flex vertical class="font-SCDream5">
                     <a-flex align="center" class="fs14">
                       <div class="ml10 font-SCDream4">{{v3.text}}</div>
@@ -63,7 +83,7 @@
         <a-flex vertical>
           <a-flex align="center" class="font-SCDream6 fs14 h50 pl20 text border-bottom-f0f0f0-2">플랜신청내역</a-flex>
           <a-flex vertical class="text-list-wrap font-SCDream4 fs12 plr20 bg-fafafa border-bottom-f0f0f0-2">
-            <a-flex align="center" justify="space-between" class="text-list h50 border-bottom-f0f0f0-2" v-if="!Object.keys(state.basicInfo).length">
+            <a-flex align="center" justify="space-between" class="text-list h50 border-bottom-f0f0f0-2" v-if="state.isPay">
               <span>AI플랜 - 기본서비스</span>
               <span>{{ state.basicList[state.selectedList.basic]['title'] }}</span>
             </a-flex>
@@ -132,9 +152,24 @@
             </a-flex>
           </a-flex>
           <a-flex vertical align="center" class="mt30">
-            <a-button class="font-SCDream6 fs14 t-white bg-black fl-cc w60 h40">결제하기</a-button>
-            <a-button class="font-SCDream6 fs14 fl-cc w60 mt20 h40">장바구니 담기</a-button>
+            <template v-if="getTotalMoney > 0">
+              <a-button class="font-SCDream6 fs14 t-white bg-black fl-cc w60 h40" @click="submit">결제하기</a-button>
+              <a-button class="font-SCDream6 fs14 fl-cc w60 mt20 h40" @click="addToCart">장바구니 담기</a-button>
+            </template>
+            <template v-else>
+              <a-button class="font-SCDream6 fs14 t-white fl-cc w60 h40" disabled>결제하기</a-button>
+              <a-button class="font-SCDream6 fs14 fl-cc w60 mt20 h40" disabled>장바구니 담기</a-button>
+            </template>
           </a-flex>
+          <a-modal v-model:open="open"
+                   title="支付成功或取消支付"
+                   @ok="handleOk"
+                   okText="支付成功"
+                   cancelText="取消支付"
+                   @cancel="handleCancel"
+                   :maskClosable="false">
+
+          </a-modal>
         </a-flex>
       </a-flex>
     </a-flex>
@@ -143,7 +178,19 @@
 </template>
 
 <script setup>
-import { computed, reactive } from "vue";
+import { computed, onBeforeMount, onMounted, reactive, ref, onUnmounted } from "vue";
+import { message } from "ant-design-vue";
+import { useRoute, useRouter } from "vue-router";
+import { AuthRequest } from "@/util/request";
+import Loading from "vue-loading-overlay";
+
+const route = useRoute();
+const router = useRouter();
+const loading = ref(false);
+const open = ref(false);
+
+const checkPayTime = 5000;
+let intervalId;
 
 const state = reactive({
   checkList:[
@@ -151,49 +198,291 @@ const state = reactive({
     '브랜드 키워드 표시','원클릭 번역','주문수집 / 관리','자동 카테고리매칭',
     '고급 이미지 편집','배송대행지 연동','직원 계정 / 데이터','9대 마켓 입점'],
   basicList: [
-    {value:1,title:'1개월',subTitle:'',money:'200000',monthMoney:''},
-    {value:2,title:'6개월',subTitle:'20% 할인',money:'960000',monthMoney:'160000'},
-    {value:3,title:'12개월',subTitle:'30% 할인',money:'1680000',monthMoney:'140000'}
+    {value:1,title:'1개월',subTitle:'',money:'200000',monthMoney:'', planName: "BasicPlan1Month"},
+    {value:2,title:'6개월',subTitle:'20% 할인',money:'960000',monthMoney:'160000', planName: "BasicPlan6Month"},
+    {value:3,title:'12개월',subTitle:'30% 할인',money:'1680000',monthMoney:'140000', planName: "BasicPlan12Month"}
   ],
   advancedList:[
     {
       title:'이미지 자동 번역',
       checkList:['상세페이지 전체 자동번역','옵션 이미지 10장 자동번역'],
       radioList:[
-        {text:'100개/일',value:'100000'},
-        {text:'200개/일',value:'200000'},
-        {text:'300개/일',value:'300000'},
-        {text:'선택안함',value:0},
+        {text:'100개/일',value:'100000', planName: "Extra1PlanAutoImageCount100"},
+        {text:'200개/일',value:'200000', planName: "Extra1PlanAutoImageCount200"},
+        {text:'300개/일',value:'300000', planName: "Extra1PlanAutoImageCount300"},
+        {text:'선택안함',value:0, planName: ""},
       ]
     },
     {
       title:'GPT AI 자동 상품명',
       checkList:['제품사진으로 GPT 자동 AI 상품명 완성'],
       radioList:[
-        {text:'100개/일',value:'100000'},
-        {text:'150개/일',value:'150000'},
-        {text:'200개/일',value:'200000'},
-        {text:'250개/일',value:'250000'},
-        {text:'300개/일',value:'300000'},
-        {text:'선택안함',value:0},
+        {text:'100개/일',value:'100000', planName: "Extra2PlanGPT100"},
+        {text:'150개/일',value:'150000', planName: "Extra2PlanGPT150"},
+        {text:'200개/일',value:'200000', planName: "Extra2PlanGPT200"},
+        {text:'250개/일',value:'250000', planName: "Extra2PlanGPT250"},
+        {text:'300개/일',value:'300000', planName: "Extra2PlanGPT300"},
+        {text:'선택안함',value:0, planName: ""},
       ]
     },
     {
       title:'ESM 판매데이터 자동수집',
       checkList:['옥션,G마켓 판매 데이터 버튼 클릭시 자동 수집 기능'],
       radioList:[
-        {text:'100개/일',value:'100000'},
-        {text:'150개/일',value:'150000'},
-        {text:'200개/일',value:'200000'},
-        {text:'250개/일',value:'250000'},
-        {text:'300개/일',value:'300000'},
-        {text:'선택안함',value:0},
+        {text:'100개/일',value:'100000', planName: "Extra3PlanMarketCollect100"},
+        {text:'150개/일',value:'150000', planName: "Extra3PlanMarketCollect150"},
+        {text:'200개/일',value:'200000', planName: "Extra3PlanMarketCollect200"},
+        {text:'250개/일',value:'250000', planName: "Extra3PlanMarketCollect250"},
+        {text:'300개/일',value:'300000', planName: "Extra3PlanMarketCollect300"},
+        {text:'선택안함',value:0, planName: ""},
       ]
     },
   ],
   selectedList: { basic:0,advanced1:3,advanced2:5,advanced3:5,payType:"1",book1:true,book2:true },
+
   basicInfo:{},//基础服务数据
+  isPay : true
 });
+
+
+
+onBeforeMount(() => {
+
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/user/is/pay/plan').then((res) => {
+    if (res.status !== '2000') {
+      message.error(res.message)
+      return false;
+    }
+    const allPlanData = res.data;
+    //设置基本服务 (主/子账号,推荐码)
+   state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
+
+      let title;
+      let subTitle = '';
+      let money;
+      let monthMoney = '';
+
+      if (allPlanData.isParent){
+        money = allPlanData.recommend_code ? item.discount_price_code : item.discount_price;
+      }else {
+        money = item.sub_account_price;
+      }
+
+      switch (item.name){
+        case 'BasicPlan1Month':
+          title = '1개월';
+          break;
+        case 'BasicPlan6Month':
+          title = '6개월';
+          subTitle = '20% 할인';
+          monthMoney = parseFloat(money) / 6;
+          break;
+        case 'BasicPlan12Month':
+          title = '12개월';
+          subTitle = '30% 할인';
+          monthMoney = parseFloat(money) / 12;
+          break;
+      }
+
+      return {
+        value : index + 1,
+        title : title,
+        subTitle : subTitle,
+        money : money,
+        monthMoney : monthMoney,
+        planName : item.name
+      }
+
+    })
+
+    //设置其他服务 (主/子账号,推荐码)
+    state.advancedList = allPlanData.allPlanDetail.other.map((item,index) => {
+
+      const radioList =  item.map((ele) => {
+
+        let text;
+        let money;
+
+        if (allPlanData.isParent){
+          money = allPlanData.recommend_code ? ele.discount_price_code : ele.discount_price;
+        }else {
+          money = ele.sub_account_price;
+        }
+
+        switch (ele.name){
+
+          case 'Extra1PlanAutoImageCount100':
+            text = '100개/일';
+            break;
+          case 'Extra1PlanAutoImageCount200':
+            text = '200개/일';
+            break;
+          case 'Extra1PlanAutoImageCount300':
+            text = '300개/일';
+            break;
+          case 'Extra2PlanGPT100':
+            text = '100개/일';
+            break;
+          case 'Extra2PlanGPT150':
+            text = '150개/일';
+            break;
+          case 'Extra2PlanGPT200':
+            text = '200개/일';
+            break;
+          case 'Extra2PlanGPT250':
+            text = '250개/일';
+            break;
+          case 'Extra2PlanGPT300':
+            text = '300개/일';
+            break;
+          case 'Extra3PlanMarketCollect100':
+            text = '100개/일';
+            break;
+          case 'Extra3PlanMarketCollect150':
+            text = '150개/일';
+            break;
+          case 'Extra3PlanMarketCollect200':
+            text = '200개/일';
+            break;
+          case 'Extra3PlanMarketCollect250':
+            text = '250개/일';
+            break;
+          case 'Extra3PlanMarketCollect300':
+            text = '300개/일';
+            break;
+
+        }
+
+        return {
+          text : text,
+          value : money,
+          planName: ele.name
+        }
+
+      })
+
+      radioList.push({text:'선택안함',value:0, planName: ""})
+
+      let title;
+      let checkList = [];
+      switch (index){
+        case 0:
+          title = '이미지 자동 번역';
+          checkList = ['상세페이지 전체 자동번역','옵션 이미지 10장 자동번역'];
+          break;
+        case 1:
+          title = 'GPT AI 자동 상품명';
+          checkList = ['제품사진으로 GPT 자동 AI 상품명 완성'];
+          break;
+        case 2:
+          title = 'ESM 판매데이터 자동수집';
+          checkList = ['옥션,G마켓 판매 데이터 버튼 클릭시 자동 수집 기능'];
+          break;
+      }
+
+      return  {
+        title : title,
+        checkList : checkList,
+        radioList : radioList
+      }
+    })
+
+
+    //如果是主账号肯定可以购买,如果是子账号 主账号有基础套餐 才能购买
+    state.isPay = allPlanData.isPay;
+
+    //当前账号是子账号 则只能购买一个月套餐
+    if (!allPlanData.isParent) {
+      state.basicList.splice(-2, 2);
+    }
+
+    //如果可以购买 且当前账号有套餐 正常显示
+    if (state.isPay && allPlanData.currPlan){
+      const basicObj = {
+        value:0,
+        title:'已经购买',
+        subTitle:'当前套餐到期时间: ',
+        time: allPlanData.currPlan.end_time,
+        money:'0',
+        monthMoney:'0',
+        planName: "BasicPlan"
+      }
+      state.basicList.unshift(basicObj);
+    }
+    //不能购买 且是子账号 且主账号无基本套餐 且子账号有套餐
+    if (!state.isPay && !allPlanData.isParent && !allPlanData.parentPlan && allPlanData.currPlan ){
+      const basicObj = {
+        value:0,
+        title:'主账号无基本套餐',
+        subTitle:'当前套餐到期时间: ',
+        time : allPlanData.currPlan.end_time,
+        money:'0',
+        monthMoney:'0',
+        planName: "BasicPlan"
+      }
+      state.basicList.unshift(basicObj);
+    }
+
+    //不能购买 且是子账号 且主账号无基本套餐 且子账号无套餐
+    if (!state.isPay && !allPlanData.isParent && !allPlanData.parentPlan && !allPlanData.currPlan ){
+      const basicObj = {
+        value:0,
+        title:'主账号无基本套餐',
+        subTitle:'' ,
+        money:'0',
+        monthMoney:'0',
+        planName: "BasicPlan"
+      }
+      state.basicList.unshift(basicObj);
+    }
+
+
+  }).catch((error) => {
+    message.error(error.message);
+    return false;
+  });
+})
+
+// 清除定时器
+onUnmounted(() => {
+  clearInterval(intervalId);
+});
+
+onMounted(() => {
+
+    if (route.query.basic){
+      state.selectedList.basic = state.basicList.findIndex(item => item.value == route.query.basic);
+    }
+    if (route.query.autoTranslateImg){
+      state.selectedList['advanced1'] = state.advancedList[0].radioList.findIndex(item => item.planName === route.query.autoTranslateImg);
+    }
+    if (route.query.gptAutomaticTitle){
+      state.selectedList['advanced2']= state.advancedList[1].radioList.findIndex(item => item.planName === route.query.gptAutomaticTitle);
+    }
+    if (route.query.autoESMSalesData){
+      state.selectedList['advanced3']= state.advancedList[2].radioList.findIndex(item => item.planName === route.query.autoESMSalesData);
+    }
+})
+
+// onMounted(() => {
+//   const jsonString = localStorage.getItem('selectedServices');
+//   if (jsonString) {
+//     const selectedServices = JSON.parse(jsonString);
+//     if (selectedServices.basic){
+//       state.selectedList.basic = state.basicList.findIndex(item => item.value === selectedServices.basic.value);
+//     }
+//     if (selectedServices.autoTranslateImg){
+//       state.selectedList['advanced1'] = state.advancedList[0].radioList.findIndex(item => item.value === selectedServices.autoTranslateImg.value);
+//     }
+//     if (selectedServices.gptAutomaticTitle){
+//       state.selectedList['advanced2']= state.advancedList[1].radioList.findIndex(item => item.value === selectedServices.gptAutomaticTitle.value);
+//     }
+//     if (selectedServices.autoESMSalesData){
+//       state.selectedList['advanced3']= state.advancedList[2].radioList.findIndex(item => item.value === selectedServices.autoESMSalesData.value);
+//     }
+//   }
+// })
+
 const getBasicMoney = computed(() => {
   return parseFloat(state.basicList[state.selectedList.basic]['money']);
 })
@@ -206,6 +495,127 @@ const getTotalMoney = computed(() => {
 const  numberFormat= (num) => {
   return parseFloat(num).toLocaleString();
 };
+
+const addToCart = () => {
+  const selectedServices = {
+    'basic' : state.basicList[state.selectedList.basic],
+    'autoTranslateImg' : state.advancedList[0].radioList[state.selectedList['advanced1']].value !== 0 ? state.advancedList[0].radioList[state.selectedList['advanced1']] : '' ,
+    'gptAutomaticTitle' : state.advancedList[1].radioList[state.selectedList['advanced2']].value !== 0 ? state.advancedList[1].radioList[state.selectedList['advanced2']] : '' ,
+    'autoESMSalesData' : state.advancedList[2].radioList[state.selectedList['advanced3']].value !== 0 ? state.advancedList[2].radioList[state.selectedList['advanced3']] : ''
+  };
+  localStorage.setItem('selectedServices', JSON.stringify(selectedServices));
+  router.push('/user/mypage');
+  return false;
+}
+
+const submit = () => {
+  if (!state.selectedList.book1) {
+    message.warn("请同意协议1, 才能继续")
+    return
+  }
+
+  if (!state.selectedList.book2) {
+    message.warn("请同意协议2, 才能继续")
+    return
+  }
+
+  const payPlanList = []
+  if (state.basicList[state.selectedList.basic]['planName'] !== 'BasicPlan'){
+    payPlanList.push(state.basicList[state.selectedList.basic]['planName'])
+  }
+  if (state.selectedList.advanced1 !== 3) {
+    payPlanList.push(state.advancedList[0]['radioList'][state.selectedList.advanced1]['planName'])
+  }
+  if (state.selectedList.advanced2 !== 5) {
+    payPlanList.push(state.advancedList[1]['radioList'][state.selectedList.advanced2]['planName'])
+  }
+  if (state.selectedList.advanced3 !== 5) {
+    payPlanList.push(state.advancedList[2]['radioList'][state.selectedList.advanced3]['planName'])
+  }
+
+  const payType = state.selectedList.payType === "1" ? "BankCard" : "Passbook"
+
+  console.log('我买了啥', payPlanList, payType);
+
+  requestPost('/api/user/quota/order/create', {'plans':[...payPlanList],'paymentMethod':payType}, (data) => {
+    console.log(data);
+    if (data.orders.length > 0){
+
+      const routeData = router.resolve({
+        name: 'user_thirdPartyPaymentPage',
+        query: { orderList:[...data.orders] , total: data.total }
+      });
+      window.open(routeData.href, '_blank');
+
+      open.value = true;
+
+       intervalId  = setInterval(() => {
+
+        AuthRequest.get(process.env.VUE_APP_API_URL + '/api/user/order/is/payed', {
+          params:{
+            orderId:data.orders[0]
+          }
+        }).then((res) => {
+
+          if (res.status !== '2000') {
+            message.error(res.message)
+            return false;
+          }
+
+          if (res.data){
+
+            clearInterval(intervalId);
+            router.push({
+              name: 'user_my'
+            })
+          }
+
+        }).catch((error) => {
+          message.error(error.message);
+          return false;
+        });
+
+
+      },checkPayTime)
+
+    }
+
+  });
+
+  //发送创建订单接口, 如果创建成功, 新开一个 付款 url, 本页面显示 dialog 提示, 有2个按钮(已完成付款, 未付款), 点击已完成付款, 跳转到付款成功页面, 点击未付款, 关闭 dialog
+}
+
+const handleOk = () => {
+  router.push({
+    name: 'user_my'
+  })
+}
+
+
+
+const requestPost = (url, params, callback) => {
+
+  loading.value = true;
+
+  AuthRequest.post(process.env.VUE_APP_API_URL + url,
+    params
+  ).then((res) => {
+    loading.value = false;
+    /* fail */
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    callback(res.data);
+
+
+  }).catch((error) => {
+    loading.value = false;
+    message.error('Error fetching data:', error);
+  })
+
+}
 </script>
 
 <style scoped>
@@ -239,7 +649,7 @@ const  numberFormat= (num) => {
   padding: 15px 20px;
 }
 .pay-wrap .rq-wrap{
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
 }
 .pay-wrap .radio-wrap{
@@ -279,6 +689,7 @@ const  numberFormat= (num) => {
 .pay-wrap .right .pay-type{
   border: 2px solid #f0f0f0;
 }
+
 </style>
 <style>
 .pay-wrap .radio-wrap label > span:first-child{
