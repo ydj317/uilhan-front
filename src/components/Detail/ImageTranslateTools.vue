@@ -72,6 +72,7 @@ export default defineComponent({
     //图片处理回调
     async handleTranslateCallback(oTranslateInfo) {
       const {action,requestId,allSort,base64} = oTranslateInfo;
+      // console.log('allSort',allSort);
       switch (action){
         case 'upload':
           this.uploadImage(base64,()=>{
@@ -88,12 +89,8 @@ export default defineComponent({
           this.localTranslateImageList = allSort.map(v=>{
             const requestId = Object.keys(v)[0];
             let item = this.localTranslateImageList.find(v2=>v2.request_id == requestId);
-            if (item.translate_status === true) {
-              item.translate_url = v[requestId]+'?request_id='+requestId;
-            } else {
-              item.translate_url = v[requestId]+'?request_id='+requestId;
-              item.url = v[requestId]+'?request_id='+requestId;
-            }
+            item.translate_url = v[requestId];
+            item.url = v[requestId];
             return item;
           });
           this.onSubmit();
