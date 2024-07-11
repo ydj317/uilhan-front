@@ -199,7 +199,7 @@ export const menus = [{
             meta: {
                 title: "서비스 결제",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                roles: [],
                 icon: MoneyCollectOutlined,
                 ids: ["haeju"],
             },
