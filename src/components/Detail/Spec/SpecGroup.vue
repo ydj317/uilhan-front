@@ -1,8 +1,8 @@
 <template>
-  <a-modal title="옵션명/옵션값 수정" v-model:open="showOptionModify" width="85%" centered :maskClosable="false" @cancel="this.closeOptionModal">
+  <a-modal title="옵션명/옵션값 수정" v-model:open="showOptionModify" width="85%" centered :maskClosable="false" @cancel="this.closeOptionModal(options)">
     <template #footer>
       <div style="display: flex; justify-content: center;">
-        <a-button key="back" style="width: 100px;" @click="this.closeOptionModal">취소</a-button>
+        <a-button key="back" style="width: 100px;" @click="this.closeOptionModal(options)">취소</a-button>
         <a-button key="submit" style="width: 100px;" @click="this.saveOption" type="primary">적용</a-button>
       </div>
     </template>
@@ -199,11 +199,11 @@ export default {
         }
 
         this.options = this.$store.state.product.detail.item_option.map(option => {
-          option.checkAll = false;
+          option.checkAll = true;
           option.oldName = option.name;
           option.data = option.data.map(item => {
             item.oldName = item.name;
-            item.checked = false;
+            item.checked = true;
             return item;
           });
           return option;
@@ -239,7 +239,18 @@ export default {
     };
   },
   methods: {
-    closeOptionModal() {
+    closeOptionModal(options) {
+      /**
+       * #271 옵션수정창 열때 항상 옵션 체크상태유지
+       */
+      for (const optionIndex in options) {
+        options[optionIndex].checkAll = true;
+        this.selectedRows[optionIndex] = [];
+        options[optionIndex].data.forEach(item => {
+          item.checked = true;
+          this.selectedRows[optionIndex].push(item.key);
+        });
+      }
       this.$store.commit("product/setShowOptionModify", false);
     },
     handleReplaceOptionGroup() {

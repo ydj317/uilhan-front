@@ -804,10 +804,16 @@ export default defineComponent({
         content: '편집된 옵션정보는 삭제되고 상품 수집시 옵션정보로 초기화됩니다.',
         onOk() {
           _this.product.item_option = cloneDeep(_this.product.item_org_option);
-          _this.product.sku = _this.product.item_org_sku;
+          // _this.product.sku = _this.product.item_org_sku;
+          // #270 초기화하여도 이미지는 자동번역버전으로 보여줘야함
+          _this.product.sku = _this.product.item_org_sku.map((item, index) => {
+            return { ...item, img: _this.product.sku[index].img };
+          });
           _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
           _this.product.resetOption = true;
+
+          console.log('1', _this.product);
           message.success('옵션정보가 초기화 되었습니다.')
         },
         // eslint-disable-next-line @typescript-eslint/no-empty-function
