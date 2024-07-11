@@ -812,8 +812,6 @@ export default defineComponent({
           _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
           _this.product.resetOption = true;
-
-          console.log('1', _this.product);
           message.success('옵션정보가 초기화 되었습니다.')
         },
         // eslint-disable-next-line @typescript-eslint/no-empty-function
