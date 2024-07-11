@@ -106,7 +106,7 @@
           </a-flex>
         </a-flex>
         <a-flex vertical class="mt12 border-top-f0f0f0-2 border-bottom-f0f0f0-2">
-          <a-flex align="center" class="font-SCDream6 fs14 h50 pl20 text border-bottom-f0f0f0-2">Tatal 결제금액</a-flex>
+          <a-flex align="center" class="font-SCDream6 fs14 h50 pl20 text border-bottom-f0f0f0-2">Total 결제금액</a-flex>
           <a-flex vertical justify="center" gap="10" class="p20 font-SCDream4 fs12 border-bottom-f0f0f0-2">
             <a-flex align="center" justify="space-between">
               <span>* AI 플랜</span>
@@ -400,8 +400,8 @@ onBeforeMount(() => {
     if (state.isPay && allPlanData.currPlan){
       const basicObj = {
         value:0,
-        title:'已经购买',
-        subTitle:'当前套餐到期时间: ',
+        title:'구매한 서비스',
+        subTitle:'사용중인 서비스 만료일: ',
         time: allPlanData.currPlan.end_time,
         money:'0',
         monthMoney:'0',
@@ -571,12 +571,12 @@ const m_Completepayment = (FormOrJson, closeEvent) => {
 
 const submit = () => {
   if (!state.selectedList.book1) {
-    message.warn("请同意协议1, 才能继续")
+    message.warn("취소/환불 규정에 동의해 주세요.")
     return
   }
 
   if (!state.selectedList.book2) {
-    message.warn("请同意协议2, 才能继续")
+    message.warn("서비스 이용약관에 동의해 주세요.")
     return
   }
 
