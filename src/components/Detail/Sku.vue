@@ -807,8 +807,13 @@ export default defineComponent({
           // _this.product.sku = _this.product.item_org_sku;
           // #270 초기화하여도 이미지는 자동번역버전으로 보여줘야함
           _this.product.sku = _this.product.item_org_sku.map((item, index) => {
-            const img = (_this.product.sku[index] && _this.product.sku[index].img) || _this.product.item_option[0].data[index].img;
-            return { ...item, img };
+            for (let i = 0; i < _this.product.item_option[0].data.length; i++) {
+              if (item.pvs.includes(_this.product.item_option[0].data[i].key)) {
+                item.img = _this.product.item_option[0].data[i].img;
+                break;
+              }
+            }
+            return item;
           });
           _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
