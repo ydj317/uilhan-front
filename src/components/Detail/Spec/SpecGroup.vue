@@ -478,11 +478,11 @@ export default {
 
     restoreInitialOptions() {
       this.options = this.$store.state.product.detail.item_option.map(option => {
-        option.checkAll = false;
+        option.checkAll = true;
         option.name = option.oldName;
         option.data = option.data.map(item => {
           item.name = item.oldName;
-          item.checked = false;
+          item.checked = true;
           return item;
         });
         return option;
