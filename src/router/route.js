@@ -199,7 +199,7 @@ export const menus = [{
             meta: {
                 title: "서비스 결제",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                roles: [],
                 icon: MoneyCollectOutlined,
                 ids: ["haeju"],
             },
@@ -238,17 +238,17 @@ export const menus = [{
                 //     },
                 // },
 
-                {
-                    path: "/user/UserQuotaOrder",
-                    name: "user_userQuotaOrder",
-                    component: () => import("@/views/Setting/UserQuotaOrder"),
-                    meta: {
-                        title: "订单列表",
-                        isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
-                        icon: '',
-                    },
-                },
+                // {
+                //     path: "/user/UserQuotaOrder",
+                //     name: "user_userQuotaOrder",
+                //     component: () => import("@/views/Setting/UserQuotaOrder"),
+                //     meta: {
+                //         title: "订单列表",
+                //         isHide: false,
+                //         roles: ["ROLE_USER", "ROLE_ADMIN"],
+                //         icon: '',
+                //     },
+                // },
                 {
                     path: "/user/UserQuotaControl",
                     name: "user_userQuotaControl",
