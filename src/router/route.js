@@ -188,20 +188,21 @@ export const menus = [{
                 title: "서비스 결제",
                 isHide: false,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: MoneyCollectOutlined
+                icon: MoneyCollectOutlined,
+                ids: ["haeju"],
             },
         },
-        {
-            path: "/user/mypage",
-            name: "user_my",
-            component: () => import("@/views/User/my.vue"),
-            meta: {
-                title: "My Page",
-                isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: ''
-            },
-        },
+        // {
+        //     path: "/user/mypage",
+        //     name: "user_my",
+        //     component: () => import("@/views/User/my.vue"),
+        //     meta: {
+        //         title: "My Page",
+        //         isHide: false,
+        //         roles: ["ROLE_ADMIN", "ROLE_USER"],
+        //         icon: ''
+        //     },
+        // },
         {
             path: "/user",
             name: "user",
@@ -459,18 +460,18 @@ export const menus = [{
         //         icon: FileExcelOutlined,
         //     },
         // },
-        {
-            path: "/user/servicePayAi",
-            name: "user_servicePayAi",
-            component: () => import("@/views/User/ServicePayAi.vue"),
-            meta: {
-                title: "️AI 서비스 결제",
-                isHide: false,
-                roles: [],
-                ids: ["haeju"],
-                icon: RobotOutlined
-            },
-        },
+        // {
+        //     path: "/user/servicePayAi",
+        //     name: "user_servicePayAi",
+        //     component: () => import("@/views/User/ServicePayAi.vue"),
+        //     meta: {
+        //         title: "️AI 서비스 결제",
+        //         isHide: false,
+        //         roles: [],
+        //         ids: ["haeju"],
+        //         icon: RobotOutlined
+        //     },
+        // },
         {
             path: "/product/analytics",
             name: "product_analytics",

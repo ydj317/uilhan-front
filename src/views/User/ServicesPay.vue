@@ -519,11 +519,12 @@ const jsf__pay = (args = {}) => {
     buyr_name: "홍길동", // 주문자이름(선택)
     buyr_tel2: "010-0000-0000", // 주문자 휴대폰번호(선택)
     buyr_mail: "test@test.co.kr", // 주문자 이메일(선택)
-    site_cd: "GKRYJ", // 가맹점 정보 설정
-    site_name: "해주국제무역상사", // 가맹점 정보 설정
+    site_cd: "AK3QN", // 가맹점 정보 설정
+    site_name: "유일(해주국제무역상사)", // 가맹점 정보 설정
     pay_method: "100000000000", // 100000000000 신용카드 | 001000000000 가상계좌
     ...args
   }
+
 
   // create form element
   const formElement = document.createElement("form");
