@@ -198,11 +198,23 @@ export const menus = [{
             component: () => import("@/views/User/ServicesPay.vue"),
             meta: {
                 title: "서비스 결제",
-                isHide: true,
+                isHide: false,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: MoneyCollectOutlined
+                icon: MoneyCollectOutlined,
+                ids: ["haeju"],
             },
         },
+        // {
+        //     path: "/user/mypage",
+        //     name: "user_my",
+        //     component: () => import("@/views/User/my.vue"),
+        //     meta: {
+        //         title: "My Page",
+        //         isHide: false,
+        //         roles: ["ROLE_ADMIN", "ROLE_USER"],
+        //         icon: ''
+        //     },
+        // },
         {
             path: "/user",
             name: "user",
@@ -225,15 +237,16 @@ export const menus = [{
                 //         icon: ''
                 //     },
                 // },
+
                 {
-                    path: "/user/mypage",
-                    name: "user_my",
-                    component: () => import("@/views/User/my.vue"),
+                    path: "/user/UserQuotaOrder",
+                    name: "user_userQuotaOrder",
+                    component: () => import("@/views/Setting/UserQuotaOrder"),
                     meta: {
-                        title: "My Page",
-                        isHide: true,
-                        roles: ["ROLE_ADMIN", "ROLE_USER"],
-                        icon: ''
+                        title: "订单列表",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
                     },
                 },
                 {
@@ -459,18 +472,18 @@ export const menus = [{
         //         icon: FileExcelOutlined,
         //     },
         // },
-        {
-            path: "/user/servicePayAi",
-            name: "user_servicePayAi",
-            component: () => import("@/views/User/ServicePayAi.vue"),
-            meta: {
-                title: "️AI 서비스 결제",
-                isHide: false,
-                roles: [],
-                ids: ["haeju"],
-                icon: RobotOutlined
-            },
-        },
+        // {
+        //     path: "/user/servicePayAi",
+        //     name: "user_servicePayAi",
+        //     component: () => import("@/views/User/ServicePayAi.vue"),
+        //     meta: {
+        //         title: "️AI 서비스 결제",
+        //         isHide: false,
+        //         roles: [],
+        //         ids: ["haeju"],
+        //         icon: RobotOutlined
+        //     },
+        // },
         {
             path: "/product/analytics",
             name: "product_analytics",
@@ -532,7 +545,17 @@ export const staticRoutes = [
         meta: {
             title: "비밀번호 찾기",
         }
-    }
+    },
+  //todo  模拟第三方支付 后期删除
+    {
+        path: "/user/thirdPartyPaymentPage",
+        name: "user_thirdPartyPaymentPage",
+        component: () => import("@/views/User/thirdPartyPaymentPage.vue"),
+        meta: {
+            title: "第三方支付",
+            icon: '',
+        },
+    },
 ];
 
 /**
