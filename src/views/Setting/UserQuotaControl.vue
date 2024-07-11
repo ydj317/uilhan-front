@@ -29,7 +29,7 @@
 
                 <a-descriptions-item label="서비스 기간">
                     <a-range-picker
-                        v-model:value="seerch_day"
+                        v-model:value="search_day"
                         value-format="YYYY-MM-DD"
                     />
                 </a-descriptions-item>
@@ -79,6 +79,7 @@
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(5)" class="ml10">서비스 사용기한 5일 연장</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(15)" class="ml5">서비스 사용기한 15일 연장</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleOk" class="ml5">서비스 초기화</a-button>
+                        <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auto_trans_image_count')"  class="ml5">批量自动翻译图像个数</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gpt_count')"  class="ml5">GPT 사용횟수 일괄변경</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gmarket_count')"  class="ml5">지마켓 상품수집 일괄변경</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auction_count')"  class="ml5">옥션 상품수집 일괄변경</a-button>
@@ -260,7 +261,7 @@ const loading = ref(false);
 const isAdmin = Cookie.get("member_roles").indexOf("ROLE_ADMIN") !== -1;
 const username = ref("");
 const plan_type = ref("");
-const seerch_day = ref(null);
+const search_day = ref(null);
 // const auto_trans_image = ref("");
 
 const tableRowKeys = ref([]);
@@ -510,7 +511,7 @@ onMounted(() => {
 const initSearch = () => {
     username.value = '';
     plan_type.value = '';
-    seerch_day.value = null;
+    search_day.value = null;
     // auto_trans_image.value = '';
 }
 
@@ -623,10 +624,10 @@ const search = () => {
         oParam.plan_type = plan_type.value;
     }
 
-    if (seerch_day.value) {
+    if (search_day.value) {
 
-        oParam.start_time = Math.floor(Date.parse(seerch_day.value[0] + ' 00:00:00') / 1000);
-        oParam.end_time = Math.floor(Date.parse(seerch_day.value[1] + ' 23:59:59') / 1000);
+        oParam.start_time = Math.floor(Date.parse(search_day.value[0] + ' 00:00:00') / 1000);
+        oParam.end_time = Math.floor(Date.parse(search_day.value[1] + ' 23:59:59') / 1000);
     }
 
     // if (auto_trans_image.value !== '') {
@@ -662,7 +663,8 @@ const handleChange = (value) => {
 const storeNameMap = {
     'gpt_count': 'GPT',
     'gmarket_count': 'GMARKET',
-    'auction_count': 'AUCTION'
+    'auction_count': 'AUCTION',
+    'auto_trans_image_count':'IMAGE'
 }
 /**
  * 批量set Count
