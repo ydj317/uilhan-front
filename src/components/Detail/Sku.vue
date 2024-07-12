@@ -185,7 +185,7 @@
           :columns="sku_columns"
           :pagination=false
           :data-source="this.product.sku"
-          :row-selection="rowSelection"
+          :row-selection="{selectedRowKeys: selectedRowKeys, onChange: handleRowSelectionChange}"
       >
         <!--bodyCell-->
         <template v-slot:bodyCell="{ record, column, index }">
@@ -433,9 +433,7 @@ export default defineComponent({
       },
 
       selectedRows: [],
-      rowSelection: {
-        onChange: this.handleRowSelectionChange
-      },
+      selectedRowKeys: [],
 
       // 판매가 인상인하 사용값
       item_price_change_type : 'add',
@@ -559,6 +557,10 @@ export default defineComponent({
     deleteSku() {
       if (this.selectedRows.length === 0) {
         message.warning("선택된 품목이 없습니다.");
+        return false;
+      }
+      if (this.selectedRows.length === this.product.sku.length) {
+        message.warning("최소 한개의 품목은 보류해 주세요.");
         return false;
       }
       // this.product.sku 에서 this.selectedRows 에 있는것을 삭제
@@ -815,6 +817,8 @@ export default defineComponent({
             }
             return item;
           });
+          _this.selectedRowKeys = [];
+          _this.selectedRows = [];
           _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
           _this.product.resetOption = true;
@@ -826,6 +830,7 @@ export default defineComponent({
     },
 
     handleRowSelectionChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
     },
 
