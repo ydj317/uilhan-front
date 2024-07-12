@@ -653,7 +653,7 @@ export default {
       /**
        * #271 옵션 항상 체크 되여야함
        */
-      this.options = this.$store.state.product.detail.item_option.map(option => {
+      this.options = this.options.map(option => {
         option.checkAll = true;
         option.data = option.data.map(item => {
           item.checked = true;
