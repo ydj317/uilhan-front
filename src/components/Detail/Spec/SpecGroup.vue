@@ -2,7 +2,7 @@
   <a-modal title="옵션명/옵션값 수정" v-model:open="showOptionModify" width="85%" centered :maskClosable="false" @cancel="this.closeOptionModal(options)">
     <template #footer>
       <div style="display: flex; justify-content: center;">
-        <a-button key="back" style="width: 100px;" @click="this.closeOptionModal(options)">취소</a-button>
+        <a-button key="back" style="width: 100px;" @click="this.closeOptionModal">취소</a-button>
         <a-button key="submit" style="width: 100px;" @click="this.saveOption" type="primary">적용</a-button>
       </div>
     </template>
@@ -239,18 +239,18 @@ export default {
     };
   },
   methods: {
-    closeOptionModal(options) {
+    closeOptionModal() {
       /**
        * #271 옵션수정창 열때 항상 옵션 체크상태유지
        */
-      for (const optionIndex in options) {
-        options[optionIndex].checkAll = true;
-        this.selectedRows[optionIndex] = [];
-        options[optionIndex].data.forEach(item => {
+      this.options = this.options.map(option => {
+        option.checkAll = true;
+        option.data = option.data.map(item => {
           item.checked = true;
-          this.selectedRows[optionIndex].push(item.key);
+          return item;
         });
-      }
+        return option;
+      });
       this.$store.commit("product/setShowOptionModify", false);
     },
     handleReplaceOptionGroup() {
