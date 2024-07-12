@@ -653,10 +653,11 @@ export default {
       /**
        * #271 옵션 항상 체크 되여야함
        */
-      this.options = this.options.map(option => {
+      this.options = this.options.map((option, index) => {
         option.checkAll = true;
         option.data = option.data.map(item => {
           item.checked = true;
+          this.selectedRows[index].push(item.key)
           return item;
         });
         return option;
