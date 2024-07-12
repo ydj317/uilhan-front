@@ -72,7 +72,7 @@ export default defineComponent({
     //图片处理回调
     async handleTranslateCallback(oTranslateInfo) {
       const {action,requestId,allSort,base64} = oTranslateInfo;
-      // console.log('allSort',allSort);
+      // console.log('oTranslateInfo',oTranslateInfo);
       switch (action){
         case 'upload':
           this.uploadImage(base64,()=>{

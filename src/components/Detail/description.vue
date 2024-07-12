@@ -592,24 +592,22 @@ export default {
     updateTranslateImageList(imageList) {
       this.$refs.editor.clear();
       let content = "<p>";
-      imageList.forEach((item) => {
-        if (item.translate_status === true) {
-          content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
-        } else {
-          const nUrl = item.translate_url || item.url;
-          content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
-        }
-        this.translateImageList = this.translateImageList.map((v)=>{
-          if(v.old_url == item.old_url){
-            if(item.translate_status === true){
-              v.url = item.translate_url;
-            }else{
-              v.url = item.url;
-            }
+      this.translateImageList = this.translateImageList.map((v)=>{
+        let upData = imageList.find(v2 =>v2.old_url === v.old_url);
+        if(upData){
+          if (upData.translate_status === true) {
+            content += `<img src="${upData.translate_url}" style="max-width: 100%; height: auto;"/>`;
+            v.url = upData.translate_url;
+          } else {
+            const nUrl = upData.translate_url || upData.url;
+            content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
+            v.url = nUrl;
           }
-          return v;
-        })
-      });
+        }else{
+          content += `<img src="${v.url}" style="max-width: 100%; height: auto;"/>`;
+        }
+        return v;
+      })
       content += "</p>";
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
