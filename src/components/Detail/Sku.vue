@@ -185,7 +185,7 @@
           :columns="sku_columns"
           :pagination=false
           :data-source="this.product.sku"
-          :row-selection="rowSelection"
+          :row-selection="{selectedRowKeys: selectedRowKeys, onChange: handleRowSelectionChange}"
       >
         <!--bodyCell-->
         <template v-slot:bodyCell="{ record, column, index }">
@@ -433,9 +433,7 @@ export default defineComponent({
       },
 
       selectedRows: [],
-      rowSelection: {
-        onChange: this.handleRowSelectionChange
-      },
+      selectedRowKeys: [],
 
       // 판매가 인상인하 사용값
       item_price_change_type : 'add',
@@ -559,6 +557,10 @@ export default defineComponent({
     deleteSku() {
       if (this.selectedRows.length === 0) {
         message.warning("선택된 품목이 없습니다.");
+        return false;
+      }
+      if (this.selectedRows.length === this.product.sku.length) {
+        message.warning("최소 한개의 품목은 보류해 주세요.");
         return false;
       }
       // this.product.sku 에서 this.selectedRows 에 있는것을 삭제
@@ -804,7 +806,19 @@ export default defineComponent({
         content: '편집된 옵션정보는 삭제되고 상품 수집시 옵션정보로 초기화됩니다.',
         onOk() {
           _this.product.item_option = cloneDeep(_this.product.item_org_option);
-          _this.product.sku = _this.product.item_org_sku;
+          // _this.product.sku = _this.product.item_org_sku;
+          // #270 초기화하여도 이미지는 자동번역버전으로 보여줘야함
+          _this.product.sku = _this.product.item_org_sku.map((item, index) => {
+            for (let i = 0; i < _this.product.item_option[0].data.length; i++) {
+              if (item.pvs.includes(_this.product.item_option[0].data[i].key)) {
+                item.img = _this.product.item_option[0].data[i].img;
+                break;
+              }
+            }
+            return item;
+          });
+          _this.selectedRowKeys = [];
+          _this.selectedRows = [];
           _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
           _this.product.resetOption = true;
@@ -816,6 +830,7 @@ export default defineComponent({
     },
 
     handleRowSelectionChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
     },
 
