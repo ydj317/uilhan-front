@@ -41,7 +41,7 @@
                          @update:translateImageList="updateTranslateImageList"/>
   <old-image-translate-tools ref="oldImageTranslateTools" v-model:visible="visible"
                          @update:visible="visible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" @update:editorImage="editorImage"/>
+                         @update:translateImageList="updateTranslateImageListOld" @update:editorImage="editorImage"/>
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
            title="상품 미리보기"
@@ -608,6 +608,21 @@ export default {
         }
         return v;
       })
+      content += "</p>";
+      this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
+    },
+    updateTranslateImageListOld(imageList) {
+      this.$refs.editor.clear();
+      let content = "<p>";
+      imageList.forEach((item) => {
+        if (item.translate_status === true) {
+          content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
+        } else {
+          const nUrl = item.translate_url || item.url;
+          content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
+        }
+      });
       content += "</p>";
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
