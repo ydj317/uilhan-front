@@ -442,6 +442,8 @@ export default defineComponent({
       translateImageList: [],
       translateSkuCode: false,
       specGroupVisible:true,
+      // 韩国MarketList
+      KrMarketList: ['Domeggook', 'Alibaba'],
     };
   },
 
@@ -808,15 +810,19 @@ export default defineComponent({
           _this.product.item_option = cloneDeep(_this.product.item_org_option);
           // _this.product.sku = _this.product.item_org_sku;
           // #270 초기화하여도 이미지는 자동번역버전으로 보여줘야함
-          _this.product.sku = _this.product.item_org_sku.map((item, index) => {
-            for (let i = 0; i < _this.product.item_option[0].data.length; i++) {
-              if (item.pvs.includes(_this.product.item_option[0].data[i].key)) {
-                item.img = _this.product.item_option[0].data[i].img;
-                break;
+          if (_this.KrMarketList.includes(_this.product.item_market)) {
+            _this.product.sku = _this.product.item_org_sku;
+          }else {
+            _this.product.sku = _this.product.item_org_sku.map((item, index) => {
+              for (let i = 0; i < _this.product.item_option[0].data.length; i++) {
+                if (item.pvs.includes(_this.product.item_option[0].data[i].key)) {
+                  item.img = _this.product.item_option[0].data[i].img;
+                  break;
+                }
               }
-            }
-            return item;
-          });
+              return item;
+            });
+          }
           _this.selectedRowKeys = [];
           _this.selectedRows = [];
           _this.handleShippingFeeChange(_this.product.item_shipping_fee);
