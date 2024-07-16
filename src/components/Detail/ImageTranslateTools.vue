@@ -79,9 +79,6 @@ export default defineComponent({
             this.translateImage({type: 2,action});
           });
           break;
-        case 'delete':
-          this.translateImage({type: 4,requestId,action});
-          break;
         case 'translate':
           await this.translateImage({type: 3,isTranslate: true,requestId,action});
           break;
@@ -121,9 +118,6 @@ export default defineComponent({
           break;
         case 3://翻译图片
           images = this.localTranslateImageList.filter(item =>item.request_id === requestId);
-          break;
-        case 4://删除图片
-          this.localTranslateImageList = this.localTranslateImageList.filter(item =>item.request_id != requestId);
           break;
         default:
           images = [];
