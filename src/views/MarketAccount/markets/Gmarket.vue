@@ -41,8 +41,8 @@
         <span>{{ state.sync_outbound_address_date ?? '-' }}</span>
       </a-form-item>
 
-      <a-form-item name="return_address_code" label="반품지" :rules="[{ required: true, message: '반품지를 선택해 주세요.' }]">
-        <a-select v-model:value="state.formData.return_address_code" placeholder="반품지를 선택해 주세요" style="width:260px;">
+      <a-form-item name="return_address_code" label="교환/반품지" :rules="[{ required: true, message: '교환/반품지를 선택해 주세요.' }]">
+        <a-select v-model:value="state.formData.return_address_code" placeholder="교환/반품지를 선택해 주세요" style="width:260px;">
           <a-select-option :value="item.return_address_code" v-for="(item, key) in state.returnAddressList"
                            :key="key">{{ item.return_address_name }}</a-select-option>
         </a-select>
