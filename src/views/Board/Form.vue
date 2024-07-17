@@ -52,7 +52,8 @@ const getBoardDetail = (id) => {
 }
 
 const onFinish = values => {
-  values = Object.assign(values, {id: formState.id})
+  const is_fixtop = formState.is_fixtop ? '1' : '0';
+  values = Object.assign(values, {id: formState.id,is_fixtop: is_fixtop})
   buttonLoading.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/board/save', values).then((res) => {
     if (res.status !== '2000') {
