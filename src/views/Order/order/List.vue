@@ -49,9 +49,9 @@
           <a-input-group compact style="display: flex;">
             <a-select size="middle" v-model:value="state.tableData.params.search_type" style="width: 100px;">
               <a-select-option value="order_no">주문번호</a-select-option>
-              <a-select-option value="prd_code">상품번호</a-select-option>
+<!--              <a-select-option value="prd_code">상품번호</a-select-option>-->
               <a-select-option value="prd_name">상품명</a-select-option>
-              <a-select-option value="prd_option_no">옵션번호</a-select-option>
+<!--              <a-select-option value="prd_option_no">옵션번호</a-select-option>-->
               <a-select-option value="prd_option_name">옵션명</a-select-option>
               <a-select-option value="orderer_name">주문자</a-select-option>
               <a-select-option value="receiver_name">수취인</a-select-option>
