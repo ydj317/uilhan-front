@@ -64,7 +64,7 @@
 
       <div style="display: flex;justify-content: center;">
         <a-button type="primary" @click.prevent="handleSearch" class="mt15">검색</a-button>
-        <a-button @click="getTableData" class="ml15 mt15">초기화</a-button>
+        <a-button @click="resetSearch" class="ml15 mt15">초기화</a-button>
       </div>
     </div>
   </a-card>
@@ -564,6 +564,16 @@ const getTableData = async () => {
     state.tableData.loading = false;
   });
 };
+
+const resetSearch = () => {
+  // 重置搜索值
+  state.tableData.params.search_value = '';
+
+  //重置到最新日期
+  state.order_date = [moment().subtract(15, 'days'), moment()];
+  state.tableData.params.order_date = state.order_date.map(date => date.format("YYYY-MM-DD"));
+  getTableData();
+}
 
 const filterOrderData = computed(() => {
   return Object.fromEntries(Object.entries(state.tableData.data).slice((state.tableData.page - 1) * state.tableData.pageSize, state.tableData.page * state.tableData.pageSize));
