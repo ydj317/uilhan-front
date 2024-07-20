@@ -27,6 +27,7 @@
         <h3>마켓정보 불러오기</h3>
       </div>
 
+<!--      출고지-->
       <a-form-item name="outbound_address_code" label="출고지"
                    :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]">
         <a-select v-model:value="state.formData.outbound_address_code" placeholder="출고지를 선택해 주세요" style="width:260px;">
@@ -41,6 +42,7 @@
         <span>{{ state.sync_outbound_address_date ?? '-' }}</span>
       </a-form-item>
 
+<!--      반품지-->
       <a-form-item name="return_address_code" label="교환/반품지" :rules="[{ required: true, message: '교환/반품지를 선택해 주세요.' }]">
         <a-select v-model:value="state.formData.return_address_code" placeholder="교환/반품지를 선택해 주세요" style="width:260px;">
           <a-select-option :value="item.return_address_code" v-for="(item, key) in state.returnAddressList"
@@ -54,6 +56,7 @@
         <span>{{ state.sync_return_address_date ?? '-' }}</span>
       </a-form-item>
 
+<!--      발송정책-->
       <a-form-item name="return_address_code" label="발송정책" :rules="[{ required: true, message: '발송정책을 선택해 주세요.' }]">
         <a-select v-model:value="state.formData.shipping_policy_code" placeholder="발송정책을 선택해 주세요" style="width:260px;">
           <a-select-option :value="item.code" v-for="(item, key) in state.shippingPolicyList"
@@ -61,17 +64,17 @@
         </a-select>
         <a-button @click="syncShippingPolicy(state.formData.id)" class="ml15"
                   :loading="state.syncShippingPolicyLoading">업데이트</a-button>
-        <a-tag class="ml15" v-if="state.sync_shipping_policy_sataus == 0">-</a-tag>
-        <a-tag color="#87d068" class="ml15" v-else-if="state.sync_return_address_status == 1">성공</a-tag>
+        <a-tag class="ml15" v-if="state.sync_shipping_policy_status == 0">-</a-tag>
+        <a-tag color="#87d068" class="ml15" v-else-if="state.sync_shipping_policy_status == 1">성공</a-tag>
         <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
-        <span>{{ state.sync_return_address_date ?? '-' }}</span>
+        <span>{{ state.sync_shipping_policy_date ?? '-' }}</span>
       </a-form-item>
 
       <h3 class="mt20">마켓정보설정</h3>
 
-      <a-form-item name="shipping_policy_code" label="택배사"
+      <a-form-item name="delivery_company_code" label="택배사"
                    :rules="[{ required: true, message: '택배사를 선택해 주세요.' }]">
-        <a-select v-model:value="state.formData.shipping_policy_code" placeholder="택배사를 선택해 주세요" style="width:260px;">
+        <a-select v-model:value="state.formData.delivery_company_code" placeholder="택배사를 선택해 주세요" style="width:260px;">
           <a-select-option :value="code" v-for="(name, code) in state.deliveryCompanyList"
                            :key="code">{{ name }}
           </a-select-option>
@@ -167,6 +170,8 @@ const initFormData = () => {
     // 마켓정보 불러오기
     state.formData.return_address_code = accountInfo.marketData.return_address_code;
     state.formData.outbound_address_code = accountInfo.marketData.outbound_address_code;
+    state.formData.shipping_policy_code = accountInfo.marketData.shipping_policy_code;
+
     // 마켓정보설정
     state.formData.delivery_company_code = accountInfo.marketData.delivery_company_code;
   }
@@ -350,14 +355,23 @@ const getAddressList = () => {
       });
     });
   });
+
+  // 발송정책 init
+  useAccountJsonApi().getAccountJson({account_id: props.accountInfo.id, group: 'shipping_cost_policy'}).then(res => {
+    const {marketJson, syncStatus, updDate} = res.data;
+
+    // 업데이트상태/날짜
+    state.sync_shipping_policy_status = syncStatus || '0';
+    state.sync_shipping_policy_date = updDate || null;
+    marketJson?.dispatchPolicies.forEach(item => {
+      state.shippingPolicyList.push({
+        code: item.dispatchPolicyNo,
+        name: item.dispatchPolicyName
+      });
+    });
+  });
 }
 
-// // 발송정책 조회
-// const getShippingPolicy = () => {
-//   useMarketApi().getAccountJson({}).then(res => {
-//     state.deliveryCompanyList = res.data.esmplus;
-//   });
-// }
 
 // 출고지/반품지 리스트 설정
 const getMarketDeliveryCompany = () => {
