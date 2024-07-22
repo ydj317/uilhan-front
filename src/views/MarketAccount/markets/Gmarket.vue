@@ -73,12 +73,25 @@
       <h3 class="mt20">마켓정보설정</h3>
 
       <a-form-item name="delivery_company_code" label="택배사"
-                   :rules="[{ required: true, message: '택배사를 선택해 주세요.' }]">
+                   :rules="[{ required: true, message: '반품/교환 배송비(편도) 를 선택해 주세요.' }]">
         <a-select v-model:value="state.formData.delivery_company_code" placeholder="택배사를 선택해 주세요" style="width:260px;">
           <a-select-option :value="code" v-for="(name, code) in state.deliveryCompanyList"
                            :key="code">{{ name }}
           </a-select-option>
         </a-select>
+      </a-form-item>
+
+      <a-form-item name="return_shipping_free" label="반품/교환 배송비(편도)"
+                   :rules="[{ required: true, message: '택배사를 선택해 주세요.' }]">
+        <a-radio-group v-model:value="state.formData.return_shipping_free" name="return_shipping_free">
+          <a-radio value="T">무료</a-radio>
+          <a-radio value="F">유료</a-radio>
+        </a-radio-group>
+
+        <div v-if="state.formData.return_shipping_free === 'F'">
+          <a-input-number v-model:value="state.formData.return_shipping_fee"  style="width: 200px;" /> 원
+        </div>
+
       </a-form-item>
 
     </div>
@@ -138,6 +151,8 @@ const state = reactive({
     shipping_policy_code : null,
     // 정보설정
     delivery_company_code : null,
+    return_shipping_free : 'T',
+    return_shipping_fee : ''
   },
 
   syncCheckLoading: false,
@@ -174,6 +189,8 @@ const initFormData = () => {
 
     // 마켓정보설정
     state.formData.delivery_company_code = accountInfo.marketData.delivery_company_code;
+    state.formData.return_shipping_free = accountInfo.marketData.return_shipping_free;
+    state.formData.return_shipping_fee = accountInfo.marketData.return_shipping_fee;
   }
 }
 
