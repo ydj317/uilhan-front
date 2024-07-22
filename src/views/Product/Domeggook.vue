@@ -332,7 +332,7 @@
   </div>
 </template>
 <script>
-import { defineComponent, onMounted, reactive, ref, toRaw } from "vue";
+import { computed, defineComponent, onMounted, reactive, ref, toRaw } from "vue";
 import "vue-loading-overlay/dist/vue-loading.css";
 import { Form, message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
@@ -466,10 +466,11 @@ export default defineComponent({
     const currentOfProductList = ref(1);
     const pageSizeOfProductList = ref(10);
     const dataSourceOfProductList = ref([]);
-    const rowSelectionOfProductList = {
-      /* 동기화할 상품선택 (체크박스) */
-      onChange: (selectedRowKeys) => {
-        dataOfProductListRowSelection.value = selectedRowKeys;
+    const selectedRowKeys = ref([]);
+    const rowSelectionOfProductList = computed(() =>({
+      selectedRowKeys: selectedRowKeys.value,
+      onChange: (selectedKeys) => {
+        selectedRowKeys.value = selectedKeys;
       },
       /* 체크박스속성 (선택불가) */
       getCheckboxProps: (record) => ({
@@ -478,7 +479,8 @@ export default defineComponent({
         disabled:
           ["true", "false"].includes(record.desc_license_usable) === false || record.is_success === false,
       }),
-    };
+    }))
+
     const pageSizeOptionsOfProductList = ref(["10", "20", "30", "40", "50"]);
 
     const onLoadShowTotal = () => {
