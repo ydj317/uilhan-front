@@ -211,7 +211,7 @@ export const menus = [{
             meta: {
                 title: "My Page",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                roles: [],
                 icon: '',
                 ids: ["jwli"],
             },
@@ -222,7 +222,7 @@ export const menus = [{
             meta: {
                 title: "서비스 관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN"],
+                roles: [],
                 icon: MoneyCollectOutlined,
                 ids: ["jwli"],
             },
