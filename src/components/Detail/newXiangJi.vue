@@ -1,13 +1,13 @@
 <template>
   <a-modal class="xiangJi" v-model:open="isOpen" :closable="false"
-           :cancel-button-props="{ ghost: true, disabled: true }" :footer="null" width="100%" wrap-class-name="full-modal">
+           :cancel-button-props="{ ghost: true, disabled: true }" :footer="null">
     <!-- 模板HTML 不可修改 -->
     <div id="xiangji-app">
       <div id="some-dialog">
         <iframe id="xiangji-image-editor" title="象寄图片精修工具"
                 :src="iframeSrc"
                 ref="iframeRef"
-                style="border:none;" @load="iframeOnload()"></iframe>
+                style="border:none;" @load="sendMessage()"></iframe>
       </div>
     </div>
   </a-modal>
@@ -49,10 +49,6 @@ export default defineComponent({
     };
   },
   methods: {
-    // 이미지 불러오기
-    iframeOnload() {
-      this.sendMessage();
-    },
     sendMessage() {
       let sendData = {
         name: this.translateTypes[this.translateType][0],
@@ -60,8 +56,8 @@ export default defineComponent({
       };
       const iframe = document.querySelector("#xiangji-image-editor");
       iframe.contentWindow.postMessage(
-          sendData,
-          "*"
+        sendData,
+        "*"
       );
     },
     receiveMessage(e) {
@@ -138,6 +134,7 @@ export default defineComponent({
 }
 
 .xiangJi {
+  width: 1400px!important;
   height: 100% !important;
 }
 
@@ -163,5 +160,8 @@ export default defineComponent({
 
 .ant-modal-footer > button.ant-btn.ant-btn-background-ghost {
   display: none !important;
+}
+.xiangJi.ant-modal{
+  padding-bottom: 0;
 }
 </style>

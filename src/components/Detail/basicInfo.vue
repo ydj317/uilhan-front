@@ -24,7 +24,7 @@
               <a-button
                 :loading="keyword.loading"
                 type="primary"
-                style="background-color: #1e44ff;color: white"
+                style="background-color: #2171e2;color: white"
                 @click="searchKeyword"
               >키워드 검색</a-button>
             </div>
@@ -61,7 +61,7 @@
               />
             </a-spin>
             </div>
-            <a-button v-if="this.use_ai" type="primary" style="background-color: #1e44ff;color: white" @click="replaceWithAI">AI 추천모드</a-button>
+            <a-button v-if="this.use_ai" type="primary" style="background-color: #2171e2;color: white" @click="replaceWithAI">AI 추천모드</a-button>
           </div>
           <div style="display: flex; gap: 5px;">
             <a-tag
@@ -91,7 +91,7 @@
               <a-button
                   :loading="tagKeyword.loading"
                   type="primary"
-                  style="background-color: #1e44ff;color: white"
+                  style="background-color: #2171e2;color: white"
                   @click="searchTagKeyword"
               >상품태그 추천</a-button>
             </div>
@@ -102,7 +102,7 @@
             <div class="fl-le" style="color: #00000073">{{!product.item_sync_keyword ? 0 : product.item_sync_keyword?.split(/,\s*|\s+/).filter(d => !!d).length }} / {{keywordMaxLength}}</div>
           </a-spin>
           <a-spin v-model:spinning="tagKeyword.loading">
-            <div v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="background: none;">
+            <div class="keyword-list" v-show="tagKeyword.list.length > 0 || tagKeyword.loading" style="margin-bottom: 10px">
               <a-tag
                   v-for="item in tagKeyword.list" :key="item.id"
                   :color="item.reg ? 'red' : ''"
@@ -129,7 +129,7 @@
     </table>
     <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                            @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                           @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams" />
+                           @update:translateImageList="updateTranslateImageList" :isMany="true" />
   </div>
 </template>
 
@@ -171,8 +171,8 @@ export default {
     activeKey: {
       handler() {
         if(this.activeKey == 1){
-          if(!this.xjParams.requestIds.length){
-            this.imgLoading = true;
+          const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
+          if(!requestIdsLength){
             this.$nextTick(() => {
               this.getRequestIds();
             });
@@ -183,7 +183,6 @@ export default {
     product: {
       handler() {
         if(this.activeKey == 1){
-          this.imgLoading = true;
           this.$nextTick(() => {
             this.getRequestIds();
           });
@@ -256,13 +255,6 @@ export default {
       showTrademarkBtn: false,
       showKeywordTip: false,
       imgLoading:false,
-      xjParams:{
-        isMany:true,
-        action:'',
-        currentIndex:0,
-        requestIds:[],
-        recharge:0
-      },
     };
   },
 
@@ -563,6 +555,10 @@ export default {
       });
 
     },
+    tagKeywordBlur(e,type){
+      this.blurIndex.type = type;
+      this.blurIndex.index = e.srcElement.selectionStart;
+    },
     translatePopup() {
       this.imageTranslateToolsVisible = true;
     },
@@ -574,12 +570,9 @@ export default {
       }
       this.product.item_thumbnails = item_thumbnails;
     },
-    tagKeywordBlur(e,type){
-      this.blurIndex.type = type;
-      this.blurIndex.index = e.srcElement.selectionStart;
-    },
     //获取图片requestIds
     getRequestIds(){
+      this.imgLoading = true;
       let aImagesUrl = this.product.item_thumbnails;
       let imgList =aImagesUrl.map((item,index)=>{
         let tmp = [];
@@ -597,11 +590,9 @@ export default {
         }
         return tmp;
       })
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
-    },
-    setXjParams(params){
-      this.imgLoading = false;
-      this.xjParams = params;
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
+        this.imgLoading = false;
+      });
     }
   },
 
@@ -663,7 +654,7 @@ export default {
 }
 
 .keyword-list {
-  background-color: #eeeeee;
+  background-color: #fafafa;
   padding: 10px;
   display: grid;
   grid-template-columns: repeat(12,1fr);

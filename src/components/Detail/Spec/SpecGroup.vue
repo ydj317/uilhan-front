@@ -199,11 +199,11 @@ export default {
         }
 
         this.options = this.$store.state.product.detail.item_option.map(option => {
-          option.checkAll = false;
+          option.checkAll = true;
           option.oldName = option.name;
           option.data = option.data.map(item => {
             item.oldName = item.name;
-            item.checked = false;
+            item.checked = true;
             return item;
           });
           return option;
@@ -240,6 +240,17 @@ export default {
   },
   methods: {
     closeOptionModal() {
+      /**
+       * #271 옵션수정창 열때 항상 옵션 체크상태유지
+       */
+      this.options = this.options.map(option => {
+        option.checkAll = true;
+        option.data = option.data.map(item => {
+          item.checked = true;
+          return item;
+        });
+        return option;
+      });
       this.$store.commit("product/setShowOptionModify", false);
     },
     handleReplaceOptionGroup() {
@@ -467,11 +478,11 @@ export default {
 
     restoreInitialOptions() {
       this.options = this.$store.state.product.detail.item_option.map(option => {
-        option.checkAll = false;
+        option.checkAll = true;
         option.name = option.oldName;
         option.data = option.data.map(item => {
           item.name = item.oldName;
-          item.checked = false;
+          item.checked = true;
           return item;
         });
         return option;
@@ -639,7 +650,18 @@ export default {
           });
         });
       });
-
+      /**
+       * #271 옵션 항상 체크 되여야함
+       */
+      this.options = this.options.map((option, index) => {
+        option.checkAll = true;
+        option.data = option.data.map(item => {
+          item.checked = true;
+          this.selectedRows[index].push(item.key)
+          return item;
+        });
+        return option;
+      });
       this.product.item_option = this.options;
       this.$store.commit("product/setShowOptionModify", false);
     },

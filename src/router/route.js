@@ -21,6 +21,18 @@ export const menus = [{
     redirect: "/dashboard",
     children: [
         {
+            path: "/mqlist",
+            name: "mqlist",
+            component: () => import("@/views/Mqlist.vue"),
+            meta: {
+                title: "MQ리스트",
+                isHide: true,
+                roles: [],
+                ids: ["jwli"],
+                icon: LayoutOutlined
+            }
+        },
+        {
             path: "/dashboard",
             name: "dashboard",
             component: () => import("@/views/Dashboard.vue"),
@@ -187,8 +199,9 @@ export const menus = [{
             meta: {
                 title: "서비스 결제",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: MoneyCollectOutlined
+                roles: [],
+                icon: MoneyCollectOutlined,
+                ids: ["haeju","jwli"],
             },
         },
         {
@@ -199,7 +212,8 @@ export const menus = [{
                 title: "My Page",
                 isHide: false,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: ''
+                icon: '',
+                ids: ["jwli"],
             },
         },
         {
@@ -234,6 +248,7 @@ export const menus = [{
                         isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
+                        ids: ["jwli"],
                     },
                 },
                 {
@@ -459,18 +474,18 @@ export const menus = [{
         //         icon: FileExcelOutlined,
         //     },
         // },
-        {
-            path: "/user/servicePayAi",
-            name: "user_servicePayAi",
-            component: () => import("@/views/User/ServicePayAi.vue"),
-            meta: {
-                title: "️AI 서비스 결제",
-                isHide: false,
-                roles: [],
-                ids: ["haeju"],
-                icon: RobotOutlined
-            },
-        },
+        // {
+        //     path: "/user/servicePayAi",
+        //     name: "user_servicePayAi",
+        //     component: () => import("@/views/User/ServicePayAi.vue"),
+        //     meta: {
+        //         title: "️AI 서비스 결제",
+        //         isHide: false,
+        //         roles: [],
+        //         ids: ["haeju"],
+        //         icon: RobotOutlined
+        //     },
+        // },
         {
             path: "/product/analytics",
             name: "product_analytics",

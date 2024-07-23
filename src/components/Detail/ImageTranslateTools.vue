@@ -6,6 +6,7 @@
       @update:isOpen="onCancel"
       @callbackReceived="handleTranslateCallback"
       :xjParams="xjParams"
+      ref="NewXiangJi"
   />
 </template>
 
@@ -34,6 +35,11 @@ export default defineComponent({
       return this.localTranslateImageList.map(item => item.request_id)
     }
   },
+  watch: {
+    "product.recharge"(val) {
+      this.xjParams.recharge = val;
+    },
+  },
   props: {
     visible: {
       type: Boolean,
@@ -43,22 +49,30 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
-    xjParams: {
-      type: Object,
-      default: () => ({}),
+    isMany: {
+      type: Boolean,
+      default: false,
     },
   },
-  emits: ["update:visible", "update:translateImageList","update:xjParams"],
+  emits: ["update:visible", "update:translateImageList"],
   data() {
     return {
       localTranslateImageList: this.translateImageList,
+      xjParams:{
+        isMany:this.isMany,
+        currentIndex:0,
+        action:'',
+        requestIds:[],
+        recharge:0
+      },
     };
   },
 
   methods: {
     //图片处理回调
     async handleTranslateCallback(oTranslateInfo) {
-      const {action,requestId,allSort,base64} = oTranslateInfo;
+      const {action,requestId,requestIds,allSort,base64} = oTranslateInfo;
+      // console.log('oTranslateInfo',oTranslateInfo);
       switch (action){
         case 'upload':
           this.uploadImage(base64,()=>{
@@ -66,21 +80,17 @@ export default defineComponent({
           });
           break;
         case 'delete':
-          this.translateImage({type: 4,requestId});
+          this.translateImage({type: 4,requestIds,action});
           break;
         case 'translate':
-          await this.translateImage({isTranslate: true,type: 3,requestId,action});
+          await this.translateImage({type: 3,isTranslate: true,requestId,action});
           break;
         case 'finish':
           this.localTranslateImageList = allSort.map(v=>{
             const requestId = Object.keys(v)[0];
             let item = this.localTranslateImageList.find(v2=>v2.request_id == requestId);
-            if (item.translate_status === true) {
-              item.translate_url = v[requestId]+'?request_id='+requestId;
-            } else {
-              item.translate_url = v[requestId]+'?request_id='+requestId;
-              item.url = v[requestId]+'?request_id='+requestId;
-            }
+            item.translate_url = v[requestId];
+            item.url = v[requestId];
             return item;
           });
           this.onSubmit();
@@ -90,8 +100,9 @@ export default defineComponent({
           break;
       }
     },
-    async translateImage(option) {
-      const {isTranslate = true,type,requestId,action='',imglist} = option;
+    async translateImage(option,back) {
+      back = back || function(){}
+      const {type,isTranslate = false,requestId,requestIds,action='',imglist} = option;
       // console.log('translateImage-option',option);
       if(imglist){
         this.localTranslateImageList = imglist;
@@ -105,33 +116,29 @@ export default defineComponent({
       let images = [];
       switch (type * 1){
         case 1:
-          //默认不翻译只获取requestId
+          //获取没有request_id的图片
           images = this.localTranslateImageList.filter(item => item.request_id == '');
           break;
         case 3://翻译图片
           images = this.localTranslateImageList.filter(item =>item.request_id === requestId);
-          if (images.translate_status === true) {
-            message.error("이미 번역된 이미지입니다.");
-            return false;
-          }
           break;
         case 4://删除图片
-          this.localTranslateImageList = this.localTranslateImageList.filter(item =>item.request_id != requestId);
+          let localTranslateImageList = requestIds.map(request_id=>{
+            return this.localTranslateImageList.find(item=>item.request_id==request_id);
+          })
+          this.localTranslateImageList = localTranslateImageList;
           break;
         default:
           images = [];
           break;
       }
-      let xjParams = {
-        isMany:this.xjParams.isMany,
-        currentIndex:this.xjParams.currentIndex,
-        action:action,
-      };
-      if(!images.length){
-        xjParams.requestIds = this.getRequestIds;
-        xjParams.recharge = this.product.recharge;
-        this.$emit("update:xjParams", xjParams);
-      }else {
+      if(!this.product.recharge){
+        this.getRecharge();
+      }
+      this.xjParams.recharge = this.product.recharge;
+      this.xjParams.requestIds = this.getRequestIds;
+      this.xjParams.action = action;
+      if(images.length){
         images.forEach((item,i) => {
           oParam.list.push({
             msg: "",
@@ -153,17 +160,23 @@ export default defineComponent({
             return false;
           }
           if(type == 3){
-            xjParams.currentIndex = this.localTranslateImageList.findIndex(value => value.request_id === requestId);
+            this.xjParams.currentIndex = this.localTranslateImageList.findIndex(value => value.request_id === requestId);
           }
           const {list, recharge} = oTranslateInfo.data;
           this.localTranslateImageList = this.localTranslateImageList.map(item=>{
             let thisItem = list.find(item2=>item2.original_url == item.url);
             return thisItem ? Object.assign(item, thisItem) : item;
           });
-          xjParams.requestIds = this.getRequestIds;
-          xjParams.recharge = recharge;
-          this.$emit("update:xjParams", xjParams);
+          this.xjParams.requestIds = this.getRequestIds;
+          this.xjParams.recharge = recharge;
+          this.product.recharge = recharge;
+          back();
         });
+      }else{
+        back();
+      }
+      if(this.visible){
+        this.$refs.NewXiangJi.sendMessage();
       }
     },
 
@@ -175,7 +188,6 @@ export default defineComponent({
               message.error(res.message);
               return false;
             }
-
             try {
               this.product.recharge = res.data.recharge;
             } catch (e) {
@@ -225,10 +237,6 @@ export default defineComponent({
       }
       return new File([u8arr], filename, {type:mime});
     }
-  },
-
-  mounted() {
-    this.getRecharge();
   },
 });
 </script>

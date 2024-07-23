@@ -62,7 +62,7 @@
                             <template #title>
                                 <p>삭제 하시겠습니까?</p>
                             </template>
-                            <a-button class="mt5" type="default">삭제</a-button>
+                            <a-button class="mt5 hidden-element" type="default">삭제</a-button>
                         </a-popconfirm>
                     </template>
                 </a-table-column>
@@ -217,6 +217,12 @@ const getLogoSrc = (fileName, marketCode) => {
 
     .user_form .phone .ant-form-item-control:nth-last-child {
         border-bottom: none;
+    }
+    /**
+      * #262 잠시 숨김처리 기능개선건으로 후 처리
+     */
+    .hidden-element{
+      display: none;
     }
 </style>
 <style scoped>

@@ -72,12 +72,12 @@
             <a-col :span="9" class="pl70">
               <a-radio-group v-model:value="state.form.receiver_info_type">
                 <a-radio value="1" class="mr30">개인통관고유부호
-                  <a-tooltip>
-                    <template #title>
-                      <div>tip</div>
-                    </template>
-                    <QuestionCircleOutlined/>
-                  </a-tooltip>
+<!--                  <a-tooltip>-->
+<!--                    <template #title>-->
+<!--                      <div>tip</div>-->
+<!--                    </template>-->
+<!--                    <QuestionCircleOutlined/>-->
+<!--                  </a-tooltip>-->
                 </a-radio>
                 <a-radio value="3">사업자등록번호</a-radio>
               </a-radio-group>

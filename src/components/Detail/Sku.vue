@@ -117,7 +117,7 @@
         <!--품목삭제-->
         <a-button @click="deleteSku" >삭제</a-button>
         <!--일괄적용-->
-        <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 구매원가, 판매가)" @confirm="skuBatch">
+        <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 판매가)" @confirm="skuBatch">
           <a-button>일괄변경</a-button>
         </a-popconfirm>
         <div style="display: flex;gap: 5px">
@@ -130,7 +130,7 @@
 
           <a-tooltip class="ml5">
             <template #title>
-              <div>옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 비활성화 합니다.</div>
+              <div>옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 삭제 합니다.</div>
             </template>
             <QuestionCircleOutlined/>
           </a-tooltip>
@@ -185,7 +185,7 @@
           :columns="sku_columns"
           :pagination=false
           :data-source="this.product.sku"
-          :row-selection="rowSelection"
+          :row-selection="{selectedRowKeys: selectedRowKeys, onChange: handleRowSelectionChange}"
       >
         <!--bodyCell-->
         <template v-slot:bodyCell="{ record, column, index }">
@@ -324,7 +324,7 @@
   </div>
   <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams"/>
+                         @update:translateImageList="updateTranslateImageList"/>
 </template>
 
 <script>
@@ -346,7 +346,36 @@ export default defineComponent({
       product: (state) => state.product.detail,
     }),
   },
-
+  props: {
+    activeKey: {
+      type: String,
+      default: '1'
+    },
+  },
+  watch: {
+    activeKey: {
+      handler() {
+        if(this.activeKey == 2){
+          const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
+          if(!requestIdsLength){
+            this.$nextTick(() => {
+              this.getRequestIds();
+            });
+          }
+        }
+      },
+    },
+    product: {
+      handler() {
+        if(this.activeKey == 2){
+          this.$nextTick(() => {
+            this.getRequestIds();
+          });
+        }
+      },
+      immediate: true,
+    },
+  },
   data() {
     return {
       selected_sku_image_key: 0,
@@ -404,9 +433,7 @@ export default defineComponent({
       },
 
       selectedRows: [],
-      rowSelection: {
-        onChange: this.handleRowSelectionChange
-      },
+      selectedRowKeys: [],
 
       // 판매가 인상인하 사용값
       item_price_change_type : 'add',
@@ -415,13 +442,8 @@ export default defineComponent({
       translateImageList: [],
       translateSkuCode: false,
       specGroupVisible:true,
-      xjParams:{
-        isMany:false,
-        action:'',
-        currentIndex:0,
-        requestIds:[],
-        recharge:0
-      },
+      // 韩国MarketList
+      KrMarketList: ['Domeggook', 'Alibaba'],
     };
   },
 
@@ -539,6 +561,10 @@ export default defineComponent({
         message.warning("선택된 품목이 없습니다.");
         return false;
       }
+      if (this.selectedRows.length === this.product.sku.length) {
+        message.warning("최소 한개의 품목은 보류해 주세요.");
+        return false;
+      }
       // this.product.sku 에서 this.selectedRows 에 있는것을 삭제
       this.product.sku  = this.product.sku.filter((data) => !this.selectedRows.includes(data));
       // 선택품목 초기화
@@ -595,12 +621,13 @@ export default defineComponent({
             this.product.sku[i]["custom_" + columns.key] = Number(this.product.sku[0]["custom_" + columns.key]);
           }
           //original_price_ko
-          if (["original_price_ko"].includes(columns.key)) {
-            this.product.sku[i]["original_price_ko"] = Number(this.product.sku[0]["original_price_ko"]);
-          }
-          if (!["checked", "code", "spec", "img", "is_option_reference_price"].includes(columns.key)) {
+          // if (["original_price_ko"].includes(columns.key)) {
+          //   this.product.sku[i]["original_price_ko"] = Number(this.product.sku[0]["original_price_ko"]);
+          // }
+          if (!["checked", "code", "spec", "img", "is_option_reference_price", "original_price_cn"].includes(columns.key)) {
             this.product.sku[i][columns.key] = this.product.sku[0][columns.key];
             // this.product.sku[i].price_kor = this.product.sku[0].price_kor;
+            this.product.sku[i].expected_return = (Number(this.product.sku[i].selling_price) - Number(this.product.sku[i].original_price_ko)).toFixed(0);
           }
         });
       });
@@ -781,7 +808,23 @@ export default defineComponent({
         content: '편집된 옵션정보는 삭제되고 상품 수집시 옵션정보로 초기화됩니다.',
         onOk() {
           _this.product.item_option = cloneDeep(_this.product.item_org_option);
-          _this.product.sku = _this.product.item_org_sku;
+          // _this.product.sku = _this.product.item_org_sku;
+          // #270 초기화하여도 이미지는 자동번역버전으로 보여줘야함
+          if (_this.KrMarketList.includes(_this.product.item_market)) {
+            _this.product.sku = _this.product.item_org_sku;
+          }else {
+            _this.product.sku = _this.product.item_org_sku.map((item, index) => {
+              for (let i = 0; i < _this.product.item_option[0].data.length; i++) {
+                if (item.pvs.includes(_this.product.item_option[0].data[i].key)) {
+                  item.img = _this.product.item_option[0].data[i].img;
+                  break;
+                }
+              }
+              return item;
+            });
+          }
+          _this.selectedRowKeys = [];
+          _this.selectedRows = [];
           _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
           _this.product.resetOption = true;
@@ -793,6 +836,7 @@ export default defineComponent({
     },
 
     handleRowSelectionChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
     },
 
@@ -817,16 +861,6 @@ export default defineComponent({
         this.watchExpectedReturn('selling_price', index)
       });
     },
-    updateTranslateImageList(imageList) {
-      this.product.sku.map(v=>{
-        if(v.code == this.translateSkuCode){
-          v.img = imageList[0].url;
-          if (imageList[0].translate_status === true) {
-            v.img = imageList[0].translate_url;
-          }
-        }
-      });
-    },
     translateImg(record) {
       this.translateSkuCode = record.code;
       let aImagesUrl = [
@@ -848,11 +882,23 @@ export default defineComponent({
         }
         return tmp;
       })
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
+        this.imageTranslateToolsVisible = true;
+      });
     },
-    setXjParams(params){
-      this.xjParams = params;
-      this.imageTranslateToolsVisible = true;
+    updateTranslateImageList(imageList) {
+      this.product.sku.map(v=>{
+        if(v.code == this.translateSkuCode){
+          v.img = imageList[0].url;
+          if (imageList[0].translate_status === true) {
+            v.img = imageList[0].translate_url;
+          }
+        }
+      });
+    },
+    //获取图片requestIds
+    getRequestIds(){
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:[]});
     }
   },
 

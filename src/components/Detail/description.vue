@@ -16,10 +16,10 @@
         <a-space>
           <a-button class="originalDetailTrans" type="default" @click="showPreview">미리보기</a-button>
           <a-spin v-model:spinning="imgLoading">
-          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">상세 이미지번역
+          <a-button type="primary" @click="translatePopup" style="background-color: #2171e2;color: white">상세 이미지번역
           </a-button>
           </a-spin>
-<!--          <a-button type="primary" @click="translatePopup" style="background-color: #1e44ff;color: white">통상세 만들기-->
+<!--          <a-button type="primary" @click="translatePopup" style="background-color: #2171e2;color: white">통상세 만들기-->
 <!--          </a-button>-->
         </a-space>
 
@@ -38,7 +38,10 @@
   </div>
   <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" :xjParams="xjParams" @update:xjParams="setXjParams"/>
+                         @update:translateImageList="updateTranslateImageList"/>
+  <old-image-translate-tools ref="oldImageTranslateTools" v-model:visible="visible"
+                         @update:visible="visible = false" :translateImageList="translateImageList"
+                         @update:translateImageList="updateTranslateImageListOld" @update:editorImage="editorImage"/>
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
            title="상품 미리보기"
@@ -60,6 +63,7 @@ import { watch, watchEffect } from "vue";
 import { message } from "ant-design-vue";
 import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
+import OldImageTranslateTools from "@/components/Detail/OldImageTranslateTools.vue";
 
 function checkShow(element, showCallback, hideCallback) {
   const options = {
@@ -88,7 +92,8 @@ export default {
   components: {
     ImageTranslateTools,
     QuestionCircleOutlined,
-    TEditor
+    TEditor,
+    OldImageTranslateTools
   },
 
   props: {
@@ -113,6 +118,7 @@ export default {
       videoId: "editor_video_content",
 
       imageTranslateToolsVisible: false,
+      visible: false,
       translateImageList: [],
       previewVisible: false,
       modalContent: "",
@@ -120,13 +126,6 @@ export default {
       showVideo: false,
       showOptionTable: false,
       imgLoading:false,
-      xjParams:{
-        isMany:true,
-        action:'',
-        currentIndex:0,
-        requestIds:[],
-        recharge:0
-      },
     };
   },
   watch: {
@@ -161,33 +160,33 @@ export default {
       immediate: true,
       deep: true
     },
-    activeKey: {
-      handler() {
-        if(this.activeKey == 3){
-          if(!this.xjParams.requestIds.length){
-            this.imgLoading = true;
-            this.$nextTick(() => {
-              setTimeout(() => {
-                this.getRequestIds();
-              }, 200);
-            });
-          }
-        }
-      },
-    },
-    product: {
-      handler() {
-        if(this.activeKey == 3){
-          this.imgLoading = true;
-          this.$nextTick(() => {
-            setTimeout(() => {
-              this.getRequestIds();
-            }, 200);
-          });
-        }
-      },
-      immediate: true,
-    },
+    // activeKey: {
+    //   handler() {
+    //     if(this.activeKey == 3){
+    //       const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
+    //       console.log('requestIdsLength-desc',requestIdsLength);
+    //       if(!requestIdsLength){
+    //         this.$nextTick(() => {
+    //           setTimeout(() => {
+    //             this.getRequestIds();
+    //           }, 200);
+    //         });
+    //       }
+    //     }
+    //   },
+    // },
+    // product: {
+    //   handler() {
+    //     if(this.activeKey == 3){
+    //       this.$nextTick(() => {
+    //         setTimeout(() => {
+    //           this.getRequestIds();
+    //         }, 200);
+    //       });
+    //     }
+    //   },
+    //   immediate: true,
+    // },
   },
 
   mounted() {
@@ -500,25 +499,6 @@ export default {
 
       return srcArr;
     },
-
-    translatePopup() {
-      this.imageTranslateToolsVisible = true;
-    },
-    updateTranslateImageList(imageList) {
-      this.$refs.editor.clear();
-      let content = "<p>";
-      imageList.forEach((item) => {
-        if (item.translate_status === true) {
-          content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
-        } else {
-          const nUrl = item.translate_url || item.url;
-          content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
-        }
-      });
-      content += "</p>";
-      this.$refs.editor.contentValue = content;
-      this.product.item_detail = content;
-    },
     showPreview() {
       this.modalContent = cloneDeep(this.product.item_detail);
       this.previewVisible = true;
@@ -531,7 +511,7 @@ export default {
       const matchBefore = regexBefore.exec(this.product.item_detail);
       const matchAfter = regexAfter.exec(this.product.item_detail);
       if (matchBefore === null && matchAfter === null) {
-          this.showGuideImage = false;
+        this.showGuideImage = false;
       }else{
         this.showGuideImage = true;
       }
@@ -557,6 +537,96 @@ export default {
       }
 
     },
+
+    translatePopup() {
+      let aImagesUrl = this.getDetailContentsImage();
+      //이미지 없을 경우
+      if (aImagesUrl === false) {
+        return false;
+      }
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        tmp['old_url'] = item['url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['url'] = item['url'].slice(0,pos-1);
+        }
+        return tmp;
+      })
+      this.translateImageList = imgList;
+      this.visible = true;
+    },
+    editorImage(res) {
+      let aImagesUrl = [
+        {url: res.url,old_url:res.old_url}
+      ];
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        tmp['old_url'] = item['old_url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['url'] = item['url'].slice(0,pos-1);
+        }
+        return tmp;
+      })
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
+        this.imageTranslateToolsVisible = true;
+      });
+    },
+    updateTranslateImageList(imageList) {
+      this.$refs.editor.clear();
+      let content = "<p>";
+      this.translateImageList = this.translateImageList.map((v)=>{
+        let upData = imageList.find(v2 =>v2.old_url === v.old_url);
+        if(upData){
+          if (upData.translate_status === true) {
+            content += `<img src="${upData.translate_url}" style="max-width: 100%; height: auto;"/>`;
+            v.url = upData.translate_url;
+          } else {
+            const nUrl = upData.translate_url || upData.url;
+            content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
+            v.url = nUrl;
+          }
+        }else{
+          content += `<img src="${v.url}" style="max-width: 100%; height: auto;"/>`;
+        }
+        return v;
+      })
+      content += "</p>";
+      this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
+    },
+    updateTranslateImageListOld(imageList) {
+      this.$refs.editor.clear();
+      let content = "<p>";
+      imageList.forEach((item) => {
+        if (item.translate_status === true) {
+          content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
+        } else {
+          const nUrl = item.translate_url || item.url;
+          content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
+        }
+      });
+      content += "</p>";
+      this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
+    },
     //获取图片requestIds
     getRequestIds(){
       let aImagesUrl = this.getDetailContentsImage();
@@ -564,6 +634,7 @@ export default {
       if (aImagesUrl === false) {
         return false;
       }
+      this.imgLoading = true;
       let imgList =aImagesUrl.map((item,index)=>{
         let tmp = [];
         tmp['checked'] = false;
@@ -580,11 +651,9 @@ export default {
         }
         return tmp;
       })
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList});
-    },
-    setXjParams(params){
-      this.imgLoading = false;
-      this.xjParams = params;
+      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
+        this.imgLoading = false;
+      });
     }
   }
 };
