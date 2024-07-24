@@ -201,7 +201,7 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 icon: MoneyCollectOutlined,
-                ids: ["haeju","jwli"],
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol"],
             },
         },
         {
@@ -213,7 +213,7 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 icon: '',
-                ids: ["jwli"],
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol"],
             },
         },
         {
@@ -246,9 +246,9 @@ export const menus = [{
                     meta: {
                         title: "订单列表",
                         isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        roles: [],
                         icon: '',
-                        ids: ["jwli"],
+                        ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol"],
                     },
                 },
                 {
