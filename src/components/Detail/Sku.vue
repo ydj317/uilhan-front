@@ -417,7 +417,6 @@ export default defineComponent({
           key: "selling_price", // (구매원가+중국내 운임)*마진율
           width: "8%",
           sorter: true,
-          sortOrder: null,
         },
         {
           title: "운임/원",
