@@ -11,17 +11,23 @@
     <a-card title="서비스 권한 관리" :bordered="false">
 
       <div class="card-count">
-        <div class="card-count-content">
-          결제대기<span class="card-count-span">2个</span>
+        <div class="card-count-content" @click="searchStatusOrder('all')">
+          全部<span class="card-count-span">{{ statistics.allCnt }}个</span>
         </div>
-        <div class="card-count-content">
-          결제완료<span class="card-count-span">2个</span>
+        <div class="card-count-content" @click="searchStatusOrder('Pending')">
+          결제대기<span class="card-count-span">{{ statistics.pendingCnt }}个</span>
         </div>
-        <div class="card-count-content">
-          退款申请<span class="pl22 color-FB6F3E">2个</span>
+        <div class="card-count-content" @click="searchStatusOrder('Completed')">
+          결제완료<span class="card-count-span">{{ statistics.CompletedCnt }}个</span>
         </div>
-        <div class="card-count-content">
-          退款完毕<span class="card-count-span">2个</span>
+        <div class="card-count-content" @click="searchStatusOrder('CancelPayment')">
+          取消支付<span class="card-count-span">{{ statistics.CancelPayment }}个</span>
+        </div>
+        <div class="card-count-content" @click="searchStatusOrder('Refunding')">
+          待退款<span class="pl22 color-FB6F3E">{{ statistics.refundingCnt }}个</span>
+        </div>
+        <div class="card-count-content" @click="searchStatusOrder('Refunded')">
+          환불완료<span class="card-count-span">{{ statistics.refundedCnt }}个</span>
         </div>
       </div>
 
@@ -43,8 +49,15 @@
             <a-select-option value="id">订单号码</a-select-option>
             <a-select-option value="user_name">会员名</a-select-option>
           </a-select>
-          <a-input v-model:value="speVal" style="width: 120px;" aria-placeholder="搜素"/>
-          <a-button type="primary" @click.prevent="search">검색</a-button>
+          <a-input-search
+            v-model:value="speVal"
+            placeholder="검색어"
+            enter-button="검색"
+            size="middle"
+            @search="searchHandle"
+          />
+<!--          <a-input v-model:value="speVal" style="width: 120px;" aria-placeholder="搜素"/>-->
+<!--          <a-button type="primary" @click.prevent="search">검색</a-button>-->
         </div>
 
       </div>
@@ -75,16 +88,21 @@
 <!--            <span style="width: 120px;display: block;white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">{{ text }}</span>-->
 <!--          </a-tooltip>-->
 <!--        </template>-->
+        <template v-if="column.key === 'id' && record.hasOwnProperty('children')">
+          <span class="color-2171E2">{{ text }}</span>
+        </template>
 
-        <template v-if="column.key === 'operation' && record.hasOwnProperty('children')"><a @click="editData(index,record)">详情</a></template>
+<!--        <template v-if="column.key === 'operation' && record.hasOwnProperty('children')"><a @click="editData(index,record)">详情</a></template>-->
+        <template v-if="column.key === 'operation'"><a @click="editData(record.id)">详情</a></template>
       </template>
 
     </a-table>
 
       <a-modal v-model:open="dataModel"
-               @ok="handleDataOk"
                title="서비스 결제관리"
                width="100%"
+               :footer="null"
+               :bodyStyle="{height:'60vh',overflow:'auto'}"
                >
 
         <a-card :bordered="false" style="overflow: auto">
@@ -106,7 +124,7 @@
                   {{ descriptions.id }}
                 </a-descriptions-item>
 
-                <a-descriptions-item label="총 결제금액(vat포함)">
+                <a-descriptions-item label="총 결제금액(vat포함">
                   {{ descriptions.paymentAmountStr }}
                 </a-descriptions-item>
 
@@ -122,44 +140,44 @@
                 <a-table-summary-row>
                   <a-table-summary-cell class="detail-summaryCell" :col-span="4" align="center">합계</a-table-summary-cell>
                   <a-table-summary-cell align="right">
-                    <a-typography-text>{{ `1,120,000` }}</a-typography-text>
+                    <a-typography-text>{{ totolPrice.totalAmount }}</a-typography-text>
                   </a-table-summary-cell>
                   <a-table-summary-cell align="right">
-                    <a-typography-text>{{ `112,000` }}</a-typography-text>
+                    <a-typography-text>{{ totolPrice.discountAmount }}</a-typography-text>
                   </a-table-summary-cell>
                   <a-table-summary-cell align="right">
-                    <a-typography-text>{{ `1,232,000` }}</a-typography-text>
+                    <a-typography-text>{{ totolPrice.taxAmount }}</a-typography-text>
                   </a-table-summary-cell>
-                  <a-table-summary-cell :col-span="2" align="center">
-                    <a-typography-text style="font-weight: 600">{{ `1,232,000` }}</a-typography-text>
+                  <a-table-summary-cell :col-span="2" align="right">
+                    <a-typography-text style="font-weight: 600">{{ totolPrice.paymentAmount }}</a-typography-text>
                   </a-table-summary-cell>
                 </a-table-summary-row>
               </template>
             </a-table>
           </div>
 
-          <div class="mt50">
-            <h3>退款明细</h3>
+          <div class="mt50" v-if="secondData.length > 0">
+            <h3>환불내역</h3>
             <a-table :data-source="secondData" :columns="secondCol" bordered :pagination="false">
               <template v-slot:bodyCell="{ text, record, index, column }">
-                <template v-if="column.key === 'status' && text === '환불요청' ">
+                <template v-if="column.key === 'status' && text === '申请中' ">
                   {{ text }}
-                  <a-button>확인</a-button>
-                  <a-button>반려</a-button>
+                  <a-button @click="agreeHandle(record)">확인</a-button>
+                  <a-button @click="refusedHandle(record)">반려</a-button>
                 </template>
                 <template v-else>{{ text }}</template>
               </template>
             </a-table>
           </div>
 
-          <div class="mt50 mb50">
-            <h3>推荐人支付明细</h3>
+          <div class="mt50 mb50" v-if="threeData[0] !== undefined && threeData[0]['referrerID'] !== ''">
+            <h3>추천인 지급 내역</h3>
             <a-table class="w61" :data-source="threeData" :columns="threeCol" bordered :pagination="false">
               <template #summary>
                 <a-table-summary-row>
                   <a-table-summary-cell class="detail-summaryCell" :col-span="5" align="center">합계</a-table-summary-cell>
                   <a-table-summary-cell align="right" style="font-weight: 600">
-                    <a-typography-text>{{ `1,17,665` }}</a-typography-text>
+                    <a-typography-text>{{ totolPrice.theTotalReferrer }}</a-typography-text>
                   </a-table-summary-cell>
                 </a-table-summary-row>
               </template>
@@ -198,7 +216,7 @@
 import {ref, reactive, computed, onMounted, createVNode} from "vue";
 import Loading from "vue-loading-overlay";
 import Cookie from "js-cookie";
-import {message, Modal} from "ant-design-vue";
+import {message, Modal, Textarea} from "ant-design-vue";
 import {AuthRequest} from "@/util/request";
 import { useRouter } from 'vue-router';
 import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
@@ -213,7 +231,18 @@ const selectVal = ref('id')
 const dataSource = ref([]);
 const router = useRouter();
 
+const currentOrderId = ref(null);
 
+const currentRefundOrderId = ref(null);
+
+const statistics = ref({
+  allCnt:0,
+  pendingCnt: 0,
+  CompletedCnt:0,
+  CancelPayment:0,
+  refundingCnt:0,
+  refundedCnt:0
+})
 
 //分页
 const total = ref(0);
@@ -223,11 +252,20 @@ const pageSizeOptions = ref(["10", "20", "30", "40", "50"]);
 
 //展示当前行 modal
 const dataModel = ref(false);
-const editableData = reactive({});
 const expandedRowKeys = ref([]);
 
 //详情descriptions
 const descriptions = ref({});
+
+//详情 表格
+
+let oneData = ref([]);
+let secondData = ref([]);
+let threeData = ref([]);
+
+let totolPrice = ref({});
+
+let currentStatus = ref(null);
 
 /* 페이징 Method */
 const onChange = (iCurrent, iPageSize) => {
@@ -294,67 +332,25 @@ const columns = [
 ];
 
 
-//详情 表格
 
-let oneData = ref([]);
-let secondData = ref([]);
-let threeData = ref([]);
 
-oneData  = [
-  {
-    key: '1',
-    service: '기본서비스 6개월',
-    requestDate: '2024. 1. 1 12:30:00',
-    completionDate: '2024. 1. 1 13:00:00',
-    usageTime: '2024. 1. 1 ~ 2024. 6. 30',
-    standardAmount: '1,200,000',
-    discount: '960,000',
-    tax: '96,000',
-    paymentAmount: '1,056,000',
-    status: '결제완료 / 결제대기 (무통장)'
-  },
-  {
-    key: '2',
-    service: '이미지 자동번역 100개',
-    requestDate: '',
-    completionDate: '2024. 1. 1 13:00:00',
-    usageTime: '2024. 1. 1 ~ 2024. 1. 31',
-    standardAmount: '100,000',
-    discount: '100,000',
-    tax: '10,000',
-    paymentAmount: '110,000',
-    status: '환불요청'
-  },
-  {
-    key: '3',
-    service: 'GPT 100개',
-    requestDate: '',
-    completionDate: '2024. 1. 1 13:00:00',
-    usageTime: '2024. 1. 1 ~ 2024. 1. 31',
-    standardAmount: '60,000',
-    discount: '60,000',
-    tax: '6,000',
-    paymentAmount: '66,000',
-    status: '환불완료'
-  }
-];
 const  oneCol = [
   {
     title: '결제서비스',
-    dataIndex: 'service',
-    key: 'service',
+    dataIndex: 'plan_type',
+    key: 'plan_type',
     align: 'center'
   },
   {
     title: '결제요청일시',
-    dataIndex: 'requestDate',
-    key: 'requestDate',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
     align: 'center'
   },
   {
     title: '결제완료일시',
-    dataIndex: 'completionDate',
-    key: 'completionDate',
+    dataIndex: 'paymentTime',
+    key: 'paymentTime',
     align: 'center'
   },
   {
@@ -365,82 +361,55 @@ const  oneCol = [
   },
   {
     title: '표준금액(vat별도)',
-    dataIndex: 'standardAmount',
-    key: 'standardAmount',
+    dataIndex: 'totalAmountStr',
+    key: 'totalAmountStr',
     align: 'right'
   },
   {
     title: '할인(vat별도)',
-    dataIndex: 'discount',
-    key: 'discount',
+    dataIndex: 'discountAmountStr',
+    key: 'discountAmountStr',
     align: 'right'
   },
   {
     title: '부가세',
-    dataIndex: 'tax',
-    key: 'tax',
+    dataIndex: 'taxAmountStr',
+    key: 'taxAmountStr',
     align: 'right'
   },
   {
     title: '결제금액(vat포함)',
-    dataIndex: 'paymentAmount',
-    key: 'paymentAmount',
+    dataIndex: 'paymentAmountStr',
+    key: 'paymentAmountStr',
     align: 'right'
   },
   {
     title: '상태',
-    dataIndex: 'status',
-    key: 'status',
+    dataIndex: 'statusStr',
+    key: 'statusStr',
+    width:'150px',
     align: 'center'
   }
 ]
 
-secondData = [
-  {
-    key: '1',
-    refundService: '이미지 자동번역 100개',
-    refundRequestDate: '2024. 1. 10 13:00:00',
-    refundCompletionDate: '',
-    usableDays: 31,
-    remainingDays: 21,
-    remainingAmount: '74,516',
-    refundEstimatedAmount: '52,516',
-    refundConfirmedAmount: '52,516',
-    cancellationFee: '22,000',
-    status: '환불요청'
-  },
-  {
-    key: '2',
-    refundService: 'GPT 100개',
-    refundRequestDate: '2024. 1. 5 13:00:00',
-    refundCompletionDate: '2024. 1. 5 13:00:00',
-    usableDays: 31,
-    remainingDays: 26,
-    remainingAmount: '55,355',
-    refundEstimatedAmount: '42,155',
-    refundConfirmedAmount: '42,155',
-    cancellationFee: '13,200',
-    status: '환불완료'
-  }
-];
 
 const secondCol = [
   {
     title: '환불서비스',
-    dataIndex: 'refundService',
-    key: 'refundService',
+    dataIndex: 'show_name',
+    key: 'show_name',
     align: 'center'
   },
   {
     title: '환불요청일시',
-    dataIndex: 'refundRequestDate',
-    key: 'refundRequestDate',
+    dataIndex: 'refundStartDate',
+    key: 'refundStartDate',
     align: 'center'
   },
   {
     title: '환불완료일시',
-    dataIndex: 'refundCompletionDate',
-    key: 'refundCompletionDate',
+    dataIndex: 'refundEndDate',
+    key: 'refundEndDate',
     align: 'center'
   },
   {
@@ -451,8 +420,8 @@ const secondCol = [
   },
   {
     title: '남은 일수',
-    dataIndex: 'remainingDays',
-    key: 'remainingDays',
+    dataIndex: 'refundDay',
+    key: 'refundDay',
     align: 'center'
   },
   {
@@ -474,7 +443,7 @@ const secondCol = [
     align: 'right'
   },
   {
-    title: '취소수수료 20%',
+    title: '취소수수료 10%',
     dataIndex: 'cancellationFee',
     key: 'cancellationFee',
     align: 'right'
@@ -488,46 +457,17 @@ const secondCol = [
   }
 ];
 
-threeData = [
-  {
-    key: '1',
-    referrerID: '이몽룡',
-    paymentService: '기본서비스 6개월',
-    referrerTotalAmount: '105,600',
-    referrerRefundEstimatedAmount: '',
-    referrerRefundConfirmedAmount: '',
-    referrerActualAmount: '105,600'
-  },
-  {
-    key: '2',
-    referrerID: '이몽룡',
-    paymentService: '이미지 자동번역 100개',
-    referrerTotalAmount: '11,000',
-    referrerRefundEstimatedAmount: '9,226',
-    referrerRefundConfirmedAmount: '',
-    referrerActualAmount: '11,000'
-  },
-  {
-    key: '3',
-    referrerID: '이몽룡',
-    paymentService: 'GPT 100개',
-    referrerTotalAmount: '6,600',
-    referrerRefundEstimatedAmount: '5,535',
-    referrerRefundConfirmedAmount: '5,535',
-    referrerActualAmount: '1,065'
-  }
-];
-
+//推荐人支付明细
 const threeCol = [
   {
-    title: '추천인 ID',
+    title: '추천인ID',
     dataIndex: 'referrerID',
     key: 'referrerID',
     align: 'center',
     customCell: (_, index) => {
       if (index === 0) {
         return {
-          rowSpan: 3,
+          rowSpan: oneData.value.length,
         };
       }
 
@@ -540,8 +480,8 @@ const threeCol = [
   },
   {
     title: '결제서비스',
-    dataIndex: 'paymentService',
-    key: 'paymentService',
+    dataIndex: 'plan_type',
+    key: 'plan_type',
     align: 'center'
   },
   {
@@ -573,11 +513,63 @@ const threeCol = [
 
 onMounted(() => {
   search();
+  getStatistics();
 })
+
+//点击搜索回调  先重置订单状态
+const searchHandle = () => {
+  currentStatus.value = null;
+  search();
+}
+
+//按订单状态 查找订单
+const searchStatusOrder = (type) => {
+
+  if (type !== 'all'){
+    currentStatus.value = type;
+  }else {
+    currentStatus.value = null;
+  }
+
+  current.value = 1;
+  pageSize.value = 10;
+  speVal.value = '';
+  selectVal.value = 'id';
+  search_day.value = null;
+
+  search();
+
+}
 
 //select change事件
 const handleChange = (value) => {
   type.value = value;
+}
+
+//获取订单统计数据
+const getStatistics = () => {
+
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/user/order/statistics').then((res) => {
+
+    if (res.status !== '2000') {
+      message.error(res.message)
+      return false;
+    }
+
+    statistics.value = {
+      allCnt:res.data.allCnt,
+      pendingCnt: res.data.pendingCnt,
+      CompletedCnt:res.data.CompletedCnt,
+      CancelPayment:res.data.CancelPayment,
+      refundingCnt:res.data.refundingCnt,
+      refundedCnt:res.data.refundedCnt
+    }
+
+  }).catch((error) => {
+    message.error(error.message);
+    return false;
+  });
+
 }
 
 //table 点击搜索回调
@@ -603,6 +595,10 @@ const search = () => {
     oParam.end_time = Math.floor(Date.parse(search_day.value[1] + ' 23:59:59') / 1000);
   }
 
+  if (currentStatus.value){
+    oParam.status = currentStatus.value;
+  }
+
   expandedRowKeys.value = [];
 
 
@@ -617,6 +613,8 @@ const search = () => {
           delete ele.children;
           return { ...ele };
         })
+      }else{
+        delete item.children;
       }
       return {...item};
     })
@@ -637,44 +635,316 @@ const handleExpand = (expanded, record) => {
   }
 }
 
-//行点击回调
-const editData = (index,record) => {
+//详情点击回调
+const editData = (id) => {
+
+  currentOrderId.value = id;
+
+  oneData.value = [];
+  secondData.value = [];
+  threeData.value = [];
 
 
-  console.log(record.id);
+  descriptions.value = {};
+  oneData.value = [];
+  totolPrice.value = {};
 
-  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/user/quota/order/detail/' + record.id).then((res) => {
+  loading.value = true;
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/user/quota/order/detail/' + id).then((res) => {
 
+    loading.value = false;
     if (res.status !== '2000') {
       message.error(res.message)
       return false;
     }
 
-    console.log(res);
+    console.log(res.data);
     const uData = res.data;
+
+    getStatistics();
+
     descriptions.value = {
       user_name:uData.user_name,
-      paymentMethod:uData.paymentMethod,
+      paymentMethod:uData.paymentMethodStr,
       id:uData.id,
       paymentAmountStr:uData.paymentAmountStr
     }
-    oneData.value = {
+    oneData.value.push({
+      order_id: uData.id,
+      plan_type : uData.historyQuota.quotaDetail.show_name,
+      createdAt : formatDateTime(uData.createdAt),
+      paymentTime : formatDateTime(uData.paymentTime),
+      usageTime: formatDate(uData.historyQuota.quotaDetail.start_time) + '-' + formatDate(uData.historyQuota.quotaDetail.end_time),
+      totalAmountStr:uData.totalAmountStr,
+      totalAmount:uData.totalAmount,
+      paymentAmountStr:uData.paymentAmountStr,
+      paymentAmount:uData.paymentAmount,
+      discountAmountStr:uData.discountAmountStr,
+      discountAmount:uData.discountAmount,
+      taxAmountStr:uData.taxAmountStr,
+      taxAmount:uData.taxAmount,
+      statusStr:uData.statusStr
+    })
 
+    uData.children.forEach((item) => {
+
+      const childrenObj = {
+        order_id: item.id,
+        plan_type : item.historyQuota.quotaDetail.show_name,
+        createdAt : formatDateTime(item.createdAt),
+        paymentTime : formatDateTime(item.paymentTime),
+        usageTime: formatDate(item.historyQuota.quotaDetail.start_time) + '-' + formatDate(item.historyQuota.quotaDetail.end_time),
+        totalAmountStr:item.totalAmountStr,
+        totalAmount:item.totalAmount,
+        paymentAmountStr:item.paymentAmountStr,
+        paymentAmount:item.paymentAmount,
+        discountAmountStr:item.discountAmountStr,
+        discountAmount:item.discountAmount,
+        taxAmountStr:item.taxAmountStr,
+        taxAmount:item.taxAmount,
+        statusStr:item.statusStr
+      }
+
+      oneData.value.push(childrenObj)
+
+    })
+
+    totolPrice.value.totalAmount = numberFormat(oneData.value.reduce((accumulator, item) => accumulator + item.totalAmount, 0));
+    totolPrice.value.paymentAmount = numberFormat(oneData.value.reduce((accumulator, item) => accumulator + item.paymentAmount, 0));
+    totolPrice.value.discountAmount = numberFormat(oneData.value.reduce((accumulator, item) => accumulator + item.discountAmount, 0));
+    totolPrice.value.taxAmount = numberFormat(oneData.value.reduce((accumulator, item) => accumulator + item.taxAmount, 0));
+
+    //退款明细
+    secondData.value = uData.refunds.map((item) => {
+      const usableDays = item.refundDay + item.useDay;
+      const remainingAmount = Math.floor((item.paymentAmount / usableDays) * item.refundDay);
+      const cancellationFee = item.isFreeSevenDay ? 0 : Math.floor((item.totalAmount * 1.1) * 0.1);
+      const refundEstimatedAmount = Math.floor(remainingAmount - cancellationFee);
+      const refundConfirmedAmount = item.status === 'Success' ? refundEstimatedAmount : '';
+
+      return {
+        refund_id:item.id,
+        order_id: item.order.id,
+        show_name: item.order.show_name,
+        refundStartDate: item.refundStartDate,
+        refundEndDate: item.refundEndDate,
+        usableDays: usableDays,
+        refundDay: item.refundDay,
+        remainingAmount: numberFormat(remainingAmount),
+        cancellationFee: numberFormat(cancellationFee),
+        refundEstimatedAmount: numberFormat(refundEstimatedAmount),
+        refundConfirmedAmount: refundConfirmedAmount===''?'-':numberFormat(refundConfirmedAmount),
+        status: item.statusStr,
+        statusFlag:item.status
+      };
+    });
+
+
+    //推荐人支付明细
+    threeData.value = oneData.value.map((item) => {
+
+      const referrerTotalAmount = Math.floor(item.paymentAmount * 0.1);
+
+      const refundsItem =secondData.value.find((ele) => {
+        return ele.order_id === item.order_id;
+      })
+
+      let referrerRefundEstimatedAmount = '';
+      let referrerRefundConfirmedAmount = '';
+      if (refundsItem!==undefined){
+         referrerRefundEstimatedAmount = Math.floor((referrerTotalAmount / refundsItem.usableDays) * refundsItem.refundDay);
+        referrerRefundConfirmedAmount = refundsItem.statusFlag === 'Success'? numberFormat(referrerRefundEstimatedAmount) : '';
+      }
+
+      const referrerActualAmount = referrerRefundConfirmedAmount === '' ? referrerTotalAmount : referrerTotalAmount - referrerRefundEstimatedAmount;
+
+      return {
+        referrerID:uData.recommendCodeUserName !== '' ? (uData.recommend_user.name === '' ? uData.recommend_user.user_name : uData.recommend_user.name) : '',
+        plan_type:item.plan_type,
+        referrerTotalAmount:numberFormat(referrerTotalAmount),
+        referrerRefundEstimatedAmount:referrerRefundEstimatedAmount !== '' ? numberFormat(referrerRefundEstimatedAmount) : '-',
+        referrerRefundConfirmedAmount:referrerRefundConfirmedAmount !== '' ? referrerRefundConfirmedAmount : '-',
+        referrerActualAmount:numberFormat(referrerActualAmount),
+        referrerActualAmountNum:referrerActualAmount
+      }
+    })
+
+    totolPrice.value.theTotalReferrer = numberFormat(threeData.value.reduce((accumulator, item) => accumulator + item.referrerActualAmountNum, 0));
+
+    if (currentRefundOrderId.value !== null){
+
+      let updateData;
+      if (uData.id === currentRefundOrderId.value){
+        updateData = { ...uData };
+      }else {
+        if(uData.isParentOrder && uData.children.length > 0){
+          uData.children.forEach((item) => {
+            delete item.children;
+            if (item.id === currentRefundOrderId.value){
+              updateData = {...item};
+              return;
+            }
+          })
+        }
+      }
+
+      replaceItem(currentRefundOrderId.value, updateData);
     }
+
+
+
     // return;
     dataModel.value = true;
 
   }).catch((error) => {
+    loading.value = false;
     message.error(error.message);
     return false;
   });
 
 }
 
-//详情模态框 确定回调
-const handleDataOk = () => {
-  dataModel.value = false;
+//申请退款 同意按钮回调
+const agreeHandle = (record) => {
+
+  currentRefundOrderId.value = record.order_id;
+
+  Modal.confirm({
+    icon: createVNode(ExclamationCircleOutlined),
+    content: '确定要同意退款吗?',
+    okText: '확인',
+    cancelText: '취소',
+    centered:true,
+    onOk: () => {
+      handleSuccessRefund(record.refund_id);
+    }
+  });
 }
+
+//申请退款 拒绝按钮回调
+const refusedHandle = (record) => {
+
+  currentRefundOrderId.value = record.order_id;
+  const reason = ref('');
+
+  Modal.confirm({
+    icon: createVNode(ExclamationCircleOutlined),
+    content: createVNode('div', null, [
+      createVNode('p', null, '确定要拒绝退款吗?'),
+      createVNode(Textarea, {
+        placeholder: '请输入拒绝理由',
+        'onUpdate:value': (value) => reason.value = value
+      })
+    ]),
+    okText: '확인',
+    cancelText: '취소',
+    centered: true,
+    onOk: () => {
+      handleFailRefund(record.refund_id, reason.value); // 将理由传递给处理函数
+    }
+  });
+
+}
+
+//同意退款处理逻辑
+const handleSuccessRefund = (id) => {
+
+  const oParam = {
+    refund_id : id
+  }
+
+  requestPost('/api/user/quota/order/success/refund',oParam, (data) => {
+
+    if (data){
+      message.success('同意退款成功')
+      editData(currentOrderId.value);
+    }
+  });
+}
+
+//拒绝退款处理逻辑
+const handleFailRefund = (id, reason) => {
+  console.log(id, reason);
+
+  const oParam = {
+    refund_id : id,
+    memo : reason
+  }
+
+  requestPost('/api/user/quota/order/fail/refund',oParam, (data) => {
+
+    if (data){
+      message.success('拒绝退款成功')
+      editData(currentOrderId.value);
+    }
+  });
+
+}
+
+
+//按默认 格式化为金额
+const  numberFormat= (num) => {
+  return parseFloat(num).toLocaleString();
+};
+
+//时间格式化
+function formatDate(dateString) {
+  // 将输入的日期字符串转换为 Date 对象
+  const date = new Date(dateString);
+
+  // 获取年份、月份和日期
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // getMonth() 返回值是 0-11，需要加 1
+  const day = date.getDate();
+
+  // 返回格式化后的字符串
+  return `${year}.${month}.${day}`;
+}
+
+//时间格式化
+function formatDateTime(dateString) {
+  // 将输入的日期字符串转换为 Date 对象
+  const date = new Date(dateString);
+
+  // 获取年份、月份、日期、小时、分钟和秒
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // getMonth() 返回值是 0-11，需要加 1
+  const day = date.getDate();
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+
+  // 返回格式化后的字符串
+  return `${year}.${month}.${day} ${hours}:${minutes}:${seconds}`;
+}
+
+
+const replaceItem = (orderId, data) => {
+
+  dataSource.value.forEach((item, index) => {
+
+    if (item.isParentOrder && item.children.length > 0) {
+      item.children.forEach((child_item, child_index) => {
+        if(child_item.id == orderId) {
+          const newData = {...data}
+          dataSource.value[index].children[child_index] = newData
+        }
+      })
+    }
+
+    if(item.id == orderId) {
+      const newData = {...data}
+      newData.No=dataSource.value[index].No
+      dataSource.value[index] = newData
+    }
+  })
+
+}
+
+//详情模态框 确定回调
+// const handleDataOk = () => {
+//   dataModel.value = false;
+// }
 
 
 
@@ -724,6 +994,9 @@ const requestPost = (url, params, callback) => {
   }
 }
 
+.detail-summaryCell {
+  background-color: #d9d9d961;
+}
 
  .card-count {
    display: flex;
@@ -761,5 +1034,17 @@ const requestPost = (url, params, callback) => {
  .card-search-form{
    display: flex;
  }
+ .card-search-form >>> .ant-select-selector{
+   border-right: 0;
+   border-radius: 5px 0 0 5px;
+ }
+.card-search-form >>> .ant-input{
+  border-radius: 0;
+}
+
+
+.card-count-content:hover{
+  cursor: pointer;
+}
 
 </style>

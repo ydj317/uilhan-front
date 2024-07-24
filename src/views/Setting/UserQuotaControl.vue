@@ -166,7 +166,7 @@
 
                     <a-form-item has-feedback label="상품 수집수" name="taobao_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.taobao_count"
                         />
                     </a-form-item>
@@ -180,7 +180,7 @@
 
                     <a-form-item has-feedback label="이미지 자동번역 횟수" name="auto_trans_image_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.auto_trans_image_count"
                         />
 
@@ -192,28 +192,28 @@
 
                     <a-form-item has-feedback label="이미지 번역 횟수" name="trans_image_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.trans_image_count"
                         />
                     </a-form-item>
 
                     <a-form-item has-feedback label="GPT 사용횟수" name="gpt_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.gpt_count"
                         />
                     </a-form-item>
 
                     <a-form-item has-feedback label="지마켓 상품 수집수" name="gmarket_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.gmarket_count"
                         />
                     </a-form-item>
 
                     <a-form-item has-feedback label="옥션 상품 수집수" name="auction_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.auction_count"
                         />
                     </a-form-item>
@@ -434,7 +434,7 @@ const validateEndtime = async (_rule, value) => {
 const validateCnt = async (_rule, value) => {
     if (value === null){
         return Promise.reject('값이 비여있습니다. 반드시 입력하여 주시기 바랍니다.');
-    }else if (value < 0){
+    }else if (value < 0 && value !== -9999){
         return Promise.reject('반드시 양수여야 합니다.');
     }else if (!Number.isInteger(value)){
         return Promise.reject('반드시 정수여야 합니다.');
@@ -504,9 +504,16 @@ const rules = {
 };
 
 onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
     search();
     getAllplan();
 })
+
+const handleKeydown = (event) => {
+  if (event.key === 'Enter') {
+    search();
+  }
+}
 
 const initSearch = () => {
     username.value = '';
@@ -598,10 +605,12 @@ const planTypeMap = {
     Extra2PlanGPT100: 'AI GPT 서비스 100개',
     Extra2PlanGPT150: 'AI GPT 서비스 150개',
     Extra2PlanGPT200: 'AI GPT 서비스 200개',
+    Extra2PlanGPT250: 'AI GPT 서비스 250개',
     Extra2PlanGPT300: 'AI GPT 서비스 300개',
     Extra3PlanMarketCollect100: 'ESM 원클릭 수집 100',
     Extra3PlanMarketCollect150: 'ESM 원클릭 수집 150',
     Extra3PlanMarketCollect200: 'ESM 원클릭 수집 200',
+    Extra3PlanMarketCollect250: 'ESM 원클릭 수집 250',
     Extra3PlanMarketCollect300: 'ESM 원클릭 수집 300',
     Extra1PlanAutoImageCount100: '이미지 자동번역100',
     Extra1PlanAutoImageCount200: '이미지 자동번역200',
@@ -833,7 +842,7 @@ const getAllplan = () => {
             return false;
         }
 
-        console.log(res.data)
+        console.log('allplan',res.data)
         /**
          * 자동이미지 숨김 폰론트단에서 처리
          */
