@@ -57,8 +57,8 @@
       </a-form-item>
 
 <!--      발송정책-->
-      <a-form-item name="return_address_code" label="발송정책" :rules="[{ required: true, message: '발송정책을 선택해 주세요.' }]">
-        <a-select v-model:value="state.formData.shipping_policy_code" placeholder="발송정책을 선택해 주세요" style="width:260px;">
+      <a-form-item name="return_address_code" label="발송 정책" :rules="[{ required: true, message: '발송 정책을 선택해 주세요.' }]">
+        <a-select v-model:value="state.formData.shipping_policy_code" placeholder="발송 정책을 선택해 주세요" style="width:260px;">
           <a-select-option :value="item.code" v-for="(item, key) in state.shippingPolicyList"
                            :key="key">{{ item.name }}</a-select-option>
         </a-select>
@@ -88,9 +88,19 @@
           <a-radio value="F">유료</a-radio>
         </a-radio-group>
 
-        <div v-if="state.formData.return_shipping_free === 'F'">
-          <a-input-number v-model:value="state.formData.return_shipping_fee"  style="width: 200px;" /> 원
-        </div>
+        <a-form-item v-if="state.formData.return_shipping_free === 'F'" class="mt10">
+
+          <a-input-number
+            addon-after="원"
+            v-model:value="state.formData.return_shipping_fee"
+            min="100"
+            max="200000"
+            step="100"
+            style="width:
+              200px;" >
+
+          </a-input-number>
+        </a-form-item>
 
       </a-form-item>
 
