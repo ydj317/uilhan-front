@@ -184,8 +184,10 @@
           :bordered="true"
           :columns="sku_columns"
           :pagination=false
-          :data-source="this.product.sku"
+          :data-source="sortedData"
           :row-selection="{selectedRowKeys: selectedRowKeys, onChange: handleRowSelectionChange}"
+          @change="skuTableChange"
+
       >
         <!--bodyCell-->
         <template v-slot:bodyCell="{ record, column, index }">
@@ -345,6 +347,9 @@ export default defineComponent({
     ...mapState({
       product: (state) => state.product.detail,
     }),
+    sortedData() {
+      return this.sortData(this.product.sku);
+    },
   },
   props: {
     activeKey: {
@@ -411,6 +416,8 @@ export default defineComponent({
           title: "판매가/원",
           key: "selling_price", // (구매원가+중국내 운임)*마진율
           width: "8%",
+          sorter: true,
+          sortOrder: null,
         },
         {
           title: "운임/원",
@@ -444,6 +451,9 @@ export default defineComponent({
       specGroupVisible:true,
       // 韩国MarketList
       KrMarketList: ['Domeggook', 'Alibaba'],
+
+      sortOrder: null,
+      sortColumn: null,
     };
   },
 
@@ -828,6 +838,16 @@ export default defineComponent({
           _this.handleShippingFeeChange(_this.product.item_shipping_fee);
           _this.setExpectedReturn();
           _this.product.resetOption = true;
+
+          // 重置排序顺序和列高亮
+          _this.sortOrder = null;
+          _this.sortColumn = null;
+          _this.sku_columns.filter((item) => {
+            if (item.key === 'selling_price') {
+              item.sortColumn = _this.sortColumn
+              item.sortOrder = _this.sortOrder;
+            }
+          });
           message.success('옵션정보가 초기화 되었습니다.')
         },
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -899,7 +919,29 @@ export default defineComponent({
     //获取图片requestIds
     getRequestIds(){
       this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:[]});
-    }
+    },
+
+    sortData(data) {
+      if (!this.sortColumn || !this.sortOrder) return data;
+      const sortedData = [...data].sort((a, b) => {
+        const result = a[this.sortColumn] - b[this.sortColumn];
+        return this.sortOrder === 'ascend' ? result : -result;
+      });
+      return sortedData;
+    },
+
+    skuTableChange(pagination, filters, sorter) {
+      this.sortColumn = sorter.columnKey;
+      this.sortOrder = sorter.order;
+
+      this.sku_columns.filter((item) => {
+        if (item.key === 'selling_price') {
+          item.sortColumn = sorter.columnKey;
+          item.sortOrder = sorter.order;
+        }
+      });
+    },
+
   },
 
   mounted() {
@@ -1180,5 +1222,9 @@ export default defineComponent({
 }
 .big-img-wrap:hover .big-img{
   display: block;
+}
+
+:deep .ant-table-wrapper .ant-table-column-sorters {
+  padding: 0 55px;
 }
 </style>
