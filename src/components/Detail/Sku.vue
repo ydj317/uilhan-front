@@ -187,7 +187,7 @@
           :data-source="sortedData"
           :row-selection="{selectedRowKeys: selectedRowKeys, onChange: handleRowSelectionChange}"
           @change="skuTableChange"
-
+          :locale="tableLocale"
       >
         <!--bodyCell-->
         <template v-slot:bodyCell="{ record, column, index }">
@@ -430,6 +430,12 @@ export default defineComponent({
           width: "7%",
         },
       ],
+      tableLocale: {
+        triggerDesc: '클릭시 판매가 높은 순/낮은 순으로 배열합니다.',
+        triggerAsc: '클릭시 판매가 높은 순/낮은 순으로 배열합니다.',
+        cancelSort: '클릭시 판매가 높은 순/낮은 순으로 배열합니다.',
+      },
+
       sku_pagination: {
         total: 0,
         defaultPageSize: 10,
