@@ -17,7 +17,7 @@ import Cookie from "js-cookie";
 import moment from "moment";
 
 const path = window.location.pathname;
-const exclude = ['/user/login', '/user/register', '/user/find', '/user/find/username', '/user/find/password']
+const exclude = ['/user/login', '/user/register', '/user/find/password']
 
 // 10분에 한번씩 토큰이 만료되였는지 확인
 let interval = null;
