@@ -332,7 +332,7 @@
   </div>
 </template>
 <script>
-import { defineComponent, onMounted, reactive, ref, toRaw } from "vue";
+import { computed, defineComponent, onMounted, reactive, ref, toRaw } from "vue";
 import "vue-loading-overlay/dist/vue-loading.css";
 import { Form, message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
@@ -466,19 +466,22 @@ export default defineComponent({
     const currentOfProductList = ref(1);
     const pageSizeOfProductList = ref(10);
     const dataSourceOfProductList = ref([]);
-    const rowSelectionOfProductList = {
-      /* 동기화할 상품선택 (체크박스) */
-      onChange: (selectedRowKeys) => {
-        dataOfProductListRowSelection.value = selectedRowKeys;
+    const selectedRowKeys = ref([]);
+    const rowSelectionOfProductList = computed(() =>({
+      selectedRowKeys: selectedRowKeys.value,
+      onChange: (selectedKeys) => {
+        selectedRowKeys.value = selectedKeys;
+        dataOfProductListRowSelection.value = selectedKeys;
       },
       /* 체크박스속성 (선택불가) */
-      getCheckboxProps: (record) => ({
-        name: record.name,
-        /* 상품상세조회시 선택불가 */
-        disabled:
-          ["true", "false"].includes(record.desc_license_usable) === false || record.is_success === false,
-      }),
-    };
+      // getCheckboxProps: (record) => ({
+      //   name: record.name,
+      //   /* 상품상세조회시 선택불가 */
+      //   disabled:
+      //     ["true", "false"].includes(record.desc_license_usable) === false || record.is_success === false,
+      // }),
+    }))
+
     const pageSizeOptionsOfProductList = ref(["10", "20", "30", "40", "50"]);
 
     const onLoadShowTotal = () => {
@@ -488,6 +491,7 @@ export default defineComponent({
       return `전체 상품 건수 ${totalOfProductList.value} `;
     };
     const onClickSyncProduct = (aSyncProduct) => {
+      console.log(1,aSyncProduct);
       if (lib.isArray(aSyncProduct, true) === false) {
         message.warning("동기화 진행할 상품을 선택해 주세요.");
         return false;
