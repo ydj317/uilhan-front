@@ -23,6 +23,7 @@ const exclude = ['/user/login', '/user/register', '/user/find/password']
 let interval = null;
 const checkLogin = () => {
   interval = setInterval(() => {
+
     if(!Cookie.get('expires_time') || moment().unix() > Cookie.get('expires_time')) {
       Cookie.remove('account_list');
       Cookie.remove('expires_time');
@@ -34,7 +35,7 @@ const checkLogin = () => {
       alert('세션이 만료되었습니다. 다시 로그인해주세요.')
       window.location.replace('/user/login')
     }
-  }, 11000);
+  }, 10 * 60 * 1000);
 }
 
 onMounted(() => {
