@@ -56,8 +56,8 @@
             size="middle"
             @search="searchHandle"
           />
-<!--          <a-input v-model:value="speVal" style="width: 120px;" aria-placeholder="搜素"/>-->
-<!--          <a-button type="primary" @click.prevent="search">검색</a-button>-->
+          <!--          <a-input v-model:value="speVal" style="width: 120px;" aria-placeholder="搜素"/>-->
+          <!--          <a-button type="primary" @click.prevent="search">검색</a-button>-->
         </div>
 
       </div>
@@ -77,33 +77,33 @@
                :expandedRowKeys="expandedRowKeys"
                @expand="handleExpand"
                :scroll="{ x: 'max-content' }">
-      <template v-slot:bodyCell="{ text, record, index, column }">
+        <template v-slot:bodyCell="{ text, record, index, column }">
 
-        <!--          <template v-if="column.key === 'auto_trans_image'">-->
-        <!--            <span>{{ text === true ? '사용함' : '사용안함'}}</span>-->
-        <!--          </template>-->
+          <!--          <template v-if="column.key === 'auto_trans_image'">-->
+          <!--            <span>{{ text === true ? '사용함' : '사용안함'}}</span>-->
+          <!--          </template>-->
 
-<!--        <template v-if="column.key === 'plan_type_label'">-->
-<!--          <a-tooltip :title="text">-->
-<!--            <span style="width: 120px;display: block;white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">{{ text }}</span>-->
-<!--          </a-tooltip>-->
-<!--        </template>-->
-        <template v-if="column.key === 'id' && record.hasOwnProperty('children')">
-          <span class="color-2171E2">{{ text }}</span>
+          <!--        <template v-if="column.key === 'plan_type_label'">-->
+          <!--          <a-tooltip :title="text">-->
+          <!--            <span style="width: 120px;display: block;white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">{{ text }}</span>-->
+          <!--          </a-tooltip>-->
+          <!--        </template>-->
+          <template v-if="column.key === 'id' && record.hasOwnProperty('children')">
+            <span class="color-2171E2">{{ text }}</span>
+          </template>
+
+          <!--        <template v-if="column.key === 'operation' && record.hasOwnProperty('children')"><a @click="editData(index,record)">详情</a></template>-->
+          <template v-if="column.key === 'operation'"><a @click="editData(record.id)">详情</a></template>
         </template>
 
-<!--        <template v-if="column.key === 'operation' && record.hasOwnProperty('children')"><a @click="editData(index,record)">详情</a></template>-->
-        <template v-if="column.key === 'operation'"><a @click="editData(record.id)">详情</a></template>
-      </template>
-
-    </a-table>
+      </a-table>
 
       <a-modal v-model:open="dataModel"
                title="서비스 결제관리"
                width="100%"
                :footer="null"
                :bodyStyle="{height:'60vh',overflow:'auto'}"
-               >
+      >
 
         <a-card :bordered="false" style="overflow: auto">
           <div class="fl">
@@ -130,7 +130,7 @@
 
               </a-descriptions>
             </div>
-<!--            <span class="p7 fl-te">xxxxx</span>-->
+            <!--            <span class="p7 fl-te">xxxxx</span>-->
 
           </div>
           <div class="mt50">
@@ -189,18 +189,18 @@
 
       </a-modal>
 
-    <!--paging-->
-    <div class="w100 center top h50" style="background-color: white">
-      <a-pagination
-        v-model:current="current"
-        :page-size-options="pageSizeOptions"
-        :total="total"
-        show-size-changer
-        :page-size="pageSize"
-        @change="onChange"
-      >
-      </a-pagination>
-    </div>
+      <!--paging-->
+      <div class="w100 center top h50" style="background-color: white">
+        <a-pagination
+          v-model:current="current"
+          :page-size-options="pageSizeOptions"
+          :total="total"
+          show-size-changer
+          :page-size="pageSize"
+          @change="onChange"
+        >
+        </a-pagination>
+      </div>
 
     </a-card>
   </div>
@@ -513,7 +513,7 @@ const threeCol = [
 
 onMounted(() => {
   search();
-  getStatistics();
+  // getStatistics();
 })
 
 //点击搜索回调  先重置订单状态
@@ -575,6 +575,8 @@ const getStatistics = () => {
 //table 点击搜索回调
 const search = () => {
 
+  getStatistics()
+
   const oParam = {
     page: current.value,
     page_size: pageSize.value,
@@ -608,7 +610,7 @@ const search = () => {
 
     dataSource.value = data.list.map((item,key) => {
       item.No = total.value - (current.value - 1) * pageSize.value - key;
-      if(item.children.length > 0){
+      if(item.hasOwnProperty('children') && item.children.length > 0){
         item.children = item.children.map((ele, k) => {
           delete ele.children;
           return { ...ele };
@@ -752,7 +754,7 @@ const editData = (id) => {
       let referrerRefundEstimatedAmount = '';
       let referrerRefundConfirmedAmount = '';
       if (refundsItem!==undefined){
-         referrerRefundEstimatedAmount = Math.floor((referrerTotalAmount / refundsItem.usableDays) * refundsItem.refundDay);
+        referrerRefundEstimatedAmount = Math.floor((referrerTotalAmount / refundsItem.usableDays) * refundsItem.refundDay);
         referrerRefundConfirmedAmount = refundsItem.statusFlag === 'Success'? numberFormat(referrerRefundEstimatedAmount) : '';
       }
 
@@ -777,7 +779,7 @@ const editData = (id) => {
       if (uData.id === currentRefundOrderId.value){
         updateData = { ...uData };
       }else {
-        if(uData.isParentOrder && uData.children.length > 0){
+        if(uData.isParentOrder && uData.hasOwnProperty('children') && uData.children.length > 0){
           uData.children.forEach((item) => {
             delete item.children;
             if (item.id === currentRefundOrderId.value){
@@ -923,7 +925,7 @@ const replaceItem = (orderId, data) => {
 
   dataSource.value.forEach((item, index) => {
 
-    if (item.isParentOrder && item.children.length > 0) {
+    if (item.isParentOrder && item.hasOwnProperty('children') && item.children.length > 0) {
       item.children.forEach((child_item, child_index) => {
         if(child_item.id == orderId) {
           const newData = {...data}
@@ -998,46 +1000,46 @@ const requestPost = (url, params, callback) => {
   background-color: #d9d9d961;
 }
 
- .card-count {
-   display: flex;
-   justify-content: flex-start;
-   font-size: 15px;
-   font-weight: 600;
- }
+.card-count {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 15px;
+  font-weight: 600;
+}
 
- .card-count-content{
-   padding: 13px;
-   margin-right: 10px;
-   width: 135px;
-   height: 50px;
-   border: 1px solid #cccccc;
-   border-radius: 8px;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
-   transition: box-shadow 0.3s ease; /* 添加平滑过渡效果 */
+.card-count-content{
+  padding: 13px;
+  margin-right: 10px;
+  min-width: 135px;
+  height: 50px;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  transition: box-shadow 0.3s ease; /* 添加平滑过渡效果 */
 
- }
+}
 
- .card-count-content:hover {
-   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 悬停时的阴影效果 */
- }
+.card-count-content:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 悬停时的阴影效果 */
+}
 
- .card-count-span{
-   padding-left: 22px;
-   color: #2A6BD0;
- }
+.card-count-span{
+  padding-left: 22px;
+  color: #2A6BD0;
+}
 
- .card-search{
-   margin-top: 50px;
-   display: flex;
-   justify-content: space-between;
- }
- .card-search-form{
-   display: flex;
- }
- .card-search-form >>> .ant-select-selector{
-   border-right: 0;
-   border-radius: 5px 0 0 5px;
- }
+.card-search{
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-between;
+}
+.card-search-form{
+  display: flex;
+}
+.card-search-form >>> .ant-select-selector{
+  border-right: 0;
+  border-radius: 5px 0 0 5px;
+}
 .card-search-form >>> .ant-input{
   border-radius: 0;
 }
