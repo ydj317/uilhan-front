@@ -10,7 +10,7 @@
     <a-page-header title="유일 AI 플랜" class="font-SCDream6 fs16" />
     <a-flex align="center" justify="space-between" class="title bg-fafafa">
       <span class="fs18">AI 플랜 기능설명</span>
-<!--      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>-->
+      <!--      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>-->
     </a-flex>
     <a-flex class="check-wrap mt30" wrap="wrap">
       <a-flex align="center" class="check-list" v-for="v in state.checkList">
@@ -255,7 +255,7 @@ onBeforeMount(() => {
     }
     const allPlanData = res.data;
     //设置基本服务 (主/子账号,推荐码)
-   state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
+    state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
 
       let title;
       let subTitle = '';
@@ -544,50 +544,75 @@ const submit = () => {
   // console.log('我买了啥', payPlanList, payType);
 
   requestPost('/api/user/quota/order/create', {'plans':[...payPlanList],'paymentMethod':payType}, (data) => {
-    // console.log(data);
     if (data.orders.length > 0){
 
-      const routeData = router.resolve({
-        name: 'user_thirdPartyPaymentPage',
-        query: { orderList:[...data.orders] , total: data.total }
-      });
-      window.open(routeData.href, '_blank');
 
-      open.value = true;
+      if (data.isDebug === undefined || data.isDebug === false){
 
-       intervalId  = setInterval(() => {
+        // 调用结算界面
+        const pay_data = {
+          ordr_idxx: data.payInfo.ordr_idxx, // 상점관리 주문번호
+          good_name: data.payInfo.good_name, // 상품명
+          good_mny: data.payInfo.good_mny , // 주문요청금액
+          shop_user_id: data.payInfo.shop_user_id, // 쇼핑몰에서 관리하는 회원 ID
+          // buyr_name: data.payInfo.buyr_name, // 주문자이름(선택)
+          // buyr_tel2: "010-0000-0000", // 주문자 휴대폰번호(선택)
+          // buyr_mail: "test@test.co.kr", // 주문자 이메일(선택)
+          site_cd: data.payInfo.site_cd, // 가맹점 정보 설정
+          site_name: data.payInfo.site_name, // 가맹점 정보 설정
+          pay_method: data.payInfo.pay_method, // 100000000000 신용카드 | 001000000000 가상계좌
+        }
+        jsf__pay(pay_data);
 
-        AuthRequest.get(process.env.VUE_APP_API_URL + '/api/user/order/is/payed', {
-          params:{
-            orderId:data.orders[0]
-          }
-        }).then((res) => {
-          if (res.status !== '2000') {
-            message.error(res.message)
-            return false;
-          }
-
-          if (res.data){
-
-            clearInterval(intervalId);
-            router.push({
-              name: 'user_my'
-            })
-          }
-
-        }).catch((error) => {
-          message.error(error.message);
-          return false;
+      }else {
+        const routeData = router.resolve({
+          name: 'user_thirdPartyPaymentPage',
+          query: { orderList:[...data.orders] , total: data.total }
         });
+        window.open(routeData.href, '_blank');
 
-
-      },checkPayTime)
+        payedHandle();
+      }
 
     }
 
   });
 
+
+
   //发送创建订单接口, 如果创建成功, 新开一个 付款 url, 本页面显示 dialog 提示, 有2个按钮(已完成付款, 未付款), 点击已完成付款, 跳转到付款成功页面, 点击未付款, 关闭 dialog
+}
+
+const payedHandle = () => {
+  open.value = true;
+
+  intervalId  = setInterval(() => {
+
+    AuthRequest.get(process.env.VUE_APP_API_URL + '/api/user/order/is/payed', {
+      params:{
+        orderId:data.orders[0]
+      }
+    }).then((res) => {
+      if (res.status !== '2000') {
+        message.error(res.message)
+        return false;
+      }
+
+      if (res.data){
+
+        clearInterval(intervalId);
+        router.push({
+          name: 'user_my'
+        })
+      }
+
+    }).catch((error) => {
+      message.error(error.message);
+      return false;
+    });
+
+
+  },checkPayTime)
 }
 
 const handleOk = () => {
@@ -621,6 +646,57 @@ const requestPost = (url, params, callback) => {
   })
 
 }
+
+/* 결제창 호출 调用结算界面 */
+const jsf__pay = (args = {}) => {
+
+  const form = {
+    ...args
+  }
+
+  // create form element
+  const formElement = document.createElement("form");
+  formElement.setAttribute("name", "order_info");
+  // create hidden input element
+  for (const key in form) {
+    const inputElement = document.createElement("input");
+    inputElement.setAttribute("type", "hidden");
+    inputElement.setAttribute("name", key);
+    inputElement.setAttribute("value", form[key]);
+    formElement.appendChild(inputElement);
+  }
+
+  try {
+    KCP_Pay_Execute_Web(formElement);
+  } catch (e) {
+    /* IE 에서 결제 정상종료시 throw로 스크립트 종료 */
+    console.log(e);
+  }
+}
+
+/* 인증완료시 재귀 함수 认证后的回调函数  */
+const m_Completepayment = (FormOrJson, closeEvent) => {
+
+  if (FormOrJson.res_cd.value == "0000") {
+    console.log(FormOrJson);
+
+    // FormOrJson 데이터를 Server 에 전달하여 승인요청하기
+    // {
+    //   "res_cd": '',
+    //   "res_msg": '',
+    //   "enc_info": '',
+    //   "enc_data": '',
+    //   "ret_pay_method": '',
+    //   "tran_cd": '',
+    //   "use_pay_method": '',
+    // }
+
+  } else {
+    message.warning("[" + FormOrJson.res_cd.value + "] " + FormOrJson.res_msg.value);
+    closeEvent();
+  }
+}
+
 </script>
 
 <style scoped>
