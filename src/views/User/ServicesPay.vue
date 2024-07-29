@@ -10,7 +10,7 @@
     <a-page-header title="유일 AI 플랜" class="font-SCDream6 fs16" />
     <a-flex align="center" justify="space-between" class="title bg-fafafa">
       <span class="fs18">AI 플랜 기능설명</span>
-<!--      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>-->
+      <!--      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>-->
     </a-flex>
     <a-flex class="check-wrap mt30" wrap="wrap">
       <a-flex align="center" class="check-list" v-for="v in state.checkList">
@@ -106,7 +106,7 @@
           </a-flex>
         </a-flex>
         <a-flex vertical class="mt12 border-top-f0f0f0-2 border-bottom-f0f0f0-2">
-          <a-flex align="center" class="font-SCDream6 fs14 h50 pl20 text border-bottom-f0f0f0-2">Total 결제금액</a-flex>
+          <a-flex align="center" class="font-SCDream6 fs14 h50 pl20 text border-bottom-f0f0f0-2">Tatal 결제금액</a-flex>
           <a-flex vertical justify="center" gap="10" class="p20 font-SCDream4 fs12 border-bottom-f0f0f0-2">
             <a-flex align="center" justify="space-between">
               <span>* AI 플랜</span>
@@ -255,7 +255,7 @@ onBeforeMount(() => {
     }
     const allPlanData = res.data;
     //设置基本服务 (主/子账号,推荐码)
-   state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
+    state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
 
       let title;
       let subTitle = '';
@@ -400,8 +400,8 @@ onBeforeMount(() => {
     if (state.isPay && allPlanData.currPlan){
       const basicObj = {
         value:0,
-        title:'구매한 서비스',
-        subTitle:'사용중인 서비스 만료일: ',
+        title:'已经购买',
+        subTitle:'当前套餐到期时间: ',
         time: allPlanData.currPlan.end_time,
         money:'0',
         monthMoney:'0',
@@ -436,6 +436,7 @@ onBeforeMount(() => {
       state.basicList.unshift(basicObj);
     }
 
+    initRouteCheckPlan();
 
   }).catch((error) => {
     message.error(error.message);
@@ -450,19 +451,24 @@ onUnmounted(() => {
 
 onMounted(() => {
 
-    if (route.query.basic){
-      state.selectedList.basic = state.basicList.findIndex(item => item.value == route.query.basic);
-    }
-    if (route.query.autoTranslateImg){
-      state.selectedList['advanced1'] = state.advancedList[0].radioList.findIndex(item => item.planName === route.query.autoTranslateImg);
-    }
-    if (route.query.gptAutomaticTitle){
-      state.selectedList['advanced2']= state.advancedList[1].radioList.findIndex(item => item.planName === route.query.gptAutomaticTitle);
-    }
-    if (route.query.autoESMSalesData){
-      state.selectedList['advanced3']= state.advancedList[2].radioList.findIndex(item => item.planName === route.query.autoESMSalesData);
-    }
+
 })
+
+const initRouteCheckPlan = () => {
+
+  if (route.query.basic){
+    state.selectedList.basic = state.basicList.findIndex(item => item.value == route.query.basic);
+  }
+  if (route.query.autoTranslateImg){
+    state.selectedList['advanced1'] = state.advancedList[0].radioList.findIndex(item => item.planName === route.query.autoTranslateImg);
+  }
+  if (route.query.gptAutomaticTitle){
+    state.selectedList['advanced2']= state.advancedList[1].radioList.findIndex(item => item.planName === route.query.gptAutomaticTitle);
+  }
+  if (route.query.autoESMSalesData){
+    state.selectedList['advanced3']= state.advancedList[2].radioList.findIndex(item => item.planName === route.query.autoESMSalesData);
+  }
+}
 
 // onMounted(() => {
 //   const jsonString = localStorage.getItem('selectedServices');
@@ -508,23 +514,145 @@ const addToCart = () => {
   return false;
 }
 
+const submit = () => {
+  if (!state.selectedList.book1) {
+    message.warn("请同意协议1, 才能继续")
+    return
+  }
+
+  if (!state.selectedList.book2) {
+    message.warn("请同意协议2, 才能继续")
+    return
+  }
+
+  const payPlanList = []
+  if (state.basicList[state.selectedList.basic]['planName'] !== 'BasicPlan'){
+    payPlanList.push(state.basicList[state.selectedList.basic]['planName'])
+  }
+  if (state.selectedList.advanced1 !== 3) {
+    payPlanList.push(state.advancedList[0]['radioList'][state.selectedList.advanced1]['planName'])
+  }
+  if (state.selectedList.advanced2 !== 5) {
+    payPlanList.push(state.advancedList[1]['radioList'][state.selectedList.advanced2]['planName'])
+  }
+  if (state.selectedList.advanced3 !== 5) {
+    payPlanList.push(state.advancedList[2]['radioList'][state.selectedList.advanced3]['planName'])
+  }
+
+  const payType = state.selectedList.payType === "1" ? "BankCard" : "Passbook"
+
+  // console.log('我买了啥', payPlanList, payType);
+
+  requestPost('/api/user/quota/order/create', {'plans':[...payPlanList],'paymentMethod':payType}, (data) => {
+    if (data.orders.length > 0){
+
+
+      if (data.isDebug === undefined || data.isDebug === false){
+
+        // 调用结算界面
+        const pay_data = {
+          ordr_idxx: data.payInfo.ordr_idxx, // 상점관리 주문번호
+          good_name: data.payInfo.good_name, // 상품명
+          good_mny: data.payInfo.good_mny , // 주문요청금액
+          shop_user_id: data.payInfo.shop_user_id, // 쇼핑몰에서 관리하는 회원 ID
+          // buyr_name: data.payInfo.buyr_name, // 주문자이름(선택)
+          // buyr_tel2: "010-0000-0000", // 주문자 휴대폰번호(선택)
+          // buyr_mail: "test@test.co.kr", // 주문자 이메일(선택)
+          site_cd: data.payInfo.site_cd, // 가맹점 정보 설정
+          site_name: data.payInfo.site_name, // 가맹점 정보 설정
+          pay_method: data.payInfo.pay_method, // 100000000000 신용카드 | 001000000000 가상계좌
+        }
+        jsf__pay(pay_data);
+
+      }else {
+        const routeData = router.resolve({
+          name: 'user_thirdPartyPaymentPage',
+          query: { orderList:[...data.orders] , total: data.total }
+        });
+        window.open(routeData.href, '_blank');
+
+        payedHandle();
+      }
+
+    }
+
+  });
+
+
+
+  //发送创建订单接口, 如果创建成功, 新开一个 付款 url, 本页面显示 dialog 提示, 有2个按钮(已完成付款, 未付款), 点击已完成付款, 跳转到付款成功页面, 点击未付款, 关闭 dialog
+}
+
+const payedHandle = () => {
+  open.value = true;
+
+  intervalId  = setInterval(() => {
+
+    AuthRequest.get(process.env.VUE_APP_API_URL + '/api/user/order/is/payed', {
+      params:{
+        orderId:data.orders[0]
+      }
+    }).then((res) => {
+      if (res.status !== '2000') {
+        message.error(res.message)
+        return false;
+      }
+
+      if (res.data){
+
+        clearInterval(intervalId);
+        router.push({
+          name: 'user_my'
+        })
+      }
+
+    }).catch((error) => {
+      message.error(error.message);
+      return false;
+    });
+
+
+  },checkPayTime)
+}
+
+const handleOk = () => {
+  router.push({
+    name: 'user_my'
+  })
+}
+
+
+
+const requestPost = (url, params, callback) => {
+
+  loading.value = true;
+
+  AuthRequest.post(process.env.VUE_APP_API_URL + url,
+    params
+  ).then((res) => {
+    loading.value = false;
+    /* fail */
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    callback(res.data);
+
+
+  }).catch((error) => {
+    loading.value = false;
+    message.error('Error fetching data:', error);
+  })
+
+}
+
 /* 결제창 호출 调用结算界面 */
 const jsf__pay = (args = {}) => {
 
   const form = {
-    ordr_idxx: "TEST12345", // 상점관리 주문번호
-    good_name: "AI 서비스 결제", // 상품명
-    good_mny: getTotalMoney.value + getTotalMoney.value * 0.1 , // 주문요청금액
-    shop_user_id: "홍길동", // 쇼핑몰에서 관리하는 회원 ID
-    buyr_name: "홍길동", // 주문자이름(선택)
-    buyr_tel2: "010-0000-0000", // 주문자 휴대폰번호(선택)
-    buyr_mail: "test@test.co.kr", // 주문자 이메일(선택)
-    site_cd: "AK3QN", // 가맹점 정보 설정
-    site_name: "유일(해주국제무역상사)", // 가맹점 정보 설정
-    pay_method: "100000000000", // 100000000000 신용카드 | 001000000000 가상계좌
     ...args
   }
-
 
   // create form element
   const formElement = document.createElement("form");
@@ -550,6 +678,7 @@ const jsf__pay = (args = {}) => {
 const m_Completepayment = (FormOrJson, closeEvent) => {
 
   if (FormOrJson.res_cd.value == "0000") {
+    console.log(FormOrJson);
 
     // FormOrJson 데이터를 Server 에 전달하여 승인요청하기
     // {
@@ -568,117 +697,6 @@ const m_Completepayment = (FormOrJson, closeEvent) => {
   }
 }
 
-
-const submit = () => {
-  if (!state.selectedList.book1) {
-    message.warn("취소/환불 규정에 동의해 주세요.")
-    return
-  }
-
-  if (!state.selectedList.book2) {
-    message.warn("서비스 이용약관에 동의해 주세요.")
-    return
-  }
-
-  const payPlanList = []
-  if (state.basicList[state.selectedList.basic]['planName'] !== 'BasicPlan') {
-    payPlanList.push(state.basicList[state.selectedList.basic]['planName'])
-  }
-  if (state.selectedList.advanced1 !== 3) {
-    payPlanList.push(state.advancedList[0]['radioList'][state.selectedList.advanced1]['planName'])
-  }
-  if (state.selectedList.advanced2 !== 5) {
-    payPlanList.push(state.advancedList[1]['radioList'][state.selectedList.advanced2]['planName'])
-  }
-  if (state.selectedList.advanced3 !== 5) {
-    payPlanList.push(state.advancedList[2]['radioList'][state.selectedList.advanced3]['planName'])
-  }
-
-  const payType = state.selectedList.payType === "1" ? "BankCard" : "Passbook"
-
-  console.log('我买了啥', payPlanList, payType);
-
-
-  requestPost('/api/user/quota/order/create', {'plans':[...payPlanList],'paymentMethod':payType}, (data) => {
-    console.log(data);
-    if (data.orders.length > 0){
-
-      // const routeData = router.resolve({
-      //   name: 'user_thirdPartyPaymentPage',
-      //   query: { orderList:[...data.orders] , total: data.total }
-      // });
-      // window.open(routeData.href, '_blank');
-
-      // 调用结算界面
-      jsf__pay();
-
-      //open.value = true;
-
-      // intervalId  = setInterval(() => {
-      //
-      //   AuthRequest.get(process.env.VUE_APP_API_URL + '/api/user/order/is/payed', {
-      //     params:{
-      //       orderId:data.orders[0]
-      //     }
-      //   }).then((res) => {
-      //
-      //     if (res.status !== '2000') {
-      //       message.error(res.message)
-      //       return false;
-      //     }
-      //
-      //     if (res.data){
-      //
-      //       clearInterval(intervalId);
-      //       router.push({
-      //         name: 'user_my'
-      //       })
-      //     }
-      //
-      //   }).catch((error) => {
-      //     message.error(error.message);
-      //     return false;
-      //   });
-      //
-      //
-      // },checkPayTime)
-
-    }
-
-  });
-
-  //发送创建订单接口, 如果创建成功, 新开一个 付款 url, 本页面显示 dialog 提示, 有2个按钮(已完成付款, 未付款), 点击已完成付款, 跳转到付款成功页面, 点击未付款, 关闭 dialog
-}
-
-const handleOk = () => {
-  router.push({
-    name: 'user_my'
-  })
-}
-
-const requestPost = (url, params, callback) => {
-
-  loading.value = true;
-
-  AuthRequest.post(process.env.VUE_APP_API_URL + url,
-    params
-  ).then((res) => {
-    loading.value = false;
-    /* fail */
-    if (res.status !== "2000") {
-      message.error(res.message);
-      return false;
-    }
-
-    callback(res.data);
-
-
-  }).catch((error) => {
-    loading.value = false;
-    message.error('Error fetching data:', error);
-  })
-
-}
 </script>
 
 <style scoped>
