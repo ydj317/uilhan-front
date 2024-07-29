@@ -1,6 +1,6 @@
 <template>
   <a-modal class="xiangJi" v-model:open="isOpen" :closable="false"
-           :cancel-button-props="{ ghost: true, disabled: true }" :footer="null" width="100%" wrap-class-name="full-modal">
+           :cancel-button-props="{ ghost: true, disabled: true }" :footer="null">
     <!-- 模板HTML 不可修改 -->
     <div id="xiangji-app">
       <div id="some-dialog">
@@ -134,6 +134,7 @@ export default defineComponent({
 }
 
 .xiangJi {
+  width: 1400px!important;
   height: 100% !important;
 }
 
@@ -159,5 +160,8 @@ export default defineComponent({
 
 .ant-modal-footer > button.ant-btn.ant-btn-background-ghost {
   display: none !important;
+}
+.xiangJi.ant-modal{
+  padding-bottom: 0;
 }
 </style>

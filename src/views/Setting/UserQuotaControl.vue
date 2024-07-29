@@ -29,7 +29,7 @@
 
                 <a-descriptions-item label="서비스 기간">
                     <a-range-picker
-                        v-model:value="seerch_day"
+                        v-model:value="search_day"
                         value-format="YYYY-MM-DD"
                     />
                 </a-descriptions-item>
@@ -79,6 +79,7 @@
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(5)" class="ml10">서비스 사용기한 5일 연장</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(15)" class="ml5">서비스 사용기한 15일 연장</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleOk" class="ml5">서비스 초기화</a-button>
+                        <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auto_trans_image_count')"  class="ml5">批量自动翻译图像个数</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gpt_count')"  class="ml5">GPT 사용횟수 일괄변경</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gmarket_count')"  class="ml5">지마켓 상품수집 일괄변경</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auction_count')"  class="ml5">옥션 상품수집 일괄변경</a-button>
@@ -165,7 +166,7 @@
 
                     <a-form-item has-feedback label="상품 수집수" name="taobao_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.taobao_count"
                         />
                     </a-form-item>
@@ -179,7 +180,7 @@
 
                     <a-form-item has-feedback label="이미지 자동번역 횟수" name="auto_trans_image_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.auto_trans_image_count"
                         />
 
@@ -191,28 +192,28 @@
 
                     <a-form-item has-feedback label="이미지 번역 횟수" name="trans_image_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.trans_image_count"
                         />
                     </a-form-item>
 
                     <a-form-item has-feedback label="GPT 사용횟수" name="gpt_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.gpt_count"
                         />
                     </a-form-item>
 
                     <a-form-item has-feedback label="지마켓 상품 수집수" name="gmarket_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.gmarket_count"
                         />
                     </a-form-item>
 
                     <a-form-item has-feedback label="옥션 상품 수집수" name="auction_count">
                         <a-input-number
-                            min="0"
+
                             v-model:value="editableData.auction_count"
                         />
                     </a-form-item>
@@ -260,7 +261,7 @@ const loading = ref(false);
 const isAdmin = Cookie.get("member_roles").indexOf("ROLE_ADMIN") !== -1;
 const username = ref("");
 const plan_type = ref("");
-const seerch_day = ref(null);
+const search_day = ref(null);
 // const auto_trans_image = ref("");
 
 const tableRowKeys = ref([]);
@@ -433,7 +434,7 @@ const validateEndtime = async (_rule, value) => {
 const validateCnt = async (_rule, value) => {
     if (value === null){
         return Promise.reject('값이 비여있습니다. 반드시 입력하여 주시기 바랍니다.');
-    }else if (value < 0){
+    }else if (value < 0 && value !== -9999){
         return Promise.reject('반드시 양수여야 합니다.');
     }else if (!Number.isInteger(value)){
         return Promise.reject('반드시 정수여야 합니다.');
@@ -503,14 +504,21 @@ const rules = {
 };
 
 onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
     search();
     getAllplan();
 })
 
+const handleKeydown = (event) => {
+  if (event.key === 'Enter') {
+    search();
+  }
+}
+
 const initSearch = () => {
     username.value = '';
     plan_type.value = '';
-    seerch_day.value = null;
+    search_day.value = null;
     // auto_trans_image.value = '';
 }
 
@@ -597,10 +605,12 @@ const planTypeMap = {
     Extra2PlanGPT100: 'AI GPT 서비스 100개',
     Extra2PlanGPT150: 'AI GPT 서비스 150개',
     Extra2PlanGPT200: 'AI GPT 서비스 200개',
+    Extra2PlanGPT250: 'AI GPT 서비스 250개',
     Extra2PlanGPT300: 'AI GPT 서비스 300개',
     Extra3PlanMarketCollect100: 'ESM 원클릭 수집 100',
     Extra3PlanMarketCollect150: 'ESM 원클릭 수집 150',
     Extra3PlanMarketCollect200: 'ESM 원클릭 수집 200',
+    Extra3PlanMarketCollect250: 'ESM 원클릭 수집 250',
     Extra3PlanMarketCollect300: 'ESM 원클릭 수집 300',
     Extra1PlanAutoImageCount100: '이미지 자동번역100',
     Extra1PlanAutoImageCount200: '이미지 자동번역200',
@@ -623,10 +633,10 @@ const search = () => {
         oParam.plan_type = plan_type.value;
     }
 
-    if (seerch_day.value) {
+    if (search_day.value) {
 
-        oParam.start_time = Math.floor(Date.parse(seerch_day.value[0] + ' 00:00:00') / 1000);
-        oParam.end_time = Math.floor(Date.parse(seerch_day.value[1] + ' 23:59:59') / 1000);
+        oParam.start_time = Math.floor(Date.parse(search_day.value[0] + ' 00:00:00') / 1000);
+        oParam.end_time = Math.floor(Date.parse(search_day.value[1] + ' 23:59:59') / 1000);
     }
 
     // if (auto_trans_image.value !== '') {
@@ -662,7 +672,8 @@ const handleChange = (value) => {
 const storeNameMap = {
     'gpt_count': 'GPT',
     'gmarket_count': 'GMARKET',
-    'auction_count': 'AUCTION'
+    'auction_count': 'AUCTION',
+    'auto_trans_image_count':'IMAGE'
 }
 /**
  * 批量set Count
@@ -831,7 +842,7 @@ const getAllplan = () => {
             return false;
         }
 
-        console.log(res.data)
+        console.log('allplan',res.data)
         /**
          * 자동이미지 숨김 폰론트단에서 처리
          */

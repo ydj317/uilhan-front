@@ -41,7 +41,7 @@
                          @update:translateImageList="updateTranslateImageList"/>
   <old-image-translate-tools ref="oldImageTranslateTools" v-model:visible="visible"
                          @update:visible="visible = false" :translateImageList="translateImageList"
-                         @update:translateImageList="updateTranslateImageList" @update:editorImage="editorImage"/>
+                         @update:translateImageList="updateTranslateImageListOld" @update:editorImage="editorImage"/>
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
            title="상품 미리보기"
@@ -553,6 +553,7 @@ export default {
         tmp['order'] = index;
         tmp['request_id'] = '';
         tmp['url'] = item['url'];
+        tmp['old_url'] = item['url'];
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
           tmp['request_id'] = item['url'].slice(pos+11);
@@ -565,7 +566,7 @@ export default {
     },
     editorImage(res) {
       let aImagesUrl = [
-        {url: res.url}
+        {url: res.url,old_url:res.old_url}
       ];
       let imgList =aImagesUrl.map((item,index)=>{
         let tmp = [];
@@ -576,6 +577,7 @@ export default {
         tmp['order'] = index;
         tmp['request_id'] = '';
         tmp['url'] = item['url'];
+        tmp['old_url'] = item['old_url'];
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
           tmp['request_id'] = item['url'].slice(pos+11);
@@ -590,6 +592,29 @@ export default {
     updateTranslateImageList(imageList) {
       this.$refs.editor.clear();
       let content = "<p>";
+      this.translateImageList = this.translateImageList.map((v)=>{
+        let upData = imageList.find(v2 =>v2.old_url === v.old_url);
+        if(upData){
+          if (upData.translate_status === true) {
+            content += `<img src="${upData.translate_url}" style="max-width: 100%; height: auto;"/>`;
+            v.url = upData.translate_url;
+          } else {
+            const nUrl = upData.translate_url || upData.url;
+            content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
+            v.url = nUrl;
+          }
+        }else{
+          content += `<img src="${v.url}" style="max-width: 100%; height: auto;"/>`;
+        }
+        return v;
+      })
+      content += "</p>";
+      this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
+    },
+    updateTranslateImageListOld(imageList) {
+      this.$refs.editor.clear();
+      let content = "<p>";
       imageList.forEach((item) => {
         if (item.translate_status === true) {
           content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
@@ -597,16 +622,6 @@ export default {
           const nUrl = item.translate_url || item.url;
           content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
         }
-        this.translateImageList = this.translateImageList.map((v)=>{
-          if(v.url == item.original_url){
-            if(item.translate_status === true){
-              v.url = item.translate_url;
-            }else{
-              v.url = item.url;
-            }
-          }
-          return v;
-        })
       });
       content += "</p>";
       this.$refs.editor.contentValue = content;

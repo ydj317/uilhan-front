@@ -367,6 +367,7 @@ function getSmartstoreCategory() {
 }
 
 onMounted(() => {
+  searchParams.value.page = 1;
   Promise.all([
     getMarketList(),
     getMarketDetailUrls(),

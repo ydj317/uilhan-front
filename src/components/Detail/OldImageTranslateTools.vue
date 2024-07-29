@@ -353,7 +353,7 @@ export default defineComponent({
       if(this.selectedCollection.request_id){
         url += '?request_id='+this.selectedCollection.request_id;
       }
-      this.$emit("update:editorImage", {url});
+      this.$emit("update:editorImage", {url,old_url:this.selectedCollection.old_url});
     },
 
     deleteImages(index) {
