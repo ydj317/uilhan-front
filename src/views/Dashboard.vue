@@ -618,41 +618,49 @@ onBeforeUnmount(() => {
 });
 </script>
 <style scoped>
-:deep(.slick-slide) {
+:deep(.slide-wrap .slick-slide) {
   width: 1200px;
   height: 430px;
 }
-:deep(.slick-dots li) {
+:deep(.slide-wrap .slick-dots li) {
   background: #e3e3e3;
 }
-:deep(.slick-dots li.slick-active button) {
+:deep(.slide-wrap .slick-dots li.slick-active button) {
   background: black;
 }
-:deep(.ant-table-cell) {
+:deep(.table-wrap .ant-table-cell) {
   text-align: center!important;
 }
-:deep(.ant-table-thead .ant-table-cell) {
+:deep(.table-wrap .ant-table-thead .ant-table-cell) {
   background: none!important;
 }
-:deep(.ant-table-thead .ant-table-cell:before) {
+:deep(.table-wrap .ant-table-thead .ant-table-cell:before) {
   width: 0!important;
 }
-:deep(.ant-table-thead th:first-child) {
+:deep(.table-wrap .ant-table-thead th:first-child) {
   width: 10%;
 }
-:deep(.ant-table-summary .ant-table-cell) {
+:deep(.table-wrap .ant-table-summary .ant-table-cell) {
   background: #fafafa;
 }
 :deep(.notice-wrap .ant-tabs-nav) {
   height: 80px;
   padding: 16px 12px;
 }
-:deep(.ant-tabs-tab) {
+:deep(.notice-wrap .ant-tabs-tab) {
   font-size: 14px;
   color: #898F9E!important;
 }
-:deep(.ant-tabs-tab-active .ant-tabs-tab-btn) {
+:deep(.notice-wrap .ant-tabs-tab-active .ant-tabs-tab-btn) {
   font-size: 20px;
+  color: #3F4249!important;
+}
+:deep(.upload-wrap .ant-tabs-tab) {
+  font-size: 12px;
+  color: #898F9E!important;
+}
+:deep(.upload-wrap .ant-tabs-tab-active .ant-tabs-tab-btn) {
+  font-size: 14px;
   color: #3F4249!important;
 }
 :deep(.ant-tabs-tab.ant-tabs-tab-active) {
@@ -669,7 +677,7 @@ onBeforeUnmount(() => {
   padding: 0 16px;
 }
 :deep(.upload-wrap .ant-collapse-content-box) {
-  padding-block: 0;
+  padding-block: 0!important;
 }
  .left{
   width: 1200px;
@@ -702,12 +710,8 @@ onBeforeUnmount(() => {
    width: 240px;
    min-height: 83px;
    line-height: 150%;
-   //padding: 20px 16px;
    font-size: 16px;
    border-radius: 16px;
-   //background: rgba(255, 255, 255, 0.10);
-   //box-shadow: 2px 4px 10px 0px rgba(255, 255, 255, 0.10);
-   //color: #fff;
    cursor: pointer;
    transition: width 0.3s ease, min-height 0.3s ease, padding 0.3s ease, background-color 0.3s ease;
    position: relative;
@@ -719,8 +723,6 @@ onBeforeUnmount(() => {
 .slide-dot:hover,.slide-dot.active{
   width: 260px;
   min-height: 103px;
-  //padding: 30px 16px;
-  //background: rgba(255, 255, 255, 0.20);
   overflow: hidden;
   opacity: 1;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.40);
@@ -818,7 +820,7 @@ onBeforeUnmount(() => {
    height: 85px;
    border-radius: 16px;
    background: #3F4249;
-   box-shadow: 2px 4px 10px 0px rgba(0, 0, 0, 0.10);
+   box-shadow: 2px 4px 10px 0 rgba(0, 0, 0, 0.10);
  }
  .money-wrap img{
    width: 24px;
