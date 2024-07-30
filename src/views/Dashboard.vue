@@ -2,14 +2,12 @@
   <a-flex class="dashboard">
     <a-flex vertical class="left mb40">
       <div class="slide-wrap">
-        <a-carousel autoplay :dots="false" ref="carousel">
+        <a-carousel autoplay ref="carousel">
                     <div v-for="image in formState.bannerList" class="fl-tc carousel-slide"><img :src="image"/></div>
         </a-carousel>
-        <div class="slide-dot-wrap fl-c fl-te" style="gap: 10px" ref="scrollContainer">
+        <div class="slide-dot-wrap fl-c fl-te" style="gap: 10px;display: none;" ref="scrollContainer">
           <div class="slide-dot" :class="{'active':i == formState.slideActive}" v-for="(v,i) in formState.bannerList" @click="toggleSlide(i)">
             <img :src="v"/>
-<!--            <div class="fs14">{{ v.title }}</div>-->
-<!--            <div class="fs16">{{ v.content }}</div>-->
           </div>
         </div>
       </div>
@@ -79,7 +77,7 @@
     <a-flex vertical class="right ml40">
       <div class="notice-wrap fs14">
         <a-tabs v-model:activeKey="formState.noticeActiveTab">
-          <a-tab-pane key="1" tab="전체">
+          <a-tab-pane key="1" tab="유일 공지">
             <a-skeleton :loading="formState.noticeLoading" active>
             <template v-for="(v,i) in formState.noticeList" >
               <a-flex align="center" class="h44 p10" v-if="i<6">
@@ -149,7 +147,7 @@
           <a-collapse-panel key="1" header="전체 연동 마켓 업로드 현황" class="fs16 color-3F4249">
             <a-flex>
               <a-tabs v-model:activeKey="formState.uploadActiveTab">
-                <a-tab-pane key="1" tab="전체">
+                <a-tab-pane key="1" tab="오늘 업로드 상품수">
                   <a-flex wrap="wrap" class="collect-list color-2755f9" gap="16">
                     <a-flex vertical align="center" class="collect-main" v-for="v in formState.MarketList">
                       <img :src="getLogoSrc('market-logo', v.market)">
@@ -157,7 +155,7 @@
                     </a-flex>
                   </a-flex>
                 </a-tab-pane>
-                <a-tab-pane key="2" tab="배송대행 공지">
+                <a-tab-pane key="2" tab="전체 업로드 상품수">
                   <a-flex wrap="wrap" class="collect-list color-2755f9" gap="16">
                     <a-flex vertical align="center" class="collect-main" v-for="v in formState.MarketList">
                       <img :src="getLogoSrc('market-logo', v.market)">
@@ -196,7 +194,8 @@ const formState = reactive({
     require('@/assets/img/dashboard/dashboard_2.png'),
     require('@/assets/img/dashboard/dashboard_3.png'),
     require('@/assets/img/dashboard/dashboard_4.png'),
-    require('@/assets/img/dashboard/dashboard_5.png')
+    require('@/assets/img/dashboard/dashboard_5.png'),
+    require('@/assets/img/dashboard/dashboard_6.png'),
   ],
   slideList:[
     {title:'이벤트',content:'유일 솔루션 신규 이벤트'},
@@ -228,12 +227,12 @@ const formState = reactive({
   },
   noticeList:[],
   expressList:[
-    {img:require(`@/assets/img/dashboard/notice1.png`),title:'웨이하이 - 변경 전 주소로 배송된 화물 처리 안내',rq:'7.28'},
+    {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 - 변경 전 주소로 배송된 화물 처리 안내',rq:'7.28'},
     {img:require(`@/assets/img/dashboard/notice2.png`),title:'CJ대한통운 - 폭우로 인한 배송지연 지역 안내',rq:'7.26'},
     {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄점 - 휴무 안내',rq:'7.22'},
     {img:require(`@/assets/img/dashboard/notice1.png`),title:'중국 -FTA제율 적용 관련 추가 안내',rq:'7.18'},
     {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 B2B - 로켓그로스 출고 지원',rq:'7.17'},
-    {img:require(`@/assets/img/dashboard/notice2.png`),title:'도쿄 - 대금상환 거래 수취거부 안내',rq:'7.15'},
+    {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄 - 대금상환 거래 수취거부 안내',rq:'7.15'},
   ],
   noticeActiveTab:'1',
   noticeLoading:false,
@@ -622,6 +621,12 @@ onBeforeUnmount(() => {
 :deep(.slick-slide) {
   width: 1200px;
   height: 430px;
+}
+:deep(.slick-dots li) {
+  background: #e3e3e3;
+}
+:deep(.slick-dots li.slick-active button) {
+  background: black;
 }
 :deep(.ant-table-cell) {
   text-align: center!important;
