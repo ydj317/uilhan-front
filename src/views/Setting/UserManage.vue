@@ -19,7 +19,7 @@
 
     </div>
 
-    <a-table :dataSource="userData" :columns="tableColumns" :pagination="false">
+    <a-table :dataSource="userData" :columns="tableColumns" :pagination="false" :scroll="{ x: 1700 }" :row-class-name="(_record, index) => (_record.del_date ? 'bg-f0f0f0' : '')">
       <template #bodyCell="{ column, record }">
 
         <template v-if="column.title === '추천코드'">
@@ -30,7 +30,16 @@
         </template>
 
         <template v-if="column.title === 'Action'">
-          <a-button type="primary" @click="userLogin(record)">로그인 하기</a-button>
+         <a-flex gap="10" align="center">
+           <a-button type="primary" @click="userLogin(record)">로그인 하기</a-button>
+           <a-button type="default" @click="deleteAccountModal(record)">탈퇴</a-button>
+           <a-button
+             size="small"
+             :type="!! record.memo ? 'primary' : 'default'"
+             style="width: 32px;padding: 0;"
+             @click="editPrdMemo(record)"
+           ><FileTextOutlined/></a-button>
+         </a-flex>
         </template>
 
       </template>
@@ -45,11 +54,34 @@
     />
 
   </a-card>
+  <a-modal v-model:open="deleteOpen" title="회원 탈퇴 확인" @ok="deleteAccount" ok-text="확인" cancel-text="취소">
+    {{deleteAccountData.username}}회원 계정 탈퇴를 확인하시겠습니까?&nbsp; 확인 완료 후 더 이상 사용 불가합니다.
+  </a-modal>
+  <a-modal
+    width="600px"
+    v-model:open="memoForm.show"
+    centered title="고객 계정 메모"
+    :afterClose="cancelEditMemo"
+    :maskClosable="false"
+  >
+    <a-textarea
+      show-count :maxlength="500"
+      v-model:value="memoForm.memo"
+      placeholder="메모를 입력해주세요."
+      :auto-size="{ minRows: 15, maxRows: 15 }"
+    />
+    <br>
+
+    <template v-slot:footer>
+      <a-button @click="cancelEditMemo">취소</a-button>
+      <a-button type="primary" @click="savePrdMemo">저장</a-button>
+    </template>
+  </a-modal>
 </template>
 
 <script setup>
 import {
-  CopyOutlined
+  CopyOutlined, FileTextOutlined
 } from "@ant-design/icons-vue";
 import {onMounted, reactive, ref} from "vue";
 import {message} from "ant-design-vue";
@@ -58,17 +90,20 @@ import router, {setFilterRouteList} from "@/router";
 import Cookie from "js-cookie";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
+import { AuthRequest } from "@/util/request";
 
 const tableLoading = ref(false);
 const indicator = ref(false);
-
+const deleteOpen = ref(false);
+const deleteAccountData = ref({});
+const memoForm = ref({show: false, id: -1, memo: ''})
 const searchFrom = reactive({
   page: 1,
   pageSize: 10,
   total: 0,
   loading: false,
   search_key: "username",
-  search_value: ""
+  search_value: "",
 })
 const searchKeyword = ref([
   {
@@ -138,6 +173,8 @@ const tableColumns = ref([
   },
   {
     title: 'Action',
+    fixed: 'right',
+    width: '16%',
   }
 ]);
 
@@ -251,6 +288,43 @@ function getDate(rq){
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+const  deleteAccountModal = (record) => {
+  deleteAccountData.value = record;
+  deleteOpen.value = true;
+};
+const  deleteAccount = () => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/delete", {id:deleteAccountData.value.id}).then((res) => {
+    deleteOpen.value = false;
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    searchFrom.page = 1;
+    getUserList();
+  });
+};
+const  editPrdMemo = (record) => {
+  memoForm.value.show = true
+  memoForm.value.id = record.id
+  memoForm.value.memo = record.memo
+};
+const  cancelEditMemo = () => {
+  memoForm.value.show = false
+  memoForm.value.id = -1
+  memoForm.value.memo = ''
+};
+const  savePrdMemo = () => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/memo", {id:memoForm.value.id,memo:memoForm.value.memo}).then((res) => {
+    deleteOpen.value = false;
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    memoForm.value.show = false
+    searchFrom.page = 1;
+    getUserList();
+  });
+};
 onMounted(() => {
   getUserList();
 });
