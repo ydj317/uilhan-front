@@ -567,6 +567,7 @@ const getTableData = async () => {
 
 const resetSearch = () => {
   // 重置搜索值
+  state.tableData.params.search_type = 'order_no';
   state.tableData.params.search_value = '';
 
   //重置到最新日期
