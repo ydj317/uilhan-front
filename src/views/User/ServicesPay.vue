@@ -794,11 +794,15 @@ const onAgree2 = () => {
   border: 2px solid #f0f0f0;
 }
 
-.ant-btn-default{
+.pay-type .ant-btn{
+  padding: 0;
+}
+
+.pay-type .ant-btn-default{
   border-color: transparent;
 }
 
-.ant-btn-default:not(:disabled):hover{
+.pay-type .ant-btn-default:not(:disabled):hover{
   color:#2171E2;
   border-color: transparent;
 }
