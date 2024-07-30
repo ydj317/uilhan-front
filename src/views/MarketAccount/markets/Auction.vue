@@ -82,14 +82,16 @@
       </a-form-item>
 
       <a-form-item name="return_shipping_free" label="반품/교환 배송비(편도)"
-                   :rules="[{ required: true, message: '택배사를 선택해 주세요.' }]">
+                   :rules="[{ required: true, message: '반품/교환 배송비(편도) 유형을 선택해 주세요.' }]">
         <a-radio-group v-model:value="state.formData.return_shipping_free" name="return_shipping_free_group">
           <a-radio value="T">무료</a-radio>
           <a-radio value="F">유료</a-radio>
         </a-radio-group>
 
-        <a-form-item v-if="state.formData.return_shipping_free === 'F'" class="mt10">
-
+        <a-form-item name="return_shipping_fee"
+                     v-if="state.formData.return_shipping_free === 'F'"
+                     class="mt10"
+                     :rules="[{ required: true, message: '반품/교환 배송비(편도)를 입력해 주세요.' }]">
             <a-input-number
               addon-after="원"
               v-model:value="state.formData.return_shipping_fee"
