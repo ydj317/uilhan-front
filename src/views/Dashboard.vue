@@ -626,7 +626,7 @@ onBeforeUnmount(() => {
   background: #e3e3e3;
 }
 :deep(.slide-wrap .slick-dots li.slick-active button) {
-  background: black;
+  background: #cecbcb;
 }
 :deep(.table-wrap .ant-table-cell) {
   text-align: center!important;
