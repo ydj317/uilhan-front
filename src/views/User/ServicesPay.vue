@@ -10,7 +10,7 @@
     <a-page-header title="유일 AI 플랜" class="font-SCDream6 fs16" />
     <a-flex align="center" justify="space-between" class="title bg-fafafa">
       <span class="fs18">AI 플랜 기능설명</span>
-      <!--      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>-->
+<!--      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>-->
     </a-flex>
     <a-flex class="check-wrap mt30" wrap="wrap">
       <a-flex align="center" class="check-list" v-for="v in state.checkList">
@@ -255,7 +255,7 @@ onBeforeMount(() => {
     }
     const allPlanData = res.data;
     //设置基本服务 (主/子账号,推荐码)
-    state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
+   state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
 
       let title;
       let subTitle = '';
@@ -571,7 +571,7 @@ const submit = () => {
         });
         window.open(routeData.href, '_blank');
 
-        payedHandle();
+        payedHandle(data);
       }
 
     }
@@ -583,7 +583,7 @@ const submit = () => {
   //发送创建订单接口, 如果创建成功, 新开一个 付款 url, 本页面显示 dialog 提示, 有2个按钮(已完成付款, 未付款), 点击已完成付款, 跳转到付款成功页面, 点击未付款, 关闭 dialog
 }
 
-const payedHandle = () => {
+const payedHandle = (data) => {
   open.value = true;
 
   intervalId  = setInterval(() => {
