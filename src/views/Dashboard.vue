@@ -19,7 +19,7 @@
               <div class="content mt10" v-html="v.content"></div>
             </a-flex>
             <img :src="v.img" class="ml20"/>
-            <a-tag :bordered="false" color="success" class="coming" v-if="v.status == 'off'">coming soon</a-tag>
+            <a-tag :bordered="false" color="error" class="coming fl-cc" v-if="v.status == 'off'">coming soon</a-tag>
           </a-flex>
         </template>
       </a-flex>
@@ -783,7 +783,11 @@ onBeforeUnmount(() => {
   z-index: 1;
 }
 .intro-wrap .intro.off .coming{
+  width: 100px;
+  height: 30px;
+  font-size: 13px;
   position: absolute;
+  border-radius: 24px;
   right: 0;
   top: 0;
   z-index: 2;
