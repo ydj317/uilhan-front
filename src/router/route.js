@@ -201,7 +201,7 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 icon: MoneyCollectOutlined,
-                ids: ["haeju","jwli"],
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123"],
             },
         },
         {
@@ -211,9 +211,9 @@ export const menus = [{
             meta: {
                 title: "My Page",
                 isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                roles: [],
                 icon: '',
-                ids: ["jwli"],
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123"],
             },
         },
         {
@@ -222,7 +222,7 @@ export const menus = [{
             meta: {
                 title: "서비스 관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN"],
+                roles: [],
                 icon: MoneyCollectOutlined,
                 ids: ["jwli"],
             },
@@ -246,9 +246,9 @@ export const menus = [{
                     meta: {
                         title: "订单列表",
                         isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        roles: [],
                         icon: '',
-                        ids: ["jwli"],
+                        ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123"],
                     },
                 },
                 {
