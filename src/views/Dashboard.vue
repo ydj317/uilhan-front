@@ -12,13 +12,16 @@
         </div>
       </div>
       <a-flex justify="space-between" class="intro-wrap mt30" gap="16">
-         <a-flex justify="space-between" class="intro" v-for="v in formState.introList">
-           <a-flex vertical>
-             <div class="title fw fs20">{{ v.title }}</div>
-             <div class="content mt10">{{ v.content }}</div>
-           </a-flex>
-           <img :src="v.img" class="ml20"/>
-         </a-flex>
+        <template v-for="v in formState.introList">
+          <a-flex justify="space-between" class="intro" :class="v.status">
+            <a-flex vertical>
+              <div class="title fw fs20">{{ v.title }}</div>
+              <div class="content mt10" v-html="v.content"></div>
+            </a-flex>
+            <img :src="v.img" class="ml20"/>
+            <a-tag :bordered="false" color="error" class="coming fl-cc" v-if="v.status == 'off'">coming soon</a-tag>
+          </a-flex>
+        </template>
       </a-flex>
       <a-flex vertical class="table-wrap mt30">
         <a-flex align="center" class="title h42">
@@ -209,9 +212,9 @@ const formState = reactive({
   ],
   slideActive:0,
   introList:[
-    {title:'아카데미',content:'연매출 100억 만들기 프로젝트 모든 노하우를 공유하세요.',img:require('@/assets/img/dashboard/intro1.png')},
-    {title:'중국시장 10억 찾기',content:'박람회, 이우시장 탐험 프로젝트혼자 사입이 어렵다면 10명이서 같이 해보세요.',img:require('@/assets/img/dashboard/intro2.png')},
-    {title:'체험단',content:'머니를 받고 매장이나제품을 체험하고 홍보해주세요.',img:require('@/assets/img/dashboard/intro3.png')},
+    {title:'아카데미',content:'연매출 100억 만들기 프로젝트<br> 모든 노하우를 공유하세요.',img:require('@/assets/img/dashboard/intro1.png'),status:'on'},
+    {title:'중국시장 10억 찾기',content:'박람회, 이우시장 탐험 프로젝트<br>혼자 사입이 어렵다면 10명이서 같이 해보세요.',img:require('@/assets/img/dashboard/intro2.png'),status:'on'},
+    {title:'체험단',content:'머니를 받고 매장이나 제품을 체험하고 홍보해주세요.',img:require('@/assets/img/dashboard/intro3.png'),status:'off'},
   ],
   marketAdminUrls:[],
   MarketList:[],
@@ -765,6 +768,30 @@ onBeforeUnmount(() => {
 }
 .intro-wrap .intro:hover .title{
   color: #2755f9;
+}
+.intro-wrap .intro.off{
+  position: relative;
+}
+.intro-wrap .intro.off::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1;
+}
+.intro-wrap .intro.off .coming{
+  width: 100px;
+  height: 30px;
+  font-size: 13px;
+  position: absolute;
+  border-radius: 24px;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  opacity: 1;
 }
 .table-wrap .title img{
   width: 30px;
