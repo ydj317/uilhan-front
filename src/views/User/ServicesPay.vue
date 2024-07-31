@@ -1,9 +1,9 @@
 <template>
 
   <Loading
-    v-model:active="loading"
-    :can-cancel="false"
-    :is-full-page="true"
+      v-model:active="loading"
+      :can-cancel="false"
+      :is-full-page="true"
   />
 
   <div class="pay-wrap">
@@ -147,8 +147,10 @@
           <a-flex vertical class="w100 pay-type br5 p10 mt20">
             <a-flex class="font-SCDream6 fs14">이용약관</a-flex>
             <a-flex vertical class="mt10">
-              <a-checkbox v-model:checked="state.selectedList.book1">취소/환불 규정에 동의합니다.  <span class="color-2171E2">[약관보기]</span></a-checkbox>
-              <a-checkbox v-model:checked="state.selectedList.book2">서비스 이용약관에 동의합니다.  <span class="color-2171E2">[약관보기]</span></a-checkbox>
+              <a-checkbox v-model:checked="state.selectedList.book2">취소/환불 규정에 동의합니다.  <a-button class="color-2171E2" @click="openRefundRuleModal">[약관보기]</a-button></a-checkbox>
+              <a-checkbox v-model:checked="state.selectedList.book1">서비스 이용약관에 동의합니다.  <a-button class="color-2171E2" @click="openPolicyModal">[약관보기]</a-button></a-checkbox>
+              <refundRule @agree2="onAgree2" />
+              <policy @agree="onAgree1" />
             </a-flex>
           </a-flex>
           <a-flex vertical align="center" class="mt30">
@@ -183,6 +185,10 @@ import { message } from "ant-design-vue";
 import { useRoute, useRouter } from "vue-router";
 import { AuthRequest } from "@/util/request";
 import Loading from "vue-loading-overlay";
+import {useStore} from "vuex";
+
+import Policy from "@/components/Detail/policy.vue";
+import RefundRule from "@/components/Detail/refundRule.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -238,7 +244,7 @@ const state = reactive({
       ]
     },
   ],
-  selectedList: { basic:0,advanced1:3,advanced2:5,advanced3:5,payType:"1",book1:true,book2:true },
+  selectedList: { basic:0,advanced1:3,advanced2:5,advanced3:5,payType:"1",book1:false,book2:false },
 
   basicInfo:{},//基础服务数据
   isPay : true
@@ -628,7 +634,7 @@ const requestPost = (url, params, callback) => {
   loading.value = true;
 
   AuthRequest.post(process.env.VUE_APP_API_URL + url,
-    params
+      params
   ).then((res) => {
     loading.value = false;
     /* fail */
@@ -696,6 +702,23 @@ const m_Completepayment = (FormOrJson, closeEvent) => {
     closeEvent();
   }
 }
+
+const store = useStore();
+const openPolicyModal = () => {
+  store.commit('setIsModalOpen', true);
+};
+
+const openRefundRuleModal = () => {
+  store.commit('setIsRefundModalOpen', true);
+};
+
+const onAgree1 = () => {
+  state.selectedList.book1= true;
+};
+
+const onAgree2 = () => {
+  state.selectedList.book2= true;
+};
 
 </script>
 
@@ -769,6 +792,19 @@ const m_Completepayment = (FormOrJson, closeEvent) => {
 }
 .pay-wrap .right .pay-type{
   border: 2px solid #f0f0f0;
+}
+
+.pay-type .ant-btn{
+  padding: 0;
+}
+
+.pay-type .ant-btn-default{
+  border-color: transparent;
+}
+
+.pay-type .ant-btn-default:not(:disabled):hover{
+  color:#2171E2;
+  border-color: transparent;
 }
 
 </style>
