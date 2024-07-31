@@ -91,7 +91,7 @@
           </a-tab-pane>
           <a-tab-pane key="2" tab="배송대행 공지">
             <template v-for="(v,i) in formState.expressList">
-              <a-flex align="center" justify="space-between" class="notice-list cp h44 p10" v-if="i<6">
+              <a-flex align="center" justify="space-between" class="notice-list cp h44 p10" :class="v.color" v-if="i<6">
                 <img :src="v.img" class="mr10"/>
                 <div class="content fs15 dot">{{ v.title}}</div>
                 <div class="rq ml10 fs14 color-969DAE">{{ v.rq}}</div>
@@ -231,12 +231,12 @@ const formState = reactive({
   },
   noticeList:[],
   expressList:[
-    {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 - 변경 전 주소로 배송된 화물 처리 안내',rq:'7.28'},
-    {img:require(`@/assets/img/dashboard/notice2.png`),title:'CJ대한통운 - 폭우로 인한 배송지연 지역 안내',rq:'7.26'},
-    {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄점 - 휴무 안내',rq:'7.22'},
-    {img:require(`@/assets/img/dashboard/notice1.png`),title:'중국 -FTA제율 적용 관련 추가 안내',rq:'7.18'},
-    {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 B2B - 로켓그로스 출고 지원',rq:'7.17'},
-    {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄 - 대금상환 거래 수취거부 안내',rq:'7.15'},
+    {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 - 변경 전 주소로 배송된 화물 처리 안내',rq:'7.28',color:'7390F8'},
+    {img:require(`@/assets/img/dashboard/notice2.png`),title:'CJ대한통운 - 폭우로 인한 배송지연 지역 안내',rq:'7.26',color:'7390F8'},
+    {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄점 - 휴무 안내',rq:'7.22',color:'FA794D'},
+    {img:require(`@/assets/img/dashboard/notice1.png`),title:'중국 -FTA제율 적용 관련 추가 안내',rq:'7.18',color:'FA794D'},
+    {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 B2B - 로켓그로스 출고 지원',rq:'7.17',color:'7390F8'},
+    {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄 - 대금상환 거래 수취거부 안내',rq:'7.15',color:'FA794D'},
   ],
   noticeActiveTab:'1',
   noticeLoading:false,
@@ -484,13 +484,12 @@ async function getBoard() {
 
 const goNoticeUrl = () => {
   if(formState.noticeActiveTab == 1){
-    router.push('/board/notice')
+    location.href = '/board/notice';
   }else{
   }
 };
 const goNoticeView = (id) => {
-  console.log(id);
-  router.push('/board/notice/view/'+id)
+    location.href = '/board/notice/view/'+id;
 };
 const getCollectCount = async () => {
   await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/collectCount", {}).then((res) => {
@@ -785,6 +784,12 @@ onBeforeUnmount(() => {
   color: #2755f9;
   background: #F1F3F8;
   border-radius: 16px;
+}
+.notice-wrap .notice-list.7390F8:hover{
+  color: #7390F8;
+}
+.notice-wrap .notice-list.FA794D:hover{
+  color: #FA794D;
 }
 .notice-wrap img{
  width: 24px;
