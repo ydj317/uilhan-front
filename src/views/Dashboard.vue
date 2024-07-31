@@ -484,13 +484,12 @@ async function getBoard() {
 
 const goNoticeUrl = () => {
   if(formState.noticeActiveTab == 1){
-    router.push('/board/notice')
+    location.href = '/board/notice';
   }else{
   }
 };
 const goNoticeView = (id) => {
-  console.log(id);
-  router.push('/board/notice/view/'+id)
+    location.href = '/board/notice/view/'+id;
 };
 const getCollectCount = async () => {
   await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/collectCount", {}).then((res) => {
