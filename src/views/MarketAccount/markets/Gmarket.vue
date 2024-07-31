@@ -408,12 +408,12 @@ const getMarketDeliveryCompany = () => {
 }
 
 onMounted(() => {
+  getMarketDeliveryCompany()
   initFormData()
 
   // 연동확인후
   if (state.formData.sync_market_status) {
     getAddressList()
-    getMarketDeliveryCompany()
   }
 
 });
