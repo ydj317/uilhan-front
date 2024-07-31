@@ -275,7 +275,7 @@ const syncOutboundAddress = (account_id) => {
         state.sync_outbound_address_date = updDate || null;
         state.outboundAddressList = [];
         marketJson?.forEach(item => {
-            if (item.usable === true && item.placeAddresses[0].countryCode === 'CN') {
+            if (item.usable === true) {
                 state.outboundAddressList.push({
                     outbound_address_code: item.outboundShippingPlaceCode,
                     outbound_address_name: item.shippingPlaceName

@@ -55,7 +55,7 @@
     </div>
   </a-card>
   <a-card class="mt15">
-    <a-table  :loading="state.tableData.loading" :columns="tableColumns" :data-source="tableList" bordered :pagination="false" @change="handleTableChange">
+    <a-table  :loading="state.tableData.loading" :columns="tableColumns" :data-source="tableList" bordered :pagination="false" @change="handleTableChange" :locale="tableLocale">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'productThumbnails'">
           <a-image
@@ -348,6 +348,13 @@ const tableColumns = [
     align: "center"
   }
 ];
+
+const tableLocale ={
+    triggerDesc: '클릭시 누적 조회수 높은 순/낮은 순으로 배열합니다.',
+    triggerAsc: '클릭시 누적 조회수 높은 순/낮은 순으로 배열합니다.',
+    cancelSort: '클릭시 누적 조회수 높은 순/낮은 순으로 배열합니다.',
+};
+
 const tableList = ref([])
 const getLogoSrc = (fileName, marketCode) => {
   try {
