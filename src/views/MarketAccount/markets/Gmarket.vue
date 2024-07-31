@@ -333,7 +333,6 @@ const syncShippingPolicy = (account_id) => {
       state.syncShippingPolicyLoading = false;
       return false;
     }
-    console.log('111', res);
 
     message.success('업데이트 완료 되었습니다. 출고지,반품지를 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
@@ -404,7 +403,7 @@ const getAddressList = () => {
 // 출고지/반품지 리스트 설정
 const getMarketDeliveryCompany = () => {
   useMarketApi().getMarketDeliveryCompany({}).then(res => {
-      state.deliveryCompanyList = res.data.esmplus;
+      state.deliveryCompanyList = res.data.gmarket;
   });
 }
 
