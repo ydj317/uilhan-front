@@ -12,13 +12,16 @@
         </div>
       </div>
       <a-flex justify="space-between" class="intro-wrap mt30" gap="16">
-         <a-flex justify="space-between" class="intro" v-for="v in formState.introList">
-           <a-flex vertical>
-             <div class="title fw fs20">{{ v.title }}</div>
-             <div class="content mt10">{{ v.content }}</div>
-           </a-flex>
-           <img :src="v.img" class="ml20"/>
-         </a-flex>
+        <template v-for="v in formState.introList">
+          <a-flex justify="space-between" class="intro" :class="v.status">
+            <a-flex vertical>
+              <div class="title fw fs20">{{ v.title }}</div>
+              <div class="content mt10" v-html="v.content"></div>
+            </a-flex>
+            <img :src="v.img" class="ml20"/>
+            <a-tag :bordered="false" color="error" class="coming fl-cc" v-if="v.status == 'off'">coming soon</a-tag>
+          </a-flex>
+        </template>
       </a-flex>
       <a-flex vertical class="table-wrap mt30">
         <a-flex align="center" class="title h42">
@@ -80,16 +83,18 @@
           <a-tab-pane key="1" tab="유일 공지">
             <a-skeleton :loading="formState.noticeLoading" active>
             <template v-for="(v,i) in formState.noticeList" >
-              <a-flex align="center" class="h44 p10" v-if="i<6">
-                <div class="content fs15 dot"><a :href="`/board/notice/view/${v.id}`" class="color-3F4249">{{ v.title }}</a></div>
-                <div class="rq ml10 fs14 color-969DAE">{{ v.rq }}</div>
-              </a-flex>
+              <div @click="goNoticeView(v.id)">
+                <a-flex align="center" class="notice-list cp h44 p10" v-if="i<6" >
+                  <div class="content fs15 dot">{{ v.title }}</div>
+                  <div class="rq ml10 fs14 color-969DAE">{{ v.rq }}</div>
+                </a-flex>
+              </div>
             </template>
             </a-skeleton>
           </a-tab-pane>
           <a-tab-pane key="2" tab="배송대행 공지">
             <template v-for="(v,i) in formState.expressList">
-              <a-flex align="center" justify="space-between" class="h44 p10" v-if="i<6">
+              <a-flex align="center" justify="space-between" class="notice-list cp h44 p10" :class="v.color" v-if="i<6">
                 <img :src="v.img" class="mr10"/>
                 <div class="content fs15 dot">{{ v.title}}</div>
                 <div class="rq ml10 fs14 color-969DAE">{{ v.rq}}</div>
@@ -110,9 +115,9 @@
             </div>
           </template>
           <a-collapse-panel key="1" header="오늘 수집한 상품" >
-            <a-divider class="m0"></a-divider>
+            <a-divider class="m0 mb16"></a-divider>
             <a-flex wrap="wrap" class="collect-list color-2755f9" gap="16">
-              <a-flex vertical align="center" class="collect-main" v-for="v in formState.collectList">
+              <a-flex vertical align="center" class="collect-main cp" v-for="v in formState.collectList">
                 <img :src="v.img"/>
                 <div class="number mt6" :class="{'color-b9bdc9':v.count==0,'fs14':v.count==0}">{{ v.count }}</div>
               </a-flex>
@@ -149,7 +154,7 @@
               <a-tabs v-model:activeKey="formState.uploadActiveTab">
                 <a-tab-pane key="1" tab="오늘 업로드 상품수">
                   <a-flex wrap="wrap" class="collect-list color-2755f9" gap="16">
-                    <a-flex vertical align="center" class="collect-main" v-for="v in formState.MarketList">
+                    <a-flex vertical align="center" class="collect-main cp" v-for="v in formState.MarketList">
                       <img :src="getLogoSrc('market-logo', v.market)">
                       <div class="number mt6" :class="{'color-b9bdc9':v.todayCount==0,'fs14':v.todayCount==0}" >{{v.todayCount}}</div>
                     </a-flex>
@@ -157,7 +162,7 @@
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="전체 업로드 상품수">
                   <a-flex wrap="wrap" class="collect-list color-2755f9" gap="16">
-                    <a-flex vertical align="center" class="collect-main" v-for="v in formState.MarketList">
+                    <a-flex vertical align="center" class="collect-main cp" v-for="v in formState.MarketList">
                       <img :src="getLogoSrc('market-logo', v.market)">
                       <div class="number mt6" :class="{'color-b9bdc9':v.count==0,'fs14':v.count==0}">{{v.count}}</div>
                     </a-flex>
@@ -168,10 +173,9 @@
           </a-collapse-panel>
         </a-collapse>
       </div>
-      <a-flex align="center" justify="space-between" class="money-wrap p20 mt40">
-        <QuestionCircleOutlined class="fs24 color-969DAE" />
+      <a-flex align="center" justify="end" class="money-wrap p20 mt40">
         <a-flex vertical align="end">
-          <div class="title fs14 color-b9bdc9">최근 7일간 예상 정산액</div>
+          <div class="title fs14 color-b9bdc9">최근 7일간 판매금액</div>
           <div class="money t-white fs16 mt5">+{{ numberFormat(formState.saleMoney) }}원</div>
         </a-flex>
       </a-flex>
@@ -181,12 +185,14 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 import { AuthRequest } from "@/util/request";
 import { message} from "ant-design-vue";
 import { QuestionCircleOutlined,DownOutlined,RightOutlined} from "@ant-design/icons-vue";
 import { useMarketApi } from "@/api/market";
 import { useMarketAccountApi } from "@/api/marketAccount";
-import dayjs from "dayjs";
+const router = useRouter();
+
 
 const formState = reactive({
   bannerList:[
@@ -206,9 +212,9 @@ const formState = reactive({
   ],
   slideActive:0,
   introList:[
-    {title:'아카데미',content:'연매출 100억 만들기 프로젝트 모든 노하우를 공유하세요.',img:require('@/assets/img/dashboard/intro1.png')},
-    {title:'중국시장 10억 찾기',content:'박람회, 이우시장 탐험 프로젝트혼자 사입이 어렵다면 10명이서 같이 해보세요.',img:require('@/assets/img/dashboard/intro2.png')},
-    {title:'체험단',content:'머니를 받고 매장이나제품을 체험하고 홍보해주세요.',img:require('@/assets/img/dashboard/intro3.png')},
+    {title:'아카데미',content:'연매출 100억 만들기 프로젝트<br> 모든 노하우를 공유하세요.',img:require('@/assets/img/dashboard/intro1.png'),status:'on'},
+    {title:'중국시장 10억 찾기',content:'박람회, 이우시장 탐험 프로젝트<br>혼자 사입이 어렵다면 10명이서 같이 해보세요.',img:require('@/assets/img/dashboard/intro2.png'),status:'on'},
+    {title:'체험단',content:'머니를 받고 매장이나 제품을 체험하고 홍보해주세요.',img:require('@/assets/img/dashboard/intro3.png'),status:'off'},
   ],
   marketAdminUrls:[],
   MarketList:[],
@@ -227,12 +233,12 @@ const formState = reactive({
   },
   noticeList:[],
   expressList:[
-    {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 - 변경 전 주소로 배송된 화물 처리 안내',rq:'7.28'},
-    {img:require(`@/assets/img/dashboard/notice2.png`),title:'CJ대한통운 - 폭우로 인한 배송지연 지역 안내',rq:'7.26'},
-    {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄점 - 휴무 안내',rq:'7.22'},
-    {img:require(`@/assets/img/dashboard/notice1.png`),title:'중국 -FTA제율 적용 관련 추가 안내',rq:'7.18'},
-    {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 B2B - 로켓그로스 출고 지원',rq:'7.17'},
-    {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄 - 대금상환 거래 수취거부 안내',rq:'7.15'},
+    {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 - 변경 전 주소로 배송된 화물 처리 안내',rq:'7.28',color:'7390F8'},
+    {img:require(`@/assets/img/dashboard/notice2.png`),title:'CJ대한통운 - 폭우로 인한 배송지연 지역 안내',rq:'7.26',color:'7390F8'},
+    {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄점 - 휴무 안내',rq:'7.22',color:'FA794D'},
+    {img:require(`@/assets/img/dashboard/notice1.png`),title:'중국 -FTA제율 적용 관련 추가 안내',rq:'7.18',color:'FA794D'},
+    {img:require(`@/assets/img/dashboard/notice2.png`),title:'웨이하이 B2B - 로켓그로스 출고 지원',rq:'7.17',color:'7390F8'},
+    {img:require(`@/assets/img/dashboard/notice1.png`),title:'도쿄 - 대금상환 거래 수취거부 안내',rq:'7.15',color:'FA794D'},
   ],
   noticeActiveTab:'1',
   noticeLoading:false,
@@ -484,6 +490,9 @@ const goNoticeUrl = () => {
   }else{
   }
 };
+const goNoticeView = (id) => {
+    location.href = '/board/notice/view/'+id;
+};
 const getCollectCount = async () => {
   await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/collectCount", {}).then((res) => {
       if (res.status !== "2000") {
@@ -674,7 +683,7 @@ onBeforeUnmount(() => {
   color: #3F4249;
 }
 :deep(.upload-wrap .ant-collapse-header) {
-  padding: 0 16px;
+  padding: 6px 16px;
 }
 :deep(.upload-wrap .ant-collapse-content-box) {
   padding-block: 0!important;
@@ -760,6 +769,30 @@ onBeforeUnmount(() => {
 .intro-wrap .intro:hover .title{
   color: #2755f9;
 }
+.intro-wrap .intro.off{
+  position: relative;
+}
+.intro-wrap .intro.off::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1;
+}
+.intro-wrap .intro.off .coming{
+  width: 100px;
+  height: 30px;
+  font-size: 13px;
+  position: absolute;
+  border-radius: 24px;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  opacity: 1;
+}
 .table-wrap .title img{
   width: 30px;
   height: 30px;
@@ -772,6 +805,17 @@ onBeforeUnmount(() => {
 .notice-wrap{
   width: 100%;
   min-height: 360px;
+}
+.notice-wrap .notice-list:hover{
+  color: #2755f9;
+  background: #F1F3F8;
+  border-radius: 16px;
+}
+.notice-wrap .notice-list.7390F8:hover{
+  color: #7390F8;
+}
+.notice-wrap .notice-list.FA794D:hover{
+  color: #FA794D;
 }
 .notice-wrap img{
  width: 24px;
@@ -815,6 +859,10 @@ onBeforeUnmount(() => {
    height: 93px;
    padding: 16px;
  }
+.collect-main:hover{
+  background: #F1F3F8;
+  border-radius: 10px;
+}
  .money-wrap{
    width: 100%;
    height: 85px;
