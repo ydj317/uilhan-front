@@ -15,22 +15,34 @@ const dataSource = reactive({
 const shouldShowPopup = (id) => {
   const lastPopupTimestamp = localStorage.getItem('lastPopupTimestamp' + id);
 
-  if (!lastPopupTimestamp) {
-    return true
-  } else {
-    const lastTimestamp = parseInt(lastPopupTimestamp, 10);
-    const currentTimestamp = Date.now();
-    const oneWeekInMilliseconds = 3 * 24 * 60 * 60 * 1000; // 7天的毫秒数
+  // if (!lastPopupTimestamp) {
+  //   return true
+  // } else {
+  //   const lastTimestamp = parseInt(lastPopupTimestamp, 10);
+  //   const currentTimestamp = Date.now();
+  //   const oneWeekInMilliseconds = 3 * 24 * 60 * 60 * 1000; // 7天的毫秒数
+  //
+  //   return currentTimestamp - lastTimestamp >= oneWeekInMilliseconds;
+  // }
 
-    return currentTimestamp - lastTimestamp >= oneWeekInMilliseconds;
+  if (lastPopupTimestamp) {
+    const currentTime = Date.now();
+    return currentTime > parseInt(lastPopupTimestamp, 10);
   }
+  return true;
+
 }
 
 const handleCancel = (id) => {
   if(dataSource.visibleDays['visibal'+id] === true){
-    const currentTimestamp = Date.now();
-    localStorage.setItem('lastPopupTimestamp' + id, currentTimestamp.toString());
+    // const currentTimestamp = Date.now();
+    // localStorage.setItem('lastPopupTimestamp' + id, currentTimestamp.toString());
+
+    const now = new Date();
+    const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).getTime();
+    localStorage.setItem('lastPopupTimestamp' + id, endOfDay.toString());
   }
+  dataSource.open['open'+id] = false;
 };
 
 const getNoticePopupList = () => {
@@ -60,11 +72,11 @@ onBeforeMount(() => {
 
 <template>
   <template v-for="(item,index) in dataSource.data" :key="index">
-    <a-modal :key="index" v-if="shouldShowPopup(item.id)" v-model:open="dataSource.open[`open${item.id}`]" :title="item.title" @cancel="handleCancel(item.id)" :mask="false">
-      <div style="text-align: center;height: 600px;overflow: scroll;overflow-x: unset;" v-html="item.content">
+    <a-modal :key="index" v-if="shouldShowPopup(item.id)" v-model:open="dataSource.open[`open${item.id}`]" :title="item.title" @cancel="handleCancel(item.id)" :mask="false" style="margin-top:-50px;width: 730px">
+      <div style="text-align: center;height: 750px;overflow: scroll;overflow-x: unset;" v-html="item.content">
       </div>
       <template #footer>
-        <a-checkbox v-model:checked="dataSource.visibleDays['visibal'+item.id]" style="color: #999999">3일간 보이지 않기</a-checkbox>
+        <a-checkbox v-model:checked="dataSource.visibleDays['visibal'+item.id]" style="color: #999999">오늘 보이지 않기</a-checkbox>
       </template>
     </a-modal>
   </template>

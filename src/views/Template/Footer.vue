@@ -12,13 +12,13 @@
         </div>
         <div style="font-size: 14px;">
           <p style="line-height: 16px">문의: 09:00~18:00 (토,일,공휴일 휴무)</p>
-          <p style="line-height: 16px">TEL: 032-226-1688</p>
+          <p style="line-height: 16px">TEL: 070-4766-1622</p>
           <p style="line-height: 16px">FAX: 031-226-1689</p>
-          <p style="line-height: 16px">E-MAIL: haeju2024@hotmail.com</p>
+          <p style="line-height: 16px">E-MAIL: solution@uilhan.co.kr</p>
         </div>
       </div>
       <div style="font-size: 14px;">
-        <p style="color: black;font-weight: bold;">대표: LI JIANFENG 이건봉</p>
+        <p style="color: black;font-weight: bold;">대표: 김성현</p>
       </div>
     </div>
   </div>
