@@ -170,10 +170,9 @@
           </a-collapse-panel>
         </a-collapse>
       </div>
-      <a-flex align="center" justify="space-between" class="money-wrap p20 mt40">
-        <QuestionCircleOutlined class="fs24 color-969DAE" />
+      <a-flex align="center" justify="end" class="money-wrap p20 mt40">
         <a-flex vertical align="end">
-          <div class="title fs14 color-b9bdc9">최근 7일간 예상 정산액</div>
+          <div class="title fs14 color-b9bdc9">최근 7일간 판매금액</div>
           <div class="money t-white fs16 mt5">+{{ numberFormat(formState.saleMoney) }}원</div>
         </a-flex>
       </a-flex>
