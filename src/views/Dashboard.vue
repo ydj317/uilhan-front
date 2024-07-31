@@ -80,16 +80,18 @@
           <a-tab-pane key="1" tab="유일 공지">
             <a-skeleton :loading="formState.noticeLoading" active>
             <template v-for="(v,i) in formState.noticeList" >
-              <a-flex align="center" class="h44 p10" v-if="i<6">
-                <div class="content fs15 dot"><a :href="`/board/notice/view/${v.id}`" class="color-3F4249">{{ v.title }}</a></div>
-                <div class="rq ml10 fs14 color-969DAE">{{ v.rq }}</div>
-              </a-flex>
+              <div @click="goNoticeView(v.id)">
+                <a-flex align="center" class="notice-list cp h44 p10" v-if="i<6" >
+                  <div class="content fs15 dot">{{ v.title }}</div>
+                  <div class="rq ml10 fs14 color-969DAE">{{ v.rq }}</div>
+                </a-flex>
+              </div>
             </template>
             </a-skeleton>
           </a-tab-pane>
           <a-tab-pane key="2" tab="배송대행 공지">
             <template v-for="(v,i) in formState.expressList">
-              <a-flex align="center" justify="space-between" class="h44 p10" v-if="i<6">
+              <a-flex align="center" justify="space-between" class="notice-list cp h44 p10" v-if="i<6">
                 <img :src="v.img" class="mr10"/>
                 <div class="content fs15 dot">{{ v.title}}</div>
                 <div class="rq ml10 fs14 color-969DAE">{{ v.rq}}</div>
@@ -110,9 +112,9 @@
             </div>
           </template>
           <a-collapse-panel key="1" header="오늘 수집한 상품" >
-            <a-divider class="m0"></a-divider>
+            <a-divider class="m0 mb16"></a-divider>
             <a-flex wrap="wrap" class="collect-list color-2755f9" gap="16">
-              <a-flex vertical align="center" class="collect-main" v-for="v in formState.collectList">
+              <a-flex vertical align="center" class="collect-main cp" v-for="v in formState.collectList">
                 <img :src="v.img"/>
                 <div class="number mt6" :class="{'color-b9bdc9':v.count==0,'fs14':v.count==0}">{{ v.count }}</div>
               </a-flex>
@@ -149,7 +151,7 @@
               <a-tabs v-model:activeKey="formState.uploadActiveTab">
                 <a-tab-pane key="1" tab="오늘 업로드 상품수">
                   <a-flex wrap="wrap" class="collect-list color-2755f9" gap="16">
-                    <a-flex vertical align="center" class="collect-main" v-for="v in formState.MarketList">
+                    <a-flex vertical align="center" class="collect-main cp" v-for="v in formState.MarketList">
                       <img :src="getLogoSrc('market-logo', v.market)">
                       <div class="number mt6" :class="{'color-b9bdc9':v.todayCount==0,'fs14':v.todayCount==0}" >{{v.todayCount}}</div>
                     </a-flex>
@@ -157,7 +159,7 @@
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="전체 업로드 상품수">
                   <a-flex wrap="wrap" class="collect-list color-2755f9" gap="16">
-                    <a-flex vertical align="center" class="collect-main" v-for="v in formState.MarketList">
+                    <a-flex vertical align="center" class="collect-main cp" v-for="v in formState.MarketList">
                       <img :src="getLogoSrc('market-logo', v.market)">
                       <div class="number mt6" :class="{'color-b9bdc9':v.count==0,'fs14':v.count==0}">{{v.count}}</div>
                     </a-flex>
@@ -181,12 +183,14 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 import { AuthRequest } from "@/util/request";
 import { message} from "ant-design-vue";
 import { QuestionCircleOutlined,DownOutlined,RightOutlined} from "@ant-design/icons-vue";
 import { useMarketApi } from "@/api/market";
 import { useMarketAccountApi } from "@/api/marketAccount";
-import dayjs from "dayjs";
+const router = useRouter();
+
 
 const formState = reactive({
   bannerList:[
@@ -480,9 +484,13 @@ async function getBoard() {
 
 const goNoticeUrl = () => {
   if(formState.noticeActiveTab == 1){
-    location.href = '/board/notice';
+    router.push('/board/notice')
   }else{
   }
+};
+const goNoticeView = (id) => {
+  console.log(id);
+  router.push('/board/notice/view/'+id)
 };
 const getCollectCount = async () => {
   await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/collectCount", {}).then((res) => {
@@ -773,6 +781,11 @@ onBeforeUnmount(() => {
   width: 100%;
   min-height: 360px;
 }
+.notice-wrap .notice-list:hover{
+  color: #2755f9;
+  background: #F1F3F8;
+  border-radius: 16px;
+}
 .notice-wrap img{
  width: 24px;
  height: 24px;
@@ -815,6 +828,10 @@ onBeforeUnmount(() => {
    height: 93px;
    padding: 16px;
  }
+.collect-main:hover{
+  background: #F1F3F8;
+  border-radius: 10px;
+}
  .money-wrap{
    width: 100%;
    height: 85px;
