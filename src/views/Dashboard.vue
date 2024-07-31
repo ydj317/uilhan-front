@@ -683,7 +683,7 @@ onBeforeUnmount(() => {
   color: #3F4249;
 }
 :deep(.upload-wrap .ant-collapse-header) {
-  padding: 0 16px;
+  padding: 6px 16px;
 }
 :deep(.upload-wrap .ant-collapse-content-box) {
   padding-block: 0!important;
