@@ -1,6 +1,6 @@
 <template>
   <a-flex class="dashboard">
-    <a-flex vertical class="left mb40">
+    <a-flex vertical class="dashboard-left mb40">
       <div class="slide-wrap">
         <a-carousel autoplay ref="carousel">
                     <div v-for="image in formState.bannerList" class="fl-tc carousel-slide"><img :src="image"/></div>
@@ -74,7 +74,7 @@
         </a-skeleton>
       </a-flex>
     </a-flex>
-    <a-flex vertical class="right ml40">
+    <a-flex vertical class="dashboard-right ml40">
       <div class="notice-wrap fs14">
         <a-tabs v-model:activeKey="formState.noticeActiveTab">
           <a-tab-pane key="1" tab="유일 공지">
@@ -679,7 +679,7 @@ onBeforeUnmount(() => {
 :deep(.upload-wrap .ant-collapse-content-box) {
   padding-block: 0!important;
 }
- .left{
+ .dashboard-left{
   width: 1200px;
 }
  .slide-wrap{
@@ -764,7 +764,7 @@ onBeforeUnmount(() => {
   width: 30px;
   height: 30px;
 }
-.right{
+.dashboard-right{
   width: calc(100% - 1240px);
   display: flex;
   justify-content: inherit!important;
