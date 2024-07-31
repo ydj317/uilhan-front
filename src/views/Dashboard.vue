@@ -196,6 +196,7 @@ const router = useRouter();
 
 const formState = reactive({
   bannerList:[
+    require('@/assets/img/dashboard/dashboard_0.png'),
     require('@/assets/img/dashboard/dashboard_1.png'),
     require('@/assets/img/dashboard/dashboard_2.png'),
     require('@/assets/img/dashboard/dashboard_3.png'),
