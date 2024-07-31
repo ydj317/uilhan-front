@@ -21,50 +21,50 @@
           <span class="number color-FB6F3E">{{ payStr }} 원</span>
         </a-flex>
         <a-flex class="font-SCDream4 fs12 color-bababa mt10 cp" justify="flex-end">
-<!--          <span @click="toServicePay">AI 프리미엄을 시작해보세요!&nbsp;&nbsp;></span>-->
+          <!--          <span @click="toServicePay">AI 프리미엄을 시작해보세요!&nbsp;&nbsp;></span>-->
           <a-button type="link" class="btn font-SCDream4" href="/user/servicesPay">AI 프리미엄을 시작해보세요!&nbsp;&nbsp;></a-button>
         </a-flex>
       </a-flex>
     </a-flex>
     <a-divider class="bg-f0f0f0 h2"></a-divider>
-<!--    <a-flex class="card-wrap bg-fafafa br10" align="center" gap="40">-->
-<!--      <a-card :bordered="false">-->
-<!--        <a-flex align="center">-->
-<!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/order.png"></a-flex>-->
-<!--          <a-flex vertical class="ml15">-->
-<!--            <div class="font-SCDream6 fs18">주문내역</div>-->
-<!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
-<!--          </a-flex>-->
-<!--        </a-flex>-->
-<!--      </a-card>-->
-<!--      <a-card :bordered="false" >-->
-<!--        <a-flex align="center">-->
-<!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/cart.png"></a-flex>-->
-<!--          <a-flex vertical class="ml15">-->
-<!--            <div class="font-SCDream6 fs18">주문내역</div>-->
-<!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
-<!--          </a-flex>-->
-<!--        </a-flex>-->
-<!--      </a-card>-->
-<!--      <a-card :bordered="false">-->
-<!--        <a-flex align="center">-->
-<!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/send.png"></a-flex>-->
-<!--          <a-flex vertical class="ml15">-->
-<!--            <div class="font-SCDream6 fs18">주문내역</div>-->
-<!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
-<!--          </a-flex>-->
-<!--        </a-flex>-->
-<!--      </a-card>-->
-<!--      <a-card :bordered="false">-->
-<!--        <a-flex align="center">-->
-<!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/coupon.png"></a-flex>-->
-<!--          <a-flex vertical class="ml15">-->
-<!--            <div class="font-SCDream6 fs18">주문내역</div>-->
-<!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
-<!--          </a-flex>-->
-<!--        </a-flex>-->
-<!--      </a-card>-->
-<!--    </a-flex>-->
+    <!--    <a-flex class="card-wrap bg-fafafa br10" align="center" gap="40">-->
+    <!--      <a-card :bordered="false">-->
+    <!--        <a-flex align="center">-->
+    <!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/order.png"></a-flex>-->
+    <!--          <a-flex vertical class="ml15">-->
+    <!--            <div class="font-SCDream6 fs18">주문내역</div>-->
+    <!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
+    <!--          </a-flex>-->
+    <!--        </a-flex>-->
+    <!--      </a-card>-->
+    <!--      <a-card :bordered="false" >-->
+    <!--        <a-flex align="center">-->
+    <!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/cart.png"></a-flex>-->
+    <!--          <a-flex vertical class="ml15">-->
+    <!--            <div class="font-SCDream6 fs18">주문내역</div>-->
+    <!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
+    <!--          </a-flex>-->
+    <!--        </a-flex>-->
+    <!--      </a-card>-->
+    <!--      <a-card :bordered="false">-->
+    <!--        <a-flex align="center">-->
+    <!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/send.png"></a-flex>-->
+    <!--          <a-flex vertical class="ml15">-->
+    <!--            <div class="font-SCDream6 fs18">주문내역</div>-->
+    <!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
+    <!--          </a-flex>-->
+    <!--        </a-flex>-->
+    <!--      </a-card>-->
+    <!--      <a-card :bordered="false">-->
+    <!--        <a-flex align="center">-->
+    <!--          <a-flex class="bg-round br50 bg-f0f0f0 center"><img src="@/assets/img/coupon.png"></a-flex>-->
+    <!--          <a-flex vertical class="ml15">-->
+    <!--            <div class="font-SCDream6 fs18">주문내역</div>-->
+    <!--            <div class="font-SCDream6 fs16 primary-color">1,890원</div>-->
+    <!--          </a-flex>-->
+    <!--        </a-flex>-->
+    <!--      </a-card>-->
+    <!--    </a-flex>-->
     <a-flex class="intro-wrap mt30 fs18 font-SCDream6" gap="30">
       <a-card :bordered="false" class="bg-fafafa">
         <template #title>
@@ -93,7 +93,7 @@
       <a-modal v-model:open="orderModel"
                :title="OrderTitle"
                :footer="null"
-                width="100%"
+               width="100%"
                :bodyStyle="{height:'60vh',overflow:'auto'}">
 
         <a-table :bordered="false"
@@ -122,9 +122,22 @@
             </template>
 
             <!--        <template v-if="column.key === 'operation' && record.hasOwnProperty('children')"><a @click="editData(index,record)">详情</a></template>-->
-            <template v-if="column.key === 'operation' && record.status === 'Completed'">
+            <template v-if="curModal === 'order' && column.key === 'operation' && record.status === 'Completed'">
               <a-button danger @click="(event) => refundRequests(event, record)">환불신청</a-button>
             </template>
+
+            <template v-if="curModal === 'refund' && column.key === 'statusStr'">
+              <a-tooltip v-if="record.status === 'Fail' && record.denialMemo.trim() !== ''" :title="record.denialMemo.trim()">
+                <a-button type="link" danger>
+                  {{ text }}
+                  <ExclamationCircleFilled />
+                </a-button>
+              </a-tooltip>
+            </template>
+            <template v-if="curModal === 'refund' && column.key === 'statusStr' && record.status === 'Fail' && record.denialMemo.trim() === '' ">
+              <a-button type="link" danger>{{ text }}</a-button>
+            </template>
+
           </template>
 
         </a-table>
@@ -217,7 +230,7 @@
 <script setup>
 import Cookie from "js-cookie";
 import { onMounted, ref, reactive, createVNode } from "vue";
-import { ClockCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons-vue";
+import { ClockCircleOutlined, ExclamationCircleOutlined, ExclamationCircleFilled } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import { AuthRequest } from "@/util/request";
 import { message, Modal } from "ant-design-vue";
@@ -625,7 +638,7 @@ const refundRequests = (event,record) => {
 const handleRefund = (id) => {
 
   if (!id){
-   return false;
+    return false;
   }
 
   const oParam = {

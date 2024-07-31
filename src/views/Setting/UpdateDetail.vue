@@ -338,7 +338,7 @@ function changeUseAutoSave() {
 }
 
 function changeUseAutoTranslate() {
-  if (formState.userInfo.is_vip_time === false || formState.userInfo.is_vip === false  || formState.userInfo.use_quota_auto_trans_image_decide === false) {
+  if (formState.userInfo.is_vip_time === false || formState.userInfo.use_quota_auto_trans_image_decide === false) {
     formState.settingDatas.use_auto_translate = false;
     message.error('이미지 자동 번역은 유료서비스로 결제후 사용이 가능합니다.');
     return false;
