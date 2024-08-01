@@ -189,7 +189,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { AuthRequest } from "@/util/request";
 import { message} from "ant-design-vue";
-import { QuestionCircleOutlined,DownOutlined,RightOutlined} from "@ant-design/icons-vue";
+import { DownOutlined,RightOutlined} from "@ant-design/icons-vue";
 import { useMarketApi } from "@/api/market";
 import { useMarketAccountApi } from "@/api/marketAccount";
 const router = useRouter();
