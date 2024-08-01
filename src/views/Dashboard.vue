@@ -2,7 +2,7 @@
   <a-flex class="dashboard">
     <a-flex vertical class="dashboard-left mb40">
       <div class="slide-wrap">
-        <a-carousel autoplay ref="carousel">
+        <a-carousel ref="carousel">
                     <div v-for="image in formState.bannerList" class="fl-tc carousel-slide"><img :src="image"/></div>
         </a-carousel>
         <div class="slide-dot-wrap fl-c fl-te" style="gap: 10px;display: none;" ref="scrollContainer">
@@ -629,7 +629,7 @@ onBeforeUnmount(() => {
 </script>
 <style scoped>
 :deep(.slide-wrap .slick-slide) {
-  width: 1200px;
+  width: 100%;
   height: 430px;
 }
 :deep(.slide-wrap .slick-dots li) {
@@ -690,7 +690,7 @@ onBeforeUnmount(() => {
   padding-block: 0!important;
 }
  .dashboard-left{
-  width: 1200px;
+  width: calc(100% - 400px);
 }
  .slide-wrap{
    position: relative;
@@ -761,7 +761,7 @@ onBeforeUnmount(() => {
   border-radius: 24px;
   padding: 30px 20px;
   flex: 1;
-  height: 136px;
+  //height: 136px;
   cursor: pointer;
 }
 .intro-wrap .intro:hover{
@@ -799,7 +799,7 @@ onBeforeUnmount(() => {
   height: 30px;
 }
 .dashboard-right{
-  width: calc(100% - 1240px);
+  width: 400px;
   display: flex;
   justify-content: inherit!important;
 }
@@ -875,4 +875,51 @@ onBeforeUnmount(() => {
    width: 24px;
    height: 24px;
  }
+@media (max-width: 1600px) {
+  :deep(.ant-table) {
+    font-size: 11px;
+  }
+  :deep(.notice-wrap .ant-tabs-tab) {
+    font-size: 12px;
+  }
+  :deep(.notice-wrap .ant-tabs-tab-active .ant-tabs-tab-btn) {
+    font-size: 14px;
+  }
+  :deep(.notice-wrap .ant-tabs) {
+    font-size: 12px;
+  }
+  :deep(.ant-collapse-header-text) {
+    font-size: 14px!important;
+  }
+  :deep(.upload-wrap .ant-tabs-tab) {
+    font-size: 10px;
+  }
+  :deep(.upload-wrap .ant-tabs-tab-active .ant-tabs-tab-btn) {
+    font-size: 12px;
+  }
+  :deep(.ant-collapse-arrow span) {
+    font-size: 14px;
+  }
+
+
+
+  .intro-wrap .title,.intro-wrap .content{
+    font-size: 12px;
+  }
+  .intro-wrap .intro.off .coming{
+    width: 80px;
+    height: 20px;
+    font-size: 10px;
+  }
+  .table-wrap .title img{
+    width: 20px;
+    height: 20px;
+  }
+  .table-wrap .title span{
+    font-size: 14px;
+  }
+  .notice-wrap .content,.notice-wrap .rq{
+    font-size: 12px;
+  }
+}
 </style>
