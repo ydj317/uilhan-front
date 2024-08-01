@@ -2,7 +2,7 @@
   <a-flex class="dashboard">
     <a-flex vertical class="dashboard-left mb40">
       <div class="slide-wrap">
-        <a-carousel ref="carousel">
+        <a-carousel autoplay ref="carousel">
                     <div v-for="image in formState.bannerList" class="fl-tc carousel-slide"><img :src="image"/></div>
         </a-carousel>
         <div class="slide-dot-wrap fl-c fl-te" style="gap: 10px;display: none;" ref="scrollContainer">
