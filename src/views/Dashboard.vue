@@ -1,6 +1,6 @@
 <template>
-  <a-flex class="dashboard">
-    <a-flex vertical class="dashboard-left mb40">
+  <a-flex class="dashboard fl-lb">
+    <a-flex vertical class="dashboard-left">
       <div class="slide-wrap">
         <a-carousel autoplay ref="carousel">
                     <div v-for="image in formState.bannerList" class="fl-tc carousel-slide"><img :src="image"/></div>
@@ -77,7 +77,7 @@
         </a-skeleton>
       </a-flex>
     </a-flex>
-    <a-flex vertical class="dashboard-right ml40">
+    <a-flex vertical class="dashboard-right">
       <div class="notice-wrap fs14">
         <a-tabs v-model:activeKey="formState.noticeActiveTab">
           <a-tab-pane key="1" tab="유일 공지">
@@ -196,6 +196,7 @@ const router = useRouter();
 
 const formState = reactive({
   bannerList:[
+    require('@/assets/img/dashboard/dashboard_0.png'),
     require('@/assets/img/dashboard/dashboard_1.png'),
     require('@/assets/img/dashboard/dashboard_2.png'),
     require('@/assets/img/dashboard/dashboard_3.png'),
@@ -328,55 +329,60 @@ const getTableList = async () => {
       const oldOrderJson = JSON.parse(oldTableList);
       oldOrderJson.forEach((item) => {
         const newData = findObjectById(item.id, list);
-        let newQty = 0;
-        newData.paidNew = '';
-        if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
-          newQty = newData['paid'] - item['paid'];
-          newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
-        }
-        newData.shippingAddressNew = '';
-        if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
-          newQty = newData['shippingAddress'] - item['shippingAddress'];
-          newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
-        }
-        newData.shippingNew = '';
-        if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
-          newQty = newData['shipping'] - item['shipping'];
-          newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
-        }
-        newData.shippingCompleteNew = '';
-        if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
-          newQty = newData['shippingComplete'] - item['shippingComplete'];
-          newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
-        }
+        if (newData) {
+          let newQty = 0;
+          newData.paidNew = '';
+          if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
+            newQty = newData['paid'] - item['paid'];
+            newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
+          }
+          newData.shippingAddressNew = '';
+          if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
+            newQty = newData['shippingAddress'] - item['shippingAddress'];
+            newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
+          }
+          newData.shippingNew = '';
+          if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
+            newQty = newData['shipping'] - item['shipping'];
+            newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
+          }
+          newData.shippingCompleteNew = '';
+          if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
+            newQty = newData['shippingComplete'] - item['shippingComplete'];
+            newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
+          }
 
-        newData.cancelRequestNew = '';
-        if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
-          newQty = newData['cancelRequest'] - item['cancelRequest'];
-          newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
-        }
+          newData.cancelRequestNew = '';
+          if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
+            newQty = newData['cancelRequest'] - item['cancelRequest'];
+            newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
+          }
 
-        newData.cancelCompleteNew = '';
-        if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
-          newQty = newData['cancelComplete'] - item['cancelComplete'];
-          newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
-        }
-        newData.returnRequestNew = '';
-        if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
-          newQty = newData['returnRequest'] - item['returnRequest'];
-          newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
-        }
+          newData.cancelCompleteNew = '';
+          if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
+            newQty = newData['cancelComplete'] - item['cancelComplete'];
+            newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
+          }
+          newData.returnRequestNew = '';
+          if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
+            newQty = newData['returnRequest'] - item['returnRequest'];
+            newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
+          }
 
-        newData.returnCompleteNew = '';
-        if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
-          newQty = newData['returnComplete'] - item['returnComplete'];
-          newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
+          newData.returnCompleteNew = '';
+          if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
+            newQty = newData['returnComplete'] - item['returnComplete'];
+            newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
+          }
+          orderDataView.push(newData);
+        }else {
+          console.error(`Could not find object with id ${item.id}`);
         }
-        orderDataView.push(newData);
       });
     } else {
       orderDataView = list
     }
+
     formState.tableList.data = orderDataView;
     formState.tableList.list = list
     formState.tableList.total = total;
@@ -628,7 +634,7 @@ onBeforeUnmount(() => {
 </script>
 <style scoped>
 :deep(.slide-wrap .slick-slide) {
-  width: 1200px;
+  width: 100%;
   height: 430px;
 }
 :deep(.slide-wrap .slick-dots li) {
@@ -688,8 +694,11 @@ onBeforeUnmount(() => {
 :deep(.upload-wrap .ant-collapse-content-box) {
   padding-block: 0!important;
 }
+.dashboard{
+  margin: 0 20px 40px;
+}
  .dashboard-left{
-  width: 1200px;
+  width: calc(100% - 440px);
 }
  .slide-wrap{
    position: relative;
@@ -760,7 +769,7 @@ onBeforeUnmount(() => {
   border-radius: 24px;
   padding: 30px 20px;
   flex: 1;
-  height: 136px;
+  //height: 136px;
   cursor: pointer;
 }
 .intro-wrap .intro:hover{
@@ -798,9 +807,9 @@ onBeforeUnmount(() => {
   height: 30px;
 }
 .dashboard-right{
-  width: calc(100% - 1240px);
+  width: 400px;
   display: flex;
-  justify-content: inherit!important;
+  justify-content: flex-start;
 }
 .notice-wrap{
   width: 100%;
@@ -874,4 +883,51 @@ onBeforeUnmount(() => {
    width: 24px;
    height: 24px;
  }
+@media (max-width: 1600px) {
+  :deep(.ant-table) {
+    font-size: 11px;
+  }
+  :deep(.notice-wrap .ant-tabs-tab) {
+    font-size: 12px;
+  }
+  :deep(.notice-wrap .ant-tabs-tab-active .ant-tabs-tab-btn) {
+    font-size: 14px;
+  }
+  :deep(.notice-wrap .ant-tabs) {
+    font-size: 12px;
+  }
+  :deep(.ant-collapse-header-text) {
+    font-size: 14px!important;
+  }
+  :deep(.upload-wrap .ant-tabs-tab) {
+    font-size: 10px;
+  }
+  :deep(.upload-wrap .ant-tabs-tab-active .ant-tabs-tab-btn) {
+    font-size: 12px;
+  }
+  :deep(.ant-collapse-arrow span) {
+    font-size: 14px;
+  }
+
+
+
+  .intro-wrap .title,.intro-wrap .content{
+    font-size: 12px;
+  }
+  .intro-wrap .intro.off .coming{
+    width: 80px;
+    height: 20px;
+    font-size: 10px;
+  }
+  .table-wrap .title img{
+    width: 20px;
+    height: 20px;
+  }
+  .table-wrap .title span{
+    font-size: 14px;
+  }
+  .notice-wrap .content,.notice-wrap .rq{
+    font-size: 12px;
+  }
+}
 </style>
