@@ -328,55 +328,60 @@ const getTableList = async () => {
       const oldOrderJson = JSON.parse(oldTableList);
       oldOrderJson.forEach((item) => {
         const newData = findObjectById(item.id, list);
-        let newQty = 0;
-        newData.paidNew = '';
-        if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
-          newQty = newData['paid'] - item['paid'];
-          newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
-        }
-        newData.shippingAddressNew = '';
-        if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
-          newQty = newData['shippingAddress'] - item['shippingAddress'];
-          newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
-        }
-        newData.shippingNew = '';
-        if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
-          newQty = newData['shipping'] - item['shipping'];
-          newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
-        }
-        newData.shippingCompleteNew = '';
-        if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
-          newQty = newData['shippingComplete'] - item['shippingComplete'];
-          newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
-        }
+        if (newData) {
+          let newQty = 0;
+          newData.paidNew = '';
+          if (!isNaN(item['paid']) && !isNaN(newData['paid']) && newData['paid'] - item['paid'] > 0) {
+            newQty = newData['paid'] - item['paid'];
+            newData.paidNew = item['paid'].toString() + ' + ' + newQty.toString();
+          }
+          newData.shippingAddressNew = '';
+          if (!isNaN(item['shippingAddress']) && !isNaN(newData['shippingAddress']) && newData['shippingAddress'] - item['shippingAddress'] > 0) {
+            newQty = newData['shippingAddress'] - item['shippingAddress'];
+            newData.shippingAddressNew = item['shippingAddress'].toString() + ' + ' + newQty;
+          }
+          newData.shippingNew = '';
+          if (!isNaN(item['shipping']) && !isNaN(newData['shipping']) && newData['shipping'] - item['shipping'] > 0) {
+            newQty = newData['shipping'] - item['shipping'];
+            newData.shippingNew = item['shipping'].toString() + ' + ' + newQty;
+          }
+          newData.shippingCompleteNew = '';
+          if (!isNaN(item['shippingComplete']) && !isNaN(newData['shippingComplete']) && newData['shippingComplete'] - item['shippingComplete'] > 0) {
+            newQty = newData['shippingComplete'] - item['shippingComplete'];
+            newData.shippingCompleteNew = item['shippingComplete'].toString() + ' + ' + newQty;
+          }
 
-        newData.cancelRequestNew = '';
-        if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
-          newQty = newData['cancelRequest'] - item['cancelRequest'];
-          newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
-        }
+          newData.cancelRequestNew = '';
+          if (!isNaN(item['cancelRequest']) && !isNaN(newData['cancelRequest']) && newData['cancelRequest'] - item['cancelRequest'] > 0) {
+            newQty = newData['cancelRequest'] - item['cancelRequest'];
+            newData.cancelRequestNew = item['cancelRequest'].toString() + ' + ' + newQty.toString();
+          }
 
-        newData.cancelCompleteNew = '';
-        if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
-          newQty = newData['cancelComplete'] - item['cancelComplete'];
-          newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
-        }
-        newData.returnRequestNew = '';
-        if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
-          newQty = newData['returnRequest'] - item['returnRequest'];
-          newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
-        }
+          newData.cancelCompleteNew = '';
+          if (!isNaN(item['cancelComplete']) && !isNaN(newData['cancelComplete']) && newData['cancelComplete'] - item['cancelComplete'] > 0) {
+            newQty = newData['cancelComplete'] - item['cancelComplete'];
+            newData.cancelCompleteNew = item['cancelComplete'].toString() + ' + ' + newQty.toString();
+          }
+          newData.returnRequestNew = '';
+          if (!isNaN(item['returnRequest']) && !isNaN(newData['returnRequest']) && newData['returnRequest'] - item['returnRequest'] > 0) {
+            newQty = newData['returnRequest'] - item['returnRequest'];
+            newData.returnRequestNew = item['returnRequest'].toString() + ' + ' + newQty.toString();
+          }
 
-        newData.returnCompleteNew = '';
-        if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
-          newQty = newData['returnComplete'] - item['returnComplete'];
-          newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
+          newData.returnCompleteNew = '';
+          if (!isNaN(item['returnComplete']) && !isNaN(newData['returnComplete']) && newData['returnComplete'] - item['returnComplete'] > 0) {
+            newQty = newData['returnComplete'] - item['returnComplete'];
+            newData.returnCompleteNew = item['returnComplete'].toString() + ' + ' + newQty.toString();
+          }
+          orderDataView.push(newData);
+        }else {
+          console.error(`Could not find object with id ${item.id}`);
         }
-        orderDataView.push(newData);
       });
     } else {
       orderDataView = list
     }
+
     formState.tableList.data = orderDataView;
     formState.tableList.list = list
     formState.tableList.total = total;
