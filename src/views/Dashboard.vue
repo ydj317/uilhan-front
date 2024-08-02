@@ -12,15 +12,15 @@
         </div>
       </div>
       <a-flex justify="space-between" class="intro-wrap mt30" gap="16">
-        <template v-for="v in formState.introList">
-          <a-flex justify="space-between" class="intro" :class="v.status">
+        <template v-for="(v,i) in formState.introList">
+          <div class="intro fl-lb" :class="v.status" @click="goTeacherList(i)">
             <a-flex vertical>
               <div class="title fw fs20">{{ v.title }}</div>
               <div class="content mt10" v-html="v.content"></div>
             </a-flex>
             <img :src="v.img" class="ml20"/>
             <a-tag :bordered="false" color="error" class="coming fl-cc" v-if="v.status == 'off'">coming soon</a-tag>
-          </a-flex>
+          </div>
         </template>
       </a-flex>
       <a-flex vertical class="table-wrap mt30">
@@ -466,6 +466,16 @@ const openMarketAdminPage = (marketCode) => {
   }
   window.open(url);
 }
+const goTeacherList = (i) => {
+  switch (i * 1){
+    case 0:
+      const url = '/teacher/list';
+      window.open(url, '_blank');
+      break;
+    default:
+      break;
+  }
+};
 
 //消息
 async function getBoard() {

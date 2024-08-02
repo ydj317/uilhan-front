@@ -852,5 +852,7 @@ function formatDateSort(inputDate) {
   border:none;
   border-radius: 20px;
 }
-
+.box-sha{
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 </style>
