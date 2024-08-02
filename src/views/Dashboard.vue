@@ -779,15 +779,20 @@ onBeforeUnmount(() => {
   border-radius: 24px;
   padding: 30px 20px;
   flex: 1;
-  //height: 136px;
   cursor: pointer;
 }
 .intro-wrap .intro:hover{
   background: #E4E7EC;
+  transition: background 0.3s;
 }
 .intro-wrap .intro:hover .title{
   color: #2755f9;
 }
+.intro-wrap .intro:hover img{
+  transform: scale(1.2);
+  transition: transform 0.3s;
+}
+
 .intro-wrap .intro.off{
   position: relative;
 }
