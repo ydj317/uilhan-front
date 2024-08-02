@@ -12,8 +12,7 @@
               <span>讲师管理</span>
             </span>
           </template>
-          <a-menu-item key="1">讲师管理</a-menu-item>
-          <a-menu-item key="2">添加讲师</a-menu-item>
+          <a-menu-item key="1">讲师列表</a-menu-item>
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>
