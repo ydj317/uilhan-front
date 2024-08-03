@@ -686,13 +686,6 @@ onMounted(async () => {
 </script>
 
 <style>
-.bottom-border{
-  height: 2px;
-  background: black;
-}
-.text-nowrap{
-  white-space: nowrap;
-}
 .express-wrap .default .ant-badge-count{
 	background: #F6F6F6;
 	color: #9F9F9F;
@@ -753,6 +746,13 @@ onMounted(async () => {
 }
 </style>
 <style scoped>
+.bottom-border{
+  height: 2px;
+  background: black;
+}
+.text-nowrap{
+  white-space: nowrap;
+}
 .header-wrap > div,.content > div{
 	text-align: center;
 }

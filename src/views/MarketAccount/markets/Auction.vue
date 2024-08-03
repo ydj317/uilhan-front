@@ -82,14 +82,16 @@
       </a-form-item>
 
       <a-form-item name="return_shipping_free" label="반품/교환 배송비(편도)"
-                   :rules="[{ required: true, message: '택배사를 선택해 주세요.' }]">
+                   :rules="[{ required: true, message: '반품/교환 배송비(편도) 유형을 선택해 주세요.' }]">
         <a-radio-group v-model:value="state.formData.return_shipping_free" name="return_shipping_free_group">
           <a-radio value="T">무료</a-radio>
           <a-radio value="F">유료</a-radio>
         </a-radio-group>
 
-        <a-form-item v-if="state.formData.return_shipping_free === 'F'" class="mt10">
-
+        <a-form-item name="return_shipping_fee"
+                     v-if="state.formData.return_shipping_free === 'F'"
+                     class="mt10"
+                     :rules="[{ required: true, message: '반품/교환 배송비(편도)를 입력해 주세요.' }]">
             <a-input-number
               addon-after="원"
               v-model:value="state.formData.return_shipping_fee"
@@ -331,7 +333,6 @@ const syncShippingPolicy = (account_id) => {
       state.syncShippingPolicyLoading = false;
       return false;
     }
-    console.log('111', res);
 
     message.success('업데이트 완료 되었습니다. 출고지,반품지를 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
@@ -402,17 +403,16 @@ const getAddressList = () => {
 // 출고지/반품지 리스트 설정
 const getMarketDeliveryCompany = () => {
   useMarketApi().getMarketDeliveryCompany({}).then(res => {
-      state.deliveryCompanyList = res.data.esmplus;
+      state.deliveryCompanyList = res.data.auction;
   });
 }
 
 onMounted(() => {
+  getMarketDeliveryCompany()
   initFormData()
-
   // 연동확인후
   if (state.formData.sync_market_status) {
     getAddressList()
-    getMarketDeliveryCompany()
   }
 
 });

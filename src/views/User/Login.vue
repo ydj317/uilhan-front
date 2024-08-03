@@ -53,6 +53,8 @@ import {isLogin, cookieInit} from "util/auth";
 import {message} from 'ant-design-vue';
 import {lib} from "@/util/lib";
 import {useRoute} from 'vue-router';
+import dayjs from "dayjs";
+import moment from "moment";
 
 export default defineComponent({
   components: {
@@ -135,49 +137,53 @@ export default defineComponent({
         // 아이디 저장하기
         tempSave();
         //管理者+子账号+员工账号
-        AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/list", {}).then((res2) => {
+        AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/list", {}).then(async (res2) => {
           if (res2.status !== "2000") {
             message.error(res2.message);
             return false;
           }
-          Cookie.set('token',res2.data.token);
-          if(res2.data.loginUser){
+          Cookie.set('token', res2.data.token);
+          if (res2.data.loginUser) {
             Cookie.set('login_user', JSON.stringify(res2.data.loginUser));
           }
-          if(res2.data.mainUser){
+          if (res2.data.mainUser) {
             Cookie.set('main_user', JSON.stringify(res2.data.mainUser));
           }
-          if(res2.data.employee){
+          if (res2.data.employee) {
             Cookie.set('employee', JSON.stringify(res2.data.employee));
           }
-          if(res2.data.accountList){
+          if (res2.data.accountList) {
             Cookie.set('account_list', JSON.stringify(res2.data.accountList));
           }
           let goUrl = '/dashboard';
-          if(res2.data.employee){
+          if (res2.data.employee) {
             Cookie.set('member_name', res2.data.mainUser.username);
             //显示员工第一个有权限的菜单
             for (const val of res2.data.employee.menu_names) {
-              if(val == 'product'){
+              if (val == 'product') {
                 goUrl = '/product';
                 break;
               }
-              if(val == 'order_list'){
+              if (val == 'order_list') {
                 goUrl = '/order/list';
                 break;
               }
-              if(val == 'express_list'){
+              if (val == 'express_list') {
                 goUrl = '/express/list';
                 break;
               }
             }
-          }else{
+          } else {
             Cookie.set('member_name', res.data.member_name);
           }
           Cookie.set('member_roles', res.data.member_roles);
+
+          // 만료시간을 8시간으로 설정
+          Cookie.set('expires_time', moment().add(8,'hour').unix());
           const menuList = setFilterRouteList();
-          router.addRoute(menuList[0])
-          router.push(goUrl);
+          await router.addRoute(menuList[0])
+          // router.push(goUrl);
+          location.href = goUrl;
           loading.value = false;
           return false;
         });

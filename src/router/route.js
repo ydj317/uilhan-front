@@ -201,27 +201,28 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 icon: MoneyCollectOutlined,
-                ids: ["haeju"],
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123"],
             },
         },
-        // {
-        //     path: "/user/mypage",
-        //     name: "user_my",
-        //     component: () => import("@/views/User/my.vue"),
-        //     meta: {
-        //         title: "My Page",
-        //         isHide: false,
-        //         roles: ["ROLE_ADMIN", "ROLE_USER"],
-        //         icon: ''
-        //     },
-        // },
+        {
+            path: "/user/mypage",
+            name: "user_my",
+            component: () => import("@/views/User/my.vue"),
+            meta: {
+                title: "My Page",
+                isHide: false,
+                roles: [],
+                icon: '',
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123"],
+            },
+        },
         {
             path: "/user",
             name: "user",
             meta: {
                 title: "서비스 관리",
                 isHide: false,
-                roles: ["ROLE_ADMIN"],
+                roles: [],
                 icon: MoneyCollectOutlined,
                 ids: ["jwli"],
             },
@@ -238,17 +239,18 @@ export const menus = [{
                 //     },
                 // },
 
-                // {
-                //     path: "/user/UserQuotaOrder",
-                //     name: "user_userQuotaOrder",
-                //     component: () => import("@/views/Setting/UserQuotaOrder"),
-                //     meta: {
-                //         title: "订单列表",
-                //         isHide: false,
-                //         roles: ["ROLE_USER", "ROLE_ADMIN"],
-                //         icon: '',
-                //     },
-                // },
+                {
+                    path: "/user/UserQuotaOrder",
+                    name: "user_userQuotaOrder",
+                    component: () => import("@/views/Setting/UserQuotaOrder"),
+                    meta: {
+                        title: "订单列表",
+                        isHide: false,
+                        roles: [],
+                        icon: '',
+                        ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123"],
+                    },
+                },
                 {
                     path: "/user/UserQuotaControl",
                     name: "user_userQuotaControl",
