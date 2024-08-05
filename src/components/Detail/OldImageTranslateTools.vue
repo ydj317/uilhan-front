@@ -350,9 +350,6 @@ export default defineComponent({
     // 편집
     async editorImage() {
       let url = this.selectedCollection.url;
-      if(this.selectedCollection.request_id){
-        url += '?request_id='+this.selectedCollection.request_id;
-      }
       this.$emit("update:editorImage", {url,old_url:this.selectedCollection.old_url});
     },
 
