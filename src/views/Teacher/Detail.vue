@@ -1,82 +1,54 @@
 <template>
-  <a-layout class="wrap">
-    <a-layout-sider class="menu-wrap">
-      <div class="logo-wrap fl-cc">
-        <img src="@/assets/logo_icon.png">
-      </div>
-      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" v-model:openKeys="openKeys">
-        <a-sub-menu key="sub1">
-          <template #title>
-            <span>
-              <user-outlined />
-              <span>讲师管理</span>
-            </span>
-          </template>
-          <a-menu-item key="1">讲师列表</a-menu-item>
-        </a-sub-menu>
-      </a-menu>
-    </a-layout-sider>
-    <a-layout>
-      <a-layout-header class="layout-header-wrap"></a-layout-header>
-      <a-layout-content>
-        <div class="layout-content-wrap">
-          <div class="teacher-detail-wrap">
-            <div class="font-SCDream5 fs30">아카데미</div>
-            <a-flex class="main-wrap mt56">
-              <a-flex vertical class="left-wrap">
-                <div class="video-wrap bg-9C8DFB br10"></div>
-                <a-flex vertical class="intro-wrap mt30">
-                  <div class="font-SCDream5 fs24">{{state.detail.title}}</div>
-                  <div class="intro font-SCDream4 fs16 color-949494 mt20" v-html="state.detail.intro"></div>
-                  <div class="font-SCDream4 fs14 color-949494 mt20"><EyeOutlined class="mr5 fs16" />{{state.detail.finish}}명 수강완료</div>
-                </a-flex>
-                <a-flex class="card-wrap bg-fafafa br15 mt43">
-                  <div class="avatar-wrap fl-cc fl00">
-                    <img :src="state.detail.avatar" class="avatar">
-                  </div>
-                  <a-flex vertical class="ml64">
-                    <div class="font-SCDream6 fs18">{{state.detail.name}}</div>
-                    <div class="font-SCDream4 fs14 color-949494 mt15" v-html="state.detail.intro2"></div>
-                    <a-flex align="center" wrap="wrap" gap="20" class="mt36">
-                      <div class="range-wrap fl-tc" v-for="(v,i) in state.detail.range">
-                        <div class="range" :class="`range`+i"></div>
-                        <span class="ml8 border-bottom-black">{{v}}</span>
-                      </div>
-                    </a-flex>
-                  </a-flex>
-                </a-flex>
-                <a-flex vertical class="video-list-wrap mt16 bor-F0F0F0 br20" v-if="state.videoList.length">
-                  <div class="font-SCDream6 fs18 mb30">강의 {{state.videoList.length}}</div>
-                  <a-flex align="center" class="video-list" v-for="v in state.videoList">
-                    <div class="video bg-9C8DFB fl10"></div>
-                    <a-flex vertical class="text-wrap ml30">
-                      <div class="font-SCDream4 fs18">{{ v.title }}</div>
-                      <div class="content font-SCDream4 fs12 mt15">{{ v.content }}</div>
-                    </a-flex>
-                  </a-flex>
-                </a-flex>
-              </a-flex>
-              <a-flex class="right-wrap ml40">
-                <div class="list fl-c fl-tc" :class="`shadow-`+state.detail.color">
-                  <div class="avatar-wrap fl-cc" :class="`bg-`+state.detail.color"><img :src="state.detail.avatar" class="avatar"></div>
-                  <div class="name fl-cc font-SCDream6 fs18 fw">{{state.detail.name}}</div>
-                  <span class="title font-SCDream5 fs18 color-9C8DFB mt30 border-bottom-9C8DFB">수강이 궁금하다면 ?</span>
-                  <a-button class="pay-btn fl-cc font-SCDream5 fs16 color-FEDB41 mt30 bg-black br20">결제하기</a-button>
-                </div>
-              </a-flex>
-            </a-flex>
+  <div class="teacher-detail-wrap">
+    <div class="font-SCDream5 fs30">아카데미</div>
+    <a-flex class="main-wrap mt56">
+      <a-flex vertical class="left-wrap">
+        <div class="video-wrap bg-9C8DFB br10"></div>
+        <a-flex vertical class="intro-wrap mt30">
+          <div class="font-SCDream5 fs24">{{state.detail.title}}</div>
+          <div class="intro font-SCDream4 fs16 color-949494 mt20" v-html="state.detail.intro"></div>
+          <div class="font-SCDream4 fs14 color-949494 mt20"><EyeOutlined class="mr5 fs16" />{{state.detail.finish}}명 수강완료</div>
+        </a-flex>
+        <a-flex class="card-wrap bg-fafafa br15 mt43">
+          <div class="avatar-wrap fl-cc fl00">
+            <img :src="state.detail.avatar" class="avatar">
           </div>
+          <a-flex vertical class="ml64">
+            <div class="font-SCDream6 fs18">{{state.detail.name}}</div>
+            <div class="font-SCDream4 fs14 color-949494 mt15" v-html="state.detail.intro2"></div>
+            <a-flex align="center" wrap="wrap" gap="20" class="mt36">
+              <div class="range-wrap fl-tc" v-for="(v,i) in state.detail.range">
+                <div class="range" :class="`range`+i"></div>
+                <span class="ml8 border-bottom-black">{{v}}</span>
+              </div>
+            </a-flex>
+          </a-flex>
+        </a-flex>
+        <a-flex vertical class="video-list-wrap mt16 bor-F0F0F0 br20" v-if="state.videoList.length">
+          <div class="font-SCDream6 fs18 mb30">강의 {{state.videoList.length}}</div>
+          <a-flex align="center" class="video-list" v-for="v in state.videoList">
+            <div class="video bg-9C8DFB fl10"></div>
+            <a-flex vertical class="text-wrap ml30">
+              <div class="font-SCDream4 fs18">{{ v.title }}</div>
+              <div class="content font-SCDream4 fs12 mt15">{{ v.content }}</div>
+            </a-flex>
+          </a-flex>
+        </a-flex>
+      </a-flex>
+      <a-flex class="right-wrap ml40">
+        <div class="list fl-c fl-tc" :class="`shadow-`+state.detail.color">
+          <div class="avatar-wrap fl-cc" :class="`bg-`+state.detail.color"><img :src="state.detail.avatar" class="avatar"></div>
+          <div class="name fl-cc font-SCDream6 fs18 fw">{{state.detail.name}}</div>
+          <span class="title font-SCDream5 fs18 color-9C8DFB mt30 border-bottom-9C8DFB">수강이 궁금하다면 ?</span>
+          <a-button class="pay-btn fl-cc font-SCDream5 fs16 color-FEDB41 mt30 bg-black br20">결제하기</a-button>
         </div>
-      </a-layout-content>
-      <a-layout-footer class="layout-footer-wrap"></a-layout-footer>
-    </a-layout>
-  </a-layout>
+      </a-flex>
+    </a-flex>
+  </div>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
-import { UserOutlined,EyeOutlined} from "@ant-design/icons-vue";
-const selectedKeys = ref(['1']);
-const openKeys = ref(['sub1']);
+import { reactive } from "vue";
+import { EyeOutlined} from "@ant-design/icons-vue";
 const state = reactive({
   videoList:[
     {
@@ -107,33 +79,6 @@ const state = reactive({
   },
 });
 </script>
-<style scoped>
-.wrap .logo-wrap{
-  width: 100%;
-  height: 60px;
-}
-.wrap .logo-wrap img{
-  height: 30px;
-  display: none;
-}
-.wrap .layout-header-wrap{
-  background: #fff;
-  height: 60px;
-}
-.wrap .layout-content-wrap{
-  background: #fff;
-  min-height: calc(100vh - 160px);
-  padding: 20px;
-}
-.wrap .layout-footer-wrap{
-  background: #fff;
-  height: 100px;
-}
-:deep(.ant-menu-item-selected) {
-  font-weight: bold;
-  color: #001529;
-}
-</style>
 <style>
 .teacher-detail-wrap .shadow-9C8DFB{
   box-shadow:15px 15px 25px rgba(156,141,251,0.3);

@@ -1,58 +1,19 @@
 <template>
-  <a-layout class="wrap">
-    <a-layout-sider class="menu-wrap">
-      <div class="logo-wrap fl-cc">
-        <img src="@/assets/logo_icon.png">
+  <div class="teacher-wrap">
+    <div class="font-SCDream5 fs30 pl60">아카데미</div>
+    <a-flex wrap="wrap" justify="center" class="list-wrap">
+      <div class="list fl-c cp" v-for="v in state.teacherList" :class="`shadow-`+v.color" @click="goTeacherUrl(v.id)">
+        <div class="avatar-wrap fl-cc" :class="`bg-`+v.color"><img :src="v.avatar" class="avatar"></div>
+        <div class="name fl-cc font-SCDream6 fs20 fw">{{v.name}}</div>
+        <!--                <div class="title font-SCDream5 fs16 fw mt36 text-center" v-html="v.title"></div>-->
+        <!--                <div class="intro fl-cc font-SCDream4 fs12 color-949494 mt20 text-center" v-html="v.intro"></div>-->
+        <!--                <div class="finish fl-cc fl-tc font-SCDream4 fs11 color-949494 mt20"><EyeOutlined class="mr5 fs16" />{{v.finish}}명 수강완료</div>-->
       </div>
-      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" v-model:openKeys="openKeys">
-        <template v-for="v in menuList">
-          <template v-if="v.children">
-            <a-sub-menu key="sub1">
-              <template #title>
-                <span>
-                  <user-outlined />
-                  <span>{{ v.name }}</span>
-                </span>
-              </template>
-              <a-menu-item key="1" v-for="v2 in v.children">{{ v2.name }}</a-menu-item>
-            </a-sub-menu>
-          </template>
-          <template v-else>
-            <a-menu-item key="2">
-              <user-outlined />
-              <span class="nav-text">{{ v.name }}</span>
-            </a-menu-item>
-          </template>
-        </template>
-      </a-menu>
-    </a-layout-sider>
-    <a-layout>
-      <a-layout-header class="layout-header-wrap"></a-layout-header>
-      <a-layout-content>
-        <div class="layout-content-wrap">
-          <div class="teacher-wrap">
-            <div class="font-SCDream5 fs30 pl60">아카데미</div>
-            <a-flex wrap="wrap" justify="center" class="list-wrap">
-              <div class="list fl-c cp" v-for="v in state.teacherList" :class="`shadow-`+v.color" @click="goTeacherUrl(v.id)">
-                <div class="avatar-wrap fl-cc" :class="`bg-`+v.color"><img :src="v.avatar" class="avatar"></div>
-                <div class="name fl-cc font-SCDream6 fs20 fw">{{v.name}}</div>
-<!--                <div class="title font-SCDream5 fs16 fw mt36 text-center" v-html="v.title"></div>-->
-<!--                <div class="intro fl-cc font-SCDream4 fs12 color-949494 mt20 text-center" v-html="v.intro"></div>-->
-<!--                <div class="finish fl-cc fl-tc font-SCDream4 fs11 color-949494 mt20"><EyeOutlined class="mr5 fs16" />{{v.finish}}명 수강완료</div>-->
-              </div>
-            </a-flex>
-          </div>
-        </div>
-      </a-layout-content>
-      <a-layout-footer class="layout-footer-wrap"></a-layout-footer>
-    </a-layout>
-  </a-layout>
+    </a-flex>
+  </div>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
-import { UserOutlined,EyeOutlined} from "@ant-design/icons-vue";
-const selectedKeys = ref(['1']);
-const openKeys = ref(['sub1']);
+import { reactive } from "vue";
 const state = reactive({
   teacherList:[
     {
