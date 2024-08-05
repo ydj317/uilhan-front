@@ -548,6 +548,28 @@ export const staticRoutes = [
             title: "비밀번호 찾기",
         }
     },
+    {
+        path: "/teacher/list",
+        name: "teacher_list",
+        component: () => import("@/views/Teacher/List.vue"),
+        meta: {
+            title: "배송대행지",
+            isHide: true,
+            roles: ["ROLE_USER", "ROLE_ADMIN"],
+            icon: GiftOutlined
+        },
+    },
+    {
+        path: "/teacher/detail",
+        name: "teacher_detail",
+        component: () => import("@/views/Teacher/Detail.vue"),
+        meta: {
+            title: "배송대행지",
+            isHide: true,
+            roles: ["ROLE_USER", "ROLE_ADMIN"],
+            icon: GiftOutlined
+        },
+    },
   //todo  模拟第三方支付 后期删除
     {
         path: "/user/thirdPartyPaymentPage",
