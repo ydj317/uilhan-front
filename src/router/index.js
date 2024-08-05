@@ -4,7 +4,7 @@ import "nprogress/nprogress.css";
 import findLast from "lodash/findLast";
 import {cookieInit, isLogin} from "util/auth";
 import Cookie from "js-cookie";
-import {menus, notFoundAndNoPower, staticRoutes} from "@/router/route";
+import {menus, notFoundAndNoPower, staticRoutes,otherMenus} from "@/router/route";
 import emitter from "@/util/emitter";
 
 /**
@@ -14,7 +14,7 @@ const menuList = setFilterRouteList();
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes: [...menuList,notFoundAndNoPower,...staticRoutes],
+  routes: [...menuList,notFoundAndNoPower,...staticRoutes,...otherMenus],
   scrollBehavior (to, from, savedPosition) {
     return { top: 0}
   }

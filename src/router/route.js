@@ -10,7 +10,8 @@ import {
     BellOutlined,
     RobotOutlined,
     ReadOutlined,
-    AppstoreOutlined
+    AppstoreOutlined,
+    UserOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -548,28 +549,6 @@ export const staticRoutes = [
             title: "비밀번호 찾기",
         }
     },
-    {
-        path: "/teacher/list",
-        name: "teacher_list",
-        component: () => import("@/views/Teacher/List.vue"),
-        meta: {
-            title: "배송대행지",
-            isHide: true,
-            roles: ["ROLE_USER", "ROLE_ADMIN"],
-            icon: GiftOutlined
-        },
-    },
-    {
-        path: "/teacher/detail",
-        name: "teacher_detail",
-        component: () => import("@/views/Teacher/Detail.vue"),
-        meta: {
-            title: "배송대행지",
-            isHide: true,
-            roles: ["ROLE_USER", "ROLE_ADMIN"],
-            icon: GiftOutlined
-        },
-    },
   //todo  模拟第三方支付 后期删除
     {
         path: "/user/thirdPartyPaymentPage",
@@ -581,6 +560,60 @@ export const staticRoutes = [
         },
     },
 ];
+export const otherMenus = [{
+    path: "/",
+    name: "teacher",
+    meta: {roles: ["ROLE_USER"]},
+    component: () => import("@/views/Template/TeacherLayout"),
+    redirect: "/teacher/list",
+    children: [
+        {
+            path: "/teacher",
+            name: "teacher",
+            meta: {
+                title: "老师",
+                isHide: false,
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                icon: SettingOutlined
+            },
+            "children": [
+                {
+                    path: "/teacher/list",
+                    name: "teacher_list",
+                    component: () => import("@/views/Teacher/List.vue"),
+                    meta: {
+                        title: "老师管理",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: UserOutlined,
+                    },
+                },
+                {
+                    path: "/teacher/detail",
+                    name: "teacher_detail",
+                    component: () => import("@/views/Teacher/Detail.vue"),
+                    meta: {
+                        title: "老师详情",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: UserOutlined,
+                    },
+                },
+            ]
+        },
+        {
+            path: "/order/list",
+            name: "order_list",
+            component: () => import("@/views/Order/order/List.vue"),
+            meta: {
+                title: "订单",
+                isHide: false,
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                icon: CalendarOutlined
+            },
+        },
+    ]
+}]
 
 /**
  * 定义404、401界面
