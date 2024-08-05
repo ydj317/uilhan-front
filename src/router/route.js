@@ -571,7 +571,7 @@ export const otherMenus = [{
             path: "/teacher",
             name: "teacher",
             meta: {
-                title: "老师",
+                title: "아카데미",
                 isHide: false,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: SettingOutlined
@@ -582,7 +582,7 @@ export const otherMenus = [{
                     name: "teacher_list",
                     component: () => import("@/views/Teacher/List.vue"),
                     meta: {
-                        title: "老师管理",
+                        title: "강사리스트",
                         isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: UserOutlined,
@@ -593,24 +593,13 @@ export const otherMenus = [{
                     name: "teacher_detail",
                     component: () => import("@/views/Teacher/Detail.vue"),
                     meta: {
-                        title: "老师详情",
-                        isHide: false,
+                        title: "",
+                        isHide: true,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: UserOutlined,
                     },
                 },
             ]
-        },
-        {
-            path: "/order/list",
-            name: "order_list",
-            component: () => import("@/views/Order/order/List.vue"),
-            meta: {
-                title: "订单",
-                isHide: false,
-                roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: CalendarOutlined
-            },
         },
     ]
 }]
