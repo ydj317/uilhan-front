@@ -160,33 +160,6 @@ export default {
       immediate: true,
       deep: true
     },
-    // activeKey: {
-    //   handler() {
-    //     if(this.activeKey == 3){
-    //       const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
-    //       console.log('requestIdsLength-desc',requestIdsLength);
-    //       if(!requestIdsLength){
-    //         this.$nextTick(() => {
-    //           setTimeout(() => {
-    //             this.getRequestIds();
-    //           }, 200);
-    //         });
-    //       }
-    //     }
-    //   },
-    // },
-    // product: {
-    //   handler() {
-    //     if(this.activeKey == 3){
-    //       this.$nextTick(() => {
-    //         setTimeout(() => {
-    //           this.getRequestIds();
-    //         }, 200);
-    //       });
-    //     }
-    //   },
-    //   immediate: true,
-    // },
   },
 
   mounted() {
@@ -557,7 +530,6 @@ export default {
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
           tmp['request_id'] = item['url'].slice(pos+11);
-          tmp['url'] = item['url'].slice(0,pos-1);
         }
         return tmp;
       })
@@ -581,7 +553,6 @@ export default {
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
           tmp['request_id'] = item['url'].slice(pos+11);
-          tmp['url'] = item['url'].slice(0,pos-1);
         }
         return tmp;
       })
@@ -627,34 +598,6 @@ export default {
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
     },
-    //获取图片requestIds
-    getRequestIds(){
-      let aImagesUrl = this.getDetailContentsImage();
-      //이미지 없을 경우
-      if (aImagesUrl === false) {
-        return false;
-      }
-      this.imgLoading = true;
-      let imgList =aImagesUrl.map((item,index)=>{
-        let tmp = [];
-        tmp['checked'] = false;
-        if(index == 0){
-          tmp['checked'] = true;
-        }
-        tmp['order'] = index;
-        tmp['request_id'] = '';
-        tmp['url'] = item['url'];
-        let pos = item['url'].indexOf('request_id');
-        if(pos != -1){
-          tmp['request_id'] = item['url'].slice(pos+11);
-          tmp['url'] = item['url'].slice(0,pos-1);
-        }
-        return tmp;
-      })
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
-        this.imgLoading = false;
-      });
-    }
   }
 };
 </script>

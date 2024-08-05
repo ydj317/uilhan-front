@@ -13,7 +13,7 @@
         <div style="font-size: 14px;">
           <p style="line-height: 16px">문의: 09:00~18:00 (토,일,공휴일 휴무)</p>
           <p style="line-height: 16px">TEL: 070-4766-1622</p>
-          <p style="line-height: 16px">FAX: 031-226-1689</p>
+          <p style="line-height: 16px">FAX: 032-226-1689</p>
           <p style="line-height: 16px">E-MAIL: solution@uilhan.co.kr</p>
         </div>
       </div>
