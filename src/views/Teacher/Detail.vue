@@ -31,7 +31,7 @@
                   <div class="font-SCDream4 fs14 color-949494 mt20"><EyeOutlined class="mr5 fs16" />{{state.detail.finish}}명 수강완료</div>
                 </a-flex>
                 <a-flex class="card-wrap bg-fafafa br15 mt43">
-                  <div class="avatar-wrap fl-cc">
+                  <div class="avatar-wrap fl-cc fl00">
                     <img :src="state.detail.avatar" class="avatar">
                   </div>
                   <a-flex vertical class="ml64">
@@ -40,7 +40,7 @@
                     <a-flex align="center" wrap="wrap" gap="20" class="mt36">
                       <div class="range-wrap fl-tc" v-for="(v,i) in state.detail.range">
                         <div class="range" :class="`range`+i"></div>
-                        <span class="ml8">{{v}}</span>
+                        <span class="ml8 border-bottom-black">{{v}}</span>
                       </div>
                     </a-flex>
                   </a-flex>
@@ -179,7 +179,7 @@ const state = reactive({
   background: lightcyan;
 }
 .teacher-detail-wrap{
-  padding: 0 125px 67px 60px;
+  margin: 0 60px 60px;
 }
 .left-wrap{
   width: calc(100% - 355px);
@@ -222,6 +222,7 @@ const state = reactive({
   border-radius: 15px;
 }
 .right-wrap{
+  width: 310px;
   margin-top: 278px;
 }
 .right-wrap .list{
@@ -249,5 +250,19 @@ const state = reactive({
 .right-wrap .pay-btn{
   width: 229px;
   height: 44px;
+}
+@media (max-width: 1400px) {
+  .card-wrap .avatar-wrap{
+    width: 90px;
+    height: 90px;
+  }
+  .card-wrap .avatar{
+    width: 60px;
+    height: 60px;
+  }
+  .video{
+    width: 105px;
+    height: 55px;
+  }
 }
 </style>

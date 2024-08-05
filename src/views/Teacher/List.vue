@@ -22,7 +22,7 @@
         <div class="layout-content-wrap">
           <div class="teacher-wrap">
             <div class="font-SCDream5 fs30 pl60">아카데미</div>
-            <a-flex wrap="wrap" class="list-wrap">
+            <a-flex wrap="wrap" justify="center" class="list-wrap">
               <div class="list fl-c cp" v-for="v in state.teacherList" :class="`shadow-`+v.color" @click="goTeacherUrl(v.id)">
                 <div class="avatar-wrap fl-cc" :class="`bg-`+v.color"><img :src="v.avatar" class="avatar"></div>
                 <div class="name fl-cc font-SCDream6 fs20 fw">{{v.name}}</div>
@@ -148,7 +148,7 @@ const goTeacherUrl = (id) => {
 </style>
 <style scoped>
 .list-wrap{
-  margin: 232px 134px;
+  margin-top: 232px;
   gap: 271px 144px;
 }
 .list-wrap .list{
