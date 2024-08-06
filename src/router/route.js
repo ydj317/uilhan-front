@@ -564,7 +564,7 @@ export const otherMenus = [{
     path: "/",
     name: "teacher",
     meta: {roles: ["ROLE_USER"]},
-    component: () => import("@/views/Template/TeacherLayout"),
+    component: () => import("@/views/Layout/Layout"),
     redirect: "/teacher/list",
     children: [
         {
