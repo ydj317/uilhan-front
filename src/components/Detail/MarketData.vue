@@ -255,6 +255,7 @@ export default {
                 await this.getDisplayCategory(marketInfo.market_code, res.data[0]["cate_ids"], marketInfo.seller_id, marketInfo.accountName);
               }
 
+              // 추천옵션 사용마켓일경우 추천옵션 리스트 조회하여 초기데이타 넣어줌
               if (this.useRecommendedMarketList.includes(marketInfo.market_code)) {
                 await this.getRecommendedOpt(marketInfo, leafCateId)
               }
@@ -428,8 +429,9 @@ export default {
         account_id : marketInfo.id,
         cate_id : leafCateId
       }
+      // this.loading = true;
       await useProductApi().getRecommendedOpt(param).then(res => {
-        console.log(res.data);
+        // this.loading = false;
         this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOptList'] = res.data;
         this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOpt'] = this.product.item_option.map(item => {
           return {

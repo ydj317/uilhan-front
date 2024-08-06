@@ -78,13 +78,14 @@
               <div v-if="showRecommendOpt" class="spec-option-group"
                    v-for ="(market, marketIndex) in recommendedMarketList" :key="marketIndex" >
                 <span class="spec-font">[{{openMarketList[market.marketCode]}}] 추천옵션그룹{{ optionIndex + 1 }}</span>
+
                 <a-select v-model:value="product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id']"
                           style="width: 100px; margin-left: 10px"
                           @change="onChangeRecommendedOptionGroup(market, optionIndex, $event)"
                           @dropdownVisibleChange="onDropdownVisibleChange(market, optionIndex, $event)"
                 >
                   <a-select-option value="">자동매칭</a-select-option>
-                  <a-select-option v-for="recOption in market.meta_data.recommendedOptList || []" :key="recOption.recommendedOptNo">
+                  <a-select-option v-for="(recOption, recOptionKey) in market.meta_data.recommendedOptList || []" :key="recOptionKey" >
                     {{ recOption.recommendedOptName }}
                   </a-select-option>
                 </a-select>
@@ -158,7 +159,7 @@ import { cloneDeep, forEach } from "lodash";
 import { mapState, useStore } from "vuex";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
-import { nextTick, watch } from "vue";
+import { nextTick, reactive, watch } from "vue";
 
 export default {
   name: "productDetailSpecGroup",
@@ -750,11 +751,20 @@ export default {
     this.adjustRepeatHeights();
     this.showRecommendOpt = this.product.item_sync_market.some(market => this.useRecommendedMarketList.includes(market.market_code));
 
+    // product.item_cate 에 저장된 cate_meta 데이타에서 추가옵션정보를 꺼내옴
     forEach(this.product.item_cate, (value, key) => {
       if (this.useRecommendedMarketList.includes(value.marketCode)
         && this.product.item_sync_market.some(market => [value.marketCode].includes(market.market_code)))
       {
         value.accountName = key;
+        // 직접입력 항목 노출하지 않도록 제거
+        let recommendedOptList = reactive({})
+        for (const key in value.meta_data.recommendedOptList) {
+          if (value.meta_data.recommendedOptList.hasOwnProperty(key) && key !== '0') {
+            recommendedOptList[key] = value.meta_data.recommendedOptList[key];
+          }
+        }
+        value.meta_data.recommendedOptList = recommendedOptList;
         this.recommendedMarketList.push(value)
       }})
   }
