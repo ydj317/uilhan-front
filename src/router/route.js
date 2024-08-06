@@ -11,7 +11,8 @@ import {
     RobotOutlined,
     ReadOutlined,
     AppstoreOutlined,
-    UserOutlined
+    UserOutlined,
+    MenuUnfoldOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -574,7 +575,7 @@ export const otherMenus = [{
                 title: "아카데미",
                 isHide: false,
                 roles: ["ROLE_ADMIN", "ROLE_USER"],
-                icon: SettingOutlined
+                icon: MenuUnfoldOutlined
             },
             "children": [
                 {
