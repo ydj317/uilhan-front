@@ -316,7 +316,7 @@ const isAdmin = ref(Cookie.get("member_roles").split(",").includes("ROLE_ADMIN")
 
 //--------Account---------------
 function changeUseAi() {
-  if (formState.userInfo.is_vip_time === false || formState.userInfo.use_ai_recommend === false) {
+  if (formState.userInfo.is_vip_time === false || formState.userInfo.use_ai_recommend === false || formState.userInfo.is_ai_return_time === false) {
     formState.settingDatas.use_ai = false;
     message.error('AI 추천모드는 유료서비스로 결제후 사용이 가능합니다.');
     return false;
