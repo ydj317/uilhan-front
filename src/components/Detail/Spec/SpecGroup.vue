@@ -74,6 +74,21 @@
                     option.name.length
                   }}</span> / 25</span>
               </div>
+
+              <div v-if="showRecommendOpt" class="spec-option-group"
+                   v-for ="(market, marketIndex) in recommendedMarketList" :key="marketIndex" >
+                <span class="spec-font">[{{openMarketList[market.marketCode]}}] 추천옵션그룹{{ optionIndex + 1 }}</span>
+                <a-select v-model:value="product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id']"
+                          style="width: 100px; margin-left: 10px"
+                          @change="onChangeRecommendedOptionGroup(market, optionIndex, $event)"
+                          @dropdownVisibleChange="onDropdownVisibleChange(market, optionIndex, $event)"
+                >
+                  <a-select-option value="">자동매칭</a-select-option>
+                  <a-select-option v-for="recOption in market.meta_data.recommendedOptList || []" :key="recOption.recommendedOptNo">
+                    {{ recOption.recommendedOptName }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </th>
           </tr>
           <!--옵션값 일괄 설정 영역-->
@@ -150,7 +165,11 @@ export default {
   computed: {
     ...mapState({
       product: state => state.product.detail,
-      showOptionModify: state => state.product.showOptionModify
+      showOptionModify: state => state.product.showOptionModify,
+      openMarketList: state => state.market.marketList,
+      useRecommendedMarketList: (state) => state.market.use_recommended_market_list.map(item => {
+        return item.market_code;
+      })
     })
   },
   watch: {
@@ -236,6 +255,9 @@ export default {
       ]),
 
       isFirstLoad: true,
+      showRecommendOpt : false,
+      recommendedMarketList : [],
+      selectedRecommendedOption : []  //선택된 추천 옵션 리스트
     };
   },
   methods: {
@@ -705,11 +727,36 @@ export default {
       } catch (e) {
       }
       return check;
+    },
+
+    onDropdownVisibleChange(market, optionIndex, $event) {
+      this.selectedRecommendedOption = [];
+      this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'].map((item) => {
+        if (item.recommended_id !== '' && item.recommended_id !== 0) {
+          this.selectedRecommendedOption.push(item.recommended_id);
+        }
+      })
+    },
+
+    onChangeRecommendedOptionGroup(market, optionIndex, $event) {
+      if (this.selectedRecommendedOption.includes($event)) {
+         message.info('이미 선택된 옵션입니다.')
+        this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id'] = '';
+      }
     }
   },
   mounted() {
     this.options = cloneDeep(this.initOptionData);
     this.adjustRepeatHeights();
+    this.showRecommendOpt = this.product.item_sync_market.some(market => this.useRecommendedMarketList.includes(market.market_code));
+
+    forEach(this.product.item_cate, (value, key) => {
+      if (this.useRecommendedMarketList.includes(value.marketCode)
+        && this.product.item_sync_market.some(market => [value.marketCode].includes(market.market_code)))
+      {
+        value.accountName = key;
+        this.recommendedMarketList.push(value)
+      }})
   }
 };
 </script>
