@@ -5,6 +5,7 @@
     v-model:selectedKeys="state.selectedKeys"
     v-model:openKeys="state.openKeys"
     @openChange="onOpenChange"
+    class="layout-left-menu"
   >
     <template v-for="(menu, index) in state.menuList" :key="index">
       <template v-if="!menu.children && !menu.meta.isHide">

@@ -42,6 +42,15 @@ onMounted(() => {
   document.title = site + ' - ' + router.currentRoute.value.meta.title;
 })
 </script>
+<style>
+.wrap .layout-left-menu{
+  color: rgba(255, 255, 255, 1);
+}
+.wrap .layout-left-menu .ant-menu-item-selected {
+  font-weight: bold;
+  color: #001529;
+}
+</style>
 <style scoped>
 .wrap .logo-wrap{
   width: 100%;
@@ -65,9 +74,5 @@ onMounted(() => {
 .wrap .layout-footer-wrap{
   background: #fff;
   height: 100px;
-}
-:deep(.wrap .ant-menu-item-selected) {
-  font-weight: bold;
-  color: #001529;
 }
 </style>
