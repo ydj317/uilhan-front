@@ -5,6 +5,8 @@ import { Interpark } from './interpark';
 import { Coupang } from "./coupang";
 import { Qoo10sg } from "./qoo10sg";
 import { Sk11st } from "./sk11st";
+import { Auction } from "./auction";
+import { Gmarket } from "./gmarket";
 
 export class OrderMapping {
   marketCode;
@@ -19,6 +21,8 @@ export class OrderMapping {
       'coupang': Coupang,
       'qoo10sg': Qoo10sg,
       'sk11st': Sk11st,
+      'auction': Auction,
+      'gmarket': Gmarket,
     };
   }
 
