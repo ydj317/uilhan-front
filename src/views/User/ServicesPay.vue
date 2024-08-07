@@ -164,9 +164,9 @@
             </template>
           </a-flex>
           <a-modal v-model:open="open"
-                   title="支付成功或取消支付"
+                   title="서비스 결제중입니다."
                    @ok="handleOk"
-                   okText="支付成功"
+                   okText="결제완료"
                    cancelText=결제취소
                    @cancel="handleCancel"
                    :maskClosable="false">
