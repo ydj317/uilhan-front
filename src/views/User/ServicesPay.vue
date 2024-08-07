@@ -140,7 +140,7 @@
             <a-flex class="mt10">
               <a-radio-group v-model:value="state.selectedList.payType" name="payType">
                 <a-radio value="1"  class="font-SCDream4">카드</a-radio>
-                <a-radio value="2"  class="font-SCDream4">무통장입금</a-radio>
+                <a-radio value="2"  class="font-SCDream4" v-show="false">무통장입금</a-radio>
               </a-radio-group>
             </a-flex>
           </a-flex>
@@ -407,7 +407,7 @@ onBeforeMount(() => {
       const basicObj = {
         value:0,
         title:'사용중',
-        subTitle:'사용만료일시: ',
+        subTitle:'기본서비스 만료일시: ',
         time: allPlanData.currPlan.end_time,
         money:'0',
         monthMoney:'0',
