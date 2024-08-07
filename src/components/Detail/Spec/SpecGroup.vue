@@ -756,16 +756,17 @@ export default {
       if (this.useRecommendedMarketList.includes(value.marketCode)
         && this.product.item_sync_market.some(market => [value.marketCode].includes(market.market_code)))
       {
-        value.accountName = key;
+        const itemCateInfo = cloneDeep(value);
+        itemCateInfo.accountName = key;
         // 직접입력 항목 노출하지 않도록 제거
         let recommendedOptList = reactive({})
-        for (const key in value.meta_data.recommendedOptList) {
-          if (value.meta_data.recommendedOptList.hasOwnProperty(key) && key !== '0') {
-            recommendedOptList[key] = value.meta_data.recommendedOptList[key];
+        for (const key in itemCateInfo.meta_data.recommendedOptList) {
+          if (itemCateInfo.meta_data.recommendedOptList.hasOwnProperty(key) && key !== '0') {
+            recommendedOptList[key] = itemCateInfo.meta_data.recommendedOptList[key];
           }
         }
-        value.meta_data.recommendedOptList = recommendedOptList;
-        this.recommendedMarketList.push(value)
+        itemCateInfo.meta_data.recommendedOptList = recommendedOptList;
+        this.recommendedMarketList.push(itemCateInfo)
       }})
   }
 };
