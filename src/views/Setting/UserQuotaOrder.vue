@@ -12,22 +12,22 @@
 
       <div class="card-count">
         <div class="card-count-content" @click="searchStatusOrder('all')">
-          전체<span class="card-count-span">{{ statistics.allCnt }}个</span>
+          전체<span class="card-count-span">{{ statistics.allCnt }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('Pending')">
-          결제대기<span class="card-count-span">{{ statistics.pendingCnt }}个</span>
+          결제대기<span class="card-count-span">{{ statistics.pendingCnt }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('Completed')">
-          결제완료<span class="card-count-span">{{ statistics.CompletedCnt }}个</span>
+          결제완료<span class="card-count-span">{{ statistics.CompletedCnt }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('CancelPayment')">
-          결제취소<span class="card-count-span">{{ statistics.CancelPayment }}个</span>
+          결제취소<span class="card-count-span">{{ statistics.CancelPayment }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('Refunding')">
-          환불대기<span class="pl22 color-FB6F3E">{{ statistics.refundingCnt }}个</span>
+          환불대기<span class="pl22 color-FB6F3E">{{ statistics.refundingCnt }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('Refunded')">
-          환불완료<span class="card-count-span">{{ statistics.refundedCnt }}个</span>
+          환불완료<span class="card-count-span">{{ statistics.refundedCnt }}</span>
         </div>
       </div>
 
