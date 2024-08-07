@@ -232,6 +232,13 @@ export default {
       deep: true
     },
 
+    "product.item_cate": {
+      handler: function(val) {
+        this.setRecommendedOpt();
+      },
+      deep: true
+    },
+
   },
   components: { PlusOutlined, MinusOutlined },
   data() {
@@ -744,30 +751,35 @@ export default {
          message.info('이미 선택된 옵션입니다.')
         this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id'] = '';
       }
+    },
+    setRecommendedOpt() {
+      // product.item_cate 에 저장된 cate_meta 데이타에서 추가옵션정보를 꺼내옴
+      this.recommendedMarketList = reactive([]);
+      forEach(this.product.item_cate, (value, key) => {
+        if (this.useRecommendedMarketList.includes(value.marketCode)
+          && this.product.item_sync_market.some(market => [value.marketCode].includes(market.market_code)))
+        {
+          const itemCateInfo = cloneDeep(value);
+          itemCateInfo.accountName = key;
+          // 직접입력 항목 노출하지 않도록 제거
+          let recommendedOptList = reactive({})
+          for (const key in itemCateInfo.meta_data.recommendedOptList) {
+            if (itemCateInfo.meta_data.recommendedOptList.hasOwnProperty(key) && key !== '0') {
+              recommendedOptList[key] = itemCateInfo.meta_data.recommendedOptList[key];
+            }
+          }
+          itemCateInfo.meta_data.recommendedOptList = recommendedOptList;
+          this.recommendedMarketList.push(itemCateInfo)
+        }})
     }
   },
+
   mounted() {
     this.options = cloneDeep(this.initOptionData);
     this.adjustRepeatHeights();
     this.showRecommendOpt = this.product.item_sync_market.some(market => this.useRecommendedMarketList.includes(market.market_code));
+    this.setRecommendedOpt()
 
-    // product.item_cate 에 저장된 cate_meta 데이타에서 추가옵션정보를 꺼내옴
-    forEach(this.product.item_cate, (value, key) => {
-      if (this.useRecommendedMarketList.includes(value.marketCode)
-        && this.product.item_sync_market.some(market => [value.marketCode].includes(market.market_code)))
-      {
-        const itemCateInfo = cloneDeep(value);
-        itemCateInfo.accountName = key;
-        // 직접입력 항목 노출하지 않도록 제거
-        let recommendedOptList = reactive({})
-        for (const key in itemCateInfo.meta_data.recommendedOptList) {
-          if (itemCateInfo.meta_data.recommendedOptList.hasOwnProperty(key) && key !== '0') {
-            recommendedOptList[key] = itemCateInfo.meta_data.recommendedOptList[key];
-          }
-        }
-        itemCateInfo.meta_data.recommendedOptList = recommendedOptList;
-        this.recommendedMarketList.push(itemCateInfo)
-      }})
   }
 };
 </script>

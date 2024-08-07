@@ -126,6 +126,7 @@ import { useCategoryApi } from "@/api/category";
 import { message } from "ant-design-vue";
 import MarketDisplayCategorys from "@/components/Detail/MarketDisplayCategorys.vue";
 import { useProductApi } from "@/api/product";
+import { forEach } from "lodash";
 
 const displayCategoryMarkets = ["lotteon"];
 
@@ -243,12 +244,22 @@ export default {
               this.categories[marketInfo.accountName].value = res.data[0]["cate_names"].join("/");
               const leafCateId = res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1];
               this.product.item_cate[marketInfo.accountName] = {
-                account_name : marketInfo.accountName,
+                accountName : marketInfo.accountName,
                 marketCode: marketInfo.market_code,
                 cateId: leafCateId,
                 categoryNames: res.data[0]["cate_names"].join("/"),
                 keyword: search_keyword,
-                meta_data:this.initMetaData,
+                meta_data:{
+                  //추천 옵션 리스트
+                  recommendedOptList: [],
+                  // 선택한 추천옵션 데이타
+                  recommendedOpt: this.product.item_option.map(item => {
+                    return {
+                      option_name : item.name,
+                      recommended_id : ''
+                    }
+                  })
+                }
               };
 
               if (this.displayCategoryMarkets.includes(marketInfo.market_code)) {
@@ -294,12 +305,22 @@ export default {
         if (res.data.length) {
           this.categories[market.accountName].value = res.data[0]["cate_names"].join("/");
           this.product.item_cate[market.accountName] = {
-            account_name: market.accountName,
+            accountName: market.accountName,
             marketCode: market.market_code,
             cateId: res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1],
             categoryNames: res.data[0]["cate_names"].join("/"),
             keyword: this.search_keyword_clone || searchInput,
-            meta_data: this.initMetaData,
+            meta_data: {
+              //추천 옵션 리스트
+              recommendedOptList: [],
+              // 선택한 추천옵션 데이타
+              recommendedOpt: this.product.item_option.map(item => {
+                return {
+                  option_name : item.name,
+                  recommended_id : ''
+                }
+              })
+            }
           };
           if (this.displayCategoryMarkets.includes(market.market_code)) {
             await this.getDisplayCategory(market.market_code, res.data[0]["cate_ids"], market.seller_id, market.accountName);
@@ -371,7 +392,17 @@ export default {
         cateId: value,
         categoryNames: selectedOptions.cate_names,
         keyword: keyword,
-        meta_data:this.initMetaData,
+        meta_data:{
+          //추천 옵션 리스트
+          recommendedOptList: [],
+          // 선택한 추천옵션 데이타
+          recommendedOpt: this.product.item_option.map(item => {
+            return {
+              option_name : item.name,
+              recommended_id : ''
+            }
+          })
+        }
       };
 
       // 전시카테고리 마켓
@@ -436,7 +467,6 @@ export default {
         this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOpt'] = this.product.item_option.map(item => {
           return {
             option_name : item.name,
-            recommended_name : '',
             recommended_id : ''
           }
         });
@@ -448,6 +478,24 @@ export default {
     //this.search_keyword = '망치'
     if (this.product.item_cate === null || this.product.item_cate === undefined || Object.keys(this.product.item_cate).length === 0) {
       this.product.item_cate = {};
+      forEach(this.marketList, (market) => {
+        let accountName = market.market_code + "|" + market.seller_id;
+        this.product.item_cate[accountName] = {
+          accountName : accountName,
+          marketCode : market.market_code,
+          meta_data : {
+            //추천 옵션 리스트
+            recommendedOptList: [],
+            // 선택한 추천옵션 데이타
+            recommendedOpt: this.product.item_option.map(item => {
+              return {
+                option_name : item.name,
+                recommended_id : ''
+              }
+            })
+          }
+        }
+      })
     }
 
     if (this.product.item_disp_cate === null || this.product.item_disp_cate === undefined || Object.keys(this.product.item_disp_cate).length === 0) {
