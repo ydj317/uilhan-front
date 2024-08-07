@@ -67,7 +67,7 @@ const state = reactive({
   ],
 });
 const goTeacherUrl = (id) => {
-  location.href = '/teacher/detail';
+  // location.href = '/teacher/detail';
 };
 </script>
 <style>
