@@ -727,6 +727,7 @@ const editData = (id) => {
       return {
         refund_id:item.id,
         order_id: item.order.id,
+        isParentOrder:item.order.isParentOrder,
         show_name: item.order.show_name,
         refundStartDate: item.refundStartDate,
         refundEndDate: item.refundEndDate,
@@ -811,14 +812,16 @@ const agreeHandle = (record) => {
 
   currentRefundOrderId.value = record.order_id;
 
+  const msg = record.isParentOrder ? '确定要同意退款吗? 所有子订单也会一起退款' : '确定要同意退款吗?';
+
   Modal.confirm({
     icon: createVNode(ExclamationCircleOutlined),
-    content: '确定要同意退款吗?',
+    content: msg,
     okText: '확인',
     cancelText: '취소',
     centered:true,
     onOk: () => {
-      handleSuccessRefund(record.refund_id);
+      handleSuccessRefund(record.refund_id,record.isParentOrder);
     }
   });
 }
@@ -829,10 +832,12 @@ const refusedHandle = (record) => {
   currentRefundOrderId.value = record.order_id;
   const reason = ref('');
 
+  const msg = record.isParentOrder ? '确定要拒绝退款吗? 所有子订单也会一起拒绝退款' : '确定要拒绝退款吗?';
+
   Modal.confirm({
     icon: createVNode(ExclamationCircleOutlined),
     content: createVNode('div', null, [
-      createVNode('p', null, '确定要拒绝退款吗?'),
+      createVNode('p', null, msg),
       createVNode(Textarea, {
         placeholder: '请输入拒绝理由',
         'onUpdate:value': (value) => reason.value = value
@@ -842,20 +847,22 @@ const refusedHandle = (record) => {
     cancelText: '취소',
     centered: true,
     onOk: () => {
-      handleFailRefund(record.refund_id, reason.value); // 将理由传递给处理函数
+      handleFailRefund(record.refund_id, reason.value,record.isParentOrder); // 将理由传递给处理函数
     }
   });
 
 }
 
 //同意退款处理逻辑
-const handleSuccessRefund = (id) => {
+const handleSuccessRefund = (id,isParentOrder) => {
+
+  const url = isParentOrder ? '/api/user/quota/parent/order/success/refund' : '/api/user/quota/order/success/refund';
 
   const oParam = {
     refund_id : id
   }
 
-  requestPost('/api/user/quota/order/success/refund',oParam, (data) => {
+  requestPost(url,oParam, (data) => {
 
     if (data){
       message.success('同意退款成功')
@@ -865,15 +872,17 @@ const handleSuccessRefund = (id) => {
 }
 
 //拒绝退款处理逻辑
-const handleFailRefund = (id, reason) => {
+const handleFailRefund = (id, reason, isParentOrder) => {
   console.log(id, reason);
+
+  const url = isParentOrder ? '/api/user/quota/parent/order/fail/refund' : '/api/user/quota/order/fail/refund';
 
   const oParam = {
     refund_id : id,
     memo : reason
   }
 
-  requestPost('/api/user/quota/order/fail/refund',oParam, (data) => {
+  requestPost(url,oParam, (data) => {
 
     if (data){
       message.success('拒绝退款成功')
@@ -927,16 +936,16 @@ const replaceItem = (orderId, data) => {
 
     if (item.isParentOrder && item.hasOwnProperty('children') && item.children.length > 0) {
       item.children.forEach((child_item, child_index) => {
-        if(child_item.id == orderId) {
-          const newData = {...data}
+        if (child_item.id == orderId) {
+          const newData = { ...data }
           dataSource.value[index].children[child_index] = newData
         }
       })
     }
 
-    if(item.id == orderId) {
-      const newData = {...data}
-      newData.No=dataSource.value[index].No
+    if (item.id == orderId) {
+      const newData = { ...data }
+      newData.No = dataSource.value[index].No
       dataSource.value[index] = newData
     }
   })
@@ -947,7 +956,6 @@ const replaceItem = (orderId, data) => {
 // const handleDataOk = () => {
 //   dataModel.value = false;
 // }
-
 
 
 const requestPost = (url, params, callback) => {
@@ -986,11 +994,13 @@ const requestPost = (url, params, callback) => {
     padding-bottom: 0;
     margin: 0;
   }
+
   .ant-modal-content {
     display: flex;
     flex-direction: column;
     height: calc(100vh);
   }
+
   .ant-modal-body {
     flex: 1;
   }
@@ -1007,7 +1017,7 @@ const requestPost = (url, params, callback) => {
   font-weight: 600;
 }
 
-.card-count-content{
+.card-count-content {
   padding: 13px;
   margin-right: 10px;
   min-width: 135px;
@@ -1023,29 +1033,32 @@ const requestPost = (url, params, callback) => {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 悬停时的阴影效果 */
 }
 
-.card-count-span{
+.card-count-span {
   padding-left: 22px;
   color: #2A6BD0;
 }
 
-.card-search{
+.card-search {
   margin-top: 50px;
   display: flex;
   justify-content: space-between;
 }
-.card-search-form{
+
+.card-search-form {
   display: flex;
 }
-.card-search-form >>> .ant-select-selector{
+
+.card-search-form >>> .ant-select-selector {
   border-right: 0;
   border-radius: 5px 0 0 5px;
 }
-.card-search-form >>> .ant-input{
+
+.card-search-form >>> .ant-input {
   border-radius: 0;
 }
 
 
-.card-count-content:hover{
+.card-count-content:hover {
   cursor: pointer;
 }
 
