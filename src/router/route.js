@@ -210,7 +210,7 @@ export const menus = [{
             component: () => import("@/views/User/my.vue"),
             meta: {
                 title: "My Page",
-                isHide: false,
+                isHide: true,
                 roles: [],
                 icon: '',
                 ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910"],
@@ -244,7 +244,7 @@ export const menus = [{
                     name: "user_userQuotaOrder",
                     component: () => import("@/views/Setting/UserQuotaOrder"),
                     meta: {
-                        title: "订单列表",
+                        title: "결제관리",
                         isHide: false,
                         roles: [],
                         icon: '',

@@ -79,7 +79,7 @@
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(5)" class="ml10">서비스 사용기한 5일 연장</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(15)" class="ml5">서비스 사용기한 15일 연장</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleOk" class="ml5">서비스 초기화</a-button>
-                        <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auto_trans_image_count')"  class="ml5">批量自动翻译图像个数</a-button>
+                        <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auto_trans_image_count')"  class="ml5">이미지 자동번역 횟수 일괄변경</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gpt_count')"  class="ml5">GPT 사용횟수 일괄변경</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gmarket_count')"  class="ml5">지마켓 상품수집 일괄변경</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auction_count')"  class="ml5">옥션 상품수집 일괄변경</a-button>

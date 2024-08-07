@@ -85,7 +85,7 @@
             </template>
           </template>
           <template v-else>
-            <p>您还没有购买过任何订单</p>
+            <p>주문내역이 없습니다.</p>
           </template>
 
         </div>
@@ -168,7 +168,7 @@
                 <a-button class="pay bg-FB6F3E" @click="goServicesPay">결제페이지로 이동</a-button>
               </div>
               <div class="right-content ml3">
-                <a-button class="pay bg-434343" @click="emptyYourShoppingCart">清空</a-button>
+                <a-button class="pay bg-434343" @click="emptyYourShoppingCart">초기화</a-button>
               </div>
             </div>
           </div>
@@ -180,7 +180,7 @@
             </template>
           </template>
           <template v-else>
-            <p>您还未添加任何套餐到购物车</p>
+            <p>장바구니가 비어있습니다.</p>
           </template>
         </div>
       </a-card>
@@ -203,7 +203,7 @@
             </template>
           </template>
           <template v-else>
-            <p>您还没有任何退款信息</p>
+            <p>환불내역이 없습니다.</p>
           </template>
         </div>
       </a-card>
@@ -214,7 +214,7 @@
           <img src="@/assets/img/free.png">
           <span class="ml20 font-SCDream6 fs18">무료플랜</span>
         </template>
-        <div class="font-SCDream4 fs16">무료플랜 남은기간 : {{ preview_plan }}</div>
+        <div class="font-SCDream4 fs16">무료플랜 사용기간 : {{ preview_plan }}</div>
       </a-card>
       <a-card :bordered="false">
         <template #title>
@@ -267,38 +267,38 @@ const columns_order = [
     align: "center",
   },
   {
-    title: "订单号码",
+    title: "주문번호",
     dataIndex: "id",
     key: "id",
     // width: 80,
     align: "center",
   },
   {
-    title: "结算日期",
+    title: "결제일시",
     dataIndex: "paymentTime",
     key: "paymentTime",
     align: "center",
   },
   {
-    title: "结算服务",
+    title: "결제서비스",
     dataIndex: ['historyQuota','quotaDetail','show_name'],
     key: "quotaName",
     align: "center",
   },
   {
-    title: "使用期限",
+    title: "사용기간",
     dataIndex: "usageTime",
     key: "usageTime",
     align: "center",
   },
   {
-    title: "结算金额(含vat)",
+    title: "결제금액(vat포함)",
     dataIndex: "paymentAmountStr",
     key: "paymentAmountStr",
     align: "center",
   },
   {
-    title: "订单状态",
+    title: "결제상태",
     dataIndex: "statusStr",
     key: "statusStr",
     align: "center",
@@ -319,44 +319,44 @@ const columns_refund = [
     align: "center",
   },
   {
-    title: "订单号码",
+    title: "주문번호",
     dataIndex: ['order','id'],
     key: "id",
     // width: 80,
     align: "center",
   },
   {
-    title: "退款申请日期",
+    title: "환불요청일자",
     dataIndex: "refundStartDate",
     key: "refundStartDate",
     align: "center",
   },
   {
-    title: "退款日期",
+    title: "환불완료일자",
     dataIndex: "refundEndDate",
     key: "refundEndDate",
     align: "center",
   },
   {
-    title: "退款服务",
+    title: "환불서비스",
     dataIndex: ['order','show_name'],
     key: "quotaName",
     align: "center",
   },
   {
-    title: "实际使用期限",
+    title: "실 사용기간",
     dataIndex: "actualPeriodOfUse",
     key: "actualPeriodOfUse",
     align: "center",
   },
   {
-    title: "退款金额",
+    title: "환불금액",
     dataIndex: "realAmountStr",
     key: "realAmountStr",
     align: "center",
   },
   {
-    title: "状态",
+    title: "환불상태",
     dataIndex: "statusStr",
     key: "statusStr",
     align: "center",
@@ -466,7 +466,7 @@ const getOrderInfo = () => {
     if (res.data.preview_plan){
       preview_plan.value = formatDate(res.data.preview_plan.start_time) + ' - ' + formatDate(res.data.preview_plan.end_time);
     }else {
-      preview_plan.value = '无信息';
+      preview_plan.value = '데이터가 없습니다.';
     }
 
     payStr.value = res.data.total_price_str;
@@ -486,7 +486,7 @@ const orderDetail = (flag=false) => {
     current.value = 1;
     pageSize.value = 10;
     curModal.value = 'order';
-    OrderTitle.value = '查看订单明细'
+    OrderTitle.value = '주문내역 상세보기'
   }
 
   const oParam = {
@@ -552,7 +552,7 @@ const refundDetail = (flag=false) => {
     current.value = 1;
     pageSize.value = 10;
     curModal.value = 'refund';
-    OrderTitle.value = '查看退款明细'
+    OrderTitle.value = '환불내역 상세보기'
   }
 
 
@@ -585,7 +585,7 @@ const refundDetail = (flag=false) => {
       let actualPeriodOfUse;
 
       if (startDate > endDate){
-        actualPeriodOfUse = '未使用';
+        actualPeriodOfUse = '사용안함';
       }else {
         actualPeriodOfUse = formatDateSort(item.history.startDate) + ' - ' + formatDateSort(item.refundStartDate);
       }
@@ -616,9 +616,9 @@ const refundRequests = (event,record) => {
   // 阻止事件冒泡
   event.stopPropagation();
 
-  let content ='确定要申请退款吗?';
+  let content ='환불신청을 하시겠습니까?';
   if (record.isParentOrder && record.children !== undefined){
-    content += ' 此订单下的所有子订单也会一起退款!';
+    content += ' 기본서비스와 함께 사용중인 모든 추가서비스도 함께 환불됩니다!';
   }
 
   Modal.confirm({
