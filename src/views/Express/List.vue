@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from "vue";
+import { onMounted, onUnmounted, reactive } from "vue";
 import "@/util/jQuery_v1.10.2";
 import { useRouter } from "vue-router";
 const router = useRouter()
@@ -105,6 +105,11 @@ onMounted(()=>{
   $('.ant-layout-content').css({'margin':"0"});
   $('.ant-layout-footer').css({ 'display': 'none' });
   $('body').css({ 'overflow-y': 'hidden' });
+})
+onUnmounted(()=>{
+  $('.ant-layout-content').css({'margin':"0 20px"});
+  $('.ant-layout-footer').css({ 'display': 'block' });
+  $('body').css({ 'overflow-y': 'scroll' });
 })
 
 </script>
