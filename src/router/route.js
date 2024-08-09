@@ -500,15 +500,49 @@ export const menus = [{
             },
         },
         {
-            path: "/express/list",
-            name: "express_list",
-            component: () => import("@/views/express/list.vue"),
+            path: "/express",
+            name: "express",
             meta: {
                 title: "배송대행지",
                 isHide: false,
                 roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: GiftOutlined
             },
+            "children": [
+                {
+                    path: "/express/list",
+                    name: "express_list",
+                    component: () => import("@/views/Express/List"),
+                    meta: {
+                        title: "ListOne",
+                        isHide: true,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+                {
+                    path: "/express/listone",
+                    name: "express_listone",
+                    component: () => import("@/views/Express/ListOne"),
+                    meta: {
+                        title: "ListOne",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+                {
+                    path: "/express/listtwo",
+                    name: "express_listtwo",
+                    component: () => import("@/views/Express/ListTwo"),
+                    meta: {
+                        title: "ListTwo",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: '',
+                    },
+                },
+            ]
         },
         {
             path: "https://classic-radium-bbe.notion.site/AI-712da71f7fdb45a5a0b7b78e0215772d",
