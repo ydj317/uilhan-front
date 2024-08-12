@@ -67,7 +67,11 @@ const onOpenChange = (openKeys) => {
 
   const path = openKeys[openKeys.length-1];
   const parentMenu = '/express';
+  // console.log('openKeys',openKeys);
+  // console.log('path-out',path);
+  // console.log('state.lastOpenKeys',state.lastOpenKeys);
   if (path == parentMenu ||  (state.lastOpenKeys.indexOf(parentMenu) != -1  && openKeys.indexOf(parentMenu) == -1)) {
+    // console.log('path',path);
     router.push({ path: '/express/list' });
   }
   state.lastOpenKeys = openKeys;

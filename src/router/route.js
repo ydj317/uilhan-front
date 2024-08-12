@@ -525,7 +525,7 @@ export const menus = [{
                     name: "express_listone",
                     component: () => import("@/views/Express/ListOne"),
                     meta: {
-                        title: "ListOne",
+                        title: "넥스트배송",
                         isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
@@ -536,7 +536,7 @@ export const menus = [{
                     name: "express_listtwo",
                     component: () => import("@/views/Express/ListTwo"),
                     meta: {
-                        title: "ListTwo",
+                        title: "토스토스",
                         isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
