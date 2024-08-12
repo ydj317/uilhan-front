@@ -8,33 +8,33 @@
 
   <div v-if="isAdmin">
 
-    <a-card title="서비스 권한 관리" :bordered="false">
+    <a-card title="결제관리" :bordered="false">
 
       <div class="card-count">
         <div class="card-count-content" @click="searchStatusOrder('all')">
-          全部<span class="card-count-span">{{ statistics.allCnt }}个</span>
+          전체<span class="card-count-span">{{ statistics.allCnt }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('Pending')">
-          결제대기<span class="card-count-span">{{ statistics.pendingCnt }}个</span>
+          결제대기<span class="card-count-span">{{ statistics.pendingCnt }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('Completed')">
-          결제완료<span class="card-count-span">{{ statistics.CompletedCnt }}个</span>
+          결제완료<span class="card-count-span">{{ statistics.CompletedCnt }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('CancelPayment')">
-          取消支付<span class="card-count-span">{{ statistics.CancelPayment }}个</span>
+          결제취소<span class="card-count-span">{{ statistics.CancelPayment }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('Refunding')">
-          待退款<span class="pl22 color-FB6F3E">{{ statistics.refundingCnt }}个</span>
+          환불대기<span class="pl22 color-FB6F3E">{{ statistics.refundingCnt }}</span>
         </div>
         <div class="card-count-content" @click="searchStatusOrder('Refunded')">
-          환불완료<span class="card-count-span">{{ statistics.refundedCnt }}个</span>
+          환불완료<span class="card-count-span">{{ statistics.refundedCnt }}</span>
         </div>
       </div>
 
 
       <div class="card-search">
         <div>
-          结算完成时间&nbsp;&nbsp;&nbsp;
+          결제완료일시&nbsp;&nbsp;&nbsp;
           <a-range-picker
             v-model:value="search_day"
             value-format="YYYY-MM-DD"
@@ -46,8 +46,8 @@
             v-model:value="selectVal"
             @change="handleChange"
           >
-            <a-select-option value="id">订单号码</a-select-option>
-            <a-select-option value="user_name">会员名</a-select-option>
+            <a-select-option value="id">주문번호</a-select-option>
+            <a-select-option value="user_name">회원ID</a-select-option>
           </a-select>
           <a-input-search
             v-model:value="speVal"
@@ -93,7 +93,7 @@
           </template>
 
           <!--        <template v-if="column.key === 'operation' && record.hasOwnProperty('children')"><a @click="editData(index,record)">详情</a></template>-->
-          <template v-if="column.key === 'operation'"><a @click="editData(record.id)">详情</a></template>
+          <template v-if="column.key === 'operation'"><a @click="editData(record.id)">상세보기</a></template>
         </template>
 
       </a-table>
@@ -160,7 +160,7 @@
             <h3>환불내역</h3>
             <a-table :data-source="secondData" :columns="secondCol" bordered :pagination="false">
               <template v-slot:bodyCell="{ text, record, index, column }">
-                <template v-if="column.key === 'status' && text === '申请中' ">
+                <template v-if="column.key === 'status' && text === '심사중' ">
                   {{ text }}
                   <a-button @click="agreeHandle(record)">확인</a-button>
                   <a-button @click="refusedHandle(record)">반려</a-button>
@@ -227,7 +227,7 @@ const isAdmin = Cookie.get("member_roles").indexOf("ROLE_ADMIN") !== -1;
 const search_day = ref(null);
 const type = ref('');
 const speVal = ref('');
-const selectVal = ref('id')
+const selectVal = ref('user_name')
 const dataSource = ref([]);
 const router = useRouter();
 
@@ -282,43 +282,43 @@ const columns = [
     align: "center",
   },
   {
-    title: "订单号码",
+    title: "주문번호",
     dataIndex: "id",
     key: "id",
     // width: 80,
     align: "center",
   },
   {
-    title: "订购时间",
+    title: "구매일시",
     dataIndex: "createdAt",
     key: "createdAt",
     align: "center",
   },
   {
-    title: "结算完成时间",
+    title: "결제완료일시",
     dataIndex: "paymentTime",
     key: "paymentTime",
     align: "center",
   },
   {
-    title: "会员ID",
+    title: "회원ID",
     dataIndex: "user_name",
     key: "user_name",
     align: "center",
   },
   {
-    title: "结算服务",
+    title: "결제서비스",
     dataIndex: ['historyQuota','quotaDetail','show_name'],
     key: "quotaName",
     align: "center",
   },{
-    title: "结算金额",
+    title: "결제금액(vat포함)",
     dataIndex: "paymentAmountStr",
     key: "paymentAmountStr",
     align: "center",
   },
   {
-    title: "订单状态",
+    title: "결제상태",
     dataIndex: "statusStr",
     key: "statusStr",
     align: "center",
@@ -812,7 +812,7 @@ const agreeHandle = (record) => {
 
   currentRefundOrderId.value = record.order_id;
 
-  const msg = record.isParentOrder ? '确定要同意退款吗? 所有子订单也会一起退款' : '确定要同意退款吗?';
+  const msg = record.isParentOrder ? '환불 확인을 하시겠습니까? 함께 신청된 추가서비스도 함께 확인처리 됩니다.' : '환불 확인을 하시겠습니까?';
 
   Modal.confirm({
     icon: createVNode(ExclamationCircleOutlined),
@@ -832,14 +832,14 @@ const refusedHandle = (record) => {
   currentRefundOrderId.value = record.order_id;
   const reason = ref('');
 
-  const msg = record.isParentOrder ? '确定要拒绝退款吗? 所有子订单也会一起拒绝退款' : '确定要拒绝退款吗?';
+  const msg = record.isParentOrder ? '환불 반려를 하시겠습니까? 함꼐 신청된 추가서비스도 함께 반려처리 됩니다.' : '환불 반려를 하시겠습니까?';
 
   Modal.confirm({
     icon: createVNode(ExclamationCircleOutlined),
     content: createVNode('div', null, [
       createVNode('p', null, msg),
       createVNode(Textarea, {
-        placeholder: '请输入拒绝理由',
+        placeholder: '환불 반려 이유를 적어주세요.',
         'onUpdate:value': (value) => reason.value = value
       })
     ]),
@@ -865,7 +865,7 @@ const handleSuccessRefund = (id,isParentOrder) => {
   requestPost(url,oParam, (data) => {
 
     if (data){
-      message.success('同意退款成功')
+      message.success('환불 확인 성공')
       editData(currentOrderId.value);
     }
   });
@@ -885,7 +885,7 @@ const handleFailRefund = (id, reason, isParentOrder) => {
   requestPost(url,oParam, (data) => {
 
     if (data){
-      message.success('拒绝退款成功')
+      message.success('환불 반려 성공')
       editData(currentOrderId.value);
     }
   });
