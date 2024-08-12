@@ -152,6 +152,11 @@ const tableColumns = ref([
     width: '8%',
   },
   {
+    title: '상품수집수',
+    dataIndex: 'prd_register_count',
+    width: '8%',
+  },
+  {
     title: '사용자명',
     dataIndex: 'name',
     width: '12%',
@@ -268,7 +273,7 @@ function getUserList() {
         return {...item2,ins_date:getDate(item2.insDate)}
       })
       const children = item['children'].length ? item['children'] : '';
-      return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'],children };
+      return {...item[0], key: searchFrom.total - ((searchFrom.page - 1) * searchFrom.pageSize + index), ins_date: formattedCreatedAt, recommend_count: item['childCount'],children, prd_register_count: item['prdRegisterCount'] };
     });
     tableLoading.value = false;
   });
