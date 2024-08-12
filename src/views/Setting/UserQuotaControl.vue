@@ -13,6 +13,10 @@
                     <a-input  v-model:value="username" style="width: 200px;" placeholder="아이디를 입력해주세요."/>
                 </a-descriptions-item>
 
+                <a-descriptions-item label="추천인 아이디">
+                  <a-input v-model:value="parent_user" style="width: 200px;" placeholder="추천인 아이디를 입력해주세요."/>
+                </a-descriptions-item>
+
                 <a-descriptions-item label="서비스 유형">
                     <a-select
                         class="mr10"
@@ -77,7 +81,7 @@
                             </a-radio-group>
                         </a-modal>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(5)" class="ml10">서비스 사용기한 5일 연장</a-button>
-                        <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(15)" class="ml5">서비스 사용기한 15일 연장</a-button>
+                        <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleDelay(14)" class="ml5">서비스 사용기한 14일 연장</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="handleOk" class="ml5">서비스 초기화</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('auto_trans_image_count')"  class="ml5">이미지 자동번역 횟수 일괄변경</a-button>
                         <a-button type="primary" :disabled="!hasSelected" size="small" @click="resetSoresCnt('gpt_count')"  class="ml5">GPT 사용횟수 일괄변경</a-button>
@@ -279,6 +283,8 @@ const dataSource = ref([]);
 //展示当前行 modal
 const dataModel = ref(false);
 
+//#332 추천인 코드
+const parent_user = ref("");
 
 
 //table 编辑模式 || 文本模式
@@ -519,6 +525,7 @@ const initSearch = () => {
     username.value = '';
     plan_type.value = '';
     search_day.value = null;
+    parent_user.value = '';
     // auto_trans_image.value = '';
 }
 
@@ -627,6 +634,11 @@ const search = () => {
 
     if (username.value && username.value.trim() !== '') {
         oParam.username = username.value;
+    }
+
+    // #332 추천인 코드
+    if (parent_user.value && parent_user.value.trim() !== '') {
+        oParam.parent_user = parent_user.value;
     }
 
     if (plan_type.value) {
