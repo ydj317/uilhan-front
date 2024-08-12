@@ -604,7 +604,7 @@ const checkUserRowKeys = (id) => {
 
 const planTypeMap = {
     DefaultPlan: '기본플랜',
-    PreviewPlan: '베타버전',
+    PreviewPlan: '무료플랜',
     BasicPlan1Month: '기본서비스 1개월',
     BasicPlan6Month: '기본서비스 6개월',
     BasicPlan12Month: '기본서비스 12개월',
@@ -622,6 +622,7 @@ const planTypeMap = {
     Extra1PlanAutoImageCount100: '이미지 자동번역100',
     Extra1PlanAutoImageCount200: '이미지 자동번역200',
     Extra1PlanAutoImageCount300: '이미지 자동번역300',
+    EventPlan: '이벤트 플랜'
 }
 
 const search = () => {
