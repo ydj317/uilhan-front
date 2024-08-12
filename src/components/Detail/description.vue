@@ -562,7 +562,7 @@ export default {
     },
     updateTranslateImageList(imageList) {
       this.$refs.editor.clear();
-      let content = "<p style='text-align: center;'>";
+      let content = "<div style='display: flex; flex-direction: column;justify-content: center;align-items: center;'>";
       this.translateImageList = this.translateImageList.map((v)=>{
         let upData = imageList.find(v2 =>v2.old_url === v.old_url);
         if(upData){
@@ -579,13 +579,13 @@ export default {
         }
         return v;
       })
-      content += "</p>";
+      content += "</div>";
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
     },
     updateTranslateImageListOld(imageList) {
       this.$refs.editor.clear();
-      let content = "<p>";
+      let content = "<div style='display: flex; flex-direction: column;justify-content: center;align-items: center;'>";
       imageList.forEach((item) => {
         if (item.translate_status === true) {
           content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
@@ -594,7 +594,7 @@ export default {
           content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
         }
       });
-      content += "</p>";
+      content += "</div>";
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
     },
