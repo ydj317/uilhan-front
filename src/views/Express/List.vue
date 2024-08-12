@@ -18,7 +18,7 @@
               <div class="img-wrap fl-cc">
                 <img :src="v2.img"/>
               </div>
-              <div class="text1 mt10">{{ v2.title }}</div>
+              <div class="text1 mt10" v-html="v2.title"></div>
             </div>
         </div>
       </a-flex>
@@ -40,19 +40,19 @@ const state = reactive({
       introList:[
         {
           img:require(`@/assets/img/express/star.svg`),
-           title:'유일 제휴 코드 입력 시 VIP등급',
+           title:'유일 제휴 코드 입력 시<br>VIP등급',
         },
         {
           img:require(`@/assets/img/express/weight.svg`),
-          title:'부피무게 없이 실무게 배송비 적용',
+          title:'부피무게 없이<br>실무게 배송비 적용',
         },
         {
           img:require(`@/assets/img/express/apartment.svg`),
-          title:'인천 세관 자가장치장 운영(자체통관라인, 1~3일 소요)',
+          title:'인천 세관 자가장치장<br>운영(자체통관라인, 1~3일 소요)',
         },
         {
           img:require(`@/assets/img/express/support_agent.svg`),
-          title:'한국 CS 담당마스터 직원 소통',
+          title:'한국 CS 담당<br>마스터 직원 소통',
         }
       ],
     },
@@ -63,31 +63,31 @@ const state = reactive({
       introList:[
         {
           img:require(`@/assets/img/express/account_tree.svg`),
-          title:'구매대행에 최적화된 배송대행 솔루션',
+          title:'구매대행에 최적화된<br>배송대행 솔루션',
         },
         {
           img:require(`@/assets/img/express/airline_stops.svg`),
-          title:'중국, 미국, 일본, 영국, 독일 총 8개 지점과 국내 3PL 연계',
+          title:'중국, 미국, 일본, 영국, 독일<br>총 8개 지점과 국내 3PL 연계',
         },
         {
           img:require(`@/assets/img/express/drag_click.svg`),
-          title:'통관업체 선택지정 및 자가장치장 당일통관부터 평택, 군산까지',
+          title:'통관업체 선택지정 및<br>자가장치장 당일통관부터<br>평택, 군산까지',
         },
         {
           img:require(`@/assets/img/express/shopping_cart_checkout.svg`),
-          title:'1688 맞춤형 구매대행 및B2B전용 지점 별도 운영',
+          title:'1688 맞춤형 구매대행 및<br>B2B전용 지점 별도 운영',
         },
         {
           img:require(`@/assets/img/express/rocket_launch.svg`),
-          title:'간편 LCL등록 및국내외 로켓그로스 출고',
+          title:'간편 LCL등록 및<br>국내외 로켓그로스 출고',
         },
         {
           img:require(`@/assets/img/express/block.svg`),
-          title:'노데이터 매칭,긴급 출고중지 시스템',
+          title:'노데이터 매칭,<br>긴급 출고중지 시스템',
         },
         {
           img:require(`@/assets/img/express/support_agent_purple.svg`),
-          title:'카카오 알림톡 및한국 고객상담센터 운영',
+          title:'카카오 알림톡 및<br>한국 고객상담센터 운영',
         }
       ],
     }
