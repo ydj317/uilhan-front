@@ -586,7 +586,6 @@ export default {
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
           tmp['request_id'] = item['url'].slice(pos+11);
-          tmp['url'] = item['url'].slice(0,pos-1);
         }
         return tmp;
       })

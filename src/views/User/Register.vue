@@ -26,7 +26,8 @@
           <a-form-item name="username" has-feedback>
             <a-input v-model:value="formState.username" placeholder="아이디"/>
           </a-form-item>
-          <div class="help">최소 5자 최대 20자이내로 입력해주십시오</div>
+          <div class="help">최소 5자 최대 20자 이내,영문으로 시작하고 영문 소문자 혹은 숫자만 사용할 수 있습니다.
+          </div>
         </a-descriptions-item>
         <a-descriptions-item>
           <span class="required"><strong>비밀번호</strong></span>
@@ -555,6 +556,11 @@ export default defineComponent({
 
         if (value.length < 5 || value.length > 20) {
           return Promise.reject("최소 5자 최대 20자이내로 입력해주십시오");
+        }
+
+        const usernamePattern = /^[a-z][a-z0-9]*$/;
+        if (!usernamePattern.test(value)) {
+          return Promise.reject("영문으로 시작하고 영문 소문자 혹은 숫자만 사용할 수 있습니다.");
         }
 
         let returnData = await NoAuthAjax.post(

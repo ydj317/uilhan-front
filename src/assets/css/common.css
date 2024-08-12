@@ -1885,6 +1885,27 @@
 .color-b9bdc9{
     color: #b9bdc9;
 }
+.color-949494{
+    color: #949494;
+}
+.color-F75F82{
+    color: #F75F82;
+}
+.color-FD9249{
+    color: #FD9249;
+}
+.color-082B49{
+    color: #082B49;
+}
+.color-757A1D{
+    color: #757A1D;
+}
+.color-9C8DFB{
+    color: #9C8DFB;
+}
+.color-D2D2D2{
+    color: #D2D2D2;
+}
 .bg-FEDB41{
     background: #FEDB41;
 }
@@ -1906,9 +1927,42 @@
 .bg-F0F8FE{
     background: #F0F8FE;
 }
-.he100{
-    height: 100%;
+.bg-F75F82{
+    background: #F75F82;
 }
-.box-sha{
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.bg-FD9249{
+    background: #FD9249;
+}
+.bg-082B49{
+    background: #082B49;
+}
+.bg-757A1D{
+    background: #757A1D;
+}
+.bg-9C8DFB{
+    background: #9C8DFB;
+}
+.bg-D2D2D2{
+    background: #D2D2D2;
+}
+.border-bottom-black{
+    border-bottom: 1px solid black;
+}
+.border-bottom-F75F82{
+    border-bottom: 1px solid #F75F82;
+}
+.border-bottom-FD9249{
+    border-bottom: 1px solid #FD9249;
+}
+.border-bottom-082B49{
+    border-bottom: 1px solid #082B49;
+}
+.border-bottom-757A1D{
+    border-bottom: 1px solid #757A1D;
+}
+.border-bottom-9C8DFB{
+    border-bottom: 1px solid #9C8DFB;
+}
+.border-bottom-D2D2D2{
+    border-bottom: 1px solid #D2D2D2;
 }
