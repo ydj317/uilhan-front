@@ -86,6 +86,7 @@ const SYNC_COLUMNS_CONFIG = [
     key: "market_account",
     align: "center",
     width: "15%",
+    ellipsis: true,
   },
   {
     title: "등록상태",
@@ -241,7 +242,13 @@ async function loadSyncInfo() {
 }
 
 </script>
-
+<style>
+.ant-table-thead th {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+</style>
 <style scoped>
 .market-code {
   position: relative;
@@ -253,4 +260,5 @@ async function loadSyncInfo() {
   right:27px;
   opacity:0.5;
 }
+
 </style>
