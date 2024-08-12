@@ -334,7 +334,7 @@ export const menus = [{
                 title: "도매꾹",
                 isHide: false,
                 roles: [],
-                ids: ["jwli", "haehu2023"],
+                ids: ["jwli", "haehu2023","djfxlalt84"],
                 icon: AppstoreOutlined,
             },
         },
