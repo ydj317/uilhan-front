@@ -562,7 +562,7 @@ export default {
     },
     updateTranslateImageList(imageList) {
       this.$refs.editor.clear();
-      let content = "<p>";
+      let content = "<p style='text-align: center;'>";
       this.translateImageList = this.translateImageList.map((v)=>{
         let upData = imageList.find(v2 =>v2.old_url === v.old_url);
         if(upData){
