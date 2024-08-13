@@ -2,7 +2,7 @@
   <div class="footer">
     <div style="width: 400px;"></div>
     <div style="display: flex;flex-direction: column;gap: 10px;">
-      <div style="font-size: 20px;font-weight: bold;color: black" class="mb30">해주국제무역상사(주)</div>
+      <div style="font-size: 20px;font-weight: bold;color: black" class="mb30">유일</div>
       <div style="display: flex;flex-direction: row;gap: 80px;font-weight: bold">
         <div style="font-size: 14px;">
           <p style="line-height: 16px">사업장주소: 서울 금천구 가산디지털1로 70 호서대벤처타워 4층 409호</p>

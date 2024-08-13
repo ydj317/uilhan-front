@@ -104,6 +104,7 @@ import ModalSyncResult from "@/views/Product/List/ModalSyncResult/ModalSyncResul
 import Cookie from "js-cookie";
 import {EventSourcePolyfill} from "event-source-polyfill";
 import emitter from "@/util/emitter";
+import { mapState, useStore } from "vuex";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 
@@ -138,6 +139,9 @@ const defaultSyncResult = {
 }
 const syncResult = ref({...defaultSyncResult})
 let imageTransStateEvent = null;
+
+const store = useStore();
+
 
 provide('search', {searchParams})
 
@@ -369,6 +373,9 @@ function getSmartstoreCategory() {
 onMounted(() => {
   searchParams.value.page = 1;
   Promise.all([
+    // 추천옵션 사용 마켓리스트 불러오기
+    store.dispatch('market/getUseRecommendedOptionMarketList'),
+    store.dispatch('market/getOpenMarketList'),
     getMarketList(),
     getMarketDetailUrls(),
     reloadList(),
