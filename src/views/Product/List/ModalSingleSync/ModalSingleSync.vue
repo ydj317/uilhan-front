@@ -57,9 +57,6 @@
             <div v-else>{{ record.upd_time }}</div>
           </div>
         </template>
-        <template v-if="column.key === 'employee_name'">
-          <div>{{ record.employee_name }}</div>
-        </template>
       </template>
 
     </a-table>
