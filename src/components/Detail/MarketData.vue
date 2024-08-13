@@ -125,6 +125,8 @@ import { CloseCircleTwoTone, LoadingOutlined } from "@ant-design/icons-vue";
 import { useCategoryApi } from "@/api/category";
 import { message } from "ant-design-vue";
 import MarketDisplayCategorys from "@/components/Detail/MarketDisplayCategorys.vue";
+import { useProductApi } from "@/api/product";
+import { forEach } from "lodash";
 
 const displayCategoryMarkets = ["lotteon"];
 
@@ -138,7 +140,10 @@ export default {
   },
   computed: {
     ...mapState({
-      product: (state) => state.product.detail
+      product: (state) => state.product.detail,
+      useRecommendedMarketList: (state) => state.market.use_recommended_market_list.map(item => {
+        return item.market_code;
+      })
     }),
     marketList() {
       if (Array.isArray(this.product.item_sync_market) && this.product.item_sync_market.length > 0) {
@@ -204,6 +209,10 @@ export default {
       },
       searchCategories: {
         // market_code|seller_id: []
+      },
+      initMetaData : {
+        recommendedOptList: [], //추천 옵션 리스트
+        recommendedOpt: [] // 선택한 추천옵션 데이타
       }
     };
   },
@@ -233,16 +242,35 @@ export default {
             if (res.data.length) {
               this.search_keyword_clone = search_keyword;
               this.categories[marketInfo.accountName].value = res.data[0]["cate_names"].join("/");
+              const leafCateId = res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1];
               this.product.item_cate[marketInfo.accountName] = {
+                accountName : marketInfo.accountName,
                 marketCode: marketInfo.market_code,
-                cateId: res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1],
+                cateId: leafCateId,
                 categoryNames: res.data[0]["cate_names"].join("/"),
-                keyword: search_keyword
+                keyword: search_keyword,
+                meta_data:{
+                  //추천 옵션 리스트
+                  recommendedOptList: [],
+                  // 선택한 추천옵션 데이타
+                  recommendedOpt: this.product.item_option.map(item => {
+                    return {
+                      option_name : item.name,
+                      recommended_id : ''
+                    }
+                  })
+                }
               };
 
               if (this.displayCategoryMarkets.includes(marketInfo.market_code)) {
                 await this.getDisplayCategory(marketInfo.market_code, res.data[0]["cate_ids"], marketInfo.seller_id, marketInfo.accountName);
               }
+
+              // 추천옵션 사용마켓일경우 추천옵션 리스트 조회하여 초기데이타 넣어줌
+              if (this.useRecommendedMarketList.includes(marketInfo.market_code)) {
+                await this.getRecommendedOpt(marketInfo, leafCateId)
+              }
+
             } else {
               this.product.item_cate[marketInfo.accountName] = {};
               this.categories[marketInfo.accountName].value = [];
@@ -277,14 +305,31 @@ export default {
         if (res.data.length) {
           this.categories[market.accountName].value = res.data[0]["cate_names"].join("/");
           this.product.item_cate[market.accountName] = {
+            accountName: market.accountName,
             marketCode: market.market_code,
             cateId: res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1],
             categoryNames: res.data[0]["cate_names"].join("/"),
-            keyword: this.search_keyword_clone || searchInput
+            keyword: this.search_keyword_clone || searchInput,
+            meta_data: {
+              //추천 옵션 리스트
+              recommendedOptList: [],
+              // 선택한 추천옵션 데이타
+              recommendedOpt: this.product.item_option.map(item => {
+                return {
+                  option_name : item.name,
+                  recommended_id : ''
+                }
+              })
+            }
           };
           if (this.displayCategoryMarkets.includes(market.market_code)) {
             await this.getDisplayCategory(market.market_code, res.data[0]["cate_ids"], market.seller_id, market.accountName);
           }
+          // 추천옵션 불러오기
+          if (this.useRecommendedMarketList.includes(market.market_code)) {
+            await this.getRecommendedOpt(market, res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1])
+          }
+
         } else {
           this.product.item_cate[market.accountName] = {};
           this.categories[market.accountName].value = [];
@@ -342,15 +387,31 @@ export default {
       }
       let keyword = this.product.item_cate?.[accountName]?.keyword || this.search_keyword_clone;
       this.product.item_cate[accountName] = {
+        accountName: accountName,
         marketCode: marketCode,
         cateId: value,
         categoryNames: selectedOptions.cate_names,
-        keyword: keyword
+        keyword: keyword,
+        meta_data:{
+          //추천 옵션 리스트
+          recommendedOptList: [],
+          // 선택한 추천옵션 데이타
+          recommendedOpt: this.product.item_option.map(item => {
+            return {
+              option_name : item.name,
+              recommended_id : ''
+            }
+          })
+        }
       };
 
       // 전시카테고리 마켓
       if (this.displayCategoryMarkets.includes(marketCode)) {
         await this.getDisplayCategory(marketCode, [selectedOptions.cate_ids], sellerId, accountName);
+      }
+
+      if (this.useRecommendedMarketList.includes(marketCode)) {
+        await this.getRecommendedOpt(marketInfo, value)
       }
 
       return false;
@@ -390,13 +451,51 @@ export default {
       }).finally(() => {
         this.displayCategories[accountName].loading = false;
       });
-    }
+    },
+
+    // 카테고리 메타데이타에 추가옵션 조회해서 넣음 (옥션, g마켓)
+    async getRecommendedOpt(marketInfo, leafCateId) {
+      let param = {
+        market_code : marketInfo.market_code,
+        account_id : marketInfo.id,
+        cate_id : leafCateId
+      }
+      // this.loading = true;
+      await useProductApi().getRecommendedOpt(param).then(res => {
+        // this.loading = false;
+        this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOptList'] = res.data;
+        this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOpt'] = this.product.item_option.map(item => {
+          return {
+            option_name : item.name,
+            recommended_id : ''
+          }
+        });
+      })
+    },
   },
 
   mounted() {
     //this.search_keyword = '망치'
     if (this.product.item_cate === null || this.product.item_cate === undefined || Object.keys(this.product.item_cate).length === 0) {
       this.product.item_cate = {};
+      forEach(this.marketList, (market) => {
+        let accountName = market.market_code + "|" + market.seller_id;
+        this.product.item_cate[accountName] = {
+          accountName : accountName,
+          marketCode : market.market_code,
+          meta_data : {
+            //추천 옵션 리스트
+            recommendedOptList: [],
+            // 선택한 추천옵션 데이타
+            recommendedOpt: this.product.item_option.map(item => {
+              return {
+                option_name : item.name,
+                recommended_id : ''
+              }
+            })
+          }
+        }
+      })
     }
 
     if (this.product.item_disp_cate === null || this.product.item_disp_cate === undefined || Object.keys(this.product.item_disp_cate).length === 0) {

@@ -164,6 +164,8 @@ function openMarketPopup(marketInfo) {
       vendor_item_id = parts[1]
     }
     url = marketDetailUrls.value[marketInfo.market_code] + market_prd_code + '?vendorItemId=' + vendor_item_id;
+  } else if (['gmarket', 'auction'].includes(marketInfo.market_code) && marketInfo.hasOwnProperty('front_code')) {
+    url = marketDetailUrls.value[marketInfo.market_code] + marketInfo.front_code;
   } else {
     url = marketDetailUrls.value[marketInfo.market_code] + market_prd_code;
   }

@@ -738,6 +738,7 @@ export default defineComponent({
           key: "market_account",
           align: "center",
           width: "180px",
+          ellipsis: true,
         },
         {
           title: "등록상태",
@@ -747,6 +748,12 @@ export default defineComponent({
         {
           title: "등록시간",
           key: "ins_time",
+          width: "170px",
+          align: "center"
+        },
+        {
+          title: "처리자",
+          key: "employee_name",
           width: "170px",
           align: "center"
         }
