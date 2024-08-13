@@ -10,7 +10,9 @@ import {
     BellOutlined,
     RobotOutlined,
     ReadOutlined,
-    AppstoreOutlined
+    AppstoreOutlined,
+    UserOutlined,
+    MenuUnfoldOutlined
 } from "@ant-design/icons-vue";
 
 export const menus = [{
@@ -201,7 +203,7 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 icon: MoneyCollectOutlined,
-                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123"],
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
@@ -210,10 +212,10 @@ export const menus = [{
             component: () => import("@/views/User/my.vue"),
             meta: {
                 title: "My Page",
-                isHide: false,
+                isHide: true,
                 roles: [],
                 icon: '',
-                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123"],
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
@@ -244,11 +246,11 @@ export const menus = [{
                     name: "user_userQuotaOrder",
                     component: () => import("@/views/Setting/UserQuotaOrder"),
                     meta: {
-                        title: "订单列表",
+                        title: "결제관리",
                         isHide: false,
                         roles: [],
                         icon: '',
-                        ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123"],
+                        ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
                     },
                 },
                 {
@@ -332,7 +334,7 @@ export const menus = [{
                 title: "도매꾹",
                 isHide: false,
                 roles: [],
-                ids: ["jwli"],
+                ids: ["jwli", "haehu2023","djfxlalt84"],
                 icon: AppstoreOutlined,
             },
         },
@@ -559,6 +561,49 @@ export const staticRoutes = [
         },
     },
 ];
+export const otherMenus = [{
+    path: "/",
+    name: "teacher",
+    meta: {roles: ["ROLE_USER"]},
+    component: () => import("@/views/Layout/Layout"),
+    redirect: "/teacher/list",
+    children: [
+        {
+            path: "/teacher",
+            name: "teacher",
+            meta: {
+                title: "아카데미",
+                isHide: false,
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                icon: MenuUnfoldOutlined
+            },
+            "children": [
+                {
+                    path: "/teacher/list",
+                    name: "teacher_list",
+                    component: () => import("@/views/Teacher/List.vue"),
+                    meta: {
+                        title: "강사리스트",
+                        isHide: false,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: UserOutlined,
+                    },
+                },
+                {
+                    path: "/teacher/detail",
+                    name: "teacher_detail",
+                    component: () => import("@/views/Teacher/Detail.vue"),
+                    meta: {
+                        title: "",
+                        isHide: true,
+                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        icon: UserOutlined,
+                    },
+                },
+            ]
+        },
+    ]
+}]
 
 /**
  * 定义404、401界面

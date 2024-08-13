@@ -118,7 +118,11 @@ function excelUploadCustomOrder(res) {
 
   if (res.file.status === 'done') {
     loading.value = false;
-    message.success(res.file.response.message);
+    if (res.file.response.status != '2000') {
+      message.error(res.file.response.message);
+    } else {
+      message.success(res.file.response.message);
+    }
   }
 }
 

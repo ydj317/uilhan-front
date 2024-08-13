@@ -79,5 +79,13 @@ export function useMarketApi() {
                 params: data,
             });
         },
+
+        getUseRecommendedOptionMarketList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/getUseRecommendedOptionMarketList",
+                method: "get",
+                params: data,
+            });
+        },
     }
 }

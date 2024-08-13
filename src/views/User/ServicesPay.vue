@@ -10,7 +10,7 @@
     <a-page-header title="유일 AI 플랜" class="font-SCDream6 fs16" />
     <a-flex align="center" justify="space-between" class="title bg-fafafa">
       <span class="fs18">AI 플랜 기능설명</span>
-      <!--      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>-->
+<!--      <span class="font-SCDream4 fs14 color-2171E2">[사용중 : 2024.03.01 ~ 2024.03.31]</span>-->
     </a-flex>
     <a-flex class="check-wrap mt30" wrap="wrap">
       <a-flex align="center" class="check-list" v-for="v in state.checkList">
@@ -89,7 +89,7 @@
             </a-flex>
             <a-flex align="center" justify="space-between" class="text-list h50 border-bottom-f0f0f0-2">
               <span>프리미엄 AI기능 - 추가서비스</span>
-              <span>1개월</span>
+              <span v-if="isNotAdvancedConditionsMet">1개월</span>
             </a-flex>
             <a-flex align="center" justify="space-between" class="text-list h50 border-bottom-f0f0f0-2 pl20" v-if="state.selectedList.advanced1 != 3">
               <span>{{ state.advancedList[0]['title'] + ' - ' + state.advancedList[0]['radioList'][state.selectedList.advanced1]['text'] }}</span>
@@ -140,7 +140,7 @@
             <a-flex class="mt10">
               <a-radio-group v-model:value="state.selectedList.payType" name="payType">
                 <a-radio value="1"  class="font-SCDream4">카드</a-radio>
-                <a-radio value="2"  class="font-SCDream4">무통장입금</a-radio>
+                <a-radio value="2"  class="font-SCDream4" v-show="false">무통장입금</a-radio>
               </a-radio-group>
             </a-flex>
           </a-flex>
@@ -164,10 +164,10 @@
             </template>
           </a-flex>
           <a-modal v-model:open="open"
-                   title="支付成功或取消支付"
+                   title="서비스 결제중입니다."
                    @ok="handleOk"
-                   okText="支付成功"
-                   cancelText="取消支付"
+                   okText="결제완료"
+                   cancelText=결제취소
                    @cancel="handleCancel"
                    :maskClosable="false">
 
@@ -261,7 +261,7 @@ onBeforeMount(() => {
     }
     const allPlanData = res.data;
     //设置基本服务 (主/子账号,推荐码)
-    state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
+   state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
 
       let title;
       let subTitle = '';
@@ -406,8 +406,8 @@ onBeforeMount(() => {
     if (state.isPay && allPlanData.currPlan){
       const basicObj = {
         value:0,
-        title:'已经购买',
-        subTitle:'当前套餐到期时间: ',
+        title:'사용중',
+        subTitle:'기본서비스 만료일시: ',
         time: allPlanData.currPlan.end_time,
         money:'0',
         monthMoney:'0',
@@ -419,8 +419,8 @@ onBeforeMount(() => {
     if (!state.isPay && !allPlanData.isParent && !allPlanData.parentPlan && allPlanData.currPlan ){
       const basicObj = {
         value:0,
-        title:'主账号无基本套餐',
-        subTitle:'当前套餐到期时间: ',
+        title:'메인계정의 서비스가 만료되었습니다. 구매후 사용하시기 바랍니다.',
+        subTitle:'서비스 만료일시: ',
         time : allPlanData.currPlan.end_time,
         money:'0',
         monthMoney:'0',
@@ -433,7 +433,7 @@ onBeforeMount(() => {
     if (!state.isPay && !allPlanData.isParent && !allPlanData.parentPlan && !allPlanData.currPlan ){
       const basicObj = {
         value:0,
-        title:'主账号无基本套餐',
+        title:'메인계정의 서비스가 만료되었습니다. 구매후 사용하시기 바랍니다.',
         subTitle:'' ,
         money:'0',
         monthMoney:'0',
@@ -504,6 +504,9 @@ const getAdvancedMoney = computed(() => {
 const getTotalMoney = computed(() => {
   return getBasicMoney.value + getAdvancedMoney.value;
 })
+const isNotAdvancedConditionsMet = computed(() => {
+  return state.selectedList.advanced1 !== 3 || state.selectedList.advanced2 !== 5 || state.selectedList.advanced3 !== 5;
+})
 const  numberFormat= (num) => {
   return parseFloat(num).toLocaleString();
 };
@@ -522,12 +525,12 @@ const addToCart = () => {
 
 const submit = () => {
   if (!state.selectedList.book1) {
-    message.warn("请同意协议1, 才能继续")
+    message.warn("이용약관에 동의하여 주세요.")
     return
   }
 
   if (!state.selectedList.book2) {
-    message.warn("请同意协议2, 才能继续")
+    message.warn("이용약관에 동의하여 주세요.")
     return
   }
 
@@ -577,7 +580,7 @@ const submit = () => {
         });
         window.open(routeData.href, '_blank');
 
-        payedHandle();
+        payedHandle(data);
       }
 
     }
@@ -589,7 +592,7 @@ const submit = () => {
   //发送创建订单接口, 如果创建成功, 新开一个 付款 url, 本页面显示 dialog 提示, 有2个按钮(已完成付款, 未付款), 点击已完成付款, 跳转到付款成功页面, 点击未付款, 关闭 dialog
 }
 
-const payedHandle = () => {
+const payedHandle = (data) => {
   open.value = true;
 
   intervalId  = setInterval(() => {

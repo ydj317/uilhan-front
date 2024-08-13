@@ -35,12 +35,12 @@
   </a-layout>
   <div class="fixed-wrap">
     <a-float-button-group shape="circle">
-      <a-float-button class="fixed-button chat" href="https://open.kakao.com/o/gAfSJqmg" @click="openNewWindowOpen">
+      <a-float-button class="fixed-button chat" href="https://open.kakao.com/o/gAfSJqmg" target="_blank">
         <template #icon>
           <img src="@/assets/img/chat.jpg" class="br50">
         </template>
       </a-float-button>
-      <a-float-button class="fixed-button help-center" href="http://pf.kakao.com/_xodWxnG" @click="openNewWindowPf">
+      <a-float-button class="fixed-button help-center" href="http://pf.kakao.com/_xodWxnG" target="_blank">
         <template #icon>
           <img src="@/assets/img/help-center.jpg" class="br50">
         </template>
