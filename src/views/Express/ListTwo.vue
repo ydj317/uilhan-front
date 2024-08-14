@@ -230,9 +230,31 @@ const state = reactive({
       rqRange:'6.28',
     }
   ],
-  search:[
-    ''
+  locationList:[
+    '토스토스 지점',
+    '칭다오',
+    '광저우',
+    '웨이하이',
+    'B2B',
+    '오리건',
+    '캘리포니아',
+    '영국',
+    '독일',
+    '도쿄',
+    '인천',
+    '3PL',
+    '지구별',
   ],
+  search: {
+    location:'',
+    rqStart:'',
+    rqEnd:'',
+    searchKey:'',
+    searchValue:'',
+    weight:false,
+    sort:'',
+    pageSize:0,
+  },
 });
 onMounted(()=>{
   $('.ant-layout-content').css({'margin':"0"});
