@@ -436,7 +436,7 @@ const HEADER =ref({
 function uploadImage(option,position) {
   const formData = new FormData();
   formData.append("file", option.file);
-  formData.append("image_type", "account");
+  formData.append("image_type", position + "_img"); // top_img bottom_img
 
   if (position === 'top') loadingTop.value = true;
   else loadingBottom.value = true;

@@ -143,7 +143,7 @@ export default {
           // }else{
           const formData = new FormData();
           formData.append('file', file);
-          formData.append('product_idx', this.productId);
+          formData.append('relation_id', this.productId);
           formData.append('image_type', 'product');
           AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/upload/image', formData).then((res) => {
             if (res.status !== '2000') {

@@ -1073,7 +1073,7 @@ export default defineComponent({
       const { onSuccess, onError, file } = options;
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('image_type', 'account');
+      formData.append('image_type', 'license');
 
       loading.value = true;
 

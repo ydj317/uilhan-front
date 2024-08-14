@@ -90,14 +90,7 @@ onBeforeMount(() => {
             @finishFailed="onFinishFailed" autocomplete="off" :scrollToFirstError="true" layout="horizontal"
             class="board_form">
       <a-form-item label="상단고정" name="is_fixtop">
-        <a-switch v-model:checked="formState.is_fixtop"/>
-      </a-form-item>
-
-      <a-form-item label="타입" name="type">
-        <a-radio-group v-model:value="formState.type" button-style="solid">
-          <a-radio-button value="notice">공지사항</a-radio-button>
-          <a-radio-button value="question">1:1 문의</a-radio-button>
-        </a-radio-group>
+        <a-switch v-model:checked="formState.is_fixtop" checked-children="On" un-checked-children="Off"/>
       </a-form-item>
 
       <a-form-item label="팝업설정" name="is_popup" v-if="formState.type === 'notice'">

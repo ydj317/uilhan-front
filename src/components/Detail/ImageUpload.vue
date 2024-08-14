@@ -429,7 +429,7 @@ export default {
       formData.append("file", option.file);
       formData.append("image_type", "product");
       formData.append("relation_type", "product");
-      formData.append("product_idx", this.product.item_id);
+      formData.append("relation_id", this.product.item_id);
       AuthRequest.post(
           process.env.VUE_APP_API_URL + "/api/image",
           formData
