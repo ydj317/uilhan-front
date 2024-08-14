@@ -111,6 +111,15 @@ watch(show, val => {
   if (val && props.product) {
     loadSyncInfo()
   }
+
+  // 쿠팡일경우 승인대기일때 승인상태확인 자동으로 클릭해주기
+  const aFilterItemData = props.product.item_sync_market.filter(item => {
+    return item.status === 'approval' && item.market_code === 'coupang';
+  })
+
+  if (val && aFilterItemData.length > 0) {
+    approvalCheck(aFilterItemData[0].market_id);
+  }
 })
 
 const syncLoading = ref(false)
