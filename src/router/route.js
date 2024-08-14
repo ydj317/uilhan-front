@@ -537,7 +537,7 @@ export const menus = [{
                     component: () => import("@/views/Express/ListTwo"),
                     meta: {
                         title: "토스토스",
-                        isHide: true,
+                        isHide: false,
                         roles: ["ROLE_USER", "ROLE_ADMIN"],
                         icon: '',
                     },
