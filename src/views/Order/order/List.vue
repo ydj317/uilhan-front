@@ -215,7 +215,7 @@
               <a-input v-model:value="item.invoiceNumber" placeholder="송장번호를 입력해 주세요." allow-clear/>
             </div>
             <div v-else>
-              {{ order.courierName }} - {{ order.invoiceNumber }}
+              {{ item.courierName }} - {{ item.invoiceNumber }}
             </div>
           </td>
           <td :rowspan="calculateRowspan(order, _key)"
