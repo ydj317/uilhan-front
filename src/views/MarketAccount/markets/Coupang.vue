@@ -231,6 +231,7 @@ const state = reactive({
 const initFormData = () => {
     const accountInfo = props.accountInfo;
 
+  console.log('accountInfo', accountInfo)
     if (Object.keys(accountInfo).length > 0) {
         state.formData.id = accountInfo.id;
         state.formData.market_code = accountInfo.marketCode;
@@ -422,6 +423,7 @@ const getReturnAddressList = () => {
 // 출고지 리스트
 const getOutboundAddressList = () => {
     useAccountJsonApi().getAccountJson({ account_id: props.accountInfo.id, group: 'outbound_address' }).then(res => {
+      console.log('outbound_address', res)
         const { marketJson, syncStatus, updDate } = res.data;
 
         // 업데이트상태/날짜
@@ -429,7 +431,7 @@ const getOutboundAddressList = () => {
         state.sync_outbound_address_date = updDate || null;
 
         marketJson?.forEach(item => {
-            if (item.usable === true && item.placeAddresses[0].countryCode === 'CN') {
+            if (item.usable === true) {
                 state.outboundAddressList.push({
                     outbound_address_code: item.outboundShippingPlaceCode,
                     outbound_address_name: item.shippingPlaceName
