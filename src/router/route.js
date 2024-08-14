@@ -333,8 +333,7 @@ export const menus = [{
             meta: {
                 title: "도매꾹",
                 isHide: false,
-                roles: [],
-                ids: ["jwli", "haehu2023","djfxlalt84"],
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: AppstoreOutlined,
             },
         },
