@@ -77,8 +77,12 @@
                     </template>
                 </a-table-column>
             </a-table>
-            <a-pagination :total="state.tableData.total" :page-size="state.tableData.params.pageSize"
-                :current="state.tableData.params.page" @change="pageChangeHandler" class="mt15" />
+            <a-pagination
+              :total="state.tableData.total"
+              :page-size="state.tableData.params.pageSize"
+              :current="state.tableData.params.page"
+              @change="pageChangeHandler"
+              class="mt15" />
 
         </a-card>
     </div>
@@ -208,8 +212,9 @@ const handleOk = (e) => {
     state.isModalVisible = false;
 };
 
-const pageChangeHandler = (page) => {
+const pageChangeHandler = (page, pageSize ) => {
     state.tableData.params.page = page;
+    state.tableData.params.pageSize = pageSize;
     getTableList();
 }
 const getLogoSrc = (fileName, marketCode) => {
