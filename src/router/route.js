@@ -276,6 +276,18 @@ export const menus = [{
                         icon: ''
                     },
                 },
+                {
+                    path: "/setting/UserAccountManage",
+                    name: "UserAccountManage",
+                    component: () => import("@/views/Setting/UserAccountManage.vue"),
+                    meta: {
+                        title: "고객 마켓연동관리",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                        icon: ''
+                    },
+                },
                 // {
                 //     path: "/user/manage",
                 //     name: "user_manage",
