@@ -72,14 +72,13 @@
         {
           // alert( "[" + frm.res_cd.value + "] " + frm.res_msg.value );
           if(frm.res_cd.value == '3001'){
+            closeEvent();
             var orderIds = frm.ordr_idxx.value.split(',');
             var url = '/api/user/order/update/cancelPayment';
             var param = { orderIds };
             updateOrderStatus(url,param,(res)=>{
-              closeEvent();
             });
           }
-
         }
       }
       function updateOrderStatus(url,param,callback){
