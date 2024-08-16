@@ -59,7 +59,9 @@
               가맹점 리턴값 처리 영역
           */
           var orderIds = frm.ordr_idxx.value.split(',');
-          updateOrderStatus(orderIds,frm.good_mny.value,(res)=>{
+          var url = '/api/user/order/update/payed';
+          var param = { orderIds, amount:frm.good_mny.value };
+          updateOrderStatus(url,param,(res)=>{
             if (res){
               frm.submit();
               location.href = '/user/mypage';
@@ -68,17 +70,24 @@
         }
         else
         {
-          alert( "[" + frm.res_cd.value + "] " + frm.res_msg.value );
+          // alert( "[" + frm.res_cd.value + "] " + frm.res_msg.value );
+          if(frm.res_cd.value == '3001'){
+            var orderIds = frm.ordr_idxx.value.split(',');
+            var url = '/api/user/order/update/cancelPayment';
+            var param = { orderIds };
+            updateOrderStatus(url,param,(res)=>{
+              closeEvent();
+            });
+          }
 
-          closeEvent();
         }
       }
-      function updateOrderStatus(orderIds,amount,callback){
+      function updateOrderStatus(url,param,callback){
         $.ajax({
-          url: API_URL + '/api/user/order/update/payed',
+          url: API_URL + url,
           type: 'POST',  // 请求方法
           contentType: 'application/json',  // 请求头，指定发送的是 JSON 数据
-          data: JSON.stringify({ orderIds,amount }),  // 请求体，序列化为 JSON 格式
+          data: JSON.stringify(param),  // 请求体，序列化为 JSON 格式
           headers: { 'token': token},
           success: function (res) {
             if (res.status !== "2000") {
