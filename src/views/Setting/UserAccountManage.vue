@@ -23,13 +23,13 @@
                                allowClear/>
                     </a-input-group>
                   </a-form-item>
-                    <a-form-item label="노출선택">
-                        <a-radio-group v-model:value="state.tableData.params.is_use" @change="getTableList">
-                            <a-radio value="">전체</a-radio>
-                            <a-radio value="1">노출함</a-radio>
-                            <a-radio value="0">노출안함</a-radio>
-                        </a-radio-group>
-                    </a-form-item>
+<!--                    <a-form-item label="노출선택">-->
+<!--                        <a-radio-group v-model:value="state.tableData.params.is_use" @change="getTableList">-->
+<!--                            <a-radio value="">전체</a-radio>-->
+<!--                            <a-radio value="1">노출함</a-radio>-->
+<!--                            <a-radio value="0">노출안함</a-radio>-->
+<!--                        </a-radio-group>-->
+<!--                    </a-form-item>-->
                 </div>
               <div style="display: flex;justify-content: center;">
                 <a-button type="primary" @click.prevent="handleSearch" class="mt15">검색</a-button>
@@ -50,12 +50,12 @@
                     </template>
                 </a-table-column>
                 <a-table-column title="마켓ID" dataIndex="sellerId" key="sellerId" align="center"/>
-                <a-table-column title="노출상태" dataIndex="isUse" key="isUse" align="center">
-                    <template #customRender="scope, record, index">
-                        <a-switch v-model:checked="scope.record.isUse" @change="changeIsUse(scope.record)" :checkedValue="1"
-                            :unCheckedValue="0" checked-children="On" un-checked-children="Off" :disabled="!!(scope.record.total && !auth)" />
-                    </template>
-                </a-table-column>
+<!--                <a-table-column title="노출상태" dataIndex="isUse" key="isUse" align="center">-->
+<!--                    <template #customRender="scope, record, index">-->
+<!--                        <a-switch v-model:checked="scope.record.isUse" @change="changeIsUse(scope.record)" :checkedValue="1"-->
+<!--                            :unCheckedValue="0" checked-children="On" un-checked-children="Off" :disabled="!!(scope.record.total && !auth)" />-->
+<!--                    </template>-->
+<!--                </a-table-column>-->
                 <a-table-column title="등록일자" dataIndex="insDate" key="insDate" align="center">
                     <template #customRender="scope, record, index">
                         {{ scope.record.insDate.split('T')[0] }}
@@ -67,12 +67,12 @@
                             <a-button type="primary" :disabled="!!(scope.record.total && !auth)">수정</a-button>
                         </RouterLink>
 
-                        <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No"
+                        <a-popconfirm placement="rightBottom" ok-text="Yes" cancel-text="No"
                             @confirm="removeAccount(scope.record['id'])" class="ml10">
                             <template #title>
                                 <p>삭제 하시겠습니까?</p>
                             </template>
-                            <a-button class="mt5 hidden-element" type="default">삭제</a-button>
+                            <a-button class="mt5" type="default">삭제</a-button>
                         </a-popconfirm>
                     </template>
                 </a-table-column>
