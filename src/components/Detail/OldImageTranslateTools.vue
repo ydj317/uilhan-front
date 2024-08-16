@@ -69,6 +69,7 @@
           <div style="display: flex;gap: 5px">
             <a-button type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
             <a-button @click="editorImage">편집</a-button>
+            <a-button @click="imageMatting" :loading="imageMattingLoading" v-if="Cookie.get('member_name') === 'jwli'">AI 누끼 따기</a-button>
           </div>
           <div>
             이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span>
@@ -228,12 +229,43 @@ export default defineComponent({
 
       translateImageLoading: false,
       translateImageBatchLoading: false,
+      imageMattingLoading: false,
       requestIds: [],
     };
   },
 
   methods: {
+    Cookie,
+// 이미지 누끼 따기
+    async imageMatting() {
+      const selectedCollection = this.selectedCollection
 
+      if(selectedCollection === undefined){
+        message.error("이미지를 선택해주세요.");
+        return false;
+      }
+
+      const option = {
+        msg: "",
+        key: selectedCollection.key || 0,
+        name: selectedCollection.name || "",
+        order: selectedCollection.order || "",
+        checked: selectedCollection.checked,
+        visible: selectedCollection.visible,
+        original_url: selectedCollection.url,
+        translate_url: selectedCollection.translate_url || '',
+        translate_status: selectedCollection.translate_status,
+        request_id: selectedCollection.request_id || '',
+        is_translate: selectedCollection.is_translate || false
+      }
+      this.imageMattingLoading = true;
+      useProductApi().imageMatting(option, (oTranslateInfo) => {
+        const { translate_url } = oTranslateInfo.data;
+        selectedCollection.translate_url = translate_url;
+      }).finally(() => {
+        this.imageMattingLoading = false;
+      });
+    },
     handleTranslateCallback(oTranslateInfo) {
       const { requestId, all, url } = oTranslateInfo;
 
