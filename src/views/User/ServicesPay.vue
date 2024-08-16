@@ -564,13 +564,10 @@ const submit = () => {
           good_name: data.payInfo.good_name, // 상품명
           good_mny: data.payInfo.good_mny , // 주문요청금액
           shop_user_id: data.payInfo.shop_user_id, // 쇼핑몰에서 관리하는 회원 ID
-          // buyr_name: data.payInfo.buyr_name, // 주문자이름(선택)
-          // buyr_tel2: "010-0000-0000", // 주문자 휴대폰번호(선택)
-          // buyr_mail: "test@test.co.kr", // 주문자 이메일(선택)
           site_cd: data.payInfo.site_cd, // 가맹점 정보 설정
           site_name: data.payInfo.site_name, // 가맹점 정보 설정
           pay_method: data.payInfo.pay_method, // 100000000000 신용카드 | 001000000000 가상계좌
-          quotaopt: '1',
+          quotaopt: '12',
           // 필수 항목 : 결제 금액/화폐단위
           currency: 'WON',
           module_type: '01',
@@ -592,7 +589,7 @@ const submit = () => {
           comm_vat_mny: '',
           comm_free_mny: '',
           skin_indx: '1',
-          kcp_pay_title: 'NHN KCP TEST',
+          kcp_pay_title: '유일 결제 서비스',
           disp_tax_yn: 'N',
         }
         // const pay_data = {
