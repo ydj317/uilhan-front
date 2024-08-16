@@ -281,7 +281,7 @@ export const menus = [{
                     name: "UserAccountManage",
                     component: () => import("@/views/Setting/UserAccountManage.vue"),
                     meta: {
-                        title: "고객 마켓 계정관리",
+                        title: "고객 마켓연동관리",
                         isHide: false,
                         roles: [],
                         ids: ["jwli"],
