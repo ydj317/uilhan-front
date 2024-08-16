@@ -154,10 +154,52 @@
         </a-flex>
       </a-flex>
     </a-flex>
-    <a-flex class="search-wrap bg-white fl-lb">
-      <a-flex>
-        <a-select>
-          <a-select-option value="lucy">토스토스 지점</a-select-option>
+    <a-flex class="search-wrap bg-white fl-lb fl-tc">
+      <a-flex class="search-left fl-tc" gap="5">
+        <a-select
+          v-model:value="state.search.location"
+          :options="state.locationList"
+        ></a-select>
+        <a-divider type="vertical" class="mlr5" :style="{background:'#CFD2DA'}" />
+        <a-date-picker v-model:value="state.search.rqStart" placeholder="시작일" class="rqStart"/>
+        <span>~</span>
+        <a-date-picker v-model:value="state.search.rqEnd" placeholder="종료일" class="rqEnd"/>
+        <a-divider type="vertical" class="mlr5 bg-cfd2da" :style="{background:'#CFD2DA'}" />
+
+        <a-input-group compact>
+          <a-select v-model:value="state.search.searchKey">
+            <a-select-option value="받는사람">받는사람</a-select-option>
+            <a-select-option value="전화번호">전화번호</a-select-option>
+            <a-select-option value="트래킹번호">트래킹번호</a-select-option>
+            <a-select-option value="운송장번호">운송장번호</a-select-option>
+            <a-select-option value="운송장번호">구매주문번호</a-select-option>
+            <a-select-option value="운송장번호">신청서주문번호</a-select-option>
+            <a-select-option value="운송장번호">상품명</a-select-option>
+            <a-select-option value="운송장번호">쇼핑몰관리번호</a-select-option>
+          </a-select>
+          <a-input-search
+            v-model:value="state.search.searchValue"
+            style="width: 250px"
+            placeholder="이름 첫 글자부터 입력"
+          >
+          <template #enterButton>
+            <a-button>Custom</a-button>
+          </template>
+          </a-input-search>
+        </a-input-group>
+      </a-flex>
+      <a-flex class="search-right fl-tc" gap="20">
+        <div>
+          <span>중량화물</span>
+          <span><CheckOutlined /></span>
+        </div>
+        <a-select v-model:value="value3">
+          <a-select-option value="Zhejiang">Zhejiang</a-select-option>
+          <a-select-option value="Jiangsu">Jiangsu</a-select-option>
+        </a-select>
+        <a-select v-model:value="value3">
+          <a-select-option value="Zhejiang">Zhejiang</a-select-option>
+          <a-select-option value="Jiangsu">Jiangsu</a-select-option>
         </a-select>
       </a-flex>
     </a-flex>
@@ -166,7 +208,7 @@
 
 <script setup>
 import { onMounted, onUnmounted, reactive } from "vue";
-import {DownOutlined,QuestionCircleOutlined,UpOutlined,SettingOutlined} from "@ant-design/icons-vue";
+import {DownOutlined,QuestionCircleOutlined,UpOutlined,SettingOutlined,CheckOutlined} from "@ant-design/icons-vue";
 
 const state = reactive({
 	statusList: [
@@ -231,22 +273,25 @@ const state = reactive({
     }
   ],
   locationList:[
-    '토스토스 지점',
-    '칭다오',
-    '광저우',
-    '웨이하이',
-    'B2B',
-    '오리건',
-    '캘리포니아',
-    '영국',
-    '독일',
-    '도쿄',
-    '인천',
-    '3PL',
-    '지구별',
+    {value:'토스토스 지점'},
+    {value:'칭다오'},
+    {value:'광저우'},
+    {value:'웨이하이'},
+    {value:'B2B'},
+    {value:'오리건'},
+    {value:'캘리포니아'},
+    {value:'영국'},
+    {value:'독일'},
+    {value:'도쿄'},
+    {value:'인천'},
+    {value:'3PL'},
+    {value:'지구별'},
+  ],
+  searchKeyList:[
+
   ],
   search: {
-    location:'',
+    location:'토스토스 지점',
     rqStart:'',
     rqEnd:'',
     searchKey:'',
@@ -286,6 +331,9 @@ onUnmounted(()=>{
 }
 .list-two-wrap .ant-tabs-nav{
   padding-bottom: 20px;
+}
+.list-two-wrap .rqStart .ant-picker-input,.list-two-wrap .rqEnd .ant-picker-input{
+  width: 120px;
 }
 </style>
 <style scoped>
@@ -362,6 +410,7 @@ onUnmounted(()=>{
 .search-wrap{
   width:100%;
   height: 80px;
+  padding: 0 140px;
   box-shadow: 2px 4px 10px 0 rgba(0,0,0,0.1);
 }
 </style>
