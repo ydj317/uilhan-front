@@ -158,15 +158,27 @@
       <a-flex class="search-left fl-tc" gap="5">
         <a-select
           v-model:value="state.search.location"
-          :options="state.locationList"
-        ></a-select>
+        >
+          <a-select-option value="토스토스 지점">토스토스 지점</a-select-option>
+          <a-select-option value="칭다오">칭다오</a-select-option>
+          <a-select-option value="광저우">광저우</a-select-option>
+          <a-select-option value="웨이하이">웨이하이</a-select-option>
+          <a-select-option value="B2B">B2B</a-select-option>
+          <a-select-option value="오리건">오리건</a-select-option>
+          <a-select-option value="캘리포니아">캘리포니아</a-select-option>
+          <a-select-option value="영국">영국</a-select-option>
+          <a-select-option value="독일">독일</a-select-option>
+          <a-select-option value="도쿄">도쿄</a-select-option>
+          <a-select-option value="인천">인천</a-select-option>
+          <a-select-option value="3PL">3PL</a-select-option>
+          <a-select-option value="지구별">지구별</a-select-option>
+        </a-select>
         <a-divider type="vertical" class="mlr5" :style="{background:'#CFD2DA'}" />
         <a-date-picker v-model:value="state.search.rqStart" placeholder="시작일" class="rqStart"/>
         <span>~</span>
         <a-date-picker v-model:value="state.search.rqEnd" placeholder="종료일" class="rqEnd"/>
-        <a-divider type="vertical" class="mlr5 bg-cfd2da" :style="{background:'#CFD2DA'}" />
-
-        <a-input-group compact>
+        <a-divider type="vertical" class="mlr5" :style="{background:'#CFD2DA'}" />
+        <a-input-group compact class="search-group">
           <a-select v-model:value="state.search.searchKey">
             <a-select-option value="받는사람">받는사람</a-select-option>
             <a-select-option value="전화번호">전화번호</a-select-option>
@@ -179,28 +191,106 @@
           </a-select>
           <a-input-search
             v-model:value="state.search.searchValue"
-            style="width: 250px"
             placeholder="이름 첫 글자부터 입력"
+            class="search-btn"
           >
-          <template #enterButton>
-            <a-button>Custom</a-button>
-          </template>
           </a-input-search>
         </a-input-group>
       </a-flex>
       <a-flex class="search-right fl-tc" gap="20">
-        <div>
+        <div class="cp color-969DAE" :class="{'color-2755f9':state.search.weight}">
           <span>중량화물</span>
-          <span><CheckOutlined /></span>
+          <span class="ml5"><CheckOutlined /></span>
         </div>
-        <a-select v-model:value="value3">
-          <a-select-option value="Zhejiang">Zhejiang</a-select-option>
-          <a-select-option value="Jiangsu">Jiangsu</a-select-option>
+        <a-select v-model:value="state.search.sort">
+          <a-select-option value="">정렬기준</a-select-option>
+          <a-select-option value="등록일">등록일</a-select-option>
+          <a-select-option value="처리일">처리일</a-select-option>
+          <a-select-option value="입고시간">입고시간</a-select-option>
         </a-select>
-        <a-select v-model:value="value3">
-          <a-select-option value="Zhejiang">Zhejiang</a-select-option>
-          <a-select-option value="Jiangsu">Jiangsu</a-select-option>
+        <a-select v-model:value="state.search.pageSize">
+          <a-select-option value="">페이지당 개수</a-select-option>
+          <a-select-option value="30">30개</a-select-option>
+          <a-select-option value="50">50개</a-select-option>
+          <a-select-option value="100">100개</a-select-option>
         </a-select>
+      </a-flex>
+    </a-flex>
+    <a-flex class="table-list-wrap mt20">
+      <a-flex vertical class="table-list">
+        <a-flex class="table-list-header fl-tc fl-lb w100 h54">
+          <a-flex class="fl-tc">
+            <img src="@/assets/img/express/pending.png"/>
+            <span class="ml10 fs16 color-969DAE">접수대기</span>
+          </a-flex>
+          <a-flex class="fl-tc" gap="10">
+            <span class="color-898f9e fs13">접수 24. 00. 00 00:00</span>
+            <span class="fs14">
+              <span class="color-6B6F7C">주문번호: </span>
+              <span class="color-2755f9 font-SCDream6">240101</span>
+              <span class="color-3F4249">-8294112</span>
+            </span>
+            <span class="color-6B6F7C fs14">주문상세 <RightOutlined /></span>
+            <a-checkbox v-model:checked="checked" />
+          </a-flex>
+        </a-flex>
+        <a-flex class="table-list-content">
+            <a-flex vertical class="table-content-left mb20">
+              <div class="h34 fs20 color-3F4249 fl-tc">김재현</div>
+              <a-flex gap="16" class="mt18 h34">
+                <a-flex class="fl-tc">
+                  <img src="@/assets/img/express/USA.png"/>
+                  <div class="ml7">오리건</div>
+                </a-flex>
+                <a-flex class="fl-tc">
+                  <img src="@/assets/img/express/flight.png"/>
+                  <div class="ml7">항공</div>
+                </a-flex>
+                <a-flex class="fl-tc">
+                  <img src="@/assets/img/express/number-one.png"/>
+                  <div class="ml7">단독배송</div>
+                  <div class="ml7">5개</div>
+                </a-flex>
+              </a-flex>
+              <a-flex class="fl-tc fl-lb mt10">
+                <a-flex wrap="wrap" gap="6" class="fs13">
+                  <div class="check-list">택배개봉금지</div>
+                  <div class="check-list">택배개봉금지</div>
+                  <div class="check-list">택배개봉금지</div>
+                  <div class="check-list">택배개봉금지</div>
+                  <div class="check-list">택배개봉금지</div>
+                  <QuestionCircleOutlined class="ml5" />
+                </a-flex>
+                <img src="@/assets/img/express/china.png" width="80" height="80"/>
+              </a-flex>
+              <a-flex vertical class="mt10">
+                <a-flex class="fl-lb fl-tc">
+                  <a-flex class="fl-tc fs13" gap="6">
+                    <div class="color-898f9e">멀티박스</div>
+                    <div class="color-2755f9">0건</div>
+                    <div class="bg-F1F3F8 br5 p5">중량착불</div>
+                  </a-flex>
+                  <DownOutlined />
+                </a-flex>
+                <a-flex class="fl-tc mt10">
+                  <div class="bg-898F9E br5 p6 t-white fs14">Master BL   TOS0000000</div>
+                  <img src="@/assets/img/express/copy.png" class="ml6 cp"/>
+                </a-flex>
+                <a-flex class="fl-tc fl-lb mt10">
+                  <a-flex vertical class="fl-lc" gap="6">
+                    <a-flex class="fl-tc" gap="6">
+                      <span>1.</span>
+                      <img src="@/assets/img/express/cj.png"/>
+                      <span>0000000000000</span>
+                      <img src="@/assets/img/express/copy.png" class="cp"/>
+                    </a-flex>
+                    <div class="mt6 fs13 color-898f9e">지점출고 24. 00. 00 00:00</div>
+                  </a-flex>
+                  <a-button shape="round" class="t-white fs14 bg-2755f9">배송조회</a-button>
+                </a-flex>
+              </a-flex>
+            </a-flex>
+        </a-flex>
       </a-flex>
     </a-flex>
   </div>
@@ -208,7 +298,7 @@
 
 <script setup>
 import { onMounted, onUnmounted, reactive } from "vue";
-import {DownOutlined,QuestionCircleOutlined,UpOutlined,SettingOutlined,CheckOutlined} from "@ant-design/icons-vue";
+import {DownOutlined,QuestionCircleOutlined,UpOutlined,SettingOutlined,CheckOutlined,RightOutlined} from "@ant-design/icons-vue";
 
 const state = reactive({
 	statusList: [
@@ -272,33 +362,15 @@ const state = reactive({
       rqRange:'6.28',
     }
   ],
-  locationList:[
-    {value:'토스토스 지점'},
-    {value:'칭다오'},
-    {value:'광저우'},
-    {value:'웨이하이'},
-    {value:'B2B'},
-    {value:'오리건'},
-    {value:'캘리포니아'},
-    {value:'영국'},
-    {value:'독일'},
-    {value:'도쿄'},
-    {value:'인천'},
-    {value:'3PL'},
-    {value:'지구별'},
-  ],
-  searchKeyList:[
-
-  ],
   search: {
     location:'토스토스 지점',
     rqStart:'',
     rqEnd:'',
-    searchKey:'',
+    searchKey:'받는사람',
     searchValue:'',
     weight:false,
     sort:'',
-    pageSize:0,
+    pageSize:'',
   },
 });
 onMounted(()=>{
@@ -334,6 +406,37 @@ onUnmounted(()=>{
 }
 .list-two-wrap .rqStart .ant-picker-input,.list-two-wrap .rqEnd .ant-picker-input{
   width: 120px;
+  height: 40px;
+  padding: 0 11px;
+}
+.list-two-wrap .search-btn .ant-input-search-button{
+  border-left: 0;
+}
+.list-two-wrap .ant-select-selector{
+  height: 40px!important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.list-two-wrap .search-group .ant-input-group-addon{
+  background-color: transparent;
+}
+.list-two-wrap .search-group .ant-select-selector,.list-two-wrap .search-group input,.list-two-wrap .search-group button{
+  background: #F1F3F8;
+  border: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+}
+.list-two-wrap .search-group .ant-select-selector{
+  border-start-start-radius: 20px!important;
+  border-end-start-radius: 20px!important;
+}
+.list-two-wrap .ant-input-group button{
+  border-start-end-radius: 20px!important;
+  border-end-end-radius: 20px!important;
 }
 </style>
 <style scoped>
@@ -412,5 +515,33 @@ onUnmounted(()=>{
   height: 80px;
   padding: 0 140px;
   box-shadow: 2px 4px 10px 0 rgba(0,0,0,0.1);
+}
+.search-btn{
+  width: 250px;
+}
+.list-two-wrap .rqStart,.list-two-wrap .rqEnd{
+  padding: 0;
+}
+.table-list{
+  width: 1440px;
+  border-radius: 24px;
+  border: 1px solid #E4E7EC;
+  padding: 6px 16px 16px;
+  background: #fff;
+  box-shadow: 2px 4px 10px 0 rgba(0,0,0,0.1);
+}
+.table-content-left{
+  width: 400px;
+}
+.table-content-center{
+  width: 568px;
+}
+.table-content-right{
+  width: 360px;
+}
+.check-list{
+  border: 1px solid #e9eefe;
+  border-radius: 6px;
+  padding: 4px 6px;
 }
 </style>
