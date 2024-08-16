@@ -1002,6 +1002,14 @@ const handleOk = () => {
     return false;
   }
 
+  //#363 수령자 연락처 확인
+  const checkNumber = state.form.receiver_tel1.slice(0,3);
+
+  if (checkNumber !== "010") {
+    message.error("수령자 연락처는 010으로 시작하는 핸드폰 번호를 입력해 주세요.");
+    return false;
+  }
+
   // check arc_seq
   if (state.form.items.some(item => item.arc_seq === "")) {
     message.error("통관품목을 선택해 주세요.");
