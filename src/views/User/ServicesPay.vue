@@ -554,10 +554,7 @@ const submit = () => {
 
   requestPost('/api/user/quota/order/create', {'plans':[...payPlanList],'paymentMethod':payType}, (data) => {
     if (data.orders.length > 0){
-
-
       if (data.isDebug === undefined || data.isDebug === false){
-
         // 调用结算界面
         const pay_data = {
           ordr_idxx: data.payInfo.ordr_idxx, // 상점관리 주문번호
