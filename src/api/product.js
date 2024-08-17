@@ -96,7 +96,7 @@ export function useProductApi() {
         },
         async uploadImage(data, callback) {
             return await AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/xjUploadImage",
+                url: process.env.VUE_APP_API_URL + "/api/upload/image",
                 method: "post",
                 data: data,
             }).then((res) => {
