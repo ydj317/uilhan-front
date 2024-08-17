@@ -69,7 +69,7 @@
           <div style="display: flex;gap: 5px">
             <a-button type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
             <a-button @click="editorImage">편집</a-button>
-            <a-button @click="imageMatting" :loading="imageMattingLoading" v-if="Cookie.get('member_name') === 'jwli'">AI 누끼 따기</a-button>
+            <a-button @click="imageMatting" :loading="imageMattingLoading" v-if="checkAdmin">AI 누끼 따기</a-button>
           </div>
           <div>
             이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span>
@@ -89,7 +89,7 @@
             style="background-color: white;width: 100%;height: 600px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
             :style="selectedCollectionBackgroundImage"
           >
-
+            <contextHolder />
           </div>
         </section>
       </a-card>
@@ -125,24 +125,39 @@
 </template>
 
 <script>
-import {defineComponent} from "vue";
+import {defineComponent, h} from "vue";
 import {lib} from "@/util/lib";
 import Cookie from "js-cookie";
 import draggable from "vuedraggable";
 import {AuthRequest} from "@/util/request";
 import {mapState} from "vuex";
-import {message} from "ant-design-vue";
+import {message, Modal} from "ant-design-vue";
 import {
   QuestionCircleOutlined,
   PlusOutlined,
   DeleteOutlined,
   CloseOutlined,
-  CheckCircleOutlined
+  CheckCircleOutlined, ExclamationCircleOutlined
 } from "@ant-design/icons-vue";
 import NewXiangJi from "@/components/Detail/newXiangJi.vue";
 import {useProductApi} from "@/api/product";
 import ImageUpload from "@/components/Detail/ImageUpload.vue";
 
+const [modal, contextHolder] = Modal.useModal();
+const showConfirm = () => {
+  modal.confirm({
+    title: 'Do you Want to delete these items?',
+    icon: h(ExclamationCircleOutlined),
+    content: h('div', { style: 'color:red;' }, 'Some descriptions'),
+    onOk() {
+      console.log('OK');
+    },
+    onCancel() {
+      console.log('Cancel');
+    },
+    class: 'test',
+  });
+};
 export default defineComponent({
   components: {
     CheckCircleOutlined,
@@ -153,6 +168,7 @@ export default defineComponent({
     DeleteOutlined,
     CloseOutlined,
     ImageUpload,
+    contextHolder
   },
 
   computed: {
@@ -235,8 +251,10 @@ export default defineComponent({
   },
 
   methods: {
-    Cookie,
-// 이미지 누끼 따기
+    checkAdmin() {
+      return Cookie.get("member_name") === "jwli";
+    },
+    // 이미지 누끼 따기
     async imageMatting() {
       const selectedCollection = this.selectedCollection
 
@@ -262,6 +280,17 @@ export default defineComponent({
       useProductApi().imageMatting(option, (oTranslateInfo) => {
         const { translate_url } = oTranslateInfo.data;
         selectedCollection.translate_url = translate_url;
+        modal.confirm({
+          title: '이미지 누끼따기 결과',
+          icon: h(ExclamationCircleOutlined),
+          content: h('img', { src: translate_url, style: 'width: 100%;' }),
+          onOk() {
+            console.log('OK');
+          },
+          onCancel() {
+            console.log('Cancel');
+          },
+        });
       }).finally(() => {
         this.imageMattingLoading = false;
       });
