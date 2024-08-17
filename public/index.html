@@ -43,5 +43,74 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+  <script type="text/javascript">
+      const API_URL = '<%= VUE_APP_API_URL %>';
+      const token = getCookie('token');
+      /* 인증완료시 재귀 함수 认证后的回调函数  */
+      function m_Completepayment(FormOrJson, closeEvent )
+      {
+          var frm = document.order_info;
+
+          GetField( frm, FormOrJson );
+        if( frm.res_cd.value == "0000" )
+        {
+          // alert("결제 승인 요청 전,\n\n반드시 결제창에서 고객님이 결제 인증 완료 후\n\n리턴 받은 ordr_chk 와 업체 측 주문정보를\n\n다시 한번 검증 후 결제 승인 요청하시기 바랍니다."); //업체 연동 시 필수 확인 사항.
+          /*
+              가맹점 리턴값 처리 영역
+          */
+          var orderIds = frm.ordr_idxx.value.split(',');
+          var url = '/api/user/order/update/payed';
+          var param = { orderIds, amount:frm.good_mny.value };
+          updateOrderStatus(url,param,(res)=>{
+            if (res){
+              frm.submit();
+              location.href = '/user/mypage';
+            }
+          });
+        }
+        else
+        {
+          // alert( "[" + frm.res_cd.value + "] " + frm.res_msg.value );
+          if(frm.res_cd.value == '3001'){
+            closeEvent();
+            var orderIds = frm.ordr_idxx.value.split(',');
+            var url = '/api/user/order/update/cancelPayment';
+            var param = { orderIds };
+            updateOrderStatus(url,param,(res)=>{
+            });
+          }
+        }
+      }
+      function updateOrderStatus(url,param,callback){
+        $.ajax({
+          url: API_URL + url,
+          type: 'POST',  // 请求方法
+          contentType: 'application/json',  // 请求头，指定发送的是 JSON 数据
+          data: JSON.stringify(param),  // 请求体，序列化为 JSON 格式
+          headers: { 'token': token},
+          success: function (res) {
+            if (res.status !== "2000") {
+              alert(res.message);
+              return false;
+            }
+            callback(res.data);
+          },
+          error: function (xhr, status, error) {  // 失败回调
+            console.error('Error response:', xhr.responseText);
+          }
+        });
+      }
+      function getCookie(cname)
+      {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++)
+        {
+          var c = ca[i].trim();
+          if (c.indexOf(name)==0) return unescape(c.substring(name.length,c.length));
+        }
+        return "";
+      }
+  </script>
   </body>
 </html>
