@@ -290,6 +290,31 @@
                 </a-flex>
               </a-flex>
             </a-flex>
+            <a-flex class="table-content-center mb20">
+              <a-flex vertical>
+                  <a-flex class="fl-tc" gap="5">
+                    <a-button class="t-white fs13 bg-ff3049">중복송장</a-button>
+                    <a-button class="t-white fs13 bg-6b6f7c">목록통관</a-button>
+                    <div class="fs14 color-6B6F7C">총 금액</div>
+                    <div class="fs14 color-3F4249">USD $239.96</div>
+                  </a-flex>
+                <div class="fs14 color-3F4249">장난감 (playing toys)</div>
+                <a-flex class="fs13 color-6B6F7C fl-lb">
+                  <div>옵션</div>
+                  <div>2개</div>
+                </a-flex>
+                <a-flex class="fs13 color-6B6F7C fl-lb">
+                  <div>단가</div>
+                  <div class="color-3F4249">USD $119.98</div>
+                </a-flex>
+              </a-flex>
+              <a-flex vertical>
+                <div></div>
+              </a-flex>
+            </a-flex>
+          <a-flex vertical class="table-content-right mb20">
+
+          </a-flex>
         </a-flex>
       </a-flex>
     </a-flex>
@@ -524,6 +549,7 @@ onUnmounted(()=>{
 }
 .table-list{
   width: 1440px;
+  max-height: 507px;
   border-radius: 24px;
   border: 1px solid #E4E7EC;
   padding: 6px 16px 16px;
