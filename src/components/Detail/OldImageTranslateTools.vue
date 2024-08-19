@@ -202,7 +202,10 @@ export default defineComponent({
     },
     selectedCollection() {
       return this.localTranslateImageList.find(item => item.checked === true);
-    }
+    },
+    checkAdmin() {
+      return Cookie.get("member_name") === "jwli";
+    },
   },
   props: {
     visible: {
@@ -251,9 +254,6 @@ export default defineComponent({
   },
 
   methods: {
-    checkAdmin() {
-      return Cookie.get("member_name") === "jwli";
-    },
     // 이미지 누끼 따기
     async imageMatting() {
       const selectedCollection = this.selectedCollection
