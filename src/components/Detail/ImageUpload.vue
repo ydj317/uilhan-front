@@ -288,8 +288,13 @@ export default {
         return false;
       }
 
+      let from = 'zh';
+      if (this.product.item_market === 'Rakuten') {
+        from = 'jp';
+      }
+
       const oParam = {
-        from: "zh",
+        from: from,
         to: "ko",
         list: [
           {
@@ -329,9 +334,13 @@ export default {
         return false;
       }
 
+      let from = 'zh';
+      if (this.product.item_market === 'Rakuten') {
+        from = 'jp';
+      }
 
       const oParam = {
-        from: "zh",
+        from: from,
         to: "ko",
         list: [],
         isTranslate: true

@@ -62,8 +62,13 @@ export default {
     // 이미지 번역
     translateImage() {
       this.product.translateImage = (aImagesInfo = [], xiangjiCallback) => {
+        let from = 'zh';
+        if (this.product.item_market === 'Rakuten') {
+          from = 'jp';
+        }
+
         let oParam = {
-          from: "zh",
+          from: from,
           to: "ko",
           list: aImagesInfo,
           isTranslate: this.product.isTranslate,

@@ -327,8 +327,13 @@ export default defineComponent({
         return false;
       }
 
+      let from = 'zh';
+      if (this.product.item_market === 'Rakuten') {
+        from = 'jp';
+      }
+
       const oParam = {
-        from: "zh",
+        from: from,
         to: "ko",
         list: [
           {
@@ -373,9 +378,13 @@ export default defineComponent({
         return false;
       }
 
+      let from = 'zh';
+      if (this.product.item_market === 'Rakuten') {
+        from = 'jp';
+      }
 
       const oParam = {
-        from: "zh",
+        from: from,
         to: "ko",
         list: [],
         isTranslate: true
