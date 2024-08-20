@@ -319,8 +319,8 @@
                       <div>단가</div>
                       <div class="color-3F4249 font-SCDream6">USD $119.98</div>
                     </a-flex>
-                    <input-on @input="handleInput" />
-                    <input-on @input="handleInput" />
+                    <input-on @input="handleInput" :key="Math.random()" />
+                    <input-on @input="handleInput" :key="Math.random()" />
                   </a-flex>
                   <img src="@/assets/img/express/cj.png" width="140" height="140"/>
                 </a-flex>
@@ -431,7 +431,7 @@
               </a-flex>
               <div class="footer-list-close fl-cc"><CloseOutlined class="t-white" /></div>
             </a-flex>
-            <input-on class="mt10" width="240" :edit="false"  />
+            <input-on class="mt10" width="240" :edit="false" :key="Math.random()" />
           </a-flex>
         </a-flex>
       </a-flex>
@@ -454,7 +454,7 @@
                 <div class="fs13 color-898f9e">접수: 24.07.03 16:51</div>
                 <span class="color-898f9e">사유:<span class="color-3F4249">파손 수취 거부</span></span>
               </a-flex>
-              <input-on class="mt10" width="240"  :edit="false" />
+              <input-on class="mt10" width="240" :edit="false" :key="Math.random()" />
             </a-flex>
           </a-flex>
         </a-flex>

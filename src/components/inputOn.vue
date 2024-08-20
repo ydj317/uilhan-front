@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { reactive, ref,nextTick  } from "vue";
 import { message } from "ant-design-vue";
 const inputRef = ref(null);
 const emit = defineEmits(['input'])
@@ -55,13 +55,18 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  value: {
+    type: String,
+    default: '',
+  },
 });
 const state = reactive({
-  inputValue:'sdsdssss',
+  inputValue:props.value,
   isFocus :false,
 });
-const handleFocus = () => {
+const handleFocus = async  () => {
   state.isFocus = true;
+  await nextTick();
   if (inputRef.value) {
     inputRef.value.focus();
   }
@@ -77,7 +82,7 @@ const copyContent = (value) => {
   el.select();
   document.execCommand('copy');
   document.body.removeChild(el);
-  message.success('상품코드를 복사 하였습니다.');
+  message.success('성공적으로 복사되었습니다');
 }
 </script>
 <style>
@@ -93,7 +98,7 @@ const copyContent = (value) => {
 .input-on-wrap .ant-input-affix-wrapper.ant-input-affix-wrapper-disabled,.input-on-wrap .ant-input-affix-wrapper input.ant-input-disabled{
   background: #fff;
   cursor: inherit!important;
-  color: inherit
+  color: inherit;
 }
 </style>
 <style scoped>
