@@ -1,9 +1,9 @@
 <template>
 	<div class="list-two-wrap fl-c fl-tc bg-F1F3F8">
     <a-flex align="center" gap="6" class="status-wrap fs14 p6 bg-white font-SCDream5">
-      <div class="status-list fl-cc fl-c" v-for="v in state.statusList">
+      <div class="status-list fl-cc fl-c cp" v-for="v in state.statusList">
         <div>{{ v.name }}</div>
-        <div class="mt5">{{v.num}}</div>
+        <div class="mt5" :class="v.num == 0 ? 'color-abb1be':'color-2755f9'">{{v.num}}</div>
       </div>
       <div class="show-more br10 p10 fl-cc"><DownOutlined /></div>
       <QuestionCircleOutlined class="fs15 color-b9bdc9 ml2" />
@@ -159,7 +159,7 @@
         <a-select
           v-model:value="state.search.location"
         >
-          <a-select-option value="토스토스 지점">토스토스 지점</a-select-option>
+          <a-select-option value="">토스토스 지점</a-select-option>
           <a-select-option value="칭다오">칭다오</a-select-option>
           <a-select-option value="광저우">광저우</a-select-option>
           <a-select-option value="웨이하이">웨이하이</a-select-option>
@@ -216,8 +216,8 @@
         </a-select>
       </a-flex>
     </a-flex>
-    <a-flex class="table-list-wrap mt20">
-      <a-flex vertical class="table-list">
+    <a-flex vertical class="table-list-wrap mt20" gap="20">
+      <a-flex vertical class="table-list"  v-for="i in 3">
         <a-flex class="table-list-header fl-tc fl-lb w100 h54">
           <a-flex class="fl-tc">
             <img src="@/assets/img/express/pending.png"/>
@@ -234,8 +234,8 @@
             <a-checkbox v-model:checked="checked" />
           </a-flex>
         </a-flex>
-        <a-flex class="table-list-content">
-            <a-flex vertical class="table-content-left mb20">
+        <a-flex class="table-list-content mb20" gap="20">
+            <a-flex vertical class="table-content-left">
               <div class="h34 fs20 color-3F4249 fl-tc">김재현</div>
               <a-flex gap="16" class="mt18 h34">
                 <a-flex class="fl-tc">
@@ -249,7 +249,7 @@
                 <a-flex class="fl-tc">
                   <img src="@/assets/img/express/number-one.png"/>
                   <div class="ml7">단독배송</div>
-                  <div class="ml7">5개</div>
+                  <div class="ml7 color-2755f9">5개</div>
                 </a-flex>
               </a-flex>
               <a-flex class="fl-tc fl-lb mt10">
@@ -290,30 +290,172 @@
                 </a-flex>
               </a-flex>
             </a-flex>
-            <a-flex class="table-content-center mb20">
-              <a-flex vertical>
-                  <a-flex class="fl-tc" gap="5">
-                    <a-button class="t-white fs13 bg-ff3049">중복송장</a-button>
-                    <a-button class="t-white fs13 bg-6b6f7c">목록통관</a-button>
-                    <div class="fs14 color-6B6F7C">총 금액</div>
-                    <div class="fs14 color-3F4249">USD $239.96</div>
+            <a-flex vertical class="table-content-center font-SCDream4">
+              <a-flex vertical gap="15">
+                  <a-flex class="fl-lb">
+                    <a-flex class="fl-tc" gap="5">
+                      <a-button class="t-white fs13 bg-ff3049">중복송장</a-button>
+                      <a-button class="t-white fs13 bg-6b6f7c">목록통관</a-button>
+                      <div class="fs14 color-6B6F7C">총 금액</div>
+                      <div class="fs14 color-3F4249 font-SCDream6">USD $239.96</div>
+                    </a-flex>
+                    <a-flex gap="5" class="fs14 fl-tc fl-le">
+                      <span class="color-6B6F7C">총 수량</span>
+                      <span>86개</span>
+                      <DownOutlined />
+                    </a-flex>
                   </a-flex>
-                <div class="fs14 color-3F4249">장난감 (playing toys)</div>
-                <a-flex class="fs13 color-6B6F7C fl-lb">
-                  <div>옵션</div>
-                  <div>2개</div>
-                </a-flex>
-                <a-flex class="fs13 color-6B6F7C fl-lb">
-                  <div>단가</div>
-                  <div class="color-3F4249">USD $119.98</div>
-                </a-flex>
               </a-flex>
-              <a-flex vertical>
-                <div></div>
+              <a-divider class="mtb15" />
+              <a-flex vertical class="center-list" gap="40">
+                <a-flex class="fl-lb" gap="20" v-for="i in 6">
+                  <a-flex vertical gap="15">
+                    <div class="fs14 color-3F4249 font-SCDream6">장난감 (playing toys)</div>
+                    <a-flex class="fs13 color-6B6F7C fl-lb">
+                      <div>옵션</div>
+                      <div>2개</div>
+                    </a-flex>
+                    <a-flex class="fs13 color-6B6F7C fl-lb">
+                      <div>단가</div>
+                      <div class="color-3F4249 font-SCDream6">USD $119.98</div>
+                    </a-flex>
+                    <input-on @input="handleInput" />
+                    <input-on @input="handleInput" />
+                  </a-flex>
+                  <img src="@/assets/img/express/cj.png" width="140" height="140"/>
+                </a-flex>
               </a-flex>
             </a-flex>
-          <a-flex vertical class="table-content-right mb20">
-
+          <a-flex vertical class="table-content-right">
+            <a-flex vertical class="right-status" gap="10">
+              <a-flex vertical class="bg-F1F3F8 br15 w100 p20">
+                <a-flex class="fl-tc fl-le fs14">
+                  <div>메모</div>
+                  <img src="@/assets/img/express/memo-add.png" class="ml5"/>
+                  <div class="ml25">문의</div>
+                  <img src="@/assets/img/express/support_agent_hui.png" class="ml5"/>
+                </a-flex>
+                <div class="fs16 color-3F4249 mt30 font-SCDream6">트래킹 번호를 입력하세요.</div>
+                <div class="fs14 color-6B6F7C mt10">트래킹 번호를 입력해야 접수 신청이 완료됩니다.</div>
+                <a-button shape="round" class="t-white fs14 bg-2755f9 mt20 h40">입력하기</a-button>
+              </a-flex>
+              <a-flex gap="10">
+                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">신청서 수정</a-button>
+                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">접수 취소</a-button>
+              </a-flex>
+            </a-flex>
+<!--            <a-flex vertical class="right-status" gap="10">-->
+<!--              <a-flex vertical class="bg-F1F3F8 br15 w100 p20">-->
+<!--                <a-flex class="fl-tc fl-le fs14">-->
+<!--                  <div>메모</div>-->
+<!--                  <img src="@/assets/img/express/memo-add.png" class="ml5"/>-->
+<!--                  <div class="ml25">문의</div>-->
+<!--                  <img src="@/assets/img/express/support_agent_hui.png" class="ml5"/>-->
+<!--                </a-flex>-->
+<!--                <div class="fs16 color-3F4249 mt30 font-SCDream6">배송비를 결제해주세요.</div>-->
+<!--                <div class="fs14 color-6B6F7C mt10">결제완료 후 출고를 시작합니다.</div>-->
+<!--                <a-flex vertical class="bg-white br15 p20 mt20" gap="15">-->
+<!--                  <a-flex class="fl-lb fs13 color-3F4249">-->
+<!--                    <div>가로*세로*높이</div>-->
+<!--                    <div>16 * 25 * 11</div>-->
+<!--                  </a-flex>-->
+<!--                  <a-flex class="fl-lb fs13 color-969DAE">-->
+<!--                    <div class="fl-tc">-->
+<!--                      <CheckOutlined />-->
+<!--                      <span class="ml5">부피무게</span>-->
+<!--                    </div>-->
+<!--                    <div>0.7kg</div>-->
+<!--                  </a-flex>-->
+<!--                  <a-flex class="fl-lb fs13 color-2755f9">-->
+<!--                    <div class="fl-tc">-->
+<!--                      <CheckOutlined />-->
+<!--                      <span class="ml5">실무게</span>-->
+<!--                    </div>-->
+<!--                    <div>0.2kg</div>-->
+<!--                  </a-flex>-->
+<!--                  <a-flex class="fl-lb fs13 color-3F4249">-->
+<!--                    <div>결제 금액</div>-->
+<!--                    <div class="color-2755f9 font-SCDream6">6,600원</div>-->
+<!--                  </a-flex>-->
+<!--                  <a-button class="t-white fs14 bg-2755f9 b0 h40">결제하기</a-button>-->
+<!--                </a-flex>-->
+<!--                <div class="fl-cc color-2755f9 fs14 mt20">반품 신청</div>-->
+<!--              </a-flex>-->
+<!--              <a-flex gap="10">-->
+<!--                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">배송 방법 변경</a-button>-->
+<!--                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">수령인 변경</a-button>-->
+<!--              </a-flex>-->
+<!--            </a-flex>-->
+<!--            <a-flex vertical class="right-status" gap="10">-->
+<!--              <a-flex vertical class="bg-F1F3F8 br15 w100 p20">-->
+<!--                <a-flex class="fl-tc fl-lb fs14">-->
+<!--                  <img src="@/assets/img/express/memo-add.png" class="br50" width="34" height="34"/>-->
+<!--                  <a-flex class="fl-tc">-->
+<!--                    <div class="memo-bg"></div>-->
+<!--                    <div class="ml25">문의</div>-->
+<!--                    <img src="@/assets/img/express/support_agent_hui.png" class="ml5"/>-->
+<!--                  </a-flex>-->
+<!--                </a-flex>-->
+<!--                <div class="fs16 color-3F4249 mt30 font-SCDream6">접수 신청 완료</div>-->
+<!--                <div class="fs14 color-6B6F7C mt10">상품이 아직 지점으로 도착하지 않았습니다.</div>-->
+<!--              </a-flex>-->
+<!--              <a-flex gap="10">-->
+<!--                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">신청서 수정</a-button>-->
+<!--                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">접수 취소</a-button>-->
+<!--              </a-flex>-->
+<!--            </a-flex>-->
+          </a-flex>
+        </a-flex>
+      </a-flex>
+    </a-flex>
+    <a-flex vertical align="center" class="footer-wrap mt50 bg-3f4249 w100 p50" gap="14">
+      <a-flex class="fs24 t-white font-SCDream6 fl-tc">
+        <img src="@/assets/img/express/union.png" height="23"/>
+        <div class="ml10">노데이터</div>
+      </a-flex>
+      <div class="fs16 color-cfd2da font-SCDream4">신청서에 등록되지 않은 트래킹 번호</div>
+      <a-flex class="fs16 bg-535660 t-white font-SCDream4 p10 br10 w100 fl-lc" gap="20">
+          <div>1. 입고일 기준 3개월 이후 폐기(보상불가)됩니다. </div>
+          <div>2. 판매자가 물건을 나눠서 배송했을 수 있습니다. </div>
+          <div>3. 트래킹번호 확인 후 신청서에 등록 시 사라집니다. </div>
+      </a-flex>
+      <a-flex wrap="wrap" class="footer-list mt20 w80 pl80" gap="20">
+        <a-flex class="footer-list-main bg-white br15" gap="10" v-for="i in 5">
+          <div class="footer-list-img bor-black"></div>
+          <a-flex vertical>
+            <a-flex class="fl-tc fl-lb">
+              <a-flex class="fl-tc" gap="5">
+                <img src="@/assets/img/express/china.png"/>
+                <div class="fs16 color-3F4249">광저우</div>
+                <div class="fs13 color-898f9e">24.07.03 16:51</div>
+              </a-flex>
+              <div class="footer-list-close fl-cc"><CloseOutlined class="t-white" /></div>
+            </a-flex>
+            <input-on class="mt10" width="240" :edit="false"  />
+          </a-flex>
+        </a-flex>
+      </a-flex>
+      <a-divider class="bg-6b6f7c w90" />
+      <a-flex vertical align="center" gap="14" class="w100">
+        <div class="fs24 t-white font-SCDream4 fl-cc">미입고 트래킹 번호</div>
+        <div class="fs16 color-cfd2da font-SCDream4 fl-cc">지점에 도착한 화물의 외관이 파손 되었거나 해외 판매자가 회수요청을 한 경우</div>
+        <a-flex wrap="wrap" class="footer-list mt20 w80 pl80" gap="20">
+          <a-flex class="footer-list-main bg-white br15" gap="10" v-for="i in 2">
+            <div class="footer-list-img bor-black"></div>
+            <a-flex vertical gap="10">
+              <a-flex class="fl-tc fl-lb">
+                <a-flex class="fl-tc" gap="5">
+                  <img src="@/assets/img/express/china.png"/>
+                  <div class="fs16 color-3F4249">광저우</div>
+                </a-flex>
+                <div class="footer-list-close fl-cc"><CloseOutlined class="t-white" /></div>
+              </a-flex>
+              <a-flex vertical class="fs15" gap="10">
+                <div class="fs13 color-898f9e">접수: 24.07.03 16:51</div>
+                <span class="color-898f9e">사유:<span class="color-3F4249">파손 수취 거부</span></span>
+              </a-flex>
+              <input-on class="mt10" width="240"  :edit="false" />
+            </a-flex>
           </a-flex>
         </a-flex>
       </a-flex>
@@ -323,11 +465,12 @@
 
 <script setup>
 import { onMounted, onUnmounted, reactive } from "vue";
-import {DownOutlined,QuestionCircleOutlined,UpOutlined,SettingOutlined,CheckOutlined,RightOutlined} from "@ant-design/icons-vue";
+import {DownOutlined,QuestionCircleOutlined,UpOutlined,SettingOutlined,CheckOutlined,RightOutlined,CloseOutlined} from "@ant-design/icons-vue";
+import InputOn from "@/components/inputOn.vue";
 
 const state = reactive({
 	statusList: [
-    {name:'접수대기',num:0},
+    {name:'접수대기',num:2},
     {name:'접수신청',num:0},
     {name:'부분입고',num:0},
     {name:'오류입고',num:0},
@@ -388,7 +531,7 @@ const state = reactive({
     }
   ],
   search: {
-    location:'토스토스 지점',
+    location:'',
     rqStart:'',
     rqEnd:'',
     searchKey:'받는사람',
@@ -398,6 +541,9 @@ const state = reactive({
     pageSize:'',
   },
 });
+const handleInput = (val) => {
+  console.log('handleInput',val);
+};
 onMounted(()=>{
   $('.ant-layout-content').css({'margin':"0"});
 })
@@ -478,6 +624,10 @@ onUnmounted(()=>{
   width: 74px;
   height: 65px;
 }
+.status-list:hover{
+  background: #F1F3F8;
+  border-radius: 10px;
+}
 .show-more{
   width: 76px;
   height: 44px;
@@ -548,7 +698,6 @@ onUnmounted(()=>{
   padding: 0;
 }
 .table-list{
-  width: 1440px;
   max-height: 507px;
   border-radius: 24px;
   border: 1px solid #E4E7EC;
@@ -561,6 +710,7 @@ onUnmounted(()=>{
 }
 .table-content-center{
   width: 568px;
+  height: 281px;
 }
 .table-content-right{
   width: 360px;
@@ -569,5 +719,36 @@ onUnmounted(()=>{
   border: 1px solid #e9eefe;
   border-radius: 6px;
   padding: 4px 6px;
+}
+.center-list{
+  overflow: hidden;
+  overflow-y: scroll;
+}
+.center-list::-webkit-scrollbar{
+  display: none;
+}
+.right-status{
+  width: 360px;
+}
+.memo-bg{
+  width: 71px;
+  height: 34px;
+  background: url("../../assets/img/express/memo.png") no-repeat;
+}
+.footer-list-main{
+  width: 366px;
+  padding: 12px;
+}
+.footer-list-img{
+  width: 92px;
+  height: 92px;
+  border-radius: 5px;
+  position: relative;
+}
+.footer-list-close{
+  width: 24px;
+  height: 24px;
+  background: #3F4249;
+  border-radius: 50%;
 }
 </style>
