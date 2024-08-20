@@ -250,6 +250,8 @@ const formState = reactive({
     {img:require(`@/assets/img/dashboard/collect2.png`),market:'Tmall',count:0},
     {img:require(`@/assets/img/dashboard/collect3.png`),market:'Aliexpress',count:0},
     {img:require(`@/assets/img/dashboard/collect4.png`),market:'Alibaba',count:0},
+    {img:require(`@/assets/img/dashboard/collect5.png`),market:'Rakuten',count:0},
+    {img:require(`@/assets/img/dashboard/collect6.png`),market:'Iherb',count:0},
   ],
   collectActive:'1',
   uploadActive:'1',

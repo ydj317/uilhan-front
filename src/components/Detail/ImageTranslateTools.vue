@@ -107,8 +107,14 @@ export default defineComponent({
       if(imglist){
         this.localTranslateImageList = imglist;
       }
+
+      let from = 'zh';
+      if (this.product.item_market === 'Rakuten') {
+        from = 'jp';
+      }
+
       const oParam = {
-        from: "zh",
+        from: from,
         to: "ko",
         list: [],
         isTranslate,

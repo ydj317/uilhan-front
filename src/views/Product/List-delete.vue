@@ -621,6 +621,14 @@ export default defineComponent({
               label: "Aliexpress",
               value: "Aliexpress"
             },
+            {
+              label: "Rakuten",
+              value: "Rakuten"
+            },
+            {
+              label: "Iherb",
+              value: "Iherb"
+            },
           ],
           label: "상품수집마켓",
           key: "market_code",
