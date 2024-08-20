@@ -45,7 +45,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: '请输入内容',
+    default: '내용을 입력해주세요',
   },
   copy: {
     type: Boolean,

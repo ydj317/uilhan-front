@@ -198,7 +198,7 @@
         </a-input-group>
       </a-flex>
       <a-flex class="search-right fl-tc" gap="20">
-        <div class="cp color-969DAE" :class="{'color-2755f9':state.search.weight}">
+        <div class="cp color-969DAE" :class="{'color-2755f9':state.search.weight}" @click="state.search.weight = !state.search.weight">
           <span>중량화물</span>
           <span class="ml5"><CheckOutlined /></span>
         </div>
@@ -580,9 +580,6 @@ onUnmounted(()=>{
   height: 40px;
   padding: 0 11px;
 }
-.list-two-wrap .search-btn .ant-input-search-button{
-  border-left: 0;
-}
 .list-two-wrap .ant-select-selector{
   height: 40px!important;
   display: flex;
@@ -596,10 +593,14 @@ onUnmounted(()=>{
   background: #F1F3F8;
   border: 0;
   height: 40px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
+}
+.list-two-wrap .search-group input,.list-two-wrap .search-group button{
+  padding: 2px;
+  justify-content: left;
 }
 .list-two-wrap .search-group .ant-select-selector{
   border-start-start-radius: 20px!important;
