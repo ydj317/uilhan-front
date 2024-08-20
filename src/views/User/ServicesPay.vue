@@ -554,23 +554,79 @@ const submit = () => {
 
   requestPost('/api/user/quota/order/create', {'plans':[...payPlanList],'paymentMethod':payType}, (data) => {
     if (data.orders.length > 0){
-
-
       if (data.isDebug === undefined || data.isDebug === false){
-
         // 调用结算界面
         const pay_data = {
           ordr_idxx: data.payInfo.ordr_idxx, // 상점관리 주문번호
           good_name: data.payInfo.good_name, // 상품명
           good_mny: data.payInfo.good_mny , // 주문요청금액
           shop_user_id: data.payInfo.shop_user_id, // 쇼핑몰에서 관리하는 회원 ID
-          // buyr_name: data.payInfo.buyr_name, // 주문자이름(선택)
-          // buyr_tel2: "010-0000-0000", // 주문자 휴대폰번호(선택)
-          // buyr_mail: "test@test.co.kr", // 주문자 이메일(선택)
           site_cd: data.payInfo.site_cd, // 가맹점 정보 설정
           site_name: data.payInfo.site_name, // 가맹점 정보 설정
           pay_method: data.payInfo.pay_method, // 100000000000 신용카드 | 001000000000 가상계좌
+          quotaopt: '12',
+          // 필수 항목 : 결제 금액/화폐단위
+          currency: 'WON',
+          module_type: '01',
+          res_cd: '',
+          res_msg: '',
+          enc_info: '',
+          enc_data: '',
+          ret_pay_method: '',
+          tran_cd: '',
+          use_pay_method: '',
+          ordr_chk: '',
+          cash_yn: '',
+          cash_tr_code: '',
+          cash_id_info: '',
+          good_expr: '0',
+
+          tax_flag: 'TG03',
+          comm_tax_mny: '',
+          comm_vat_mny: '',
+          comm_free_mny: '',
+          skin_indx: '1',
+          kcp_pay_title: '유일 결제 서비스',
+          disp_tax_yn: 'N',
         }
+        // const pay_data = {
+        //     ordr_idxx: data.payInfo.ordr_idxx, // 상점관리 주문번호
+        //     good_name: 'test_good', // 상품명
+        //     good_mny: data.payInfo.good_mny , // 주문요청금액
+        //     shop_user_id: 'test', // 쇼핑몰에서 관리하는 회원 ID
+        //     // buyr_name: data.payInfo.buyr_name, // 주문자이름(선택)
+        //     // buyr_tel2: "010-0000-0000", // 주문자 휴대폰번호(선택)
+        //     // buyr_mail: "test@test.co.kr", // 주문자 이메일(선택)
+        //     site_cd: 'T0000', // 가맹점 정보 설정
+        //     site_name: 'KCP TEST SHOP', // 가맹점 정보 설정
+        //     pay_method: '001000000000', // 100000000000 신용카드 | 001000000000 가상계좌
+        //   quotaopt: '1',
+        //
+        //     // 필수 항목 : 결제 금액/화폐단위
+        //   currency: 'WON',
+        //   module_type: '01',
+        //   res_cd: '',
+        //   res_msg: '',
+        //   enc_info: '',
+        //   enc_data: '',
+        //   ret_pay_method: '',
+        //   tran_cd: '',
+        //   use_pay_method: '',
+        //   ordr_chk: '',
+        //   cash_yn: '',
+        //   cash_tr_code: '',
+        //   cash_id_info: '',
+        //   good_expr: '0',
+        //
+        //   tax_flag: 'TG03',
+        //   comm_tax_mny: '',
+        //   comm_vat_mny: '',
+        //   comm_free_mny: '',
+        //   skin_indx: '1',
+        //   kcp_pay_title: 'NHN KCP TEST',
+        //   disp_tax_yn: 'N',
+        //
+        //   }
         jsf__pay(pay_data);
 
       }else {
@@ -672,37 +728,17 @@ const jsf__pay = (args = {}) => {
     inputElement.setAttribute("type", "hidden");
     inputElement.setAttribute("name", key);
     inputElement.setAttribute("value", form[key]);
+
     formElement.appendChild(inputElement);
   }
+
+  document.body.appendChild(formElement);
 
   try {
     KCP_Pay_Execute_Web(formElement);
   } catch (e) {
     /* IE 에서 결제 정상종료시 throw로 스크립트 종료 */
     console.log(e);
-  }
-}
-
-/* 인증완료시 재귀 함수 认证后的回调函数  */
-const m_Completepayment = (FormOrJson, closeEvent) => {
-
-  if (FormOrJson.res_cd.value == "0000") {
-    console.log(FormOrJson);
-
-    // FormOrJson 데이터를 Server 에 전달하여 승인요청하기
-    // {
-    //   "res_cd": '',
-    //   "res_msg": '',
-    //   "enc_info": '',
-    //   "enc_data": '',
-    //   "ret_pay_method": '',
-    //   "tran_cd": '',
-    //   "use_pay_method": '',
-    // }
-
-  } else {
-    message.warning("[" + FormOrJson.res_cd.value + "] " + FormOrJson.res_msg.value);
-    closeEvent();
   }
 }
 

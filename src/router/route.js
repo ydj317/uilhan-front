@@ -203,7 +203,7 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 icon: MoneyCollectOutlined,
-                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910"],
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
@@ -215,7 +215,7 @@ export const menus = [{
                 isHide: true,
                 roles: [],
                 icon: '',
-                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910"],
+                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
@@ -250,7 +250,7 @@ export const menus = [{
                         isHide: false,
                         roles: [],
                         icon: '',
-                        ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910"],
+                        ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
                     },
                 },
                 {
@@ -270,6 +270,18 @@ export const menus = [{
                     component: () => import("@/views/Setting/UserManage.vue"),
                     meta: {
                         title: "고객 계정관리",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                        icon: ''
+                    },
+                },
+                {
+                    path: "/setting/UserAccountManage",
+                    name: "UserAccountManage",
+                    component: () => import("@/views/Setting/UserAccountManage.vue"),
+                    meta: {
+                        title: "고객 마켓연동관리",
                         isHide: false,
                         roles: [],
                         ids: ["jwli"],
@@ -333,8 +345,7 @@ export const menus = [{
             meta: {
                 title: "도매꾹",
                 isHide: false,
-                roles: [],
-                ids: ["jwli", "haehu2023","djfxlalt84"],
+                roles: ["ROLE_USER", "ROLE_ADMIN"],
                 icon: AppstoreOutlined,
             },
         },

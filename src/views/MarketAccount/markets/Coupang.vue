@@ -380,7 +380,7 @@ const handleSubmit = (e) => {
 
             message.success(res.message);
             setTimeout(() => {
-                router.push({ name: 'market_accounts_list' });
+              router.back();
             }, 500);
 
         });
@@ -429,7 +429,7 @@ const getOutboundAddressList = () => {
         state.sync_outbound_address_date = updDate || null;
 
         marketJson?.forEach(item => {
-            if (item.usable === true && item.placeAddresses[0].countryCode === 'CN') {
+            if (item.usable === true) {
                 state.outboundAddressList.push({
                     outbound_address_code: item.outboundShippingPlaceCode,
                     outbound_address_name: item.shippingPlaceName
@@ -463,7 +463,7 @@ onMounted(() => {
 });
 
 const goBack = () => {
-    router.push({ name: 'market_accounts_list' });
+  router.back();
 };
 </script>
 <style scoped>

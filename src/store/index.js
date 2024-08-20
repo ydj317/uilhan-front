@@ -1,5 +1,6 @@
 import {createStore} from "vuex";
 import product from "@/store/modules/product";
+import market from "@/store/modules/market";
 import marketAccount from "@/store/modules/marketAccount";
 
 export default createStore({
@@ -34,6 +35,7 @@ export default createStore({
   },
   modules: {
     product,
-    marketAccount
+    marketAccount,
+    market
   },
 });

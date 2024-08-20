@@ -162,7 +162,8 @@ export default defineComponent({
           title: "마켓",
           key: "market_account",
           width: "15%",
-          align: "center"
+          align: "center",
+          ellipsis: true,
         },
         {
           title: "등록상태",
@@ -172,6 +173,12 @@ export default defineComponent({
         {
           title: "등록시간",
           key: "ins_time",
+          width: "170px",
+          align: "center"
+        },
+        {
+          title: "처리자",
+          key: "employee_name",
           width: "170px",
           align: "center"
         }
@@ -416,7 +423,7 @@ export default defineComponent({
     },
 
     async approvalCheck(market_id) {
-      this.indicator = true;
+      this.syncLoading = true;
 
       try {
         let res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/approval_check", {
@@ -461,7 +468,7 @@ export default defineComponent({
           }
         }
 
-        this.indicator = false;
+        this.syncLoading = false;
 
         return true;
       } catch (e) {
@@ -872,6 +879,15 @@ export default defineComponent({
       } catch (e) {
         message.error("저장에 실패 하였습니다.");
         return false;
+      }
+
+      // 쿠팡일경우 승인대기일때 승인상태확인 자동으로 클릭해주기
+      const aFilterItemData = this.product.item_sync_market.filter(item => {
+        return item.status === 'approval' && item.market_code === 'coupang';
+      })
+
+      if (aFilterItemData.length > 0) {
+        await this.approvalCheck(aFilterItemData[0].market_id);
       }
     },
     async getUserInfoData() {

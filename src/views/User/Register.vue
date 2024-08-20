@@ -197,7 +197,7 @@
           <a-form-item name="recommend_code" has-feedback>
             <a-input v-model:value="formState.recommend_code" placeholder="추천코드"/>
           </a-form-item>
-          <div class="help">추천코드가 있다면 기입해주세요.</div>
+          <div class="help">앞뒤 공백 없이 추천코드를 입력해 주세요.</div>
         </a-descriptions-item>
 
         <!-- 가입시 입력 안해되는 항목 -->

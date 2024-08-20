@@ -43,5 +43,84 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+  <script type="text/javascript">
+      const API_URL = '<%= VUE_APP_API_URL %>';
+      const token = getCookie('token');
+      /* 인증완료시 재귀 함수 认证后的回调函数  */
+      function m_Completepayment(FormOrJson, closeEvent )
+      {
+          var frm = document.order_info;
+          GetField( frm, FormOrJson );
+        if( frm.res_cd.value == "0000" )
+        {
+          /*
+              가맹점 리턴값 처리 영역
+          */
+          var orderIds = frm.ordr_idxx.value.split(',');
+          var url = '/api/user/order/update/payed?XDEBUG_SESSION_START=PHPSTORM';
+          var param = {
+            orderIds,
+            good_mny:frm.good_mny.value,
+            tran_cd:frm.tran_cd.value,
+            enc_data:frm.enc_data.value,
+            enc_info:frm.enc_info.value,
+            ordr_chk:frm.ordr_chk.value,
+          };
+          updateOrderStatus(url,param,(res)=>{
+            if (res){
+                alert('결제가 완료되었습니다.')
+                closeEvent()
+              location.href = '/user/mypage';
+            } else {
+              alert('결제가 실패하였습니다.')
+                closeEvent()
+                location.href = '/user/servicesPay';
+            }
+          });
+        }
+        else
+        {
+          // alert( "[" + frm.res_cd.value + "] " + frm.res_msg.value );
+          if(frm.res_cd.value == '3001'){
+            closeEvent();
+            var orderIds = frm.ordr_idxx.value.split(',');
+            var url = '/api/user/order/update/cancelPayment';
+            var param = { orderIds };
+            updateOrderStatus(url,param,(res)=>{
+            });
+          }
+        }
+      }
+      function updateOrderStatus(url,param,callback){
+        $.ajax({
+          url: API_URL + url,
+          type: 'POST',  // 请求方法
+          contentType: 'application/json',  // 请求头，指定发送的是 JSON 数据
+          data: JSON.stringify(param),  // 请求体，序列化为 JSON 格式
+          headers: { 'token': token},
+          success: function (res) {
+            if (res.status !== "2000") {
+              alert(res.message);
+              return false;
+            }
+            callback(res.data);
+          },
+          error: function (xhr, status, error) {  // 失败回调
+            console.error('Error response:', xhr.responseText);
+          }
+        });
+      }
+      function getCookie(cname)
+      {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++)
+        {
+          var c = ca[i].trim();
+          if (c.indexOf(name)==0) return unescape(c.substring(name.length,c.length));
+        }
+        return "";
+      }
+  </script>
   </body>
 </html>

@@ -11,6 +11,14 @@ export function useMarketAccountApi() {
             });
         },
 
+        getAllAccountList: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/manage_account_list",
+                method: "get",
+                params: data,
+            });
+        },
+
         getAccountFind: (id) => {
             return AuthRequest({
                 url: process.env.VUE_APP_API_URL + "/api/market/account/" + id,

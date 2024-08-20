@@ -74,6 +74,22 @@
                     option.name.length
                   }}</span> / 25</span>
               </div>
+
+              <div v-if="showRecommendOpt" class="spec-option-group"
+                   v-for ="(market, marketIndex) in recommendedMarketList" :key="marketIndex" >
+                <span class="spec-font">[{{openMarketList[market.marketCode]}}] 추천옵션그룹{{ optionIndex + 1 }}</span>
+
+                <a-select v-model:value="product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id']"
+                          style="width: 100px; margin-left: 10px"
+                          @change="onChangeRecommendedOptionGroup(market, optionIndex, $event)"
+                          @dropdownVisibleChange="onDropdownVisibleChange(market, optionIndex, $event)"
+                >
+                  <a-select-option value="">자동매칭</a-select-option>
+                  <a-select-option v-for="(recOption, recOptionKey) in market.meta_data.recommendedOptList || []" :key="recOptionKey" >
+                    {{ recOption.recommendedOptName }}
+                  </a-select-option>
+                </a-select>
+              </div>
             </th>
           </tr>
           <!--옵션값 일괄 설정 영역-->
@@ -143,14 +159,18 @@ import { cloneDeep, forEach } from "lodash";
 import { mapState, useStore } from "vuex";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
-import { nextTick, watch } from "vue";
+import { nextTick, reactive, watch } from "vue";
 
 export default {
   name: "productDetailSpecGroup",
   computed: {
     ...mapState({
       product: state => state.product.detail,
-      showOptionModify: state => state.product.showOptionModify
+      showOptionModify: state => state.product.showOptionModify,
+      openMarketList: state => state.market.marketList,
+      useRecommendedMarketList: (state) => state.market.use_recommended_market_list.map(item => {
+        return item.market_code;
+      })
     })
   },
   watch: {
@@ -212,6 +232,13 @@ export default {
       deep: true
     },
 
+    "product.item_cate": {
+      handler: function(val) {
+        this.setRecommendedOpt();
+      },
+      deep: true
+    },
+
   },
   components: { PlusOutlined, MinusOutlined },
   data() {
@@ -236,6 +263,9 @@ export default {
       ]),
 
       isFirstLoad: true,
+      showRecommendOpt : false,
+      recommendedMarketList : [],
+      selectedRecommendedOption : []  //선택된 추천 옵션 리스트
     };
   },
   methods: {
@@ -382,7 +412,7 @@ export default {
         message.warning("특문을 제거할 옵션명을 선택하세요.");
         return false;
       }
-      const specialChars = /[@#$^&*"?<>\\;,/{}()ㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡®ªº㉾＄％￦Ｆ′″℃Å￠￡￥¤℉‰€㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．／：；？＾＿｀｜￣、。·…¨〃­―∥＼∼～ˇ˘˝˚˙¸˛¿ː]+/g;
+      const specialChars = /[\[\]@#$^&*"?<>\\;,/{}()ㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡®ªº㉾＄％￦Ｆ′″℃Å￠￡￥¤℉‰€㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．／：；？＾＿｀｜￣、。·…¨〃­―∥＼∼～ˇ˘˝˚˙¸˛¿ː]+/g;
       this.options.forEach(option => {
         option.data.forEach(item => {
           if (selectItems.includes(item.key)) {
@@ -705,11 +735,51 @@ export default {
       } catch (e) {
       }
       return check;
+    },
+
+    onDropdownVisibleChange(market, optionIndex, $event) {
+      this.selectedRecommendedOption = [];
+      this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'].map((item) => {
+        if (item.recommended_id !== '' && item.recommended_id !== 0) {
+          this.selectedRecommendedOption.push(item.recommended_id);
+        }
+      })
+    },
+
+    onChangeRecommendedOptionGroup(market, optionIndex, $event) {
+      if (this.selectedRecommendedOption.includes($event)) {
+         message.info('이미 선택된 옵션입니다.')
+        this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id'] = '';
+      }
+    },
+    setRecommendedOpt() {
+      // product.item_cate 에 저장된 cate_meta 데이타에서 추가옵션정보를 꺼내옴
+      this.recommendedMarketList = reactive([]);
+      forEach(this.product.item_cate, (value, key) => {
+        if (this.useRecommendedMarketList.includes(value.marketCode)
+          && this.product.item_sync_market.some(market => [value.marketCode].includes(market.market_code)))
+        {
+          const itemCateInfo = cloneDeep(value);
+          itemCateInfo.accountName = key;
+          // 직접입력 항목 노출하지 않도록 제거
+          let recommendedOptList = reactive({})
+          for (const key in itemCateInfo.meta_data.recommendedOptList) {
+            if (itemCateInfo.meta_data.recommendedOptList.hasOwnProperty(key) && key !== '0') {
+              recommendedOptList[key] = itemCateInfo.meta_data.recommendedOptList[key];
+            }
+          }
+          itemCateInfo.meta_data.recommendedOptList = recommendedOptList;
+          this.recommendedMarketList.push(itemCateInfo)
+        }})
     }
   },
+
   mounted() {
     this.options = cloneDeep(this.initOptionData);
     this.adjustRepeatHeights();
+    this.showRecommendOpt = this.product.item_sync_market.some(market => this.useRecommendedMarketList.includes(market.market_code));
+    this.setRecommendedOpt()
+
   }
 };
 </script>
