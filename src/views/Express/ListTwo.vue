@@ -428,7 +428,32 @@
       </a-flex>
       <a-flex wrap="wrap" class="footer-list mt20 w80 pl80" gap="20">
         <a-flex class="footer-list-main bg-white br15" gap="10" v-for="i in 5">
-          <div class="footer-list-img bor-black"></div>
+          <div class="footer-list-img fl-cc">
+            <template v-if="i == 1">
+              <div class="upload-wrap fl-cc bg-F1F3F8">
+                <a-upload name="file">
+                  <a-button shape="round" class="fs14 bg-2755f9 t-white fl-cc">사진요청</a-button>
+                </a-upload>
+              </div>
+            </template>
+            <template v-if="i == 2">
+              <div class="img-wrap">
+                <img src="@/assets/img/express/symbol.png" class="br10"/>
+                <div class="img-num t-white fs13 fl-cc">+3</div>
+              </div>
+            </template>
+            <template v-else>
+              <div class="upload-wrap fl-cc fl-c bg-F1F3F8">
+                <a-flex wrap="wrap" class="fs12 color-898f9e fl-cc w100" gap="5">
+                  <div class="fl-cc">사진요청 일시</div>
+                  <div class="fl-cc">24.00.00.00:00</div>
+                </a-flex>
+                <a-upload name="file" class="mt5">
+                  <a-button shape="round" class="fs14 bg-535660 t-white fl-cc">요청취소</a-button>
+                </a-upload>
+              </div>
+            </template>
+          </div>
           <a-flex vertical>
             <a-flex class="fl-tc fl-lb">
               <a-flex class="fl-tc" gap="5">
@@ -448,7 +473,11 @@
         <div class="fs16 color-cfd2da font-SCDream4 fl-cc">지점에 도착한 화물의 외관이 파손 되었거나 해외 판매자가 회수요청을 한 경우</div>
         <a-flex wrap="wrap" class="footer-list mt20 w80 pl80" gap="20">
           <a-flex class="footer-list-main bg-white br15" gap="10" v-for="i in 2">
-            <div class="footer-list-img bor-black"></div>
+            <div class="footer-list-img fl-cc">
+              <div class="img-wrap no-image">
+                <img src="@/assets/img/express/symbol.png" class="br10"/>
+              </div>
+            </div>
             <a-flex vertical gap="10">
               <a-flex class="fl-tc fl-lb">
                 <a-flex class="fl-tc" gap="5">
@@ -753,11 +782,47 @@ onUnmounted(()=>{
   width: 366px;
   padding: 12px;
 }
-.footer-list-img{
+.upload-wrap,.img-wrap{
   width: 92px;
   height: 92px;
-  border-radius: 5px;
+  border-radius: 10px;
   position: relative;
+  z-index: 1;
+}
+.img-wrap img{
+  width: 92px;
+  height: 92px;
+  border-radius: 10px;
+}
+.img-num{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border-radius: 10px;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.5);
+}
+.img-wrap.no-image{
+  background: #E4E7EC;
+  z-index: 2;
+}
+.img-wrap.no-image img{
+  display: none;
+}
+.img-wrap.no-image:before{
+  content: 'NO IMAGE';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #898F9E;
+}
+.footer-list-img button{
+  width: 80px;
+  height: 34px;
 }
 .footer-list-close{
   width: 24px;
