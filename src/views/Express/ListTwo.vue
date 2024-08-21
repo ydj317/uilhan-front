@@ -156,9 +156,7 @@
     </a-flex>
     <a-flex class="search-wrap bg-white fl-lb fl-tc">
       <a-flex class="search-left fl-tc" gap="5">
-        <a-select
-          v-model:value="state.search.location"
-        >
+        <a-select v-model:value="state.search.location">
           <a-select-option value="">토스토스 지점</a-select-option>
           <a-select-option value="칭다오">칭다오</a-select-option>
           <a-select-option value="광저우">광저우</a-select-option>
@@ -178,7 +176,7 @@
         <span>~</span>
         <a-date-picker v-model:value="state.search.rqEnd" placeholder="종료일" class="rqEnd"/>
         <a-divider type="vertical" class="mlr5" :style="{background:'#CFD2DA'}" />
-        <a-input-group compact class="search-group">
+        <a-input-group compact class="search-group fl-tc">
           <a-select v-model:value="state.search.searchKey">
             <a-select-option value="받는사람">받는사람</a-select-option>
             <a-select-option value="전화번호">전화번호</a-select-option>
@@ -198,9 +196,9 @@
         </a-input-group>
       </a-flex>
       <a-flex class="search-right fl-tc" gap="20">
-        <div class="cp color-969DAE" :class="{'color-2755f9':state.search.weight}" @click="state.search.weight = !state.search.weight">
-          <span>중량화물</span>
-          <span class="ml5"><CheckOutlined /></span>
+        <div class="cp color-969DAE fl fl00" :class="{'color-2755f9':state.search.weight}" @click="state.search.weight = !state.search.weight">
+          <div>중량화물</div>
+          <div class="ml5"><CheckOutlined /></div>
         </div>
         <a-select v-model:value="state.search.sort">
           <a-select-option value="">정렬기준</a-select-option>
@@ -216,7 +214,7 @@
         </a-select>
       </a-flex>
     </a-flex>
-    <a-flex vertical class="table-list-wrap mt20" gap="20">
+    <a-flex vertical class="table-list-wrap" gap="20">
       <a-flex vertical class="table-list"  v-for="i in 3">
         <a-flex class="table-list-header fl-tc fl-lb w100 h54">
           <a-flex class="fl-tc">
@@ -408,7 +406,7 @@
         </a-flex>
       </a-flex>
     </a-flex>
-    <a-flex vertical align="center" class="footer-wrap mt50 bg-3f4249 w100 p50" gap="14">
+    <a-flex vertical align="center" class="mt50 bg-3f4249 w100 p50" gap="14">
       <a-flex class="fs24 t-white font-SCDream6 fl-tc">
         <img src="@/assets/img/express/union.png" height="23"/>
         <div class="ml10">노데이터</div>
@@ -689,14 +687,17 @@ onUnmounted(()=>{
 .search-wrap{
   width:100%;
   height: 80px;
-  padding: 0 140px;
+  padding: 0 60px;
   box-shadow: 2px 4px 10px 0 rgba(0,0,0,0.1);
 }
 .search-btn{
   width: 250px;
 }
-.list-two-wrap .rqStart,.list-two-wrap .rqEnd{
+.rqStart,.rqEnd{
   padding: 0;
+}
+.table-list-wrap{
+  margin: 20px 140px;
 }
 .table-list{
   max-height: 507px;
@@ -706,15 +707,8 @@ onUnmounted(()=>{
   background: #fff;
   box-shadow: 2px 4px 10px 0 rgba(0,0,0,0.1);
 }
-.table-content-left{
-  width: 400px;
-}
 .table-content-center{
-  width: 568px;
   height: 281px;
-}
-.table-content-right{
-  width: 360px;
 }
 .check-list{
   border: 1px solid #e9eefe;
@@ -729,7 +723,7 @@ onUnmounted(()=>{
   display: none;
 }
 .right-status{
-  width: 360px;
+  //width: 360px;
 }
 .memo-bg{
   width: 71px;
