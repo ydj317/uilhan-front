@@ -23,6 +23,13 @@
             @search="searchByKeyword"
         />
       </div>
+      <div v-show="checkSpecialMarket" class="button-synchronization">
+        <a-tooltip placement="topLeft" title="쿠팡 승인대기 상태인 상품들을 확인 처리합니다.">
+          <a-button>
+            <ReloadOutlined @click="SynchronizationPop()"/>
+          </a-button>
+        </a-tooltip>
+      </div>
     </div>
     <product-filter v-model:is-show="showFilter" @search="searchByFilter"/>
     <a-spin size="large" :spinning="listLoading">
@@ -107,6 +114,7 @@ import Cookie from "js-cookie";
 import {EventSourcePolyfill} from "event-source-polyfill";
 import emitter from "@/util/emitter";
 import { mapState, useStore } from "vuex";
+import {ReloadOutlined} from "@ant-design/icons-vue";
 
 const WHITE_LIST_USER = ['jwli', 'irunkorea_02', 'haeju']
 
@@ -143,6 +151,8 @@ const syncResult = ref({...defaultSyncResult})
 let imageTransStateEvent = null;
 
 const store = useStore();
+
+const checkSpecialMarket = ref(false)
 
 
 provide('search', {searchParams})
@@ -190,6 +200,16 @@ async function getList() {
     searchParams.value.start_time = res.data.start_time
     searchParams.value.end_time = res.data.end_time
     resetList(productList.value.map(d => d['item_id']))
+
+    // 스페셜마켓 (coupang) 체크 동기화버튼
+    if (res.data.market_list.length > 0) {
+      res.data.market_list.filter((item) => {
+        if (item.marketCode === 'coupang') {
+          checkSpecialMarket.value = true;
+        }
+      })
+    }
+
   }).finally(() => {
     listLoading.value = false
     // 번역중 혹은 대기 상태인 상품이 있을경우 sse 열어줌
@@ -409,6 +429,26 @@ emitter.on('set-product-filter',(prd_id)=>{
   getList();
 })
 
+
+// 승인대기 상태인 상품 동기화
+async function SynchronizationPop() {
+  try {
+    const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/get_special_sync_market", {});
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    if (res.data.length === 0) {
+      message.error("승인대기 상태인 상품이 없습니다.");
+      return false;
+    }
+  } catch (e) {
+    message.error("등록상태 조회실패 하였습니다.");
+    return false;
+  }
+}
+
 </script>
 
 <style scoped>
@@ -442,6 +482,13 @@ emitter.on('set-product-filter',(prd_id)=>{
 
 .button-group {
   flex: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.button-synchronization {
+  margin-left: 15px;
   display: flex;
   align-items: center;
   gap: 5px;
