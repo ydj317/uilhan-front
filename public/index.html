@@ -50,21 +50,31 @@
       function m_Completepayment(FormOrJson, closeEvent )
       {
           var frm = document.order_info;
-
           GetField( frm, FormOrJson );
         if( frm.res_cd.value == "0000" )
         {
-          // alert("결제 승인 요청 전,\n\n반드시 결제창에서 고객님이 결제 인증 완료 후\n\n리턴 받은 ordr_chk 와 업체 측 주문정보를\n\n다시 한번 검증 후 결제 승인 요청하시기 바랍니다."); //업체 연동 시 필수 확인 사항.
           /*
               가맹점 리턴값 처리 영역
           */
           var orderIds = frm.ordr_idxx.value.split(',');
-          var url = '/api/user/order/update/payed';
-          var param = { orderIds, amount:frm.good_mny.value };
+          var url = '/api/user/order/update/payed?XDEBUG_SESSION_START=PHPSTORM';
+          var param = {
+            orderIds,
+            good_mny:frm.good_mny.value,
+            tran_cd:frm.tran_cd.value,
+            enc_data:frm.enc_data.value,
+            enc_info:frm.enc_info.value,
+            ordr_chk:frm.ordr_chk.value,
+          };
           updateOrderStatus(url,param,(res)=>{
             if (res){
-              frm.submit();
+                alert('결제가 완료되었습니다.')
+                closeEvent()
               location.href = '/user/mypage';
+            } else {
+              alert('결제가 실패하였습니다.')
+                closeEvent()
+                location.href = '/user/servicesPay';
             }
           });
         }
