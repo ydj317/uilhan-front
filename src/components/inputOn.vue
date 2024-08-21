@@ -6,7 +6,7 @@
       @blur="handleBlur"
       @focus="handleFocus"
       :allowClear="state.isFocus && state.inputValue"
-      :disabled="!state.isFocus && state.inputValue != ''"
+      :disabled="(!state.isFocus && state.inputValue != '') || readonly"
       :style="{
         border: `1px solid ${state.isFocus ? focusColor : defaultColor}`,
         width:`${width}px`,
@@ -58,6 +58,10 @@ const props = defineProps({
   value: {
     type: String,
     default: '',
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
 });
 const state = reactive({

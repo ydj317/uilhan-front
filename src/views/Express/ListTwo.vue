@@ -442,7 +442,7 @@
                 <div class="img-num t-white fs13 fl-cc">+3</div>
               </div>
             </template>
-            <template v-else>
+            <template v-if="i > 2">
               <div class="upload-wrap fl-cc fl-c bg-F1F3F8">
                 <a-flex wrap="wrap" class="fs12 color-898f9e fl-cc w100" gap="5">
                   <div class="fl-cc">사진요청 일시</div>
@@ -463,7 +463,7 @@
               </a-flex>
               <div class="footer-list-close fl-cc"><CloseOutlined class="t-white" /></div>
             </a-flex>
-            <input-on class="mt10" width="240" :edit="false" :key="Math.random()" />
+            <input-on class="mt10" width="240" :edit="false" :key="Math.random()" readonly  />
           </a-flex>
         </a-flex>
       </a-flex>
@@ -490,7 +490,7 @@
                 <div class="fs13 color-898f9e">접수: 24.07.03 16:51</div>
                 <span class="color-898f9e">사유:<span class="color-3F4249">파손 수취 거부</span></span>
               </a-flex>
-              <input-on class="mt10" width="240" :edit="false" :key="Math.random()" />
+              <input-on class="mt10" width="240" :edit="false" :key="Math.random()" readonly />
             </a-flex>
           </a-flex>
         </a-flex>
