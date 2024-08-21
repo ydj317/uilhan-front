@@ -406,6 +406,15 @@
         </a-flex>
       </a-flex>
     </a-flex>
+    <a-pagination
+      class="w100 fl-cc mt15 font-SCDream4"
+      v-model:current="state.search.page"
+      v-model:page-size="state.search.pageSize"
+      @change="onPageChange"
+      :total="state.search.total"
+      :show-total="(total, range) => `[총 ${total}개]  검색결과 - ${range[0]}-${range[1]}`"
+      :showSizeChanger="false"
+    />
     <a-flex vertical align="center" class="mt50 bg-3f4249 w100 p50" gap="14">
       <a-flex class="fs24 t-white font-SCDream6 fl-tc">
         <img src="@/assets/img/express/union.png" height="23"/>
@@ -536,11 +545,21 @@ const state = reactive({
     searchValue:'',
     weight:false,
     sort:'',
-    pageSize:'',
+    page:1,
+    pageSize:10,
+    total:100,
   },
 });
+const getList = () => {
+  
+};
 const handleInput = (val) => {
   console.log('handleInput',val);
+};
+const onPageChange = (page, pageSize) => {
+  state.search.page = page;
+  state.search.pageSize = pageSize;
+  getList();
 };
 onMounted(()=>{
   $('.ant-layout-content').css({'margin':"0"});
