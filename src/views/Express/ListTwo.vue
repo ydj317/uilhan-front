@@ -247,19 +247,21 @@
                 <a-flex class="fl-tc">
                   <img src="@/assets/img/express/number-one.png"/>
                   <div class="ml7">단독배송</div>
-                  <div class="ml7 color-2755f9">5개</div>
+                  <div class="ml7 color-2755f9" v-if="i==3">5개</div>
                 </a-flex>
               </a-flex>
               <a-flex class="fl-tc fl-lb mt10">
                 <a-flex wrap="wrap" gap="6" class="fs13">
                   <div class="check-list">택배개봉금지</div>
-                  <div class="check-list">택배개봉금지</div>
-                  <div class="check-list">택배개봉금지</div>
-                  <div class="check-list">택배개봉금지</div>
-                  <div class="check-list">택배개봉금지</div>
+                  <template v-if="i > 2">
+                    <div class="check-list">택배개봉금지</div>
+                    <div class="check-list">택배개봉금지</div>
+                    <div class="check-list">택배개봉금지</div>
+                    <div class="check-list">택배개봉금지</div>
+                  </template>
                   <QuestionCircleOutlined class="ml5" />
                 </a-flex>
-                <img src="@/assets/img/express/china.png" width="80" height="80"/>
+                <img src="@/assets/img/express/china.png" width="80" height="80" v-if="i == 2"/>
               </a-flex>
               <a-flex vertical class="mt10">
                 <a-flex class="fl-lb fl-tc">
@@ -293,22 +295,22 @@
                   <a-flex class="fl-lb">
                     <a-flex class="fl-tc" gap="5">
                       <a-button class="t-white fs13 bg-ff3049">중복송장</a-button>
-                      <a-button class="t-white fs13 bg-6b6f7c">목록통관</a-button>
+                      <a-button class="t-white fs13" :class="i == 3 ? 'bg-2755f9' : 'bg-6b6f7c'">목록통관</a-button>
                       <div class="fs14 color-6B6F7C">총 금액</div>
-                      <div class="fs14 color-3F4249 font-SCDream6">USD $239.96</div>
+                      <div class="fs14 color-3F4249 font-SCDream6" :class="{'color-2755f9':i == 3}">USD $239.96</div>
                     </a-flex>
                     <a-flex gap="5" class="fs14 fl-tc fl-le">
                       <span class="color-6B6F7C">총 수량</span>
-                      <span>86개</span>
+                      <span class="font-SCDream6" :class="{'color-2755f9':i == 3}">86개</span>
                       <DownOutlined />
                     </a-flex>
                   </a-flex>
               </a-flex>
               <a-divider class="mtb15" />
               <a-flex vertical class="center-list" gap="40">
-                <a-flex class="fl-lb" gap="20" v-for="i in 6">
+                <a-flex class="fl-lb" gap="20" v-for="i2 in i==3 ? 6 : 1">
                   <a-flex vertical gap="15">
-                    <div class="fs14 color-3F4249 font-SCDream6">장난감 (playing toys)</div>
+                    <div class="fs14 color-3F4249 font-SCDream6">장난감 (playing toys){{i2}}</div>
                     <a-flex class="fs13 color-6B6F7C fl-lb">
                       <div>옵션</div>
                       <div>2개</div>
@@ -317,15 +319,15 @@
                       <div>단가</div>
                       <div class="color-3F4249 font-SCDream6">USD $119.98</div>
                     </a-flex>
-                    <input-on @input="handleInput" :key="Math.random()" />
-                    <input-on @input="handleInput" :key="Math.random()" />
+                    <input-on @input="handleInput" :key="Math.random()" value="240120123124233" placeholder="쇼핑몰 주문번호" />
+                    <input-on @input="handleInput" :key="Math.random()" value="9201KD1032159F39232" placeholder="트래킹 번호" class="code-wrap color-2755f9" />
                   </a-flex>
                   <img src="@/assets/img/express/cj.png" width="140" height="140"/>
                 </a-flex>
               </a-flex>
             </a-flex>
           <a-flex vertical class="table-content-right">
-            <a-flex vertical class="right-status" gap="10">
+            <a-flex vertical class="right-status" gap="10" v-if="i == 1">
               <a-flex vertical class="bg-F1F3F8 br15 w100 p20">
                 <a-flex class="fl-tc fl-le fs14">
                   <div>메모</div>
@@ -342,66 +344,66 @@
                 <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">접수 취소</a-button>
               </a-flex>
             </a-flex>
-<!--            <a-flex vertical class="right-status" gap="10">-->
-<!--              <a-flex vertical class="bg-F1F3F8 br15 w100 p20">-->
-<!--                <a-flex class="fl-tc fl-le fs14">-->
-<!--                  <div>메모</div>-->
-<!--                  <img src="@/assets/img/express/memo-add.png" class="ml5"/>-->
-<!--                  <div class="ml25">문의</div>-->
-<!--                  <img src="@/assets/img/express/support_agent_hui.png" class="ml5"/>-->
-<!--                </a-flex>-->
-<!--                <div class="fs16 color-3F4249 mt30 font-SCDream6">배송비를 결제해주세요.</div>-->
-<!--                <div class="fs14 color-6B6F7C mt10">결제완료 후 출고를 시작합니다.</div>-->
-<!--                <a-flex vertical class="bg-white br15 p20 mt20" gap="15">-->
-<!--                  <a-flex class="fl-lb fs13 color-3F4249">-->
-<!--                    <div>가로*세로*높이</div>-->
-<!--                    <div>16 * 25 * 11</div>-->
-<!--                  </a-flex>-->
-<!--                  <a-flex class="fl-lb fs13 color-969DAE">-->
-<!--                    <div class="fl-tc">-->
-<!--                      <CheckOutlined />-->
-<!--                      <span class="ml5">부피무게</span>-->
-<!--                    </div>-->
-<!--                    <div>0.7kg</div>-->
-<!--                  </a-flex>-->
-<!--                  <a-flex class="fl-lb fs13 color-2755f9">-->
-<!--                    <div class="fl-tc">-->
-<!--                      <CheckOutlined />-->
-<!--                      <span class="ml5">실무게</span>-->
-<!--                    </div>-->
-<!--                    <div>0.2kg</div>-->
-<!--                  </a-flex>-->
-<!--                  <a-flex class="fl-lb fs13 color-3F4249">-->
-<!--                    <div>결제 금액</div>-->
-<!--                    <div class="color-2755f9 font-SCDream6">6,600원</div>-->
-<!--                  </a-flex>-->
-<!--                  <a-button class="t-white fs14 bg-2755f9 b0 h40">결제하기</a-button>-->
-<!--                </a-flex>-->
-<!--                <div class="fl-cc color-2755f9 fs14 mt20">반품 신청</div>-->
-<!--              </a-flex>-->
-<!--              <a-flex gap="10">-->
-<!--                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">배송 방법 변경</a-button>-->
-<!--                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">수령인 변경</a-button>-->
-<!--              </a-flex>-->
-<!--            </a-flex>-->
-<!--            <a-flex vertical class="right-status" gap="10">-->
-<!--              <a-flex vertical class="bg-F1F3F8 br15 w100 p20">-->
-<!--                <a-flex class="fl-tc fl-lb fs14">-->
-<!--                  <img src="@/assets/img/express/memo-add.png" class="br50" width="34" height="34"/>-->
-<!--                  <a-flex class="fl-tc">-->
-<!--                    <div class="memo-bg"></div>-->
-<!--                    <div class="ml25">문의</div>-->
-<!--                    <img src="@/assets/img/express/support_agent_hui.png" class="ml5"/>-->
-<!--                  </a-flex>-->
-<!--                </a-flex>-->
-<!--                <div class="fs16 color-3F4249 mt30 font-SCDream6">접수 신청 완료</div>-->
-<!--                <div class="fs14 color-6B6F7C mt10">상품이 아직 지점으로 도착하지 않았습니다.</div>-->
-<!--              </a-flex>-->
-<!--              <a-flex gap="10">-->
-<!--                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">신청서 수정</a-button>-->
-<!--                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">접수 취소</a-button>-->
-<!--              </a-flex>-->
-<!--            </a-flex>-->
+            <a-flex vertical class="right-status" gap="10"  v-if="i == 2">
+              <a-flex vertical class="bg-F1F3F8 br15 w100 p20">
+                <a-flex class="fl-tc fl-le fs14">
+                  <div>메모</div>
+                  <img src="@/assets/img/express/memo-add.png" class="ml5"/>
+                  <div class="ml25">문의</div>
+                  <img src="@/assets/img/express/support_agent_hui.png" class="ml5"/>
+                </a-flex>
+                <div class="fs16 color-3F4249 mt30 font-SCDream6">배송비를 결제해주세요.</div>
+                <div class="fs14 color-6B6F7C mt10">결제완료 후 출고를 시작합니다.</div>
+                <a-flex vertical class="bg-white br15 p20 mt20" gap="15">
+                  <a-flex class="fl-lb fs13 color-3F4249">
+                    <div>가로*세로*높이</div>
+                    <div>16 * 25 * 11</div>
+                  </a-flex>
+                  <a-flex class="fl-lb fs13 color-969DAE">
+                    <div class="fl-tc">
+                      <CheckOutlined />
+                      <span class="ml5">부피무게</span>
+                    </div>
+                    <div>0.7kg</div>
+                  </a-flex>
+                  <a-flex class="fl-lb fs13 color-2755f9">
+                    <div class="fl-tc">
+                      <CheckOutlined />
+                      <span class="ml5">실무게</span>
+                    </div>
+                    <div>0.2kg</div>
+                  </a-flex>
+                  <a-flex class="fl-lb fs13 color-3F4249">
+                    <div>결제 금액</div>
+                    <div class="color-2755f9 font-SCDream6">6,600원</div>
+                  </a-flex>
+                  <a-button class="t-white fs14 bg-2755f9 b0 h40">결제하기</a-button>
+                </a-flex>
+                <div class="fl-cc color-2755f9 fs14 mt20">반품 신청</div>
+              </a-flex>
+              <a-flex gap="10">
+                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">배송 방법 변경</a-button>
+                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">수령인 변경</a-button>
+              </a-flex>
+            </a-flex>
+            <a-flex vertical class="right-status" gap="10"  v-if="i == 3">
+              <a-flex vertical class="bg-F1F3F8 br15 w100 p20">
+                <a-flex class="fl-tc fl-lb fs14">
+                  <img src="@/assets/img/express/memo-add.png" class="br50" width="34" height="34"/>
+                  <a-flex class="fl-tc">
+                    <div class="memo-bg"></div>
+                    <div class="ml25">문의</div>
+                    <img src="@/assets/img/express/support_agent_hui.png" class="ml5"/>
+                  </a-flex>
+                </a-flex>
+                <div class="fs16 color-3F4249 mt30 font-SCDream6">접수 신청 완료</div>
+                <div class="fs14 color-6B6F7C mt10">상품이 아직 지점으로 도착하지 않았습니다.</div>
+              </a-flex>
+              <a-flex gap="10">
+                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">신청서 수정</a-button>
+                <a-button class="color-3F4249 fs14 bg-F1F3F8 w50 b0 h40">접수 취소</a-button>
+              </a-flex>
+            </a-flex>
           </a-flex>
         </a-flex>
       </a-flex>
@@ -463,7 +465,7 @@
               </a-flex>
               <div class="footer-list-close fl-cc cp"><CloseOutlined class="t-white" /></div>
             </a-flex>
-            <input-on class="mt10" width="240" :edit="false" :key="Math.random()" readonly  />
+            <input-on class="mt10 code-wrap color-2755f9" width="240" :edit="false" :key="Math.random()" value="9201KD10321524" placeholder="트래킹 번호"  readonly  />
           </a-flex>
         </a-flex>
       </a-flex>
@@ -490,7 +492,7 @@
                 <div class="fs13 color-898f9e">접수: 24.07.03 16:51</div>
                 <span class="color-898f9e">사유:<span class="color-3F4249">파손 수취 거부</span></span>
               </a-flex>
-              <input-on class="mt10" width="240" :edit="false" :key="Math.random()" readonly />
+              <input-on class="mt10 code-wrap color-2755f9" width="240" :edit="false" :key="Math.random()" value="9201KD10321524" placeholder="트래킹 번호" readonly />
             </a-flex>
           </a-flex>
         </a-flex>
@@ -591,10 +593,10 @@ const onPageChange = (page, pageSize) => {
   getList();
 };
 onMounted(()=>{
-  $('.ant-layout-content').css({'margin':"0"});
+  $('.ant-layout-content').css({'margin':"0",'display':"flex"});
 })
 onUnmounted(()=>{
-  $('.ant-layout-content').css({'margin':"0 20px"});
+  $('.ant-layout-content').css({'margin':"0 20px",'display':"block"});
 })
 </script>
 <style>
@@ -748,15 +750,20 @@ onUnmounted(()=>{
   margin: 20px 140px;
 }
 .table-list{
-  max-height: 507px;
   border-radius: 24px;
   border: 1px solid #E4E7EC;
   padding: 6px 16px 16px;
   background: #fff;
   box-shadow: 2px 4px 10px 0 rgba(0,0,0,0.1);
 }
+.table-content-left{
+  width: 400px;
+}
 .table-content-center{
   height: 281px;
+}
+.table-content-right{
+  width: 360px;
 }
 .check-list{
   border: 1px solid #e9eefe;
@@ -768,10 +775,15 @@ onUnmounted(()=>{
   overflow-y: scroll;
 }
 .center-list::-webkit-scrollbar{
-  display: none;
+  width: 6px;
+  height: 20px;
 }
-.right-status{
-  //width: 360px;
+.center-list::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.center-list::-webkit-scrollbar-thumb {
+  background-color: #969DAE;
+  border-radius: 10px;
 }
 .memo-bg{
   width: 71px;
@@ -829,5 +841,8 @@ onUnmounted(()=>{
   height: 24px;
   background: #3F4249;
   border-radius: 50%;
+}
+:deep(.input-on-wrap.code-wrap .placeholder){
+ color: #2755F9!important;
 }
 </style>

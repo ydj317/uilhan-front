@@ -45,7 +45,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: '내용을 입력해주세요',
+    default: '',
   },
   copy: {
     type: Boolean,
@@ -122,8 +122,7 @@ const copyContent = (value) => {
   color: #535660;
 }
 .input-on-wrap.focus .placeholder {
-  top: 0;
-  transform: translateY(-50%);
+  top: 1px;
   font-size: 10px;
   background: white;
   padding: 0 4px;
