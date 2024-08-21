@@ -1,8 +1,8 @@
 <template>
-  <FullPageLoading v-model:show="loading" />
+<!--  <FullPageLoading v-model:show="loading" />-->
   <a-modal width="600px" :open="show" @update:open="closeModal" centered>
     <template #title><market-list-title /></template>
-
+    <a-spin size="large" :spinning="syncLoading" >
     <a-table
       :columns="columns"
       :data-source="options"
@@ -32,7 +32,7 @@
         </template>
       </template>
     </a-table>
-
+    </a-spin>
     <template v-slot:footer><market-list-footer @send="sendMarket" @close="closeModal" /></template>
   </a-modal>
 </template>
@@ -71,6 +71,7 @@ watch(show, val => {
 })
 
 const loading = ref(false)
+const syncLoading = ref(false)
 const marketSelectedRowKeys = ref([])
 
 function onMarketSelectChange(selectedRowKeys) {
@@ -85,13 +86,13 @@ async function sendMarket() {
     return
   }
 
-  loading.value = true
+  syncLoading.value = true
   const result = await ServiceProduct.sendMarket(productList, accountList, smartStoreCategory.value)
   if (result !== false) {
     emit('result', result)
     closeModal()
   }
-  loading.value = false
+  syncLoading.value = false
 }
 
 function closeModal() {
