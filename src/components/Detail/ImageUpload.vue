@@ -409,7 +409,8 @@ export default {
         translate_url: selectedCollection.translate_url || '',
         translate_status: selectedCollection.translate_status,
         request_id: selectedCollection.request_id || '',
-        is_translate: selectedCollection.is_translate || false
+        is_translate: selectedCollection.is_translate || false,
+        relation_id: this.product.item_id
       }
       this.imageMattingLoading = true;
       useProductApi().imageMatting(option, (oTranslateInfo) => {
