@@ -207,10 +207,10 @@
           <a-select-option value="입고시간">입고시간</a-select-option>
         </a-select>
         <a-select v-model:value="state.search.pageSize">
-          <a-select-option value="">페이지당 개수</a-select-option>
-          <a-select-option value="30">30개</a-select-option>
-          <a-select-option value="50">50개</a-select-option>
-          <a-select-option value="100">100개</a-select-option>
+          <a-select-option :value="10">페이지당 개수</a-select-option>
+          <a-select-option :value="30">30개</a-select-option>
+          <a-select-option :value="50">50개</a-select-option>
+          <a-select-option :value="100">100개</a-select-option>
         </a-select>
       </a-flex>
     </a-flex>
@@ -461,7 +461,7 @@
                 <div class="fs16 color-3F4249">광저우</div>
                 <div class="fs13 color-898f9e">24.07.03 16:51</div>
               </a-flex>
-              <div class="footer-list-close fl-cc"><CloseOutlined class="t-white" /></div>
+              <div class="footer-list-close fl-cc cp"><CloseOutlined class="t-white" /></div>
             </a-flex>
             <input-on class="mt10" width="240" :edit="false" :key="Math.random()" readonly  />
           </a-flex>
@@ -484,7 +484,7 @@
                   <img src="@/assets/img/express/china.png"/>
                   <div class="fs16 color-3F4249">광저우</div>
                 </a-flex>
-                <div class="footer-list-close fl-cc"><CloseOutlined class="t-white" /></div>
+                <div class="footer-list-close fl-cc cp"><CloseOutlined class="t-white" /></div>
               </a-flex>
               <a-flex vertical class="fs15" gap="10">
                 <div class="fs13 color-898f9e">접수: 24.07.03 16:51</div>
