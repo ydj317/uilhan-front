@@ -279,14 +279,22 @@ export default defineComponent({
       }
       this.imageMattingLoading = true;
       useProductApi().imageMatting(option, (oTranslateInfo) => {
-        const { translate_url } = oTranslateInfo.data;
-        selectedCollection.translate_url = translate_url;
+        const { translate_url, url } = oTranslateInfo.data;
+
+        const checkedImage = this.localTranslateImageList.find(item => item.checked === true);
+        if (checkedImage === undefined) {
+          return false;
+        }
+
         modal.confirm({
           title: '이미지 누끼따기 결과',
           icon: h(ExclamationCircleOutlined),
           content: h('img', { src: translate_url, style: 'width: 100%;' }),
           onOk() {
-            console.log('OK');
+            checkedImage.translate_url = translate_url;
+            checkedImage.url = url;
+
+            selectedCollection.translate_url = translate_url;
           },
           onCancel() {
             console.log('Cancel');
