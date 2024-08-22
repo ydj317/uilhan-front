@@ -878,15 +878,14 @@ const handleSearch = () => {
 };
 
 const handleCollect = () => {
-  // useMarketOrderApi().collectMarketOrder({}).then(res => {
-  //   if (res.status !== "2000") {
-  //     message.error(res.message);
-  //     return false;
-  //   }
-  //
-  //   message.success("수집처리중 입니다. 잠시만 기다려 주세요.");
-  // });
-  message.success("수집처리중 입니다. 잠시만 기다려 주세요.");
+  useMarketOrderApi().collectMarketOrder({}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+
+    message.success("수집처리중 입니다. 잠시만 기다려 주세요.");
+  });
 };
 
 const getMarketDetailUrls = async () => {
