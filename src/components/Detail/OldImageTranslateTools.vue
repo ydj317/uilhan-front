@@ -263,7 +263,7 @@ export default defineComponent({
         message.error("이미지를 선택해주세요.");
         return false;
       }
-
+      console.log('this.localTranslateImageList',this.localTranslateImageList);
       const option = {
         msg: "",
         key: selectedCollection.key || 0,
@@ -281,17 +281,13 @@ export default defineComponent({
       useProductApi().imageMatting(option, (oTranslateInfo) => {
         const { translate_url } = oTranslateInfo.data;
         selectedCollection.translate_url = translate_url;
-        modal.confirm({
-          title: '이미지 누끼따기 결과',
-          icon: h(ExclamationCircleOutlined),
-          content: h('img', { src: translate_url, style: 'width: 100%;' }),
-          onOk() {
-            console.log('OK');
-          },
-          onCancel() {
-            console.log('Cancel');
-          },
+        this.localTranslateImageList = this.localTranslateImageList.map((v)=>{
+          if(v.checked === true){
+            v.url = translate_url;
+          }
+          return v;
         });
+        this.onChange();
       }).finally(() => {
         this.imageMattingLoading = false;
       });
@@ -479,7 +475,7 @@ export default defineComponent({
 
       return true;
     },
-    onChange(event) {
+    onChange() {
       this.$emit("update:translateImageList", this.localTranslateImageList);
     },
   },
