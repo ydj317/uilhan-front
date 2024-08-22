@@ -3,7 +3,7 @@
     <div class="fs24 color-3F4249 fw fl-cc">배송대행지를 선택해주세요.</div>
     <a-flex class="mt40 fl-lc" gap="100">
       <a-flex class="list-wrap color-3F4249" gap="20" v-for="(v,i) in state.list">
-        <div class="left-wrap fl-c p40 cp">
+        <div class="left-wrap fl-c p40 cp" :class="{'off':i== 1}">
           <div class="text1 fs14 color-6B6F7C">{{ v.title }}</div>
           <div class="text2 fs28 fw mt6">{{ v.title2 }}</div>
           <div class="img-wrap fl-cc">
@@ -12,6 +12,7 @@
           <div class="fl-cc">
             <a-button class="btn fs14 plr16 color-3F4249 bg-F1F3F8" @click="goUrl(i)">바로가기</a-button>
           </div>
+          <a-tag :bordered="false" color="error" class="coming fl-cc" v-if="i== 1">coming soon</a-tag>
         </div>
         <div class="right-wrap fs16 t-white mask-top mask-bottom">
             <div class="right-list p24" v-for="v2 in v.introList">
@@ -128,6 +129,30 @@ onUnmounted(()=>{
   border: 1px solid #E4E7EC;
   box-shadow: 2px 4px 10px 0 rgba(0,0,0,0.1);
   border-radius: 24px;
+}
+.left-wrap.off{
+  position: relative;
+}
+.left-wrap.off::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1;
+}
+.left-wrap.off .coming{
+  width: 100px;
+  height: 30px;
+  font-size: 13px;
+  position: absolute;
+  border-radius: 24px;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  opacity: 1;
 }
 .list-wrap:first-child .left-wrap:hover{
   border: 2px solid #FF4200;
