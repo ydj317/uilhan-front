@@ -593,16 +593,13 @@ const submit = () => {
             ordr_idxx: data.payInfo.ordr_idxx, // 상점관리 주문번호
             good_name: 'test_good', // 상품명
             good_mny: data.payInfo.good_mny , // 주문요청금액
-            shop_user_id: 'hong123', // 쇼핑몰에서 관리하는 회원 ID
+            shop_user_id: 'test', // 쇼핑몰에서 관리하는 회원 ID
             // buyr_name: data.payInfo.buyr_name, // 주문자이름(선택)
             // buyr_tel2: "010-0000-0000", // 주문자 휴대폰번호(선택)
             // buyr_mail: "test@test.co.kr", // 주문자 이메일(선택)
             site_cd: 'T0000', // 가맹점 정보 설정
             site_name: 'KCP TEST SHOP', // 가맹점 정보 설정
             pay_method: '001000000000', // 100000000000 신용카드 | 001000000000 가상계좌
-          PayUrl:'https://testsmpay.kcp.co.kr/pay/mobileGW.kcp',
-          approval_Key:'ockLyC3QHxD5rSUio3ETuAcHyKIPdQiE35VBPEo1cQ=',
-          Ret_URL:'https://쇼핑몰주문처리서버/../return',
           quotaopt: '1',
 
             // 필수 항목 : 결제 금액/화폐단위
