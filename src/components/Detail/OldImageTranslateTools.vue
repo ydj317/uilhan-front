@@ -348,7 +348,8 @@ export default defineComponent({
 
         const { list, recharge } = oTranslateInfo.data;
         let transImage = list.find(item => item.key === index);
-        this.localTranslateImageList[index] = { ...this.localTranslateImageList[index], ...transImage,'url':transImage.translate_url }
+        let url = transImage.translate_url+'?request_id='+transImage.request_id;
+        this.localTranslateImageList[index] = { ...this.localTranslateImageList[index], ...transImage,url }
         this.product.recharge = recharge;
         this.onChange();
       }).finally(() => {
@@ -405,7 +406,9 @@ export default defineComponent({
     // 편집
     async editorImage() {
       let url = this.selectedCollection.url;
-      this.$emit("update:editorImage", {url,old_url:this.selectedCollection.old_url});
+      let old_url = this.selectedCollection.old_url;
+      console.log({url,old_url});
+      this.$emit("update:editorImage", {url,old_url});
     },
 
     deleteImages(index) {
