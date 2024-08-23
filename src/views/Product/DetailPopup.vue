@@ -433,18 +433,21 @@ export default defineComponent({
         if (res.status !== "2000") {
           message.error(res.message);
           this.indicator = false;
+          this.syncLoading = false;
           return false;
         }
 
         if (res.data !== undefined && res.data.length === 0) {
           message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
           this.indicator = false;
+          this.syncLoading = false;
           return false;
         }
 
         if (res.data.message !== undefined && res.data.message !== '') {
           message.warning(res.data.message);
           this.indicator = false;
+          this.syncLoading = false;
           return false;
         }
 
@@ -474,6 +477,7 @@ export default defineComponent({
       } catch (e) {
         message.error(e.message);
         this.indicator = false;
+        this.syncLoading = false;
         return false;
       }
     },
@@ -882,7 +886,7 @@ export default defineComponent({
       }
 
       // 쿠팡일경우 승인대기일때 승인상태확인 자동으로 클릭해주기
-      const aFilterItemData = this.product.item_sync_market.filter(item => {
+      const aFilterItemData = this.product.item_sync_market && this.product.item_sync_market.filter(item => {
         return item.status === 'approval' && item.market_code === 'coupang';
       })
 
