@@ -48,6 +48,7 @@ const state = reactive({
   rootSubmenuKeys: ['/board', '/setting', '/user'],
   selectedKeys: ['/main'],
   openKeys: [],
+  lastOpenKeys:[],
 });
 
 // 绑定事件
@@ -63,6 +64,17 @@ const onOpenChange = (openKeys) => {
   } else {
     state.openKeys = latestOpenKey ? [latestOpenKey] : [];
   }
+
+  const path = openKeys[openKeys.length-1];
+  const parentMenu = '/express';
+  // console.log('openKeys',openKeys);
+  // console.log('path-out',path);
+  // console.log('state.lastOpenKeys',state.lastOpenKeys);
+  if (path == parentMenu ||  (state.lastOpenKeys.indexOf(parentMenu) != -1  && openKeys.indexOf(parentMenu) == -1)) {
+    // console.log('path',path);
+    router.push({ path: '/express/list' });
+  }
+  state.lastOpenKeys = openKeys;
 };
 const selectActive = computed(() => {
   const {meta,path} = route
