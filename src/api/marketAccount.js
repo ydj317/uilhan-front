@@ -86,5 +86,13 @@ export function useMarketAccountApi() {
                 data,
             });
         },
+
+        removeAccountWithManager: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/account/removeAccountWithManager",
+                method: "POST",
+                data,
+            });
+        },
     }
 }
