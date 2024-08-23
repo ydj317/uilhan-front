@@ -91,7 +91,7 @@ export default defineComponent({
             let item = this.localTranslateImageList.find(v2=>v2.request_id == requestId);
             item.translate_url = v[requestId];
             item.url = v[requestId];
-            return item;
+            return {...item};
           });
           this.onSubmit();
           break;
