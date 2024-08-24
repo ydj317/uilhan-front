@@ -2011,3 +2011,9 @@
 .border-bottom-D2D2D2{
     border-bottom: 1px solid #D2D2D2;
 }
+.help-text{
+    margin: 0 0 0 10px;
+    color: #898989;
+    font-size: 13px;
+    font-style: normal;
+}

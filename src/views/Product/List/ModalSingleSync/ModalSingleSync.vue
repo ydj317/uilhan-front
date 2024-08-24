@@ -31,6 +31,14 @@
               </template>
               <ExclamationCircleOutlined />
             </a-tooltip>
+
+            <a-tooltip v-else-if="record.market_code === 'smartstore'">
+              <template #title>
+                <div>마켓 정책에 의하여 상품등록 시 기준 판매가로 세팅된 옵션명이 상품명 뒤에 추가됩니다. 글자 수 초과 시 상품명은 자동으로 잘리게 됩니다. 단일 옵션은 정책 대상이 아니기 때문에 적용되지 않습니다.</div>
+              </template>
+              <ExclamationCircleOutlined />
+            </a-tooltip>
+
           </div>
         </template>
 
@@ -60,6 +68,8 @@
       </template>
 
     </a-table>
+
+    <span class="help-text" v-show="showNaverHelp"> - 스마트스토어 마켓 정책 : 기준 판매가 옵션이 첫 번째 옵션으로 되고 상품명 뒤에 옵션명이 추가됩니다.</span>
 
     <template v-slot:footer>
       <a-button @click="closeModal">닫기</a-button>
@@ -124,10 +134,23 @@ watch(show, val => {
 
 const syncLoading = ref(false)
 const syncSelectedRowKeys = ref([])
+const showNaverHelp = ref(false)
 
 function onSyncSelectChange(selectedRowKeys) {
   syncSelectedRowKeys.value = selectedRowKeys;
 }
+
+// 스마트스토어 도움말 노출여부 체크
+watch(syncSelectedRowKeys, (val) => {
+  const iSmartstoreKey = props.product.item_sync_market.findIndex(item => item.market_code === 'smartstore');
+  if (iSmartstoreKey !== -1) {
+    if (val.includes(iSmartstoreKey)) {
+      showNaverHelp.value = true
+    } else {
+      showNaverHelp.value = false
+    }
+  }
+})
 
 async function approvalCheck(market_id) {
   syncLoading.value = true;
