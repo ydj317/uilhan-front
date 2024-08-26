@@ -124,7 +124,7 @@
                   {{ descriptions.id }}
                 </a-descriptions-item>
 
-                <a-descriptions-item label="총 결제금액(vat포함">
+                <a-descriptions-item label="총 결제금액(vat포함)">
                   {{ descriptions.paymentAmountStr }}
                 </a-descriptions-item>
 

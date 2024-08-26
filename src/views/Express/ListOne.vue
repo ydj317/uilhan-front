@@ -372,7 +372,7 @@ import moment from "moment";
 import { InfoCircleFilled,ExclamationCircleOutlined,CheckOutlined } from '@ant-design/icons-vue';
 import {useExpressApi} from "@/api/express";
 import Cookie from "js-cookie";
-import ExpressDetail from "@/views/express/components/ExpressDetail.vue";
+import ExpressDetail from "@/views/Express/components/ExpressDetail.vue";
 
 const modalVisible = ref(false);
 const bridgeDetail = ref({});

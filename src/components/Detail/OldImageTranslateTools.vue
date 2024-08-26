@@ -9,6 +9,7 @@
           v-bind="DRAG_OPTIONS"
           v-model="localTranslateImageList"
           :component-data="DRAG_CONFIG"
+          @change="onChange"
         >
           <template #item="{ element, index }">
             <div
@@ -109,7 +110,7 @@
     </template>
     <template #footer>
       <div style="display: flex; justify-content: center">
-        <a-button @click="onCancel">취소</a-button>
+<!--        <a-button @click="onCancel">취소</a-button>-->
         <a-button type="primary" @click="onSubmit" >저장</a-button>
       </div>
     </template>
@@ -262,7 +263,7 @@ export default defineComponent({
         message.error("이미지를 선택해주세요.");
         return false;
       }
-
+      console.log('this.localTranslateImageList',this.localTranslateImageList);
       const option = {
         msg: "",
         key: selectedCollection.key || 0,
@@ -279,27 +280,15 @@ export default defineComponent({
       }
       this.imageMattingLoading = true;
       useProductApi().imageMatting(option, (oTranslateInfo) => {
-        const { translate_url, url } = oTranslateInfo.data;
-
-        const checkedImage = this.localTranslateImageList.find(item => item.checked === true);
-        if (checkedImage === undefined) {
-          return false;
-        }
-
-        modal.confirm({
-          title: '이미지 누끼따기 결과',
-          icon: h(ExclamationCircleOutlined),
-          content: h('img', { src: translate_url, style: 'width: 100%;' }),
-          onOk() {
-            checkedImage.translate_url = translate_url;
-            checkedImage.url = url;
-
-            selectedCollection.translate_url = translate_url;
-          },
-          onCancel() {
-            console.log('Cancel');
-          },
+        const { translate_url } = oTranslateInfo.data;
+        selectedCollection.translate_url = translate_url;
+        this.localTranslateImageList = this.localTranslateImageList.map((v)=>{
+          if(v.checked === true){
+            v.url = translate_url;
+          }
+          return v;
         });
+        this.onChange();
       }).finally(() => {
         this.imageMattingLoading = false;
       });
@@ -439,6 +428,7 @@ export default defineComponent({
       if (this.localTranslateImageList.find(item => item.checked === true) === undefined) {
         this.localTranslateImageList[0].checked = true;
       }
+      this.$emit("update:translateImageList", this.localTranslateImageList);
     },
 
     // 图片 选择/取消选择
@@ -456,6 +446,7 @@ export default defineComponent({
     onCancel() {
       console.log('cancel');
       this.$emit("update:visible", false);
+      this.$emit("update:translateImageList", this.localTranslateImageList);
     },
     // 图片上传
     uploadImage(option) {
@@ -477,6 +468,7 @@ export default defineComponent({
           request_id: res.data.requestId,
         };
         this.localTranslateImageList.push(tmp);
+        this.$emit("update:translateImageList", this.localTranslateImageList);
       });
     },
 
@@ -493,6 +485,9 @@ export default defineComponent({
       }
 
       return true;
+    },
+    onChange() {
+      this.$emit("update:translateImageList", this.localTranslateImageList);
     },
   },
 

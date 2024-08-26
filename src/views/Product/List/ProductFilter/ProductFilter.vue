@@ -125,12 +125,16 @@ const marketOptions = [
       value: "Aliexpress"
     },
     {
-      label: "Rakuten",
-      value: "Rakuten"
+      label: "Domeggook",
+      value: "Domeggook"
     },
     {
       label: "Iherb",
       value: "Iherb"
+    },
+    {
+      label: "Rakuten",
+      value: "Rakuten"
     },
   ]
 // 처리상태
