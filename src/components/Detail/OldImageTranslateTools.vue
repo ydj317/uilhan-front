@@ -419,7 +419,6 @@ export default defineComponent({
     async editorImage() {
       let url = this.selectedCollection.url;
       let old_url = this.selectedCollection.old_url;
-      console.log({url,old_url});
       this.$emit("update:editorImage", {url,old_url});
     },
 

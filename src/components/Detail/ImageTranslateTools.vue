@@ -32,8 +32,6 @@ export default defineComponent({
       product: (state) => state.product.detail,
     }),
     getRequestIds() {
-      console.log('==localTranslateImageList==')
-      console.log(this.localTranslateImageList)
       return this.localTranslateImageList.map(item => item.request_id)
     }
   },
@@ -73,8 +71,6 @@ export default defineComponent({
   methods: {
     //图片处理回调
     async handleTranslateCallback(oTranslateInfo) {
-      console.log('==oTranslateInfo==')
-      console.log(oTranslateInfo)
       const {action,requestId,requestIds,allSort,base64} = oTranslateInfo;
       // console.log('oTranslateInfo',oTranslateInfo);
       switch (action){
