@@ -1167,6 +1167,7 @@ export default defineComponent({
   height: 100vh;
   overflow-y: hidden;
   background: url("../../assets/img/login_bg.jpg") no-repeat center center;
+  background-size: cover;
 }
 
 #userRegister .init {
