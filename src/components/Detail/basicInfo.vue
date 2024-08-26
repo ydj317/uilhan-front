@@ -8,9 +8,7 @@
       </colgroup>
       <tr>
         <th>
-          <a-spin v-model:spinning="imgLoading">
           <img :src="product.item_thumbnails[0]?.url" style="width: 100px;height: 100px" alt="" class="cp" @click="translatePopup"/>
-          </a-spin>
         </th>
         <td>
           <div style="display: flex;flex-direction: column;gap: 5px;width: 100%">
@@ -129,7 +127,10 @@
     </table>
     <image-translate-tools ref="imageTranslateTools" v-model:visible="imageTranslateToolsVisible"
                            @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
-                           @update:translateImageList="updateTranslateImageList" :isMany="true" />
+                           @update:translateImageList="updateTranslateImageList"/>
+    <old-image-translate-tools ref="oldImageTranslateTools" v-model:visible="visible"
+                               @update:visible="visible = false" :translateImageList="translateImageList"
+                               @update:translateImageList="updateTranslateImageListOld" @update:editorImage="editorImage"/>
   </div>
 </template>
 
@@ -141,9 +142,10 @@ import {QuestionCircleOutlined,CheckCircleOutlined} from '@ant-design/icons-vue'
 import {useMandatoryApi} from "@/api/mandatory";
 import {lib} from "@/util/lib";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
+import OldImageTranslateTools from "@/components/Detail/OldImageTranslateTools.vue";
 
 export default {
-  components: {QuestionCircleOutlined,CheckCircleOutlined,ImageTranslateTools},
+  components: { OldImageTranslateTools, QuestionCircleOutlined,CheckCircleOutlined,ImageTranslateTools},
 
   computed: {
     ...mapState({
@@ -151,12 +153,6 @@ export default {
     }),
   },
   emits: ['suggestCategory'],
-  props: {
-    activeKey: {
-      type: String,
-      default: '1'
-    },
-  },
   watch: {
     "product.item_trans_name"() {
       this.keyword.list.forEach(d => {
@@ -167,28 +163,6 @@ export default {
       this.tagKeyword.list.forEach(d => {
         d.is_using = this.isUsingKeyword(d.word, 2)
       })
-    },
-    activeKey: {
-      handler() {
-        if(this.activeKey == 1){
-          const requestIdsLength = this.$refs.imageTranslateTools.xjParams.requestIds.length;
-          if(!requestIdsLength){
-            this.$nextTick(() => {
-              this.getRequestIds();
-            });
-          }
-        }
-      },
-    },
-    product: {
-      handler() {
-        if(this.activeKey == 1){
-          this.$nextTick(() => {
-            this.getRequestIds();
-          });
-        }
-      },
-      immediate: true,
     },
   },
 
@@ -246,6 +220,7 @@ export default {
         list: [],
       },
       imageTranslateToolsVisible: false,
+      visible: false,
       translateImageList: [],
       blurIndex: {
         type:0,
@@ -254,7 +229,6 @@ export default {
       keywordMaxLength:20,
       showTrademarkBtn: false,
       showKeywordTip: false,
-      imgLoading:false,
     };
   },
 
@@ -560,19 +534,6 @@ export default {
       this.blurIndex.index = e.srcElement.selectionStart;
     },
     translatePopup() {
-      this.imageTranslateToolsVisible = true;
-    },
-    updateTranslateImageList(imageList) {
-      let item_thumbnails = [];
-      for (let i = 0; i < imageList.length; i++) {
-        let url = imageList[i].translate_status === true ? imageList[i].translate_url :  imageList[i].url;
-        item_thumbnails.push({'name':i,'url':url});
-      }
-      this.product.item_thumbnails = item_thumbnails;
-    },
-    //获取图片requestIds
-    getRequestIds(){
-      this.imgLoading = true;
       let aImagesUrl = this.product.item_thumbnails;
       let imgList =aImagesUrl.map((item,index)=>{
         let tmp = [];
@@ -583,6 +544,30 @@ export default {
         tmp['order'] = index;
         tmp['request_id'] = '';
         tmp['url'] = item['url'];
+        tmp['old_url'] = item['url'];
+        let pos = item['url'].indexOf('request_id');
+        if(pos != -1){
+          tmp['request_id'] = item['url'].slice(pos+11);
+        }
+        return tmp;
+      })
+      this.translateImageList = imgList;
+      this.visible = true;
+    },
+    editorImage(res) {
+      let aImagesUrl = [
+        {url: res.url,old_url:res.old_url}
+      ];
+      let imgList =aImagesUrl.map((item,index)=>{
+        let tmp = [];
+        tmp['checked'] = false;
+        if(index == 0){
+          tmp['checked'] = true;
+        }
+        tmp['order'] = index;
+        tmp['request_id'] = '';
+        tmp['url'] = item['url'];
+        tmp['old_url'] = item['old_url'];
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
           tmp['request_id'] = item['url'].slice(pos+11);
@@ -590,9 +575,40 @@ export default {
         return tmp;
       })
       this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
-        this.imgLoading = false;
+        this.imageTranslateToolsVisible = true;
       });
-    }
+    },
+    updateTranslateImageList(imageList) {
+      let item_thumbnails = [];
+      this.translateImageList = this.translateImageList.map((v,i)=>{
+        let upData = imageList.find(v2 =>v2.old_url === v.old_url);
+        if(upData){
+          if (upData.translate_status === true) {
+            v.url = upData.translate_url;
+          } else {
+            const nUrl = upData.translate_url || upData.url;
+            v.url = nUrl;
+          }
+        }
+        item_thumbnails.push({'name':i,'url':v.url});
+        return v;
+      })
+      this.product.item_thumbnails = item_thumbnails;
+
+      for (let i = 0; i < imageList.length; i++) {
+        let url = imageList[i].translate_status === true ? imageList[i].translate_url :  imageList[i].url;
+        item_thumbnails.push({'name':i,'url':url});
+      }
+      this.product.item_thumbnails = item_thumbnails;
+    },
+    updateTranslateImageListOld(imageList) {
+      let item_thumbnails = [];
+      for (let i = 0; i < imageList.length; i++) {
+        let url = imageList[i].translate_status === true ? imageList[i].translate_url :  imageList[i].url;
+        item_thumbnails.push({'name':i,'url':url});
+      }
+      this.product.item_thumbnails = item_thumbnails;
+    },
   },
 
   mounted() {
