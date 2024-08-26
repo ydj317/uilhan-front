@@ -85,12 +85,8 @@
           >
             <a-spin size="large"/>
           </div>
-          <div
-            v-else
-            style="background-color: white;width: 100%;height: 600px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
-            :style="selectedCollectionBackgroundImage"
-          >
-            <contextHolder />
+          <div v-else >
+            <img :src="selectedCollectionBackgroundImage" style="background-color: white;width: 100%;height: 600px;overflow: hidden;position: relative;cursor: pointer;object-fit:contain">
           </div>
         </section>
       </a-card>
@@ -191,15 +187,13 @@ export default defineComponent({
       }
 
       // checked translate_status
-      if (checkedImage.translate_status === true) {
-        return {
-          backgroundImage: `url(${checkedImage.translate_url})`
-        };
-      } else {
-        return {
-          backgroundImage: `url(${checkedImage.url})`
-        };
-      }
+      // if (checkedImage.translate_status === true) {
+      //   return checkedImage.translate_url;
+      // } else {
+      //   return checkedImage.url;
+      // }
+      // console.log('checkedImage',checkedImage);
+      return checkedImage.url;
     },
     selectedCollection() {
       return this.localTranslateImageList.find(item => item.checked === true);
@@ -263,7 +257,6 @@ export default defineComponent({
         message.error("이미지를 선택해주세요.");
         return false;
       }
-      console.log('this.localTranslateImageList',this.localTranslateImageList);
       const option = {
         msg: "",
         key: selectedCollection.key || 0,
@@ -301,12 +294,14 @@ export default defineComponent({
       }
 
       const checkedImage = this.localTranslateImageList.find(item => item.request_id === requestId);
-      if (checkedImage.translate_status === true) {
-        checkedImage.translate_url = url;
-      } else {
-        checkedImage.translate_url = url;
-        checkedImage.url = url;
-      }
+      // if (checkedImage.translate_status === true) {
+      //   checkedImage.translate_url = url;
+      // } else {
+      //   checkedImage.translate_url = url;
+      //   checkedImage.url = url;
+      // }
+      checkedImage.translate_url = url;
+      checkedImage.url = url;
     },
 
     // 단건 이미지 번역
@@ -352,8 +347,11 @@ export default defineComponent({
         }
 
         const { list, recharge } = oTranslateInfo.data;
-        this.localTranslateImageList[index] = { ...this.localTranslateImageList[index], ...list.find(item => item.key === index) }
+        let transImage = list.find(item => item.key === index);
+        let url = transImage.translate_url+'?request_id='+transImage.request_id;
+        this.localTranslateImageList[index] = { ...this.localTranslateImageList[index], ...transImage,url }
         this.product.recharge = recharge;
+        this.onChange();
       }).finally(() => {
         this.translateImageLoading = false;
       });
@@ -408,7 +406,9 @@ export default defineComponent({
     // 편집
     async editorImage() {
       let url = this.selectedCollection.url;
-      this.$emit("update:editorImage", {url,old_url:this.selectedCollection.old_url});
+      let old_url = this.selectedCollection.old_url;
+      console.log({url,old_url});
+      this.$emit("update:editorImage", {url,old_url});
     },
 
     deleteImages(index) {
@@ -417,7 +417,7 @@ export default defineComponent({
       if (this.localTranslateImageList.find(item => item.checked === true) === undefined) {
         this.localTranslateImageList[0].checked = true;
       }
-      this.$emit("update:translateImageList", this.localTranslateImageList);
+      this.onChange();
     },
 
     // 图片 选择/取消选择
@@ -429,13 +429,13 @@ export default defineComponent({
     },
 
     onSubmit() {
-      this.$emit("update:translateImageList", this.localTranslateImageList);
+      this.onChange();
       this.$emit("update:visible", false);
     },
     onCancel() {
       console.log('cancel');
       this.$emit("update:visible", false);
-      this.$emit("update:translateImageList", this.localTranslateImageList);
+      this.onChange();
     },
     // 图片上传
     uploadImage(option) {
@@ -457,7 +457,7 @@ export default defineComponent({
           request_id: res.data.requestId,
         };
         this.localTranslateImageList.push(tmp);
-        this.$emit("update:translateImageList", this.localTranslateImageList);
+        this.onChange();
       });
     },
 
@@ -486,6 +486,13 @@ export default defineComponent({
         this.localTranslateImageList = this.translateImageList;
       },
     },
+    translateImageList: {
+      immediate: true,
+      handler(newValue) {
+        // console.log('newValue',newValue);
+        this.localTranslateImageList = newValue;
+      }
+    }
   },
 });
 </script>
