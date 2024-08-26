@@ -647,15 +647,16 @@ onBeforeUnmount(() => {
 });
 </script>
 <style scoped>
-:deep(.slide-wrap .slick-slide) {
-  width: 100%;
-  height: 430px;
-}
 :deep(.slide-wrap .slick-dots li) {
   background: #e3e3e3;
 }
 :deep(.slide-wrap .slick-dots li.slick-active button) {
   background: #cecbcb;
+}
+:deep(.slide-wrap .slick-track){
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 :deep(.table-wrap .ant-table-cell) {
   text-align: center!important;
@@ -716,9 +717,6 @@ onBeforeUnmount(() => {
 }
  .slide-wrap{
    position: relative;
- }
- .carousel-slide{
-   height: 430px;
  }
 .slide-wrap img{
   width: 100%;
