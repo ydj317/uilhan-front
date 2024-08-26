@@ -132,6 +132,10 @@ const marketOptions = [
       label: "Iherb",
       value: "Iherb"
     },
+    {
+      label: "Domeggook",
+      value: "Domeggook"
+    },
   ]
 // 처리상태
 const statusOptions = [
