@@ -25,7 +25,7 @@
                   :style="{backgroundImage: `url(${element.url})`}"
                   :key="index"
                   :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
-                  @click="activedImage(element, index)"
+                  @click="activedImage(element, index, $event)"
                 >
                   <div
                     style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
@@ -421,7 +421,9 @@ export default defineComponent({
     },
 
     // 图片 选择/取消选择
-    activedImage(element, index) {
+    activedImage(element, index,event) {
+      event.preventDefault();
+      event.stopPropagation();
       this.localTranslateImageList.forEach((item) => {
         item.checked = false;
       });
