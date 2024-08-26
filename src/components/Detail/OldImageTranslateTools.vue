@@ -55,7 +55,8 @@
                 :beforeUpload="validateUploadImage"
                 :customRequest="uploadImage"
               >
-                <div style="display: flex;flex-direction: column;gap: 5px;justify-content: center;align-items: center">
+                <div style="display: flex; flex-direction: column; gap: 5px; justify-content: center;
+                align-items: center; cursor: pointer; padding: 36px 14px;">
                   <PlusOutlined/>
                   이미지 업로드
                 </div>
@@ -452,20 +453,23 @@ export default defineComponent({
     uploadImage(option) {
       const formData = new FormData();
       formData.append("file", option.file);
+      formData.append("image_type", 'product');
+      formData.append("relation_id", this.product.item_id);
+      formData.append("is_xiangji", '1');
       useProductApi().uploadImage(formData, (res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
         }
-        if (lib.isEmpty(res.data.url)) {
+        if (lib.isEmpty(res.data.img_url)) {
           message.error("upload failed");
           return false;
         }
         let tmp = {
           checked: false,
           order: this.localTranslateImageList.length,
-          url: res.data.url,
-          request_id: res.data.requestId,
+          url: res.data.img_url,
+          request_id: res.data.url_id,
         };
         this.localTranslateImageList.push(tmp);
         this.$emit("update:translateImageList", this.localTranslateImageList);
