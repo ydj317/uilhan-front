@@ -49,7 +49,15 @@
             </a-tooltip>
             <a-tooltip v-if="record.market_code === 'lotteon'">
               <template #title>
-                <div>롯데ON의 경우 마켓 등록 재전송 필요합니다.(*기존 데이터 베이스가 없으므로 작업 후 기존 마켓들과 동일하게 업로드 가능)</div>
+                <div>-롯데ON의 경우 마켓 등록 재전송 필요합니다.(*기존 데이터 베이스가 없으므로 작업 후 기존 마켓들과 동일하게 업로드 가능)</div>
+              </template>
+              <ExclamationCircleOutlined />
+            </a-tooltip>
+
+            <a-tooltip v-else-if="record.market_code === 'smartstore'">
+              <template #title>
+                <div>-마켓 정책에 의하여 상품등록 시 기준 판매가로 세팅된 옵션명이 상품명 뒤에 추가됩니다. 글자 수 초과 시 상품명은 자동으로 잘리게 됩니다.
+                  <br> -단일 옵션은 정책 대상이 아니기 때문에 적용되지 않습니다.</div>
               </template>
               <ExclamationCircleOutlined />
             </a-tooltip>
@@ -82,6 +90,8 @@
       </template>
 
     </a-table>
+
+    <span class="help-text" v-show="showNaverHelp"> -스마트스토어 마켓 정책 : 기준 판매가 옵션이 첫 번째 옵션으로 되고 상품명 뒤에 옵션명이 추가됩니다.</span>
 
     <template v-slot:footer>
       <a-button @click="closeResultPop()">닫기</a-button>
@@ -193,6 +203,7 @@ export default defineComponent({
       syncSelectedRowKeys: [],
       marketSyncResult: [],
       smartStoreCategory: [],
+      showNaverHelp : false
     };
   },
 
@@ -933,6 +944,24 @@ export default defineComponent({
     //   deep: true,
     //   immediate: true
     // },
+
+    // 상품등록 페이지에 스마트스토어 체크시 네이버 도움말 보여주기
+    'product.item_sync_market' : {
+        handler() {
+          let checkedMarket = [];
+          for (let i = 0; i < this.product.item_sync_market.length; i++) {
+            if (this.product.item_sync_market[i].checked === true) {
+              checkedMarket.push(this.product.item_sync_market[i].market_code);
+            }
+          }
+          if (checkedMarket.length > 0 && checkedMarket.includes('smartstore')) {
+            this.showNaverHelp = true;
+          } else {
+            this.showNaverHelp = false;
+          }
+        },
+        deep: true,
+    },
 
     autosave: {
       handler() {
