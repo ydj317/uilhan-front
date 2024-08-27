@@ -149,7 +149,7 @@
               style="text-align: center;">
             <div style="display: flex;flex-direction: column;gap: 3px;">
 <!--              <span><a-button type="link" target="_blank" :href="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</a-button></span>-->
-              <a-popover placement="top" trigger="hover" :overlayStyle="{width: '160px',textAlign: 'center'}" overlayClassName="order-list-popover">
+              <a-popover placement="top" trigger="hover" :overlayStyle="{width: '170px',textAlign: 'center'}" overlayClassName="order-list-popover">
                 <template #content>
                   <a-button size="small" @click="openMarketAdminPage(order.marketCode)">판매처</a-button>
                   <a-button size="small" style="margin-left: 10px;" @click="showDetail(order)">유일</a-button>
@@ -308,7 +308,7 @@
     </a-modal>
   </div>
 
-  <ModalDetail v-model:detail="orderDetail" :marketCode="openDetailMarketCode" @update:detail="closeDetail"/>
+  <ModalDetail v-model:detail="orderDetail" :marketCode="openDetailMarketCode"/>
 </template>
 
 <script setup>
@@ -402,13 +402,9 @@ const showDetail = async (orderData) => {
     // 마켓코드 설정
     openDetailMarketCode.value = marketAccount.marketCode.charAt(0).toUpperCase() + marketAccount.marketCode.slice(1);
     orderDetail.value.show = true;
-    document.body.style.overflow = 'hidden';
   });
 
 }
-const closeDetail = () => {
-  document.body.style.overflow = '';
-};
 
 const updateCourierInfo = (item) => {
   const {marketCode} = item;
