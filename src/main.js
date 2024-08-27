@@ -12,11 +12,9 @@ import "./assets/css/common.css";
 import 'echarts';
 import DatePicker from "ant-design-vue/es/date-picker/moment";
 import VConsole from 'vconsole';
-
-if (process.env.NODE_ENV === 'development') {
-  const vConsole = new VConsole();
+if(location.hostname.indexOf('192') != -1 || location.hostname.indexOf('qa-') != -1){
+  // const vConsole = new VConsole();
 }
-console.log(process.env.NODE_ENV)
 const app = createApp(App);
 app.use(router);
 app.use(store);
