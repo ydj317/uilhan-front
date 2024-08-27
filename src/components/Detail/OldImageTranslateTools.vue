@@ -437,8 +437,6 @@ export default defineComponent({
         item.checked = false;
       });
       this.localTranslateImageList[index].checked = !element.checked;
-      console.log('==check==')
-      console.log(this.localTranslateImageList)
     },
 
     onSubmit() {
