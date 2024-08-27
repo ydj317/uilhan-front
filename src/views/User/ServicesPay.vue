@@ -140,7 +140,7 @@
             <a-flex class="mt10">
               <a-radio-group v-model:value="state.selectedList.payType" name="payType">
                 <a-radio value="1"  class="font-SCDream4">카드</a-radio>
-                <a-radio value="2"  class="font-SCDream4">무통장입금</a-radio>
+                <a-radio value="2"  class="font-SCDream4" v-show="false">무통장입금</a-radio>
               </a-radio-group>
             </a-flex>
           </a-flex>
@@ -629,7 +629,7 @@ const submit = () => {
         //   }
         jsf__pay(pay_data);
 
-      }else {
+      } else {
         const routeData = router.resolve({
           name: 'user_thirdPartyPaymentPage',
           query: { orderList:[...data.orders] , total: data.total }
