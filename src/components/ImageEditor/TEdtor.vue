@@ -113,7 +113,7 @@ export default {
         // statusbar: false,  //最下方的元素路径和字数统计那一栏是否显示
         elementpath: false,  //元素路径是否显示
 
-        content_style: "img {max-width:100%;} p {display: flex; flex-flow: column nowrap; align-items: center;} #tinymce { padding: 0 25%; }",  //直接自定义可编辑区域的css样式
+        content_style: "img {max-width:100%;} p {display: flex; flex-flow: column nowrap; align-items: center;} #tinymce { padding: 0 35%; }",  //直接自定义可编辑区域的css样式
         // content_css: '/tinycontent.css',  //以css文件方式自定义可编辑区域的css样式，css文件需自己创建并引入
 
         // images_upload_url: '/apib/api-upload/uploadimg',  //后端处理程序的url，建议直接自定义上传函数image_upload_handler，这个就可以不用了

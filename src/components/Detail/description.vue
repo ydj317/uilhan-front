@@ -609,8 +609,8 @@ export default {
 #previewContainer {
   overflow: auto;
   max-height: 800px;
-  padding: 20px;
   text-align: center; /* 텍스트 중앙 정렬 */
+  padding: 20px 20%;
 }
 
 #previewContainer img {
