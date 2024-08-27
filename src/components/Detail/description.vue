@@ -584,14 +584,6 @@ export default {
         if(upData){
           v.url = upData.url;
           content += `<img src="${upData.url}" style="max-width: 100%; height: auto;"/>`;
-          // if (upData.translate_status === true) {
-          //   content += `<img src="${upData.translate_url}" style="max-width: 100%; height: auto;"/>`;
-          //   v.url = upData.translate_url;
-          // } else {
-          //   const nUrl = upData.translate_url || upData.url;
-          //   content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
-          //   v.url = nUrl;
-          // }
         }else{
           content += `<img src="${v.url}" style="max-width: 100%; height: auto;"/>`;
         }
