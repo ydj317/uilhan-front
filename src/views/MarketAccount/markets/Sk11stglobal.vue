@@ -478,8 +478,8 @@ const syncOutboundAddress = (account_id) => {
     const {marketJson, syncStatus, updDate} = res.data;
 
     // 업데이트상태/날짜
-    state.sync_address_status = syncStatus || '0';
-    state.sync_address_date = updDate || null;
+    state.sync_outbound_address_status = syncStatus || '0';
+    state.sync_outbound_address_date = updDate || null;
     state.outboundAddressList = [];
 
     if ('inOutAddress' in marketJson) {
