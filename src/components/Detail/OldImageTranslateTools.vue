@@ -437,6 +437,8 @@ export default defineComponent({
         item.checked = false;
       });
       this.localTranslateImageList[index].checked = !element.checked;
+      console.log('==check==')
+      console.log(this.localTranslateImageList)
     },
 
     onSubmit() {
@@ -468,6 +470,7 @@ export default defineComponent({
           checked: false,
           order: this.localTranslateImageList.length,
           url: res.data.img_url,
+          old_url: res.data.img_url,
           request_id: res.data.url_id,
         };
         this.localTranslateImageList.push(tmp);

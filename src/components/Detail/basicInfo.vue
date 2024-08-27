@@ -591,12 +591,6 @@ export default {
         let upData = imageList.find(v2 =>v2.old_url === v.old_url);
         if(upData){
           v.url = upData.url;
-          // if (upData.translate_status === true) {
-          //   v.url = upData.translate_url;
-          // } else {
-          //   const nUrl = upData.translate_url || upData.url;
-          //   v.url = nUrl;
-          // }
         }
         item_thumbnails.push({'name':i,'url':v.url});
         return { ...v };
