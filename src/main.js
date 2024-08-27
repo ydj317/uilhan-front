@@ -12,7 +12,7 @@ import "./assets/css/common.css";
 import 'echarts';
 import DatePicker from "ant-design-vue/es/date-picker/moment";
 import VConsole from 'vconsole';
-if(location.hostname.indexOf('192') != -1 || location.hostname.indexOf('qa-') != -1){
+if(location.hostname.indexOf('192.168.51.111') != -1 || location.hostname.indexOf('qa-') != -1){
   // const vConsole = new VConsole();
 }
 const app = createApp(App);
