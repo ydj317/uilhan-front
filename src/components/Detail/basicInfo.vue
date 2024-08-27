@@ -45,7 +45,13 @@
       </tr>
 
       <tr>
-        <th>상품명</th>
+        <th>
+          상품명
+          <a-tooltip>
+            <template #title>지마켓/옥션 마켓 정책상 특정 카테고리의 "노출상품명"은 등록 후 10일이 경과되거나 상품이 판매된 경우 수정할 수 없습니다.</template>
+            <ExclamationCircleOutlined />
+          </a-tooltip>
+        </th>
         <td style="display: flex;flex-direction: column; gap: 5px;">
           <div style="display: flex;gap: 5px;">
             <div style="flex: 1">
@@ -138,14 +144,14 @@
 import { message } from "ant-design-vue";
 import { mapState } from "vuex";
 import { AuthRequest } from "@/util/request";
-import {QuestionCircleOutlined,CheckCircleOutlined} from '@ant-design/icons-vue';
+import {QuestionCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined} from '@ant-design/icons-vue';
 import {useMandatoryApi} from "@/api/mandatory";
 import {lib} from "@/util/lib";
 import ImageTranslateTools from "@/components/Detail/ImageTranslateTools.vue";
 import OldImageTranslateTools from "@/components/Detail/OldImageTranslateTools.vue";
 
 export default {
-  components: { OldImageTranslateTools, QuestionCircleOutlined,CheckCircleOutlined,ImageTranslateTools},
+  components: {ExclamationCircleOutlined, OldImageTranslateTools, QuestionCircleOutlined,CheckCircleOutlined,ImageTranslateTools},
 
   computed: {
     ...mapState({
@@ -554,6 +560,13 @@ export default {
       this.translateImageList = imgList;
       this.visible = true;
     },
+    updateTranslateImageListOld(imageList) {
+      let item_thumbnails = [];
+      for (let i = 0; i < imageList.length; i++) {
+        item_thumbnails.push({'name':i,'url':imageList[i].url});
+      }
+      this.product.item_thumbnails = item_thumbnails;
+    },
     editorImage(res) {
       let aImagesUrl = [
         {url: res.url,old_url:res.old_url}
@@ -583,30 +596,17 @@ export default {
       this.translateImageList = this.translateImageList.map((v,i)=>{
         let upData = imageList.find(v2 =>v2.old_url === v.old_url);
         if(upData){
-          if (upData.translate_status === true) {
-            v.url = upData.translate_url;
-          } else {
-            const nUrl = upData.translate_url || upData.url;
-            v.url = nUrl;
-          }
+          v.url = upData.url;
+          // if (upData.translate_status === true) {
+          //   v.url = upData.translate_url;
+          // } else {
+          //   const nUrl = upData.translate_url || upData.url;
+          //   v.url = nUrl;
+          // }
         }
         item_thumbnails.push({'name':i,'url':v.url});
-        return v;
+        return { ...v };
       })
-      this.product.item_thumbnails = item_thumbnails;
-
-      for (let i = 0; i < imageList.length; i++) {
-        let url = imageList[i].translate_status === true ? imageList[i].translate_url :  imageList[i].url;
-        item_thumbnails.push({'name':i,'url':url});
-      }
-      this.product.item_thumbnails = item_thumbnails;
-    },
-    updateTranslateImageListOld(imageList) {
-      let item_thumbnails = [];
-      for (let i = 0; i < imageList.length; i++) {
-        let url = imageList[i].translate_status === true ? imageList[i].translate_url :  imageList[i].url;
-        item_thumbnails.push({'name':i,'url':url});
-      }
       this.product.item_thumbnails = item_thumbnails;
     },
   },

@@ -298,7 +298,7 @@
                 v-model:value="record[column.key]"
             />
             <div style="text-align:center">
-              <span style="font-size:12px;">옵션가기준</span>
+              <span style="font-size:12px;">기준 판매가</span>
               <label class="ant-radio-wrapper" :class="{'ant-radio-wrapper-checked': record.is_option_reference_price === 'T' }">
                   <span class="ant-radio" :class="{'ant-radio-checked': record.is_option_reference_price === 'T' }">
                     <span class="ant-radio-inner" @click="setIsOptionReferencePrice(record.key)"></span>
