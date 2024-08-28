@@ -39,9 +39,20 @@ export const menus = [{
             component: () => import("@/views/Mqlist.vue"),
             meta: {
                 title: "MQ리스트",
-                isHide: true,
+                isHide: false,
                 roles: [],
                 ids: ["jwli"],
+                icon: LayoutOutlined
+            }
+        },
+        {
+            path: "/dashboard2",
+            name: "dashboard2",
+            component: () => import("@/views/Dashboard.vue"),
+            meta: {
+                title: "대시보드2",
+                isHide: false,
+                roles: ["ROLE_USER"],
                 icon: LayoutOutlined
             }
         },
