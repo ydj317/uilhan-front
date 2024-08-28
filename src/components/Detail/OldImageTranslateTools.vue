@@ -25,7 +25,7 @@
                   :style="{backgroundImage: `url(${element.url})`}"
                   :key="index"
                   :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
-                  @click="activedImage(element, index)"
+                  @click="activedImage(element, index, $event)"
                 >
                   <div
                     style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
@@ -55,7 +55,8 @@
                 :beforeUpload="validateUploadImage"
                 :customRequest="uploadImage"
               >
-                <div style="display: flex;flex-direction: column;gap: 5px;justify-content: center;align-items: center">
+                <div style="display: flex; flex-direction: column; gap: 5px; justify-content: center;
+                align-items: center; cursor: pointer; padding: 36px 14px;">
                   <PlusOutlined/>
                   이미지 업로드
                 </div>
@@ -268,7 +269,8 @@ export default defineComponent({
         translate_url: selectedCollection.translate_url || '',
         translate_status: selectedCollection.translate_status,
         request_id: selectedCollection.request_id || '',
-        is_translate: selectedCollection.is_translate || false
+        is_translate: selectedCollection.is_translate || false,
+        relation_id: this.product.item_id
       }
       this.imageMattingLoading = true;
       useProductApi().imageMatting(option, (oTranslateInfo) => {
@@ -319,8 +321,13 @@ export default defineComponent({
         return false;
       }
 
+      let from = 'zh';
+      if (this.product.item_market === 'Rakuten') {
+        from = 'jp';
+      }
+
       const oParam = {
-        from: "zh",
+        from: from,
         to: "ko",
         list: [
           {
@@ -334,10 +341,11 @@ export default defineComponent({
             translate_url: checkedImage.translate_url || '',
             translate_status: checkedImage.translate_status,
             request_id: checkedImage.request_id || '',
-            is_translate: isTranslate
+            is_translate: isTranslate,
           }
         ],
         isTranslate,
+        relation_id: this.product.item_id,
       }
       this.translateImageLoading = true;
       await useProductApi().translateImage(oParam, (oTranslateInfo) => {
@@ -368,9 +376,13 @@ export default defineComponent({
         return false;
       }
 
+      let from = 'zh';
+      if (this.product.item_market === 'Rakuten') {
+        from = 'jp';
+      }
 
       const oParam = {
-        from: "zh",
+        from: from,
         to: "ko",
         list: [],
         isTranslate: true
@@ -407,7 +419,6 @@ export default defineComponent({
     async editorImage() {
       let url = this.selectedCollection.url;
       let old_url = this.selectedCollection.old_url;
-      console.log({url,old_url});
       this.$emit("update:editorImage", {url,old_url});
     },
 
@@ -421,7 +432,9 @@ export default defineComponent({
     },
 
     // 图片 选择/取消选择
-    activedImage(element, index) {
+    activedImage(element, index,event) {
+      event.preventDefault();
+      event.stopPropagation();
       this.localTranslateImageList.forEach((item) => {
         item.checked = false;
       });
@@ -441,20 +454,24 @@ export default defineComponent({
     uploadImage(option) {
       const formData = new FormData();
       formData.append("file", option.file);
+      formData.append("image_type", 'product');
+      formData.append("relation_id", this.product.item_id);
+      formData.append("is_xiangji", '1');
       useProductApi().uploadImage(formData, (res) => {
         if (res.status !== "2000") {
           message.error(res.message);
           return false;
         }
-        if (lib.isEmpty(res.data.url)) {
+        if (lib.isEmpty(res.data.img_url)) {
           message.error("upload failed");
           return false;
         }
         let tmp = {
           checked: false,
           order: this.localTranslateImageList.length,
-          url: res.data.url,
-          request_id: res.data.requestId,
+          url: res.data.img_url,
+          old_url: res.data.img_url,
+          request_id: res.data.url_id,
         };
         this.localTranslateImageList.push(tmp);
         this.onChange();

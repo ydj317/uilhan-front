@@ -149,7 +149,7 @@
               style="text-align: center;">
             <div style="display: flex;flex-direction: column;gap: 3px;">
 <!--              <span><a-button type="link" target="_blank" :href="`/order/info/${item.orderNo}`">{{ order.orderNo }} (old)</a-button></span>-->
-              <a-popover placement="top" trigger="hover" :overlayStyle="{width: '140px'}">
+              <a-popover placement="top" trigger="hover" :overlayStyle="{width: '170px',textAlign: 'center'}" overlayClassName="order-list-popover">
                 <template #content>
                   <a-button size="small" @click="openMarketAdminPage(order.marketCode)">판매처</a-button>
                   <a-button size="small" style="margin-left: 10px;" @click="showDetail(order)">유일</a-button>
@@ -1020,6 +1020,9 @@ onMounted(async () => {
 
 #order-status .ant-tabs-tab.ant-tabs-tab-active {
   background-color: #ffd117 !important;
+}
+.order-list-popover .ant-popover-title{
+  min-width: inherit!important;
 }
 </style>
 

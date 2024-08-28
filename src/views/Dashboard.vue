@@ -181,6 +181,7 @@
       </a-flex>
     </a-flex>
   </a-flex>
+  <div style="height: 50px;"></div>
 </template>
 
 <script setup>
@@ -188,7 +189,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { AuthRequest } from "@/util/request";
 import { message} from "ant-design-vue";
-import { QuestionCircleOutlined,DownOutlined,RightOutlined} from "@ant-design/icons-vue";
+import { DownOutlined,RightOutlined} from "@ant-design/icons-vue";
 import { useMarketApi } from "@/api/market";
 import { useMarketAccountApi } from "@/api/marketAccount";
 const router = useRouter();
@@ -249,6 +250,8 @@ const formState = reactive({
     {img:require(`@/assets/img/dashboard/collect2.png`),market:'Tmall',count:0},
     {img:require(`@/assets/img/dashboard/collect3.png`),market:'Aliexpress',count:0},
     {img:require(`@/assets/img/dashboard/collect4.png`),market:'Alibaba',count:0},
+    {img:require(`@/assets/img/dashboard/collect5.png`),market:'Rakuten',count:0},
+    {img:require(`@/assets/img/dashboard/collect6.png`),market:'Iherb',count:0},
   ],
   collectActive:'1',
   uploadActive:'1',

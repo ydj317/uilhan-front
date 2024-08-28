@@ -275,12 +275,15 @@ const getMarketClaimStatusList = async () => {
 const total = computed(() => {
 
   if (detail.value.show === false) {
+    document.body.classList.remove('body-no-scroll');
     return {
       totalPaymentAmount: 0,
       deliveryFee: 0,
       price: 0,
       totalDiscountAmount: 0
     }
+  }else{
+    document.body.classList.add('body-no-scroll');
   }
 
   /** 합계 금액 */
@@ -342,7 +345,16 @@ onMounted(async () => {
 
 
 </script>
-
+<style>
+.body-no-scroll {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+</style>
 <style scoped>
 .container {
   overflow: auto;

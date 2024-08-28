@@ -584,14 +584,6 @@ export default {
         if(upData){
           v.url = upData.url;
           content += `<img src="${upData.url}" style="max-width: 100%; height: auto;"/>`;
-          // if (upData.translate_status === true) {
-          //   content += `<img src="${upData.translate_url}" style="max-width: 100%; height: auto;"/>`;
-          //   v.url = upData.translate_url;
-          // } else {
-          //   const nUrl = upData.translate_url || upData.url;
-          //   content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
-          //   v.url = nUrl;
-          // }
         }else{
           content += `<img src="${v.url}" style="max-width: 100%; height: auto;"/>`;
         }
@@ -604,13 +596,20 @@ export default {
   }
 };
 </script>
-
+<style>
+#previewContainer img {
+  display: block; /* 이미지 블록 레벨 요소로 설정 */
+  margin: 0 auto; /* 이미지 상하 마진 0, 좌우 마진 자동으로 설정하여 중앙 정렬 */
+  max-width: 100%; /* 이미지가 모달 너비를 초과하지 않도록 설정 */
+  height: auto; /* 이미지의 원래 비율을 유지 */
+}
+</style>
 <style scoped>
 #previewContainer {
   overflow: auto;
   max-height: 800px;
-  padding: 20px;
   text-align: center; /* 텍스트 중앙 정렬 */
+  padding: 20px 20%;
 }
 
 #previewContainer img {
