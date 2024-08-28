@@ -1,5 +1,5 @@
 {
-  "name": "world-link",
+  "name": "uilhan",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -26,6 +26,7 @@
     "nprogress": "^0.2.0",
     "path": "^0.12.7",
     "tui-image-editor": "^3.15.3",
+    "vconsole": "^3.15.1",
     "vue": "^3.4.21",
     "vue-echarts": "^6.5.5",
     "vue-loading-overlay": "^5.0.3",

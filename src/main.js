@@ -11,7 +11,12 @@ import "./assets/css/custom.css";
 import "./assets/css/common.css";
 import 'echarts';
 import DatePicker from "ant-design-vue/es/date-picker/moment";
+import VConsole from 'vconsole';
 
+if (process.env.NODE_ENV === 'development') {
+  const vConsole = new VConsole();
+}
+console.log(process.env.NODE_ENV)
 const app = createApp(App);
 app.use(router);
 app.use(store);
