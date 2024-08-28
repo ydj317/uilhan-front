@@ -189,6 +189,29 @@
           @change="skuTableChange"
           :locale="tableLocale"
       >
+        <template #headerCell="{ column }">
+          <template v-if="column.key === 'original_price_cn'">
+            <span>
+              {{ column.title }}
+
+              <a-tooltip class="ml5" v-if="this.product.item_market === 'Rakuten'">
+                <template #title>
+                  <div>라쿠텐에서 수집된 가격(엔)은 실시간 환율에 따라 환화로 계산됩니다. </div>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
+
+              <a-tooltip class="ml5" v-else-if="this.product.item_market === 'Iherb'">
+                <template #title>
+                  <div>아이허브에서 수집된 가격(한화) 그대로 출력됩니다. </div>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
+
+            </span>
+          </template>
+        </template>
+
         <!--bodyCell-->
         <template v-slot:bodyCell="{ record, column, index }">
           <!--선택-->
@@ -247,7 +270,11 @@
               <span>{{ formatNumber(record.original_price_ko) }}</span>
               <div>
                 <sub style="padding:2px 6px;background-color: #f0f0f0;border-radius:4px;">
-                  <span style="color: #999999">￥ {{ formatNumber(record.original_price_cn) }}</span>
+                  <span style="color: #999999">
+                    <span v-if="this.product.item_market === 'Rakuten'">¥</span>
+                    <span v-else-if="this.product.item_market === 'Iherb'">₩</span>
+                    <span v-else>￥</span>
+                    {{ formatNumber(record.original_price_cn) }}</span>
                 </sub>
               </div>
             </div>

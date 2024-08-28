@@ -124,9 +124,8 @@ export default {
           // }else{
           const formData = new FormData();
           formData.append('file', file);
-          formData.append('relation_type', 'board');
           formData.append('image_type', 'board');
-          AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/board/imageUpload', formData).then((res) => {
+          AuthRequest.post(process.env.VUE_APP_API_URL  + '/api/upload/image', formData).then((res) => {
             if (res.status !== '2000') {
               failure(res.message)
               return false;
