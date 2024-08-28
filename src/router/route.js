@@ -22,12 +22,23 @@ export const menus = [{
     redirect: "/dashboard",
     children: [
         {
+            path: "/dashboard",
+            name: "dashboard",
+            component: () => import("@/views/Dashboard.vue"),
+            meta: {
+                title: "대시보드",
+                isHide: false,
+                roles: ["ROLE_USER"],
+                icon: LayoutOutlined
+            }
+        },
+        {
             path: "/replaceList",
             name: "replaceList",
             component: () => import("@/views/replaceList.vue"),
             meta: {
                 title: "메세지치환 관리",
-                isHide: false,
+                isHide: true,
                 roles: [],
                 ids: ["jwli"],
                 icon: LayoutOutlined
@@ -39,31 +50,9 @@ export const menus = [{
             component: () => import("@/views/Mqlist.vue"),
             meta: {
                 title: "MQ리스트",
-                isHide: false,
+                isHide: true,
                 roles: [],
                 ids: ["jwli"],
-                icon: LayoutOutlined
-            }
-        },
-        {
-            path: "/dashboard2",
-            name: "dashboard2",
-            component: () => import("@/views/Dashboard.vue"),
-            meta: {
-                title: "대시보드2",
-                isHide: false,
-                roles: ["ROLE_USER"],
-                icon: LayoutOutlined
-            }
-        },
-        {
-            path: "/dashboard",
-            name: "dashboard",
-            component: () => import("@/views/Dashboard.vue"),
-            meta: {
-                title: "대시보드",
-                isHide: false,
-                roles: ["ROLE_USER"],
                 icon: LayoutOutlined
             }
         },
