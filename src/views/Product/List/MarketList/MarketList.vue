@@ -111,7 +111,8 @@ async function sendMarket() {
   syncLoading.value = true
   const result = await ServiceProduct.sendMarket(productList, accountList, smartStoreCategory.value)
   if (result !== false) {
-    emit('result', result)
+    // sendMarket后端流程改为异步,取消result emit
+    // emit('result', result)
     closeModal()
   }
   syncLoading.value = false
