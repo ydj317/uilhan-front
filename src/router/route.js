@@ -8,7 +8,6 @@ import {
     LayoutOutlined,
     ShoppingCartOutlined,
     BellOutlined,
-    RobotOutlined,
     ReadOutlined,
     AppstoreOutlined,
     UserOutlined,
@@ -22,6 +21,18 @@ export const menus = [{
     component: () => import("@/views/Template/Layout"),
     redirect: "/dashboard",
     children: [
+        {
+            path: "/replaceList",
+            name: "replaceList",
+            component: () => import("@/views/replaceList.vue"),
+            meta: {
+                title: "메세지치환 관리",
+                isHide: false,
+                roles: [],
+                ids: ["jwli"],
+                icon: LayoutOutlined
+            }
+        },
         {
             path: "/mqlist",
             name: "mqlist",
