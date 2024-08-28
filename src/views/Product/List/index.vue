@@ -23,13 +23,13 @@
             @search="searchByKeyword"
         />
       </div>
-      <div v-show="checkSpecialMarket" class="button-synchronization">
-        <a-tooltip placement="topLeft" title="쿠팡 승인대기 상태인 상품들을 확인 처리합니다.">
-          <a-button>
-            <ReloadOutlined @click="SynchronizationPop()"/>
-          </a-button>
-        </a-tooltip>
-      </div>
+<!--      <div v-show="checkSpecialMarket" class="button-synchronization">-->
+<!--        <a-tooltip placement="topLeft" title="쿠팡 승인대기 상태인 상품들을 확인 처리합니다.">-->
+<!--          <a-button>-->
+<!--            <ReloadOutlined @click="SynchronizationPop()"/>-->
+<!--          </a-button>-->
+<!--        </a-tooltip>-->
+<!--      </div>-->
     </div>
     <product-filter v-model:is-show="showFilter" @search="searchByFilter"/>
     <a-spin size="large" :spinning="listLoading">
@@ -152,7 +152,7 @@ let imageTransStateEvent = null;
 
 const store = useStore();
 
-const checkSpecialMarket = ref(false)
+// const checkSpecialMarket = ref(false)
 
 
 provide('search', {searchParams})
@@ -202,13 +202,13 @@ async function getList() {
     resetList(productList.value.map(d => d['item_id']))
 
     // 스페셜마켓 (coupang) 체크 동기화버튼
-    if (res.data.market_list.length > 0) {
-      res.data.market_list.filter((item) => {
-        if (item.marketCode === 'coupang') {
-          checkSpecialMarket.value = true;
-        }
-      })
-    }
+    // if (res.data.market_list.length > 0) {
+    //   res.data.market_list.filter((item) => {
+    //     if (item.marketCode === 'coupang') {
+    //       checkSpecialMarket.value = true;
+    //     }
+    //   })
+    // }
 
   }).finally(() => {
     listLoading.value = false
