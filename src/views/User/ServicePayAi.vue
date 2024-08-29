@@ -122,8 +122,6 @@ const serviceBuy = (data) => {
     message.warning('결제 하시러면 이용약관 내용을 읽어보시고 약관 동의가 필요합니다.');
     return false;
   }
-  console.log('==0==')
-  console.log(data)
 
   message.success('결제');
 

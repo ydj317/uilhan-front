@@ -779,14 +779,16 @@
     function uploadImage(options) {
       const { onSuccess, onError, file } = options;
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append('file', file);
+      formData.append('image_type', 'license');
 
       loading.value = true;
 
       AuthRequest.post(
-          process.env.VUE_APP_API_URL + "/api/setting/uploadImage",
+          process.env.VUE_APP_API_URL + "/api/upload/image",
           formData
       ).then(response => {
+
         formState.business_license_image = response.data.img_url;
         formState.imageUploaded = true;
         onSuccess(response);

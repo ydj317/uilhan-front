@@ -221,9 +221,6 @@ const selectOption = () => {
 
 // 결제버튼
 const payment = () => {
-  console.log('==0==')
-  console.log(formState)
-
   message.success('결제');
 }
 

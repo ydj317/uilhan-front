@@ -288,8 +288,13 @@ export default {
         return false;
       }
 
+      let from = 'zh';
+      if (this.product.item_market === 'Rakuten') {
+        from = 'jp';
+      }
+
       const oParam = {
-        from: "zh",
+        from: from,
         to: "ko",
         list: [
           {
@@ -329,9 +334,13 @@ export default {
         return false;
       }
 
+      let from = 'zh';
+      if (this.product.item_market === 'Rakuten') {
+        from = 'jp';
+      }
 
       const oParam = {
-        from: "zh",
+        from: from,
         to: "ko",
         list: [],
         isTranslate: true
@@ -400,7 +409,8 @@ export default {
         translate_url: selectedCollection.translate_url || '',
         translate_status: selectedCollection.translate_status,
         request_id: selectedCollection.request_id || '',
-        is_translate: selectedCollection.is_translate || false
+        is_translate: selectedCollection.is_translate || false,
+        relation_id: this.product.item_id
       }
       this.imageMattingLoading = true;
       useProductApi().imageMatting(option, (oTranslateInfo) => {
@@ -429,7 +439,7 @@ export default {
       formData.append("file", option.file);
       formData.append("image_type", "product");
       formData.append("relation_type", "product");
-      formData.append("product_idx", this.product.item_id);
+      formData.append("relation_id", this.product.item_id);
       AuthRequest.post(
           process.env.VUE_APP_API_URL + "/api/image",
           formData

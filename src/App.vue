@@ -32,7 +32,7 @@ const checkLogin = () => {
       Cookie.remove('member_name');
       Cookie.remove('member_roles');
       Cookie.remove('token');
-      alert('세션이 만료되었습니다. 다시 로그인해주세요.')
+      alert('인증키의 유효기간이 만료되었습니다. 다시 로그인해 주시기 바랍니다.');
       window.location.replace('/user/login')
     }
   }, 10 * 60 * 1000);
