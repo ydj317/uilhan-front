@@ -33,8 +33,8 @@ export const menus = [{
             }
         },
         {
-            path: "/replacementManege",
-            name: "replacementManege",
+            path: "/replacementManage",
+            name: "replacementManage",
             component: () => import("@/views/ReplacementManage.vue"),
             meta: {
                 title: "메세지치환 관리",
