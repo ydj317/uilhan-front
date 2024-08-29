@@ -15,6 +15,8 @@
           <a-radio value="a">Tmall</a-radio>
           <a-radio value="a">Alibaba</a-radio>
           <a-radio value="a">Aliexpress</a-radio>
+          <a-radio value="a">Rakuten</a-radio>
+          <a-radio value="a">Iherb</a-radio>
         </a-radio-group>
       </div>
 

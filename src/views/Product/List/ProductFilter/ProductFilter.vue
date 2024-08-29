@@ -124,6 +124,18 @@ const marketOptions = [
       label: "Aliexpress",
       value: "Aliexpress"
     },
+    {
+      label: "Domeggook",
+      value: "Domeggook"
+    },
+    {
+      label: "Iherb",
+      value: "Iherb"
+    },
+    {
+      label: "Rakuten",
+      value: "Rakuten"
+    },
   ]
 // 처리상태
 const statusOptions = [

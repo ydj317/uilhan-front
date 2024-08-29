@@ -436,14 +436,13 @@ const HEADER =ref({
 function uploadImage(option,position) {
   const formData = new FormData();
   formData.append("file", option.file);
-  formData.append("image_type", "product");
-  formData.append("relation_type", "product");
+  formData.append("image_type", position + "_img"); // top_img bottom_img
 
   if (position === 'top') loadingTop.value = true;
   else loadingBottom.value = true;
 
   AuthRequest.post(
-      process.env.VUE_APP_API_URL + "/api/image",
+      process.env.VUE_APP_API_URL + "/api/upload/image",
       formData
   ).then((res) => {
     if (res.status !== "2000") {

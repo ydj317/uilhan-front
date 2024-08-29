@@ -45,12 +45,14 @@
       </tr>
 
       <tr>
-        <th>
+        <th style="position: relative;">
           상품명
-          <a-tooltip>
-            <template #title>지마켓/옥션 마켓 정책상 특정 카테고리의 "노출상품명"은 등록 후 10일이 경과되거나 상품이 판매된 경우 수정할 수 없습니다.</template>
-            <ExclamationCircleOutlined />
-          </a-tooltip>
+          <span v-if="shouldShowTooltip" style="position: absolute; right: 2px">
+            <a-tooltip>
+              <template #title>지마켓/옥션 마켓 정책상 특정 카테고리의 "노출상품명"은 등록 후 10일이 경과되거나 상품이 판매된 경우 수정할 수 없습니다.</template>
+              <QuestionCircleOutlined />
+            </a-tooltip>
+          </span>
         </th>
         <td style="display: flex;flex-direction: column; gap: 5px;">
           <div style="display: flex;gap: 5px;">
@@ -157,6 +159,15 @@ export default {
     ...mapState({
       product: (state) => state.product.detail,
     }),
+
+    shouldShowTooltip() {
+      if (Array.isArray(this.product.item_sync_market) && this.product.item_sync_market.length > 0) {
+        return this.product.item_sync_market.some(item =>
+            item.market_code === 'gmarket' || item.market_code === 'auction'
+        );
+      }
+      return false;
+    }
   },
   emits: ['suggestCategory'],
   watch: {
@@ -597,12 +608,6 @@ export default {
         let upData = imageList.find(v2 =>v2.old_url === v.old_url);
         if(upData){
           v.url = upData.url;
-          // if (upData.translate_status === true) {
-          //   v.url = upData.translate_url;
-          // } else {
-          //   const nUrl = upData.translate_url || upData.url;
-          //   v.url = nUrl;
-          // }
         }
         item_thumbnails.push({'name':i,'url':v.url});
         return { ...v };
