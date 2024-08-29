@@ -57,26 +57,28 @@
           <span class="font-SCDream4 fs14 color-2171E2">[추가서비스는 1개월 기준입니다]</span>
         </a-flex>
         <a-flex vertical class="advanced-list ml30 bottom-border-f0f0f0 pb20" v-for="(v,i) in state.advancedList">
-          <div class="font-SCDream4 fs20 mt30">{{ v.title }}</div>
-          <a-flex wrap="wrap" gap="20" class="mt30">
-            <a-flex align="center" class="check-list" v-if="v.checkList" v-for="v2 in v.checkList">
-              <img src="@/assets/img/pay-yes.png" class="check">
-              <div class="btn font-SCDream5 fs12 color-2171E2 ml15 bg-F0F8FE fl-cc br5 fl1">{{ v2 }}</div>
+          <template v-if="i != 2">
+            <div class="font-SCDream4 fs20 mt30">{{ v.title }}</div>
+            <a-flex wrap="wrap" gap="20" class="mt30">
+              <a-flex align="center" class="check-list" v-if="v.checkList" v-for="v2 in v.checkList">
+                <img src="@/assets/img/pay-yes.png" class="check">
+                <div class="btn font-SCDream5 fs12 color-2171E2 ml15 bg-F0F8FE fl-cc br5 fl1">{{ v2 }}</div>
+              </a-flex>
             </a-flex>
-          </a-flex>
-          <a-flex wrap="wrap" gap="30" class="mt30" v-if="v.radioList">
-            <a-radio-group v-model:value="state.selectedList['advanced'+(i+1)]" :name="'advanced'+i" class="radio-wrap w100 fl-w">
-              <template v-for="(v3,i3) in v.radioList">
-                <a-radio :value="i3" :class="{'bg-FEDB41':i3 == state.selectedList['advanced'+(i+1)]}" :disabled="!state.isPay">
-                  <a-flex vertical class="font-SCDream5">
-                    <a-flex align="center" class="fs14">
-                      <div class="ml10 font-SCDream4">{{v3.text}}</div>
+            <a-flex wrap="wrap" gap="30" class="mt30" v-if="v.radioList">
+              <a-radio-group v-model:value="state.selectedList['advanced'+(i+1)]" :name="'advanced'+i" class="radio-wrap w100 fl-w">
+                <template v-for="(v3,i3) in v.radioList">
+                  <a-radio :value="i3" :class="{'bg-FEDB41':i3 == state.selectedList['advanced'+(i+1)]}" :disabled="!state.isPay">
+                    <a-flex vertical class="font-SCDream5">
+                      <a-flex align="center" class="fs14">
+                        <div class="ml10 font-SCDream4">{{v3.text}}</div>
+                      </a-flex>
                     </a-flex>
-                  </a-flex>
-                </a-radio>
-              </template>
-            </a-radio-group>
-          </a-flex>
+                  </a-radio>
+                </template>
+              </a-radio-group>
+            </a-flex>
+          </template>
         </a-flex>
       </a-flex>
       <a-flex vertical class="right ml30">
