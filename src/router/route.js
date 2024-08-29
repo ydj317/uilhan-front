@@ -33,9 +33,9 @@ export const menus = [{
             }
         },
         {
-            path: "/replaceList",
-            name: "replaceList",
-            component: () => import("@/views/replaceList.vue"),
+            path: "/replacementManege",
+            name: "replacementManege",
+            component: () => import("@/views/ReplacementManage.vue"),
             meta: {
                 title: "메세지치환 관리",
                 isHide: true,
