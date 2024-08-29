@@ -266,10 +266,10 @@ export default {
                 await this.getDisplayCategory(marketInfo.market_code, res.data[0]["cate_ids"], marketInfo.seller_id, marketInfo.accountName);
               }
 
-              // 추천옵션 사용마켓일경우 추천옵션 리스트 조회하여 초기데이타 넣어줌
-              if (this.useRecommendedMarketList.includes(marketInfo.market_code)) {
-                await this.getRecommendedOpt(marketInfo, leafCateId)
-              }
+              // // 추천옵션 사용마켓일경우 추천옵션 리스트 조회하여 초기데이타 넣어줌
+              // if (this.useRecommendedMarketList.includes(marketInfo.market_code)) {
+              //   await this.getRecommendedOpt(marketInfo, leafCateId)
+              // }
 
             } else {
               this.product.item_cate[marketInfo.accountName] = {};
@@ -292,9 +292,15 @@ export default {
     searchCategoryByMarket(market, searchInput) {
       if (!searchInput) return;
       this.loading = true;
+      console.log('market', market);
 
-      const params = { market_code: market.market_code, search_keyword: searchInput };
+      const params = {
+        account_id: market.id,
+        market_code: market.market_code,
+        search_keyword: searchInput
+      };
       useCategoryApi().getAutoRecommendCategoryNames(params).then(async res => {
+        console.log('res', res);
         this.categories[market.accountName].options = res.data.map(item => {
           return {
             cate_ids: item.cate_ids[item.cate_ids.length - 1],
@@ -311,8 +317,9 @@ export default {
             categoryNames: res.data[0]["cate_names"].join("/"),
             keyword: this.search_keyword_clone || searchInput,
             meta_data: {
+              useOption : res.data[0]["cate_meta"] || 'Y',
               //추천 옵션 리스트
-              recommendedOptList: [],
+              recommendedOptList: res.data[0]["cate_meta"]['recommendedOpt'] || [],
               // 선택한 추천옵션 데이타
               recommendedOpt: this.product.item_option.map(item => {
                 return {
@@ -325,10 +332,10 @@ export default {
           if (this.displayCategoryMarkets.includes(market.market_code)) {
             await this.getDisplayCategory(market.market_code, res.data[0]["cate_ids"], market.seller_id, market.accountName);
           }
-          // 추천옵션 불러오기
-          if (this.useRecommendedMarketList.includes(market.market_code)) {
-            await this.getRecommendedOpt(market, res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1])
-          }
+          // // 추천옵션 불러오기
+          // if (this.useRecommendedMarketList.includes(market.market_code)) {
+          //   await this.getRecommendedOpt(market, res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1])
+          // }
 
         } else {
           this.product.item_cate[market.accountName] = {};
@@ -410,9 +417,9 @@ export default {
         await this.getDisplayCategory(marketCode, [selectedOptions.cate_ids], sellerId, accountName);
       }
 
-      if (this.useRecommendedMarketList.includes(marketCode)) {
-        await this.getRecommendedOpt(marketInfo, value)
-      }
+      // if (this.useRecommendedMarketList.includes(marketCode)) {
+      //   await this.getRecommendedOpt(marketInfo, value)
+      // }
 
       return false;
 
