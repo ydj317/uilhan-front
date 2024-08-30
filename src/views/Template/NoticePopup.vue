@@ -60,10 +60,9 @@ const getMidnightTime = () => {
   const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
   return tomorrow.getTime();
 };
-
 const modalCancel = () => {
   state.list = state.list.map(item=>{
-    if(state.currentRoute == item.menu && !item.show){
+    if(state.currentRoute === item.menu && !item.show){
       item.show = true;
     }
     return {...item};
