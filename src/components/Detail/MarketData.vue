@@ -141,7 +141,7 @@ export default {
   computed: {
     ...mapState({
       product: (state) => state.product.detail,
-      useRecommendedMarketList: (state) => state.market.use_recommended_market_list.map(item => {
+      useCategoryMetaMarket: (state) => state.market.use_recommended_market_list.map(item => {
         return item.market_code;
       })
     }),
@@ -267,8 +267,8 @@ export default {
               }
 
               // 추천옵션 사용마켓일경우 추천옵션 리스트 조회하여 초기데이타 넣어줌
-              if (this.useRecommendedMarketList.includes(marketInfo.market_code)) {
-                await this.getRecommendedOpt(marketInfo, leafCateId)
+              if (this.useCategoryMetaMarket.includes(marketInfo.market_code)) {
+                await this.getCategoryMeta(marketInfo, leafCateId)
               }
 
             } else {
@@ -326,8 +326,8 @@ export default {
             await this.getDisplayCategory(market.market_code, res.data[0]["cate_ids"], market.seller_id, market.accountName);
           }
           // 추천옵션 불러오기
-          if (this.useRecommendedMarketList.includes(market.market_code)) {
-            await this.getRecommendedOpt(market, res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1])
+          if (this.useCategoryMetaMarket.includes(market.market_code)) {
+            await this.getCategoryMeta(market, res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1])
           }
 
         } else {
@@ -410,8 +410,8 @@ export default {
         await this.getDisplayCategory(marketCode, [selectedOptions.cate_ids], sellerId, accountName);
       }
 
-      if (this.useRecommendedMarketList.includes(marketCode)) {
-        await this.getRecommendedOpt(marketInfo, value)
+      if (this.useCategoryMetaMarket.includes(marketCode)) {
+        await this.getCategoryMeta(marketInfo, value)
       }
 
       return false;
@@ -454,14 +454,14 @@ export default {
     },
 
     // 카테고리 메타데이타에 추가옵션 조회해서 넣음 (옥션, g마켓)
-    async getRecommendedOpt(marketInfo, leafCateId) {
+    async getCategoryMeta(marketInfo, leafCateId) {
       let param = {
         market_code : marketInfo.market_code,
         account_id : marketInfo.id,
         cate_id : leafCateId
       }
       // this.loading = true;
-      await useProductApi().getRecommendedOpt(param).then(res => {
+      await useCategoryApi().getCategoryMeta(param).then(res => {
         // this.loading = false;
         this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOptList'] = res.data;
         this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOpt'] = this.product.item_option.map(item => {

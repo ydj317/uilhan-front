@@ -40,6 +40,14 @@ export function useCategoryApi() {
                 method: "get",
                 params: data,
             });
-        }
+        },
+
+        getCategoryMeta: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/market/getCategoryMeta",
+                method: "get",
+                params: data,
+            });
+        },
     }
 }

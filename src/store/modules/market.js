@@ -2,14 +2,14 @@ import { useMarketApi } from "@/api/market";
 
 const state = () => ({
     marketList : [],
-    use_recommended_market_list : []
+    use_category_meta_market : []
 });
 
 const getters = {}
 
 const mutations = {
     setUseRecommendedOptionMarketList(state, value) {
-        state.use_recommended_market_list = value;
+        state.use_category_meta_market = value;
     },
     setMarketList(state, value) {
         state.marketList = value;
