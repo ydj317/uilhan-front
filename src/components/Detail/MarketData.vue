@@ -46,15 +46,18 @@
                 placeholder="마켓별 카테고리를 선택해 주세요."
                 change-on-select style="width: 100%"
                 :default-active-first-option="false"
-                :field-names="{label: 'cate_names', value: 'cate_ids'}"
                 :show-arrow="false"
                 :filter-option="false"
                 :not-found-content="null"
                 :disabled="market.market_prd_code !== ''"
-                :options="categories[market.accountName].options"
                 @change="(val, info) => handleCascaderChange(val, info, market)"
                 @reset="removeCategory(market.accountName)"
-              ></a-select>
+              >
+                <a-select-option v-for="(option, key) in categories[market.accountName].options" :value="option.cate_ids" :key="key">
+                  <a-tag v-if="option.is_group" color="#108ee9">그룹상품</a-tag>
+                  {{ option.cate_names }}
+                </a-select-option>
+              </a-select>
 
               <!-- disp 的情况 -->
               <template v-if="displayCategoryMarkets.includes(market.market_code)">
@@ -301,7 +304,8 @@ export default {
         });
 
         if (res.data.length) {
-          this.categories[market.accountName].value = res.data[0]["cate_names"].join("/");
+          // this.categories[market.accountName].value = res.data[0]["cate_names"].join("/");
+          this.categories[market.accountName].value =this.categories[market.accountName].options[0]["cate_ids"];
           this.product.item_cate[market.accountName] = {
             accountName: market.accountName,
             marketCode: market.market_code,
@@ -471,6 +475,14 @@ export default {
           });
 
           this.product.item_cate[marketInfo.accountName]['meta_data'] = metaData;
+          this.categories[marketInfo.accountName].options = this.categories[marketInfo.accountName].options.map(option => {
+            if (option.cate_ids === leafCateId && res.data['optionUseYn'] === 'N') {
+               option['is_group'] = true;
+              this.categories[marketInfo.accountName].value
+            }
+            return option;
+          })
+          this.categories[marketInfo.accountName].value = leafCateId;
         }
       })
     },
