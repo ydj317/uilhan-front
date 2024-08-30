@@ -33,30 +33,6 @@ export const menus = [{
             }
         },
         {
-            path: "/replacementManage",
-            name: "replacementManage",
-            component: () => import("@/views/ReplacementManage.vue"),
-            meta: {
-                title: "메세지치환 관리",
-                isHide: true,
-                roles: [],
-                ids: ["jwli"],
-                icon: LayoutOutlined
-            }
-        },
-        {
-            path: "/mqlist",
-            name: "mqlist",
-            component: () => import("@/views/Mqlist.vue"),
-            meta: {
-                title: "MQ리스트",
-                isHide: true,
-                roles: [],
-                ids: ["jwli"],
-                icon: LayoutOutlined
-            }
-        },
-        {
             path: "/product",
             name: "product",
             component: () => import("@/views/Product/List/index.vue"),
@@ -345,6 +321,28 @@ export const menus = [{
                         icon: '',
                         active: "/board/list"
                     },
+                },
+                {
+                    path: "/mqlist",
+                    name: "mqlist",
+                    component: () => import("@/views/Mqlist.vue"),
+                    meta: {
+                        title: "MQ리스트",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                    }
+                },
+                {
+                    path: "/replacementManage",
+                    name: "replacementManage",
+                    component: () => import("@/views/ReplacementManage.vue"),
+                    meta: {
+                        title: "메세지치환 관리",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                    }
                 },
 
             ]

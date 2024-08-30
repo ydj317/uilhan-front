@@ -48,7 +48,7 @@
   <!--조작버튼-->
   <div class="mb10">
     <!--삭제-->
-    <a-button type="primary" @click="onRemoveOpen()">선택섹제</a-button>
+    <a-button type="primary" @click="onRemoveOpen()">선택삭제</a-button>
     <a-modal v-model:open="state.removeOpen" :confirm-loading="state.updateLoading"
              title="선택한내용 삭제 하시겠습니까?" ok-text="확인" cancel-text="취소" @ok="onRemove()" />
 
