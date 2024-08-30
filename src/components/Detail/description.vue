@@ -556,6 +556,15 @@ export default {
       if (this.showOptionTable) {
         this.handleOptionTableToggle();
       }
+
+      if (this.showGuideImage) {
+        this.setGuideContent();
+      }
+
+      if (this.showVideo) {
+        this.setVideoContent()
+      }
+
     },
     editorImage(res) {
       let aImagesUrl = [
