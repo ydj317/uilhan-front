@@ -6,7 +6,7 @@
   <a-descriptions bordered :column="1" :labelStyle="{ height: '50px',width: '150px',textAlign: 'right' }" :contentStyle="{ height: '50px' }">
     <a-descriptions-item label="유형">
       <a-radio-group v-model:value="searchFrom.type">
-        <a-radio v-for="(value, key) in state.typeSelect" :key="key" :value="key">{{ value }}</a-radio>
+        <a-radio v-for="(value, key) in state.selectType" :key="key" :value="key">{{ value }}</a-radio>
       </a-radio-group>
     </a-descriptions-item>
 
@@ -17,17 +17,17 @@
       </a-checkbox>
       <a-divider type="vertical" class="mr15" style="border-color: #eee;" />
       <a-checkbox-group v-model:value="searchFrom.market" @change="onCheckMarketChange">
-        <a-checkbox v-for="(value, key) in state.marketSelect" :key="key" :value="key">
+        <a-checkbox v-for="(value, key) in state.selectMarket" :key="key" :value="key">
           {{ value }}
         </a-checkbox>
       </a-checkbox-group>
     </a-descriptions-item>
 
-    <a-descriptions-item label="번역조건">
-      <a-input v-model:value="searchFrom.match" placeholder="검색어를 입력해 주세요" />
+    <a-descriptions-item label="치환조건">
+      <a-input v-model:value="searchFrom.matcher" placeholder="검색어를 입력해 주세요" />
     </a-descriptions-item>
 
-    <a-descriptions-item label="번역결과">
+    <a-descriptions-item label="치환결과">
       <a-input v-model:value="searchFrom.replacement" placeholder="검색어를 입력해 주세요" />
     </a-descriptions-item>
 
@@ -45,62 +45,144 @@
     <a-button class="ml15" @click="onReset()">초기화</a-button>
   </div>
 
+  <!--조작버튼-->
+  <div class="mb10">
+    <a-button type="primary" @click="onRemoveOpen()">선택섹제</a-button>
+    <a-modal v-model:open="state.removeOpen" :confirm-loading="state.updateLoading"
+             title="선택한내용 삭제 하시겠습니까?" ok-text="확인" cancel-text="취소" @ok="onRemove()" />
+
+    <a-button class="ml10" @click="state.registerOpen = true">새로등록</a-button>
+    <a-modal v-model:open="state.registerOpen" :confirm-loading="state.updateLoading"
+             title="메세지치환 등록" ok-text="등록" cancel-text="취소" @ok="onRemove()">
+      <a-form
+        :model="state.registerForm"
+        name="basic"
+        :label-col="{ span: 8 }"
+        :wrapper-col="{ span: 16 }"
+        autocomplete="off"
+        @finish="onRegister()"
+        @finishFailed="onRegister()"
+      >
+        <a-form-item label="type" name="type"
+          :rules="[{ required: true, message: 'Please input your username!' }]" >
+          <a-input v-model:value="state.registerForm.type" />
+        </a-form-item>
+
+        <a-form-item label="market" name="market"
+                     :rules="[{ required: true, message: 'Please input your password!' }]" >
+          <a-input v-model:value="state.registerForm.market" />
+        </a-form-item>
+
+        <a-form-item label="matcher" name="matcher"
+                     :rules="[{ required: true, message: 'Please input your password!' }]" >
+          <a-input v-model:value="state.registerForm.matcher" />
+        </a-form-item>
+
+        <a-form-item label="replacement" name="replacement"
+                     :rules="[{ required: true, message: 'Please input your password!' }]" >
+          <a-input v-model:value="state.registerForm.replacement" />
+        </a-form-item>
+
+        <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+          <a-button type="primary" html-type="submit">Submit</a-button>
+        </a-form-item>
+      </a-form>
+    </a-modal>
+  </div>
+
   <!--테이블-->
   <a-card :loading="state.loading" :bodyStyle="state.loading ? {overflow: 'hidden'} : {padding: 0, overflow: 'hidden'}">
-    <a-table :data-source="state.replacementList" :pagination="false"
+    <a-spin size="large" :spinning="state.updateLoading">
+      <a-table :data-source="state.replacementList" :pagination="false"
              :row-selection="{ selectedRowKeys: state.listSelectedRowKeys, onChange: onListSelectChange }">
 
-      <a-table-column title="유형" :width="60" dataIndex="type" key="type">
-        <template #customRender="{text}">
-          {{ state.typeSelect[text] }}
-        </template>
-      </a-table-column>
-
-      <a-table-column title="마켓" :width="160" dataIndex="market" key="market">
-        <template #customRender="{text}">
-          <img :src="getLogoSrc('market-logo', text)" alt="" style="width: 18px;border-radius: 50%;" class="mr5">
-          {{ state.marketSelect[text] }}
-        </template>
-      </a-table-column>
-
-      <a-table-column title="변역조건" dataIndex="match" key="match">
+      <a-table-column title="유형" :width="100" dataIndex="type" key="type">
         <template #customRender="{record}">
-          <a-input v-model:value="record.match" />
           <a-tooltip placement="top">
             <template #title>
-              <span>prompt text</span>
+              <span>선택하면 저장됩니다</span>
             </template>
-            <div style="display: inline-block; cursor: pointer;">{{ record.match }}</div>
+            <a-select v-model:value="record.type" style="width: 70px;"
+                      @change="setUpdateData(record.id, {type: record.type});">
+              <a-select-option v-for="(value, key) in state.selectType" :value="key">
+                {{ value }}
+              </a-select-option>
+            </a-select>
           </a-tooltip>
         </template>
       </a-table-column>
 
-      <a-table-column title="변역결과" dataIndex="replacement" key="replacement">
+      <a-table-column title="마켓" :width="190" dataIndex="market" key="market">
         <template #customRender="{record}">
           <a-tooltip placement="top">
             <template #title>
-              <span>prompt text</span>
+              <span>선택하면 저장됩니다</span>
             </template>
-            <div>{{ record.replacement }}</div>
+            <a-select v-model:value="record.market" style="width: 160px;"
+                      @change="setUpdateData(record.id, {market: record.market});">
+              <a-select-option v-for="(value, key) in state.selectMarket" :value="key">
+                <img :src="getLogoSrc('market-logo', key)" alt="" style="width: 18px; border-radius: 50%;" class="mr5">
+                {{ value }}
+              </a-select-option>
+            </a-select>
           </a-tooltip>
         </template>
       </a-table-column>
 
-      <a-table-column title="사용여부" :width="120" dataIndex="isUse" key="is_use">
+      <a-table-column title="치환조건" dataIndex="matcher" key="matcher">
         <template #customRender="{record}">
-          <a-switch v-model:checked="record.isUse" :disabled="state.updateLoading" @change="setUpdateData(record.id, {isUse: record.isUse})" checked-children="사용중" un-checked-children="사용안함" />
+          <a-tooltip placement="top" v-if="!record.matcherShow" @click="record.matcherShow = true">
+            <template #title>
+              <span>클릭하여 수정하세요</span>
+            </template>
+            <div style="cursor: pointer;">
+              {{ record.matcher }}
+            </div>
+          </a-tooltip>
+          <a-tooltip placement="top" v-else>
+            <template #title>
+              <span>편집수, Enter 눌러 저장하세요</span>
+            </template>
+          <a-input v-model:value="record.matcher"
+                   @keydown.enter="setUpdateData(record.id, {matcher: record.matcher}); record.matcherShow = false" />
+          </a-tooltip>
         </template>
       </a-table-column>
 
-      <a-table-column title="생성시간" :width="200" dataIndex="insDate" key="insDate" />
-      <a-table-column title="변경시간" :width="200" dataIndex="updDate" key="updDate" />
+      <a-table-column title="치환결과" dataIndex="replacement" key="replacement">
+        <template #customRender="{record}">
+          <a-tooltip placement="top" v-if="!record.replacementShow" @click="record.replacementShow = true">
+            <template #title>
+              <span>클릭하여 수정하세요</span>
+            </template>
+            <div style="cursor: pointer;">
+              {{ record.replacement }}
+            </div>
+          </a-tooltip>
+          <a-tooltip placement="top" v-else>
+            <template #title>
+              <span>편집수, Enter 눌러 저장하세요</span>
+            </template>
+            <a-input v-model:value="record.replacement"
+                     @keydown.enter="setUpdateData(record.id, {replacement: record.replacement}); record.replacementShow = false" />
+          </a-tooltip>
+        </template>
+      </a-table-column>
 
-      <a-table-column title="액션" :width="70" dataIndex="id" key="action">
-        <template #customRender="{text}">
-          <a-button type="primary" size="small" class="mlr5" @click="onRemove(text)">삭제</a-button>
+      <a-table-column title="사용여부" :width="120" dataIndex="isUse" key="isUse">
+        <template #customRender="{record}">
+          <a-switch v-model:checked="record.isUse" @change="setUpdateData(record.id, {isUse: record.isUse})" checked-children="사용중" un-checked-children="사용안함" />
+        </template>
+      </a-table-column>
+
+      <a-table-column title="생성시간" :width="200" dataIndex="insDate" key="insDate" >
+        <template #customRender="{record}">
+          {{ record.insDate }}
+          <div style="color: #999; font-size: 12px;">변경( {{ record.updDate }} )</div>
         </template>
       </a-table-column>
     </a-table>
+    </a-spin>
   </a-card>
 
   <!--페이지-->
@@ -131,11 +213,11 @@ const state = reactive({
   marketCheckAll: true,
   marketIndeterminate: false,
   ins_date: [],
-  typeSelect:
+  selectType:
     {
       product: '상품',
     },
-  marketSelect:
+  selectMarket:
     {
       smartstore: '스마트스토어',
       coupang: '쿠팡',
@@ -147,12 +229,18 @@ const state = reactive({
     },
   replacementList: [],
   listSelectedRowKeys: [],
+  registerForm: {
+    type: 'product',
+    market: 'smartstore',
+    matcher: '',
+    replacement: '',
+  },
 });
 
 const searchFrom = reactive({
   type: 'product',
-  market: Object.keys(state.marketSelect),
-  match: '',
+  market: Object.keys(state.selectMarket),
+  matcher: '',
   replacement: '',
   is_use: '',
   ins_date: [],
@@ -164,13 +252,13 @@ const searchFrom = reactive({
 
 const onmarketCheckAllChange = e => {
   state.marketIndeterminate = false;
-  searchFrom.market = e.target.checked ? Object.keys(state.marketSelect) : [];
+  searchFrom.market = e.target.checked ? Object.keys(state.selectMarket) : [];
   onCheckMarketChange();
 };
 
 const onCheckMarketChange = () => {
-  state.marketCheckAll = searchFrom.market.length === Object.keys(state.marketSelect).length
-  state.marketIndeterminate = searchFrom.market.length > 0 && searchFrom.market.length < Object.keys(state.marketSelect).length
+  state.marketCheckAll = searchFrom.market.length === Object.keys(state.selectMarket).length
+  state.marketIndeterminate = searchFrom.market.length > 0 && searchFrom.market.length < Object.keys(state.selectMarket).length
 };
 
 const getTableData = async () => {
@@ -178,7 +266,7 @@ const getTableData = async () => {
   await AuthRequest.get(process.env.VUE_APP_API_URL + '/api/replacement/list', {params: searchFrom}).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message)
-      state.loading = false
+      state.replacementList = []
       return false
     }
 
@@ -188,10 +276,9 @@ const getTableData = async () => {
     }));
 
     searchFrom.total = res.data.total
-
   }).catch((e) => {
     message.error(e.message)
-    state.loading = false
+    state.replacementList = []
   }).finally(() => {
     state.loading = false
   });
@@ -203,49 +290,78 @@ const setUpdateData = async (targetId, updateData) => {
   await AuthRequest.post(process.env.VUE_APP_API_URL + '/api/replacement/update', {id: targetId, updateData}).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message)
-      state.updateLoading = false
+      getTableData()
       return false
     }
 
-    const index = state.replacementList.findIndex(item => item.id === targetId);
-    if (index !== -1) {
-      state.replacementList.splice(index, 1, { ...state.replacementList[index], ...updateData });
-    }
-
-    state.updateLoading = false
   }).catch((e) => {
     message.error(e.message)
-    state.updateLoading = false
+    getTableData()
   }).finally(() => {
     state.updateLoading = false
   });
 };
 
+const onRegister = () => {
+  state.updateLoading = true
+
+  console.log('==0==')
+  console.log(state.registerForm)
+
+  state.updateLoading = false
+}
+
+const onRemoveOpen = () => {
+  if (state.listSelectedRowKeys.length < 1) {
+    message.error('삭제할 내용을 선택해주세요')
+    return
+  }
+
+  state.removeOpen = true
+}
+
+const onRemove = async () => {
+  state.updateLoading = true
+
+  await AuthRequest.post(process.env.VUE_APP_API_URL + '/api/replacement/remove', {id: state.listSelectedRowKeys}).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message)
+      return false
+    }
+
+    getTableData()
+  }).catch((e) => {
+    message.error(e.message)
+  }).finally(() => {
+    state.updateLoading = false
+    state.removeOpen = false
+  });
+}
 
 const onListSelectChange = (selectedRowKeys) => {
-  state.listSelectedRowKeys = selectedRowKeys;
+  state.listSelectedRowKeys = selectedRowKeys
 };
 
 const onChangeDatePicker = (value, dateString) => {
-  searchFrom.ins_date = [dateString[0] + ' 00:00:00', dateString[1] + ' 23:59:59'];
+  searchFrom.ins_date = [dateString[0] + ' 00:00:00', dateString[1] + ' 23:59:59']
 };
 
 function onChangePage(current, pageSize) {
   searchFrom.page = 1
-  searchFrom.pageSize = pageSize;
-  getTableData();
+  searchFrom.pageSize = pageSize
+  getTableData()
 }
 
 const onPageChange = (page, pageSize) => {
-  searchFrom.page = page;
-  searchFrom.pageSize = pageSize;
-  getTableData();
+  searchFrom.page = page
+  searchFrom.pageSize = pageSize
+  getTableData()
 };
 
 const onReset = () => {
   searchFrom.type = 'product'
-  searchFrom.market = Object.keys(state.marketSelect)
-  searchFrom.match = ''
+  searchFrom.market = Object.keys(state.selectMarket)
+  searchFrom.matcher = ''
   searchFrom.replacement = ''
   searchFrom.ins_date = []
   searchFrom.page = 1
@@ -254,7 +370,7 @@ const onReset = () => {
   state.marketCheckAll = true
   state.marketIndeterminate = false
   state.ins_date = []
-  getTableData();
+  getTableData()
 };
 
 const getLogoSrc = (fileName, marketCode) => {
