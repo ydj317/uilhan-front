@@ -671,9 +671,13 @@ const getLogoSrc = (marketCode) => {
  * 선택주문처리
  */
 const receiverOrderSelected = () => {
-  const selectedRowKeys = rowSelection.value.selectedRowKeys;
 
-  if (!selectedRowKeys) {
+  const selectedRowKeys = Object.values(filterOrderData.value)
+      .filter(order => order.checked === true)
+      .flatMap(order => order.items.map(item => item.id))
+    || [];
+
+  if (selectedRowKeys.length === 0) {
     message.error("주문처리할 주문을 선택해주세요.");
     return false;
   }
