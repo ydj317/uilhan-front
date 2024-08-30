@@ -97,6 +97,21 @@
     <a-spin size="large" :spinning="state.updateLoading">
       <a-table :data-source="state.replacementList" :pagination="false"
              :row-selection="{ selectedRowKeys: state.listSelectedRowKeys, onChange: onListSelectChange }">
+        <template #headerCell="{ column }">
+          <template v-if="column.key === 'matcher'">
+            <span>
+              {{ column.title }}
+
+              <a-tooltip class="ml5">
+                <template #title>
+                  <div>특정부호 {.*} 로 정규일치(正则匹配)가능합니다.</div>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
+
+            </span>
+          </template>
+        </template>
 
       <a-table-column title="유형" :width="100" dataIndex="type" key="type">
         <template #customRender="{record}">
@@ -206,6 +221,7 @@
 
 <script setup>
 import {onMounted, reactive} from "vue";
+import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
 
