@@ -141,9 +141,7 @@ export default {
   computed: {
     ...mapState({
       product: (state) => state.product.detail,
-      useCategoryMetaMarket: (state) => state.market.use_recommended_market_list.map(item => {
-        return item.market_code;
-      })
+      useCategoryMetaMarket: (state) => state.market.use_category_meta_market
     }),
     marketList() {
       if (Array.isArray(this.product.item_sync_market) && this.product.item_sync_market.length > 0) {
@@ -462,14 +460,18 @@ export default {
       }
       // this.loading = true;
       await useCategoryApi().getCategoryMeta(param).then(res => {
-        // this.loading = false;
-        this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOptList'] = res.data;
-        this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOpt'] = this.product.item_option.map(item => {
-          return {
-            option_name : item.name,
-            recommended_id : ''
-          }
-        });
+        // g마켓, 옥션
+        if (['auction', 'gmarket'].includes(marketInfo.market_code)) {
+          const metaData = res.data;
+          metaData['recommendedOpt'] = this.product.item_option.map(item => {
+            return {
+              option_name : item.name,
+              recommended_id : ''
+            }
+          });
+
+          this.product.item_cate[marketInfo.accountName]['meta_data'] = metaData;
+        }
       })
     },
   },

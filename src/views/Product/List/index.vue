@@ -402,6 +402,8 @@ onMounted(() => {
   Promise.all([
     // 추천옵션 사용 마켓리스트 불러오기
     store.dispatch('market/getUseRecommendedOptionMarketList'),
+    // 카테고리 메타데이타 사용 마켓
+    store.dispatch('market/getUseCategoryMetaMarket'),
     store.dispatch('market/getOpenMarketList'),
     getMarketList(),
     getMarketDetailUrls(),
