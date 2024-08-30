@@ -73,7 +73,7 @@ watch(route, (newRoute) => {
   state.currentRoute = newRoute.path;
   const noticeList = localStorage.getItem('noticeList');
   noticeList ? state.list = JSON.parse(noticeList) : getNoticePopupList();
-});
+}, { immediate: true });
 const  refresh = async () => {
   localStorage.removeItem('noticeList');
 };
