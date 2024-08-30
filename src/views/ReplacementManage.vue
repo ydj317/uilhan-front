@@ -47,44 +47,46 @@
 
   <!--조작버튼-->
   <div class="mb10">
+    <!--삭제-->
     <a-button type="primary" @click="onRemoveOpen()">선택섹제</a-button>
     <a-modal v-model:open="state.removeOpen" :confirm-loading="state.updateLoading"
              title="선택한내용 삭제 하시겠습니까?" ok-text="확인" cancel-text="취소" @ok="onRemove()" />
 
+    <!--등록-->
     <a-button class="ml10" @click="state.registerOpen = true">새로등록</a-button>
     <a-modal v-model:open="state.registerOpen" :confirm-loading="state.updateLoading"
-             title="메세지치환 등록" ok-text="등록" cancel-text="취소" @ok="onRemove()">
-      <a-form
-        :model="state.registerForm"
-        name="basic"
-        :label-col="{ span: 8 }"
-        :wrapper-col="{ span: 16 }"
-        autocomplete="off"
-        @finish="onRegister()"
-        @finishFailed="onRegister()"
-      >
-        <a-form-item label="type" name="type"
-          :rules="[{ required: true, message: 'Please input your username!' }]" >
-          <a-input v-model:value="state.registerForm.type" />
+             title="메세지치환 등록" :ok-button-props="{ style: { display: 'none' } }"
+             :cancel-button-props="{ style: { display: 'none' } }">
+      <a-form :model="state.registerForm" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" @finish="onRegister()" class="mt20">
+        <a-form-item label="유형" name="type">
+          <a-radio-group v-model:value="state.registerForm.type">
+            <a-radio v-for="(value, key) in state.selectType" :key="key" :value="key" >{{ value }}</a-radio>
+          </a-radio-group>
         </a-form-item>
 
-        <a-form-item label="market" name="market"
-                     :rules="[{ required: true, message: 'Please input your password!' }]" >
-          <a-input v-model:value="state.registerForm.market" />
+        <a-form-item label="마켓" name="market">
+          <a-select v-model:value="state.registerForm.market" style="width: 160px;">
+            <a-select-option v-for="(value, key) in state.selectMarket" :value="key">
+              <img :src="getLogoSrc('market-logo', key)" alt="" style="width: 18px; border-radius: 50%;" class="mr5">
+              {{ value }}
+            </a-select-option>
+          </a-select>
         </a-form-item>
 
-        <a-form-item label="matcher" name="matcher"
-                     :rules="[{ required: true, message: 'Please input your password!' }]" >
+        <a-form-item label="치환조건" name="matcher" :rules="[
+          { required: true, message: '필수 입력입니다.' },
+          { max: 255, message: '최대 255자까지 입력 가능합니다.' }]" >
           <a-input v-model:value="state.registerForm.matcher" />
         </a-form-item>
 
-        <a-form-item label="replacement" name="replacement"
-                     :rules="[{ required: true, message: 'Please input your password!' }]" >
+        <a-form-item label="치환결과" name="replacement" :rules="[
+          { required: true, message: '필수 입력입니다.' },
+          { max: 255, message: '최대 255자까지 입력 가능합니다.' }]" >
           <a-input v-model:value="state.registerForm.replacement" />
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-          <a-button type="primary" html-type="submit">Submit</a-button>
+          <a-button type="primary" html-type="submit" :loading="state.updateLoading">새로등록</a-button>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -141,9 +143,9 @@
           </a-tooltip>
           <a-tooltip placement="top" v-else>
             <template #title>
-              <span>편집수, Enter 눌러 저장하세요</span>
+              <span>편집후, Enter 눌러 저장하세요 (최대 255자 입력가능)</span>
             </template>
-          <a-input v-model:value="record.matcher"
+          <a-input v-model:value="record.matcher" maxlength="255"
                    @keydown.enter="setUpdateData(record.id, {matcher: record.matcher}); record.matcherShow = false" />
           </a-tooltip>
         </template>
@@ -161,9 +163,9 @@
           </a-tooltip>
           <a-tooltip placement="top" v-else>
             <template #title>
-              <span>편집수, Enter 눌러 저장하세요</span>
+              <span>편집후, Enter 눌러 저장하세요 (최대 255자 입력가능)</span>
             </template>
-            <a-input v-model:value="record.replacement"
+            <a-input v-model:value="record.replacement" maxlength="255"
                      @keydown.enter="setUpdateData(record.id, {replacement: record.replacement}); record.replacementShow = false" />
           </a-tooltip>
         </template>
@@ -302,13 +304,29 @@ const setUpdateData = async (targetId, updateData) => {
   });
 };
 
-const onRegister = () => {
+const onRegister = async () => {
   state.updateLoading = true
 
-  console.log('==0==')
-  console.log(state.registerForm)
+  await AuthRequest.post(process.env.VUE_APP_API_URL + '/api/replacement/register', state.registerForm).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message)
+      return false
+    }
 
-  state.updateLoading = false
+    state.registerForm = {
+      type: 'product',
+      market: 'smartstore',
+      matcher: '',
+      replacement: '',
+    }
+
+    getTableData()
+  }).catch((e) => {
+    message.error(e.message)
+  }).finally(() => {
+    state.updateLoading = false
+    state.registerOpen = false
+  });
 }
 
 const onRemoveOpen = () => {
