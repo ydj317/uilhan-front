@@ -49,8 +49,12 @@
   <div class="mb10">
     <!--삭제-->
     <a-button type="primary" @click="onRemoveOpen()">선택삭제</a-button>
-    <a-modal v-model:open="state.removeOpen" :confirm-loading="state.updateLoading"
-             title="선택한내용 삭제 하시겠습니까?" ok-text="확인" cancel-text="취소" @ok="onRemove()" />
+    <a-modal v-model:open="state.removeOpen" :confirm-loading="state.updateLoading" ok-text="섹제" cancel-text="취소" @ok="onRemove()">
+      <template #title>
+        <ExclamationCircleOutlined/>
+        선택한내용 삭제 하시겠습니까?
+      </template>
+    </a-modal>
 
     <!--등록-->
     <a-button class="ml10" @click="state.registerOpen = true">새로등록</a-button>
@@ -101,14 +105,25 @@
           <template v-if="column.key === 'matcher'">
             <span>
               {{ column.title }}
-
               <a-tooltip class="ml5">
                 <template #title>
-                  <div>특정부호 {.*} 로 정규일치(正则匹配)가능합니다.</div>
+                  <div>1. 메세지내용에 치환조건 문구가 포함되면 치환결과 메세지로 노출됩니다.</div>
+                  <div>2. 특정부호 {.*} 로 정규일치(正则匹配)가능합니다.</div>
                 </template>
                 <QuestionCircleOutlined/>
               </a-tooltip>
+            </span>
+          </template>
 
+          <template v-if="column.key === 'replacement'">
+            <span>
+              {{ column.title }}
+              <a-tooltip class="ml5">
+                <template #title>
+                  <div>최종 노출메세지 입니다.</div>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
             </span>
           </template>
         </template>
@@ -221,7 +236,7 @@
 
 <script setup>
 import {onMounted, reactive} from "vue";
-import {QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {QuestionCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import {AuthRequest} from "@/util/request";
 import {message} from "ant-design-vue";
 
