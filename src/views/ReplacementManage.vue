@@ -108,7 +108,7 @@
               <a-tooltip class="ml5">
                 <template #title>
                   <div>1. 메세지내용에 치환조건 문구가 포함되면 치환결과 메세지로 노출됩니다.</div>
-                  <div>2. 특정부호 {.*} 로 정규일치(正则匹配)가능합니다.</div>
+                  <div>2. 특정부호 {*} 로 정규일치(正则匹配)가능합니다.</div>
                 </template>
                 <QuestionCircleOutlined/>
               </a-tooltip>
