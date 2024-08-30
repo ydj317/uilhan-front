@@ -173,10 +173,10 @@
           </a-tooltip>
           <a-tooltip placement="top" v-else>
             <template #title>
-              <span>편집후, Enter 눌러 저장하세요 (최대 255자 입력가능)</span>
+              <span>Enter 눌러 저장(최대 255자 입력)</span>
             </template>
-          <a-input v-model:value="record.matcher" maxlength="255"
-                   @keydown.enter="setUpdateData(record.id, {matcher: record.matcher}); record.matcherShow = false" />
+          <a-input-search v-model:value="record.matcher" maxlength="255" enter-button="저장"
+                   @search="setUpdateData(record.id, {matcher: record.matcher}); record.matcherShow = false" />
           </a-tooltip>
         </template>
       </a-table-column>
@@ -193,10 +193,11 @@
           </a-tooltip>
           <a-tooltip placement="top" v-else>
             <template #title>
-              <span>편집후, Enter 눌러 저장하세요 (최대 255자 입력가능)</span>
+              <span>Enter 눌러 저장(최대 255자 입력)</span>
             </template>
-            <a-input v-model:value="record.replacement" maxlength="255"
-                     @keydown.enter="setUpdateData(record.id, {replacement: record.replacement}); record.replacementShow = false" />
+            <a-input-search v-model:value="record.replacement" maxlength="255" enter-button="저장"
+                     @keydown.enter="setUpdateData(record.id, {replacement: record.replacement}); record.replacementShow = false"
+                     @search="setUpdateData(record.id, {replacement: record.replacement}); record.replacementShow = false" />
           </a-tooltip>
         </template>
       </a-table-column>
