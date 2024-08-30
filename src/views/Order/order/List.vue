@@ -93,7 +93,7 @@
             <template #icon>
               <ContainerOutlined/>
             </template>
-            선택 주문처리
+            주문확인
           </a-button>
         </a-space>
       </div>
@@ -228,10 +228,10 @@
                     히스토리
                   </a-button>
                   <a-button class="ml10" style="width: 70px;" size="small" v-if="item.status === 'paid' && item.marketCode !== 'interpark'"
-                            type="primary" @click.prevent="receiverOneOrder(item.id)">발주
+                            type="primary" @click.prevent="receiverOneOrder(item.id)">주문확인
                   </a-button>
                   <a-button class="ml10" style="width: 70px;" type="primary" size="small" v-if="item.status === 'shippingAddress'"
-                            @click.prevent="deliveryOrder(item.id, item.courierCode, item.courierName, item.invoiceNumber)">배송
+                            @click.prevent="deliveryOrder(item.id, item.courierCode, item.courierName, item.invoiceNumber)">발송처리
                   </a-button>
               </a-flex>
               <a-space class="mt10">
@@ -720,7 +720,7 @@ const deliveryOrder = (id, courierCode, courierName, invoiceNumber) => {
       return false;
     }
 
-    message.success(res.data.message === "" ? "배송처리 성공 하었습니다." : res.data.message);
+    message.success(res.data.message === "" ? "발송처리 성공 하었습니다." : res.data.message);
   }).finally(() => {
     getTableData();
   });
