@@ -4,6 +4,8 @@ import {onBeforeMount, reactive, ref} from "vue";
 import {AuthRequest} from "@/util/request";
 import BoardEditor from "@/components/ImageEditor/BoardEditor.vue";
 import { message } from "ant-design-vue";
+import { setFilterRouteList } from "@/router"
+import { lib } from "@/util/lib";
 
 const route = useRoute();
 const router = useRouter();
@@ -20,6 +22,8 @@ let formState = reactive({
   type: 'notice',
   status: '0',
   sort: '0',
+  menuList: [],
+  menu: '',
 });
 
 const contentUpdate = (tinymce) => {
@@ -43,6 +47,7 @@ const getBoardDetail = (id) => {
     formState.is_popup = res.data.isPopup
     formState.is_fixtop = res.data.isFixtop
     formState.type = res.data.type
+    formState.menu = res.data.menu
     indicator.value = false;
   }).catch((error) => {
     message.error(error.message);
@@ -53,7 +58,7 @@ const getBoardDetail = (id) => {
 
 const onFinish = values => {
   const is_fixtop = formState.is_fixtop ? '1' : '0';
-  values = Object.assign(values, {id: formState.id, is_fixtop: is_fixtop, type: formState.type})
+  values = Object.assign(values, {id: formState.id, is_fixtop: is_fixtop, type: formState.type,menu:formState.menu})
   buttonLoading.value = true;
   AuthRequest.post(process.env.VUE_APP_API_URL + '/api/board/save', values).then((res) => {
     if (res.status !== '2000') {
@@ -81,7 +86,19 @@ const onFinishFailed = errorInfo => {
 
 onBeforeMount(() => {
   getBoardDetail(route.params.id)
+  if(lib.isWorldLink()) {
+    formState.menuList = setFilterRouteList()[0].children
+  } else {
+    const hideMenu = [
+      '/user',
+      '/blog'
+    ];
+    formState.menuList = setFilterRouteList()[0].children.filter(item=>!hideMenu.includes(item.path) && item.path.indexOf('http') !== 0)
+  }
 })
+const handleChange = (value ) => {
+  formState.menu = value;
+};
 </script>
 
 <template>
@@ -96,7 +113,22 @@ onBeforeMount(() => {
       <a-form-item label="팝업설정" name="is_popup" v-if="formState.type === 'notice'">
         <a-switch v-model:checked="formState.is_popup" checked-children="On" un-checked-children="Off"/>
       </a-form-item>
-
+      <a-form-item label="노출메뉴" name="is_show" v-if="formState.is_popup" >
+        <a-select v-model:value="formState.menu"  @change="handleChange">
+          <template v-for="(menu,key) in formState.menuList">
+              <template v-if="menu.children && !menu.meta.isHide">
+                <a-select-opt-group :label="menu.meta.title">
+                  <template v-for="(menu2,key2) in menu.children">
+                    <a-select-option :value="menu2.path" v-if="!menu2.meta.isHide">{{ menu2.meta.title }}</a-select-option>
+                  </template>
+                </a-select-opt-group>
+              </template>
+            <template v-else>
+              <a-select-option :value="menu.path" v-if="!menu.meta.isHide">{{ menu.meta.title }}</a-select-option>
+            </template>
+          </template>
+        </a-select>
+      </a-form-item>
       <a-form-item label="제목" name="title"
                    :rules="[{ required: true, message: '제목을 입력해 주세요.' }]">
         <a-input v-model:value="formState.title" allow-clear placeholder="제목을 입력해 주세요."/>
