@@ -1,6 +1,7 @@
 <template>
 
-  <div style="font-size: 18px; font-weight: bold; padding-bottom: 10px;">MQ리스트</div>
+  <div class="title">MQ리스트</div>
+
   <a-card :loading="mqLoading" :bodyStyle="mqLoading ? {overflow: 'hidden'} : {padding: 0, overflow: 'hidden'}">
       <a-table :data-source="mqReportData" :pagination="false">
         <a-table-column title="구분" :width="300" dataIndex="title" key="title" />

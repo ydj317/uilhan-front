@@ -8,7 +8,6 @@ import {
     LayoutOutlined,
     ShoppingCartOutlined,
     BellOutlined,
-    RobotOutlined,
     ReadOutlined,
     AppstoreOutlined,
     UserOutlined,
@@ -22,18 +21,6 @@ export const menus = [{
     component: () => import("@/views/Template/Layout"),
     redirect: "/dashboard",
     children: [
-        {
-            path: "/mqlist",
-            name: "mqlist",
-            component: () => import("@/views/Mqlist.vue"),
-            meta: {
-                title: "MQ리스트",
-                isHide: true,
-                roles: [],
-                ids: ["jwli"],
-                icon: LayoutOutlined
-            }
-        },
         {
             path: "/dashboard",
             name: "dashboard",
@@ -203,7 +190,7 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 icon: MoneyCollectOutlined,
-                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
+                ids: ["jmg1052", "haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
@@ -215,7 +202,7 @@ export const menus = [{
                 isHide: true,
                 roles: [],
                 icon: '',
-                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
+                ids: ["jmg1052", "haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
@@ -334,6 +321,28 @@ export const menus = [{
                         icon: '',
                         active: "/board/list"
                     },
+                },
+                {
+                    path: "/mqlist",
+                    name: "mqlist",
+                    component: () => import("@/views/Mqlist.vue"),
+                    meta: {
+                        title: "MQ리스트",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                    }
+                },
+                {
+                    path: "/replacementManage",
+                    name: "replacementManage",
+                    component: () => import("@/views/ReplacementManage.vue"),
+                    meta: {
+                        title: "메세지치환 관리",
+                        isHide: false,
+                        roles: [],
+                        ids: ["jwli"],
+                    }
                 },
 
             ]
