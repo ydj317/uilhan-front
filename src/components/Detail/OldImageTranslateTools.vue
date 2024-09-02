@@ -423,16 +423,19 @@ export default defineComponent({
     },
 
     deleteImages(index) {
+      console.log(index);
       this.localTranslateImageList.splice(index, 1)
 
       if (this.localTranslateImageList.find(item => item.checked === true) === undefined) {
         this.localTranslateImageList[0].checked = true;
       }
+      console.log(this.localTranslateImageList);
       this.onChange();
     },
 
     // 图片 选择/取消选择
     activedImage(element, index,event) {
+      console.log(index);
       event.preventDefault();
       event.stopPropagation();
       this.localTranslateImageList.forEach((item) => {
