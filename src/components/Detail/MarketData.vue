@@ -462,7 +462,7 @@ export default {
         account_id : marketInfo.id,
         cate_id : leafCateId
       }
-      // this.loading = true;
+      this.loading = true;
       await useCategoryApi().getCategoryMeta(param).then(res => {
         // g마켓, 옥션
         if (['auction', 'gmarket'].includes(marketInfo.market_code)) {
@@ -483,6 +483,7 @@ export default {
             return option;
           })
           this.categories[marketInfo.accountName].value = leafCateId;
+          this.loading = false;
         }
       })
     },
