@@ -45,7 +45,6 @@ export function cookieInit() {
   Cookie.remove('main_user');
   Cookie.remove('employee');
   Cookie.remove('account_list');
-  localStorage.removeItem('noticeList');
 }
 
 export function getUserInfo() {
