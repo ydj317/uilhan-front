@@ -242,7 +242,8 @@ export default {
             });
             if (res.data.length) {
               this.search_keyword_clone = search_keyword;
-              this.categories[marketInfo.accountName].value = res.data[0]["cate_names"].join("/");
+              // this.categories[marketInfo.accountName].value = res.data[0]["cate_names"].join("/");
+              this.categories[marketInfo.accountName].value =this.categories[marketInfo.accountName].options[0]["cate_ids"];
               const leafCateId = res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1];
               this.product.item_cate[marketInfo.accountName] = {
                 accountName : marketInfo.accountName,
@@ -537,7 +538,14 @@ export default {
         this.search_keyword_by_market[accountName] = "";
 
         if (this.product.item_cate && this.product.item_cate[accountName]) {
-          this.categories[accountName].value = this.product.item_cate[accountName].categoryNames;
+          this.categories[accountName].options[0] = {
+            cate_ids: this.product.item_cate[accountName].cateId,
+            cate_names: this.product.item_cate[accountName].categoryNames,
+          }
+          if (['gmarket', 'auction'].includes(market.market_code)) {
+            this.categories[accountName].options[0]['is_group'] =  this.product.item_cate[accountName].meta_data?.optionUseYn === 'N'
+          }
+          this.categories[accountName].value = this.product.item_cate[accountName].cateId
         }
 
         // // 加载初始数据

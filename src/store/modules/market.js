@@ -2,7 +2,8 @@ import { useMarketApi } from "@/api/market";
 
 const state = () => ({
     marketList : [],
-    use_category_meta_market : []
+    use_category_meta_market : [],
+    use_recommended_market_list : []
 });
 
 const getters = {}
