@@ -113,7 +113,7 @@ export default {
 
     //특정 계정만 MyPage 보여줌
     hasSpecificId(){
-      const specificIds  = ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910"];
+      const specificIds  = ["jmg1052", "haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910"];
       return specificIds.includes(this.$data.user_name);
     }
   },
