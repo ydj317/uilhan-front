@@ -72,7 +72,7 @@
             <a-tag color="success" v-else-if="record.status === 'success'">연동성공</a-tag>
             <a-tag color="error" v-else-if="record.status === 'failed'">연동실패</a-tag>
             <a-tag color="default" v-else>연동대기</a-tag>
-            <span v-if="record.status === 'failed'">{{ record.result }}</span>
+            <span v-if="record.status === 'failed'">실패원인: {{ record.result }}</span>
             <a-tag color="#108ee9" v-if="record.status === 'approval'"
                    style="cursor: pointer" @click="approvalCheck(record.market_id)">
               승인상태확인
