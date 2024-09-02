@@ -190,7 +190,7 @@ export const menus = [{
                 isHide: false,
                 roles: [],
                 icon: MoneyCollectOutlined,
-                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
+                ids: ["jmg1052", "haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
@@ -202,7 +202,7 @@ export const menus = [{
                 isHide: true,
                 roles: [],
                 icon: '',
-                ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
+                ids: ["jmg1052", "haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
