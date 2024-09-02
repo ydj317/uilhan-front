@@ -31,6 +31,7 @@ const getNoticePopupList = async () => {
     state.list = res.data.map((item) => {
       item.show = false;
       item['open' + item.id] = true;
+      localStorage.removeItem('noticeClose_' + item.id);
       return item;
     })
     localStorage.setItem('noticeList', JSON.stringify(state.list));
@@ -49,6 +50,7 @@ const todayShow = (id) => {
   if(!tomorrowTime){
     return true;
   }
+  console.log(todayTime , tomorrowTime,todayTime > tomorrowTime);
   if(todayTime > tomorrowTime){
     localStorage.removeItem('noticeClose_' + id);
     return true;
