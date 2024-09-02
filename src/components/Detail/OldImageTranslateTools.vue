@@ -35,8 +35,8 @@
                   </div>
                 </div>
 
-                <div style="position: absolute;top: 6px;right: 6px;width: 20px;height: 20px;border-radius: 2px; background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;cursor: pointer">
-                  <CloseOutlined style="color: white;" @click="deleteImages(index)"/>
+                <div style="position: absolute;top: 6px;right: 6px;width: 20px;height: 20px;border-radius: 2px; background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;cursor: pointer" @click="deleteImages(index)">
+                  <CloseOutlined style="color: white;" />
                 </div>
               </div>
             </div>
