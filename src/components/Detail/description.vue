@@ -302,7 +302,7 @@ export default {
             if (optionTableDoc) {
               // optionTableDoc.innerHTML = "";
               optionTableDoc.remove(); // 移除元素
-              this.product.item_detail = doc.documentElement.innerHTML;
+              this.product.item_detail = window.tinymce.editors[0].getContent();
             }
             return;
           }
@@ -313,7 +313,7 @@ export default {
           // 只有在 showOptionTable 为 true 时才创建或更新 optionTable
           if (optionTableDoc) {
             optionTableDoc.innerHTML = optionHtml;
-            this.product.item_detail = doc.documentElement.innerHTML;
+            this.product.item_detail = window.tinymce.editors[0].getContent();
           } else {
             const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
             // top에 올라가게 변경
@@ -387,7 +387,7 @@ export default {
       }
       if (optionHtml) {
         optionTableDoc.innerHTML = optionHtml;
-        this.product.item_detail = dom.doc.documentElement.innerHTML;
+        this.product.item_detail = window.tinymce.editors[0].getContent();
       }
     },
     getOptionTable(columnCount) {
