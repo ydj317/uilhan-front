@@ -50,7 +50,6 @@ const todayShow = (id) => {
   if(!tomorrowTime){
     return true;
   }
-  console.log(todayTime , tomorrowTime,todayTime > tomorrowTime);
   if(todayTime > tomorrowTime){
     localStorage.removeItem('noticeClose_' + id);
     return true;
