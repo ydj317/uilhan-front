@@ -151,7 +151,7 @@ export class ServiceProduct {
         message.error("해당요청에 오류가 발생하였습니다. \n재시도하여 오류가 지속될시 관리자에게 문의하여 주십시오.");
         return false;
       }
-
+      message.success('상품등록 요청에 성공하였습니다. ');
       let returnData = res.data;
       return [
         returnData.success,
