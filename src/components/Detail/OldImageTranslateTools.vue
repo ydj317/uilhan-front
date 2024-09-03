@@ -35,8 +35,8 @@
                   </div>
                 </div>
 
-                <div style="position: absolute;top: 6px;right: 6px;width: 20px;height: 20px;border-radius: 2px; background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;cursor: pointer">
-                  <CloseOutlined style="color: white;" @click="deleteImages(index)"/>
+                <div style="position: absolute;top: 6px;right: 6px;width: 20px;height: 20px;border-radius: 2px; background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;cursor: pointer" @click="deleteImages(index)">
+                  <CloseOutlined style="color: white;" />
                 </div>
               </div>
             </div>
@@ -423,16 +423,19 @@ export default defineComponent({
     },
 
     deleteImages(index) {
+      console.log(index);
       this.localTranslateImageList.splice(index, 1)
 
       if (this.localTranslateImageList.find(item => item.checked === true) === undefined) {
         this.localTranslateImageList[0].checked = true;
       }
+      console.log(this.localTranslateImageList);
       this.onChange();
     },
 
     // 图片 选择/取消选择
     activedImage(element, index,event) {
+      console.log(index);
       event.preventDefault();
       event.stopPropagation();
       this.localTranslateImageList.forEach((item) => {
