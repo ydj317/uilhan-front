@@ -68,9 +68,6 @@
     box-sizing: border-box;
     outline: none;
 }
-div[aria-hidden="true"] {
-    display: none !important
-}
 /* ------------------------------------------------------ flex ------------------------------------------------------ */
 .fl{
     display: flex;
