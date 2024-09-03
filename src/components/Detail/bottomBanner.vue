@@ -71,17 +71,8 @@
     </a-modal>
 
     <!--제휴사 연동결과-->
-    <a-modal width="600px" :maskClosable="false" v-model:open="marketSyncPop" title="제휴사연동결과" @ok="">
-      <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
-      <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
-        <template #renderItem="{ item }">
-          <a-list-item>
-            <a-card :title="item.market_account" style="width: 100%">
-              <p v-for="( prd ) in item.products">{{ prd.prd_code }} - {{ prd.result }}</p>
-            </a-card>
-          </a-list-item>
-        </template>
-      </a-list>
+    <a-modal width="600px" :maskClosable="false" v-model:open="marketSyncPop" @ok="">
+      <p>상품등록 요청에 성공하였습니다.</p>
       <template v-slot:footer>
         <a-button type="primary" @click="closeMarketSyncPop()">확인</a-button>
       </template>
@@ -573,6 +564,7 @@ export default {
           this.product.item_sync_market[i].market_id = foundItem.id;
           this.product.item_sync_market[i].status = foundItem.status;
           this.product.item_sync_market[i].result = foundItem.result;
+          this.product.item_sync_market[i].upd_time = foundItem.upd_time;
         }
 
         this.product.item_sync_market[i].key = i;

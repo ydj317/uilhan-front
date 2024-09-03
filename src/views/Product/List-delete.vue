@@ -489,19 +489,9 @@
     </a-modal>
 
     <!--연동결과-->
-    <a-modal width="600px" v-model:open="marketSyncPop" centered title="제휴사연동결과" @cancel="cancelEditMemo">
-      <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
-      <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
-        <template #renderItem="{ item }">
-          <a-list-item>
-            <a-card :title="item.market_code + '::' + item.seller_id" style="width: 100%">
-              <p v-for="( prd ) in item.products">{{ prd.prd_code }} - {{ prd.result }}</p>
-            </a-card>
-          </a-list-item>
-        </template>
-      </a-list>
+    <a-modal width="600px" v-model:open="marketSyncPop" centered @cancel="cancelEditMemo">
+      <p>상품등록 요청에 성공하였습니다.</p>
       <template v-slot:footer>
-        <a-button type="primary" @click="searchFailed">실패상품검색</a-button>
         <a-button type="primary" @click="closeResultPop('multi')">확인</a-button>
       </template>
     </a-modal>
@@ -1383,6 +1373,7 @@ export default defineComponent({
           this.singleDetail.item_sync_market[i].marker_id = foundItem.id;
           this.singleDetail.item_sync_market[i].status = foundItem.status;
           this.singleDetail.item_sync_market[i].result = foundItem.result;
+          this.singleDetail.item_sync_market[i].upd_time = foundItem.upd_time;
         }
 
         this.singleDetail.item_sync_market[i].key = i;
