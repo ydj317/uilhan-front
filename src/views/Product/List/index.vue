@@ -78,7 +78,6 @@
       :sync-result="syncResult"
       v-model:show="syncResult.marketSyncPop"
       @close="closeSyncResult"
-      @search-fail="searchFail"
   />
   <DetailPopup
       :visible="showDetail"
@@ -141,11 +140,7 @@ const singleDetail = ref({})
 const smartStoreCategory = ref([])  // 联动时，检擦是否有 smartstore 联动失败的商品
 const defaultSyncResult = {
   marketSyncPop: false,
-  marketSyncResult: [],
-  marketSyncSuccess: 0,
-  marketSyncFailed: 0,
-  marketSyncTotal: 0,
-  marketSyncFailedCode: "",
+  marketSyncResult: false,
 }
 const syncResult = ref({...defaultSyncResult})
 let imageTransStateEvent = null;
@@ -168,17 +163,6 @@ async function searchByKeyword() {
   params.limit = searchParams.value.limit
   params.keyword = searchParams.value.keyword || ''
   searchParams.value = params
-  return getList()
-}
-
-async function searchFail() {
-  const params = ServiceProduct.defaultParams()
-  params.page = 1
-  params.limit = searchParams.value.limit
-  params.search_key = "item_code"
-  params.search_value = syncResult.value.marketSyncFailedCode
-  searchParams.value = params
-  closeSyncResult()
   return getList()
 }
 
@@ -340,11 +324,7 @@ function MarketListPop() {
 }
 
 function showSyncResult(data) {
-  syncResult.value.marketSyncSuccess = data[0]
-  syncResult.value.marketSyncFailedCode = data[1]
-  syncResult.value.marketSyncFailed = data[2]
-  syncResult.value.marketSyncTotal = data[3]
-  syncResult.value.marketSyncResult = data[4]
+  syncResult.value.marketSyncResult = data
   syncResult.value.marketSyncPop = true
 }
 

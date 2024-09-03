@@ -224,10 +224,8 @@ async function sendMarket() {
 
   syncLoading.value = true
   const result = await ServiceProduct.sendMarket(productList, accountList, props.smartStoreCategory)
-  if (result !== false) {
-    emit('result', result)
-    closeModal()
-  }
+  emit('result', result)
+  closeModal()
   syncLoading.value = false
 }
 
@@ -260,6 +258,7 @@ async function loadSyncInfo() {
       props.product.item_sync_market[i].marker_id = foundItem.id;
       props.product.item_sync_market[i].status = foundItem.status;
       props.product.item_sync_market[i].result = foundItem.result;
+      props.product.item_sync_market[i].upd_time = foundItem.upd_time;
     }
 
     props.product.item_sync_market[i].key = i;
