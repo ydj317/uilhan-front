@@ -10,7 +10,7 @@
         <div><strong>선택한 상품</strong></div>
         <btn-delete :delete-items="productList.filter(d => selection.includes(d.item_id))"/>
         <btn-clone :selection="selection"></btn-clone>
-        <a-tooltip title="최대 20개 상품까지 일괄등록이 가능합니다.">
+        <a-tooltip title="최대 50개 상품까지 일괄등록이 가능합니다.">
           <a-button type="default" @click="MarketListPop">상품등록</a-button>
         </a-tooltip>
         <btn-ai-replace v-if="userInfo?.user_data?.use_ai===true || userInfo?.user_data?.use_ai==='true'"
@@ -312,8 +312,8 @@ function MarketListPop() {
     return false;
   }
 
-  if (selection.value.length > 20) {
-    message.error("최대 20개 상품까지 일괄등록이 가능합니다.");
+  if (selection.value.length > 50) {
+    message.error("최대 50개 상품까지 일괄등록이 가능합니다.");
     return false;
   }
   MarketListVisible.value = true
