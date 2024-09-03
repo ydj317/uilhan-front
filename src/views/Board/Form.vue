@@ -92,17 +92,16 @@ const getNoticePopupList = async () => {
     }
     let noticeList = JSON.parse(localStorage.getItem('noticeList'));
     let newNoticeList = res.data.map(item=>{
-      noticeList.map(item2=>{
-        if(item.id == item2.id && item.enu == item2.id){
-          item.show = item2.show;
-          item['open' + item.id] = item2['open' + item2.id];
-          item['close' + item.id] = item2['close' + item2.id];
-        }else{
-          item.show = false;
-          item['open' + item.id] = true;
-          item['close' + item.id] = false;
-        }
-      })
+      let notice = noticeList.find(item2=>item.id == item2.id && item.menu == item2.menu);
+      if(notice){
+        item.show = notice.show;
+        item['open' + item.id] = notice['open' + notice.id];
+        item['close' + item.id] = notice['close' + notice.id];
+      }else{
+        item.show = false;
+        item['open' + item.id] = true;
+        item['close' + item.id] = false;
+      }
       return {...item};
     });
     localStorage.setItem('noticeList', JSON.stringify(newNoticeList));
