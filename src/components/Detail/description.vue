@@ -551,6 +551,20 @@ export default {
       content += "</div>";
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
+
+      // #440 옵션테이블 사라지는 이슈
+      if (this.showOptionTable) {
+        this.handleOptionTableToggle();
+      }
+
+      if (this.showGuideImage) {
+        this.setGuideContent();
+      }
+
+      if (this.showVideo) {
+        this.setVideoContent()
+      }
+
     },
     editorImage(res) {
       let aImagesUrl = [

@@ -1,10 +1,9 @@
 <template>
   <template v-for="(item,index) in state.list" :key="index">
-    <a-modal :key="index" :title="item.title" :mask="false" v-model:open="item['open' + item.id]" @cancel="modalCancel" v-if="state.currentRoute === item.menu && !item.show && todayShow(item.id)" style="margin-top:-50px;width: 730px">
-      <div style="text-align: center;height: 750px;overflow: scroll;overflow-x: unset;" v-html="item.content">
-      </div>
+    <a-modal :key="index" :title="item.title" :mask="false" v-model:open="item['open' + item.id]" @cancel="modalCancel(item)" v-if="state.currentRoute === item.menu && !item.show && todayShow(item)" style="margin-top:-50px;width: 730px">
+      <div style="text-align: center;height: 750px;overflow: scroll;overflow-x: unset;" v-html="item.content"></div>
       <template #footer>
-        <a-checkbox @change="closeNotice(item.id)" style="color: #999999">오늘 하루 보이지 않기</a-checkbox>
+        <a-checkbox v-model:checked="item['close' + item.id]" style="color: #999999">오늘 하루 보이지 않기</a-checkbox>
       </template>
     </a-modal>
   </template>
@@ -31,6 +30,7 @@ const getNoticePopupList = async () => {
     state.list = res.data.map((item) => {
       item.show = false;
       item['open' + item.id] = true;
+      item['close' + item.id] = false;
       return item;
     })
     localStorage.setItem('noticeList', JSON.stringify(state.list));
@@ -39,18 +39,14 @@ const getNoticePopupList = async () => {
     return false;
   });
 }
-const closeNotice = (id) => {
-  const tomorrowTime = getMidnightTime();
-  localStorage.setItem('noticeClose_'+id, tomorrowTime);
-};
-const todayShow = (id) => {
+const todayShow = (item) => {
   let todayTime = Date.now();
-  let tomorrowTime = localStorage.getItem('noticeClose_'+id);
+  let tomorrowTime = localStorage.getItem(item.id + item.menu);
   if(!tomorrowTime){
     return true;
   }
   if(todayTime > tomorrowTime){
-    localStorage.removeItem('noticeClose_' + id);
+    localStorage.removeItem(item.id + item.menu);
     return true;
   }
   return false;
@@ -60,13 +56,12 @@ const getMidnightTime = () => {
   const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
   return tomorrow.getTime();
 };
-const modalCancel = () => {
-  state.list = state.list.map(item=>{
-    if(state.currentRoute === item.menu && !item.show){
-      item.show = true;
-    }
-    return {...item};
-  })
+const modalCancel = (item) => {
+  item.show = true;
+  if(item['close' + item.id]){
+    const tomorrowTime = getMidnightTime();
+    localStorage.setItem(item.id + item.menu, tomorrowTime);
+  }
   localStorage.setItem('noticeList', JSON.stringify(state.list));
 };
 watch(route, (newRoute) => {

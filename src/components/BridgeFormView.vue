@@ -1249,10 +1249,19 @@ function RRN_NO_API() {
       } else {
         state.form.rrn_no_con = ["N"];
       }
-      message.warning(res.data.txt);
+      if (res.data.persEcmQryRtnErrInfoVo.length > 1) {
+        message.warning(res.data.persEcmQryRtnErrInfoVo[0].errMsgCn);
+      } else {
+        message.warning(res.data.persEcmQryRtnErrInfoVo.errMsgCn);
+      }
+
     } else {
       state.form.rrn_no_con = ["N"];
-      message.warning(res.data.txt);
+      if (res.data.persEcmQryRtnErrInfoVo.length > 1) {
+        message.warning(res.data.persEcmQryRtnErrInfoVo[0].errMsgCn);
+      } else {
+        message.warning(res.data.persEcmQryRtnErrInfoVo.errMsgCn);
+      }
     }
     state.checkClearanceCodeLoading = false;
   }).catch(err => {

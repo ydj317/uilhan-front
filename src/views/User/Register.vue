@@ -516,6 +516,7 @@ export default defineComponent({
             Cookie.remove('main_user');
             Cookie.remove('employee');
             Cookie.remove('account_list');
+            localStorage.removeItem('noticeList');
             router.push("/user/login");
             return false;
           }
@@ -530,6 +531,7 @@ export default defineComponent({
             Cookie.remove('main_user');
             Cookie.remove('employee');
             Cookie.remove('account_list');
+            localStorage.removeItem('noticeList');
             router.push("/user/login");
             return false;
           }
