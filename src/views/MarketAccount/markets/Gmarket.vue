@@ -53,8 +53,8 @@
         <a-form-item name="bundle_shipping_code"
                      label="묶음배송비"
                      v-if="state.formData.outbound_address_code"
-                     :rules="[{ required: true, message: '출고지를 선택한 다음 묶음배송비를 선택해 주세요.' }]">
-          <a-select v-model:value="state.formData.bundle_shipping_code" placeholder="출고지를 선택해 주세요" style="width:400px;">
+                     :rules="[{ required: true, message: '묶음배송비를 선택해 주세요.' }]">
+          <a-select v-model:value="state.formData.bundle_shipping_code" placeholder="묶음배송비를 선택해 주세요" style="width:260px;">
             <a-select-option :value="item.bundle_shipping_code" v-for="(item, key) in state.bundleShippingList"
                              :key="key">{{ item.bundle_shipping_name }}</a-select-option>
           </a-select>
@@ -320,7 +320,7 @@ const syncOutboundAddress = (account_id) => {
       return false;
     }
 
-    message.success('업데이트 완료 되었습니다. 출고지,반품지를 선택해 주세요.');
+    message.success('업데이트 완료 되었습니다. 출고지를 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
 
     // 업데이트상태/날짜
@@ -347,7 +347,7 @@ const syncReturnAddress = (account_id) => {
       return false;
     }
 
-    message.success('업데이트 완료 되었습니다. 반품지를 선택해 주세요.');
+    message.success('업데이트 완료 되었습니다. 교환/반품지를 선택해 주세요.');
     const { marketJson, syncStatus, updDate } = res.data;
 
     // 업데이트상태/날짜
@@ -368,6 +368,10 @@ const syncReturnAddress = (account_id) => {
 
 // 선택한 출고지의 묶음배송비 정책 불러오기
 const syncBundleShipping = (account_id, outbound_address_code) => {
+  state.syncBundleShippingLoading = true;
+  state.bundleShippingList = [];
+  state.formData.bundle_shipping_code = null;
+
   useAccountJsonApi().getBundleShipping({account_id: account_id, market_code: props.market_code, outbound_address_code: outbound_address_code}).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
@@ -376,7 +380,7 @@ const syncBundleShipping = (account_id, outbound_address_code) => {
     }
 
     console.log('res', res);
-    message.success('업데이트 완료 되었습니다. 출고지,반품지를 선택해 주세요.');
+    message.success('업데이트 완료 되었습니다. 묶음배송비를 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
 
     // 업데이트상태/날짜
@@ -414,7 +418,7 @@ const syncShippingPolicy = (account_id) => {
       return false;
     }
 
-    message.success('업데이트 완료 되었습니다. 출고지,반품지를 선택해 주세요.');
+    message.success('업데이트 완료 되었습니다. 발송정책을 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
 
     // 업데이트상태/날짜
