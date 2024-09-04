@@ -198,10 +198,7 @@ export default {
         return false;
       }
 
-      const videoContent = `<div id="${this.videoId}">
-                            <video width="auto;" height="400;" controls="controls">
-                            <source src="${this.product.item_video_url}" type="video/mp4"></video>
-                            </div>`;
+      const videoContent = `<div id="${this.videoId}"><video width="auto;" height="400;" controls="controls"><source src="${this.product.item_video_url}" type="video/mp4"></video></div>`;
       let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
       const match = regex.exec(this.product.item_detail);
       if (match !== null) {
@@ -275,7 +272,7 @@ export default {
       }
 
       if (matchAfter === null) {
-        const afterCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
+        const afterCont = `<div id="${this.guideAfterId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
         this.product.item_detail = this.product.item_detail + afterCont;
       }
 
