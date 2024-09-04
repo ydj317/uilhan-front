@@ -379,7 +379,6 @@ const syncBundleShipping = (account_id, outbound_address_code) => {
       return false;
     }
 
-    console.log('res', res);
     message.success('업데이트 완료 되었습니다. 묶음배송비를 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
 
@@ -494,7 +493,6 @@ const getBundleShippingAccountJson = () => {
     state.sync_bundle_shipping_status = syncStatus || '0';
     state.sync_bundle_shipping_date = updDate || null;
 
-    console.log('marketJson', marketJson);
     marketJson?.policies.forEach(item => {
       let name = '';
       name += state.bundle_shipping_map_rule.feeType[item.feeType] + ' : ';
