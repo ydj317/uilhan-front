@@ -12,16 +12,10 @@
       <!--bodyCell-->
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'market_name'">
-          <div  style="text-align: center;">{{ record.market_code }}</div>
-        </template>
-
-        <template v-if="column.key === 'market_account'">
-          <div style="text-align: left">
-            <img 
-              :src="getLogoSrc('market-logo', record.market_code)"
-              style="width: 16px; height: 16px; margin-right: 5px;" 
+          <div  style="text-align: center;" class="market-code">
+            <img :src="getLogoSrc('market-logo', record.market_code)"
+              style="width: 25px; height: 25px;"
             >
-            {{ record.seller_id }}
             <a-tooltip v-if="record.market_code === 'lotteon'">
               <template #title>
                 <div>-롯데ON의 경우 마켓 등록 재전송 필요합니다.(*기존 데이터 베이스가 없으므로 작업 후 기존 마켓들과 동일하게 업로드 가능)</div>
@@ -36,6 +30,12 @@
               </template>
               <ExclamationCircleOutlined />
             </a-tooltip>
+          </div>
+        </template>
+
+        <template v-if="column.key === 'market_account'">
+          <div style="text-align: left">
+            {{ record.seller_id }}
           </div>
         </template>
       </template>
@@ -64,7 +64,7 @@ const columns = [
     title: '마켓',
     key: 'market_name',
     align: "center",
-    width: '160px'
+    width: '150px'
   },
   {
     title: '계정',
