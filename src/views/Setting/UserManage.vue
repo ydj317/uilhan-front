@@ -355,10 +355,6 @@ const editParentUser = (record) => {
     searchFrom.editModal = true;
 };
 const setParentUser = () => {
-  if(searchFrom.editUser.parent_user.trim() == ''){
-    message.info('추천인 아이디를 입력해주세요');
-    return;
-  }
   AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user/set", {id:searchFrom.editUser.id,parent_user:searchFrom.editUser.parent_user}).then((res) => {
     if (res.status !== "2000") {
       message.error(res.message);
