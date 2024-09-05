@@ -126,6 +126,7 @@ export default {
       showVideo: false,
       showOptionTable: false,
       imgLoading:false,
+      imgRegexData:[],
     };
   },
   watch: {
@@ -220,7 +221,8 @@ export default {
         return;
       }
 
-      this.deleteGuideContent();
+      // #456 상/하단 이미지 체크 버튼 클릭시 삭제
+      this.deleteGuideContentMergeData();
 
       if (this.showGuideImage) {
         this.setGuideContent();
@@ -257,6 +259,11 @@ export default {
         const regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>|<div id="${this.guideAfterId}".*?</div>`, "igs");
         this.product.item_detail = this.product.item_detail.replace(regex, "");
       }
+    },
+
+    deleteGuideContentMergeData() {
+        const regex = /src=["']([^"']*(?:top_img|bottom_img)[^"']*)["']/g;
+        this.product.item_detail = this.product.item_detail.replace(regex, "");
     },
 
     getGuide() {
@@ -533,13 +540,36 @@ export default {
         }
         return tmp;
       })
+
+      //#456 상/하단 이미지 이미지편집 리스트에서 뺴기
+      let regex = /(top_img|bottom_img)/;
+      this.imgRegexData = imgList.filter(obj => regex.test(obj.url));
+      imgList = imgList.filter(obj => !regex.test(obj.url));
+      if (imgList.length > 0) {
+        imgList[0].checked = true;
+      }
+
       this.translateImageList = imgList;
       this.visible = true;
     },
     updateTranslateImageListOld(imageList) {
       this.$refs.editor.clear();
       let content = "<div style='display: flex; flex-direction: column;justify-content: center;align-items: center;'>";
-      imageList.forEach((item) => {
+
+      // #456 상/하단 리스트에서 뺸 이미지 머지
+      let aMergedArray = imageList
+      if (this.showGuideImage) {
+        let aImgRegexData = this.imgRegexData;
+        let iCount = aImgRegexData.length;
+
+        aMergedArray = [
+          ...aImgRegexData.slice(0,1),
+          ...imageList,
+          ...aImgRegexData.slice(iCount-1)
+        ]
+      }
+
+      aMergedArray.forEach((item) => {
         content += `<img src="${item.url}" style="max-width: 100%; height: auto;"/>`;
         // if (item.translate_status === true) {
         //   content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
@@ -555,14 +585,6 @@ export default {
       // #440 옵션테이블 사라지는 이슈
       if (this.showOptionTable) {
         this.handleOptionTableToggle();
-      }
-
-      if (this.showGuideImage) {
-        this.setGuideContent();
-      }
-
-      if (this.showVideo) {
-        this.setVideoContent()
       }
 
     },
