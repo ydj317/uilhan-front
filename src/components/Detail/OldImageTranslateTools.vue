@@ -26,6 +26,7 @@
                   :key="index"
                   :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
                   @click="activedImage(element, index, $event)"
+                  @touchstart="activedImage(element, index, $event)"
                 >
                   <div
                     style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
@@ -35,8 +36,8 @@
                   </div>
                 </div>
 
-                <div style="position: absolute;top: 6px;right: 6px;width: 20px;height: 20px;border-radius: 2px; background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;cursor: pointer">
-                  <CloseOutlined style="color: white;" @click="deleteImages(index)"/>
+                <div style="position: absolute;top: 6px;right: 6px;width: 20px;height: 20px;border-radius: 2px; background-color: rgba(0,0,0,0.6);display: flex;justify-content: center;align-items: center;cursor: pointer" @click="deleteImages(index)" @touchstart="deleteImages(index)">
+                  <CloseOutlined style="color: white;" />
                 </div>
               </div>
             </div>
@@ -95,14 +96,6 @@
     <template #title>
       <div style="display: flex;justify-content: space-between;align-items:center;padding: 0 20px;">
         이미지 편집
-        <!--        <div style="display: flex;gap: 5px;">-->
-        <!--          <a-button @click="onCancel">-->
-        <!--            전체 이미지 다운로드-->
-        <!--          </a-button>-->
-        <!--          <a-popconfirm title="리스트의 전체 이미지가 번역됩니다. 계속 진행 하시겠습니까?" ok-text="확인" cancel-text="취소" @confirm="translateImageBatch">-->
-        <!--            <a-button :loading="translateImageBatchLoading">전체 이미지 번역</a-button>-->
-        <!--          </a-popconfirm>-->
-        <!--        </div>-->
       </div>
     </template>
     <template #footer>
@@ -428,13 +421,12 @@ export default defineComponent({
       if (this.localTranslateImageList.find(item => item.checked === true) === undefined) {
         this.localTranslateImageList[0].checked = true;
       }
+      console.log(this.localTranslateImageList);
       this.onChange();
     },
 
     // 图片 选择/取消选择
     activedImage(element, index,event) {
-      event.preventDefault();
-      event.stopPropagation();
       this.localTranslateImageList.forEach((item) => {
         item.checked = false;
       });

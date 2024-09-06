@@ -100,17 +100,8 @@
   </a-modal>
 
   <!--제휴사 연동결과-->
-  <a-modal width="600px" :maskClosable="false" v-model:open="marketSyncPop" centered title="제휴사연동결과" @ok="">
-    <h3><b>총{{ marketSyncTotal }}개 상품 / 성공 {{ marketSyncSuccess }} / 실패 {{ marketSyncFailed }}</b></h3>
-    <a-list v-if="marketSyncResult.length > 0" :data-source="marketSyncResult">
-      <template #renderItem="{ item }">
-        <a-list-item>
-          <a-card :title="item.market_account" style="width: 100%">
-            <p v-for="( prd ) in item.products">{{ prd.prd_code }} - {{ prd.result }}</p>
-          </a-card>
-        </a-list-item>
-      </template>
-    </a-list>
+  <a-modal width="600px" :maskClosable="false" v-model:open="marketSyncPop" centered @ok="">
+    <p>상품등록 요청에 성공하였습니다.</p>
     <template v-slot:footer>
       <a-button type="primary" @click="closeMarketSyncPop()">확인</a-button>
     </template>
@@ -128,7 +119,7 @@ import {lib} from "@/util/lib";
 import {message} from "ant-design-vue";
 import {AuthRequest} from "@/util/request";
 import { mapState} from "vuex";
-import {throttle,debounce} from "lodash";
+import { throttle, debounce, forEach } from "lodash";
 import {useCategoryApi} from "@/api/category";
 import {useUserApi} from "@/api/user";
 import Loading from "vue-loading-overlay";
@@ -203,7 +194,11 @@ export default defineComponent({
       syncSelectedRowKeys: [],
       marketSyncResult: [],
       smartStoreCategory: [],
-      showNaverHelp : false
+      showNaverHelp : false,
+      optionTableId: "editor_option_table",
+      guideBeforeId: "editor_before_guide",
+      guideAfterId: "editor_after_guide",
+      videoId: "editor_video_content",
     };
   },
 
@@ -211,6 +206,7 @@ export default defineComponent({
     ...mapState({
       product: state => state.product.detail,
       autosave: (state) => state.product.detail?.user?.use_auto_save,
+      descriptionOption: (state) => state.product.detail?.user?.description_option
     }),
 
     localvisible: {
@@ -259,6 +255,8 @@ export default defineComponent({
         message.error(res.message);
         return false;
       }
+      //自动保存后修改时间不为空,为了再次自动保存时相关的验证
+      this.product.item_upd = 1;
       this.lastSaveTime = new Date().getTime();
       this.showMessage();
       return true;
@@ -373,7 +371,7 @@ export default defineComponent({
         spec: JSON.stringify(oProduct.item_option),
         stock: oProduct["item_stock"],
         image: JSON.stringify(oProduct.item_thumbnails),
-        detail: oProduct.item_detail,
+        detail: this.getProductDetail(),
         trans_name: oProduct.item_trans_name,
         trans_status: oProduct.item_is_trans,
         cross_border: oProduct.item_cross_border,
@@ -831,6 +829,7 @@ export default defineComponent({
           this.product.item_sync_market[i].market_id = foundItem.id;
           this.product.item_sync_market[i].status = foundItem.status;
           this.product.item_sync_market[i].result = foundItem.result;
+          this.product.item_sync_market[i].upd_time = foundItem.upd_time;
         }
 
         this.product.item_sync_market[i].key = i;
@@ -929,6 +928,105 @@ export default defineComponent({
         }
       }
     },
+    handleLocalVisible() {
+      if (this.localvisible) {
+        // add keyboard event listener
+        document.addEventListener('keydown', this.handleTabsEvent);
+      } else {
+        document.removeEventListener('keydown', this.handleTabsEvent);
+      }
+    },
+    getProductDetail(){
+      if(this.product.item_upd === null){
+        if(this.descriptionOption?.option_table?.use){
+          const productTable = new RegExp(`<div id="${this.optionTableId}".*?</div>`, "ig");
+          const matchProductTable = productTable.exec(this.product.item_detail);
+          if(matchProductTable == null){
+            const divElement = document.createElement('div');
+            divElement.id = `${this.optionTableId}`;
+            let optionHtml = this.getOptionTable(this.descriptionOption?.option_table?.column_length);
+            divElement.innerHTML = optionHtml;
+            if (optionHtml) {
+              if(this.descriptionOption?.option_table?.show_position == 'top'){
+                this.product.item_detail = divElement.outerHTML + this.product.item_detail;
+              }else{
+                this.product.item_detail = this.product.item_detail + divElement.outerHTML;
+              }
+            }
+          }
+        }
+        if(this.descriptionOption?.top_bottom_image?.use){
+          // 기존에 있는지 업는지 판단소스를 써줘``
+          const regexBefore = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "ig");
+          const regexAfter = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "ig");
+          const matchBefore = regexBefore.exec(this.product.item_detail);
+          const matchAfter = regexAfter.exec(this.product.item_detail);
+
+          if (matchBefore === null) {
+            const beforeCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
+            this.product.item_detail = beforeCont + this.product.item_detail;
+          }
+
+          if (matchAfter === null) {
+            const afterCont = `<div id="${this.guideAfterId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
+            this.product.item_detail = this.product.item_detail + afterCont;
+          }
+        }
+        if(this.descriptionOption?.show_video){
+          const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
+          this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
+          if (this.product.item_video_url === "" || this.product.item_video_url === null) {
+          }else{
+            const videoContent = `<div id="${this.videoId}"><video width="auto;" height="400;" controls="controls"><source src="${this.product.item_video_url}" type="video/mp4"></video></div>`;
+            let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
+            const match = regex.exec(this.product.item_detail);
+            if (match !== null) {
+              this.product.item_detail = this.product.item_detail.replace(regex, "");
+              this.product.item_detail = match[0] + videoContent + this.product.item_detail;
+            } else {
+              this.product.item_detail = videoContent + this.product.item_detail;
+            }
+          }
+        }
+      }
+      return this.product.item_detail;
+    },
+    getOptionTable(columnCount) {
+      let tableId = `${this.optionTableId}_${columnCount}`;
+      //columnCount은 2줄로 보기 혹은 4줄로 보기
+      let optionHtml = `<table id="${tableId}" border="1" style="border-collapse: collapse; margin-left: auto; margin-right: auto;">`;
+      let i = 1;
+      let trStartTag = null;
+      let skuLength = this.product.sku.length;
+      forEach(this.product.sku, (item) => {
+        if (i === 1 || i === trStartTag) {
+          //다음번 tr 시작 태그
+          trStartTag = i + columnCount;
+          optionHtml += "<tr>";
+        }
+        let imgHtml = item.img === null || item.img === "" ? `<div style="height:100px;width:100px;"></div>` : `<img style="height:100px;width:100px;" src="${item.img}">`;
+        optionHtml += `<td style="min-height:100px;min-width:100px;">${imgHtml}</td>`;
+        optionHtml += `<td style="min-height:100px;min-width:150px; text-align: center;">${item.spec}</td>`;
+        //1줄 이상의 데이타일 경우 부족한 td 추가해줌
+        if (i === skuLength) {
+          if (skuLength > columnCount && skuLength % columnCount !== 0) {
+            for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
+              optionHtml += `<td style="min-height:100px;min-width:100px;"></td>`;
+              optionHtml += `<td style="min-height:100px;min-width:150px;"></td>`;
+            }
+          }
+        }
+
+        //tr태그 닫음
+        if (i % columnCount === 0) {
+          optionHtml += "</tr>";
+        }
+        i++;
+      });
+      optionHtml += "</table>";
+
+      return optionHtml;
+    },
   },
 
   watch: {
@@ -971,19 +1069,13 @@ export default defineComponent({
 
     prdId: {
       async handler() {
-        this.$store.dispatch('product/getDetail', this.prdId);
+        await this.$store.dispatch('product/getDetail', this.prdId);
+        this.handleLocalVisible();
       },
       flush: 'post',
     },
     localvisible: {
-      handler() {
-        if (this.localvisible) {
-          // add keyboard event listener
-          document.addEventListener('keydown', this.handleTabsEvent);
-        } else {
-          document.removeEventListener('keydown', this.handleTabsEvent);
-        }
-      },
+      handler: 'handleLocalVisible',
       immediate: true,
     },
     activeTab(newVal) {

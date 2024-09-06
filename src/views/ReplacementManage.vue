@@ -176,7 +176,7 @@
               <span>Enter 눌러 저장(최대 255자 입력)</span>
             </template>
           <a-input-search v-model:value="record.matcher" maxlength="255" enter-button="저장"
-                   @search="setUpdateData(record.id, {matcher: record.matcher}); record.matcherShow = false" />
+                   @search="setUpdateData(record.id, {matcher: record.matcher.trim()}); record.matcherShow = false" />
           </a-tooltip>
         </template>
       </a-table-column>
@@ -196,8 +196,7 @@
               <span>Enter 눌러 저장(최대 255자 입력)</span>
             </template>
             <a-input-search v-model:value="record.replacement" maxlength="255" enter-button="저장"
-                     @keydown.enter="setUpdateData(record.id, {replacement: record.replacement}); record.replacementShow = false"
-                     @search="setUpdateData(record.id, {replacement: record.replacement}); record.replacementShow = false" />
+                     @search="setUpdateData(record.id, {replacement: record.replacement.trim()}); record.replacementShow = false" />
           </a-tooltip>
         </template>
       </a-table-column>
@@ -338,6 +337,9 @@ const setUpdateData = async (targetId, updateData) => {
 
 const onRegister = async () => {
   state.updateLoading = true
+
+  state.registerForm.matcher = state.registerForm.matcher.trim()
+  state.registerForm.replacement = state.registerForm.replacement.trim()
 
   await AuthRequest.post(process.env.VUE_APP_API_URL + '/api/replacement/register', state.registerForm).then((res) => {
     if (res.status !== "2000") {

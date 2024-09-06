@@ -24,6 +24,7 @@ let formState = reactive({
   sort: '0',
   menuList: [],
   menu: '',
+  menuOld: '',
 });
 
 const contentUpdate = (tinymce) => {
@@ -48,6 +49,7 @@ const getBoardDetail = (id) => {
     formState.is_fixtop = res.data.isFixtop
     formState.type = res.data.type
     formState.menu = res.data.menu
+    formState.menuOld = res.data.menu
     indicator.value = false;
   }).catch((error) => {
     message.error(error.message);
@@ -66,7 +68,10 @@ const onFinish = values => {
       buttonLoading.value = false;
       return false;
     }
-
+    if(localStorage.getItem(formState.id + formState.menuOld)){
+      localStorage.removeItem(formState.id + formState.menuOld);
+    }
+    getNoticePopupList()
     let data = res.data;
     message.success(data.message);
 
@@ -79,7 +84,32 @@ const onFinish = values => {
     return false;
   });
 };
-
+const getNoticePopupList = async () => {
+  AuthRequest.get(process.env.VUE_APP_API_URL + '/api/board/noticePopupList').then((res) => {
+    if (res.status !== '2000') {
+      message.error(res.message)
+      return false;
+    }
+    let noticeList = JSON.parse(localStorage.getItem('noticeList'));
+    let newNoticeList = res.data.map(item=>{
+      let notice = noticeList.find(item2=>item.id == item2.id && item.menu == item2.menu);
+      if(notice){
+        item.show = notice.show;
+        item['open' + item.id] = notice['open' + notice.id];
+        item['close' + item.id] = notice['close' + notice.id];
+      }else{
+        item.show = false;
+        item['open' + item.id] = true;
+        item['close' + item.id] = false;
+      }
+      return {...item};
+    });
+    localStorage.setItem('noticeList', JSON.stringify(newNoticeList));
+  }).catch((error) => {
+    message.error(error.message);
+    return false;
+  });
+}
 const onFinishFailed = errorInfo => {
   console.log('Failed:', errorInfo);
 };
