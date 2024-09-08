@@ -29,13 +29,17 @@
             <div style="display:flex;justify-content:space-between;align-items:center;" class="mb15">
                 <h3>마켓정보 불러오기</h3>
             </div>
-
+          <a-form-item label="출고지">
             <a-form-item name="outboundShippingPlaceCode" label="출고지"
                 :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]">
-                <a-select v-model:value="state.formData.outboundShippingPlaceCode" placeholder="출고지를 선택해 주세요"
+                <a-select @change="setShipmentDate" v-model:value="state.formData.outboundShippingPlaceCode" placeholder="출고지를 선택해 주세요"
                     style="width:260px;">
-                    <a-select-option :value="item.outbound_address_code" v-for="(item, key) in state.outboundAddressList"
-                        :key="key">{{ item.outbound_address_name }}</a-select-option>
+                    <a-select-option
+                      :value="item.outbound_address_code"
+                      :data-country-code="item.outbound_address_country_code"
+                      v-for="(item, key) in state.outboundAddressList"
+                        :key="key">{{ item.outbound_address_name }}
+                    </a-select-option>
                 </a-select>
                 <a-button @click="syncOutboundAddress(state.formData.id)" class="ml15"
                     :loading="state.syncOutboundAddressLoading">업데이트</a-button>
@@ -44,6 +48,21 @@
                 <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
                 <span>{{ state.sync_outbound_address_date ?? '-' }}</span>
             </a-form-item>
+
+            <a-form-item name="shipmentDate" label="출고소요일"
+                         :rules="[{ required: true, message: '출고소요일을 선택해 주세요.' }]">
+              <a-select @change="setCountryCode" v-model:value="state.formData.shipmentDate" placeholder="출고소요일을 선택해 주세요"
+                        style="width:150px;">
+                <a-select-option value="">- 선택해주세요 -</a-select-option>
+                <a-select-option
+                  v-for="number in state.shipmentDateLength"
+                  :value="number"
+                  :key="number">{{ number }}</a-select-option>
+              </a-select> 일
+            </a-form-item>
+
+          </a-form-item>
+
 
             <a-form-item name="returnCenterCode" label="반품지" :rules="[{ required: true, message: '반품지를 선택해 주세요.' }]">
                 <a-select v-model:value="state.formData.returnCenterCode" placeholder="반품지를 선택해 주세요" style="width:260px;"
@@ -202,12 +221,15 @@ const state = reactive({
         // 마켓정보 불러오기
         returnCenterCode: null,// 반품지
         outboundShippingPlaceCode: null,// 출고지
+        shipmentDate: '', // 출고소요일
+        outboundShippingPlaceCountryCode : '', // 출고지 국가코드
 
         // 마켓정보 설정
         returnChargeLow: 0,
         returnChargeMedium: 0,
         returnChargeHigh: 0,
         deliveryCompany: '',
+
     },
 
     syncCheckLoading: false,
@@ -224,7 +246,8 @@ const state = reactive({
     sync_return_address_status: 0,
     sync_return_address_date: null,
 
-    deliveryCompanyList: []
+    deliveryCompanyList: [],
+    shipmentDateLength: 0,
 })
 
 // 수정시 계정 데이터 설정
@@ -241,6 +264,8 @@ const initFormData = () => {
         state.formData.sync_market_status = accountInfo.marketData.sync_market_status;
 
         state.formData.outboundShippingPlaceCode = accountInfo.marketData.outboundShippingPlaceCode;
+        state.formData.outboundShippingPlaceCountryCode = accountInfo.marketData.outboundShippingPlaceCountryCode;
+        state.formData.shipmentDate = accountInfo.marketData.shipmentDate;
         state.formData.returnCenterCode = accountInfo.marketData.returnCenterCode;
         state.formData.returnZipCode = accountInfo.marketData.returnZipCode;
         state.formData.returnAddress = accountInfo.marketData.returnAddress;
@@ -278,7 +303,8 @@ const syncOutboundAddress = (account_id) => {
             if (item.usable === true) {
                 state.outboundAddressList.push({
                     outbound_address_code: item.outboundShippingPlaceCode,
-                    outbound_address_name: item.shippingPlaceName
+                    outbound_address_name: item.shippingPlaceName,
+                    outbound_address_country_code : item.placeAddresses[0].countryCode
                 });
             }
         });
@@ -286,6 +312,18 @@ const syncOutboundAddress = (account_id) => {
         state.syncOutboundAddressLoading = false;
     });
 };
+
+const setShipmentDate = (value, option) => {
+  state.formData.outboundShippingPlaceCountryCode = option['data-country-code'];
+  if (state.formData.outboundShippingPlaceCountryCode === 'KR') {
+    state.shipmentDateLength = 7;
+  } else {
+    state.shipmentDateLength = 20;
+  }
+  state.formData.shipmentDate = '';
+}
+
+
 const syncReturnAddress = (account_id) => {
     state.syncReturnAddressLoading = true;
     useAccountJsonApi().syncReturnAddress({ account_id: account_id, market_code: props.market_code }).then(res => {
@@ -432,7 +470,8 @@ const getOutboundAddressList = () => {
             if (item.usable === true) {
                 state.outboundAddressList.push({
                     outbound_address_code: item.outboundShippingPlaceCode,
-                    outbound_address_name: item.shippingPlaceName
+                    outbound_address_name: item.shippingPlaceName,
+                    outbound_address_country_code : item.placeAddresses[0].countryCode
                 });
             }
         });
@@ -459,6 +498,11 @@ onMounted(() => {
     if (state.formData.sync_market_status) {
         getOutboundAddressList()
         getReturnAddressList()
+    }
+    if (state.formData.outboundShippingPlaceCountryCode === 'KR') {
+      state.shipmentDateLength = 7;
+    } else {
+      state.shipmentDateLength = 20;
     }
 });
 
