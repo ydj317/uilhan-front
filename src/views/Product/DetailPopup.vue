@@ -947,7 +947,11 @@ export default defineComponent({
             let optionHtml = this.getOptionTable(this.descriptionOption?.option_table?.column_length);
             divElement.innerHTML = optionHtml;
             if (optionHtml) {
-              this.product.item_detail = divElement.outerHTML + this.product.item_detail;
+              if(this.descriptionOption?.option_table?.show_position == 'top'){
+                this.product.item_detail = divElement.outerHTML + this.product.item_detail;
+              }else{
+                this.product.item_detail = this.product.item_detail + divElement.outerHTML;
+              }
             }
           }
         }

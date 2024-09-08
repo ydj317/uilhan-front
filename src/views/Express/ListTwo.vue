@@ -228,7 +228,7 @@
               <span class="color-2755f9 font-SCDream6">240101</span>
               <span class="color-3F4249">-8294112</span>
             </span>
-            <span class="color-6B6F7C fs14">주문상세 <RightOutlined /></span>
+            <span class="color-6B6F7C fs14 cp" @click="openDetail">주문상세 <RightOutlined /></span>
             <a-checkbox v-model:checked="checked" />
           </a-flex>
         </a-flex>
@@ -498,6 +498,7 @@
         </a-flex>
       </a-flex>
     </a-flex>
+    <ExpressTwoDetail :visible="state.modalVisible" :bridgeDetail="state.bridgeDetail" @close="state.modalVisible = false" />
   </div>
 </template>
 
@@ -505,8 +506,10 @@
 import { onMounted, onUnmounted, reactive } from "vue";
 import {DownOutlined,QuestionCircleOutlined,UpOutlined,SettingOutlined,CheckOutlined,RightOutlined,CloseOutlined} from "@ant-design/icons-vue";
 import InputOn from "@/components/inputOn.vue";
+import ExpressTwoDetail from "@/views/Express/components/ExpressTwoDetail.vue";
 
 const state = reactive({
+  bridgeList: [],
 	statusList: [
     {name:'접수대기',num:2},
     {name:'접수신청',num:0},
@@ -580,7 +583,13 @@ const state = reactive({
     pageSize:10,
     total:100,
   },
+  modalVisible: true,
+  bridgeDetail:{},
 });
+const openDetail = () => {
+  state.modalVisible = true;
+  console.log(state.modalVisible);
+};
 const getList = () => {
   
 };

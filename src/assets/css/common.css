@@ -68,9 +68,6 @@
     box-sizing: border-box;
     outline: none;
 }
-div[aria-hidden="true"] {
-    display: none !important
-}
 /* ------------------------------------------------------ flex ------------------------------------------------------ */
 .fl{
     display: flex;
@@ -215,6 +212,9 @@ div[aria-hidden="true"] {
 .t-c{text-align: center;}
 .t-l{text-align: left;}
 .t-r{text-align: right;}
+.wb-bw{word-break: break-word;}
+.wb-ba{word-break: break-all;}
+.ws-pw{white-space: pre-wrap;}
 .dot{
     white-space: nowrap;
     overflow: hidden;
