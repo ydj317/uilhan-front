@@ -69,9 +69,9 @@
       </a-card>
       <a-card style="flex: 4;height: 760px;">
         <div>
-          <a-button class="mr5" type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
+          <a-button class="mr5" type="primary" @click="translateImage" :disabled="translateImageLoading">번역</a-button>
           <a-button class="mr5" @click="editorImage">편집</a-button>
-          <a-button class="mr5" @click="imageMatting" :loading="imageMattingLoading" v-if="checkAdmin">AI 누끼 따기</a-button>
+          <a-button class="mr5" @click="imageMatting" :disabled="imageMattingLoading" v-if="checkAdmin">AI 누끼 따기</a-button>
           <a-dropdown>
             <template #overlay>
               <a-menu @click="resizeImage" :loading="resizeImageLoading">
