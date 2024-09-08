@@ -111,15 +111,6 @@ export function useProductApi() {
             }).then((res) => {
                 callback(res);
             });
-        },
-
-        getRecommendedOpt: (data) => {
-            return AuthRequest({
-                url: process.env.VUE_APP_API_URL + "/api/market/getRecommendedOption",
-                method: "get",
-                params: data,
-            });
         }
-
     }
 }

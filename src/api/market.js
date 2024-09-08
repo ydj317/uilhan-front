@@ -87,5 +87,13 @@ export function useMarketApi() {
                 params: data,
             });
         },
+
+        getUseCategoryMetaMarket: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/openmarket/getUseCategoryMetaMarket",
+                method: "get",
+                params: data,
+            });
+        },
     }
 }
