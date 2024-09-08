@@ -68,15 +68,25 @@
         </draggable>
       </a-card>
       <a-card style="flex: 4;height: 760px;">
-        <div style="display: flex;justify-content: space-between;align-items: center">
-          <div style="display: flex;gap: 5px">
-            <a-button type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
-            <a-button @click="editorImage">편집</a-button>
-            <a-button @click="imageMatting" :loading="imageMattingLoading" v-if="checkAdmin">AI 누끼 따기</a-button>
-          </div>
-          <div>
-            이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span>
-          </div>
+        <div>
+          <a-button class="mr5" type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
+          <a-button class="mr5" @click="editorImage">편집</a-button>
+          <a-button class="mr5" @click="imageMatting" :loading="imageMattingLoading" v-if="checkAdmin">AI 누끼 따기</a-button>
+          <a-dropdown>
+            <template #overlay>
+              <a-menu @click="resizeImage" :loading="resizeImageLoading">
+                <a-menu-item key="600">600 * 600</a-menu-item>
+                <a-menu-item key="1000">1000 * 1000</a-menu-item>
+              </a-menu>
+            </template>
+            <a-button class="mr5">
+              이미지 리사이징
+            </a-button>
+          </a-dropdown>
+
+        </div>
+        <div class="mt5">
+          이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span>
         </div>
         <section
           id="preview"
@@ -120,7 +130,6 @@ import {defineComponent, h} from "vue";
 import {lib} from "@/util/lib";
 import Cookie from "js-cookie";
 import draggable from "vuedraggable";
-import {AuthRequest} from "@/util/request";
 import {mapState} from "vuex";
 import {message, Modal} from "ant-design-vue";
 import {
@@ -128,8 +137,11 @@ import {
   PlusOutlined,
   DeleteOutlined,
   CloseOutlined,
-  CheckCircleOutlined, ExclamationCircleOutlined
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  DownOutlined
 } from "@ant-design/icons-vue";
+
 import NewXiangJi from "@/components/Detail/newXiangJi.vue";
 import {useProductApi} from "@/api/product";
 import ImageUpload from "@/components/Detail/ImageUpload.vue";
@@ -152,6 +164,7 @@ const showConfirm = () => {
 export default defineComponent({
   components: {
     CheckCircleOutlined,
+    DownOutlined,
     NewXiangJi,
     QuestionCircleOutlined,
     draggable,
@@ -238,6 +251,7 @@ export default defineComponent({
       translateImageLoading: false,
       translateImageBatchLoading: false,
       imageMattingLoading: false,
+      resizeImageLoading: false,
       requestIds: [],
     };
   },
@@ -355,6 +369,56 @@ export default defineComponent({
         this.onChange();
       }).finally(() => {
         this.translateImageLoading = false;
+      });
+
+    },
+
+    // 이미지 리사이즈
+    async resizeImage(e) {
+      const checkedImage = this.localTranslateImageList.find(item => item.checked === true);
+      const index = this.localTranslateImageList.findIndex(item => item.checked === true);
+      if (checkedImage === undefined) {
+        message.error("이미지를 선택해주세요.");
+        return false;
+      }
+
+      const oParam = {
+        from: 'zh',
+        to: "ko",
+        list: [
+          {
+            msg: "",
+            key: index,
+            name: checkedImage.name || "",
+            order: checkedImage.order || "",
+            checked: checkedImage.checked,
+            visible: checkedImage.visible,
+            original_url: checkedImage.url,
+            translate_url: checkedImage.translate_url || '',
+            translate_status: checkedImage.translate_status,
+            request_id: checkedImage.request_id || '',
+            is_translate: false,
+          }
+        ],
+        isTranslate: false,
+        relation_id: this.product.item_id,
+        resize: e.key,
+      }
+      this.resizeImageLoading = true;
+      await useProductApi().resizeImage(oParam, (oTranslateInfo) => {
+        if (oTranslateInfo.status !== "2000") {
+          message.error(oTranslateInfo.message);
+          return false;
+        }
+
+        const { list, recharge } = oTranslateInfo.data;
+        let transImage = list.find(item => item.key === index);
+        let url = transImage.translate_url+'?request_id='+transImage.request_id;
+        this.localTranslateImageList[index] = { ...this.localTranslateImageList[index], ...transImage,url }
+        this.product.recharge = recharge;
+        this.onChange();
+      }).finally(() => {
+        this.resizeImageLoading = false;
       });
 
     },

@@ -41,6 +41,15 @@ export function useProductApi() {
                 callback(res);
             });
         },
+        async resizeImage(data, callback) {
+            return await AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/regiseimage",
+                method: "post",
+                data: data,
+            }).then((res) => {
+                callback(res);
+            });
+        },
 
         async translateImageBatch(data, callback) {
             return await AuthRequest({
