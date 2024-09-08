@@ -1,14 +1,24 @@
 <template>
   <loading v-model:active="indicator" :can-cancel="false" :is-full-page="true"/>
-  <span @click="deletePop" :style="fullWidth ? 'width: 100%' : ''">
-    <slot>
-      <a-button type="default" >삭제</a-button>
-    </slot>
+  <span  :style="fullWidth ? 'width: 100%' : ''">
+
+      <a-dropdown :trigger="['click']">
+        <slot>
+        <a-button type="default" >삭제</a-button>
+          </slot>
+        <template #overlay>
+          <a-menu>
+            <a-menu-item key="0" @click="deletePop('only-market')">오픈마켓 상품 삭제</a-menu-item>
+            <a-menu-item key="1" @click="deletePop('all')">유일 및 오픈마켓 상품 삭제</a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
+
   </span>
 
   <a-modal width="800px" v-model:open="deletePrdPop" centered>
     <template #title>
-      등록상품 삭제하기
+      {{ title[deleteType] }}
       <a-tooltip>
         <template #title>
           <div>전체 삭제할 경우 리스트에서 상품이 삭제됩니다.</div>
@@ -18,8 +28,9 @@
     </template>
 
     <div class="space-between">
-      <div>선택한 상품의 삭제할 오픈마켓을 선택해 주세요.<br>11번가 / 롯데온 / 위메프는 상품 삭제를 지원하지 않아 "판매중지" 상태로 변경됩니다.</div>
-      <div>
+      <div v-html="desc[deleteType]">
+      </div>
+      <div v-if="deleteType === 'only-market'">
         <a-button style="margin-right: 10px;" @click="deleteCheckList = deleteOptions.map(option => option.value)">
           전체선택
         </a-button>
@@ -32,7 +43,9 @@
     <div v-if="deleteOptions.length > 0">
       <a-checkbox-group v-model:value="deleteCheckList">
         <a-checkbox v-for="option in deleteOptions" :key="option.value" :value="option.value"
-                    style="background: #e1ecfe; padding: 5px 8px 8px 12px; border-radius: 3px; margin: 5px 10px 5px 0;">
+                    style="background: #e1ecfe; padding: 5px 8px 8px 12px; border-radius: 3px; margin: 5px 10px 5px 0;"
+        :disabled="option.type === 'all'"
+        >
           <img :src="getLogoSrc('market-logo', option.market_code)" alt=""
                style="width: 16px; height: 16px; margin-right: 5px;">
           {{ option.label }}
@@ -49,7 +62,7 @@
     </div>
 
     <template v-slot:footer>
-      <a-button type="primary" @click="deletePrd">삭제하기</a-button>
+      <a-button type="primary" @click="deletePrd" :loading="indicator">삭제하기</a-button>
       <a-button @click="deletePrdPop = false">취소</a-button>
     </template>
   </a-modal>
@@ -63,16 +76,32 @@ import {getLogoSrc} from "@/util/functions";
 import {QuestionCircleOutlined} from "@ant-design/icons-vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 
 const props = defineProps(['deleteItems', 'fullWidth'])
 const emit = defineEmits(['popup'])
 const {deleteItems} = toRefs(props)
 
+
 const indicator = ref(false)
 const deleteOptions = ref([])
 const deletePrdPop = ref(false)
 const deleteCheckList = ref([])
-function deletePop() {
+const deleteType = ref('only-market')
+
+const title = ref({
+  'only-market': '오픈마켓에서 상품 삭제하기',
+  'all': '유일 및 전체 오픈마켓 상품 삭제하기'
+})
+const desc = ref({
+  'only-market': '선택된 오픈마켓에서 상품이 삭제되고 유일에서는 삭제되지 않습니다.<br>- 11번가 / 롯데온 / 위메프는 상품 삭제를 지원하지 않아 "판매중지" 상태로 변경됩니다.',
+  'all': '선택한 상품은 유일과 전체 오픈마켓에서 모두 삭제 됩니다.<br>삭제된 상품은 회복이 불가하고 필요시 상품 수집부터 다시 진행해 주시기 바랍니다.'
+})
+
+function deletePop(type = 'only-market') {
+  deleteType.value = type;
   if (deleteItems.value.length === 0) {
     message.warning("선택된 상품이 없습니다.");
     return false;
@@ -86,12 +115,21 @@ function deletePop() {
         acc[key] = {
           market_code: syncItem.market_code,
           label: syncItem.seller_id,
-          value: syncItem.id
+          value: syncItem.id,
+          type: deleteType.value
         };
+        if('all' === deleteType.value) {
+          deleteCheckList.value.push(syncItem.id);
+        }
       }
       return acc;
     }, {})
   );
+
+  if(deleteType.value === 'only-market' && deleteOptions.value.length === 0) {
+    message.warning("연동된 마켓이 없습니다.");
+    return false;
+  }
 
   deletePrdPop.value = true;
   emit('popup')
@@ -112,13 +150,31 @@ async function deletePrd() {
   indicator.value = true;
   await useProductApi().deletePrd({
     'deleteItems': deleteItems.value,
-    'deleteCheckList': deleteCheckList.value
+    'deleteCheckList': deleteCheckList.value,
+    'deleteType': deleteType.value
   }).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
     }
-    window.location.reload()
+
+    if(res.data?.length > 0) {
+      res.data.forEach(item => {
+        message.error(item.market_code + ' / ' + item.market_user_id + ' / ' + item.message);
+      });
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      }).then(() => {
+
+        location.reload();
+      });
+      return false;
+    }
+
+    message.success("삭제되었습니다.");
+    location.reload();
   }).finally(() => {
     indicator.value = false;
   });
