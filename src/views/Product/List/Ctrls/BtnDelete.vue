@@ -19,12 +19,6 @@
   <a-modal width="800px" v-model:open="deletePrdPop" centered>
     <template #title>
       {{ title[deleteType] }}
-      <a-tooltip>
-        <template #title>
-          <div>전체 삭제할 경우 리스트에서 상품이 삭제됩니다.</div>
-        </template>
-        <QuestionCircleOutlined/>
-      </a-tooltip>
     </template>
 
     <div class="space-between">
