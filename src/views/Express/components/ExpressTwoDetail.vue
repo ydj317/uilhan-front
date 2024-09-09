@@ -14,7 +14,7 @@
         <a-button shape="round" ghost>출고</a-button>
         <a-button shape="round" ghost>삭제</a-button>
       </a-flex>
-      <a-button shape="round" class="close bg-535660">목록</a-button>
+      <a-button shape="round" class="close bg-535660" @click="visible = false">목록</a-button>
     </a-flex>
     <a-flex class="mt30">
       <a-descriptions title="주문정보" layout="vertical" :column="6" :label-style="{color:'#898f9e',fontSize:'15px',fontFamily:'SCDream3'}" :content-style="{color:'#535660',fontSize:'16px',fontFamily:'SCDream5'}">
@@ -196,7 +196,7 @@
         <a-button shape="round" ghost>출고</a-button>
         <a-button shape="round" ghost>삭제</a-button>
       </a-flex>
-      <a-button shape="round" class="close bg-535660">목록</a-button>
+      <a-button shape="round" class="close bg-535660" @click="visible = false">목록</a-button>
     </a-flex>
 	</a-modal>
 </template>

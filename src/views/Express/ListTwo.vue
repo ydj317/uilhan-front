@@ -583,7 +583,7 @@ const state = reactive({
     pageSize:10,
     total:100,
   },
-  modalVisible: true,
+  modalVisible: false,
   bridgeDetail:{},
 });
 const openDetail = () => {
