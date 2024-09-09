@@ -491,7 +491,7 @@ export default {
             }
             return option;
           })
-          console.log(this.categories[marketInfo.accountName]);
+
           this.categories[marketInfo.accountName].value = leafCateId;
           this.loading = false;
         }
