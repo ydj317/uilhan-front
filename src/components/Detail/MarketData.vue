@@ -398,9 +398,6 @@ export default {
         this.product.item_cate = {};
       }
       let keyword = this.product.item_cate?.[accountName]?.keyword || this.search_keyword_clone;
-      console.log('value', value);
-      console.log('selectedOptions', selectedOptions);
-      console.log('marketInfo', marketInfo);
       this.product.item_cate[accountName] = {
         accountName: accountName,
         marketCode: marketCode,
