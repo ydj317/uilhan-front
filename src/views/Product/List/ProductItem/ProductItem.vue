@@ -17,10 +17,8 @@
           @mouseout="product.hover = false"
           :style="{opacity: product.hover ? '1' : '0'}"
         >
-            <a
-              href="javascript:void(0)"
-              @click="openDetailPopup(product, '1')"
-              style="color: white;font-weight: bold;">편집</a>
+          <a href="javascript:void(0)" @click="openDetailPopup(product, '1')"
+            style="color: white; font-weight: bold; padding: 110px 134px;">편집</a>
           <btn-link-market v-if="product.item_url" :product="product" />
           <change-link :product="product" :visible="changLinkVisible"  @update:updateData="changeLinkDataUpdate" />
           <a-button v-if="!product.item_url" class="btn-chang-link" type="primary" @click="openChangLinkPopup()"> 구매링크 추가 </a-button>

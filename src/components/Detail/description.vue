@@ -40,7 +40,7 @@
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
                          @update:translateImageList="updateTranslateImageList"/>
   <old-image-translate-tools ref="oldImageTranslateTools" v-model:visible="visible"
-                         @update:visible="visible = false" :translateImageList="translateImageList"
+                         :isDetail="true" @update:visible="visible = false" :translateImageList="translateImageList"
                          @update:translateImageList="updateTranslateImageListOld" @update:editorImage="editorImage"/>
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
