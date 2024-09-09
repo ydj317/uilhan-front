@@ -56,9 +56,9 @@
           <a-button class="mr5" type="primary" @click="translateImage" :disabled="translateImageLoading">번역</a-button>
           <a-button class="mr5" @click="editorImage">편집</a-button>
           <a-button class="mr5" @click="imageMatting" :disabled="imageMattingLoading" v-if="checkAdmin">AI 누끼 따기</a-button>
-          <a-dropdown v-if="isDetail === false">
+          <a-dropdown v-if="isDetail === false" :disabled="resizeImageLoading">
             <template #overlay>
-              <a-menu @click="resizeImage" :loading="resizeImageLoading">
+              <a-menu @click="resizeImage">
                 <a-menu-item key="600">600 * 600</a-menu-item>
                 <a-menu-item key="1000">1000 * 1000</a-menu-item>
               </a-menu>
@@ -434,7 +434,7 @@ export default defineComponent({
     async editorImage() {
       let url = this.selectedCollection.url;
       let old_url = this.selectedCollection.old_url;
-      this.$emit("update:editorImage", {url,old_url});
+      this.$emit("update:editorImage", {url, old_url});
     },
 
     deleteImages(index) {
