@@ -201,7 +201,7 @@
 	</a-modal>
 </template>
 <script setup>
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import {QuestionCircleOutlined} from '@ant-design/icons-vue';
 import InputOn from "@/components/inputOn.vue";
 const emit = defineEmits(["close"]);
@@ -215,8 +215,13 @@ let visible = computed({
   get: () => props.visible,
   set: (value) => emit("close")
 });
-
-
+watch(visible, val => {
+  if (val){
+    $('body').css({ 'overflow': 'hidden' });
+  }else{
+    $('body').css({ 'overflow': 'auto' });
+  }
+},{ immediate: true })
 </script>
 <style>
 .expressTwoModal .ant-modal-content{

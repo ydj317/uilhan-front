@@ -588,7 +588,6 @@ const state = reactive({
 });
 const openDetail = () => {
   state.modalVisible = true;
-  console.log(state.modalVisible);
 };
 const getList = () => {
   
