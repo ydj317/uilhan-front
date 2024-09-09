@@ -488,10 +488,10 @@ export default {
           this.categories[marketInfo.accountName].options = this.categories[marketInfo.accountName].options.map(option => {
             if (option.cate_ids === leafCateId && res.data['optionUseYn'] === 'N') {
                option['is_group'] = true;
-              this.categories[marketInfo.accountName].value
             }
             return option;
           })
+          console.log(this.categories[marketInfo.accountName]);
           this.categories[marketInfo.accountName].value = leafCateId;
           this.loading = false;
         }
