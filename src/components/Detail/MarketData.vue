@@ -62,7 +62,7 @@
                 @change="(val, info) => handleCascaderChange(val, info, market)"
                 @reset="removeCategory(market.accountName)"
               >
-                <a-select-option v-for="(option, key) in categories[market.accountName].options" :value="option.cate_ids" :key="key">
+                <a-select-option v-for="(option, key) in categories[market.accountName].options" :value="option.cate_ids" :data-cate-names="option.cate_names" :key="key">
                   <a-tag v-if="option.is_group" color="#108ee9">그룹상품</a-tag>
                   {{ option.cate_names }}
                 </a-select-option>
@@ -398,11 +398,14 @@ export default {
         this.product.item_cate = {};
       }
       let keyword = this.product.item_cate?.[accountName]?.keyword || this.search_keyword_clone;
+      console.log('value', value);
+      console.log('selectedOptions', selectedOptions);
+      console.log('marketInfo', marketInfo);
       this.product.item_cate[accountName] = {
         accountName: accountName,
         marketCode: marketCode,
         cateId: value,
-        categoryNames: selectedOptions.cate_names,
+        categoryNames: selectedOptions['data-cate-names'],
         keyword: keyword,
         meta_data:{
           //추천 옵션 리스트

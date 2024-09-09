@@ -51,7 +51,7 @@
 
             <a-form-item name="shipmentDate" label="출고소요일"
                          :rules="[{ required: true, message: '출고소요일을 선택해 주세요.' }]">
-              <a-select @change="setCountryCode" v-model:value="state.formData.shipmentDate" placeholder="출고소요일을 선택해 주세요"
+              <a-select v-model:value="state.formData.shipmentDate" placeholder="출고소요일을 선택해 주세요"
                         style="width:150px;">
                 <a-select-option value="">- 선택해주세요 -</a-select-option>
                 <a-select-option
