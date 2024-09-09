@@ -35,6 +35,15 @@
             <a-tooltip :title="market.seller_id">
               <img :src="getLogoSrc(market.market_code)" style="width: 25px;height: 25px;" />
             </a-tooltip>
+
+            <span style="position: absolute" v-if="['auction', 'gmarket'].includes(market.market_code)">
+              <a-tooltip>
+              <template #title>
+                <div>그룹상품으로 표기된 카테고리는 옵션 추가가 불가하기에 매개 옵션이 각각 단일상품으로 등록됩니다.</div>
+              </template>
+                <ExclamationCircleOutlined />
+              </a-tooltip>
+            </span>
 <!--            {{ market.market_code }}:-->
           </th>
           <td>
@@ -124,7 +133,7 @@
 import { ref, reactive, computed } from "vue";
 import { mapState, useStore } from "vuex";
 import CategorySettings from "@/components/Detail/categorySettings.vue";
-import { CloseCircleTwoTone, LoadingOutlined } from "@ant-design/icons-vue";
+import { CloseCircleTwoTone, LoadingOutlined, ExclamationCircleOutlined} from "@ant-design/icons-vue";
 import { useCategoryApi } from "@/api/category";
 import { message } from "ant-design-vue";
 import MarketDisplayCategorys from "@/components/Detail/MarketDisplayCategorys.vue";
@@ -134,7 +143,7 @@ import { forEach } from "lodash";
 const displayCategoryMarkets = ["lotteon"];
 
 export default {
-  components: { MarketDisplayCategorys, CategorySettings, CloseCircleTwoTone, LoadingOutlined },
+  components: { MarketDisplayCategorys, CategorySettings, CloseCircleTwoTone, LoadingOutlined, ExclamationCircleOutlined },
   props: {
     suggestCategory: {
       type: Array,
