@@ -49,7 +49,8 @@
           상품명
           <span v-if="shouldShowTooltip" style="position: absolute; right: 2px">
             <a-tooltip>
-              <template #title>지마켓/옥션 마켓 정책상 특정 카테고리의 "노출상품명"은 등록 후 10일이 경과되거나 상품이 판매된 경우 수정할 수 없습니다.</template>
+              <template #title>-지마켓/옥션 마켓 정책상 특정 카테고리의 "노출상품명"은 등록 후 10일이 경과되거나 상품이 판매된 경우 수정할 수 없습니다.
+                <br>-그룹상품일 경우 옵션이 각각 단일상품으로 등록되고 상품명 뒤에 옵션명이 추가됩니다.</template>
               <QuestionCircleOutlined />
             </a-tooltip>
           </span>
