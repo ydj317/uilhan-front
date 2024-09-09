@@ -228,7 +228,7 @@ watch(visible, val => {
   background: #f1f3f8;
   padding: 40px 100px;
   width: fit-content;
-  height: 100%;
+  height: 100%!important;
 }
 .expressTwoModal .ant-descriptions-title{
   font-size: 20px;
