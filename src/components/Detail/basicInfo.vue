@@ -137,7 +137,7 @@
                            @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
                            @update:translateImageList="updateTranslateImageList"/>
     <old-image-translate-tools ref="oldImageTranslateTools" v-model:visible="visible"
-                               @update:visible="visible = false" :translateImageList="translateImageList"
+                               :isDetail="false" @update:visible="visible = false" :translateImageList="translateImageList"
                                @update:translateImageList="updateTranslateImageListOld" @update:editorImage="editorImage"/>
   </div>
 </template>
@@ -552,10 +552,10 @@ export default {
     },
     translatePopup() {
       let aImagesUrl = this.product.item_thumbnails;
-      let imgList =aImagesUrl.map((item,index)=>{
+      let imgList = aImagesUrl.map((item,index) => {
         let tmp = [];
         tmp['checked'] = false;
-        if(index == 0){
+        if (index == 0) {
           tmp['checked'] = true;
         }
         tmp['order'] = index;
@@ -563,8 +563,8 @@ export default {
         tmp['url'] = item['url'];
         tmp['old_url'] = item['url'];
         let pos = item['url'].indexOf('request_id');
-        if(pos != -1){
-          tmp['request_id'] = item['url'].slice(pos+11);
+        if (pos != -1) {
+          tmp['request_id'] = item['url'].slice(pos + 11);
         }
         return tmp;
       })
