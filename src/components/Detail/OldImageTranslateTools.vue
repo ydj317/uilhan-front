@@ -315,7 +315,7 @@ export default defineComponent({
       }
 
       let from = 'zh';
-      if (this.product.item_market === 'Rakuten') {
+      if (['Rakuten', 'Superdelivery'].includes(this.product.item_market)) {
         from = 'jp';
       }
 
@@ -370,7 +370,7 @@ export default defineComponent({
       }
 
       let from = 'zh';
-      if (this.product.item_market === 'Rakuten') {
+      if (['Rakuten', 'Superdelivery'].includes(this.product.item_market)) {
         from = 'jp';
       }
 

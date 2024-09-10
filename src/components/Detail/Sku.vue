@@ -208,6 +208,13 @@
                 <QuestionCircleOutlined/>
               </a-tooltip>
 
+              <a-tooltip class="ml5" v-if="this.product.item_market === 'Superdelivery'">
+                <template #title>
+                  <div>Superdelivery에서 수집된 가격(엔)은 실시간 환율에 따라 환화로 계산됩니다. </div>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
+
             </span>
           </template>
         </template>
@@ -271,7 +278,7 @@
               <div>
                 <sub style="padding:2px 6px;background-color: #f0f0f0;border-radius:4px;">
                   <span style="color: #999999">
-                    <span v-if="this.product.item_market === 'Rakuten'">¥</span>
+                    <span v-if="['Rakuten', 'Superdelivery'].includes(this.product.item_market)">¥</span>
                     <span v-else-if="this.product.item_market === 'Iherb'">₩</span>
                     <span v-else>￥</span>
                     {{ formatNumber(record.original_price_cn) }}</span>
