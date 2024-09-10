@@ -573,7 +573,18 @@ export const menus = [{
                 icon: ReadOutlined,
                 active: false
             },
-        }
+        },
+        {
+            path: "/coupang",
+            name: "coupang",
+            component: () => import("@/views/Coupang.vue"),
+            meta: {
+                title: "쿠팡",
+                isHide: true,
+                icon: ReadOutlined,
+                roles: ["ROLE_USER"]
+            }
+        },
     ]
 }]
 
