@@ -49,7 +49,8 @@
           상품명
           <span v-if="shouldShowTooltip" style="position: absolute; right: 2px">
             <a-tooltip>
-              <template #title>지마켓/옥션 마켓 정책상 특정 카테고리의 "노출상품명"은 등록 후 10일이 경과되거나 상품이 판매된 경우 수정할 수 없습니다.</template>
+              <template #title>-지마켓/옥션 마켓 정책상 특정 카테고리의 "노출상품명"은 등록 후 10일이 경과되거나 상품이 판매된 경우 수정할 수 없습니다.
+                <br>-그룹상품일 경우 옵션이 각각 단일상품으로 등록되고 상품명 뒤에 옵션명이 추가됩니다.</template>
               <QuestionCircleOutlined />
             </a-tooltip>
           </span>
@@ -137,7 +138,7 @@
                            @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
                            @update:translateImageList="updateTranslateImageList"/>
     <old-image-translate-tools ref="oldImageTranslateTools" v-model:visible="visible"
-                               @update:visible="visible = false" :translateImageList="translateImageList"
+                               :isDetail="false" @update:visible="visible = false" :translateImageList="translateImageList"
                                @update:translateImageList="updateTranslateImageListOld" @update:editorImage="editorImage"/>
   </div>
 </template>
@@ -552,10 +553,10 @@ export default {
     },
     translatePopup() {
       let aImagesUrl = this.product.item_thumbnails;
-      let imgList =aImagesUrl.map((item,index)=>{
+      let imgList = aImagesUrl.map((item,index) => {
         let tmp = [];
         tmp['checked'] = false;
-        if(index == 0){
+        if (index == 0) {
           tmp['checked'] = true;
         }
         tmp['order'] = index;
@@ -563,8 +564,8 @@ export default {
         tmp['url'] = item['url'];
         tmp['old_url'] = item['url'];
         let pos = item['url'].indexOf('request_id');
-        if(pos != -1){
-          tmp['request_id'] = item['url'].slice(pos+11);
+        if (pos != -1) {
+          tmp['request_id'] = item['url'].slice(pos + 11);
         }
         return tmp;
       })
@@ -579,13 +580,11 @@ export default {
       this.product.item_thumbnails = item_thumbnails;
     },
     editorImage(res) {
-      let aImagesUrl = [
-        {url: res.url,old_url:res.old_url}
-      ];
-      let imgList =aImagesUrl.map((item,index)=>{
+      let aImagesUrl = [{url: res.url, old_url:res.old_url}];
+      let imgList = aImagesUrl.map((item, index) => {
         let tmp = [];
         tmp['checked'] = false;
-        if(index == 0){
+        if (index == 0) {
           tmp['checked'] = true;
         }
         tmp['order'] = index;
@@ -593,15 +592,21 @@ export default {
         tmp['url'] = item['url'];
         tmp['old_url'] = item['old_url'];
         let pos = item['url'].indexOf('request_id');
-        if(pos != -1){
-          tmp['request_id'] = item['url'].slice(pos+11);
+        if (pos != -1) {
+          tmp['request_id'] = item['url'].slice(pos + 11).split('&')[0];
         }
         return tmp;
       })
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
+
+      this.$refs.imageTranslateTools.translateImage({
+        isTranslate: false,
+        type: 1,
+        imglist: imgList
+      }, () => {
         this.imageTranslateToolsVisible = true;
       });
     },
+
     updateTranslateImageList(imageList) {
       let item_thumbnails = [];
       this.translateImageList = this.translateImageList.map((v,i)=>{

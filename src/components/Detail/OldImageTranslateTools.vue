@@ -3,35 +3,24 @@
     <div style="display: flex;padding: 0 20px;gap: 10px">
       <a-card style="flex: 6;height: 760px;overflow-y: scroll">
         <draggable
-          style="display: grid; /* 세 개의 행, 각각 높이가 1:2:1 비율로 정의 */
-            grid-template-columns: repeat(4, 1fr); gap: 5px;"
+          style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; /* 세 개의 행, 각각 높이가 1:2:1 비율로 정의 */"
           item-key="order"
           v-bind="DRAG_OPTIONS"
           v-model="localTranslateImageList"
           :component-data="DRAG_CONFIG"
-          @change="onChange"
-        >
+          @change="onChange">
           <template #item="{ element, index }">
-            <div
-              class="eModelTitle_1_conent_group"
-              style="width: 120px;height: 120px;"
-              :key="index"
-            >
+            <div class="eModelTitle_1_conent_group" style="width: 120px;height: 120px;" :key="index">
               <div style="position: relative;">
                 <!--이미지-->
-                <div
-                  class="imageList"
+                <div class="imageList"
                   style="background-color: white;width: 120px;height: 120px;overflow: hidden;position: relative;cursor: pointer;background-size: contain;background-position: center;background-repeat: no-repeat;"
                   :style="{backgroundImage: `url(${element.url})`}"
                   :key="index"
                   :class="`${element.checked ? 'checkedEl' : 'checkedNot'}`"
                   @click="activedImage(element, index, $event)"
-                  @touchstart="activedImage(element, index, $event)"
-                >
-                  <div
-                    style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;"
-                    v-if="element.translate_status"
-                  >
+                  @touchstart="activedImage(element, index, $event)">
+                  <div style="position: absolute;bottom: 8px;right: 5px;width: 15px;height: 15px;" v-if="element.translate_status">
                     <CheckCircleOutlined style="color: #059669"/>
                   </div>
                 </div>
@@ -43,19 +32,13 @@
             </div>
           </template>
           <template #footer v-if="(!isMany && !localTranslateImageList.length) || isMany">
-            <div
-              class="eModelTitle_1_conent_group"
-              key="all"
-              style="border:2px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 120px;width: 120px;border-radius: 10px;"
-            >
-              <a-upload
-                name="file"
+            <div class="eModelTitle_1_conent_group" key="all" style="border:2px dashed #cccccc;display: flex;justify-content: center;align-items: center;height: 120px;width: 120px;border-radius: 10px;">
+              <a-upload name="file"
                 :headers="HEADER"
                 :multiple="true"
                 :showUploadList="false"
                 :beforeUpload="validateUploadImage"
-                :customRequest="uploadImage"
-              >
+                :customRequest="uploadImage">
                 <div style="display: flex; flex-direction: column; gap: 5px; justify-content: center;
                 align-items: center; cursor: pointer; padding: 36px 14px;">
                   <PlusOutlined/>
@@ -68,23 +51,25 @@
         </draggable>
       </a-card>
       <a-card style="flex: 4;height: 760px;">
-        <div style="display: flex;justify-content: space-between;align-items: center">
-          <div style="display: flex;gap: 5px">
-            <a-button type="primary" @click="translateImage" :loading="translateImageLoading">번역</a-button>
-            <a-button @click="editorImage">편집</a-button>
-            <a-button @click="imageMatting" :loading="imageMattingLoading" v-if="checkAdmin">AI 누끼 따기</a-button>
-          </div>
-          <div>
-            이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span>
-          </div>
+        <div>이미지 번역 남은 회수: <span style="color: red;font-weight: bold;">{{ this.product.recharge }}</span></div>
+        <div class="mt5">
+          <a-button class="mr5" type="primary" @click="translateImage" :disabled="translateImageLoading">번역</a-button>
+          <a-button class="mr5" @click="editorImage">편집</a-button>
+          <a-button class="mr5" @click="imageMatting" :disabled="imageMattingLoading" v-if="checkAdmin">AI 누끼 따기</a-button>
+          <a-dropdown v-if="isDetail === false" :disabled="resizeImageLoading">
+            <template #overlay>
+              <a-menu @click="resizeImage">
+                <a-menu-item key="600">600 * 600</a-menu-item>
+                <a-menu-item key="1000">1000 * 1000</a-menu-item>
+              </a-menu>
+            </template>
+            <a-button class="mr5">
+              이미지 리사이징
+            </a-button>
+          </a-dropdown>
         </div>
-        <section
-          id="preview"
-          style="display: flex;justify-content: center;align-items: center; width: 100%;height: 700px; margin-top: 10px"
-        >
-          <div
-            v-if="translateImageLoading"
-          >
+        <section id="preview" style="display: flex;justify-content: center;align-items: center; width: 100%;height: 700px; margin-top: 10px">
+          <div v-if="translateImageLoading">
             <a-spin size="large"/>
           </div>
           <div v-else >
@@ -100,8 +85,7 @@
     </template>
     <template #footer>
       <div style="display: flex; justify-content: center">
-<!--        <a-button @click="onCancel">취소</a-button>-->
-        <a-button type="primary" @click="onSubmit" >저장</a-button>
+        <a-button type="primary" @click="onSubmit">저장</a-button>
       </div>
     </template>
   </a-modal>
@@ -120,7 +104,6 @@ import {defineComponent, h} from "vue";
 import {lib} from "@/util/lib";
 import Cookie from "js-cookie";
 import draggable from "vuedraggable";
-import {AuthRequest} from "@/util/request";
 import {mapState} from "vuex";
 import {message, Modal} from "ant-design-vue";
 import {
@@ -128,30 +111,20 @@ import {
   PlusOutlined,
   DeleteOutlined,
   CloseOutlined,
-  CheckCircleOutlined, ExclamationCircleOutlined
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  DownOutlined
 } from "@ant-design/icons-vue";
+
 import NewXiangJi from "@/components/Detail/newXiangJi.vue";
 import {useProductApi} from "@/api/product";
 import ImageUpload from "@/components/Detail/ImageUpload.vue";
 
 const [modal, contextHolder] = Modal.useModal();
-const showConfirm = () => {
-  modal.confirm({
-    title: 'Do you Want to delete these items?',
-    icon: h(ExclamationCircleOutlined),
-    content: h('div', { style: 'color:red;' }, 'Some descriptions'),
-    onOk() {
-      console.log('OK');
-    },
-    onCancel() {
-      console.log('Cancel');
-    },
-    class: 'test',
-  });
-};
 export default defineComponent({
   components: {
     CheckCircleOutlined,
+    DownOutlined,
     NewXiangJi,
     QuestionCircleOutlined,
     draggable,
@@ -180,13 +153,6 @@ export default defineComponent({
         return false;
       }
 
-      // checked translate_status
-      // if (checkedImage.translate_status === true) {
-      //   return checkedImage.translate_url;
-      // } else {
-      //   return checkedImage.url;
-      // }
-      // console.log('checkedImage',checkedImage);
       return checkedImage.url;
     },
     selectedCollection() {
@@ -209,7 +175,10 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
-
+    isDetail: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ["update:visible", "update:translateImageList", "update:editorImage"],
   data() {
@@ -231,6 +200,7 @@ export default defineComponent({
         animation: 300,
         ghostClass: "ghost",
       },
+
       localTranslateImageList: this.translateImageList,
 
       isOpen: false,
@@ -238,6 +208,7 @@ export default defineComponent({
       translateImageLoading: false,
       translateImageBatchLoading: false,
       imageMattingLoading: false,
+      resizeImageLoading: false,
       requestIds: [],
     };
   },
@@ -280,6 +251,7 @@ export default defineComponent({
         this.imageMattingLoading = false;
       });
     },
+
     handleTranslateCallback(oTranslateInfo) {
       const { requestId, all, url } = oTranslateInfo;
 
@@ -359,6 +331,56 @@ export default defineComponent({
 
     },
 
+    // 이미지 리사이즈
+    async resizeImage(e) {
+      const checkedImage = this.localTranslateImageList.find(item => item.checked === true);
+      const index = this.localTranslateImageList.findIndex(item => item.checked === true);
+      if (checkedImage === undefined) {
+        message.error("이미지를 선택해주세요.");
+        return false;
+      }
+
+      const oParam = {
+        from: 'zh',
+        to: "ko",
+        list: [
+          {
+            msg: "",
+            key: index,
+            name: checkedImage.name || "",
+            order: checkedImage.order || "",
+            checked: checkedImage.checked,
+            visible: checkedImage.visible,
+            original_url: checkedImage.url,
+            translate_url: checkedImage.translate_url || '',
+            translate_status: checkedImage.translate_status,
+            request_id: checkedImage.request_id || '',
+            is_translate: false,
+          }
+        ],
+        isTranslate: false,
+        relation_id: this.product.item_id,
+        resize: e.key,
+      }
+      this.resizeImageLoading = true;
+      await useProductApi().resizeImage(oParam, (oTranslateInfo) => {
+        if (oTranslateInfo.status !== "2000") {
+          message.error(oTranslateInfo.message);
+          return false;
+        }
+
+        const { list, recharge } = oTranslateInfo.data;
+        let transImage = list.find(item => item.key === index);
+        let url = transImage.translate_url+'?request_id='+transImage.request_id;
+        this.localTranslateImageList[index] = { ...this.localTranslateImageList[index], ...transImage,url }
+        this.product.recharge = recharge;
+        this.onChange();
+      }).finally(() => {
+        this.resizeImageLoading = false;
+      });
+
+    },
+
     // 전체 이미지 번역
     async translateImageBatch() {
 
@@ -412,7 +434,7 @@ export default defineComponent({
     async editorImage() {
       let url = this.selectedCollection.url;
       let old_url = this.selectedCollection.old_url;
-      this.$emit("update:editorImage", {url,old_url});
+      this.$emit("update:editorImage", {url, old_url});
     },
 
     deleteImages(index) {
@@ -426,7 +448,7 @@ export default defineComponent({
     },
 
     // 图片 选择/取消选择
-    activedImage(element, index,event) {
+    activedImage(element, index, event) {
       this.localTranslateImageList.forEach((item) => {
         item.checked = false;
       });
@@ -437,11 +459,13 @@ export default defineComponent({
       this.onChange();
       this.$emit("update:visible", false);
     },
+
     onCancel() {
       console.log('cancel');
       this.$emit("update:visible", false);
       this.onChange();
     },
+
     // 图片上传
     uploadImage(option) {
       const formData = new FormData();
@@ -484,6 +508,7 @@ export default defineComponent({
 
       return true;
     },
+
     onChange() {
       this.$emit("update:translateImageList", this.localTranslateImageList);
     },

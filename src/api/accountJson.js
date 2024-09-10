@@ -36,6 +36,15 @@ export function useAccountJsonApi() {
                 method: "POST",
                 data,
             });
-        }
+        },
+        
+        // 묶음 배송 정책 조회
+        getBundleShipping: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/sync/bundleShipping",
+                method: "POST",
+                data,
+            });
+        },
     }
 }

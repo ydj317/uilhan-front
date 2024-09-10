@@ -40,6 +40,13 @@
               <ExclamationCircleOutlined />
             </a-tooltip>
 
+            <a-tooltip v-else-if="['gmarket', 'auction'].includes(record.market_code)">
+              <template #title>
+                <div>-마켓 정책 상 일부 카테고리는 단일상품만 등록이 가능하기에 해당 카테고리로 상품을 등록할 경우 옵션이 아닌 단일상품으로 등록하고 최대 50개까지 그룹상품으로 추가해 드립니다.</div>
+              </template>
+              <ExclamationCircleOutlined />
+            </a-tooltip>
+
           </div>
         </template>
 
