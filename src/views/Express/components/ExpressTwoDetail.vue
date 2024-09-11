@@ -226,7 +226,7 @@ watch(visible, val => {
 <style>
 .expressTwoModal .ant-modal-content{
   background: #f1f3f8;
-  padding: 40px 100px;
+  padding: 40px 200px;
   width: fit-content;
   height: 100%!important;
 }
