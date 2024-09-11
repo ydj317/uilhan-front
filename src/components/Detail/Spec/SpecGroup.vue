@@ -747,10 +747,10 @@ export default {
     },
 
     onChangeRecommendedOptionGroup(market, optionIndex, $event) {
-      if (this.selectedRecommendedOption.includes($event)) {
-         message.info('이미 선택된 옵션입니다.')
-        this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id'] = '';
-      }
+      // if (this.selectedRecommendedOption.includes($event)) {
+      //    message.info('이미 선택된 옵션입니다.')
+      //   this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id'] = '';
+      // }
     },
     setRecommendedOpt() {
       // product.item_cate 에 저장된 cate_meta 데이타에서 추가옵션정보를 꺼내옴
