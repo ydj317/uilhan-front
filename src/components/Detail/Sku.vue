@@ -486,7 +486,6 @@ export default defineComponent({
       item_price_change_value : 0,
       imageTranslateToolsVisible: false,
       translateImageList: [],
-      translateSkuCode: false,
       specGroupVisible:true,
       // 韩国MarketList
       KrMarketList: ['Domeggook', 'Alibaba'],
@@ -921,7 +920,6 @@ export default defineComponent({
       });
     },
     translateImg(record) {
-      this.translateSkuCode = record.code;
       let aImagesUrl = [
         {url: record.img}
       ];
@@ -934,9 +932,10 @@ export default defineComponent({
         tmp['order'] = index;
         tmp['request_id'] = '';
         tmp['url'] = item['url'];
+        tmp['old_url'] = record['code'];
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
-          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['request_id'] = item['url'].slice(pos + 11).split('&')[0];
         }
         return tmp;
       })
@@ -945,13 +944,12 @@ export default defineComponent({
       });
     },
     updateTranslateImageList(imageList) {
-      this.product.sku.map(v=>{
-        if(v.code == this.translateSkuCode){
-          v.img = imageList[0].url;
-          if (imageList[0].translate_status === true) {
-            v.img = imageList[0].translate_url;
-          }
+      this.product.sku = this.product.sku.map(v=>{
+        let upData = imageList.find(v2 =>v2.old_url === v.code);
+        if(upData){
+          v.img = upData.url;
         }
+        return { ...v };
       });
     },
     //获取图片requestIds
