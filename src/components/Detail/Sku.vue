@@ -16,7 +16,7 @@
       <td>
         <a-input-number v-model:value="this.product.item_discount_rate"
                         :min="0"
-                        :max="100"
+                        :max="99"
                         :step="1"
                         style="width: 38.8%"
                         addon-after="%"
