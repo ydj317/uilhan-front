@@ -27,9 +27,7 @@
         <h3>마켓정보 불러오기</h3>
       </div>
 
-      <a-form-item label="출고지/묶음배송비"
-                   v-if="state.formData.outbound_address_code"
-                   >
+      <a-form-item label="출고지/묶음배송비">
 
         <!--      출고지-->
         <a-form-item name="outbound_address_code" label="출고지"
