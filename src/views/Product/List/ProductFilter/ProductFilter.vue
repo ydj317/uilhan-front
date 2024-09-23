@@ -136,6 +136,10 @@ const marketOptions = [
       label: "Rakuten",
       value: "Rakuten"
     },
+    {
+      label: "Superdelivery",
+      value: "Superdelivery"
+    },
   ]
 // 처리상태
 const statusOptions = [
