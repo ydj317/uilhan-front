@@ -17,6 +17,7 @@
           <a-radio value="a">Aliexpress</a-radio>
           <a-radio value="a">Rakuten</a-radio>
           <a-radio value="a">Iherb</a-radio>
+          <a-radio value="a">Superdelivery</a-radio>
         </a-radio-group>
       </div>
 

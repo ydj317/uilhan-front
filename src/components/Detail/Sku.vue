@@ -16,7 +16,7 @@
       <td>
         <a-input-number v-model:value="this.product.item_discount_rate"
                         :min="0"
-                        :max="100"
+                        :max="99"
                         :step="1"
                         style="width: 38.8%"
                         addon-after="%"
@@ -208,6 +208,13 @@
                 <QuestionCircleOutlined/>
               </a-tooltip>
 
+              <a-tooltip class="ml5" v-if="this.product.item_market === 'Superdelivery'">
+                <template #title>
+                  <div>Superdelivery에서 수집된 가격(엔)은 실시간 환율에 따라 환화로 계산됩니다. </div>
+                </template>
+                <QuestionCircleOutlined/>
+              </a-tooltip>
+
             </span>
           </template>
         </template>
@@ -271,7 +278,7 @@
               <div>
                 <sub style="padding:2px 6px;background-color: #f0f0f0;border-radius:4px;">
                   <span style="color: #999999">
-                    <span v-if="this.product.item_market === 'Rakuten'">¥</span>
+                    <span v-if="['Rakuten', 'Superdelivery'].includes(this.product.item_market)">¥</span>
                     <span v-else-if="this.product.item_market === 'Iherb'">₩</span>
                     <span v-else>￥</span>
                     {{ formatNumber(record.original_price_cn) }}</span>
@@ -479,7 +486,6 @@ export default defineComponent({
       item_price_change_value : 0,
       imageTranslateToolsVisible: false,
       translateImageList: [],
-      translateSkuCode: false,
       specGroupVisible:true,
       // 韩国MarketList
       KrMarketList: ['Domeggook', 'Alibaba'],
@@ -914,7 +920,6 @@ export default defineComponent({
       });
     },
     translateImg(record) {
-      this.translateSkuCode = record.code;
       let aImagesUrl = [
         {url: record.img}
       ];
@@ -927,9 +932,10 @@ export default defineComponent({
         tmp['order'] = index;
         tmp['request_id'] = '';
         tmp['url'] = item['url'];
+        tmp['old_url'] = record['code'];
         let pos = item['url'].indexOf('request_id');
         if(pos != -1){
-          tmp['request_id'] = item['url'].slice(pos+11);
+          tmp['request_id'] = item['url'].slice(pos + 11).split('&')[0];
         }
         return tmp;
       })
@@ -938,13 +944,12 @@ export default defineComponent({
       });
     },
     updateTranslateImageList(imageList) {
-      this.product.sku.map(v=>{
-        if(v.code == this.translateSkuCode){
-          v.img = imageList[0].url;
-          if (imageList[0].translate_status === true) {
-            v.img = imageList[0].translate_url;
-          }
+      this.product.sku = this.product.sku.map(v=>{
+        let upData = imageList.find(v2 =>v2.old_url === v.code);
+        if(upData){
+          v.img = upData.url;
         }
+        return { ...v };
       });
     },
     //获取图片requestIds

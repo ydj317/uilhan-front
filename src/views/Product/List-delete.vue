@@ -619,6 +619,10 @@ export default defineComponent({
               label: "Iherb",
               value: "Iherb"
             },
+            {
+              label: "Superdelivery",
+              value: "Superdelivery"
+            },
           ],
           label: "상품수집마켓",
           key: "market_code",
