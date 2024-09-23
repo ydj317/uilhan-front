@@ -1,13 +1,13 @@
 <template>
-	<a-modal
-		width="100%"
-		wrap-class-name="full-modal"
-		class="expressTwoModal"
-		:footer="null"
+  <a-modal
+    width="100%"
+    wrap-class-name="full-modal"
+    class="expressTwoModal"
+    :footer="null"
     :closable="false"
-		v-model:open="visible"
+    v-model:open="visible"
     @cancel="visible = false"
-	>
+  >
     <a-flex justify="space-between" class="action">
       <a-flex gap="10">
         <a-button shape="round" ghost>수정</a-button>
@@ -171,10 +171,10 @@
           </a-descriptions>
         </a-flex>
         <a-flex justify="center" vertical gap="10">
-            <a-flex gap="10">
-              <input-on :key="Math.random()" value="240120123124233" placeholder="쇼핑몰 주문번호" width="306"/>
-              <input-on :key="Math.random()" value="9201KD1032159F39232"  placeholder="트래킹 번호" width="306" class="code-wrap color-2755f9"/>
-            </a-flex>
+          <a-flex gap="10">
+            <input-on :key="Math.random()" value="240120123124233" placeholder="쇼핑몰 주문번호" width="306"/>
+            <input-on :key="Math.random()" value="9201KD1032159F39232"  placeholder="트래킹 번호" width="306" class="code-wrap color-2755f9"/>
+          </a-flex>
           <a-flex justify="flex-end" class="fs14 color-898f9e">입고 [지점] 24.00.00.00:00</a-flex>
         </a-flex>
       </a-flex>
@@ -198,7 +198,7 @@
       </a-flex>
       <a-button shape="round" class="close bg-535660" @click="visible = false">목록</a-button>
     </a-flex>
-	</a-modal>
+  </a-modal>
 </template>
 <script setup>
 import { computed, watch } from "vue";

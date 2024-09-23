@@ -1,5 +1,5 @@
 <template>
-	<div class="list-two-wrap fl-c fl-tc bg-F1F3F8">
+  <div class="list-two-wrap fl-c fl-tc bg-F1F3F8">
     <a-flex align="center" gap="6" class="status-wrap fs14 p6 bg-white font-SCDream5">
       <div class="status-list fl-cc fl-c cp" v-for="v in state.statusList">
         <div>{{ v.name }}</div>
@@ -233,99 +233,99 @@
           </a-flex>
         </a-flex>
         <a-flex class="table-list-content mb20" gap="20">
-            <a-flex vertical class="table-content-left">
-              <div class="h34 fs20 color-3F4249 fl-tc">김재현</div>
-              <a-flex gap="16" class="mt18 h34">
-                <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/USA.png"/>
-                  <div class="ml7">오리건</div>
+          <a-flex vertical class="table-content-left">
+            <div class="h34 fs20 color-3F4249 fl-tc">김재현</div>
+            <a-flex gap="16" class="mt18 h34">
+              <a-flex class="fl-tc">
+                <img src="@/assets/img/express/USA.png"/>
+                <div class="ml7">오리건</div>
+              </a-flex>
+              <a-flex class="fl-tc">
+                <img src="@/assets/img/express/flight.png"/>
+                <div class="ml7">항공</div>
+              </a-flex>
+              <a-flex class="fl-tc">
+                <img src="@/assets/img/express/number-one.png"/>
+                <div class="ml7">단독배송</div>
+                <div class="ml7 color-2755f9" v-if="i==3">5개</div>
+              </a-flex>
+            </a-flex>
+            <a-flex class="fl-tc fl-lb mt10">
+              <a-flex wrap="wrap" gap="6" class="fs13">
+                <div class="check-list">택배개봉금지</div>
+                <template v-if="i > 2">
+                  <div class="check-list">택배개봉금지</div>
+                  <div class="check-list">택배개봉금지</div>
+                  <div class="check-list">택배개봉금지</div>
+                  <div class="check-list">택배개봉금지</div>
+                </template>
+                <QuestionCircleOutlined class="ml5" />
+              </a-flex>
+              <img src="@/assets/img/express/china.png" width="80" height="80" v-if="i == 2"/>
+            </a-flex>
+            <a-flex vertical class="mt10">
+              <a-flex class="fl-lb fl-tc">
+                <a-flex class="fl-tc fs13" gap="6">
+                  <div class="color-898f9e">멀티박스</div>
+                  <div class="color-2755f9">0건</div>
+                  <div class="bg-F1F3F8 br5 p5">중량착불</div>
                 </a-flex>
-                <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/flight.png"/>
-                  <div class="ml7">항공</div>
-                </a-flex>
-                <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/number-one.png"/>
-                  <div class="ml7">단독배송</div>
-                  <div class="ml7 color-2755f9" v-if="i==3">5개</div>
-                </a-flex>
+                <DownOutlined />
+              </a-flex>
+              <a-flex class="fl-tc mt10">
+                <div class="bg-898F9E br5 p6 t-white fs14">Master BL   TOS0000000</div>
+                <img src="@/assets/img/express/copy.png" class="ml6 cp"/>
               </a-flex>
               <a-flex class="fl-tc fl-lb mt10">
-                <a-flex wrap="wrap" gap="6" class="fs13">
-                  <div class="check-list">택배개봉금지</div>
-                  <template v-if="i > 2">
-                    <div class="check-list">택배개봉금지</div>
-                    <div class="check-list">택배개봉금지</div>
-                    <div class="check-list">택배개봉금지</div>
-                    <div class="check-list">택배개봉금지</div>
-                  </template>
-                  <QuestionCircleOutlined class="ml5" />
-                </a-flex>
-                <img src="@/assets/img/express/china.png" width="80" height="80" v-if="i == 2"/>
-              </a-flex>
-              <a-flex vertical class="mt10">
-                <a-flex class="fl-lb fl-tc">
-                  <a-flex class="fl-tc fs13" gap="6">
-                    <div class="color-898f9e">멀티박스</div>
-                    <div class="color-2755f9">0건</div>
-                    <div class="bg-F1F3F8 br5 p5">중량착불</div>
+                <a-flex vertical class="fl-lc" gap="6">
+                  <a-flex class="fl-tc" gap="6">
+                    <span>1.</span>
+                    <img src="@/assets/img/express/cj.png"/>
+                    <span>0000000000000</span>
+                    <img src="@/assets/img/express/copy.png" class="cp"/>
                   </a-flex>
+                  <div class="mt6 fs13 color-898f9e">지점출고 24. 00. 00 00:00</div>
+                </a-flex>
+                <a-button shape="round" class="t-white fs14 bg-2755f9">배송조회</a-button>
+              </a-flex>
+            </a-flex>
+          </a-flex>
+          <a-flex vertical class="table-content-center font-SCDream4">
+            <a-flex vertical gap="15">
+              <a-flex class="fl-lb">
+                <a-flex class="fl-tc" gap="5">
+                  <a-button class="t-white fs13 bg-ff3049">중복송장</a-button>
+                  <a-button class="t-white fs13" :class="i == 3 ? 'bg-2755f9' : 'bg-6b6f7c'">목록통관</a-button>
+                  <div class="fs14 color-6B6F7C">총 금액</div>
+                  <div class="fs14 color-3F4249 font-SCDream6" :class="{'color-2755f9':i == 3}">USD $239.96</div>
+                </a-flex>
+                <a-flex gap="5" class="fs14 fl-tc fl-le">
+                  <span class="color-6B6F7C">총 수량</span>
+                  <span class="font-SCDream6" :class="{'color-2755f9':i == 3}">86개</span>
                   <DownOutlined />
                 </a-flex>
-                <a-flex class="fl-tc mt10">
-                  <div class="bg-898F9E br5 p6 t-white fs14">Master BL   TOS0000000</div>
-                  <img src="@/assets/img/express/copy.png" class="ml6 cp"/>
-                </a-flex>
-                <a-flex class="fl-tc fl-lb mt10">
-                  <a-flex vertical class="fl-lc" gap="6">
-                    <a-flex class="fl-tc" gap="6">
-                      <span>1.</span>
-                      <img src="@/assets/img/express/cj.png"/>
-                      <span>0000000000000</span>
-                      <img src="@/assets/img/express/copy.png" class="cp"/>
-                    </a-flex>
-                    <div class="mt6 fs13 color-898f9e">지점출고 24. 00. 00 00:00</div>
-                  </a-flex>
-                  <a-button shape="round" class="t-white fs14 bg-2755f9">배송조회</a-button>
-                </a-flex>
               </a-flex>
             </a-flex>
-            <a-flex vertical class="table-content-center font-SCDream4">
-              <a-flex vertical gap="15">
-                  <a-flex class="fl-lb">
-                    <a-flex class="fl-tc" gap="5">
-                      <a-button class="t-white fs13 bg-ff3049">중복송장</a-button>
-                      <a-button class="t-white fs13" :class="i == 3 ? 'bg-2755f9' : 'bg-6b6f7c'">목록통관</a-button>
-                      <div class="fs14 color-6B6F7C">총 금액</div>
-                      <div class="fs14 color-3F4249 font-SCDream6" :class="{'color-2755f9':i == 3}">USD $239.96</div>
-                    </a-flex>
-                    <a-flex gap="5" class="fs14 fl-tc fl-le">
-                      <span class="color-6B6F7C">총 수량</span>
-                      <span class="font-SCDream6" :class="{'color-2755f9':i == 3}">86개</span>
-                      <DownOutlined />
-                    </a-flex>
+            <a-divider class="mtb15" />
+            <a-flex vertical class="center-list" gap="40">
+              <a-flex class="fl-lb" gap="20" v-for="i2 in i==3 ? 6 : 1">
+                <a-flex vertical gap="15">
+                  <div class="fs14 color-3F4249 font-SCDream6">장난감 (playing toys){{i2}}</div>
+                  <a-flex class="fs13 color-6B6F7C fl-lb">
+                    <div>옵션</div>
+                    <div>2개</div>
                   </a-flex>
-              </a-flex>
-              <a-divider class="mtb15" />
-              <a-flex vertical class="center-list" gap="40">
-                <a-flex class="fl-lb" gap="20" v-for="i2 in i==3 ? 6 : 1">
-                  <a-flex vertical gap="15">
-                    <div class="fs14 color-3F4249 font-SCDream6">장난감 (playing toys){{i2}}</div>
-                    <a-flex class="fs13 color-6B6F7C fl-lb">
-                      <div>옵션</div>
-                      <div>2개</div>
-                    </a-flex>
-                    <a-flex class="fs13 color-6B6F7C fl-lb">
-                      <div>단가</div>
-                      <div class="color-3F4249 font-SCDream6">USD $119.98</div>
-                    </a-flex>
-                    <input-on @input="handleInput" :key="Math.random()" value="240120123124233" placeholder="쇼핑몰 주문번호" />
-                    <input-on @input="handleInput" :key="Math.random()" value="9201KD1032159F39232" placeholder="트래킹 번호" class="code-wrap color-2755f9" />
+                  <a-flex class="fs13 color-6B6F7C fl-lb">
+                    <div>단가</div>
+                    <div class="color-3F4249 font-SCDream6">USD $119.98</div>
                   </a-flex>
-                  <img src="@/assets/img/express/cj.png" width="140" height="140"/>
+                  <input-on @input="handleInput" :key="Math.random()" value="240120123124233" placeholder="쇼핑몰 주문번호" />
+                  <input-on @input="handleInput" :key="Math.random()" value="9201KD1032159F39232" placeholder="트래킹 번호" class="code-wrap color-2755f9" />
                 </a-flex>
+                <img src="@/assets/img/express/cj.png" width="140" height="140"/>
               </a-flex>
             </a-flex>
+          </a-flex>
           <a-flex vertical class="table-content-right">
             <a-flex vertical class="right-status" gap="10" v-if="i == 1">
               <a-flex vertical class="bg-F1F3F8 br15 w100 p20">
@@ -424,9 +424,9 @@
       </a-flex>
       <div class="fs16 color-cfd2da font-SCDream4">신청서에 등록되지 않은 트래킹 번호</div>
       <a-flex class="fs16 bg-535660 t-white font-SCDream4 p10 br10 w100 fl-lc" gap="20">
-          <div>1. 입고일 기준 3개월 이후 폐기(보상불가)됩니다. </div>
-          <div>2. 판매자가 물건을 나눠서 배송했을 수 있습니다. </div>
-          <div>3. 트래킹번호 확인 후 신청서에 등록 시 사라집니다. </div>
+        <div>1. 입고일 기준 3개월 이후 폐기(보상불가)됩니다. </div>
+        <div>2. 판매자가 물건을 나눠서 배송했을 수 있습니다. </div>
+        <div>3. 트래킹번호 확인 후 신청서에 등록 시 사라집니다. </div>
       </a-flex>
       <a-flex wrap="wrap" class="footer-list mt20 w80 pl80" gap="20">
         <a-flex class="footer-list-main bg-white br15" gap="10" v-for="i in 5">
@@ -510,7 +510,7 @@ import ExpressTwoDetail from "@/views/Express/components/ExpressTwoDetail.vue";
 
 const state = reactive({
   bridgeList: [],
-	statusList: [
+  statusList: [
     {name:'접수대기',num:2},
     {name:'접수신청',num:0},
     {name:'부분입고',num:0},
@@ -590,7 +590,7 @@ const openDetail = () => {
   state.modalVisible = true;
 };
 const getList = () => {
-  
+
 };
 const handleInput = (val) => {
   console.log('handleInput',val);
@@ -851,6 +851,6 @@ onUnmounted(()=>{
   border-radius: 50%;
 }
 :deep(.input-on-wrap.code-wrap .placeholder){
- color: #2755F9!important;
+  color: #2755F9!important;
 }
 </style>
