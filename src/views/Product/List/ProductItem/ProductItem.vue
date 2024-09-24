@@ -17,10 +17,8 @@
           @mouseout="product.hover = false"
           :style="{opacity: product.hover ? '1' : '0'}"
         >
-            <a
-              href="javascript:void(0)"
-              @click="openDetailPopup(product, '1')"
-              style="color: white;font-weight: bold;">편집</a>
+          <a href="javascript:void(0)" @click="openDetailPopup(product, '1')"
+            style="color: white; font-weight: bold; padding: 110px 134px;">편집</a>
           <btn-link-market v-if="product.item_url" :product="product" />
           <change-link :product="product" :visible="changLinkVisible"  @update:updateData="changeLinkDataUpdate" />
           <a-button v-if="!product.item_url" class="btn-chang-link" type="primary" @click="openChangLinkPopup()"> 구매링크 추가 </a-button>
@@ -129,14 +127,14 @@ async function openDetailPopup(product, tab) {
 
 function openMarketPopup(marketInfo) {
   let market_prd_code = marketInfo.market_prd_code
-  if (marketInfo.status !== "success") {
-    if (marketInfo.status === "unsync") {
-      return;
-    }
-    message.warning('연동준비중이거나 연동실패된 상품입니다.연동 완료후 시도해 주세요.');
+  // if (marketInfo.status !== "success") {
+  //
+  //   message.warning('연동준비중이거나 연동실패된 상품입니다.연동 완료후 시도해 주세요.');
+  //   return;
+  // }
+  if (marketInfo.status === "unsync" || market_prd_code === null) {
     return;
   }
-
 
   if (!lib.isNumeric(marketInfo.market_code)) {
     message.warning("마켓코드가 잘못되었습니다.");

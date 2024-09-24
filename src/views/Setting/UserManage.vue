@@ -28,6 +28,17 @@
             <CopyOutlined />
           </a-button>
         </template>
+        <template v-if="column.title === '추천인 아이디'">
+          <template v-if="Cookie.get('member_name') == 'jwli'">
+            <div class="fl-tc fl-le">
+              <div class="wb-ba">{{ record.parent_user }}</div>
+              <EditOutlined class="cp ml5" @click="editParentUser(record)" />
+            </div>
+          </template>
+          <template v-else>
+            {{ record.parent_user }}
+          </template>
+        </template>
 
         <template v-if="column.title === 'Action'">
          <a-flex gap="10" align="center">
@@ -77,11 +88,14 @@
       <a-button type="primary" @click="savePrdMemo">저장</a-button>
     </template>
   </a-modal>
+  <a-modal v-model:open="searchFrom.editModal" title="추천인 아이디" cancel-text="취소" ok-text="저장" @ok="setParentUser" @cancel="cancelParentUser">
+    <a-input v-model:value="searchFrom.editUser.parent_user"/>
+  </a-modal>
 </template>
 
 <script setup>
 import {
-  CopyOutlined, FileTextOutlined
+  CopyOutlined, FileTextOutlined,EditOutlined
 } from "@ant-design/icons-vue";
 import {onMounted, reactive, ref} from "vue";
 import {message} from "ant-design-vue";
@@ -104,6 +118,8 @@ const searchFrom = reactive({
   loading: false,
   search_key: "username",
   search_value: "",
+  editModal: false,
+  editUser:{},
 })
 const searchKeyword = ref([
   {
@@ -319,7 +335,10 @@ const  cancelEditMemo = () => {
   memoForm.value.memo = ''
 };
 const  savePrdMemo = () => {
-  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/account/memo", {id:memoForm.value.id,memo:memoForm.value.memo}).then((res) => {
+  if(memoForm.value.memo.trim() == ''){
+    return;
+  }
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user/set", {id:memoForm.value.id,memo:memoForm.value.memo}).then((res) => {
     deleteOpen.value = false;
     if (res.status !== "2000") {
       message.error(res.message);
@@ -329,6 +348,29 @@ const  savePrdMemo = () => {
     searchFrom.page = 1;
     getUserList();
   });
+};
+const editParentUser = (record) => {
+    searchFrom.editUser.id =record.id;
+    searchFrom.editUser.parent_user = record.parent_user;
+    searchFrom.editModal = true;
+};
+const setParentUser = () => {
+  AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user/set", {id:searchFrom.editUser.id,parent_user:searchFrom.editUser.parent_user}).then((res) => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      return false;
+    }
+    userData.value = userData.value.map(user => {
+      if(user.id === searchFrom.editUser.id){
+        user.parent_user = searchFrom.editUser.parent_user.toLowerCase();
+      }
+      return user;
+    })
+    cancelParentUser();
+  });
+};
+const cancelParentUser = () => {
+  searchFrom.editModal = false;
 };
 onMounted(() => {
   getUserList();

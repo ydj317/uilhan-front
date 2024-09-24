@@ -40,7 +40,7 @@
                          @update:visible="imageTranslateToolsVisible = false" :translateImageList="translateImageList"
                          @update:translateImageList="updateTranslateImageList"/>
   <old-image-translate-tools ref="oldImageTranslateTools" v-model:visible="visible"
-                         @update:visible="visible = false" :translateImageList="translateImageList"
+                         :isDetail="true" @update:visible="visible = false" :translateImageList="translateImageList"
                          @update:translateImageList="updateTranslateImageListOld" @update:editorImage="editorImage"/>
   <!-- 미리보기 -->
   <a-modal v-model:open="this.previewVisible"
@@ -126,6 +126,7 @@ export default {
       showVideo: false,
       showOptionTable: false,
       imgLoading:false,
+      imgRegexData:[],
     };
   },
   watch: {
@@ -198,10 +199,7 @@ export default {
         return false;
       }
 
-      const videoContent = `<div id="${this.videoId}">
-                            <video width="auto;" height="400;" controls="controls">
-                            <source src="${this.product.item_video_url}" type="video/mp4"></video>
-                            </div>`;
+      const videoContent = `<div id="${this.videoId}"><video width="auto;" height="400;" controls="controls"><source src="${this.product.item_video_url}" type="video/mp4"></video></div>`;
       let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
       const match = regex.exec(this.product.item_detail);
       if (match !== null) {
@@ -220,7 +218,8 @@ export default {
         return;
       }
 
-      this.deleteGuideContent();
+      // #456 상/하단 이미지 체크 버튼 클릭시 삭제
+      this.deleteGuideContentMergeData();
 
       if (this.showGuideImage) {
         this.setGuideContent();
@@ -259,6 +258,11 @@ export default {
       }
     },
 
+    deleteGuideContentMergeData() {
+        const regex = /src=["']([^"']*(?:top_img|bottom_img)[^"']*)["']/g;
+        this.product.item_detail = this.product.item_detail.replace(regex, "");
+    },
+
     getGuide() {
       if (this.showGuideImage === false) {
         return;
@@ -275,7 +279,7 @@ export default {
       }
 
       if (matchAfter === null) {
-        const afterCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
+        const afterCont = `<div id="${this.guideAfterId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
         this.product.item_detail = this.product.item_detail + afterCont;
       }
 
@@ -533,13 +537,36 @@ export default {
         }
         return tmp;
       })
+
+      //#456 상/하단 이미지 이미지편집 리스트에서 뺴기
+      let regex = /(top_img|bottom_img)/;
+      this.imgRegexData = imgList.filter(obj => regex.test(obj.url));
+      imgList = imgList.filter(obj => !regex.test(obj.url));
+      if (imgList.length > 0) {
+        imgList[0].checked = true;
+      }
+
       this.translateImageList = imgList;
       this.visible = true;
     },
     updateTranslateImageListOld(imageList) {
       this.$refs.editor.clear();
       let content = "<div style='display: flex; flex-direction: column;justify-content: center;align-items: center;'>";
-      imageList.forEach((item) => {
+
+      // #456 상/하단 리스트에서 뺸 이미지 머지
+      let aMergedArray = imageList
+      if (this.showGuideImage) {
+        let aImgRegexData = this.imgRegexData;
+        let iCount = aImgRegexData.length;
+
+        aMergedArray = [
+          ...aImgRegexData.slice(0,1),
+          ...imageList,
+          ...aImgRegexData.slice(iCount-1)
+        ]
+      }
+
+      aMergedArray.forEach((item) => {
         content += `<img src="${item.url}" style="max-width: 100%; height: auto;"/>`;
         // if (item.translate_status === true) {
         //   content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
@@ -557,23 +584,13 @@ export default {
         this.handleOptionTableToggle();
       }
 
-      if (this.showGuideImage) {
-        this.setGuideContent();
-      }
-
-      if (this.showVideo) {
-        this.setVideoContent()
-      }
-
     },
     editorImage(res) {
-      let aImagesUrl = [
-        {url: res.url,old_url:res.old_url}
-      ];
-      let imgList =aImagesUrl.map((item,index)=>{
+      let aImagesUrl = [{url: res.url, old_url: res.old_url}];
+      let imgList =aImagesUrl.map((item, index)=>{
         let tmp = [];
         tmp['checked'] = false;
-        if(index == 0){
+        if (index == 0) {
           tmp['checked'] = true;
         }
         tmp['order'] = index;
@@ -581,12 +598,16 @@ export default {
         tmp['url'] = item['url'];
         tmp['old_url'] = item['old_url'];
         let pos = item['url'].indexOf('request_id');
-        if(pos != -1){
-          tmp['request_id'] = item['url'].slice(pos+11);
+        if (pos != -1) {
+          tmp['request_id'] = item['url'].slice(pos + 11).split('&')[0];
         }
         return tmp;
       })
-      this.$refs.imageTranslateTools.translateImage({isTranslate: false,type: 1,imglist:imgList},()=>{
+      this.$refs.imageTranslateTools.translateImage({
+        isTranslate: false,
+        type: 1,
+        imglist: imgList
+      }, () => {
         this.imageTranslateToolsVisible = true;
       });
     },

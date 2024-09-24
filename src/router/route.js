@@ -188,9 +188,8 @@ export const menus = [{
             meta: {
                 title: "서비스 결제",
                 isHide: false,
-                roles: [],
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: MoneyCollectOutlined,
-                ids: ["jmg1052", "haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
@@ -200,9 +199,8 @@ export const menus = [{
             meta: {
                 title: "My Page",
                 isHide: true,
-                roles: [],
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
                 icon: '',
-                ids: ["jmg1052", "haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
             },
         },
         {
@@ -237,7 +235,7 @@ export const menus = [{
                         isHide: false,
                         roles: [],
                         icon: '',
-                        ids: ["haeju","jwli","gom126","poipoi","asdasd","WT0625","qweqwe","polpol","123123","gomgom","gomtest","test12345","test78910","dbdlf326"],
+                        ids: ["jwli"],
                     },
                 },
                 {
@@ -247,7 +245,8 @@ export const menus = [{
                     meta: {
                         title: "서비스 권한 관리",
                         isHide: false,
-                        roles: ["ROLE_USER", "ROLE_ADMIN"],
+                        roles: [],
+                        ids: ["jwli"],
                         icon: '',
                     },
                 },
@@ -574,7 +573,18 @@ export const menus = [{
                 icon: ReadOutlined,
                 active: false
             },
-        }
+        },
+        {
+            path: "/coupang",
+            name: "coupang",
+            component: () => import("@/views/Coupang.vue"),
+            meta: {
+                title: "쿠팡",
+                isHide: true,
+                icon: ReadOutlined,
+                roles: ["ROLE_USER"]
+            }
+        },
     ]
 }]
 

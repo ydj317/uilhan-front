@@ -27,20 +27,46 @@
         <h3>마켓정보 불러오기</h3>
       </div>
 
-<!--      출고지-->
-      <a-form-item name="outbound_address_code" label="출고지"
-                   :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]">
-        <a-select v-model:value="state.formData.outbound_address_code" placeholder="출고지를 선택해 주세요" style="width:260px;">
-          <a-select-option :value="item.outbound_address_code" v-for="(item, key) in state.outboundAddressList"
-                           :key="key">{{ item.outbound_address_name }}</a-select-option>
-        </a-select>
-        <a-button @click="syncOutboundAddress(state.formData.id)" class="ml15"
-                  :loading="state.syncOutboundAddressLoading">업데이트</a-button>
-        <a-tag class="ml15" v-if="state.sync_outbound_address_status == 0">-</a-tag>
-        <a-tag color="#87d068" class="ml15" v-else-if="state.sync_outbound_address_status == 1">성공</a-tag>
-        <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
-        <span>{{ state.sync_outbound_address_date ?? '-' }}</span>
+      <a-form-item label="출고지/묶음배송비">
+
+        <!--      출고지-->
+        <a-form-item name="outbound_address_code" label="출고지"
+                     :rules="[{ required: true, message: '출고지를 선택해 주세요.' }]">
+          <a-select v-model:value="state.formData.outbound_address_code"
+                    @change="syncBundleShipping(state.formData.id, state.formData.outbound_address_code)"
+                    placeholder="출고지를 선택해 주세요"
+                    style="width:260px;">
+            <a-select-option :value="item.outbound_address_code" v-for="(item, key) in state.outboundAddressList"
+                             :key="key">{{ item.outbound_address_name }}</a-select-option>
+          </a-select>
+          <a-button @click="syncOutboundAddress(state.formData.id)" class="ml15"
+                    :loading="state.syncOutboundAddressLoading">업데이트</a-button>
+          <a-tag class="ml15" v-if="state.sync_outbound_address_status == 0">-</a-tag>
+          <a-tag color="#87d068" class="ml15" v-else-if="state.sync_outbound_address_status == 1">성공</a-tag>
+          <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
+          <span>{{ state.sync_outbound_address_date ?? '-' }}</span>
+        </a-form-item>
+
+        <!--묶음배송비-->
+        <a-form-item name="bundle_shipping_code"
+                     label="묶음배송비"
+                     v-if="state.formData.outbound_address_code"
+                     :rules="[{ required: true, message: '묶음배송비를 선택해 주세요.' }]">
+          <a-select v-model:value="state.formData.bundle_shipping_code" placeholder="묶음배송비를 선택해 주세요" style="width:260px;">
+            <a-select-option :value="item.bundle_shipping_code" v-for="(item, key) in state.bundleShippingList"
+                             :key="key">{{ item.bundle_shipping_name }}</a-select-option>
+          </a-select>
+          <a-button @click="syncBundleShipping(state.formData.id, state.formData.outbound_address_code)" class="ml15"
+                    :loading="state.syncBundleShippingLoading">업데이트</a-button>
+          <a-tag class="ml15" v-if="state.sync_bundle_shipping_status == 0">-</a-tag>
+          <a-tag color="#87d068" class="ml15" v-else-if="state.sync_bundle_shipping_status == 1">성공</a-tag>
+          <a-tag color="#F56C6C" class="ml15" v-else>실패</a-tag>
+          <span>{{ state.sync_bundle_shipping_date ?? '-' }}</span>
+
+        </a-form-item>
+
       </a-form-item>
+
 
 <!--      반품지-->
       <a-form-item name="return_address_code" label="교환/반품지" :rules="[{ required: true, message: '교환/반품지를 선택해 주세요.' }]">
@@ -159,6 +185,7 @@ const state = reactive({
     // 마켓정보 불러오기
     return_address_code: null,
     outbound_address_code: null,
+    bundle_shipping_code: null,
     shipping_policy_code : null,
     // 정보설정
     delivery_company_code : null,
@@ -170,15 +197,26 @@ const state = reactive({
   syncOutboundAddressLoading: false,
   syncReturnAddressLoading : false,
   syncShippingPolicyLoading : false,
+  syncBundleShippingLoading: false,
 
   returnAddressList: [],
   outboundAddressList: [],
+  bundleShippingList: [],
   deliveryCompanyList: [],
   shippingPolicyList: [],
 
   // 불러오기 상태
   sync_address_status: 0,
   sync_address_date: null,
+
+  // 묶음배송 매핑값
+  bundle_shipping_map_rule : {
+    'feeType': {
+      1 : '무료',
+      2 : '유료',
+      3 : '조건부'
+    },
+  }
 
 
 })
@@ -196,6 +234,7 @@ const initFormData = () => {
     // 마켓정보 불러오기
     state.formData.return_address_code = accountInfo.marketData.return_address_code;
     state.formData.outbound_address_code = accountInfo.marketData.outbound_address_code;
+    state.formData.bundle_shipping_code = accountInfo.marketData.bundle_shipping_code;
     state.formData.shipping_policy_code = accountInfo.marketData.shipping_policy_code;
 
     // 마켓정보설정
@@ -279,7 +318,7 @@ const syncOutboundAddress = (account_id) => {
       return false;
     }
 
-    message.success('업데이트 완료 되었습니다. 출고지,반품지를 선택해 주세요.');
+    message.success('업데이트 완료 되었습니다. 출고지를 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
 
     // 업데이트상태/날짜
@@ -306,7 +345,7 @@ const syncReturnAddress = (account_id) => {
       return false;
     }
 
-    message.success('업데이트 완료 되었습니다. 반품지를 선택해 주세요.');
+    message.success('업데이트 완료 되었습니다. 교환/반품지를 선택해 주세요.');
     const { marketJson, syncStatus, updDate } = res.data;
 
     // 업데이트상태/날짜
@@ -325,6 +364,48 @@ const syncReturnAddress = (account_id) => {
 };
 
 
+// 선택한 출고지의 묶음배송비 정책 불러오기
+const syncBundleShipping = (account_id, outbound_address_code) => {
+  state.syncBundleShippingLoading = true;
+  state.bundleShippingList = [];
+  state.formData.bundle_shipping_code = null;
+
+  useAccountJsonApi().getBundleShipping({account_id: account_id, market_code: props.market_code, outbound_address_code: outbound_address_code}).then(res => {
+    if (res.status !== "2000") {
+      message.error(res.message);
+      state.syncBundleShippingLoading = false;
+      return false;
+    }
+
+    message.success('업데이트 완료 되었습니다. 묶음배송비를 선택해 주세요.');
+    const {marketJson, syncStatus, updDate} = res.data;
+
+    // 업데이트상태/날짜
+    state.sync_bundle_shipping_status = syncStatus || '0';
+    state.sync_bundle_shipping_date = updDate || null;
+    state.bundleShippingList = [];
+    if (marketJson?.policies.length === 0) {
+      message.error('해당 출고지에 등록된 배송비가 없습니다. 판매자 센터에서 배송비를 등록해주세요. 그리고 업데이트 버튼을 눌러주세요.');
+      return false;
+    }
+    marketJson?.policies.forEach(item => {
+      let name = '';
+      name += state.bundle_shipping_map_rule.feeType[item.feeType] + ' : ';
+      if (item.feeType === 3) {
+        name += `${item.shippingFee[0]?.condition}원 이상 무료 / ${item.shippingFee[0]?.condition}원 미만 ${item.fee}원`;
+      } else {
+        name += `${item.fee}원`;
+      }
+      state.bundleShippingList.push({
+        bundle_shipping_code: item.policyNo,
+        bundle_shipping_name: name
+      });
+    });
+    state.syncBundleShippingLoading = false;
+  })
+}
+
+
 const syncShippingPolicy = (account_id) => {
   state.syncShippingPolicyLoading = true;
   useAccountJsonApi().getShippingCostPolicy({account_id: account_id, market_code: props.market_code}).then(res => {
@@ -334,7 +415,7 @@ const syncShippingPolicy = (account_id) => {
       return false;
     }
 
-    message.success('업데이트 완료 되었습니다. 출고지,반품지를 선택해 주세요.');
+    message.success('업데이트 완료 되었습니다. 발송정책을 선택해 주세요.');
     const {marketJson, syncStatus, updDate} = res.data;
 
     // 업데이트상태/날짜
@@ -382,7 +463,9 @@ const getAddressList = () => {
       });
     });
   });
+}
 
+const getShippingPolicy = () => {
   // 발송정책 init
   useAccountJsonApi().getAccountJson({account_id: props.accountInfo.id, group: 'shipping_cost_policy'}).then(res => {
     const {marketJson, syncStatus, updDate} = res.data;
@@ -396,6 +479,32 @@ const getAddressList = () => {
         name: item.dispatchPolicyName
       });
     });
+  });
+}
+
+const getBundleShippingAccountJson = () => {
+  // 발송정책 init
+  useAccountJsonApi().getAccountJson({account_id: props.accountInfo.id, group: 'bundle_shipping'}).then(res => {
+    const {marketJson, syncStatus, updDate} = res.data;
+
+    // 업데이트상태/날짜
+    state.sync_bundle_shipping_status = syncStatus || '0';
+    state.sync_bundle_shipping_date = updDate || null;
+
+    marketJson?.policies.forEach(item => {
+      let name = '';
+      name += state.bundle_shipping_map_rule.feeType[item.feeType] + ' : ';
+      if (item.feeType === 3) {
+        name += `${item.shippingFee[0]?.condition}원 이상 무료 / ${item.shippingFee[0]?.condition}원 미만 ${item.fee}원`;
+      } else {
+        name += `${item.fee}원`;
+      }
+      state.bundleShippingList.push({
+        bundle_shipping_code: item.policyNo,
+        bundle_shipping_name: name
+      });
+    });
+
   });
 }
 
@@ -413,7 +522,9 @@ onMounted(() => {
 
   // 연동확인후
   if (state.formData.sync_market_status) {
-    getAddressList()
+    getAddressList();
+    getShippingPolicy();
+    getBundleShippingAccountJson();
   }
 
 });

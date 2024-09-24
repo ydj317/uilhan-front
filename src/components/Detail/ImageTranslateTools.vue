@@ -72,7 +72,6 @@ export default defineComponent({
     //图片处理回调
     async handleTranslateCallback(oTranslateInfo) {
       const {action,requestId,requestIds,allSort,base64} = oTranslateInfo;
-      // console.log('oTranslateInfo',oTranslateInfo);
       switch (action){
         case 'upload':
           this.uploadImage(base64,()=>{
@@ -86,11 +85,15 @@ export default defineComponent({
           await this.translateImage({type: 3,isTranslate: true,requestId,action});
           break;
         case 'finish':
-          this.localTranslateImageList = allSort.map(v=>{
+          this.localTranslateImageList = allSort.map(v => {
             const requestId = Object.keys(v)[0];
-            let item = this.localTranslateImageList.find(v2=>v2.request_id == requestId);
-            item.translate_url = v[requestId];
-            item.url = v[requestId];
+            let item = this.localTranslateImageList.find(v2 => v2.request_id === requestId);
+            let is_resize = '';
+            if (item.old_url.includes('&is_resize=1')) {
+              is_resize = '&is_resize=1';
+            }
+            item.translate_url = v[requestId] + is_resize;
+            item.url = v[requestId] + is_resize;
             return {...item};
           });
           this.onSubmit();
@@ -109,7 +112,7 @@ export default defineComponent({
       }
 
       let from = 'zh';
-      if (this.product.item_market === 'Rakuten') {
+      if (['Rakuten', 'Superdelivery'].includes(this.product.item_market)) {
         from = 'jp';
       }
 

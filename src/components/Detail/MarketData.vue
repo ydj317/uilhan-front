@@ -35,6 +35,15 @@
             <a-tooltip :title="market.seller_id">
               <img :src="getLogoSrc(market.market_code)" style="width: 25px;height: 25px;" />
             </a-tooltip>
+
+            <span style="position: absolute" v-if="['auction', 'gmarket'].includes(market.market_code)">
+              <a-tooltip>
+              <template #title>
+                <div>그룹상품으로 표기된 카테고리는 옵션 추가가 불가하기에 매개 옵션이 각각 단일상품으로 등록됩니다.</div>
+              </template>
+                <ExclamationCircleOutlined />
+              </a-tooltip>
+            </span>
 <!--            {{ market.market_code }}:-->
           </th>
           <td>
@@ -46,15 +55,18 @@
                 placeholder="마켓별 카테고리를 선택해 주세요."
                 change-on-select style="width: 100%"
                 :default-active-first-option="false"
-                :field-names="{label: 'cate_names', value: 'cate_ids'}"
                 :show-arrow="false"
                 :filter-option="false"
                 :not-found-content="null"
                 :disabled="market.market_prd_code !== ''"
-                :options="categories[market.accountName].options"
                 @change="(val, info) => handleCascaderChange(val, info, market)"
                 @reset="removeCategory(market.accountName)"
-              ></a-select>
+              >
+                <a-select-option v-for="(option, key) in categories[market.accountName].options" :value="option.cate_ids" :data-cate-names="option.cate_names" :key="key">
+                  <a-tag v-if="option.is_group" color="#108ee9">그룹상품</a-tag>
+                  {{ option.cate_names }}
+                </a-select-option>
+              </a-select>
 
               <!-- disp 的情况 -->
               <template v-if="displayCategoryMarkets.includes(market.market_code)">
@@ -121,7 +133,7 @@
 import { ref, reactive, computed } from "vue";
 import { mapState, useStore } from "vuex";
 import CategorySettings from "@/components/Detail/categorySettings.vue";
-import { CloseCircleTwoTone, LoadingOutlined } from "@ant-design/icons-vue";
+import { CloseCircleTwoTone, LoadingOutlined, ExclamationCircleOutlined} from "@ant-design/icons-vue";
 import { useCategoryApi } from "@/api/category";
 import { message } from "ant-design-vue";
 import MarketDisplayCategorys from "@/components/Detail/MarketDisplayCategorys.vue";
@@ -131,7 +143,7 @@ import { forEach } from "lodash";
 const displayCategoryMarkets = ["lotteon"];
 
 export default {
-  components: { MarketDisplayCategorys, CategorySettings, CloseCircleTwoTone, LoadingOutlined },
+  components: { MarketDisplayCategorys, CategorySettings, CloseCircleTwoTone, LoadingOutlined, ExclamationCircleOutlined },
   props: {
     suggestCategory: {
       type: Array,
@@ -141,9 +153,7 @@ export default {
   computed: {
     ...mapState({
       product: (state) => state.product.detail,
-      useRecommendedMarketList: (state) => state.market.use_recommended_market_list.map(item => {
-        return item.market_code;
-      })
+      useCategoryMetaMarket: (state) => state.market.use_category_meta_market
     }),
     marketList() {
       if (Array.isArray(this.product.item_sync_market) && this.product.item_sync_market.length > 0) {
@@ -241,7 +251,8 @@ export default {
             });
             if (res.data.length) {
               this.search_keyword_clone = search_keyword;
-              this.categories[marketInfo.accountName].value = res.data[0]["cate_names"].join("/");
+              // this.categories[marketInfo.accountName].value = res.data[0]["cate_names"].join("/");
+              this.categories[marketInfo.accountName].value =this.categories[marketInfo.accountName].options[0]["cate_ids"];
               const leafCateId = res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1];
               this.product.item_cate[marketInfo.accountName] = {
                 accountName : marketInfo.accountName,
@@ -267,8 +278,8 @@ export default {
               }
 
               // 추천옵션 사용마켓일경우 추천옵션 리스트 조회하여 초기데이타 넣어줌
-              if (this.useRecommendedMarketList.includes(marketInfo.market_code)) {
-                await this.getRecommendedOpt(marketInfo, leafCateId)
+              if (this.useCategoryMetaMarket.includes(marketInfo.market_code)) {
+                await this.getCategoryMeta(marketInfo, leafCateId)
               }
 
             } else {
@@ -303,7 +314,8 @@ export default {
         });
 
         if (res.data.length) {
-          this.categories[market.accountName].value = res.data[0]["cate_names"].join("/");
+          // this.categories[market.accountName].value = res.data[0]["cate_names"].join("/");
+          this.categories[market.accountName].value =this.categories[market.accountName].options[0]["cate_ids"];
           this.product.item_cate[market.accountName] = {
             accountName: market.accountName,
             marketCode: market.market_code,
@@ -326,8 +338,8 @@ export default {
             await this.getDisplayCategory(market.market_code, res.data[0]["cate_ids"], market.seller_id, market.accountName);
           }
           // 추천옵션 불러오기
-          if (this.useRecommendedMarketList.includes(market.market_code)) {
-            await this.getRecommendedOpt(market, res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1])
+          if (this.useCategoryMetaMarket.includes(market.market_code)) {
+            await this.getCategoryMeta(market, res.data[0]["cate_ids"][res.data[0]["cate_ids"].length - 1])
           }
 
         } else {
@@ -390,7 +402,7 @@ export default {
         accountName: accountName,
         marketCode: marketCode,
         cateId: value,
-        categoryNames: selectedOptions.cate_names,
+        categoryNames: selectedOptions['data-cate-names'],
         keyword: keyword,
         meta_data:{
           //추천 옵션 리스트
@@ -410,8 +422,8 @@ export default {
         await this.getDisplayCategory(marketCode, [selectedOptions.cate_ids], sellerId, accountName);
       }
 
-      if (this.useRecommendedMarketList.includes(marketCode)) {
-        await this.getRecommendedOpt(marketInfo, value)
+      if (this.useCategoryMetaMarket.includes(marketCode)) {
+        await this.getCategoryMeta(marketInfo, value)
       }
 
       return false;
@@ -454,22 +466,35 @@ export default {
     },
 
     // 카테고리 메타데이타에 추가옵션 조회해서 넣음 (옥션, g마켓)
-    async getRecommendedOpt(marketInfo, leafCateId) {
+    async getCategoryMeta(marketInfo, leafCateId) {
       let param = {
         market_code : marketInfo.market_code,
         account_id : marketInfo.id,
         cate_id : leafCateId
       }
-      // this.loading = true;
-      await useProductApi().getRecommendedOpt(param).then(res => {
-        // this.loading = false;
-        this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOptList'] = res.data;
-        this.product.item_cate[marketInfo.accountName]['meta_data']['recommendedOpt'] = this.product.item_option.map(item => {
-          return {
-            option_name : item.name,
-            recommended_id : ''
-          }
-        });
+      this.loading = true;
+      await useCategoryApi().getCategoryMeta(param).then(res => {
+        // g마켓, 옥션
+        if (['auction', 'gmarket'].includes(marketInfo.market_code)) {
+          const metaData = res.data;
+          metaData['recommendedOpt'] = this.product.item_option.map(item => {
+            return {
+              option_name : item.name,
+              recommended_id : ''
+            }
+          });
+
+          this.product.item_cate[marketInfo.accountName]['meta_data'] = metaData;
+          this.categories[marketInfo.accountName].options = this.categories[marketInfo.accountName].options.map(option => {
+            if (option.cate_ids === leafCateId && res.data['optionUseYn'] === 'N') {
+               option['is_group'] = true;
+            }
+            return option;
+          })
+
+          this.categories[marketInfo.accountName].value = leafCateId;
+          this.loading = false;
+        }
       })
     },
   },
@@ -522,7 +547,14 @@ export default {
         this.search_keyword_by_market[accountName] = "";
 
         if (this.product.item_cate && this.product.item_cate[accountName]) {
-          this.categories[accountName].value = this.product.item_cate[accountName].categoryNames;
+          this.categories[accountName].options[0] = {
+            cate_ids: this.product.item_cate[accountName].cateId,
+            cate_names: this.product.item_cate[accountName].categoryNames,
+          }
+          if (['gmarket', 'auction'].includes(market.market_code)) {
+            this.categories[accountName].options[0]['is_group'] =  this.product.item_cate[accountName].meta_data?.optionUseYn === 'N'
+          }
+          this.categories[accountName].value = this.product.item_cate[accountName].cateId
         }
 
         // // 加载初始数据

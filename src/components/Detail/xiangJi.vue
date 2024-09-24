@@ -64,7 +64,7 @@ export default {
       this.product.translateImage = (aImagesInfo = [], xiangjiCallback) => {
 
         let from = 'zh';
-        if (this.product.item_market === 'Rakuten') {
+        if (['Rakuten', 'Superdelivery'].includes(this.product.item_market)) {
           from = 'jp';
         }
 
