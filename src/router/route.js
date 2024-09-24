@@ -79,6 +79,17 @@ export const menus = [{
             },
         },
         {
+            path: "/order/list/express-detail",
+            name: "order_list_express_detail",
+            component: () => import("@/views/Express/components/BridgeExpressView.vue"),
+            meta: {
+                title: "주문관리",
+                isHide: true,
+                roles: ["ROLE_ADMIN", "ROLE_USER"],
+                icon: CalendarOutlined
+            },
+        },
+        {
             path: "/order/info/:orderNo?",
             name: "order_info",
             component: () => import("@/views/Order/order/Info.vue"),
