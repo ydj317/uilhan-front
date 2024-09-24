@@ -72,6 +72,10 @@ const onClose = () => {
 .address-list-wrap{
   width: 226px;
 }
+.address-list.checked{
+  border: 2px solid #2755F9;
+  border-radius: 10px;
+}
 .address-list-check{
   width: 24px;
   height: 24px;
