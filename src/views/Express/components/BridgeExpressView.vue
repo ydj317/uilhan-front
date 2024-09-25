@@ -70,7 +70,7 @@
                 <a-flex class="fl-tc mt10" gap="10">
                   <a-input class="bg-F1F3F8 b0" placeholder="이름을 입력해주세요." style="width: 236px" />
                   <div class="fl-tc fl-la toggle-tab bg-F1F3F8 br10 fs14 color-898f9e p6">
-                    <div class="checked fl-cc cp">내국인</div>
+                    <div class="checked cp">내국인</div>
                     <div class="cp">외국인</div>
                   </div>
                 </a-flex>
@@ -122,11 +122,11 @@
           </a-flex>
           <a-flex vertical class="step2-right" gap="15">
             <div class="fs15 color-3F4249 font-SCDream3">국내 택배사 요청사항</div>
-            <a-select ref="select" value="CJ 대한통운">
+            <a-select ref="select" value="CJ 대한통운" size="large">
               <a-select-option value="CJ 대한통운">CJ 대한통운</a-select-option>
               <a-select-option value="lucy">Lucy</a-select-option>
             </a-select>
-            <a-select ref="select" value="(선택사항)직접입력">
+            <a-select ref="select" value="(선택사항)직접입력" size="large">
               <a-select-option value="(선택사항)직접입력">(선택사항)직접입력</a-select-option>
               <a-select-option value="lucy">Lucy</a-select-option>
             </a-select>
@@ -283,21 +283,175 @@
         </a-flex>
       </a-flex>
     </a-flex>
-    <a-flex class="step4">
+    <a-flex vertical class="step4 mt40 mb20" gap="30">
       <div class="fs20 color-535660 font-SCDream6">4.신청할 옵션을 선택해주세요.</div>
-      <a-flex class="mt30">
-        <a-flex vertical>
-          <div class="fs16 color-3F4249">검수</div>
-          <a-flex class="fl-lb fl-tc">
-            <a-flex>
-
+      <a-flex gap="40">
+        <a-flex vertical class="step-list-wrap">
+          <div class="fs16 color-3F4249 mb20">검수</div>
+          <a-flex vertical gap="10">
+            <a-flex gap="10" v-for="i in 7">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+                <a-flex vertical>
+                  <div class="color-3F4249 fs15">택배 개봉 금지</div>
+                  <div class="color-2755f9 fs14">무료</div>
+                </a-flex>
+                <CheckOutlined class="color-cfd2da fs12" />
+              </a-flex>
+              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+            </a-flex>
+          </a-flex>
+        </a-flex>
+        <a-flex vertical class="step-list-wrap">
+          <div class="fs16 color-3F4249 mb20">포장</div>
+          <a-flex vertical gap="10">
+            <a-flex gap="10" v-for="i in 9">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+                <a-flex vertical>
+                  <div class="color-3F4249 fs15">택배 개봉 금지</div>
+                  <div class="color-2755f9 fs14">무료</div>
+                </a-flex>
+                <CheckOutlined class="color-cfd2da fs12" />
+              </a-flex>
+              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+            </a-flex>
+          </a-flex>
+        </a-flex>
+        <a-flex vertical class="step-list-wrap">
+          <div class="fs16 color-3F4249 mb20">제거</div>
+          <a-flex vertical gap="10">
+            <a-flex gap="10" v-for="i in 3">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+                <a-flex vertical>
+                  <div class="color-3F4249 fs15">택배 개봉 금지</div>
+                  <div class="color-2755f9 fs14">무료</div>
+                </a-flex>
+                <CheckOutlined class="color-cfd2da fs12" />
+              </a-flex>
+              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+            </a-flex>
+          </a-flex>
+        </a-flex>
+        <a-divider type="vertical" style="height: inherit;background-color:#E4E7EC!important;"/>
+        <a-flex vertical class="step-list-wrap">
+          <div class="fs16 color-3F4249 mb20">사업자</div>
+          <a-flex vertical gap="10">
+            <a-flex gap="10" v-for="i in 3">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+                <a-flex vertical>
+                  <div class="color-3F4249 fs15">택배 개봉 금지</div>
+                  <div class="color-2755f9 fs14">무료</div>
+                </a-flex>
+                <CheckOutlined class="color-cfd2da fs12" />
+              </a-flex>
+              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+            </a-flex>
+            <a-flex vertical gap="10" class="mt10">
+              <img src="@/assets/img/express/coupang.png"  style="width: 180px;height: 20px"/>
+              <a-flex gap="10">
+                <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+                  <a-flex vertical>
+                    <div class="color-3F4249 fs15">로켓 그로스</div>
+                    <div class="color-2755f9 fs14">변동</div>
+                  </a-flex>
+                  <CheckOutlined class="color-cfd2da fs12" />
+                </a-flex>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-flex>
             </a-flex>
           </a-flex>
         </a-flex>
       </a-flex>
     </a-flex>
-    <a-flex class="step5"></a-flex>
-    <a-flex class="step-agree"></a-flex>
+    <a-flex vertical class="step5">
+      <div class="fs20 color-535660 font-SCDream6">5.신청할 옵션을 선택해주세요.</div>
+      <a-flex class="mt30" gap="30">
+        <a-flex vertical>
+          <div class="fs16 color-3F4249 font-SCDream6 mb20">결제 옵션</div>
+          <a-flex vertical gap="10">
+            <a-flex gap="10">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+                <div class="color-3F4249 fs15">택배 개봉 금지</div>
+                <CheckOutlined class="color-cfd2da fs12" />
+              </a-flex>
+              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+            </a-flex>
+            <a-flex gap="10">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8 w50">
+                <div class="color-3F4249 fs15">택배 개봉 금지</div>
+                <CheckOutlined class="color-cfd2da fs12" />
+              </a-flex>
+              <div class="fl-tc fl-la toggle-tab bg-F1F3F8 br10 fs14 color-898f9e p6 w50">
+                <div class="checked fl-cc cp">포인트</div>
+                <div class="cp">카드</div>
+              </div>
+              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+            </a-flex>
+          </a-flex>
+        </a-flex>
+        <a-flex vertical>
+          <div class="fs16 color-3F4249 font-SCDream6 mb20">중량택배 선착불 구분</div>
+          <a-flex vertical gap="10">
+            <a-flex gap="10">
+              <div class="fl-tc fl-lb toggle-tab toggle-tab2 bg-F1F3F8 br10 fs14 color-898f9e p6">
+                <div class="cp">중량 선불</div>
+                <div class="checked cp">중량 착불</div>
+                <div class="cp">퀵/용달</div>
+              </div>
+              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+            </a-flex>
+          </a-flex>
+          <div class="fs13 color-898f9e mt10">중량 화물이 아닌 경우 경동택배, 퀵/용달로 배송불가</div>
+        </a-flex>
+        <a-flex vertical gap="40">
+          <a-flex vertical>
+            <div class="fs16 color-3F4249 font-SCDream6 mb20">현지 FTA 세율 적용여부</div>
+            <a-flex vertical gap="10">
+              <a-flex gap="10">
+                <div class="fl-tc fl-lb toggle-tab toggle-tab2 toggle-tab3 bg-F1F3F8 br10 fs14 color-898f9e p6">
+                  <div class="checked cp">적용</div>
+                  <div class="cp">미적용</div>
+                </div>
+              </a-flex>
+            </a-flex>
+          </a-flex>
+          <a-flex vertical>
+            <div class="fs16 color-3F4249 font-SCDream6 mb20">관부가세 안내문자</div>
+            <a-flex vertical gap="10">
+              <a-flex gap="10">
+                <div class="fl-tc fl-lb toggle-tab toggle-tab2 toggle-tab3 bg-F1F3F8 br10 fs14 color-898f9e p6">
+                  <div class="checked cp">송하인</div>
+                  <div class="cp">수령인</div>
+                </div>
+              </a-flex>
+            </a-flex>
+          </a-flex>
+        </a-flex>
+        <a-flex vertical>
+          <div class="fs16 color-3F4249 font-SCDream6 mb20">현지 FTA 세율 적용여부</div>
+          <a-select ref="select" value="스마트 스토어" class="h44" style="width: 340px" size="large">
+            <a-select-option value="스마트 스토어">스마트 스토어</a-select-option>
+          </a-select>
+          <a-input placeholder="구매사이트 URL" class="h44 bg-F1F3F8 b0 mt10" />
+        </a-flex>
+      </a-flex>
+    </a-flex>
+    <a-flex class="step-agree p40">
+      <a-flex class="step-agree-content br24 bg-3f4249">
+        <ul  class="fs14 color-cfd2da lh22">
+          <li>국내 택배사 집하 거부로 유리제품, 도자기 류, 모니터 류, 가구 류는 국내 배송 파손 시 택배사 면책을 동의해야 출고 가능합니다.</li>
+          <li>단독 배송이면서 택배 개봉 금지 옵션을 선택할 경우 프리 패스(500원 할인) 대상입니다. (폴리백 포장 옵션 등 기타 옵션 선택 시 프리 패스가 제외됩니다.)</li>
+          <li>합포장·배송 상품에 박스포장이 없을 경우 중량화물 조건이 아니어도 착불로 배송될 수 있습니다.</li>
+          <li>신청서는 작성하신 내용 그대로 세관에 신고되므로, 허위 신고로 인한 모든 책임은 작성자 본인에게 있습니다.</li>
+        </ul>
+        <a-flex vertical class="w50 fl-te fl-lc" gap="10">
+          <a-flex class="step-agree-check fl-cc" gap="10">
+            <div class="fs14 color-e4e7ec">모든 작성사항을 확인하였으며, 주의사항에 동의합니다.</div>
+            <div class="fl-cc br50" style="width: 24px;height: 24px;background-color: #6B6F7C"><CheckOutlined class="color-535660 fs13" /></div>
+          </a-flex>
+          <a-button class="step-agree-btn h56 br10 fl-cc t-white bg-2755f9">배송대행 신청 완료하기</a-button>
+        </a-flex>
+      </a-flex>
+    </a-flex>
   </div>
   </a-modal>
 </template>
@@ -313,6 +467,8 @@ import {
   VerticalRightOutlined,
   LeftOutlined,
   VerticalLeftOutlined,
+  QuestionCircleOutlined,
+  CheckOutlined,
 } from "@ant-design/icons-vue";
 import InputOn from "@/components/inputOn.vue";
 const state = reactive({
@@ -333,7 +489,7 @@ const onClose = () => {
 <style>
 .expressView .ant-modal-content{
   background: #fff;
-  padding: 40px 200px;
+  padding: 40px 100px;
   height: 100%!important;
 }
 .express-view .step2 input{
@@ -409,13 +565,22 @@ const onClose = () => {
   width: 129px;
   height: 44px;
 }
-.toggle-tab .checked{
+.toggle-tab > div{
   width: 54px;
   height: 34px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toggle-tab .checked{
   color: #2755F9;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 2px 4px 10px 0 rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .step2-right{
   width: 375px;
@@ -423,12 +588,13 @@ const onClose = () => {
 .step3{
   width: 100%;
   height: 882px;
+  border-top: 1px solid #E4E7EC;
+  border-bottom: 1px solid #E4E7EC;
 }
 .step3-text{
   width: 340px;
   height: 882px;
   padding: 60px 40px;
-  border: 1px solid #E4E7EC;
   box-shadow: 4px 4px 20px 0 rgba(0,0,0,.1);
 }
 .step3-add-list-wrap-border{
@@ -500,5 +666,48 @@ const onClose = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.step4 .step-list{
+  width: 270px;
+  height: 64px;
+}
+.step5{
+  padding-top: 100px;
+  padding-bottom: 30px;
+  border-top: 1px solid #E4E7EC;
+  border-bottom: 1px solid #E4E7EC;
+}
+.step5 .step-list{
+  width: 310px;
+  height: 44px;
+}
+.step5 .toggle-tab{
+  opacity: 0.5;
+}
+.step5 .toggle-tab2{
+  opacity: 1;
+  width: 310px;
+}
+.step5 .toggle-tab2 > div{
+  width: 100px;
+}
+.step5 .toggle-tab3{
+  opacity: 1;
+  width: 340px;
+}
+.step5 .toggle-tab3 > div{
+  width: 164px;
+}
+.step-agree-content{
+  width: 1640px;
+  height: 155px;
+  padding: 20px 40px;
+}
+.step-agree-check{
+  width: 387px;
+}
+.step-agree-btn{
+  opacity: 0.3;
+  width: 387px;
 }
 </style>
