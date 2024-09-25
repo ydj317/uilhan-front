@@ -482,7 +482,10 @@ const getMarketDeliveryCompany = async () => {
   });
 };
 
-const setFormatReturnShippingFee = (value) => {
+const setFormatReturnShippingFee = () => {
+  if (state.formData.returnShippingFee === 0 ) {
+    return false;
+  }
   state.formData.returnShippingFee = Math.ceil(state.formData.returnShippingFee / 100) * 100;
 }
 
