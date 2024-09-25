@@ -556,14 +556,14 @@ export default defineComponent({
           return Promise.resolve();
         }
 
-        // if (value.length < 5 || value.length > 20) {
-        //   return Promise.reject("최소 5자 최대 20자이내로 입력해주십시오");
-        // }
+        if (value.length < 5 || value.length > 20) {
+          return Promise.reject("최소 5자 최대 20자이내로 입력해주십시오");
+        }
 
-        // const usernamePattern = /^[a-z][a-z0-9]*$/;
-        // if (!usernamePattern.test(value)) {
-        //   return Promise.reject("영문으로 시작하고 영문 소문자 혹은 숫자만 사용할 수 있습니다.");
-        // }
+        const usernamePattern = /^[a-z][a-z0-9]*$/;
+        if (!usernamePattern.test(value)) {
+          return Promise.reject("영문으로 시작하고 영문 소문자 혹은 숫자만 사용할 수 있습니다.");
+        }
 
         let returnData = await NoAuthAjax.post(
             process.env.VUE_APP_API_URL + "/api/checkname", value).then((res) => {
