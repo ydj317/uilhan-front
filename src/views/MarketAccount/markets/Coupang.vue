@@ -83,16 +83,14 @@
 
           <a-form-item>
             <template #label>
-              <span>반품비(편도)</span>
-              <a-tooltip class="ml10">
+              <span>반품배송비</span>
+              <a-tooltip class="ml5">
                 <template #title>
                   <p>
-                  쿠팡에 경우 다른 오픈마켓과 달리 상품 금액 별
-                  최대 반품비용이 별도로 존재합니다.
+                    무료배송 중 반품될 경우 초도배송비+반품배송비가 청구 되고, 초도배송비는 설정한 반품배송비와 동일하게 세팅됩니다.
                   </p>
                   <p>
-                  상품 금액별 최대 반품비용을 참고하시고 설정해
-                  주시면 됩니다.
+                    정책에 맞지 않는 경우, 초도배송비와 반품배송비는 상품판매가 기준으로 다시 계산되어 업로드 됩니다.
                   </p>
                   <p>
                     <a-popover v-model:open="popoverVisible" title="해외 (해외구매대행 포함)" trigger="click" placement="rightTop" style="z-index: 999">
@@ -149,18 +147,16 @@
               </a-tooltip>
             </template>
 
-            <a-form-item name="returnChargeLow" label="상품가 <= 20000"
-                         :rules="[{ required: true, message: '상품가 <= 20000 일때 배송비를 입력해 주세요.' }]" :labelCol="{ span: 5 }">
-              <a-input-number v-model:value="state.formData.returnChargeLow" placeholder="최대 15000" style="width:160px" min="0" max="15000" step="1000"/>
-            </a-form-item>
-            <a-form-item name="returnChargeMedium" label="20000 < 상품가 <= 40000"
-                         :rules="[{ required: true, message: '20000 < 상품가 <= 40000 일때 배송비를 입력해 주세요.' }]" :labelCol="{ span: 5 }">
-              <a-input-number v-model:value="state.formData.returnChargeMedium" placeholder="최대 20000" style="width:160px" min="0" max="20000" step="1000"/>
-            </a-form-item>
-            <a-form-item name="returnChargeHigh" label="상품가 > 40000"
-                         :rules="[{ required: true, message: '상품가 > 40000 일때 배송비를 입력해 주세요.' }]" :labelCol="{ span: 5 }">
-              <a-input-number v-model:value.number="state.formData.returnChargeHigh" placeholder="최대 40000" style="width:160px" min="0" max="40000" step="1000"/>
-            </a-form-item>
+            <span>
+              <a-input-number
+                @blur="setFormatReturnShippingFee"
+                v-model:value="state.formData.returnShippingFee"
+                default-value="0"
+                placeholder="최대 200000"
+                style="width:170px" min="0" max="200000"
+                step="1000" addon-after="원"/>
+            </span>
+
           </a-form-item>
 
           <a-form-item name="deliveryCompany" label="출고지 택배사" :rules="[{ required: true, message: '출고지 택배사를 선택해주세요.' }]">
@@ -225,9 +221,7 @@ const state = reactive({
         outboundShippingPlaceCountryCode : '', // 출고지 국가코드
 
         // 마켓정보 설정
-        returnChargeLow: 0,
-        returnChargeMedium: 0,
-        returnChargeHigh: 0,
+        returnShippingFee : 0,
         deliveryCompany: '',
 
     },
@@ -273,9 +267,7 @@ const initFormData = () => {
         state.formData.companyContactNumber = accountInfo.marketData.companyContactNumber;
         state.formData.shippingPlaceName = accountInfo.marketData.shippingPlaceName;
 
-        state.formData.returnChargeLow = accountInfo.marketData.returnChargeLow;
-        state.formData.returnChargeMedium = accountInfo.marketData.returnChargeMedium;
-        state.formData.returnChargeHigh = accountInfo.marketData.returnChargeHigh;
+        state.formData.returnShippingFee = accountInfo.marketData.returnShippingFee;
 
         state.formData.deliveryCompany = accountInfo.marketData.deliveryCompany || '';
 
@@ -489,6 +481,10 @@ const getMarketDeliveryCompany = async () => {
     state.deliveryCompanyList = res.data.coupang || [];
   });
 };
+
+const setFormatReturnShippingFee = (value) => {
+  state.formData.returnShippingFee = Math.ceil(state.formData.returnShippingFee / 100) * 100;
+}
 
 onMounted(() => {
     getMarketDeliveryCompany()
