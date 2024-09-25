@@ -556,9 +556,9 @@ export default defineComponent({
           return Promise.resolve();
         }
 
-        if (value.length < 5 || value.length > 20) {
-          return Promise.reject("최소 5자 최대 20자이내로 입력해주십시오");
-        }
+        // if (value.length < 5 || value.length > 20) {
+        //   return Promise.reject("최소 5자 최대 20자이내로 입력해주십시오");
+        // }
 
         const usernamePattern = /^[a-z][a-z0-9]*$/;
         if (!usernamePattern.test(value)) {
