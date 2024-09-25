@@ -495,6 +495,22 @@ export default {
           this.categories[marketInfo.accountName].value = leafCateId;
           this.loading = false;
         }
+
+        if (['coupang'].includes(marketInfo.market_code)) {
+          const metaData = res.data;
+          metaData['recommendedOpt'] = this.product.item_option.map(item => {
+            return {
+              option_name : item.name,
+              recommended_id : ''
+            }
+          });
+
+          this.product.item_cate[marketInfo.accountName]['meta_data'] = metaData;
+          this.categories[marketInfo.accountName].value = leafCateId;
+
+          this.loading = false;
+        }
+
       })
     },
   },
