@@ -40,7 +40,7 @@
           <img src="@/assets/img/chat.jpg" class="br50">
         </template>
       </a-float-button>
-      <a-float-button class="fixed-button help-center" href="http://pf.kakao.com/_xodWxnG" target="_blank">
+      <a-float-button class="fixed-button help-center" href="https://pf.kakao.com/_xodWxnG/chat" target="_blank">
         <template #icon>
           <img src="@/assets/img/help-center.jpg" class="br50">
         </template>
