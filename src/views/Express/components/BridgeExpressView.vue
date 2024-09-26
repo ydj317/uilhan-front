@@ -1,8 +1,8 @@
 <template>
   <a-modal v-model:open="visible"
            width="100%" wrap-class-name="full-modal"
-           :confirm-loading="state.confirmLoading" @cancel="onClose" class="expressView" :footer="null">
-	<div class="express-view">
+           :confirm-loading="state.confirmLoading" @cancel="onClose" class="express-view" :footer="null">
+	<div>
     <a-flex gap="80" class="pb30">
       <a-flex vertical gap="30" class="step1 w50">
         <div class="fs20 font-SCDream6 color-535660">1.배송방법을 선택해주세요.</div>
@@ -181,7 +181,6 @@
               <a-flex vertical class="p16" gap="14">
                 <a-flex style="height: 100px" gap="10">
                   <a-upload
-                    v-model:file-list="fileList"
                     name="avatar"
                     list-type="picture-card"
                     class="avatar-uploader"
@@ -454,10 +453,35 @@
     </a-flex>
   </div>
   </a-modal>
+  <a-modal width="340px" :open="false" :footer="null" :closable="false" class="find-modal">
+    <a-flex vertical gap="10">
+      <div class="fs20 color-535660 font-SCDream6">멀티 트래킹</div>
+      <div class="fs14 color-535660">한 개의 상품이 여러 트래킹 번호로 나누어<br>
+        지점에 발송 되었을 경우 이용해 주세요.</div>
+      <div class="fs14 color-6B6F7C fl-cc br20 bg-F1F3F8 h34 plr16" style="width: fit-content;">멀티 트래킹 사용방법 보러가기</div>
+      <a-flex class="fl-lb mt20" gap="10">
+        <a-flex class="step3-order step3-find fl1">
+          <a-input placeholder="트래킹 번호를 입력해주세요." class="h50 br10" />
+          <div class="placeholder fs13 color-2755f9">트래킹 번호</div>
+        </a-flex>
+        <a-button class="fs14 t-white bg-535660 h50">입력</a-button>
+      </a-flex>
+      <div class="fs12 color-2755f9">트래킹 번호 저장 후 신청서 저장을 눌러야 완료됩니다.</div>
+      <a-flex vertical gap="30" class="mt30">
+        <a-flex class="fl-tc" gap="10" v-for="i in 5" style="width: 308px;">
+          <div class="fs14 color-6B6F7C">{{i}}.</div>
+          <input-on placeholder="트래킹 번호" value="9201KD1032159F39232" width="284" height="50" class="code-wrap color-2755f9" />
+        </a-flex>
+      </a-flex>
+      <div class="fl-cc">
+        <a-button class="fs14 t-white bg-535660 h44 save-btn">저장 후 닫기</a-button>
+      </div>
+    </a-flex>
+  </a-modal>
 </template>
 
 <script setup>
-import {computed, createVNode, reactive, ref, toRefs, watchEffect} from "vue";
+import {computed, reactive} from "vue";
 import {
   RightOutlined,
   CloseOutlined,
@@ -487,7 +511,7 @@ const onClose = () => {
 };
 </script>
 <style>
-.expressView .ant-modal-content{
+.express-view .ant-modal-content{
   background: #fff;
   padding: 40px 100px;
   height: 100%!important;
@@ -505,8 +529,17 @@ const onClose = () => {
 .express-view .step3-goods-type input{
   background: #f1f3f8;
 }
+.find-modal .ant-modal-content{
+  padding: 30px 16px;
+}
 </style>
 <style scoped>
+:deep(.input-on-wrap.code-wrap .placeholder){
+  color: #2755F9!important;
+}
+:deep(.input-on-wrap .placeholder){
+  font-size: 13px!important;
+}
 .step1{
   height: 584px;
 }
@@ -709,5 +742,8 @@ const onClose = () => {
 .step-agree-btn{
   opacity: 0.3;
   width: 387px;
+}
+.find-modal .save-btn{
+  width: fit-content;
 }
 </style>
