@@ -179,7 +179,7 @@
     </div>
 
     <!--sku table-->
-    <div class="table-scroll-container">
+    <div class="table-scroll-container" :style="{maxHeight:this.tableHeight+'px'}">
       <a-table
           :bordered="true"
           :columns="sku_columns"
@@ -492,6 +492,7 @@ export default defineComponent({
 
       sortOrder: null,
       sortColumn: null,
+      tableHeight:500,
     };
   },
 
@@ -992,6 +993,9 @@ export default defineComponent({
       onSelect: this.handleRowSelect,
       onSelectAll: this.handleSelectAll,
     };
+    if(window.innerHeight > 1000){
+      this.tableHeight = window.innerHeight - 500;
+    }
   },
 });
 </script>
