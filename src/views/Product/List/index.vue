@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import {onMounted, provide, reactive, ref} from "vue";
+import {onMounted, onUnmounted, provide, ref} from "vue";
 import {useMarketApi} from "@/api/market";
 import {useUserInfo} from "@/hooks/useUserInfo";
 import {useSelection} from "@/hooks/useSelection";
@@ -276,6 +276,7 @@ function onChangePage(page) {
   // 应用上一次生效的搜索条件，并设置新 page
   searchParams.value = ServiceProduct.getCacheParams()
   searchParams.value.page = page
+      localStorage.setItem('productPage', page)
   getList();
 }
 
@@ -378,7 +379,7 @@ function getSmartstoreCategory() {
 }
 
 onMounted(() => {
-  searchParams.value.page = 1;
+  searchParams.value.page = localStorage.getItem('productPage') ? localStorage.getItem('productPage') : 1;
   Promise.all([
     // 추천옵션 사용 마켓리스트 불러오기
     store.dispatch('market/getUseRecommendedOptionMarketList'),
@@ -391,6 +392,10 @@ onMounted(() => {
     getSmartstoreCategory()
   ]);
 })
+
+onUnmounted(() => {
+  localStorage.setItem('productPage', 1)
+});
 
 function checkUserPermission(data) {
   if (WHITE_LIST_USER.includes(data?.username)) {

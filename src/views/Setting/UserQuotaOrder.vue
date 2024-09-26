@@ -762,7 +762,7 @@ const editData = (id) => {
       const referrerActualAmount = referrerRefundConfirmedAmount === '' ? referrerTotalAmount : referrerTotalAmount - referrerRefundEstimatedAmount;
 
       return {
-        referrerID:uData.recommendCodeUserName !== '' ? (uData.recommend_user.name === '' ? uData.recommend_user.user_name : uData.recommend_user.name) : '',
+        referrerID:!!uData?.recommendCodeUserName ? (uData?.recommend_user?.name === '' ? uData?.recommend_user?.user_name : uData?.recommend_user?.name) : '',
         plan_type:item.plan_type,
         referrerTotalAmount:numberFormat(referrerTotalAmount),
         referrerRefundEstimatedAmount:referrerRefundEstimatedAmount !== '' ? numberFormat(referrerRefundEstimatedAmount) : '-',
