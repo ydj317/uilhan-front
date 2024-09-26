@@ -16,7 +16,7 @@
                     <img src="@/assets/img/express/china.png"/>
                     <div class="fs15 font-SCDream3 text">광저우{{i}}</div>
                   </a-flex>
-                  <div class="address-list-check"></div>
+                  <div class="check fl-cc br50"><CheckOutlined class="fs12" /></div>
                 </div>
               </template>
             </a-flex>
@@ -34,7 +34,7 @@
                     <img src="@/assets/img/express/ship.png"/>
                     <div class="fs15 font-SCDream3 text">해운{{i}}</div>
                   </a-flex>
-                  <div class="address-list-check"></div>
+                  <div class="check fl-cc br50"><CheckOutlined class="fs12" /></div>
                 </div>
               </template>
             </a-flex>
@@ -51,7 +51,7 @@
                   <a-flex gap="5" class="fl1">
                     <div class="fs15 font-SCDream3 text">목록통관{{i}}</div>
                   </a-flex>
-                  <div class="address-list-check"></div>
+                  <div class="check fl-cc br50"><CheckOutlined class="fs12" /></div>
                 </div>
               </template>
             </a-flex>
@@ -70,8 +70,9 @@
                 <a-flex class="fl-tc mt10" gap="10">
                   <a-input class="bg-F1F3F8 b0" placeholder="이름을 입력해주세요." style="width: 236px" />
                   <div class="fl-tc fl-la toggle-tab bg-F1F3F8 br10 fs14 color-898f9e p6">
-                    <div class="checked cp">내국인</div>
-                    <div class="cp">외국인</div>
+                    <template v-for="(v,k) in state.radioList[0]">
+                      <div class="cp" :class="{checked:v.check}" @click="selectRadio(0,k)">{{ v.name }}</div>
+                    </template>
                   </div>
                 </a-flex>
               </a-flex>
@@ -124,11 +125,9 @@
             <div class="fs15 color-3F4249 font-SCDream3">국내 택배사 요청사항</div>
             <a-select ref="select" value="CJ 대한통운" size="large">
               <a-select-option value="CJ 대한통운">CJ 대한통운</a-select-option>
-              <a-select-option value="lucy">Lucy</a-select-option>
             </a-select>
             <a-select ref="select" value="(선택사항)직접입력" size="large">
               <a-select-option value="(선택사항)직접입력">(선택사항)직접입력</a-select-option>
-              <a-select-option value="lucy">Lucy</a-select-option>
             </a-select>
             <div class="fs15 color-3F4249">토스토스 물류센터 요청사항</div>
             <a-input placeholder="요청사항이 있다면 입력해주세요." class="bg-F1F3F8" />
@@ -166,16 +165,16 @@
         </div>
         <a-flex vertical class="step3-add-list-wrap-border" gap="30">
           <a-flex class="step3-add-list-wrap plr20" gap="20">
-            <div class="step3-add-list fl00" v-for="i in 3">
+            <div class="step3-add-list fl00" v-for="(v,k) in state.goodsList">
               <a-flex class="step3-title fl-lb fl-tc h56 plr16">
                 <a-flex class="fl-tc" gap="10">
-                  <div>5. 상품</div>
-                  <a-button shape="round" class="fs13 t-white bg-2755f9">주소목록</a-button>
+                  <div>{{k+1}}. 상품</div>
+                  <a-button shape="round" class="fs13 t-white" :class="k==0?'bg-6b6f7c':'bg-2755f9'">주소목록</a-button>
                 </a-flex>
                 <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/copy.png" width="15" height="18"/>
+                  <img src="@/assets/img/express/copy.png" width="15" height="18" class="cp" @click="copyGoods(v)"/>
                   <a-divider type="vertical" style="background-color: #E4E7EC;height: 17px;" />
-                  <CloseOutlined class="color-969DAE fs17"/>
+                  <CloseOutlined class="color-969DAE fs17 cp" @click="delGoods(k)"/>
                 </a-flex>
               </a-flex>
               <a-flex vertical class="p16" gap="14">
@@ -210,7 +209,7 @@
                     <a-input placeholder="트래킹 번호를 입력해주세요." class="h50 br10" />
                     <div class="placeholder fs13 color-2755f9">트래킹 번호</div>
                   </a-flex>
-                  <a-button class="fs14 color-3F4249 h50">멀티</a-button>
+                  <a-button class="fs14 color-3F4249 h50" @click="showFindModal">멀티</a-button>
                 </a-flex>
                 <div class="fs12 color-898f9e">2개 이상의 트래킹 번호는 ‘멀티’버튼을 눌러 입력해주세요.</div>
                 <a-input placeholder="상품 유형을 검색해주세요." class="step3-goods-type h44 bg-F1F3F8 b0">
@@ -218,7 +217,7 @@
                     <span class="color-2755f9">*</span>
                   </template>
                   <template #suffix>
-                    <SearchOutlined class="fs17" />
+                    <SearchOutlined class="fs17 cp" />
                   </template>
                 </a-input>
                 <a-flex gap="10">
@@ -256,12 +255,12 @@
                 </a-flex>
               </a-flex>
             </div>
-            <a-flex vertical class="step3-add br24 p16 fl-cc fl00">
-              <PlusOutlined class="color-898f9e add" />
-              <div class="fs20 color-898f9e mt10">새 상품 추가하기</div>
+            <a-flex vertical class="step3-add br24 p16 fl-cc fl00 cp">
+              <PlusOutlined class="add cp" />
+              <div class="text fs20 mt10">새 상품 추가하기</div>
               <a-flex class="fl-lb t-white br10 bg-535660 h44 fl-tc plr16 mt40 w100">
                 <div class="fs14">나의 재고 목록</div>
-                <div class="fs13">추가하기</div>
+                <div class="fs13 cp">추가하기</div>
               </a-flex>
               <a-flex class="fl-lb t-white br10 bg-535660 h44 fl-tc plr16 mt10 w100">
                 <div class="fs14">주문 내역 자동 등록</div>
@@ -270,13 +269,13 @@
             </a-flex>
           </a-flex>
           <a-flex class="step3-page h40 fl-cc " gap="10">
-            <div class="page-start"><VerticalRightOutlined /></div>
-            <div class="page-prev"><LeftOutlined /></div>
+            <div class="page-start cp"><VerticalRightOutlined /></div>
+            <div class="page-prev cp"><LeftOutlined /></div>
             <a-flex class="page-list mlr20" gap="20">
-              <div class="fs14 color-3F4249 fw" v-for="i in 6">{{i}}</div>
+              <div class="fs14 color-3F4249 fw cp" v-for="i in 6">{{i}}</div>
             </a-flex>
-            <div class="page-next"><RightOutlined /></div>
-            <div class="page-end"><VerticalLeftOutlined /></div>
+            <div class="page-next cp"><RightOutlined /></div>
+            <div class="page-end cp"><VerticalLeftOutlined /></div>
             <div class="fs14 color-969DAE">총 6까지</div>
           </a-flex>
         </a-flex>
@@ -289,29 +288,67 @@
           <div class="fs16 color-3F4249 mb20">검수</div>
           <a-flex vertical gap="10">
             <a-flex gap="10" v-for="i in 7">
-              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8" :class="i==1?'checked':''">
                 <a-flex vertical>
                   <div class="color-3F4249 fs15">택배 개봉 금지</div>
                   <div class="color-2755f9 fs14">무료</div>
                 </a-flex>
-                <CheckOutlined class="color-cfd2da fs12" />
+                <div class="check fl-cc br50" style="width: 24px;height: 24px;"><CheckOutlined class="fs12" /></div>
               </a-flex>
-              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              <a-popover trigger="hover">
+                <template #content>1</template>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-popover>
             </a-flex>
           </a-flex>
         </a-flex>
         <a-flex vertical class="step-list-wrap">
           <div class="fs16 color-3F4249 mb20">포장</div>
           <a-flex vertical gap="10">
-            <a-flex gap="10" v-for="i in 9">
-              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+            <a-flex gap="10" v-for="i in 7">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8" :class="i==2?'checked':''">
                 <a-flex vertical>
                   <div class="color-3F4249 fs15">택배 개봉 금지</div>
                   <div class="color-2755f9 fs14">무료</div>
                 </a-flex>
-                <CheckOutlined class="color-cfd2da fs12" />
+                <div class="check fl-cc br50" style="width: 24px;height: 24px;"><CheckOutlined class="fs12" /></div>
               </a-flex>
-              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              <a-popover trigger="hover">
+                <template #content>1</template>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-popover>
+            </a-flex>
+            <a-flex gap="10">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8 disabled" :class="i==2?'checked':''">
+                <a-flex vertical>
+                  <div class="color-3F4249 fs15">택배 개봉 금지</div>
+                  <div class="color-2755f9 fs14">무료</div>
+                </a-flex>
+                <a-flex class="fl-tc" gap="10">
+                  <div class="br10 bg-white fs15 color-969DAE fl-cc" style="width: 80px;height: 44px;border: 2px solid #cfd2da"> <span class="color-2755f9 mr4">*</span> 수량</div>
+                  <div class="check fl-cc br50" style="width: 24px;height: 24px;"><CheckOutlined class="fs12" /></div>
+                </a-flex>
+              </a-flex>
+              <a-popover trigger="hover">
+                <template #content>1</template>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-popover>
+            </a-flex>
+            <a-flex gap="10">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8" :class="i==2?'checked':''">
+                <a-flex vertical>
+                  <div class="color-3F4249 fs15">택배 개봉 금지</div>
+                  <div class="color-2755f9 fs14">무료</div>
+                </a-flex>
+                <a-flex class="fl-tc" gap="10">
+                  <div class="br10 bg-white fs15 color-969DAE fl-cc" style="width: 80px;height: 44px;border: 2px solid #cfd2da"> <span class="color-2755f9 mr4">*</span> 수량</div>
+                  <div class="check fl-cc br50" style="width: 24px;height: 24px;"><CheckOutlined class="fs12" /></div>
+                </a-flex>
+              </a-flex>
+              <a-popover trigger="hover">
+                <template #content>1</template>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-popover>
             </a-flex>
           </a-flex>
         </a-flex>
@@ -319,14 +356,17 @@
           <div class="fs16 color-3F4249 mb20">제거</div>
           <a-flex vertical gap="10">
             <a-flex gap="10" v-for="i in 3">
-              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8" :class="i==3?'checked':''">
                 <a-flex vertical>
                   <div class="color-3F4249 fs15">택배 개봉 금지</div>
                   <div class="color-2755f9 fs14">무료</div>
                 </a-flex>
-                <CheckOutlined class="color-cfd2da fs12" />
+                <div class="check fl-cc br50" style="width: 24px;height: 24px;"><CheckOutlined class="fs12" /></div>
               </a-flex>
-              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              <a-popover trigger="hover">
+                <template #content>1</template>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-popover>
             </a-flex>
           </a-flex>
         </a-flex>
@@ -335,14 +375,17 @@
           <div class="fs16 color-3F4249 mb20">사업자</div>
           <a-flex vertical gap="10">
             <a-flex gap="10" v-for="i in 3">
-              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8" :class="i==1?'checked':''">
                 <a-flex vertical>
                   <div class="color-3F4249 fs15">택배 개봉 금지</div>
                   <div class="color-2755f9 fs14">무료</div>
                 </a-flex>
-                <CheckOutlined class="color-cfd2da fs12" />
+                <div class="check fl-cc br50" style="width: 24px;height: 24px;"><CheckOutlined class="fs12" /></div>
               </a-flex>
-              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              <a-popover trigger="hover">
+                <template #content>1</template>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-popover>
             </a-flex>
             <a-flex vertical gap="10" class="mt10">
               <img src="@/assets/img/express/coupang.png"  style="width: 180px;height: 20px"/>
@@ -352,9 +395,12 @@
                     <div class="color-3F4249 fs15">로켓 그로스</div>
                     <div class="color-2755f9 fs14">변동</div>
                   </a-flex>
-                  <CheckOutlined class="color-cfd2da fs12" />
+                  <div class="check fl-cc br50" style="width: 24px;height: 24px;"><CheckOutlined class="fs12" /></div>
                 </a-flex>
-                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+                <a-popover trigger="hover">
+                  <template #content>1</template>
+                  <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+                </a-popover>
               </a-flex>
             </a-flex>
           </a-flex>
@@ -368,22 +414,29 @@
           <div class="fs16 color-3F4249 font-SCDream6 mb20">결제 옵션</div>
           <a-flex vertical gap="10">
             <a-flex gap="10">
-              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8 cp">
                 <div class="color-3F4249 fs15">택배 개봉 금지</div>
-                <CheckOutlined class="color-cfd2da fs12" />
+                <div class="check fl-cc br50" style="width: 24px;height: 24px;"><CheckOutlined class="fs12" /></div>
               </a-flex>
-              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              <a-popover trigger="hover">
+                <template #content>1</template>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-popover>
             </a-flex>
             <a-flex gap="10">
-              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8 w50">
+              <a-flex class="step-list fl-lb fl-tc br10 p10 bg-F1F3F8 w50 cp">
                 <div class="color-3F4249 fs15">택배 개봉 금지</div>
-                <CheckOutlined class="color-cfd2da fs12" />
+                <div class="check fl-cc br50" style="width: 24px;height: 24px;"><CheckOutlined class="fs12" /></div>
               </a-flex>
-              <div class="fl-tc fl-la toggle-tab bg-F1F3F8 br10 fs14 color-898f9e p6 w50">
-                <div class="checked fl-cc cp">포인트</div>
-                <div class="cp">카드</div>
+              <div class="fl-tc fl-la toggle-tab bg-F1F3F8 br10 fs14 color-898f9e p6 w50 disabled">
+                <template v-for="(v,k) in state.radioList[1]">
+                  <div class="fl-cc cp" :class="{checked:v.check}" @click="selectRadio(1,k)">{{ v.name }}</div>
+                </template>
               </div>
-              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              <a-popover trigger="hover">
+                <template #content>1</template>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-popover>
             </a-flex>
           </a-flex>
         </a-flex>
@@ -392,11 +445,14 @@
           <a-flex vertical gap="10">
             <a-flex gap="10">
               <div class="fl-tc fl-lb toggle-tab toggle-tab2 bg-F1F3F8 br10 fs14 color-898f9e p6">
-                <div class="cp">중량 선불</div>
-                <div class="checked cp">중량 착불</div>
-                <div class="cp">퀵/용달</div>
+                <template v-for="(v,k) in state.radioList[2]">
+                  <div class="fl-cc cp" :class="{checked:v.check}" @click="selectRadio(2,k)">{{ v.name }}</div>
+                </template>
               </div>
-              <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              <a-popover trigger="hover">
+                <template #content>1</template>
+                <QuestionCircleOutlined class="fs19 color-b9bdc9" />
+              </a-popover>
             </a-flex>
           </a-flex>
           <div class="fs13 color-898f9e mt10">중량 화물이 아닌 경우 경동택배, 퀵/용달로 배송불가</div>
@@ -407,8 +463,9 @@
             <a-flex vertical gap="10">
               <a-flex gap="10">
                 <div class="fl-tc fl-lb toggle-tab toggle-tab2 toggle-tab3 bg-F1F3F8 br10 fs14 color-898f9e p6">
-                  <div class="checked cp">적용</div>
-                  <div class="cp">미적용</div>
+                  <template v-for="(v,k) in state.radioList[3]">
+                    <div class="fl-cc cp" :class="{checked:v.check}" @click="selectRadio(3,k)">{{ v.name }}</div>
+                  </template>
                 </div>
               </a-flex>
             </a-flex>
@@ -418,8 +475,9 @@
             <a-flex vertical gap="10">
               <a-flex gap="10">
                 <div class="fl-tc fl-lb toggle-tab toggle-tab2 toggle-tab3 bg-F1F3F8 br10 fs14 color-898f9e p6">
-                  <div class="checked cp">송하인</div>
-                  <div class="cp">수령인</div>
+                  <template v-for="(v,k) in state.radioList[4]">
+                    <div class="fl-cc cp" :class="{checked:v.check}" @click="selectRadio(4,k)">{{ v.name }}</div>
+                  </template>
                 </div>
               </a-flex>
             </a-flex>
@@ -443,17 +501,17 @@
           <li>신청서는 작성하신 내용 그대로 세관에 신고되므로, 허위 신고로 인한 모든 책임은 작성자 본인에게 있습니다.</li>
         </ul>
         <a-flex vertical class="w50 fl-te fl-lc" gap="10">
-          <a-flex class="step-agree-check fl-cc" gap="10">
-            <div class="fs14 color-e4e7ec">모든 작성사항을 확인하였으며, 주의사항에 동의합니다.</div>
-            <div class="fl-cc br50" style="width: 24px;height: 24px;background-color: #6B6F7C"><CheckOutlined class="color-535660 fs13" /></div>
-          </a-flex>
-          <a-button class="step-agree-btn h56 br10 fl-cc t-white bg-2755f9">배송대행 신청 완료하기</a-button>
+          <div class="step-agree-check fl-cc cp" @click="state.agree = !state.agree">
+            <div class="fs13 color-e4e7ec">모든 작성사항을 확인하였으며, 주의사항에 동의합니다.</div>
+            <div class="check fl-cc br50" :class="state.agree?'agree':''"><CheckOutlined class="color-535660 fs13" /></div>
+          </div>
+          <a-button class="step-agree-btn h56 br10 fl-cc t-white bg-2755f9" :class="state.agree?'':'disabled'">배송대행 신청 완료하기</a-button>
         </a-flex>
       </a-flex>
     </a-flex>
   </div>
   </a-modal>
-  <a-modal width="340px" :open="false" :footer="null" :closable="false" class="find-modal">
+  <a-modal width="340px" :open="state.findVisible" :footer="null" :closable="false" class="find-modal">
     <a-flex vertical gap="10">
       <div class="fs20 color-535660 font-SCDream6">멀티 트래킹</div>
       <div class="fs14 color-535660">한 개의 상품이 여러 트래킹 번호로 나누어<br>
@@ -474,7 +532,7 @@
         </a-flex>
       </a-flex>
       <div class="fl-cc">
-        <a-button class="fs14 t-white bg-535660 h44 save-btn">저장 후 닫기</a-button>
+        <a-button class="fs14 t-white bg-535660 h44 save-btn" @click="hideFindModal">저장 후 닫기</a-button>
       </div>
     </a-flex>
   </a-modal>
@@ -497,17 +555,67 @@ import {
 import InputOn from "@/components/inputOn.vue";
 const state = reactive({
   confirmLoading:false,
+  findVisible:false,
+  radioList:[
+    [
+      {name:'내국인',check:true},
+      {name:'외국인',check:false},
+    ],
+    [
+      {name:'포인트',check:true},
+      {name:'카드',check:false},
+    ],
+    [
+      {name:'중량 선불',check:false},
+      {name:'중량 착불',check:true},
+      {name:'퀵/용달',check:false},
+    ],
+    [
+      {name:'적용',check:true},
+      {name:'미적용',check:false},
+    ],
+    [
+      {name:'송하인',check:true},
+      {name:'수령인',check:false},
+    ]
+  ],
+  goodsList:[
+    {},
+    {},
+  ],
+  agree:false,
 });
-const emit = defineEmits(["close", "update"]);
+const emit = defineEmits(["close"]);
 const props = defineProps({
   visible: Boolean,
 });
 let visible = computed({
   get: () => !props.visible, // getter
-  set: (value) => emit("close") // setter
+  set: (value) => onClose() // setter
 });
 const onClose = () => {
   emit("close");
+};
+const selectRadio = (k,selectedIndex) => {
+  state.radioList[k] = state.radioList[k].map((item, index) => {
+    return {
+      ...item,
+      check: index === selectedIndex
+    };
+  });
+};
+
+const copyGoods = (goods) => {
+  state.goodsList.push(goods);
+};
+const delGoods = (k) => {
+  state.goodsList.splice(k,1);
+};
+const showFindModal = () => {
+  state.findVisible = true;
+};
+const hideFindModal = () => {
+  state.findVisible = false;
 };
 </script>
 <style>
@@ -528,6 +636,26 @@ const onClose = () => {
 }
 .express-view .step3-goods-type input{
   background: #f1f3f8;
+}
+.express-view .step-agree-check:hover .check svg{
+  color: #cfd2da;
+}
+.express-view .step-agree-check .check.agree svg{
+  color: #fff;
+}
+.express-view .ant-upload:hover{
+  border: 2px solid #5277fa;
+  color: #5277fa;
+  border-radius: 16px;
+}
+.express-view .ant-upload:hover .ant-upload-text{
+  color: #5277fa;
+}
+.express-view .address-list .check svg{
+  color: #cfd2da;
+}
+.express-view .address-list:not(.checked):hover .check svg{
+  color: #969DAE;
 }
 .find-modal .ant-modal-content{
   padding: 30px 16px;
@@ -559,31 +687,25 @@ const onClose = () => {
 .address-list-main::-webkit-scrollbar {
   display: none;
 }
-.address-list-check{
+.address-list .check{
+  background: #f1f3f8;
   width: 24px;
   height: 24px;
+}
+.address-list:not(.checked):hover{
   background: #f1f3f8;
-  border-radius: 50%;
-  position: relative;
+  border-radius: 10px;
 }
-.address-list-check:before{
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%,-50%) rotate(-45deg);
-  width: 11px;
-  height: 6px;
-  border-left: 3px solid #cfd2da;
-  border-bottom: 3px solid #cfd2da;
+.address-list:not(.checked):hover .check{
+  background: #E4E7EC;
 }
-.address-list.checked .address-list-check{
+.address-list.checked .check{
   background: #2755F9;
 }
 .address-list.checked .text{
   color: #2755F9;
 }
-.address-list.checked .address-list-check:before{
+.address-list.checked .check:before{
   border-left: 3px solid white;
   border-bottom: 3px solid white;
 }
@@ -691,6 +813,15 @@ const onClose = () => {
   font-size: 34px;
   color: #898F9E;
 }
+.step3-add .text{
+  color: #898F9E;
+}
+.step3-add:hover{
+  border: 2px solid #2755F9;
+}
+.step3-add:hover .add,.step3-add:hover .text{
+  color: #2755F9;
+}
 .step3-page .page-start,.step3-page .page-end,.step3-page .page-prev,.step3-page .page-next{
   width: 40px;
   height: 40px;
@@ -703,6 +834,24 @@ const onClose = () => {
 .step4 .step-list{
   width: 270px;
   height: 64px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.step4 .step-list.checked,.step5 .step-list.checked{
+  border: 2px solid #2755F9;
+}
+.step4 .step-list:hover,.step5 .step-list:hover{
+  border: 2px solid #6e8dfb;
+}
+.step4 .step-list:hover .check,.step5 .step-list:hover .check{
+  background: #E4E7EC;
+}
+.step4 .step-list.checked .check,.step5 .step-list.checked .check{
+  background: #2755F9;
+  color: #fff;
+}
+.step4 .step-list.disabled{
+  opacity: 0.5;
 }
 .step5{
   padding-top: 100px;
@@ -713,6 +862,7 @@ const onClose = () => {
 .step5 .step-list{
   width: 310px;
   height: 44px;
+  border: 2px solid transparent;
 }
 .step5 .toggle-tab{
   opacity: 0.5;
@@ -738,10 +888,26 @@ const onClose = () => {
 }
 .step-agree-check{
   width: 387px;
+  padding: 10px;
+  gap: 10px;
+}
+.step-agree-check .check{
+  width: 24px;
+  height: 24px;
+  background: #6B6F7C;
+}
+.step-agree-check:hover{
+  background: #535660;
+  border-radius: 12px;
+}
+.step-agree-check .check.agree{
+  background: #19e075;
 }
 .step-agree-btn{
-  opacity: 0.3;
   width: 387px;
+}
+.step-agree-btn.disabled{
+  opacity: 0.3;
 }
 .find-modal .save-btn{
   width: fit-content;
