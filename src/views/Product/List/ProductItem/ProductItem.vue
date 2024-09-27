@@ -123,17 +123,28 @@ const isShowTag = (product) => {
 async function openDetailPopup(product, tab) {
   const itemId = product.item_id;
   const transStatus = getTranslateStaus(product);
+  if (translateStatusKey === 'item_text_trans_status') {
+    if (transStatus === 'W' || transStatus === 'P') {
+      let msg = '텍스트 번역 대기중입니다. 잠시후 다시 진행하시기 바랍니다.';
+      if (transStatus === 'P') {
+        msg = '텍스트 번역중입니다. 잠시후 다시 진행하시기 바랍니다.';
+      }
+      message.warning(msg);
+      return;
+    }
+  } else {
     if (transStatus === 'W') {
-      message.warning(translateShowText.value + ' 번역 대기중입니다. 상품정보 편집 시 번역전의 이미지로 뒤덮일 수 있습니다.');
+      message.warning('이미지 번역 대기중입니다. 상품정보 편집 시 번역전의 이미지로 뒤덮일 수 있습니다.');
     }
 
     // 자동이미지 번역중일때  컴펌
     if (transStatus === 'P') {
-      const confirmed = confirm(translateShowText.value + ` 번역중입니다. 상품정보 편집 시 번역전의 이미지로 뒤덮일 수 있습니다. 상품정보 편집을 진행하시겠습니까?`);
+      const confirmed = confirm(`이미지 번역중입니다. 상품정보 편집 시 번역전의 이미지로 뒤덮일 수 있습니다. 상품정보 편집을 진행하시겠습니까?`);
       if (!confirmed) {
         return false;
       }
     }
+  }
 
   emit('detail', {itemId, tab})
 }
