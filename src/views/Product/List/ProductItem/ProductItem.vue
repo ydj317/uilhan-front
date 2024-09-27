@@ -57,7 +57,7 @@
 
 <script setup>
 import {lib} from "@/util/lib";
-import {reactive, toRefs, ref, computed} from "vue";
+import {reactive, toRefs, ref, computed, watch} from "vue";
 import {message} from "ant-design-vue";
 import BtnLinkMarket from "@/views/Product/List/ProductItem/BtnLinkMarket.vue";
 import ChangeLink from "@/views/Product/List/ProductItem/ChangeLink.vue";
@@ -105,6 +105,10 @@ const changeLinkDataUpdate = (data) => {
     product.value.item_market = data.item_market;
   }
 }
+// 监听 item_text_trans_status 的变化
+watch(() => product.item_text_trans_status, (newValue) => {
+  isShowTag(product);
+});
 const isShowTag = (product) => {
   let isShow = true;
   let sendSuccessMarketList = product.item_sync_market.filter(market => market.status !== 'unsync');
@@ -123,7 +127,7 @@ const isShowTag = (product) => {
 async function openDetailPopup(product, tab) {
   const itemId = product.item_id;
   const transStatus = getTranslateStaus(product);
-  if (translateStatusKey === 'item_text_trans_status') {
+  if (translateStatusKey.value === 'item_text_trans_status') {
     if (transStatus === 'W' || transStatus === 'P') {
       let msg = '텍스트 번역 대기중입니다. 잠시후 다시 진행하시기 바랍니다.';
       if (transStatus === 'P') {
