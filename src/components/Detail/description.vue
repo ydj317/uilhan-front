@@ -397,7 +397,7 @@ export default {
     getOptionTable(columnCount) {
       let tableId = `${this.optionTableId}_${columnCount}`;
       //columnCount은 2줄로 보기 혹은 4줄로 보기
-      let optionHtml = `<table id="${tableId}" border="1" style="border-collapse: collapse; margin-left: auto; margin-right: auto;">`;
+      let optionHtml = `<table id="${tableId}" border="1"  style="border-collapse: separate; margin-left: auto; margin-right: auto;border-spacing: 10px;border: 0;">`;
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
@@ -408,17 +408,21 @@ export default {
           optionHtml += "<tr>";
         }
         let imgHtml = item.img === null || item.img === "" ? `<div style="height:100px;width:100px;"></div>` : `<img style="height:100px;width:100px;" src="${item.img}">`;
-        optionHtml += `<td style="min-height:100px;min-width:100px;">${imgHtml}</td>`;
-        optionHtml += `<td style="min-height:100px;min-width:150px; text-align: center;">${item.spec}</td>`;
+        optionHtml += `<td style="padding: 0;vertical-align: baseline;">
+                          <div>
+                            <div style="height:200px;width:200px;display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
+                            <div style="width: 100%;height: 1px;background: #ccc"></div>
+                            <div style="min-height:50px;width:200px;display: flex;align-items: center;justify-content: center;padding:10px">${item.spec}</div>
+                          </div>
+                      </td>`;
         //1줄 이상의 데이타일 경우 부족한 td 추가해줌
-        if (i === skuLength) {
-          if (skuLength > columnCount && skuLength % columnCount !== 0) {
-            for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
-              optionHtml += `<td style="min-height:100px;min-width:100px;"></td>`;
-              optionHtml += `<td style="min-height:100px;min-width:150px;"></td>`;
-            }
-          }
-        }
+        // if (i === skuLength) {
+        //   if (skuLength > columnCount && skuLength % columnCount !== 0) {
+        //     for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
+        //       optionHtml += `<td style="min-height:100px;min-width:100px;"></td>`;
+        //     }
+        //   }
+        // }
 
         //tr태그 닫음
         if (i % columnCount === 0) {
