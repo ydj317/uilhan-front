@@ -315,11 +315,13 @@ function getTextTransStatusConnectSSE() {
       for (let i = 0; i < productList.value.length; i++) {
         const item = productList.value[i]
         if (transTextPrdList.value.find(d => d.item_id === item.item_id)) {
-          console.log('find', resultData.data.find(d => d.item_id === item.item_id));
-          productList.value[i].item_text_trans_status = resultData.data.find(d => d.item_id === item.item_id).item_text_trans_status
-          productList.value[i].item_image_trans_status = resultData.data.find(d => d.item_id === item.item_id).item_image_trans_status
-          productList.value[i].item_is_trans = resultData.data.find(d => d.item_id === item.item_id).item_is_trans
-          productList.value[i].item_trans_name = resultData.data.find(d => d.item_id === item.item_id).item_trans_name
+          console.log('find', resultData.data.find(d => d.item_id === item.item_id))
+          if (resultData.data.find(d => d.item_id === item.item_id)) {
+            productList.value[i].item_text_trans_status = resultData.data.find(d => d.item_id === item.item_id).item_text_trans_status
+            productList.value[i].item_image_trans_status = resultData.data.find(d => d.item_id === item.item_id).item_image_trans_status
+            productList.value[i].item_is_trans = resultData.data.find(d => d.item_id === item.item_id).item_is_trans
+            productList.value[i].item_trans_name = resultData.data.find(d => d.item_id === item.item_id).item_trans_name
+          }
         }
       }
 
