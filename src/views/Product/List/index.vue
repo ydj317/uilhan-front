@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import {onMounted, onUnmounted, provide, ref} from "vue";
+import {onMounted, onUnmounted, provide, ref, nextTick} from "vue";
 import {useMarketApi} from "@/api/market";
 import {useUserInfo} from "@/hooks/useUserInfo";
 import {useSelection} from "@/hooks/useSelection";
@@ -204,7 +204,9 @@ async function getList() {
       getImageTransStatusConnectSSE();
     }
     if (transTextPrdList.value.length !== 0) {
-      getTextTransStatusConnectSSE();
+      nextTick(() => {
+        getTextTransStatusConnectSSE();
+      })
     }
   })
 }
@@ -291,12 +293,14 @@ function getTextTransStatusConnectSSE() {
   } else {
     url += "?prd_ids=" + JSON.stringify({ids: transTextPrdList.value.map(d => d.item_id)})
   }
-
+  console.log('transTextPrdList', transTextPrdList);
   const headers = {token: Cookie.get("token")}
   if (!textTransStateEvent || textTransStateEvent.readyState === textTransStateEvent.CLOSED) {
     textTransStateEvent = new EventSourcePolyfill(url, {
       headers: headers
     });
+  } else {
+    textTransStateEvent.url = url;
   }
 
   textTransStateEvent.onopen = () => {
@@ -309,13 +313,11 @@ function getTextTransStatusConnectSSE() {
     if (resultData.code !== '2000') {
       return false;
     }
-    console.log('resultData', resultData.data);
     // data.data 와 productList.value item_image_trans_status 업데이트
     if (resultData.data.length > 0) {
       for (let i = 0; i < productList.value.length; i++) {
         const item = productList.value[i]
         if (transTextPrdList.value.find(d => d.item_id === item.item_id)) {
-          console.log('find', resultData.data.find(d => d.item_id === item.item_id))
           if (resultData.data.find(d => d.item_id === item.item_id)) {
             productList.value[i].item_text_trans_status = resultData.data.find(d => d.item_id === item.item_id).item_text_trans_status
             productList.value[i].item_image_trans_status = resultData.data.find(d => d.item_id === item.item_id).item_image_trans_status
