@@ -204,9 +204,7 @@ async function getList() {
       getImageTransStatusConnectSSE();
     }
     if (transTextPrdList.value.length !== 0) {
-      nextTick(() => {
-        getTextTransStatusConnectSSE();
-      })
+      getTextTransStatusConnectSSE();
     }
   })
 }
@@ -293,15 +291,13 @@ function getTextTransStatusConnectSSE() {
   } else {
     url += "?prd_ids=" + JSON.stringify({ids: transTextPrdList.value.map(d => d.item_id)})
   }
-  console.log('transTextPrdList', transTextPrdList);
   const headers = {token: Cookie.get("token")}
-  if (!textTransStateEvent || textTransStateEvent.readyState === textTransStateEvent.CLOSED) {
-    textTransStateEvent = new EventSourcePolyfill(url, {
-      headers: headers
-    });
-  } else {
-    textTransStateEvent.url = url;
+  if (textTransStateEvent) {
+    textTransStateEvent.close();
   }
+  textTransStateEvent = new EventSourcePolyfill(url, {
+    headers: headers
+  });
 
   textTransStateEvent.onopen = () => {
     console.log('Text SSE connection opened');
