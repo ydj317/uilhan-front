@@ -84,7 +84,7 @@ const translateStatusMap = reactive({
   F: { color: 'error', text: ' 번역 실패' }
 })
 const getTranslateStaus = (product) => {
-  if (product['item_text_trans_status'] === 'S' && product['item_image_trans_status']) {
+  if ((product['item_text_trans_status'] === 'S' || !product['item_text_trans_status']) && product['item_image_trans_status']) {
     translateStatusKey.value = 'item_image_trans_status';
   } else {
     translateStatusKey.value = 'item_text_trans_status';

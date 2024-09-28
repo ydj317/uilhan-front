@@ -225,11 +225,12 @@ function getImageTransStatusConnectSSE() {
   }
 
   const headers = {token: Cookie.get("token")}
-  if (!imageTransStateEvent || imageTransStateEvent.readyState === imageTransStateEvent.CLOSED) {
-    imageTransStateEvent = new EventSourcePolyfill(url, {
-      headers: headers
-    });
+  if (imageTransStateEvent) {
+    imageTransStateEvent.close();
   }
+  imageTransStateEvent = new EventSourcePolyfill(url, {
+    headers: headers
+  });
 
   imageTransStateEvent.onopen = () => {
     console.log('SSE connection opened');
