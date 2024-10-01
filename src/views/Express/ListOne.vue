@@ -533,7 +533,6 @@ const getBridgeList = async (params = {}) => {
 		}
 
 		state.bridgeList = res.data.list;
-    console.log(state.bridgeList);
 		//TODO 배송대행료 계산
 		state.total = res.data.total;
 
