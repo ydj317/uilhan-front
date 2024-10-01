@@ -1325,7 +1325,7 @@ const handleUploadChange = (option, index) => {
 	formData.append("image_type", "bridge");
 
 	AuthRequest.post(
-		process.env.VUE_APP_API_URL + "/api/image",
+		process.env.VUE_APP_API_URL + "/api/upload/image",
 		formData
 	).then(res => {
 		if (res.status !== '2000') {
