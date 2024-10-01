@@ -270,7 +270,9 @@
 							<div class="fs14 font-SCDream4">{{ order['bridgeOrderStatus'] ?? '' }}</div>
 <!--							<div class="fs14 font-SCDream4">{{ order['isPaid'] === 1 ? '결제완료' : '입금대기'}}</div>-->
 <!--							<div class="fs14 font-SCDream4">{{ order['ctrSeq'] ?? '' }}</div>-->
-							<div class="fs14 font-SCDream4"></div>
+							<div class="fs14 font-SCDream4">
+                {{order['ctrSeq'] === '위해 항공' ? '항공운송' : '해운운송'}}
+              </div>
 <!--							<div class="fs14 font-SCDream4">{{ order['fee'] ?? 0 }}원</div>-->
 							<div class="fs14 font-SCDream4">{{ order['receiverName'] ?? '' }}</div>
 						</template>
@@ -531,6 +533,7 @@ const getBridgeList = async (params = {}) => {
 		}
 
 		state.bridgeList = res.data.list;
+    console.log(state.bridgeList);
 		//TODO 배송대행료 계산
 		state.total = res.data.total;
 
