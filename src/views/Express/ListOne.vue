@@ -218,6 +218,7 @@
           @search="searchKeyword"
           v-model:value="state.searchParams.keyword"
       />
+
 		</a-flex>
 		<a-divider class="mt0 bottom-border" />
 		<a-spin size="large" :spinning="state.listLoading">
@@ -323,7 +324,7 @@
 				<a-form-item name="date" class="mt10 mb10">
 					<a-input
 						class="w100"
-						placeholder="쇼핑몰 주문번호를 입력하세요."
+						placeholder="넥스트배송 주문번호를 입력하세요."
 						v-model:value="state.searchParams.bridge_order_id"
 					/>
 				</a-form-item>
