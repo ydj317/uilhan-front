@@ -61,11 +61,11 @@ function taobaoParser(text) {
             for (let k = 0; k < tdEl.length; k++) {
               // 상품URL, 이미지URL
               if(tdEl[k]?.firstChild?.className?.includes('production-mod__production')) {
-                if(tdEl[k]?.firstChild?.firstChild?.childNodes[0]?.href) {
-                  itemData.prdUrl = tdEl[k]?.firstChild?.firstChild?.childNodes[0]?.href;
+                if (tdEl[k]?.firstChild?.firstChild?.firstChild?.childNodes[0]?.href) {
+                  itemData.prdUrl =  itemData.prdUrl = tdEl[k]?.firstChild?.firstChild?.firstChild?.childNodes[0]?.href;
                 }
-                if(tdEl[k]?.firstChild?.firstChild?.childNodes[0]?.firstChild?.src) {
-                  itemData.imgUrl = tdEl[k]?.firstChild?.firstChild?.childNodes[0]?.firstChild?.src;
+                if(tdEl[k]?.firstChild?.firstChild?.firstChild?.firstChild?.childNodes[0]?.src) {
+                  itemData.imgUrl = tdEl[k]?.firstChild?.firstChild?.firstChild?.firstChild?.childNodes[0]?.src
                 }
               } else if (tdEl[k]?.firstChild?.className?.includes('price-mod__price')) {
                 // 상품가격

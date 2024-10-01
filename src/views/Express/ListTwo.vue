@@ -5,7 +5,27 @@
         <div>{{ v.name }}</div>
         <div class="mt5" :class="v.num == 0 ? 'color-abb1be':'color-2755f9'">{{v.num}}</div>
       </div>
-      <div class="show-more br10 p10 fl-cc"><DownOutlined /></div>
+      <a-dropdown>
+        <div class="ant-dropdown-link show-more  br10 p10 fl-cc cp" @click.prevent>
+          <span class="mr6 color-2755f9">999</span><DownOutlined />
+        </div>
+        <template #overlay>
+          <a-menu class="show-more-list">
+            <a-menu-item>
+               <a-flex class="show-more-list-item fl-tc fl-lb h40">
+                 <div class="fs14">배달실패</div>
+                 <div class="fs15 color-abb1be">0</div>
+               </a-flex>
+            </a-menu-item>
+            <a-menu-item>
+              <a-flex class="show-more-list-item fl-tc fl-lb h40">
+                <div class="fs14">국내재발송</div>
+                <div class="fs15 color-2755f9">1</div>
+              </a-flex>
+            </a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
       <QuestionCircleOutlined class="fs15 color-b9bdc9 ml2" />
       <div class="email-wrap fl-cc fl-c">
         <div class="fs12">사서함 번호</div>
@@ -55,104 +75,67 @@
         </a-collapse-panel>
       </a-collapse>
     </a-flex>
-    <a-flex class="card-wrap fl-lb mt12 mb20">
-      <a-flex vertical class="card-list bg-white p16 fl-lb">
+    <a-flex class="card-wrap fl-lb mt12 mb20" gap="20">
+      <a-flex vertical class="card-list bg-white p16 fl-lc" gap="20">
         <a-flex class="fl-lb">
-          <img src="@/assets/img/express/ship.png" class="avatar br50"/>
+          <img src="@/assets/img/express/image2.png" class="avatar br50"/>
           <a-flex vertical class="fl-te">
             <div class="fs14 color-898f9e font-SCDream4">파트너사업자 회원</div>
             <div class="fs20 color-3F4249 font-SCDream6 mt5">강형민</div>
           </a-flex>
         </a-flex>
-        <a-flex wrap="wrap" class="card-btn-wrap fs14 color-3F4249">
-          <a-button type="default" shape="round">
-            <template #icon>
-              <SettingOutlined />
-            </template>
-            사용자설정
-          </a-button>
+        <a-flex class="card-btn-wrap fs14 color-3F4249">
           <a-button type="default" shape="round">
             <template #icon>
               <img src="@/assets/img/express/excel.png" class="mr6"/>
             </template>
             내역받기
           </a-button>
-          <a-button type="default" shape="round" class="bg-535660 t-white">트래킹번호 입력</a-button>
           <a-button type="default" shape="round" class="bg-2755f9 t-white">신청서 작성하기</a-button>
         </a-flex>
       </a-flex>
-      <a-flex vertical class="card-list bg-white p16 fl-lb">
-        <a-tabs v-model:activeKey="state.tabActiveKey" class="w100">
-          <a-tab-pane key="1" tab="내역보기">
-            <a-flex vertical class="h40">
-              <a-flex class="fl-lb fl-tc color-2755f9">
-                <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/symbol.png" class="symbol mr6"/>
-                  <span>예치금</span>
-                </a-flex>
-                <div class="fs20 font-SCDream6">95,473,940<span class="fs14 ml2">원</span></div>
-              </a-flex>
+      <a-flex vertical class="card-list bg-white p16 fl-lc" gap="20">
+        <a-flex vertical gap="20">
+          <a-flex class="fl-lb fl-tc color-2755f9">
+            <a-flex class="fl-tc">
+              <img src="@/assets/img/express/symbol.png" class="symbol mr6"/>
+              <span>예치금</span>
             </a-flex>
-            <a-flex vertical class="h40 mt10">
-              <a-flex class="fl-lb fl-tc color-3F4249">
-                <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/symbol2.png" class="symbol mr6"/>
-                  <span>토스머니</span>
-                </a-flex>
-                <div class="fs20 font-SCDream6">95,473,940<span class="fs14 ml2">원</span></div>
-              </a-flex>
+            <div class="fs20 font-SCDream6">95,473,940<span class="fs14 ml2">원</span></div>
+          </a-flex>
+          <a-flex class="fl-lb fl-tc color-3F4249">
+            <a-flex class="fl-tc">
+              <img src="@/assets/img/express/symbol2.png" class="symbol mr6"/>
+              <span>토스머니</span>
             </a-flex>
-          </a-tab-pane>
-          <a-tab-pane key="2" tab="예치금 환불">
-            <a-flex vertical class="h40">
-              <a-flex class="fl-lb fl-tc color-2755f9">
-                <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/symbol.png" class="symbol mr6"/>
-                  <span>예치금</span>
-                </a-flex>
-                <div class="fs20 font-SCDream6">95,473,940<span class="fs14 ml2">원</span></div>
-              </a-flex>
-            </a-flex>
-            <a-flex vertical class="h40 mt10">
-              <a-flex class="fl-lb fl-tc color-3F4249">
-                <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/symbol2.png" class="symbol mr6"/>
-                  <span>토스머니</span>
-                </a-flex>
-                <div class="fs20 font-SCDream6">95,473,940<span class="fs14 ml2">원</span></div>
-              </a-flex>
-            </a-flex>
-          </a-tab-pane>
-          <a-tab-pane key="3" tab="예치금 충전">
-            <a-flex vertical class="h40">
-              <a-flex class="fl-lb fl-tc color-2755f9">
-                <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/symbol.png" class="symbol mr6"/>
-                  <span>예치금</span>
-                </a-flex>
-                <div class="fs20 font-SCDream6">95,473,940<span class="fs14 ml2">원</span></div>
-              </a-flex>
-            </a-flex>
-            <a-flex vertical class="h40 mt10">
-              <a-flex class="fl-lb fl-tc color-3F4249">
-                <a-flex class="fl-tc">
-                  <img src="@/assets/img/express/symbol2.png" class="symbol mr6"/>
-                  <span>토스머니</span>
-                </a-flex>
-                <div class="fs20 font-SCDream6">95,473,940<span class="fs14 ml2">원</span></div>
-              </a-flex>
-            </a-flex>
-          </a-tab-pane>
-        </a-tabs>
-      </a-flex>
-      <a-flex vertical class="card-list bank-wrap p16 fl-lb">
-        <img src="@/assets/img/express/bank-card.png" class="bank-card"/>
-        <div class="fl-cc t-white fs15">현대카드 5115</div>
-        <a-flex wrap="wrap" class="card-btn-wrap fs14">
-          <a-button ghost shape="round" class="t-white">카드관리</a-button>
-          <a-button ghost shape="round" class="t-white">카드추가</a-button>
+            <div class="fs20 font-SCDream6">95,473,940<span class="fs14 ml2">원</span></div>
+          </a-flex>
+        </a-flex>
+        <a-flex class="fs14 color-6B6F7C" gap="10">
+          <a-button type="default" shape="round" class="bg-F1F3F8 b0 h40">내역보기</a-button>
+          <a-button type="default" shape="round" class="bg-F1F3F8 b0 h40">예치금 환불</a-button>
+          <a-button type="default" shape="round" class="bg-535660 b0 h40 t-white">예치금 충전</a-button>
         </a-flex>
       </a-flex>
+      <template v-if="1==1">
+        <a-flex vertical class="card-list t-white fs14 bg-535660 fl-cc p20">
+          <div class="fs16">자동결제 카드 등록</div>
+          <div class="mt20">카드를 추가하면</div>
+          <div class="mt5">자동결제를 이용하실 수 있습니다.</div>
+          <a-button ghost shape="round" class="h34 t-white mt20 fs14 w100" style="border: 1px solid #6b6f7c">자동결제 카드 등록하기</a-button>
+        </a-flex>
+      </template>
+      <template v-else>
+        <a-flex vertical class="card-list bank-wrap p16 fl-lc" gap="20">
+          <img src="@/assets/img/express/bank-card.png" class="bank-card"/>
+          <div class="fl-cc t-white fs15">현대카드 5115</div>
+          <a-flex class="card-btn-wrap fs14">
+            <a-button ghost shape="round" class="t-white">카드관리</a-button>
+            <a-button ghost shape="round" class="t-white">카드추가</a-button>
+          </a-flex>
+        </a-flex>
+      </template>
+
     </a-flex>
     <a-flex class="search-wrap bg-white fl-lb fl-tc">
       <a-flex class="search-left fl-tc" gap="5">
@@ -717,7 +700,7 @@ onUnmounted(()=>{
 }
 .card-list{
   width: 350px;
-  height: 200px;
+  height: 180px;
   border-radius: 16px;
 }
 .card-list .avatar{
@@ -852,5 +835,12 @@ onUnmounted(()=>{
 }
 :deep(.input-on-wrap.code-wrap .placeholder){
   color: #2755F9!important;
+}
+.show-more-list .show-more-list-item{
+  width: 160px;
+  color: #3F4249;
+}
+.show-more-list .show-more-list-item:hover{
+  color: #2755F9;
 }
 </style>
