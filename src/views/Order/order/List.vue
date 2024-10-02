@@ -174,7 +174,6 @@
               <a-button v-if="item.prdMarket" class="link_to_buy" @click="openBuyPage(item)">구매링크</a-button>
             </div>
           </td>
-
           <td style="min-width: 350px; max-width: 450px;">
             <span> {{ item.prdName }}</span>
             <br/>
