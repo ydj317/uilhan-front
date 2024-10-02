@@ -136,7 +136,6 @@ const redirectPaths = [
   '/order/list',
   '/product/domeggook',
   '/product/analytics',
-  '/express/listone'
 ];
 
 router.beforeEach(async (to, from, next) => {
@@ -157,6 +156,7 @@ const getCheckPlan = async () => {
   try {
     const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user/quota/checkPlan", {});
     const planData = res.data;
+
     Cookie.set('planData', planData)
   } catch (error) {
   }
