@@ -257,7 +257,13 @@
             <a-row class="mb10">
               <a-col :span="6" class="step4-right-text pl30">상품명 (영문)<span class="red">*</span></a-col>
               <a-col :span="18" class="help-input-wrap">
-                <a-input ref="step3-input" @change="step3Input" v-model:value="item.prd_name_en"/>
+                <a-input
+                  ref="step3-input"
+                  @change="step3Input"
+                  v-model:value="item.prd_name_en"
+                  placeholder="최대 200byte까지 입력가능"
+                  @input="limitStringLength(item,'prd_name_en', 200,$event)"
+                />
 <!--                            <span class="help-input">입력금지</span>-->
               </a-col>
             </a-row>
@@ -270,7 +276,14 @@
             <a-row class="mb10 bottom-border">
               <a-col :span="6" class="step4-right-text pl30">상품명 (중문)</a-col>
               <a-col :span="18" class="help-input-wrap">
-                <a-input ref="step3-input" @change="step3Input" v-model:value="item.prd_name_cn"/>
+                <a-input
+                  ref="step3-input"
+                  @change="step3Input"
+                  v-model:value="item.prd_name_cn"
+                  placeholder="최대 200byte까지 입력가능"
+                  @input="limitStringLength(item,'prd_name_cn', 200,$event)"
+                />
+
               </a-col>
             </a-row>
             <a-row class="mb10">
@@ -311,7 +324,12 @@
               <a-col :span="6" class="step4-right-text pl30">옵션</a-col>
               <a-col :span="2" class="center">색상</a-col>
               <a-col :span="6">
-                <a-input v-model:value="item.option_color"/>
+                <a-input
+                  v-model:value="item.option_color"
+                  placeholder="최대 100byte까지 입력가능"
+                  @input="limitStringLength(item,'option_color', 100,$event)"
+                />
+
               </a-col>
               <a-col :span="2" class="center">상품단위</a-col>
               <a-col :span="8">
@@ -321,7 +339,11 @@
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">모멜명/재질/규격/사이즈</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.option_size" placeholder="예 : KF94/100ML*30支/水20ML乳20ML"/>
+                <a-input
+                  v-model:value="item.option_size"
+                  placeholder="예 : KF94/100ML*30支,최대 80byte까지 입력가능"
+                  @change="limitStringLength(item,'option_size', 80,$event)"
+                />
               </a-col>
               <a-col :span="2" class="center">순량(KG)</a-col>
               <a-col :span="8">
@@ -1454,6 +1476,30 @@ watchEffect(() => {
   }
 
 });
+
+function limitStringLength(item,key,maxLength,e) {
+  const encoder = new TextEncoder();
+  const inputValue = e.target.value;
+  const byteArray = encoder.encode(inputValue);
+  if (byteArray.buffer.byteLength > maxLength) {
+
+    let truncatedValue = '';
+    let byteLength = 0;
+
+    for (let char of inputValue) {
+      const charByteLength = encoder.encode(char).length;
+      byteLength += charByteLength;
+
+      if (byteLength > maxLength) {
+        break;
+      }
+
+      truncatedValue += char;
+    }
+    item[key] = truncatedValue;
+    e.target.value = truncatedValue;
+  }
+}
 
 </script>
 <style>
