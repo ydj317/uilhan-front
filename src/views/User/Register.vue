@@ -88,7 +88,6 @@
             <a-button type="primary" class="center mt5" @click="showExpressModal">우편번호 검색</a-button>
           </div>
           <div class="help" :class="{'red':checked2 && formState.zoneCode == ''}">넥스트배송 동시가입을 진행할 경우 우편번호는 필수로 입력해주십시오.</div>
-          <div class="help" :class="{'red':checked3 && formState.zoneCode == ''}">토스토스배송 동시가입을 진행할 경우 우편번호는 필수로 입력해주십시오.</div>
         </a-descriptions-item>
         <a-descriptions-item>
           <span class="pb5" :class="{'required':checked2}"><strong>주소</strong></span>
@@ -101,7 +100,6 @@
             </a-form-item>
           </div>
           <div class="help" :class="{'red':checked2 && formState.address == ''}">넥스트배송 동시가입을 진행할 경우 주소는 필수로 입력해주십시오.</div>
-          <div class="help" :class="{'red':checked3 && formState.address == ''}">토스토스배송 동시가입을 진행할 경우 주소는 필수로 입력해주십시오.</div>
         </a-descriptions-item>
         <div style="margin-top: 50px; border-top: 1px solid #eee">
           <h5>사업자 정보</h5>
@@ -515,6 +513,7 @@ export default defineComponent({
         commission: formState.commission,
         wholesale_commission: formState.wholesale_commission,
         is_bridge_sync: checked2.value,
+        is_bridge_tos_sync: checked3.value,
         recommend_code: formState.recommend_code,
         zone_code: formState.zoneCode,
         address: formState.address,
