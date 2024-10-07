@@ -331,7 +331,7 @@
               </a-col>
               <a-col :span="2" class="center">상품단위</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.product_unit" placeholder="예 : 件/双/千克"/>
+                <a-input v-model:value="item.product_unit" placeholder="예 : 件/双/千克" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
@@ -345,41 +345,41 @@
               </a-col>
               <a-col :span="2" class="center">순량(KG)</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.product_weight" placeholder="한개/SET 상품의 순량"/>
+                <a-input v-model:value="item.product_weight" placeholder="한개/SET 상품의 순량" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">브랜드 (영문)</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.brand_en" placeholder="no"/>
+                <a-input v-model:value="item.brand_en" placeholder="no" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">브랜드 (중문)</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.brand_cn" placeholder="한글 입력금지 (没有)"/>
+                <a-input v-model:value="item.brand_cn" placeholder="한글 입력금지 (没有)" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">국내판매 쇼핑몰 URL</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.prdUrl_kr"/>
+                <a-input v-model:value="item.prdUrl_kr" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">자체관리 코드</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.user_code" placeholder="표준상품코드 작성 요망 (请填写标准商品条码)"/>
+                <a-input v-model:value="item.user_code" placeholder="표준상품코드 작성 요망 (请填写标准商品条码)" />
               </a-col>
               <a-col :span="2" class="center">원산지</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.origin_text" placeholder="한글 입력금지"/>
+                <a-input v-model:value="item.origin_text" placeholder="한글 입력금지" />
               </a-col>
             </a-row>
             <a-row class="mb10">
               <a-col :span="6" class="step4-right-text pl30">상품 URL</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.prdUrl" placeholder="※ 배송대행 상품금액 세관신고 증명서류입니다. 중국쇼핑몰 URL 추천합니다."/>
+                <a-input v-model:value="item.prdUrl" placeholder="※ 배송대행 상품금액 세관신고 증명서류입니다. 중국쇼핑몰 URL 추천합니다." />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
@@ -391,13 +391,13 @@
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">이미지 URL<span class="red">*</span></a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.prdImage"/>
+                <a-input v-model:value="item.prdImage" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">오픈마켓 주문번호</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.orderNo"/>
+                <a-input v-model:value="item.orderNo" />
               </a-col>
             </a-row>
           </a-col>
@@ -409,11 +409,13 @@
       </a-row>
       <a-row class="bg-fa bottom-border pt20 pb20">
         <a-col :span="20" class="pl40">총 수량</a-col>
-        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{state.form.total_quantity}}</span> 개</a-col>
+        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{ state.form.total_quantity }}</span> 개
+        </a-col>
       </a-row>
       <a-row class="bg-fa bottom-border pt20 pb20">
         <a-col :span="20" class="pl40">총 금액</a-col>
-        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{state.form.total_amount}}</span>위안</a-col>
+        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{ state.form.total_amount }}</span>위안
+        </a-col>
       </a-row>
       <a-row class="bg-fa pt20 pb20">
         <a-col :span="24" class="pl40 fs12">※ 세관에 신고되는 금액입니다. (해외직구: 해외 판매처 구매 원가 기재 / 해외구매대행업: 국내 오픈마켓 판매가 기재)</a-col>
@@ -424,18 +426,20 @@
       <!--        <a-button type="default">일반통관</a-button>-->
       <!--      </a-row>-->
 
+
       <div>
         <a-row class="mt30">
           <span class="title mb10">STEP 05&nbsp;&nbsp;&nbsp;&nbsp;구매물품보상보험 안심케어 서비스에 가입하세요.</span>
           <a-divider class="divider bg-b mt0 mb0"></a-divider>
         </a-row>
         <a-row class="mt30" style="justify-content: space-between;">
-          <a-checkbox :checked="state.form.is_care" @click="showCareInfo"><span class="cor-ora fs14">해외직구보험 가입 & 내용확인하기(필수)</span></a-checkbox>
+          <a-checkbox :checked="state.form.is_care" @click="showCareInfo"><span class="cor-ora fs14">해외직구보험 가입 & 내용확인하기(필수)</span>
+          </a-checkbox>
           <span class="fw fs14">안심케어 비용 : <span style="color: #cf1322">{{ state.form.carePrice }}</span> 원</span>
         </a-row>
         <a-divider class="bg-f mt10"></a-divider>
 
-        <a-row  style="height: 150px;">
+        <a-row style="height: 150px;">
           <a-col :span="6" class="center bg-fa" style="line-height: 0.5; text-align: center;">
             <a-col :span="24" class="pt10" style="line-height: 0.5; text-align: center;">
               <p>해외에서 직접구매하신 물품의</p>
@@ -603,7 +607,8 @@
       </a-row>
       <a-row class="bg-black footer-wrap pt30 pb30 mt20">
         <a-col :span="24" class="center pt25 pb25 pl20">
-          <div class="mb5"><span class="red">※</span>입고된 물품은 수정이 <span class="under-line">불가능</span>합니다. <span class="red">※</span></div>
+          <div class="mb5"><span class="red">※</span>입고된 물품은 수정이 <span class="under-line">불가능</span>합니다. <span
+            class="red">※</span></div>
           <div><span class="red">※</span><span class="under-line">접수신청</span>을 완료하신 후 부득이한 사유로 요청서 <span
             class="under-line">수정</span>이 필요한 경우 <span class="under-line">1:1문의</span>해주세요.<span class="red">※</span>
           </div>
@@ -616,19 +621,15 @@
 </template>
 
 <script setup>
-import {computed, createVNode, reactive, ref, toRefs, watchEffect} from "vue";
-import {message, Modal} from "ant-design-vue";
-import {
-  ExclamationCircleOutlined,
-  LoadingOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons-vue";
-import {useMarketOrderApi} from "@/api/order";
-import {useBridgeApi} from "@/api/bridge";
+import { computed, createVNode, reactive, ref, toRefs, watchEffect } from "vue";
+import { message, Modal } from "ant-design-vue";
+import { ExclamationCircleOutlined, LoadingOutlined } from "@ant-design/icons-vue";
+import { useMarketOrderApi } from "@/api/order";
+import { useBridgeApi } from "@/api/bridge";
 import Cookie from "js-cookie";
 import ParseMarketOrderZhCn from "@/components/ParseMarketOrderZhCn.vue";
 import OverseasCareDetail from "@/components/OverseasCareDetail.vue";
-import {AuthRequest} from "@/util/request";
+import { AuthRequest } from "@/util/request";
 import plusOutlined from "@ant-design/icons-vue/lib/icons/PlusOutlined";
 
 const props = defineProps({
@@ -638,7 +639,7 @@ const props = defineProps({
   }
 });
 
-const {bridgeFormData} = toRefs(props);
+const { bridgeFormData } = toRefs(props);
 const emit = defineEmits(["close", "update"]);
 
 
@@ -676,7 +677,7 @@ const state = reactive({
     req_2: "", // 물류요청사항
 
     importation_mode: "3", // 수입방식
-    receiver_info_type :"1", // 받는 사람 정보 (1:개인통관고유번호, 3:사업자등록번호)
+    receiver_info_type: "1", // 받는 사람 정보 (1:개인통관고유번호, 3:사업자등록번호)
     avatar: "", // 이미지 URL
     messageType: "", // 배송 요청사항
     carePrice: 0, // 보험료?
@@ -838,7 +839,12 @@ const state = reactive({
    이러한 사실을 통지하고 해당 상품을 취소할 수 있습니다.`
 });
 
-const OverseasCareData = ref({show: false, checked : false, total_amount_kr: state.total_amount_kr, care_price : state.form.carePrice})
+const OverseasCareData = ref({
+  show: false,
+  checked: false,
+  total_amount_kr: state.total_amount_kr,
+  care_price: state.form.carePrice
+})
 
 const calculateTotal = async () => {
   // 총 금액
@@ -936,12 +942,12 @@ const getOrderDetailForBridge = async () => {
   if (bridgeFormData.value.record.orderId === "") {
     return false;
   }
-  await useMarketOrderApi().getOrderDetailForBridge({id: bridgeFormData.value.record.orderId}).then(res => {
+  await useMarketOrderApi().getOrderDetailForBridge({ id: bridgeFormData.value.record.orderId }).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
     }
-    const {marketOrder} = res.data;
+    const { marketOrder } = res.data;
     state.form.id = marketOrder[0].id;
     state.form.order_id = marketOrder[0].orderId;
     state.form.receiver_name = marketOrder[0].receiverName;
@@ -982,7 +988,7 @@ const getOrderDetailForBridge = async () => {
   });
 };
 
-const showExpressModal = () =>{
+const showExpressModal = () => {
   new daum.Postcode({
     oncomplete: function(data) {
       state.form.receiver_post_code = data.zonecode;
@@ -1023,7 +1029,7 @@ const handleOk = () => {
   }
 
   //#363 수령자 연락처 확인
-  const checkNumber = state.form.receiver_tel1.slice(0,3);
+  const checkNumber = state.form.receiver_tel1.slice(0, 3);
 
   if (checkNumber !== "010") {
     message.error("수령자 연락처는 010으로 시작하는 핸드폰 번호를 입력해 주세요.");
@@ -1072,7 +1078,7 @@ const handleOk = () => {
   }
 
   // check amount
-  if (parseFloat(state.form.total_amount) <= 0 ) {
+  if (parseFloat(state.form.total_amount) <= 0) {
     message.error("금액을 0이상 입력해 주세요.");
     return false;
   }
@@ -1084,7 +1090,7 @@ const showConfirm = () => {
   Modal.confirm({
     title: "추가 수정 사항은 없으신가요?",
     icon: createVNode(ExclamationCircleOutlined),
-    content: createVNode("div", {style: "color:red;"}, "*주문 건 정보 수정은 배대지 사이트에서만 가능합니다."),
+    content: createVNode("div", { style: "color:red;" }, "*주문 건 정보 수정은 배대지 사이트에서만 가능합니다."),
     onOk() {
       state.confirmLoading = true;
       useMarketOrderApi().registerBridgeOrder(state.form).then(res => {
@@ -1298,7 +1304,7 @@ const getCategory = async (arc_seq, index) => {
   }
 
   state.loading = true;
-  useBridgeApi().getArcSeq({arc_seq: arc_seq}).then(res => {
+  useBridgeApi().getArcSeq({ arc_seq: arc_seq }).then(res => {
     if (res.status !== "2000") {
       message.error("통관품목을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
       return false;
@@ -1345,7 +1351,7 @@ const handleUploadChange = (option, index) => {
   formData.append("image_type", "bridge");
 
   AuthRequest.post(
-    process.env.VUE_APP_API_URL + "/api/image",
+    process.env.VUE_APP_API_URL + "/api/upload/image",
     formData
   ).then(res => {
     if (res.status !== '2000') {
@@ -1375,7 +1381,7 @@ const copyItem = (index) => {
   calculateTotal();
 };
 
-const parseMarketOrderData = reactive({show : false, orderData : {} })
+const parseMarketOrderData = reactive({ show: false, orderData: {} })
 const parseMarketOrder = (index) => {
   parseMarketOrderData.show = true
 };
@@ -1451,7 +1457,7 @@ watchEffect(() => {
     // parseMarketOrderData.orderDat 의 데이타를 initItem 구조에 맞게 매핑하고
     // state.form.items 에 넣어준다.
     state.form.items = parseMarketOrderData.orderData.items.map(item => {
-      const newItem = {...initItem};
+      const newItem = { ...initItem };
       newItem.cn_order_id = parseMarketOrderData.orderData.orderNo;
       newItem.unitPrice = item.price;
       newItem.prd_name_cn = item.prdName;
