@@ -104,7 +104,7 @@
           <a-row class="mb10">
             <a-col :span="4" class="center">연락처<span class="red">*</span></a-col>
             <a-col :span="15" class="center">
-              <a-input v-model:value="state.form.receiver_tel1" />
+              <a-input v-model:value="state.form.receiver_tel1" placeholder="예:010-1234-5678" />
             </a-col>
           </a-row>
           <a-row class="mb10">
@@ -1008,6 +1008,12 @@ const handleOk = () => {
 
   if (checkNumber !== "010") {
     message.error("수령자 연락처는 010으로 시작하는 핸드폰 번호를 입력해 주세요.");
+    return false;
+  }
+
+  //#전화번호에 '-' 있는지 판단
+  if (state.form.receiver_tel1.indexOf("-") === -1) {
+    message.error("연락처 번호는  \"-\"을 포함하여 입력해 주세요. 예: 010-1234-5678");
     return false;
   }
 
