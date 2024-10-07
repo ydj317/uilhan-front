@@ -1030,12 +1030,6 @@ const handleOk = () => {
     return false;
   }
 
-  //#전화번호에 '-' 있는지 판단
-  if (state.form.receiver_tel1.indexOf("-") === -1) {
-    message.error("연락처 번호는  \"-\"을 포함하여 입력해 주세요. 예: 010-1234-5678");
-    return false;
-  }
-
   // check arc_seq
   if (state.form.items.some(item => item.arc_seq === "")) {
     message.error("통관품목을 선택해 주세요.");
