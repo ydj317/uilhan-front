@@ -88,6 +88,7 @@
             <a-button type="primary" class="center mt5" @click="showExpressModal">우편번호 검색</a-button>
           </div>
           <div class="help" :class="{'red':checked2 && formState.zoneCode == ''}">넥스트배송 동시가입을 진행할 경우 우편번호는 필수로 입력해주십시오.</div>
+          <div class="help" :class="{'red':checked3 && formState.zoneCode == ''}">토스토스배송 동시가입을 진행할 경우 우편번호는 필수로 입력해주십시오.</div>
         </a-descriptions-item>
         <a-descriptions-item>
           <span class="pb5" :class="{'required':checked2}"><strong>주소</strong></span>
@@ -100,6 +101,7 @@
             </a-form-item>
           </div>
           <div class="help" :class="{'red':checked2 && formState.address == ''}">넥스트배송 동시가입을 진행할 경우 주소는 필수로 입력해주십시오.</div>
+          <div class="help" :class="{'red':checked3 && formState.address == ''}">토스토스배송 동시가입을 진행할 경우 주소는 필수로 입력해주십시오.</div>
         </a-descriptions-item>
         <div style="margin-top: 50px; border-top: 1px solid #eee">
           <h5>사업자 정보</h5>
@@ -108,10 +110,18 @@
         <a-descriptions-item>
           <span class="required"><strong>업체명/사업자명</strong></span>
           <a-form-item name="com_name" has-feedback>
-            <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명"/>
+            <a-input v-model:value="formState.com_name" placeholder="업체명/사업자명" @input="fnHanEng2(formState.com_name, 'com_name_en')" />
           </a-form-item>
           <div class="help">최소 2자 최대 20자이내로 입력해주십시오</div>
         </a-descriptions-item>
+
+		  <a-descriptions-item>
+			  <span class="no_required"><strong>업체명/사업자명(영문)</strong></span>
+			  <a-form-item name="com_name_en" has-feedback>
+				  <a-input v-model:value="formState.com_name_en" placeholder="업체명/사업자명(영문)" />
+			  </a-form-item>
+			  <div class="help">업체명/사업자명(영문)을 입력해주십시오</div>
+		  </a-descriptions-item>
 
         <a-descriptions-item>
           <span class="required"><strong>사업자번호</strong></span>
@@ -312,9 +322,26 @@
         </div>
         <div class="help ml15">넥스트배송 계정이 있을 경우 동시가입 체크 해제 후 가입해 주시고 계정관리에서 바인딩 해주세요.</div>
 
+		  <div class="foorterSetting">
+			  <a-checkbox v-model:checked="checked3">토스토스배송 동시가입.
+				  <a-button
+					  type="primary"
+					  size="small"
+					  @click.prevent="bridgeTosSyncCheck"
+					  :disabled="checked3 === false"
+					  style="margin: 2px;"
+				  >
+					  중복확인
+				  </a-button>
+				  <a-button class="init" type="link" @click="formState.tosModal = true">[약관보기]</a-button>
+			  </a-checkbox>
+			  <tostos-agree v-model:open="formState.tosModal"  @agree="onTosAgree"/>
+		  </div>
+		  <div class="help ml15">토스토스배송 계정이 있을 경우 동시가입 체크 해제 후 가입해 주시고 계정관리에서 바인딩 해주세요.</div>
+
         <a-form-item class="buttons">
           <a-button type="primary" html-type="submit"
-                    :disabled="checked2 === true && bridge_sync_pass !== true"
+                    :disabled="(checked2 === true && bridge_sync_pass !== true) || (checked3 === true && tos_sync_pass !== true)"
                     style="font-weight: bold;color: black"
           >회원가입
           </a-button>
@@ -346,9 +373,11 @@ import {useRoute} from "vue-router";
 import Policy from "@/components/Detail/policy.vue";
 import Express from "@/components/Detail/express.vue";
 import { useStore } from 'vuex';
+import TostosAgree from "@/components/Detail/tostosAgree.vue";
 
 export default defineComponent({
   components: {
+	  TostosAgree,
     CloseCircleOutlined,
     LoadingOutlined,
     Loading,
@@ -381,6 +410,7 @@ export default defineComponent({
     });
 
     const bridge_sync_pass = ref(false);
+    const tos_sync_pass = ref(false);
     const formRef = ref();
     const formState = reactive({
       username: "",
@@ -400,6 +430,8 @@ export default defineComponent({
       tel3: "",
       //[필수] 사업자명/업체명
       com_name: "",
+	  //사업자명/업체명(영문)
+      com_name_en: "",
       //[필수] 사업자번호
       com_number: "",
       //사업장전화번호
@@ -438,6 +470,7 @@ export default defineComponent({
       detailAddress:'',
       //快递条款弹窗
       expressModal:false,
+      tosModal:false,
       business_license_image: ''
     });
 
@@ -453,10 +486,10 @@ export default defineComponent({
         message.warning('회원가입 하시러면 회원약관 내용을 읽어보시고 약관 동의가 필요합니다.');
         return false;
       }
-      if (checked2.value) {
-        if(!formState.zoneCode || !formState.address || !formState.detailAddress){
-          return false;
-        }
+      if (checked2.value || checked3.value) {
+		  if (!formState.zoneCode || !formState.address || !formState.detailAddress) {
+			  return false;
+		  }
       }
 
       let user = {
@@ -467,6 +500,7 @@ export default defineComponent({
         phone: formState.phone1 + "-" + formState.phone2 + "-" + formState.phone3,
         tel: formState.tel1 + "-" + formState.tel2 + "-" + formState.tel3,
         com_name: formState.com_name,
+        com_name_en: formState.com_name_en,
         com_number: formState.com_number,
         com_phone: formState.com_phone1 + "-" + formState.com_phone2 + "-" + formState.com_phone3,
         com_ceo: formState.com_ceo,
@@ -772,7 +806,7 @@ export default defineComponent({
       }
     };
     let validateDetailAddress = async (rule, value) => {
-      if(checked2.value){
+      if(checked2.value || checked3.value) {
         if (value === "") {
           return Promise.reject("상세주소를 입력해주십시오.");
         } else {
@@ -1023,7 +1057,7 @@ export default defineComponent({
 
 				  const result = res.data.data;
 				  if ('MEM_CODE' in result) {
-					  message.error("배대지 동시가입 가능 합니다. 회원가입 진행 해주세요.");
+					  message.error("중복된 배대지 아이디입니다.");
 					  bridge_sync_pass.value = false ;
 
 					  return false;
@@ -1036,14 +1070,60 @@ export default defineComponent({
 		  }
 	  };
 
+	  const bridgeTosSyncCheck = () => {
+
+		  if (!!!formState.username) {
+			  message.warning('아이디를 입력해주십시오');
+			  return false;
+		  }
+
+		  if (!!!formState.password) {
+			  message.warning('비밀번호를 입력해주십시오');
+			  return false;
+		  }
+
+		  if (!!!formState.email) {
+			  message.warning('Email을 입력해주십시오');
+			  return false;
+		  }
+
+		  if (!!!formState.phone1 || !!!formState.phone2 || !!!formState.phone3) {
+			  message.warning('휴대전화를 입력해주십시오');
+			  return false;
+		  }
+
+		  if (checked3.value) {
+			  NoAuthAjax.post(
+				  process.env.VUE_APP_API_URL + "/api/bridge/syncCheckTosBridge", {...formState}).then((res) => {
+
+				  const result = res?.data;
+				  if (result?.status !== '2000') {
+					  message.error(result.message ?? '중복된 배대지 아이디입니다.');
+					  tos_sync_pass.value = false ;
+
+					  return false;
+				  }
+
+				  message.success("배대지 동시가입 가능 합니다. 회원가입 진행 해주세요.");
+				  tos_sync_pass.value = true;
+
+			  }).catch((err) => {message.error(err)});
+		  }
+	  };
+
     const checked = ref(false);
     const checked2 = ref(false);
+    const checked3 = ref(false);
     const onAgree = () => {
       checked.value = true;
     };
     const onExpressAgree = () => {
       checked2.value = true;
     };
+
+	  const onTosAgree = () => {
+		  checked3.value = true;
+	  };
 
     const store = useStore();
     const openPolicyModal = () => {
@@ -1108,6 +1188,67 @@ export default defineComponent({
       event.stopPropagation();
     }
 
+	  const fnHanEng2 = (pVal, Target) => {
+
+		  let sCho, sJung, sChong;
+
+		  sCho = ["G", "Gg", "N", "D", "Tt", "R", "M", "B", "Pp", "S", "Ss", "O",
+			  "J", "Jj", "Ch", "K", "T", "P", "H"];
+		  sJung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae",
+			  "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
+		  sChong = ["", "g", "gg", "gs", "n", "nz", "nh", "d", "l", "lg", "lm",
+			  "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "z",
+			  "ch", "k", "t", "p", "h"];
+
+		  var sVal = pVal;
+
+		  var t = "";
+		  var tmp = "";
+		  var n, n1, n2, n3;
+		  var c, d;
+		  let i;
+		  for (i = 0; i < sVal.length; i++) {
+			  c = sVal.charAt(i);
+			  n = parseInt(escape(c).replace(/%u/g, ""), 16);
+			  if (n >= 0xAC00 && n <= 0xD7A3) {
+				  n = n - 0xAC00;
+				  n1 = Math.floor(n / (21 * 28));
+				  n = n % (21 * 28);
+				  n2 = Math.floor(n / 28);
+				  n3 = Math.floor(n % 28);
+				  tmp = sCho[n1] + sJung[n2] + sChong[n3];
+				  if (tmp.length > 1 && tmp.charAt(0) == "O")
+					  tmp = ("" + tmp.charAt(1)).toUpperCase() + tmp.substring(2);
+				  if (i == 0) {
+					  // tmp ="KWON" ;
+					  if (c == "권") {
+						  tmp = "KWON";
+					  } else if (c == "김") {
+						  tmp = "KIM";
+					  } else if (c == "이") {
+						  tmp = "LEE";
+					  } else if (c == "류") {
+						  tmp = "RYU";
+					  } else if (c == "박") {
+						  tmp = "PARK";
+					  } else if (c == "최") {
+						  tmp = "CHOI";
+					  } else if (c == "오") {
+						  tmp = "OH";
+					  } else if (c == "우") {
+						  tmp = "WOO";
+					  } else if (c == "주") {
+						  tmp = "JOO";
+					  }
+				  }
+				  t += tmp;
+			  } else
+				  t += c;
+
+		  }
+		  t = t.toUpperCase();
+		  formState[Target] = t;
+	  };
 
     return {
       checked,
@@ -1140,7 +1281,6 @@ export default defineComponent({
       bridge_sync_pass,
       bridgeSyncCheck,
       lib,
-
       openPolicyModal,
       onAgree,
       onExpressAgree,
@@ -1154,7 +1294,12 @@ export default defineComponent({
       headers,
       showBigImage,
       removeLicenseImage,
-      showBigImageOnClick
+      showBigImageOnClick,
+		tos_sync_pass,
+		checked3,
+		fnHanEng2,
+		onTosAgree,
+		bridgeTosSyncCheck
     };
   }
 });
