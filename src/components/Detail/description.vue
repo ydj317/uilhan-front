@@ -397,23 +397,21 @@ export default {
     getOptionTable(columnCount) {
       let tableId = `${this.optionTableId}_${columnCount}`;
       //columnCount은 2줄로 보기 혹은 4줄로 보기
-      let optionHtml = `<table id="${tableId}" border="1"  style="border-collapse: separate; margin-left: auto; margin-right: auto;border-spacing: 10px;border: 0;">`;
+      let optionHtml = `<table id="${tableId}" border="1"  style="border-collapse: separate; margin-left: -10px; margin-right: auto;border-spacing: 10px;border: 0;">`;
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
+      let imgWidth = columnCount == 1 ? 500 : 330;
       forEach(this.product.sku, (item) => {
         if (i === 1 || i === trStartTag) {
           //다음번 tr 시작 태그
           trStartTag = i + columnCount;
           optionHtml += "<tr>";
         }
-        let imgHtml = item.img === null || item.img === "" ? `<div style="height:100px;width:100px;"></div>` : `<img style="height:100px;width:100px;" src="${item.img}">`;
+        let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgWidth}px;width:${imgWidth}px;"></div>` : `<img style="height:${imgWidth}px;width:${imgWidth}px;" src="${item.img}">`;
         optionHtml += `<td style="padding: 0;vertical-align: baseline;">
-                          <div>
-                            <div style="height:200px;width:200px;display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
-                            <div style="width: 100%;height: 1px;background: #ccc"></div>
-                            <div style="min-height:50px;width:200px;display: flex;align-items: center;justify-content: center;padding:10px">${item.spec}</div>
-                          </div>
+                          <div style="height:${imgWidth}px;width:${imgWidth}px;display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
+                            <div style="min-height:50px;width:${imgWidth-20}px;display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;">${item.spec}</div>
                       </td>`;
 
         //tr태그 닫음
