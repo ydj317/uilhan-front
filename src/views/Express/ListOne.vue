@@ -218,6 +218,7 @@
           @search="searchKeyword"
           v-model:value="state.searchParams.keyword"
       />
+
 		</a-flex>
 		<a-divider class="mt0 bottom-border" />
 		<a-spin size="large" :spinning="state.listLoading">
@@ -270,7 +271,9 @@
 							<div class="fs14 font-SCDream4">{{ order['bridgeOrderStatus'] ?? '' }}</div>
 <!--							<div class="fs14 font-SCDream4">{{ order['isPaid'] === 1 ? '결제완료' : '입금대기'}}</div>-->
 <!--							<div class="fs14 font-SCDream4">{{ order['ctrSeq'] ?? '' }}</div>-->
-							<div class="fs14 font-SCDream4"></div>
+							<div class="fs14 font-SCDream4">
+                {{order['ctrSeq'] === '위해 항공' ? '항공운송' : '해운운송'}}
+              </div>
 <!--							<div class="fs14 font-SCDream4">{{ order['fee'] ?? 0 }}원</div>-->
 							<div class="fs14 font-SCDream4">{{ order['receiverName'] ?? '' }}</div>
 						</template>
@@ -323,7 +326,7 @@
 				<a-form-item name="date" class="mt10 mb10">
 					<a-input
 						class="w100"
-						placeholder="쇼핑몰 주문번호를 입력하세요."
+						placeholder="넥스트배송 주문번호를 입력하세요."
 						v-model:value="state.searchParams.bridge_order_id"
 					/>
 				</a-form-item>
