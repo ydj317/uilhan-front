@@ -67,7 +67,7 @@ export class Gmarket {
         prdName: item.prdName,
         prdNameCn: item.prdNameCn,
         prdOptionName: item.prdOptionName,
-        PrdOptionNameCn: item.PrdOptionNameCn,
+        prdOptionNameCn: item.prdOptionNameCn,
         prdOptionNo: item.prdOptionNo,
         prdPriceCn: item.prdPriceCn,
         prdUrl: item.prdUrl,

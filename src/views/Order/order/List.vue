@@ -179,7 +179,7 @@
             <br/>
             <span style="font-size: 12px;color: #999999;"> {{ item.prdOptionName }}</span>
             <br/>
-            <span style="font-size: 12px;color: #999999;"> {{ item.PrdOptionNameCn }}</span>
+            <span style="font-size: 12px;color: #999999;"> {{ item.prdOptionNameCn }}</span>
           </td>
           <td>{{ item.quantity }}</td>
 
