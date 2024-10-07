@@ -401,17 +401,17 @@ export default {
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
-      let imgWidth = columnCount == 1 ? 500 : 330;
+      let imgWidth = this.isPhone() ? '100%' :  columnCount == 1 ? '500px' : '330px';
       forEach(this.product.sku, (item) => {
         if (i === 1 || i === trStartTag) {
           //다음번 tr 시작 태그
           trStartTag = i + columnCount;
           optionHtml += "<tr>";
         }
-        let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgWidth}px;width:${imgWidth}px;"></div>` : `<img style="height:${imgWidth}px;width:${imgWidth}px;" src="${item.img}">`;
+        let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgWidth};width:${imgWidth};"></div>` : `<img style="height:${imgWidth};width:${imgWidth};" src="${item.img}">`;
         optionHtml += `<td style="padding: 0;vertical-align: baseline;">
-                          <div style="height:${imgWidth}px;width:${imgWidth}px;display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
-                            <div style="min-height:50px;width:${imgWidth-20}px;display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;">${item.spec}</div>
+                          <div style="height:${imgWidth};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
+                            <div style="min-height:50px;width:calc(${imgWidth} - 20px);display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;">${item.spec}</div>
                       </td>`;
 
         //tr태그 닫음
@@ -622,6 +622,9 @@ export default {
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
     },
+    isPhone(){
+      return /ios|ipod|iPad|iphone|android|SymbianOS|Windows Phone/i.test(navigator.userAgent);
+    }
   }
 };
 </script>
