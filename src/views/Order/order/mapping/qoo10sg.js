@@ -62,6 +62,7 @@ export class Qoo10sg {
         prdName: item.prdName,
         prdNameCn: item.prdNameCn,
         prdOptionName: item.prdOptionName,
+        prdOptionNameCn: item.prdOptionNameCn,
         prdOptionNo: item.prdOptionNo,
         prdPriceCn: item.prdPriceCn,
         prdUrl: item.prdUrl,
