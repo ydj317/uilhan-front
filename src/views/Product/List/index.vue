@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import {onMounted, onUnmounted, provide, ref} from "vue";
+import {onMounted, onUnmounted, provide, ref, nextTick} from "vue";
 import {useMarketApi} from "@/api/market";
 import {useUserInfo} from "@/hooks/useUserInfo";
 import {useSelection} from "@/hooks/useSelection";
@@ -128,6 +128,7 @@ const detailActive = ref('1')
 const searchParams = ref(ServiceProduct.getCacheParams())
 const productList = ref([])
 const transImagePrdList = ref([])
+const transTextPrdList = ref([])
 const searchCount = ref(0)
 const totalCount = ref(0)
 const {userInfo} = useUserInfo({}, checkUserPermission)
@@ -144,6 +145,7 @@ const defaultSyncResult = {
 }
 const syncResult = ref({...defaultSyncResult})
 let imageTransStateEvent = null;
+let textTransStateEvent = null;
 
 const store = useStore();
 
@@ -176,6 +178,7 @@ async function getList() {
   return ServiceProduct.getList({...searchParams.value}).then((res) => {
     // item_image_trans_status 가 P 혹은  W 인 값들만 빼옴
     transImagePrdList.value = res.data.list.filter(d => d.item_image_trans_status === 'P' || d.item_image_trans_status === 'W')
+    transTextPrdList.value = res.data.list.filter(d => d.item_text_trans_status === 'P' || d.item_text_trans_status === 'W')
     productList.value = res.data.list;
     searchParams.value.page = parseInt(res.data.page);
     searchParams.value.limit = parseInt(res.data.limit);
@@ -200,6 +203,9 @@ async function getList() {
     if (transImagePrdList.value.length !== 0) {
       getImageTransStatusConnectSSE();
     }
+    if (transTextPrdList.value.length !== 0) {
+      getTextTransStatusConnectSSE();
+    }
   })
 }
 
@@ -219,11 +225,12 @@ function getImageTransStatusConnectSSE() {
   }
 
   const headers = {token: Cookie.get("token")}
-  if (!imageTransStateEvent || imageTransStateEvent.readyState === imageTransStateEvent.CLOSED) {
-    imageTransStateEvent = new EventSourcePolyfill(url, {
-      headers: headers
-    });
+  if (imageTransStateEvent) {
+    imageTransStateEvent.close();
   }
+  imageTransStateEvent = new EventSourcePolyfill(url, {
+    headers: headers
+  });
 
   imageTransStateEvent.onopen = () => {
     console.log('SSE connection opened');
@@ -269,6 +276,79 @@ function getImageTransStatusConnectSSE() {
     console.log('error', e)
     console.log('SSE connection closed');
     imageTransStateEvent.close();
+  };
+}
+
+function getTextTransStatusConnectSSE() {
+  if (!window.EventSource) {
+    console.log('Your browser does not support server-sent events');
+    return false;
+  }
+
+  // url 조합
+  let url = process.env.VUE_APP_API_URL + "/api/prd/transTextStatus"
+  if (Cookie.get('XDEBUG_SESSION')) {
+    url += '?XDEBUG_SESSION_START=PHPSTORM' + "&prd_ids=" + JSON.stringify({ids: transTextPrdList.value.map(d => d.item_id)});
+  } else {
+    url += "?prd_ids=" + JSON.stringify({ids: transTextPrdList.value.map(d => d.item_id)})
+  }
+  const headers = {token: Cookie.get("token")}
+  if (textTransStateEvent) {
+    textTransStateEvent.close();
+  }
+  textTransStateEvent = new EventSourcePolyfill(url, {
+    headers: headers
+  });
+
+  textTransStateEvent.onopen = () => {
+    console.log('Text SSE connection opened');
+  };
+
+  // 결과 받고 업데이트
+  textTransStateEvent.onmessage = (e) => {
+    const resultData = JSON.parse(e.data)
+    if (resultData.code !== '2000') {
+      return false;
+    }
+    // data.data 와 productList.value item_image_trans_status 업데이트
+    if (resultData.data.length > 0) {
+      for (let i = 0; i < productList.value.length; i++) {
+        const item = productList.value[i]
+        if (transTextPrdList.value.find(d => d.item_id === item.item_id)) {
+          if (resultData.data.find(d => d.item_id === item.item_id)) {
+            productList.value[i].item_text_trans_status = resultData.data.find(d => d.item_id === item.item_id).item_text_trans_status
+            productList.value[i].item_image_trans_status = resultData.data.find(d => d.item_id === item.item_id).item_image_trans_status
+            productList.value[i].item_is_trans = resultData.data.find(d => d.item_id === item.item_id).item_is_trans
+            productList.value[i].item_trans_name = resultData.data.find(d => d.item_id === item.item_id).item_trans_name
+          }
+        }
+      }
+
+      let bComplete = true;
+      // resultData.data 를 루프하여 P 혹은 W 상태가 있으면 bComplete = false
+      for (let i = 0; i < resultData.data.length; i++) {
+        if (resultData.data[i].item_text_trans_status === 'P' || resultData.data[i].item_text_trans_status === 'W') {
+          bComplete = false;
+          break;
+        }
+      }
+      if (bComplete) {
+        console.log('Text trans complete and close SSE');
+        textTransStateEvent.close();
+      }
+    }
+
+    if (resultData.action === 'close') {
+      console.log('Text SSE connection closed');
+      textTransStateEvent.close();
+    }
+  };
+
+// 에러
+  textTransStateEvent.onerror = (e) => {
+    console.log('error', e)
+    console.log('Text SSE connection closed');
+    textTransStateEvent.close();
   };
 }
 
