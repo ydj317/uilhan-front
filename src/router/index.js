@@ -6,6 +6,7 @@ import {cookieInit, isLogin} from "util/auth";
 import Cookie from "js-cookie";
 import {menus, notFoundAndNoPower, staticRoutes,otherMenus} from "@/router/route";
 import emitter from "@/util/emitter";
+import { AuthRequest } from "@/util/request";
 
 /**
  * @TODO vuex로 처리해야함
@@ -130,5 +131,35 @@ setInterval(function () {
     member_roles: Cookie.get('member_roles')
   }, '*');
 }, 1000);
+const redirectPaths = [
+  '/product',
+  '/order/list',
+  '/product/domeggook',
+  '/product/analytics',
+];
+
+router.beforeEach(async (to, from, next) => {
+
+  let planData = Cookie.get('planData')
+  if(!planData){
+    await getCheckPlan();
+    planData = Cookie.get('planData')
+  }
+  if (redirectPaths.includes(to.path) && planData == 'false') {
+    next('/user/servicesPay');
+  } else {
+    next();
+  }
+});
+
+const getCheckPlan = async () => {
+  try {
+    const res = await AuthRequest.post(process.env.VUE_APP_API_URL + "/api/user/quota/checkPlan", {});
+    const planData = res.data;
+
+    Cookie.set('planData', planData)
+  } catch (error) {
+  }
+};
 
 export default router;
