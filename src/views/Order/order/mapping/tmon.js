@@ -57,6 +57,7 @@ export class Tmon {
         prdName: item.prdName,
         prdNameCn: item.prdNameCn,
         prdOptionName: item.prdOptionName,
+        PrdOptionNameCn: item.PrdOptionNameCn,
         prdOptionNo: item.prdOptionNo,
         prdPriceCn: item.prdPriceCn,
         prdUrl: item.prdUrl,
