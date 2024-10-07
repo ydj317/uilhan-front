@@ -415,14 +415,6 @@ export default {
                             <div style="min-height:50px;width:200px;display: flex;align-items: center;justify-content: center;padding:10px">${item.spec}</div>
                           </div>
                       </td>`;
-        //1줄 이상의 데이타일 경우 부족한 td 추가해줌
-        // if (i === skuLength) {
-        //   if (skuLength > columnCount && skuLength % columnCount !== 0) {
-        //     for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
-        //       optionHtml += `<td style="min-height:100px;min-width:100px;"></td>`;
-        //     }
-        //   }
-        // }
 
         //tr태그 닫음
         if (i % columnCount === 0) {
