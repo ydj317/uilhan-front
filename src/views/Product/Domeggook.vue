@@ -798,7 +798,7 @@ export default defineComponent({
 
     const setKeyword = () => {
       const route = useRoute();
-      dataOfSearchFormValues.kw = route.query.keyword || "";
+      dataOfSearchFormValues.kw = route.query.search_keyword || "";
     }
 
     onMounted(async () => {
