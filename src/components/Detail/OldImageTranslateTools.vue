@@ -334,6 +334,14 @@ export default defineComponent({
     // 이미지 리사이즈
     async resizeImage(e) {
       const checkedImage = this.localTranslateImageList.find(item => item.checked === true);
+
+      try {
+        new URL(checkedImage.url);
+      } catch (e) {
+        message.error("이미지 로딩중입니다, 잠시후 다시 시도해주세요.");
+        return false;
+      }
+
       const index = this.localTranslateImageList.findIndex(item => item.checked === true);
       if (checkedImage === undefined) {
         message.error("이미지를 선택해주세요.");
@@ -371,6 +379,12 @@ export default defineComponent({
 
         const { list, recharge } = oTranslateInfo.data;
         let transImage = list.find(item => item.key === index);
+        try {
+          new URL(transImage.translate_url);
+        } catch (e) {
+          message.error("이미지 리사이징에 실패 했습니다. 잠시후 다시 시도해주세요. 계속 안되시면 관리자한테 문의해주세요.");
+          return false;
+        }
         let url = transImage.translate_url+'?request_id='+transImage.request_id;
         this.localTranslateImageList[index] = { ...this.localTranslateImageList[index], ...transImage,url }
         this.product.recharge = recharge;
