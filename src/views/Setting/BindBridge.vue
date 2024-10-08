@@ -2,16 +2,21 @@
 <template>
 	<a-card :loading="formState.loading" :bordered="false">
       <template #title>
-        배대지 계정 연동
-          <a-tooltip placement="right">
-            <template #title>
-              넥스트배송에 가입된 아이디,휴대전화,이메일을 모두 입력해 주세요.배대지 계정 연동후 배송대행 신청이 가능합니다.
-            </template>
-            <QuestionCircleOutlined/>
-          </a-tooltip>
+		  배대지 계정 연동
+		  <a-tooltip placement="right">
+			  <template #title>
+				  넥스트배송에 가입된 아이디,휴대전화,이메일을 모두 입력해 주세요.배대지 계정 연동후 배송대행 신청이 가능합니다.
+				  <br/>
+				  토스토스배송에 가입된 인증키를 입력해 주세요.배대지 계정 연동후 배송대행 신청이 가능합니다.
+			  </template>
+			  <QuestionCircleOutlined/>
+		  </a-tooltip>
       </template>
 		<a-descriptions bordered :column="1" :labelStyle="{ width: '170px' }"
 						:contentStyle="{ width: 'auto' }">
+			<template #title>
+				넥스트 배송
+			</template>
 			<a-descriptions-item label="배대지 ID:" :labelStyle="{textAlign: 'right'}">
 				<a-input v-model:value="formState.settingData.bind_bridge_id" style="width: 200px;" placeholder="배대지 ID를 입력해주세요" allow-clear
 						 @input="formState.settingData.is_bridge_sync = false" />
@@ -49,6 +54,26 @@
 				<a-button type="primary" size="small" @click.prevent="bridgeSyncCheck">연동확인</a-button>
 			</a-descriptions-item>
 		</a-descriptions>
+		<a-descriptions bordered :column="1" :labelStyle="{ width: '170px' }"
+						:contentStyle="{ width: 'auto' }" :style="{ marginTop: '20px' }">
+			<template #title>
+				토스토스 배송
+			</template>
+			<a-descriptions-item label="토스토스 인증키:" :labelStyle="{textAlign: 'right'}">
+				<a-input v-model:value="formState.settingData.bind_tos_api_key" style="width: 400px;" placeholder="토스토스 인증키를 입력해주세요" allow-clear
+						 @input="formState.settingData.is_bridge_tos_sync = false" />
+			</a-descriptions-item>
+			<a-descriptions-item label="사서함번호:" :labelStyle="{textAlign: 'right'}" v-if="formState.showTosItem">
+				{{formState.settingData.bind_bridge_tos_mb_id}}
+				<a-space>
+					<a-tag v-if="formState.settingData.is_bridge_tos_sync" color="green">연동완료</a-tag>
+					<a-tag v-else color="red">미연동</a-tag>
+				</a-space>
+			</a-descriptions-item>
+			<a-descriptions-item label="연동확인" :labelStyle="{textAlign: 'right'}">
+				<a-button type="primary" size="small" @click.prevent="bridgeTosSyncCheck">연동확인</a-button>
+			</a-descriptions-item>
+		</a-descriptions>
 <!--		<div style="display: flex;justify-content: center" class="mt15">-->
 <!--			<a-button type="primary" @click="handleSaveUserData" :disabled="!formState.settingData.is_bridge_sync">저장</a-button>-->
 <!--		</div>-->
@@ -76,9 +101,13 @@ const formState = reactive({
 		bind_bridge_email: '',
 		is_bridge_sync: false,
 		bind_bridge_password: '',
+		is_bridge_tos_sync: false,
+		bind_bridge_tos_mb_id: '',
+		bind_tos_api_key: '',
 	},
 	loading: false,
-	showItem: false
+	showItem: false,
+	showTosItem: false
 })
 
 const emit = defineEmits(['formUpdated']);
@@ -92,13 +121,25 @@ function getUserInfoData() {
 			return false;
 		}
 
-		const { bridge_mb_id, is_bridge_sync, bridge_phone, bridge_email, bridge_id } = res.data;
+		const {
+			bridge_mb_id,
+			is_bridge_sync,
+			bridge_phone,
+			bridge_email,
+			bridge_id,
+			is_bridge_tos_sync,
+			bridge_tos_mb_id,
+            tos_api_key
+		} = res.data;
 
     formState.settingData.bind_bridge_id = bridge_id
     formState.settingData.bind_bridge_mb_id = bridge_mb_id
     formState.settingData.bind_bridge_email= bridge_email
     formState.settingData.bind_bridge_password = ''
     formState.settingData.is_bridge_sync = is_bridge_sync
+    formState.settingData.is_bridge_tos_sync = is_bridge_tos_sync
+    formState.settingData.bind_bridge_tos_mb_id = bridge_tos_mb_id
+    formState.settingData.bind_tos_api_key = tos_api_key
 
     //배대지 계정 bridge_phone 빈값일경우
     if (bridge_phone) {
@@ -161,6 +202,32 @@ const bridgeSyncCheck = () => {
 	});
 }
 
+const bridgeTosSyncCheck = () => {
+	if (!!!formState.settingData.bind_tos_api_key) {
+		message.error("토스토스 인증키를 입력해주세요.");
+		return false;
+	}
+
+	useBridgeApi().syncTosCheckIsMember(formState.settingData).then((res) => {
+		if (res.status !== "2000") {
+			message.error(res.message);
+			return false;
+		}
+
+		if (! 'userPost' in res.data) {
+			message.error(res.message);
+			return false;
+		}
+
+		message.success('연동 성공');
+		formState.settingData.is_bridge_tos_sync = true;
+		formState.settingData.bind_bridge_tos_mb_id = res.data['userPost'];
+
+		// 调用更新用户详细信息的 API
+		return useUserApi().updateUserTosInfo(formState.settingData);
+	});
+}
+
 // 유효성 체크
 const checkValidation = () => {
 	if (formState.settingData.bind_bridge_id === '') {
@@ -196,12 +263,17 @@ const handleFormUpdate = () => {
 		bind_bridge_phone3: formState.settingData.bind_bridge_phone3,
 		bind_bridge_email: formState.settingData.bind_bridge_email,
 		is_bridge_sync: formState.settingData.is_bridge_sync,
+		is_bridge_tos_sync: formState.settingData.is_bridge_tos_sync,
+		bind_bridge_tos_mb_id: formState.settingData.bind_bridge_tos_mb_id,
+		bind_tos_api_key: formState.settingData.bind_tos_api_key,
 	});
 };
 
 watchEffect(() => {
 	formState.showItem = formState.settingData.is_bridge_sync;
+	formState.showTosItem = formState.settingData.is_bridge_tos_sync;
 	if (! formState.settingData.is_bridge_sync) formState.settingData.bind_bridge_mb_id = '';
+	if (! formState.settingData.is_bridge_tos_sync) formState.settingData.bind_bridge_tos_mb_id = '';
 	handleFormUpdate();
 });
 

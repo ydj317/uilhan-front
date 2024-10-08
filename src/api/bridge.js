@@ -76,6 +76,15 @@ export function useBridgeApi() {
                 method: "POST",
                 data,
             });
+        },
+
+        // 토스토스 바인딩 확인
+        syncTosCheckIsMember: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/bridge/syncTosCheckIsMember",
+                method: "POST",
+                data,
+            });
         }
     }
 }

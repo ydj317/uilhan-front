@@ -45,6 +45,13 @@ export function useUserApi() {
             });
         },
 
-
+        // 토스토스 연동후 저장
+        updateUserTosInfo: (data) => {
+            return AuthRequest({
+                url: process.env.VUE_APP_API_URL + "/api/user/updateUserTosInfo",
+                method: "POST",
+                data,
+            });
+        },
     }
 }
