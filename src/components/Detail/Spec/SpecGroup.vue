@@ -747,11 +747,37 @@ export default {
     },
 
     onChangeRecommendedOptionGroup(market, optionIndex, $event) {
-      // if (this.selectedRecommendedOption.includes($event)) {
-      //    message.info('이미 선택된 옵션입니다.')
-      //   this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id'] = '';
-      // }
+      if (market.marketCode === 'coupang') {
+        let aArrayData = [];
+        if (this.selectedRecommendedOption.includes($event)) {
+          message.info('이미 선택된 옵션입니다.')
+          this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id'] = '';
+          return;
+        }
+
+        if ($event !== '') {
+          let sMarketOptName = market.meta_data.recommendedOptList[$event]['recommendedOptName'];
+          aArrayData.push(sMarketOptName);
+
+          this.selectedRecommendedOption.map((item) => {
+            let sMarketOptName = market.meta_data.recommendedOptList[item]['recommendedOptName']
+            aArrayData.push(sMarketOptName);
+          })
+          let result = this.doesNotContainBoth(aArrayData, '개당 용량', '개당 중량');
+
+          if (result === false && optionIndex > 0) {
+            message.info('개당 용량과 개당 중량은 같이 선택할 수 없습니다.');
+            this.product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id'] = '';
+
+          }
+        }
+      }
     },
+
+    doesNotContainBoth(arr, val1, val2) {
+      return !(arr.includes(val1) && arr.includes(val2));
+    },
+
     setRecommendedOpt() {
       // product.item_cate 에 저장된 cate_meta 데이타에서 추가옵션정보를 꺼내옴
       this.recommendedMarketList = reactive([]);
