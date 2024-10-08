@@ -316,10 +316,13 @@ export default {
 
           // 只有在 showOptionTable 为 true 时才创建或更新 optionTable
           if (optionTableDoc) {
+            optionTableDoc.style.display = 'flex';
+            optionTableDoc.style.alignItems = 'center';
+            optionTableDoc.style.justifyContent = 'center';
             optionTableDoc.innerHTML = optionHtml;
             this.product.item_detail = window.tinymce.editors[0].getContent();
           } else {
-            const optionTable = `<div id="${this.optionTableId}" style="display: flex;align-items: center;justify-content: center;">${optionHtml}</div>`;
+            const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
             // top에 올라가게 변경
             let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
             // bottom에 올라가게 변경
@@ -380,6 +383,9 @@ export default {
       if (!optionTableDoc) {
         return;
       }
+      optionTableDoc.style.display = 'flex';
+      optionTableDoc.style.alignItems = 'center';
+      optionTableDoc.style.justifyContent = 'center';
       let optionHtml;
       //테이블 2줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
