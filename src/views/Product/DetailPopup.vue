@@ -945,7 +945,6 @@ export default defineComponent({
       }
     },
     getProductDetail(){
-      console.log('this.product.item_upd',this.product.item_upd);
       if(this.product.item_upd === null){
         if(this.descriptionOption?.option_table?.use){
           const productTable = new RegExp(`<div id="${this.optionTableId}".*?</div>`, "ig");
