@@ -7,7 +7,7 @@
                 type="card"
                 @change="handleTabChange"
         >
-          <a-tab-pane v-for="pane in tabList" :key="pane.key">
+          <a-tab-pane v-for="pane in tabList" :key="pane.key" :disabled="product.loading? true : false">
             <template #tab>
               <div :style="{color: activeKey === pane.key ? '#ffffff' : '#000000'}">
                 {{pane.tab}}
@@ -263,8 +263,6 @@ export default defineComponent({
         message.error(res.message);
         return false;
       }
-      //自动保存后修改时间不为空,为了再次自动保存时相关的验证
-      this.product.item_upd = 1;
       this.lastSaveTime = new Date().getTime();
       this.showMessage();
       return true;
@@ -331,6 +329,7 @@ export default defineComponent({
     },
 
     handleCancel() {
+      this.activeKey = '1';
       if (this.autosave) {
         this.autoSave();
       }
@@ -379,7 +378,7 @@ export default defineComponent({
         spec: JSON.stringify(oProduct.item_option),
         stock: oProduct["item_stock"],
         image: JSON.stringify(oProduct.item_thumbnails),
-        detail: this.getProductDetail(),
+        detail: oProduct.item_detail,
         trans_name: oProduct.item_trans_name,
         trans_status: oProduct.item_is_trans,
         cross_border: oProduct.item_cross_border,
@@ -922,6 +921,7 @@ export default defineComponent({
     },
     onCancel() {
       console.log('cancel!');
+      this.activeKey = '1';
       this.$emit('update:visible');
     },
 
@@ -943,61 +943,6 @@ export default defineComponent({
       } else {
         document.removeEventListener('keydown', this.handleTabsEvent);
       }
-    },
-    getProductDetail(){
-      if(this.product.item_upd === null){
-        if(this.descriptionOption?.option_table?.use){
-          const productTable = new RegExp(`<div id="${this.optionTableId}".*?</div>`, "ig");
-          const matchProductTable = productTable.exec(this.product.item_detail);
-          if(matchProductTable == null){
-            const divElement = document.createElement('div');
-            divElement.id = `${this.optionTableId}`;
-            let optionHtml = this.getOptionTable(this.descriptionOption?.option_table?.column_length);
-            divElement.innerHTML = optionHtml;
-            if (optionHtml) {
-              if(this.descriptionOption?.option_table?.show_position == 'top'){
-                this.product.item_detail = divElement.outerHTML + this.product.item_detail;
-              }else{
-                this.product.item_detail = this.product.item_detail + divElement.outerHTML;
-              }
-            }
-          }
-        }
-        if(this.descriptionOption?.top_bottom_image?.use){
-          // 기존에 있는지 업는지 판단소스를 써줘``
-          const regexBefore = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "ig");
-          const regexAfter = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "ig");
-          const matchBefore = regexBefore.exec(this.product.item_detail);
-          const matchAfter = regexAfter.exec(this.product.item_detail);
-
-          if (matchBefore === null) {
-            const beforeCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
-            this.product.item_detail = beforeCont + this.product.item_detail;
-          }
-
-          if (matchAfter === null) {
-            const afterCont = `<div id="${this.guideAfterId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
-            this.product.item_detail = this.product.item_detail + afterCont;
-          }
-        }
-        if(this.descriptionOption?.show_video){
-          const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
-          this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
-          if (this.product.item_video_url === "" || this.product.item_video_url === null) {
-          }else{
-            const videoContent = `<div id="${this.videoId}"><video width="auto;" height="400;" controls="controls"><source src="${this.product.item_video_url}" type="video/mp4"></video></div>`;
-            let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
-            const match = regex.exec(this.product.item_detail);
-            if (match !== null) {
-              this.product.item_detail = this.product.item_detail.replace(regex, "");
-              this.product.item_detail = match[0] + videoContent + this.product.item_detail;
-            } else {
-              this.product.item_detail = videoContent + this.product.item_detail;
-            }
-          }
-        }
-      }
-      return this.product.item_detail;
     },
     getOptionTable(columnCount) {
       let tableId = `${this.optionTableId}_${columnCount}`;
