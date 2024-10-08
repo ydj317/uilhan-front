@@ -380,7 +380,7 @@ export default defineComponent({
         const { list, recharge } = oTranslateInfo.data;
         let transImage = list.find(item => item.key === index);
         try {
-          new URL(transImage.url);
+          new URL(transImage.translate_url);
         } catch (e) {
           message.error("이미지 리사이징에 실패 했습니다. 잠시후 다시 시도해주세요. 계속 안되시면 관리자한테 문의해주세요.");
           return false;
