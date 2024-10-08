@@ -945,6 +945,7 @@ export default defineComponent({
       }
     },
     getProductDetail(){
+      console.log('this.product.item_upd',this.product.item_upd);
       if(this.product.item_upd === null){
         if(this.descriptionOption?.option_table?.use){
           const productTable = new RegExp(`<div id="${this.optionTableId}".*?</div>`, "ig");
@@ -1002,28 +1003,22 @@ export default defineComponent({
     getOptionTable(columnCount) {
       let tableId = `${this.optionTableId}_${columnCount}`;
       //columnCount은 2줄로 보기 혹은 4줄로 보기
-      let optionHtml = `<table id="${tableId}" border="1" style="border-collapse: collapse; margin-left: auto; margin-right: auto;">`;
+      let optionHtml = `<table id="${tableId}" border="1"  style="border-collapse: separate; border-spacing: 10px;border: 0;">`;
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
+      let imgWidth = this.isPhone() ? '100%' :  columnCount == 1 ? '500px' : '330px';
       forEach(this.product.sku, (item) => {
         if (i === 1 || i === trStartTag) {
           //다음번 tr 시작 태그
           trStartTag = i + columnCount;
           optionHtml += "<tr>";
         }
-        let imgHtml = item.img === null || item.img === "" ? `<div style="height:100px;width:100px;"></div>` : `<img style="height:100px;width:100px;" src="${item.img}">`;
-        optionHtml += `<td style="min-height:100px;min-width:100px;">${imgHtml}</td>`;
-        optionHtml += `<td style="min-height:100px;min-width:150px; text-align: center;">${item.spec}</td>`;
-        //1줄 이상의 데이타일 경우 부족한 td 추가해줌
-        if (i === skuLength) {
-          if (skuLength > columnCount && skuLength % columnCount !== 0) {
-            for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
-              optionHtml += `<td style="min-height:100px;min-width:100px;"></td>`;
-              optionHtml += `<td style="min-height:100px;min-width:150px;"></td>`;
-            }
-          }
-        }
+        let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgWidth};width:${imgWidth};"></div>` : `<img style="height:${imgWidth};width:${imgWidth};" src="${item.img}">`;
+        optionHtml += `<td style="padding: 0;vertical-align: baseline;">
+                          <div style="height:${imgWidth};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
+                            <div style="min-height:50px;width:calc(${imgWidth} - 20px);display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;">${item.spec}</div>
+                      </td>`;
 
         //tr태그 닫음
         if (i % columnCount === 0) {
@@ -1035,6 +1030,9 @@ export default defineComponent({
 
       return optionHtml;
     },
+    isPhone(){
+      return /ios|ipod|iPad|iphone|android|SymbianOS|Windows Phone/i.test(navigator.userAgent);
+    }
   },
 
   watch: {
