@@ -316,6 +316,9 @@ export default {
 
           // 只有在 showOptionTable 为 true 时才创建或更新 optionTable
           if (optionTableDoc) {
+            optionTableDoc.style.display = 'flex';
+            optionTableDoc.style.alignItems = 'center';
+            optionTableDoc.style.justifyContent = 'center';
             optionTableDoc.innerHTML = optionHtml;
             this.product.item_detail = window.tinymce.editors[0].getContent();
           } else {
@@ -380,6 +383,9 @@ export default {
       if (!optionTableDoc) {
         return;
       }
+      optionTableDoc.style.display = 'flex';
+      optionTableDoc.style.alignItems = 'center';
+      optionTableDoc.style.justifyContent = 'center';
       let optionHtml;
       //테이블 2줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
