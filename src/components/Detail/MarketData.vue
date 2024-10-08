@@ -419,7 +419,7 @@ export default {
 
       // 전시카테고리 마켓
       if (this.displayCategoryMarkets.includes(marketCode)) {
-        await this.getDisplayCategory(marketCode, [selectedOptions.cate_ids], sellerId, accountName);
+        await this.getDisplayCategory(marketCode, [selectedOptions.value], sellerId, accountName);
       }
 
       if (this.useCategoryMetaMarket.includes(marketCode)) {

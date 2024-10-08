@@ -31,12 +31,12 @@
 
         <div v-if="isShowTag(product)" style="position: absolute; right: 5px; top: 8px;">
           <a-tag
-              :color="translateStatusMap[product.item_image_trans_status]?.color || 'default'"
+              :color="translateStatusMap[getTranslateStaus(product)]?.color || 'default'"
           >
-            <template v-if="translateStatusMap[product.item_image_trans_status]?.spinning" #icon>
+            <template v-if="translateStatusMap[getTranslateStaus(product)]?.spinning" #icon>
               <SyncOutlined :spin="true" />
             </template>
-            {{ translateStatusMap[product.item_image_trans_status]?.text || 'Unknown Status' }}
+            {{ translateShowText + translateStatusMap[getTranslateStaus(product)]?.text }}
           </a-tag>
         </div>
 
@@ -57,7 +57,7 @@
 
 <script setup>
 import {lib} from "@/util/lib";
-import {reactive, toRefs, ref} from "vue";
+import {reactive, toRefs, ref, computed, watch} from "vue";
 import {message} from "ant-design-vue";
 import BtnLinkMarket from "@/views/Product/List/ProductItem/BtnLinkMarket.vue";
 import ChangeLink from "@/views/Product/List/ProductItem/ChangeLink.vue";
@@ -75,11 +75,24 @@ const props = defineProps(['product', 'selected', 'marketDetailUrls'])
 const emit = defineEmits(['select', 'detail', 'memo', 'send'])
 const {selected, product, marketDetailUrls} = toRefs(props)
 
+// 텍스트:item_text_trans_status, 이미지:item_image_trans_status
+const translateStatusKey = ref('item_text_trans_status');
 const translateStatusMap = reactive({
-  W: { color: 'orange', text: '이미지 번역대기' },
-  P: { color: 'processing', text: '이미지 번역중', spinning: true },
-  S: { color: 'success', text: '이미지 번역 성공' },
-  F: { color: 'error', text: '이미지 번역 실패' }
+  W: { color: 'orange', text: ' 번역대기' },
+  P: { color: 'processing', text: ' 번역중', spinning: true },
+  S: { color: 'success', text: ' 번역 성공' },
+  F: { color: 'error', text: ' 번역 실패' }
+})
+const getTranslateStaus = (product) => {
+  if ((product['item_text_trans_status'] === 'S' || !product['item_text_trans_status']) && product['item_image_trans_status']) {
+    translateStatusKey.value = 'item_image_trans_status';
+  } else {
+    translateStatusKey.value = 'item_text_trans_status';
+  }
+  return product[translateStatusKey.value];
+}
+let translateShowText = computed(() => {
+  return translateStatusKey.value === 'item_text_trans_status' ? '텍스트' : '이미지';
 })
 
 let changLinkVisible = ref(false);
@@ -92,12 +105,16 @@ const changeLinkDataUpdate = (data) => {
     product.value.item_market = data.item_market;
   }
 }
+// 监听 item_text_trans_status 的变化
+watch(() => product.item_text_trans_status, (newValue) => {
+  isShowTag(product);
+});
 const isShowTag = (product) => {
   let isShow = true;
   let sendSuccessMarketList = product.item_sync_market.filter(market => market.status !== 'unsync');
-  if (translateStatusMap[product.item_image_trans_status]) {
+  if (translateStatusMap[getTranslateStaus(product)]) {
     // 성공, 실패인 상품 연동이력이 있으면 미노출
-    if (['S', 'F'].includes(product.item_image_trans_status) && sendSuccessMarketList.length > 0) {
+    if (['S', 'F'].includes(getTranslateStaus(product)) && sendSuccessMarketList.length > 0) {
       isShow = false;
     }
   } else {
@@ -109,7 +126,17 @@ const isShowTag = (product) => {
 
 async function openDetailPopup(product, tab) {
   const itemId = product.item_id;
-  const transStatus = product.item_image_trans_status;
+  const transStatus = getTranslateStaus(product);
+  if (translateStatusKey.value === 'item_text_trans_status') {
+    if (transStatus === 'W' || transStatus === 'P') {
+      let msg = '텍스트 번역 대기중입니다. 잠시후 다시 진행하시기 바랍니다.';
+      if (transStatus === 'P') {
+        msg = '텍스트 번역중입니다. 잠시후 다시 진행하시기 바랍니다.';
+      }
+      message.warning(msg);
+      return;
+    }
+  } else {
     if (transStatus === 'W') {
       message.warning('이미지 번역 대기중입니다. 상품정보 편집 시 번역전의 이미지로 뒤덮일 수 있습니다.');
     }
@@ -121,6 +148,7 @@ async function openDetailPopup(product, tab) {
         return false;
       }
     }
+  }
 
   emit('detail', {itemId, tab})
 }
