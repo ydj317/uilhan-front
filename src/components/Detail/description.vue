@@ -407,17 +407,29 @@ export default {
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
-      let imgWidth = this.isPhone() ? '100%' :  columnCount == 1 ? '500px' : '330px';
+      let screenWidth = window.screen.width;
+      let imgWidth = (screenWidth-30)/columnCount+'px';
+      let imgHeight = imgWidth;
+      if(!this.isPhone()){
+        if(columnCount == 1){
+          imgWidth = '500px';
+          imgHeight = imgWidth;
+        }
+        if(columnCount == 2){
+          imgWidth = '330px';
+          imgHeight = imgWidth;
+        }
+      }
       forEach(this.product.sku, (item) => {
         if (i === 1 || i === trStartTag) {
           //다음번 tr 시작 태그
           trStartTag = i + columnCount;
           optionHtml += "<tr>";
         }
-        let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgWidth};width:${imgWidth};"></div>` : `<img style="height:${imgWidth};width:${imgWidth};" src="${item.img}">`;
+        let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgHeight};width:${imgWidth};"></div>` : `<img style="height:${imgHeight};width:${imgWidth};" src="${item.img}">`;
         optionHtml += `<td style="padding: 0;vertical-align: baseline;">
-                          <div style="height:${imgWidth};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
-                            <div style="min-height:50px;width:calc(${imgWidth} - 20px);display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;">${item.spec}</div>
+                          <div style="height:${imgHeight};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
+                            <div style="min-height:50px;width:calc(${imgWidth} - 20px);display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;flex-wrap: wrap">${item.spec}</div>
                       </td>`;
 
         //tr태그 닫음
