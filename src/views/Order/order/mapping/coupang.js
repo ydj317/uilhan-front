@@ -12,6 +12,9 @@ export class Coupang {
 
     const { paidAt,refer,orderer,parcelPrintMessage } = this.#orderData.orgData || {};
 
+    // 전화번호 단독으로 꺼내기
+    const { ordererPhoneNumber } = this.#orderData.orgData.overseaShippingInfoDto || {};
+
     const {
       receiverName,
       receiverAddr1,
@@ -32,7 +35,7 @@ export class Coupang {
       receiverAddr2,
       receiverPostCode,
       receiverTel1,
-      receiverTel2: '-',
+      receiverTel2: ordererPhoneNumber || '-',
       personalCustomsClearanceCode: personalCustomsClearanceCode || '-',
       courierName: courierName || '-',
       invoiceNumber: invoiceNumber || '-',
