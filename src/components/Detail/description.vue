@@ -409,15 +409,15 @@ export default {
       let skuLength = this.product.sku.length;
       let screenWidth = window.screen.width;
       let imgWidth = (screenWidth-30)/columnCount+'px';
-      let imgHeight = imgWidth;
+      let imgHeight = (screenWidth-30)/columnCount+'px';
       if(!this.isPhone()){
-        if(columnCount == 1){
+        if(columnCount === 1){
           imgWidth = '500px';
-          imgHeight = imgWidth;
+          imgHeight = '500px';
         }
-        if(columnCount == 2){
+        if(columnCount === 2){
           imgWidth = '330px';
-          imgHeight = imgWidth;
+          imgHeight = '330px';
         }
       }
       forEach(this.product.sku, (item) => {
@@ -428,7 +428,7 @@ export default {
         }
         let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgHeight};width:${imgWidth};"></div>` : `<img style="height:${imgHeight};width:${imgWidth};" src="${item.img}">`;
         optionHtml += `<td style="padding: 0;vertical-align: baseline;">
-                          <div style="height:${imgHeight};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
+                          <div class="isPhone${this.isPhone()?1:0}" style="height:${imgHeight};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
                             <div style="min-height:50px;width:calc(${imgWidth} - 20px);display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;flex-wrap: wrap">${item.spec}</div>
                       </td>`;
 
@@ -641,7 +641,14 @@ export default {
       this.product.item_detail = content;
     },
     isPhone(){
-      return /ios|ipod|iPad|iphone|android|SymbianOS|Windows Phone/i.test(navigator.userAgent);
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobileDevice = /iphone|android|symbianos|windows phone|ipod/i.test(userAgent);
+      const isTabletDevice = /ipad|tablet/i.test(userAgent);
+
+      // 如果检测到是移动设备或者宽度小于某个阈值
+      const isSmallScreen = window.screen.width < 768; // 768px 作为判断阈值
+
+      return isMobileDevice || (isTabletDevice && isSmallScreen);
     }
   }
 };
