@@ -402,36 +402,71 @@ export default {
     },
     getOptionTable(columnCount) {
       let tableId = `${this.optionTableId}_${columnCount}`;
-      //columnCount은 2줄로 보기 혹은 4줄로 보기
-      let optionHtml = `<table id="${tableId}" border="1"  style="border-collapse: separate; border-spacing: 10px;border: 0;">`;
+      let screenWidth = window.screen.width;
+      let optionHtml = `<style>
+    #${tableId} {
+      border-collapse: separate;
+      border-spacing: 10px;
+      border: 0;
+    }
+    #${tableId} td {
+      padding: 0;
+      vertical-align: baseline;
+     }
+     #${tableId} .img-wrap {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+     }
+     #editor_option_table_1 .img-wrap,#editor_option_table_1 .img-wrap img,#editor_option_table_2 .empty-img-wrap {
+       width: 500px;
+       height: 500px;
+     }
+     #editor_option_table_2 .img-wrap,#editor_option_table_2 .img-wrap img,#editor_option_table_2 .empty-img-wrap {
+       width: 330px;
+       height: 330px;
+     }
+     #${tableId} .img-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding:10px;
+      border-top: 1px solid #ccc;
+      flex-wrap: wrap;
+      min-height:50px;
+     }
+     #editor_option_table_1 .img-title {
+      width:480px;
+     }
+     #editor_option_table_2 .img-title {
+      width:310px;
+     }
+    @media screen and (max-width: 768px) {
+         #${tableId} .img-wrap,#${tableId} .img-wrap img,#${tableId} .empty-img-wrap {
+          width: ${(screenWidth - 30) / columnCount}px;
+         height: ${(screenWidth - 30) / columnCount}px;
+       }
+       #${tableId} .img-title {
+          width: ${(screenWidth - 30) / columnCount - 20}px;
+         height: ${(screenWidth - 30) / columnCount - 20}px;
+         }
+    }
+  </style>
+  <table id="${tableId}" border="1">`;
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
-      let screenWidth = window.screen.width;
-      let imgWidth = (screenWidth-30)/columnCount+'px';
-      let imgHeight = (screenWidth-30)/columnCount+'px';
-      if(!this.isPhone()){
-        if(columnCount === 1){
-          imgWidth = '500px';
-          imgHeight = '500px';
-        }
-        if(columnCount === 2){
-          imgWidth = '330px';
-          imgHeight = '330px';
-        }
-      }
       forEach(this.product.sku, (item) => {
         if (i === 1 || i === trStartTag) {
           //다음번 tr 시작 태그
           trStartTag = i + columnCount;
           optionHtml += "<tr>";
         }
-        let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgHeight};width:${imgWidth};"></div>` : `<img style="height:${imgHeight};width:${imgWidth};" src="${item.img}">`;
-        optionHtml += `<td style="padding: 0;vertical-align: baseline;">
-                          <div class="isPhone${this.isPhone()?1:0}" style="height:${imgHeight};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
-                            <div style="min-height:50px;width:calc(${imgWidth} - 20px);display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;flex-wrap: wrap">${item.spec}</div>
+        let imgHtml = item.img === null || item.img === "" ? `<div class="empty-img-wrap"></div>` : `<img src="${item.img}">`;
+        optionHtml += `<td>
+                          <div class="img-wrap">${imgHtml}</div>
+                            <div class="img-title">${item.spec}</div>
                       </td>`;
-
         //tr태그 닫음
         if (i % columnCount === 0) {
           optionHtml += "</tr>";
