@@ -426,9 +426,9 @@ export default {
           trStartTag = i + columnCount;
           optionHtml += "<tr>";
         }
-        let imgHtml = item.img === null || item.img === "" ? `<div class="isPhone${this.isPhone()}" style="height:${imgHeight};width:${imgWidth};"></div>` : `<img style="height:${imgHeight};width:${imgWidth};" src="${item.img}">`;
+        let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgHeight};width:${imgWidth};"></div>` : `<img style="height:${imgHeight};width:${imgWidth};" src="${item.img}">`;
         optionHtml += `<td style="padding: 0;vertical-align: baseline;">
-                          <div style="height:${imgHeight};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
+                          <div class="isPhone${this.isPhone()?1:0}" style="height:${imgHeight};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
                             <div style="min-height:50px;width:calc(${imgWidth} - 20px);display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;flex-wrap: wrap">${item.spec}</div>
                       </td>`;
 
