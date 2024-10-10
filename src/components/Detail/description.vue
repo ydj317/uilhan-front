@@ -443,12 +443,12 @@ export default {
      }
     @media screen and (max-width: 768px) {
          #${tableId} .img-wrap,#${tableId} .img-wrap img,#${tableId} .empty-img-wrap {
-         width: ${(screenWidth - 30) / columnCount}px;
+          width: ${(screenWidth - 30) / columnCount}px;
          height: ${(screenWidth - 30) / columnCount}px;
        }
        #${tableId} .img-title {
-          width: ${(screenWidth - 30) / columnCount-20}px;
-         height: ${(screenWidth - 30) / columnCount-20}px;
+          width: ${(screenWidth - 30) / columnCount - 20}px;
+         height: ${(screenWidth - 30) / columnCount - 20}px;
          }
     }
   </style>
