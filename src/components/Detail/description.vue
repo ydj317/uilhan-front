@@ -316,13 +316,10 @@ export default {
 
           // 只有在 showOptionTable 为 true 时才创建或更新 optionTable
           if (optionTableDoc) {
-            optionTableDoc.style.display = 'flex';
-            optionTableDoc.style.alignItems = 'center';
-            optionTableDoc.style.justifyContent = 'center';
             optionTableDoc.innerHTML = optionHtml;
             this.product.item_detail = window.tinymce.editors[0].getContent();
           } else {
-            const optionTable = `<div id="${this.optionTableId}" style="display: flex;align-items: center;justify-content: center;">${optionHtml}</div>`;
+            const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
             // top에 올라가게 변경
             let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
             // bottom에 올라가게 변경
@@ -383,9 +380,6 @@ export default {
       if (!optionTableDoc) {
         return;
       }
-      optionTableDoc.style.display = 'flex';
-      optionTableDoc.style.alignItems = 'center';
-      optionTableDoc.style.justifyContent = 'center';
       let optionHtml;
       //테이블 2줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
@@ -402,57 +396,8 @@ export default {
     },
     getOptionTable(columnCount) {
       let tableId = `${this.optionTableId}_${columnCount}`;
-      let screenWidth = window.screen.width;
-      let optionHtml = `<style>
-    #${tableId} {
-      border-collapse: separate;
-      border-spacing: 10px;
-      border: 0;
-    }
-    #${tableId} td {
-      padding: 0;
-      vertical-align: baseline;
-     }
-     #${tableId} .img-wrap {
-       display: flex;
-       align-items: center;
-       justify-content: center;
-     }
-     #editor_option_table_1 .img-wrap,#editor_option_table_1 .img-wrap img,#editor_option_table_2 .empty-img-wrap {
-       width: 500px;
-       height: 500px;
-     }
-     #editor_option_table_2 .img-wrap,#editor_option_table_2 .img-wrap img,#editor_option_table_2 .empty-img-wrap {
-       width: 330px;
-       height: 330px;
-     }
-     #${tableId} .img-title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding:10px;
-      border-top: 1px solid #ccc;
-      flex-wrap: wrap;
-      min-height:50px;
-     }
-     #editor_option_table_1 .img-title {
-      width:480px;
-     }
-     #editor_option_table_2 .img-title {
-      width:310px;
-     }
-    @media screen and (max-width: 768px) {
-         #${tableId} .img-wrap,#${tableId} .img-wrap img,#${tableId} .empty-img-wrap {
-          width: ${(screenWidth - 30) / columnCount}px;
-         height: ${(screenWidth - 30) / columnCount}px;
-       }
-       #${tableId} .img-title {
-          width: ${(screenWidth - 30) / columnCount - 20}px;
-         height: ${(screenWidth - 30) / columnCount - 20}px;
-         }
-    }
-  </style>
-  <table id="${tableId}" border="1">`;
+      let optionHtml = this.getOptionTableStyle(columnCount);
+      optionHtml += `<table id="${tableId}" border="1">`;
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
@@ -476,6 +421,59 @@ export default {
       optionHtml += "</table>";
 
       return optionHtml;
+    },
+    getOptionTableStyle(columnCount) {
+      let tableId = `${this.optionTableId}_${columnCount}`;
+      let screenWidth = window.screen.width;
+      return `<style>
+          #${this.optionTableId},#${tableId} .img-wrap {
+             display: flex;
+             align-items: center;
+             justify-content: center;
+           }
+          #${tableId} {
+            border-collapse: separate;
+            border-spacing: 10px;
+            border: 0;
+          }
+          #${tableId} td {
+            padding: 0;
+            vertical-align: baseline;
+           }
+           #editor_option_table_1 .img-wrap,#editor_option_table_1 .img-wrap img,#editor_option_table_2 .empty-img-wrap {
+             width: 500px;
+             height: 500px;
+           }
+           #editor_option_table_2 .img-wrap,#editor_option_table_2 .img-wrap img,#editor_option_table_2 .empty-img-wrap {
+             width: 330px;
+             height: 330px;
+           }
+           #${tableId} .img-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding:10px;
+            border-top: 1px solid #ccc;
+            flex-wrap: wrap;
+            min-height:50px;
+           }
+           #editor_option_table_1 .img-title {
+            width:480px;
+           }
+           #editor_option_table_2 .img-title {
+            width:310px;
+           }
+          @media screen and (max-width: 768px) {
+               #${tableId} .img-wrap,#${tableId} .img-wrap img,#${tableId} .empty-img-wrap {
+                width: ${(screenWidth - 30) / columnCount}px;
+               height: ${(screenWidth - 30) / columnCount}px;
+             }
+             #${tableId} .img-title {
+                width: ${(screenWidth - 30) / columnCount - 20}px;
+               height: ${(screenWidth - 30) / columnCount - 20}px;
+               }
+          }
+        </style>`;
     },
     contentUpdate(tinymce) {
       this.product.item_detail = tinymce.editors[0].getContent();
