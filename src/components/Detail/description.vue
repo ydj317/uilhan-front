@@ -396,8 +396,7 @@ export default {
     },
     getOptionTable(columnCount) {
       let tableId = `${this.optionTableId}_${columnCount}`;
-      let optionHtml = this.getOptionTableStyle(columnCount);
-      optionHtml += `<table id="${tableId}" border="1">`;
+      let optionHtml = `<table id="${tableId}" border="1">`;
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
@@ -418,14 +417,14 @@ export default {
         }
         i++;
       });
+      optionHtml += this.getOptionTableStyle(columnCount);
       optionHtml += "</table>";
-
       return optionHtml;
     },
     getOptionTableStyle(columnCount) {
       let tableId = `${this.optionTableId}_${columnCount}`;
       let screenWidth = window.screen.width;
-      return `<style>
+      return `<style type="text/css">
           #${this.optionTableId},#${tableId} .img-wrap {
              display: flex;
              align-items: center;
