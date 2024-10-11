@@ -316,10 +316,13 @@ export default {
 
           // 只有在 showOptionTable 为 true 时才创建或更新 optionTable
           if (optionTableDoc) {
+            optionTableDoc.style.display = 'flex';
+            optionTableDoc.style.alignItems = 'center';
+            optionTableDoc.style.justifyContent = 'center';
             optionTableDoc.innerHTML = optionHtml;
             this.product.item_detail = window.tinymce.editors[0].getContent();
           } else {
-            const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
+            const optionTable = `<div id="${this.optionTableId}" style="display: flex;align-items: center;justify-content: center;">${optionHtml}</div>`;
             // top에 올라가게 변경
             let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
             // bottom에 올라가게 변경
@@ -380,6 +383,9 @@ export default {
       if (!optionTableDoc) {
         return;
       }
+      optionTableDoc.style.display = 'flex';
+      optionTableDoc.style.alignItems = 'center';
+      optionTableDoc.style.justifyContent = 'center';
       let optionHtml;
       //테이블 2줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
@@ -395,84 +401,16 @@ export default {
       }
     },
     getOptionTable(columnCount) {
-      let tableId = `${this.optionTableId}_${columnCount}`;
-      let optionHtml = `<table id="${tableId}" border="1">`;
-      let i = 1;
-      let trStartTag = null;
-      let skuLength = this.product.sku.length;
+      let html = `<div style="width: 100%;display: grid;grid-template-columns: repeat(${columnCount},1fr);gap: 10px;">`
       forEach(this.product.sku, (item) => {
-        if (i === 1 || i === trStartTag) {
-          //다음번 tr 시작 태그
-          trStartTag = i + columnCount;
-          optionHtml += "<tr>";
-        }
-        let imgHtml = item.img === null || item.img === "" ? `<div class="empty-img-wrap"></div>` : `<img src="${item.img}">`;
-        optionHtml += `<td>
-                          <div class="img-wrap">${imgHtml}</div>
-                            <div class="img-title">${item.spec}</div>
-                      </td>`;
-        //tr태그 닫음
-        if (i % columnCount === 0) {
-          optionHtml += "</tr>";
-        }
-        i++;
+        html += `
+        <div style="display: flex;flex-direction: column; border: 1px solid #e8e8e8;overflow: hidden">
+        <img src="${item.img}" style="width: 100% !important;max-width: none !important;">
+        <span style="display: flex;align-items: center;justify-content: center;min-height:50px;padding: 10px;">${item.spec}</span>
+        </div>`;
       });
-      optionHtml += this.getOptionTableStyle(columnCount);
-      optionHtml += "</table>";
-      return optionHtml;
-    },
-    getOptionTableStyle(columnCount) {
-      let tableId = `${this.optionTableId}_${columnCount}`;
-      let screenWidth = window.screen.width;
-      return `<style type="text/css">
-          #${this.optionTableId},#${tableId} .img-wrap {
-             display: flex;
-             align-items: center;
-             justify-content: center;
-           }
-          #${tableId} {
-            border-collapse: separate;
-            border-spacing: 10px;
-            border: 0;
-          }
-          #${tableId} td {
-            padding: 0;
-            vertical-align: baseline;
-           }
-           #editor_option_table_1 .img-wrap,#editor_option_table_1 .img-wrap img,#editor_option_table_2 .empty-img-wrap {
-             width: 500px;
-             height: 500px;
-           }
-           #editor_option_table_2 .img-wrap,#editor_option_table_2 .img-wrap img,#editor_option_table_2 .empty-img-wrap {
-             width: 330px;
-             height: 330px;
-           }
-           #${tableId} .img-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding:10px;
-            border-top: 1px solid #ccc;
-            flex-wrap: wrap;
-            min-height:50px;
-           }
-           #editor_option_table_1 .img-title {
-            width:480px;
-           }
-           #editor_option_table_2 .img-title {
-            width:310px;
-           }
-          @media screen and (max-width: 768px) {
-               #${tableId} .img-wrap,#${tableId} .img-wrap img,#${tableId} .empty-img-wrap {
-                width: ${(screenWidth - 30) / columnCount}px;
-               height: ${(screenWidth - 30) / columnCount}px;
-             }
-             #${tableId} .img-title {
-                width: ${(screenWidth - 30) / columnCount - 20}px;
-               height: ${(screenWidth - 30) / columnCount - 20}px;
-               }
-          }
-        </style>`;
+      html += "</div>";
+      return html;
     },
     contentUpdate(tinymce) {
       this.product.item_detail = tinymce.editors[0].getContent();
