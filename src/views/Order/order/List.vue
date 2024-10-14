@@ -235,11 +235,29 @@
                   </a-button>
               </a-flex>
               <a-space class="mt10">
-                <a-button size="small"
+				  <a-popover v-model:open="bridgeVisible" placement="top" trigger="click" :overlayStyle="{width: '160px',textAlign: 'center'}">
+					  <template #content>
+						  <a-button
+							  size="small"
+							  style="margin-right: 10px"
+							  @click.prevent="showBridgeForm({record: item, type:'shipagent'});"
+						  >넥스트</a-button>
+						  <a-button
+							  size="small"
+							  @click.prevent="showTosBridgeForm({record: item, type:'shipagent'});"
+						  >토스토스</a-button>
+					  </template>
+					  <a-button
+						  size="small"
 						  style="width: 100%;"
-						  @click.prevent="showBridgeForm({record: item, type:'shipagent'})"
 						  v-if="item['isSendBridge'] === 0 && item.status === 'shippingAddress' && state.is_bridge_sync === true"
-				>배송대행</a-button>
+					  >배송대행</a-button>
+				  </a-popover>
+<!--                <a-button size="small"-->
+<!--						  style="width: 100%;"-->
+<!--						  @click.prevent="showBridgeForm({record: item, type:'shipagent'})"-->
+<!--						  v-if="item['isSendBridge'] === 0 && item.status === 'shippingAddress' && state.is_bridge_sync === true"-->
+<!--				>배송대행</a-button>-->
                 <a-button size="small"
                           style="width: 100%;"
                           v-if="(item.status === 'shippingAddress' || item.status === 'paid') && item.marketCode === 'sk11st'"
@@ -269,6 +287,14 @@
   <HistoryView :visible="historyVisible" @close="historyVisible = false" :historyData="historyData"/>
   <BridgeFormView :visible.sync="bridgeFormVisible" @close="bridgeFormVisible = false" :bridgeFormData="bridgeFormData"
                   @update="getTableData" :key="bridgeFormData.type"/>
+
+	<BridgeExpressView2
+		:visible.sync="bridgeTosFormVisible"
+		@close="bridgeTosFormVisible = false"
+		:bridgeFormData="bridgeTosFormData"
+		@update="getTableData"
+		:key="bridgeTosFormData.type"
+	/>
 
   <div>
     <a-modal
@@ -335,6 +361,7 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import ModalDetail from "@/views/Order/order/ModalDetail.vue";
 import {OrderMapping} from "@/views/Order/order/mapping";
 import {useRouter} from 'vue-router'
+import BridgeExpressView2 from "@/views/Express/components/BridgeExpressView2.vue";
 
 const orderDetail = ref({show: false, orderData: {}})
 const openDetailMarketCode = ref('')
@@ -934,9 +961,21 @@ const showHistory = (param) => {
 
 const bridgeFormVisible = ref(false);
 const bridgeFormData = ref({record:{orderId:""}});
+const bridgeVisible = ref(false);
+const bridgeTosFormVisible = ref(false);
+const bridgeTosFormData = ref({record:{orderId:""}});
+
+
 const showBridgeForm = (param) => {
-  bridgeFormData.value = param;
-  bridgeFormVisible.value = true;
+	bridgeVisible.value = false;
+	bridgeFormData.value = param;
+	bridgeFormVisible.value = true;
+};
+
+const showTosBridgeForm = (param) => {
+	bridgeVisible.value = false;
+	bridgeTosFormData.value = param;
+	bridgeTosFormVisible.value = true;
 };
 
 
