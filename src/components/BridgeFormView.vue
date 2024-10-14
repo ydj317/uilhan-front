@@ -264,7 +264,7 @@
                   placeholder="최대 200byte까지 입력가능"
                   @input="limitStringLength(item,'prd_name_en', 200,$event)"
                 />
-<!--                            <span class="help-input">입력금지</span>-->
+                <!--                            <span class="help-input">입력금지</span>-->
               </a-col>
             </a-row>
             <a-row class="mb10  pb10">
@@ -1477,29 +1477,35 @@ watchEffect(() => {
 
 });
 
-function limitStringLength(item,key,maxLength,e) {
-  const encoder = new TextEncoder();
+function limitStringLength(item, key, maxLength, e) {
   const inputValue = e.target.value;
-  const byteArray = encoder.encode(inputValue);
-  if (byteArray.buffer.byteLength > maxLength) {
+  let byteLength = 0;
+  let truncatedValue = '';
 
-    let truncatedValue = '';
-    let byteLength = 0;
+  for (let char of inputValue) {
+    let charByteLength;
 
-    for (let char of inputValue) {
-      const charByteLength = encoder.encode(char).length;
-      byteLength += charByteLength;
-
-      if (byteLength > maxLength) {
-        break;
-      }
-
-      truncatedValue += char;
+    if (/^[\x00-\x7F]$/.test(char)) {
+      charByteLength = 1;
+    } else if (/^[\uAC00-\uD7A3]$/.test(char)) {
+      charByteLength = 2;
+    } else {
+      charByteLength = 3;
     }
-    item[key] = truncatedValue;
-    e.target.value = truncatedValue;
+
+    byteLength += charByteLength;
+
+    if (byteLength > maxLength) {
+      break;
+    }
+
+    truncatedValue += char;
   }
+
+  item[key] = truncatedValue;
+  e.target.value = truncatedValue;
 }
+
 
 </script>
 <style>
