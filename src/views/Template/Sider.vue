@@ -13,9 +13,12 @@
             <template #icon>
               <component :is="menu.meta.icon" />
             </template>
-            <router-link :to="menu.path" v-if="!menu.path.startsWith('http')">
+<!--            <router-link :to="menu.path" v-if="!menu.path.startsWith('http')">-->
+<!--              <span>{{menu.meta.title}}</span>-->
+<!--            </router-link>-->
+            <a :href="menu.path" v-if="!menu.path.startsWith('http')">
               <span>{{menu.meta.title}}</span>
-            </router-link>
+            </a>
             <a :href="menu.path" target="_blank" v-else>
               <span>{{menu.meta.title}}</span>
             </a>
