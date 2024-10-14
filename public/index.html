@@ -69,7 +69,8 @@
           };
           updateOrderStatus(url,param,(res)=>{
             if (res){
-                alert('결제가 완료되었습니다.')
+              setCookie("planData",true)
+              alert('결제가 완료되었습니다.')
                 closeEvent()
               location.href = '/user/mypage';
             } else {
@@ -121,6 +122,15 @@
           if (c.indexOf(name)==0) return unescape(c.substring(name.length,c.length));
         }
         return "";
+      }
+      function setCookie(cname,cvalue,day = 0){
+        var d = new Date();
+        var expires = '';
+        if(day){
+          d.setTime(d.getTime()+(day*24*60*60*1000));
+          expires = "expires="+d.toGMTString();
+        }
+        document.cookie = cname+"="+escape(cvalue)+"; "+expires;
       }
   </script>
   </body>
