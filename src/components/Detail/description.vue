@@ -407,7 +407,7 @@ export default {
       forEach(this.product.sku, (item) => {
         html += `
         <div style="display: flex !important;flex-direction: column !important; width: ${imgWrapWidth} !important;padding: ${imgPaddingWidth} !important;">
-        <img src="${item.img}" style="width: 100% !important;border: 1px solid #e8e8e8 !important;">
+        <img src="${item.img}" style="width: 100% !important;border: 1px solid #e8e8e8 !important;border-bottom: 0 !important;">
         <span style="display: flex !important;align-items: center !important;justify-content: center !important;padding: 25px !important;font-size: 16px; !important;border: 1px solid #e8e8e8 !important;">${item.spec}</span>
         </div>`;
       });
