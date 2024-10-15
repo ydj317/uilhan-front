@@ -26,6 +26,11 @@ export class Coupang {
       personalCustomsClearanceCode,
     } = this.#orderData.items.find(item => item.receiverName) || {};
 
+    let numbers = ''
+    if (typeof receiverTel1 !== "undefined" && receiverTel1.slice(0,3) === '010') {
+      numbers = this.#orderData.orgData.receiver.safeNumber;
+    }
+
     return {
       id: this.#orderData.id,
       orderNo: this.#orderData.orderNo,
@@ -35,7 +40,7 @@ export class Coupang {
       receiverAddr2,
       receiverPostCode,
       receiverTel1,
-      receiverTel2: ordererPhoneNumber || '-',
+      receiverTel2: numbers || '-',
       personalCustomsClearanceCode: personalCustomsClearanceCode || '-',
       courierName: courierName || '-',
       invoiceNumber: invoiceNumber || '-',
