@@ -118,7 +118,7 @@
                       @change="onOrderCheckAllChange"></a-checkbox>
         </th>
         <th>판매처</th>
-        <th>주문번호(업데이트시간)</th>
+        <th>주문번호(주문시간)</th>
         <th>이미지</th>
         <th>상품명(옵션명)</th>
         <th>수량</th>
@@ -528,7 +528,6 @@ const getTableData = async () => {
       return false;
     }
 
-    let array = ['cancelRequest', 'cancelComplete', 'returnComplete', 'returnRequest'];
     const groupedByOrderNo = res.data.reduce((acc, cur) => {
       const {orderNo, sellerId, marketCode, orderDate, status, totalPaymentAmount, courierName} = cur;
       if (!acc[orderNo]) {
@@ -555,23 +554,11 @@ const getTableData = async () => {
       acc[orderNo]["sellerId"] = sellerId;
       acc[orderNo]["marketCode"] = marketCode;
       acc[orderNo]["items"].push(cur);
-      acc[orderNo]["orderDateUp"] = moment(orderDate).format("YYYY-MM-DD HH:mm:ss");
-      if (array.includes(status)){
-        acc[orderNo]["orderDateUp"] = moment(cur.claimDate).format("YYYY-MM-DD HH:mm:ss");
-      }
 
       return acc;
     }, {});
 
-    // 将对象转换为数组
-    let groupedByOrderNoArray = Object.values(groupedByOrderNo);
-
-    // 使用 sort 方法对数组进行排序
-    groupedByOrderNoArray.sort((a, b) => {
-      return new Date(b.orderDateUp) - new Date(a.orderDateUp);
-    });
-
-    state.tableData.data = groupedByOrderNoArray;
+    state.tableData.data = groupedByOrderNo;
 
     state.tableData.total = Object.keys(state.tableData.data).length;
     state.tableData.loading = false;
