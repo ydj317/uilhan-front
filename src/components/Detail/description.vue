@@ -402,12 +402,12 @@ export default {
     },
     getOptionTable(columnCount) {
       let imgWrapWidth = columnCount == 1 ? '100%' : 'calc((100% - 14px) / 2)';
-      let imgPaddingWidth = columnCount == 1 ? '10px 15%' : '10px 0';
-      let html = `<div style="width: 100% !important; display: flex !important;gap: 10px !important;justify-content: center !important;flex-wrap: wrap !important; margin: 10px 0 !important;">`
+      let imgPaddingWidth = columnCount == 1 ? '0 15%' : '0';
+      let html = `<div style="width: 100% !important; display: flex !important;gap: 10px !important;flex-wrap: wrap !important; margin: 10px 0 !important;">`
       forEach(this.product.sku, (item) => {
         html += `
         <div style="display: flex !important;flex-direction: column !important; width: ${imgWrapWidth} !important;padding: ${imgPaddingWidth} !important;">
-        <img src="${item.img}" style="width: 100% !important;border: 1px solid #e8e8e8 !important;border-bottom: 0 !important;">
+        <img src="${item.img}" style="width: calc(100% - 2px) !important;border: 1px solid #e8e8e8 !important;border-bottom: 0 !important;">
         <span style="display: flex !important;align-items: center !important;justify-content: center !important;padding: 25px !important;font-size: 16px; !important;border: 1px solid #e8e8e8 !important;">${item.spec}</span>
         </div>`;
       });
