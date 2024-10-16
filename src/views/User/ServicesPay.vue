@@ -215,7 +215,7 @@ const state = reactive({
       title:'이미지 자동 번역',
       checkList:['상세페이지 전체 자동번역','옵션 이미지 10장 자동번역'],
       radioList:[
-        {text:'50개/일',value:'100000', planName: "Extra1PlanAutoImageCount50"},
+        {text:'50개/일',value:'50000', planName: "Extra1PlanAutoImageCount50"},
         {text:'100개/일',value:'100000', planName: "Extra1PlanAutoImageCount100"},
         {text:'200개/일',value:'200000', planName: "Extra1PlanAutoImageCount200"},
         {text:'300개/일',value:'300000', planName: "Extra1PlanAutoImageCount300"},
@@ -247,7 +247,7 @@ const state = reactive({
       ]
     },
   ],
-  selectedList: { basic:0,advanced1:3,advanced2:5,advanced3:5,payType:"1",book1:false,book2:false },
+  selectedList: { basic:0,advanced1:4,advanced2:5,advanced3:5,payType:"1",book1:false,book2:false },
 
   basicInfo:{},//基础服务数据
   isPay : true
