@@ -448,8 +448,6 @@ const getOrderInfo = () => {
       return false;
     }
 
-    console.log(res.data);
-
     purchasedOrders.value = res.data.completed_orders.map((item) => {
       return {
         title: item.name,
