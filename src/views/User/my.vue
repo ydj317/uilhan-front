@@ -448,6 +448,7 @@ const getOrderInfo = () => {
       return false;
     }
 
+    console.log(res.data);
 
     purchasedOrders.value = res.data.completed_orders.map((item) => {
       return {
@@ -466,7 +467,11 @@ const getOrderInfo = () => {
     if (res.data.preview_plan){
       preview_plan.value = formatDate(res.data.preview_plan.start_time) + ' - ' + formatDate(res.data.preview_plan.end_time);
     }else {
-      preview_plan.value = '데이터가 없습니다.';
+      if (res.data.event_plan) {
+        preview_plan.value = formatDate(res.data.event_plan.start_time) + ' - ' + formatDate(res.data.event_plan.end_time);
+      } else {
+        preview_plan.value = '데이터가 없습니다.';
+      }
     }
 
     payStr.value = res.data.total_price_str;
