@@ -338,6 +338,7 @@ import { Form, message } from "ant-design-vue";
 import { AuthRequest } from "@/util/request";
 import { lib } from "@/util/lib";
 import Loading from "vue-loading-overlay";
+import {useRoute} from 'vue-router'
 
 export default defineComponent({
   name: "DomeggookComponent",
@@ -795,9 +796,15 @@ export default defineComponent({
       onPostSearchMarketCategory("0");
     };
 
+    const setKeyword = () => {
+      const route = useRoute();
+      dataOfSearchFormValues.kw = route.query.search_keyword || "";
+    }
+
     onMounted(async () => {
       _initSearch();
       delete sessionStorage.domeggooke_search_history;
+      setKeyword();
     });
 
     return {
