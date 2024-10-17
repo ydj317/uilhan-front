@@ -498,7 +498,7 @@ export default defineComponent({
         }
         let tmp = {
           checked: false,
-          order: this.localTranslateImageList.length,
+          order: this.localTranslateImageList.length + 1,
           url: res.data.img_url,
           old_url: res.data.img_url,
           request_id: res.data.url_id,
