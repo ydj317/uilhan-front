@@ -104,7 +104,7 @@
           <a-row class="mb10">
             <a-col :span="4" class="center">연락처<span class="red">*</span></a-col>
             <a-col :span="15" class="center">
-              <a-input v-model:value="state.form.receiver_tel1" />
+              <a-input v-model:value="state.form.receiver_tel1" placeholder="예:010-1234-5678" />
             </a-col>
           </a-row>
           <a-row class="mb10">
@@ -1010,6 +1010,12 @@ const handleOk = () => {
     return false;
   }
 
+  //#전화번호에 '-' 있는지 판단
+  if (state.form.receiver_tel1.indexOf("-") === -1) {
+    message.error("연락처 번호는  \"-\"을 포함하여 입력해 주세요. 예: 010-1234-5678");
+    return false;
+  }
+
   // check arc_seq
   if (state.form.items.some(item => item.arc_seq === "")) {
     message.error("통관품목을 선택해 주세요.");
@@ -1325,7 +1331,7 @@ const handleUploadChange = (option, index) => {
 	formData.append("image_type", "bridge");
 
 	AuthRequest.post(
-		process.env.VUE_APP_API_URL + "/api/image",
+		process.env.VUE_APP_API_URL + "/api/upload/image",
 		formData
 	).then(res => {
 		if (res.status !== '2000') {

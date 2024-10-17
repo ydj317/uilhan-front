@@ -21,6 +21,7 @@ export class OrderMapping {
       'coupang': Coupang,
       'qoo10sg': Qoo10sg,
       'sk11st': Sk11st,
+      'sk11stglobal': Sk11st,
       'auction': Auction,
       'gmarket': Gmarket,
     };
