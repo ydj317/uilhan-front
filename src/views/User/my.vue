@@ -212,9 +212,9 @@
       <a-card :bordered="false">
         <template #title>
           <img src="@/assets/img/free.png">
-          <span class="ml20 font-SCDream6 fs18">무료플랜</span>
+          <span class="ml20 font-SCDream6 fs18">{{ freePlanName }}</span>
         </template>
-        <div class="font-SCDream4 fs16">무료플랜 사용기간 : {{ preview_plan }}</div>
+        <div class="font-SCDream4 fs16">{{ freePlanName }} 사용기간 : {{ preview_plan }}</div>
       </a-card>
       <a-card :bordered="false">
         <template #title>
@@ -251,6 +251,7 @@ const curModal = ref('');
 const OrderTitle = ref('');
 const orderModel = ref(false);
 const orderSource = ref([]);
+const freePlanName = ref('무료플랜');
 // const expandedRowKeys = ref([]);
 
 //分页
@@ -462,10 +463,11 @@ const getOrderInfo = () => {
       }
     })
 
-    if (res.data.preview_plan){
+    if (res.data.preview_plan && res.data.is_preview_plan_expired === false){
       preview_plan.value = formatDate(res.data.preview_plan.start_time) + ' - ' + formatDate(res.data.preview_plan.end_time);
     }else {
-      if (res.data.event_plan) {
+      if (res.data.event_plan && res.data.is_event_plan_expired === false) {
+        freePlanName.value='이벤트 플랜'
         preview_plan.value = formatDate(res.data.event_plan.start_time) + ' - ' + formatDate(res.data.event_plan.end_time);
       } else {
         preview_plan.value = '데이터가 없습니다.';
