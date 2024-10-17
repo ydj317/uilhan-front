@@ -262,6 +262,11 @@ onBeforeMount(() => {
       return false;
     }
     const allPlanData = res.data;
+    // currPlan 이 이벤트 플랜일경우 currPlan을 null로 변경 (이벤트 플랜도 결제 안한것처럼 노출)
+    if (allPlanData.currPlan !== null && allPlanData.currPlan.plan_type === 'EventPlan') {
+      allPlanData.currPlan = null
+    }
+
     //设置基本服务 (主/子账号,推荐码)
    state.basicList =  allPlanData.allPlanDetail.basic.map((item,index) => {
 
