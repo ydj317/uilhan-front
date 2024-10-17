@@ -457,7 +457,7 @@ export default defineComponent({
       if (this.localTranslateImageList.find(item => item.checked === true) === undefined) {
         this.localTranslateImageList[0].checked = true;
       }
-      console.log(this.localTranslateImageList);
+      // console.log(this.localTranslateImageList);
       this.onChange();
     },
 
