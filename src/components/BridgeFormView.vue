@@ -1,5 +1,5 @@
 <template>
-	<a-spin v-model:spinning="state.loading" />
+  <a-spin v-model:spinning="state.loading" />
   <a-modal id="bridgeForm" v-model:open="visible"
            width="100%" wrap-class-name="full-modal"
            :confirm-loading="state.confirmLoading" @cancel="onClose" class="showModal" :footer="null">
@@ -21,7 +21,7 @@
           <a-radio-group v-model:value="state.form.ctr_seq">
             <a-radio value="1">위해-인천1자가장치장</a-radio>
             <a-radio value="2019">위해항공</a-radio>
-<!--            <a-radio value="2030">위해-평택해운</a-radio>-->
+            <!--            <a-radio value="2030">위해-평택해운</a-radio>-->
             <a-radio value="2031">위해-인천2지정장치장</a-radio>
           </a-radio-group>
           <a-textarea disabled :rows="2" class="mt10 mb10 textarea2"/>
@@ -72,12 +72,12 @@
             <a-col :span="9" class="pl70">
               <a-radio-group v-model:value="state.form.receiver_info_type">
                 <a-radio value="1" class="mr30">개인통관고유부호
-<!--                  <a-tooltip>-->
-<!--                    <template #title>-->
-<!--                      <div>tip</div>-->
-<!--                    </template>-->
-<!--                    <QuestionCircleOutlined/>-->
-<!--                  </a-tooltip>-->
+                  <!--                  <a-tooltip>-->
+                  <!--                    <template #title>-->
+                  <!--                      <div>tip</div>-->
+                  <!--                    </template>-->
+                  <!--                    <QuestionCircleOutlined/>-->
+                  <!--                  </a-tooltip>-->
                 </a-radio>
                 <a-radio value="3">사업자등록번호</a-radio>
               </a-radio-group>
@@ -87,13 +87,13 @@
             </a-col>
             <a-col :span="5" align="center">
               <a-button
-				  v-if="state.form.receiver_info_type === '1'"
-				  type="primary"
-				  class="step3-button"
-				  @click="RRN_NO_API"
-			  >
-				  개인통관번호 조회
-			  </a-button>
+                v-if="state.form.receiver_info_type === '1'"
+                type="primary"
+                class="step3-button"
+                @click="RRN_NO_API"
+              >
+                개인통관번호 조회
+              </a-button>
             </a-col>
           </a-row>
         </a-col>
@@ -220,20 +220,20 @@
           <a-col :span="3" class="bg-fa pt30 step4-left">
             <a-row class="ml10">
               <a-upload
-				  name="file"
-				  :max-count="1"
-				  :headers="state.uploadHeaders"
-                  list-type="picture-card"
-                  class="avatar-uploader"
-				  :showUploadList="false"
-				  :beforeUpload="validateUploadImage"
-				  :customRequest="(file) => handleUploadChange(file, index)"
+                name="file"
+                :max-count="1"
+                :headers="state.uploadHeaders"
+                list-type="picture-card"
+                class="avatar-uploader"
+                :showUploadList="false"
+                :beforeUpload="validateUploadImage"
+                :customRequest="(file) => handleUploadChange(file, index)"
               >
                 <img v-if="item.prdImage" alt="avatar" :src="item.prdImage" style="width: 100%;height:100%;object-fit: contain;"/>
                 <div v-else>
-					<loading-outlined v-if="state.loading"></loading-outlined>
-					<plus-outlined v-else></plus-outlined>
-					<div class="ant-upload-text fs12">이미지 URL<br>입력해주세요</div>
+                  <loading-outlined v-if="state.loading"></loading-outlined>
+                  <plus-outlined v-else></plus-outlined>
+                  <div class="ant-upload-text fs12">이미지 URL<br>입력해주세요</div>
                 </div>
               </a-upload>
             </a-row>
@@ -257,8 +257,14 @@
             <a-row class="mb10">
               <a-col :span="6" class="step4-right-text pl30">상품명 (영문)<span class="red">*</span></a-col>
               <a-col :span="18" class="help-input-wrap">
-                <a-input ref="step3-input" @change="step3Input" v-model:value="item.prd_name_en"/>
-<!--                            <span class="help-input">입력금지</span>-->
+                <a-input
+                  ref="step3-input"
+                  @change="step3Input"
+                  v-model:value="item.prd_name_en"
+                  placeholder="최대 200byte까지 입력가능"
+                  @input="limitStringLength(item,'prd_name_en', 200,$event)"
+                />
+                <!--                            <span class="help-input">입력금지</span>-->
               </a-col>
             </a-row>
             <a-row class="mb10  pb10">
@@ -270,7 +276,13 @@
             <a-row class="mb10 bottom-border">
               <a-col :span="6" class="step4-right-text pl30">상품명 (중문)</a-col>
               <a-col :span="18" class="help-input-wrap">
-                <a-input ref="step3-input" @change="step3Input" v-model:value="item.prd_name_cn"/>
+                <a-input
+                  ref="step3-input"
+                  @change="step3Input"
+                  v-model:value="item.prd_name_cn"
+                  placeholder="최대 200byte까지 입력가능"
+                  @input="limitStringLength(item,'prd_name_cn', 200,$event)"
+                />
               </a-col>
             </a-row>
             <a-row class="mb10">
@@ -283,83 +295,91 @@
               <a-col :span="6" class="step4-right-text pl30">단가<span class="red">*</span></a-col>
               <a-col :span="8">
                 <a-input-number
-                    :precision="2"
-                    min="0"
-                    :controls="false"
-                    size="middle"
-                    style="width: 100%"
-                    v-model:value="item.unitPrice"
-                    @blur="calculateTotal"
-                    addon-after="위안"
+                  :precision="2"
+                  min="0"
+                  :controls="false"
+                  size="middle"
+                  style="width: 100%"
+                  v-model:value="item.unitPrice"
+                  @blur="calculateTotal"
+                  addon-after="위안"
                 />
               </a-col>
               <a-col :span="1" class="center">X</a-col>
               <a-col :span="9">
                 <a-input-number
-					:precision="0"
-					min="1"
-					style="width: 100%"
-					:controls="false"
-					size="middle"
-					v-model:value="item.quantity"
-					@blur="calculateTotal"
-					addon-after="개"
-				/>
+                  :precision="0"
+                  min="1"
+                  style="width: 100%"
+                  :controls="false"
+                  size="middle"
+                  v-model:value="item.quantity"
+                  @blur="calculateTotal"
+                  addon-after="개"
+                />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">옵션</a-col>
               <a-col :span="2" class="center">색상</a-col>
               <a-col :span="6">
-                <a-input v-model:value="item.option_color"/>
+                <a-input
+                  v-model:value="item.option_color"
+                  placeholder="최대 100byte까지 입력가능"
+                  @input="limitStringLength(item,'option_color', 100,$event)"
+                />
               </a-col>
               <a-col :span="2" class="center">상품단위</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.product_unit" placeholder="예 : 件/双/千克"/>
+                <a-input v-model:value="item.product_unit" placeholder="예 : 件/双/千克" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">모멜명/재질/규격/사이즈</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.option_size" placeholder="예 : KF94/100ML*30支/水20ML乳20ML"/>
+                <a-input
+                  v-model:value="item.option_size"
+                  placeholder="예 : KF94/100ML*30支,최대 80byte까지 입력가능"
+                  @change="limitStringLength(item,'option_size', 80,$event)"
+                />
               </a-col>
               <a-col :span="2" class="center">순량(KG)</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.product_weight" placeholder="한개/SET 상품의 순량"/>
+                <a-input v-model:value="item.product_weight" placeholder="한개/SET 상품의 순량" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">브랜드 (영문)</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.brand_en" placeholder="no"/>
+                <a-input v-model:value="item.brand_en" placeholder="no" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">브랜드 (중문)</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.brand_cn" placeholder="한글 입력금지 (没有)"/>
+                <a-input v-model:value="item.brand_cn" placeholder="한글 입력금지 (没有)" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">국내판매 쇼핑몰 URL</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.prdUrl_kr"/>
+                <a-input v-model:value="item.prdUrl_kr" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">자체관리 코드</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.user_code" placeholder="표준상품코드 작성 요망 (请填写标准商品条码)"/>
+                <a-input v-model:value="item.user_code" placeholder="표준상품코드 작성 요망 (请填写标准商品条码)" />
               </a-col>
               <a-col :span="2" class="center">원산지</a-col>
               <a-col :span="8">
-                <a-input v-model:value="item.origin_text" placeholder="한글 입력금지"/>
+                <a-input v-model:value="item.origin_text" placeholder="한글 입력금지" />
               </a-col>
             </a-row>
             <a-row class="mb10">
               <a-col :span="6" class="step4-right-text pl30">상품 URL</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.prdUrl" placeholder="※ 배송대행 상품금액 세관신고 증명서류입니다. 중국쇼핑몰 URL 추천합니다."/>
+                <a-input v-model:value="item.prdUrl" placeholder="※ 배송대행 상품금액 세관신고 증명서류입니다. 중국쇼핑몰 URL 추천합니다." />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
@@ -371,13 +391,13 @@
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">이미지 URL<span class="red">*</span></a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.prdImage"/>
+                <a-input v-model:value="item.prdImage" />
               </a-col>
             </a-row>
             <a-row class="mb10 pb10">
               <a-col :span="6" class="step4-right-text pl30">오픈마켓 주문번호</a-col>
               <a-col :span="18">
-                <a-input v-model:value="item.orderNo"/>
+                <a-input v-model:value="item.orderNo" />
               </a-col>
             </a-row>
           </a-col>
@@ -389,20 +409,23 @@
       </a-row>
       <a-row class="bg-fa bottom-border pt20 pb20">
         <a-col :span="20" class="pl40">총 수량</a-col>
-        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{state.form.total_quantity}}</span> 개</a-col>
+        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{ state.form.total_quantity }}</span> 개
+        </a-col>
       </a-row>
       <a-row class="bg-fa bottom-border pt20 pb20">
         <a-col :span="20" class="pl40">총 금액</a-col>
-        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{state.form.total_amount}}</span>위안</a-col>
+        <a-col :span="4" class="pr20 text-right"><span class="col-blue fw fs20">{{ state.form.total_amount }}</span>위안
+        </a-col>
       </a-row>
       <a-row class="bg-fa pt20 pb20">
         <a-col :span="24" class="pl40 fs12">※ 세관에 신고되는 금액입니다. (해외직구: 해외 판매처 구매 원가 기재 / 해외구매대행업: 국내 오픈마켓 판매가 기재)</a-col>
         <a-col :span="24" class="pl40 fs12">※ 총 금액이 150달러를 넘을 경우 간이통관 (일반통관)으로 진행되며 관/부가세가 발생할 수 있습니다.</a-col>
       </a-row>
-<!--      <a-row class="bg-fa pb20 pr20 btn-wrap" justify="end">-->
-<!--        <a-button type="default" class="mr5">단독배송</a-button>-->
-<!--        <a-button type="default">일반통관</a-button>-->
-<!--      </a-row>-->
+      <!--      <a-row class="bg-fa pb20 pr20 btn-wrap" justify="end">-->
+      <!--        <a-button type="default" class="mr5">단독배송</a-button>-->
+      <!--        <a-button type="default">일반통관</a-button>-->
+      <!--      </a-row>-->
+
 
       <div>
         <a-row class="mt30">
@@ -410,12 +433,13 @@
           <a-divider class="divider bg-b mt0 mb0"></a-divider>
         </a-row>
         <a-row class="mt30" style="justify-content: space-between;">
-          <a-checkbox :checked="state.form.is_care" @click="showCareInfo"><span class="cor-ora fs14">해외직구보험 가입 & 내용확인하기(필수)</span></a-checkbox>
+          <a-checkbox :checked="state.form.is_care" @click="showCareInfo"><span class="cor-ora fs14">해외직구보험 가입 & 내용확인하기(필수)</span>
+          </a-checkbox>
           <span class="fw fs14">안심케어 비용 : <span style="color: #cf1322">{{ state.form.carePrice }}</span> 원</span>
         </a-row>
         <a-divider class="bg-f mt10"></a-divider>
 
-        <a-row  style="height: 150px;">
+        <a-row style="height: 150px;">
           <a-col :span="6" class="center bg-fa" style="line-height: 0.5; text-align: center;">
             <a-col :span="24" class="pt10" style="line-height: 0.5; text-align: center;">
               <p>해외에서 직접구매하신 물품의</p>
@@ -442,132 +466,132 @@
       <a-row class="step5 bottom-border">
         <a-col :span="3" class="center bg-fa">검수옵션</a-col>
         <a-col :span="21" class="pt25 pb25 pl20">
-			<a-checkbox-group v-model:value="state.form.EtcDlvr1">
-				<a-checkbox class="mr15" value="81">
-					검수안함&nbsp;<a-tag color="blue">무료</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="7">
-					정밀검수&nbsp;<a-tag color="red">3,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="82">
-					작동검수&nbsp;<a-tag color="red">3,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox value="29">
-					기본검수&nbsp;<a-tag color="blue">무료</a-tag>
-				</a-checkbox>
-			</a-checkbox-group>
+          <a-checkbox-group v-model:value="state.form.EtcDlvr1">
+            <a-checkbox class="mr15" value="81">
+              검수안함&nbsp;<a-tag color="blue">무료</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="7">
+              정밀검수&nbsp;<a-tag color="red">3,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="82">
+              작동검수&nbsp;<a-tag color="red">3,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox value="29">
+              기본검수&nbsp;<a-tag color="blue">무료</a-tag>
+            </a-checkbox>
+          </a-checkbox-group>
         </a-col>
       </a-row>
       <a-row class="step5 bottom-border">
         <a-col :span="3" class="center bg-fa">포장옵션</a-col>
         <a-col :span="21" class="right-content pt25 pb25 pl20">
-			<a-checkbox-group v-model:value="state.form.EtcDlvr2">
-				<a-checkbox class="mr15 mb10" value="98">
-					깨짐주의스티커&nbsp;<a-tag color="blue">무료</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="69">
-					추천포장&nbsp;<a-tag color="orange">유료</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="103">
-					박스 재포장&nbsp;<a-tag color="red">1,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="99">
-					모서리 보호대&nbsp;<a-tag color="red">2,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="96">
-					스틱형 에어캡&nbsp;<a-tag color="red">1,500원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="100">
-					밴딩포장&nbsp;<a-tag color="red">2,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="27">
-					폴리백포장&nbsp;<a-tag color="red">500원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="102">
-					고급 폴리백포장&nbsp;<a-tag color="red">1,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="95">
-          기본 뽁뽁이&nbsp;<a-tag color="red">1,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="104">
-					나무 특수포장&nbsp;<a-tag color="red">30,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="97">
-					발포지&nbsp;<a-tag color="red">1,500원</a-tag>
-				</a-checkbox>
-				<a-checkbox value="101">
-					내품보안포장&nbsp;<a-tag color="red">500원</a-tag>
-				</a-checkbox>
-			</a-checkbox-group>
+          <a-checkbox-group v-model:value="state.form.EtcDlvr2">
+            <a-checkbox class="mr15 mb10" value="98">
+              깨짐주의스티커&nbsp;<a-tag color="blue">무료</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="69">
+              추천포장&nbsp;<a-tag color="orange">유료</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="103">
+              박스 재포장&nbsp;<a-tag color="red">1,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="99">
+              모서리 보호대&nbsp;<a-tag color="red">2,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="96">
+              스틱형 에어캡&nbsp;<a-tag color="red">1,500원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="100">
+              밴딩포장&nbsp;<a-tag color="red">2,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="27">
+              폴리백포장&nbsp;<a-tag color="red">500원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="102">
+              고급 폴리백포장&nbsp;<a-tag color="red">1,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="95">
+              기본 뽁뽁이&nbsp;<a-tag color="red">1,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="104">
+              나무 특수포장&nbsp;<a-tag color="red">30,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="97">
+              발포지&nbsp;<a-tag color="red">1,500원</a-tag>
+            </a-checkbox>
+            <a-checkbox value="101">
+              내품보안포장&nbsp;<a-tag color="red">500원</a-tag>
+            </a-checkbox>
+          </a-checkbox-group>
         </a-col>
       </a-row>
       <a-row class="step5 bottom-border">
         <a-col :span="3" class="center bg-fa">제거옵션</a-col>
         <a-col :span="21" class="pt25 pb25 pl20">
-			<a-checkbox-group v-model:value="state.form.EtcDlvr3">
-				<a-checkbox class="mr15" value="10">
-					신발의류박스 제거&nbsp;<a-tag color="blue">무료</a-tag>
-				</a-checkbox>
-				<a-checkbox value="94">
-					영수증 제거&nbsp;<a-tag color="blue">무료</a-tag>
-				</a-checkbox>
-			</a-checkbox-group>
+          <a-checkbox-group v-model:value="state.form.EtcDlvr3">
+            <a-checkbox class="mr15" value="10">
+              신발의류박스 제거&nbsp;<a-tag color="blue">무료</a-tag>
+            </a-checkbox>
+            <a-checkbox value="94">
+              영수증 제거&nbsp;<a-tag color="blue">무료</a-tag>
+            </a-checkbox>
+          </a-checkbox-group>
         </a-col>
       </a-row>
       <a-row class="step5 bottom-border">
         <a-col :span="3" class="center bg-fa">통관옵션</a-col>
         <a-col :span="21" class="right-content pt25 pb25 pl20">
-			<a-checkbox-group v-model:value="state.form.EtcDlvr4">
-				<a-checkbox class="mr15 mb10" value="83">
-					목록통관&nbsp;<a-tag color="blue">무료</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="51">
-					간이통관 수수료&nbsp;<a-tag color="red">3,300원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="57">
-					사업자통관 수수료&nbsp;<a-tag color="red">33,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="88">
-					원산지증명발급&nbsp;<a-tag color="red">30,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="86">
-					B/L비용&nbsp;<a-tag color="red">30,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox value="138">
-					컨테이너 작업비&nbsp;<a-tag color="red">20,000원</a-tag>
-				</a-checkbox>
-			</a-checkbox-group>
+          <a-checkbox-group v-model:value="state.form.EtcDlvr4">
+            <a-checkbox class="mr15 mb10" value="83">
+              목록통관&nbsp;<a-tag color="blue">무료</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="51">
+              간이통관 수수료&nbsp;<a-tag color="red">3,300원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="57">
+              사업자통관 수수료&nbsp;<a-tag color="red">33,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="88">
+              원산지증명발급&nbsp;<a-tag color="red">30,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="86">
+              B/L비용&nbsp;<a-tag color="red">30,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox value="138">
+              컨테이너 작업비&nbsp;<a-tag color="red">20,000원</a-tag>
+            </a-checkbox>
+          </a-checkbox-group>
         </a-col>
       </a-row>
       <a-row class="step5 bottom-border">
         <a-col :span="3" class="center bg-fa">기타옵션</a-col>
         <a-col :span="21" class="right-content pt25 pb25 pl20">
-			<a-checkbox-group v-model:value="state.form.EtcDlvr5">
-				<a-checkbox class="mr15 mb10" value="54">
-					멀티박스&nbsp;<a-tag color="red">3,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="92">
-					관/부가세 선불&nbsp;<a-tag color="red">3,300원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="56">
-					도서산간&nbsp;<a-tag color="red">6,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="93">
-					경동택배비용 선불
-				</a-checkbox>
-				<a-checkbox class="mr15" value="151">
-					PDF 인쇄출력&nbsp;<a-tag color="red">200원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="91">
-					220V돼지코&nbsp;<a-tag color="red">1,000원</a-tag>
-				</a-checkbox>
-				<a-checkbox class="mr15" value="124">
-					원산지 작업 (스티커/미싱)&nbsp;<a-tag color="orange">유료</a-tag>
-				</a-checkbox>
-				<a-checkbox value="55">
-					부피무게&nbsp;<a-tag color="orange">측정</a-tag>
-				</a-checkbox>
-			</a-checkbox-group>
+          <a-checkbox-group v-model:value="state.form.EtcDlvr5">
+            <a-checkbox class="mr15 mb10" value="54">
+              멀티박스&nbsp;<a-tag color="red">3,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="92">
+              관/부가세 선불&nbsp;<a-tag color="red">3,300원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="56">
+              도서산간&nbsp;<a-tag color="red">6,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="93">
+              경동택배비용 선불
+            </a-checkbox>
+            <a-checkbox class="mr15" value="151">
+              PDF 인쇄출력&nbsp;<a-tag color="red">200원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="91">
+              220V돼지코&nbsp;<a-tag color="red">1,000원</a-tag>
+            </a-checkbox>
+            <a-checkbox class="mr15" value="124">
+              원산지 작업 (스티커/미싱)&nbsp;<a-tag color="orange">유료</a-tag>
+            </a-checkbox>
+            <a-checkbox value="55">
+              부피무게&nbsp;<a-tag color="orange">측정</a-tag>
+            </a-checkbox>
+          </a-checkbox-group>
         </a-col>
       </a-row>
       <a-row class="step5 bottom-border">
@@ -583,9 +607,10 @@
       </a-row>
       <a-row class="bg-black footer-wrap pt30 pb30 mt20">
         <a-col :span="24" class="center pt25 pb25 pl20">
-          <div class="mb5"><span class="red">※</span>입고된 물품은 수정이 <span class="under-line">불가능</span>합니다. <span class="red">※</span></div>
+          <div class="mb5"><span class="red">※</span>입고된 물품은 수정이 <span class="under-line">불가능</span>합니다. <span
+            class="red">※</span></div>
           <div><span class="red">※</span><span class="under-line">접수신청</span>을 완료하신 후 부득이한 사유로 요청서 <span
-              class="under-line">수정</span>이 필요한 경우 <span class="under-line">1:1문의</span>해주세요.<span class="red">※</span>
+            class="under-line">수정</span>이 필요한 경우 <span class="under-line">1:1문의</span>해주세요.<span class="red">※</span>
           </div>
         </a-col>
       </a-row>
@@ -596,19 +621,15 @@
 </template>
 
 <script setup>
-import {computed, createVNode, reactive, ref, toRefs, watchEffect} from "vue";
-import {message, Modal} from "ant-design-vue";
-import {
-	ExclamationCircleOutlined,
-	LoadingOutlined,
-	QuestionCircleOutlined,
-} from "@ant-design/icons-vue";
-import {useMarketOrderApi} from "@/api/order";
-import {useBridgeApi} from "@/api/bridge";
+import { computed, createVNode, reactive, ref, toRefs, watchEffect } from "vue";
+import { message, Modal } from "ant-design-vue";
+import { ExclamationCircleOutlined, LoadingOutlined } from "@ant-design/icons-vue";
+import { useMarketOrderApi } from "@/api/order";
+import { useBridgeApi } from "@/api/bridge";
 import Cookie from "js-cookie";
 import ParseMarketOrderZhCn from "@/components/ParseMarketOrderZhCn.vue";
 import OverseasCareDetail from "@/components/OverseasCareDetail.vue";
-import {AuthRequest} from "@/util/request";
+import { AuthRequest } from "@/util/request";
 import plusOutlined from "@ant-design/icons-vue/lib/icons/PlusOutlined";
 
 const props = defineProps({
@@ -618,60 +639,60 @@ const props = defineProps({
   }
 });
 
-const {bridgeFormData} = toRefs(props);
+const { bridgeFormData } = toRefs(props);
 const emit = defineEmits(["close", "update"]);
 
 
 const state = reactive({
-	form: {
-		id: "",
-		order_id: "",
-		app_type: "배송대행",
-		ctr_seq: "1", // 배송방법
-		receiver_name: "",
-		receiver_name_en: "",
-		receiver_tel1: "",
-		receiver_addr1: "",
-		receiver_addr2: "",
-		receiver_addr1_en: "",
-		receiver_addr2_en: "",
-		receiver_post_code: "",
-		message: "",
-		items: [],
+  form: {
+    id: "",
+    order_id: "",
+    app_type: "배송대행",
+    ctr_seq: "1", // 배송방법
+    receiver_name: "",
+    receiver_name_en: "",
+    receiver_tel1: "",
+    receiver_addr1: "",
+    receiver_addr2: "",
+    receiver_addr1_en: "",
+    receiver_addr2_en: "",
+    receiver_post_code: "",
+    message: "",
+    items: [],
 
-		rrn_cd: "목록통관", // 통관방법
-		fileList: [], // 사업자등록증첨부파일
-		personal_customs_clearance_code: "", // 개인통관 고유번호
-		rrn_no_con: ["Y"], // 개인통관 고유번호 확인 오후 8:36 2020-02-21
+    rrn_cd: "목록통관", // 통관방법
+    fileList: [], // 사업자등록증첨부파일
+    personal_customs_clearance_code: "", // 개인통관 고유번호
+    rrn_no_con: ["Y"], // 개인통관 고유번호 확인 오후 8:36 2020-02-21
 
-		EtcDlvr1: [], // 검수옵션
-		EtcDlvr2: [], // 포장옵션
-		EtcDlvr3: [], // 제거옵션
-		EtcDlvr4: [], // 통관옵션
-		EtcDlvr5: [], // 기타옵션
+    EtcDlvr1: [], // 검수옵션
+    EtcDlvr2: [], // 포장옵션
+    EtcDlvr3: [], // 제거옵션
+    EtcDlvr4: [], // 통관옵션
+    EtcDlvr5: [], // 기타옵션
 
-		auto_rls_yn: false, // 자동결제여부
-		auto_req_yn: false, // 자동출고여부
-		market_product_id: "", // 商城商品ID
-		req_2: "", // 물류요청사항
+    auto_rls_yn: false, // 자동결제여부
+    auto_req_yn: false, // 자동출고여부
+    market_product_id: "", // 商城商品ID
+    req_2: "", // 물류요청사항
 
-		importation_mode: "3", // 수입방식
-		receiver_info_type :"1", // 받는 사람 정보 (1:개인통관고유번호, 3:사업자등록번호)
-		avatar: "", // 이미지 URL
-		messageType: "", // 배송 요청사항
-		carePrice: 0, // 보험료?
-		is_care: false, // 보험 가입 여부
-		total_amount: 0,
-        total_quantity: 0,
-	},
+    importation_mode: "3", // 수입방식
+    receiver_info_type: "1", // 받는 사람 정보 (1:개인통관고유번호, 3:사업자등록번호)
+    avatar: "", // 이미지 URL
+    messageType: "", // 배송 요청사항
+    carePrice: 0, // 보험료?
+    is_care: false, // 보험 가입 여부
+    total_amount: 0,
+    total_quantity: 0,
+  },
   total_amount_kr: 0,
   loading: false,
   confirmLoading: false,
   checkClearanceCodeLoading: false,
   categoryData: [],
   uploadHeaders: {
-	  token: Cookie.get("token"),
-	  "Content-Type": "multipart/form-data",
+    token: Cookie.get("token"),
+    "Content-Type": "multipart/form-data",
   },
   uploadUrl: process.env.VUE_APP_API_URL + "/api/bridge/imgUpload",
   checkPersonalCustomsClearanceCode: false,
@@ -818,7 +839,12 @@ const state = reactive({
    이러한 사실을 통지하고 해당 상품을 취소할 수 있습니다.`
 });
 
-const OverseasCareData = ref({show: false, checked : false, total_amount_kr: state.total_amount_kr, care_price : state.form.carePrice})
+const OverseasCareData = ref({
+  show: false,
+  checked: false,
+  total_amount_kr: state.total_amount_kr,
+  care_price: state.form.carePrice
+})
 
 const calculateTotal = async () => {
   // 총 금액
@@ -916,12 +942,12 @@ const getOrderDetailForBridge = async () => {
   if (bridgeFormData.value.record.orderId === "") {
     return false;
   }
-  await useMarketOrderApi().getOrderDetailForBridge({id: bridgeFormData.value.record.orderId}).then(res => {
+  await useMarketOrderApi().getOrderDetailForBridge({ id: bridgeFormData.value.record.orderId }).then(res => {
     if (res.status !== "2000") {
       message.error(res.message);
       return false;
     }
-    const {marketOrder} = res.data;
+    const { marketOrder } = res.data;
     state.form.id = marketOrder[0].id;
     state.form.order_id = marketOrder[0].orderId;
     state.form.receiver_name = marketOrder[0].receiverName;
@@ -937,22 +963,22 @@ const getOrderDetailForBridge = async () => {
     state.form.items = [];
     marketOrder.forEach(item => {
       state.form.items.push({
-		  shipNm: "ycbridge",
-		  prdCode: item.prdCode,
-		  orderNo: item.orderNo,
-		  prdImage: item.prdImage,
-		  prdName: item.prdName,
-		  prd_name_cn: item.prdNameCn,
-		  prdOptionName: item.prdOptionName,
-		  prdUrl: item.prdUrl,
-		  quantity: item.quantity,
-		  unitPrice: item.prdPriceCn,
-		  itemNo: item.itemNo,
-		  message: item.message,
-		  hs_code: "",
-		  cn_order_id: "",
-		  arc_seq: "",
-		  prd_name_en: "",
+        shipNm: "ycbridge",
+        prdCode: item.prdCode,
+        orderNo: item.orderNo,
+        prdImage: item.prdImage,
+        prdName: item.prdName,
+        prd_name_cn: item.prdNameCn,
+        prdOptionName: item.prdOptionName,
+        prdUrl: item.prdUrl,
+        quantity: item.quantity,
+        unitPrice: item.prdPriceCn,
+        itemNo: item.itemNo,
+        message: item.message,
+        hs_code: "",
+        cn_order_id: "",
+        arc_seq: "",
+        prd_name_en: "",
       });
     });
   }).catch(err => {
@@ -962,7 +988,7 @@ const getOrderDetailForBridge = async () => {
   });
 };
 
-const showExpressModal = () =>{
+const showExpressModal = () => {
   new daum.Postcode({
     oncomplete: function(data) {
       state.form.receiver_post_code = data.zonecode;
@@ -980,21 +1006,21 @@ const handleOk = () => {
   }
 
   if (state.form.receiver_info_type === '1') {
-	  if (!state.form.personal_customs_clearance_code) {
-		  message.error("개인통관고유부호를 입력해 주세요.");
-		  return false;
-	  }
-	  if (state.checkPersonalCustomsClearanceCode === false) {
-		  message.error("개인통관고유부호를 확인해 주세요.");
-		  return false;
-	  }
+    if (!state.form.personal_customs_clearance_code) {
+      message.error("개인통관고유부호를 입력해 주세요.");
+      return false;
+    }
+    if (state.checkPersonalCustomsClearanceCode === false) {
+      message.error("개인통관고유부호를 확인해 주세요.");
+      return false;
+    }
   }
 
   if (state.form.receiver_info_type === '3') {
-	  if (!state.form.personal_customs_clearance_code) {
-		  message.error("사업자등록번호를 입력해 주세요.");
-		  return false;
-	  }
+    if (!state.form.personal_customs_clearance_code) {
+      message.error("사업자등록번호를 입력해 주세요.");
+      return false;
+    }
   }
 
   if (!state.form.receiver_tel1) {
@@ -1003,7 +1029,7 @@ const handleOk = () => {
   }
 
   //#363 수령자 연락처 확인
-  const checkNumber = state.form.receiver_tel1.slice(0,3);
+  const checkNumber = state.form.receiver_tel1.slice(0, 3);
 
   if (checkNumber !== "010") {
     message.error("수령자 연락처는 010으로 시작하는 핸드폰 번호를 입력해 주세요.");
@@ -1057,11 +1083,11 @@ const handleOk = () => {
     return false;
   }
 
-	// check amount
-	if (parseFloat(state.form.total_amount) <= 0 ) {
-		message.error("금액을 0이상 입력해 주세요.");
-		return false;
-	}
+  // check amount
+  if (parseFloat(state.form.total_amount) <= 0) {
+    message.error("금액을 0이상 입력해 주세요.");
+    return false;
+  }
 
   showConfirm();
 };
@@ -1070,7 +1096,7 @@ const showConfirm = () => {
   Modal.confirm({
     title: "추가 수정 사항은 없으신가요?",
     icon: createVNode(ExclamationCircleOutlined),
-    content: createVNode("div", {style: "color:red;"}, "*주문 건 정보 수정은 배대지 사이트에서만 가능합니다."),
+    content: createVNode("div", { style: "color:red;" }, "*주문 건 정보 수정은 배대지 사이트에서만 가능합니다."),
     onOk() {
       state.confirmLoading = true;
       useMarketOrderApi().registerBridgeOrder(state.form).then(res => {
@@ -1236,9 +1262,9 @@ function RRN_NO_API() {
 
   state.checkClearanceCodeLoading = true;
   useBridgeApi().checkPersonalCustomsClearanceCode({
-	  personal_customs_clearance_code: state.form.personal_customs_clearance_code,
-	  receiver_name: state.form.receiver_name,
-	  receiver_tel: state.form.receiver_tel1.replace(/-/gi, "")
+    personal_customs_clearance_code: state.form.personal_customs_clearance_code,
+    receiver_name: state.form.receiver_name,
+    receiver_tel: state.form.receiver_tel1.replace(/-/gi, "")
   }).then(res => {
     state.checkPersonalCustomsClearanceCode = true;
     if (res.status !== "2000") {
@@ -1278,70 +1304,70 @@ function RRN_NO_API() {
 
 // 통관 품목 불러오기
 const getCategory = async (arc_seq, index) => {
-	if (!arc_seq) {
-		message.error('통관품목을 입력해 주세요.');
-		return false;
-	}
+  if (!arc_seq) {
+    message.error('통관품목을 입력해 주세요.');
+    return false;
+  }
 
-	state.loading = true;
-	useBridgeApi().getArcSeq({arc_seq: arc_seq}).then(res => {
-		if (res.status !== "2000") {
-			message.error("통관품목을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
-			return false;
-		}
+  state.loading = true;
+  useBridgeApi().getArcSeq({ arc_seq: arc_seq }).then(res => {
+    if (res.status !== "2000") {
+      message.error("통관품목을 불러오기 실패하였습니다. 새로고침후 다시 시도해 주세요.");
+      return false;
+    }
 
-		const ArcSeqInfo = res?.data['RESULT_DATA'];
-		if (ArcSeqInfo['HS'][0] === false || ArcSeqInfo['HS'] === 'NONE') {
-			message.error("정확한 통관품목을 입력해 주세요.");
-			return false;
-		}
+    const ArcSeqInfo = res?.data['RESULT_DATA'];
+    if (ArcSeqInfo['HS'][0] === false || ArcSeqInfo['HS'] === 'NONE') {
+      message.error("정확한 통관품목을 입력해 주세요.");
+      return false;
+    }
 
-		state.form.items[index].prd_name_en = ArcSeqInfo['EN'] ?? '';
-		state.form.items[index].hs_code = ArcSeqInfo['HS'][0]['CODE'].substring(0, 6) ?? '';
+    state.form.items[index].prd_name_en = ArcSeqInfo['EN'] ?? '';
+    state.form.items[index].hs_code = ArcSeqInfo['HS'][0]['CODE'].substring(0, 6) ?? '';
 
-	}).catch(err => {
-		message.error(err);
-	}).finally(() => {
-		state.loading = false;
-	});
+  }).catch(err => {
+    message.error(err);
+  }).finally(() => {
+    state.loading = false;
+  });
 };
 
 const validateUploadImage = (file) => {
-	const isJPG = file.type === "image/jpeg";
-	const isJPEG = file.type === "image/jpg";
-	const isPNG = file.type === "image/png";
+  const isJPG = file.type === "image/jpeg";
+  const isJPEG = file.type === "image/jpg";
+  const isPNG = file.type === "image/png";
 
-	if (!(isJPG || isJPEG || isPNG)) {
-		message.error("허용되는 이미지 격식이 아닙니다.");
-		return false;
-	}
+  if (!(isJPG || isJPEG || isPNG)) {
+    message.error("허용되는 이미지 격식이 아닙니다.");
+    return false;
+  }
 
-	const isLt2M = file.size / 1024 / 1024 < 2;
-	if (!isLt2M) {
-		message.error('이미지 용량은 2MB를 초과하였습니다.');
-	}
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error('이미지 용량은 2MB를 초과하였습니다.');
+  }
 
-	return true;
+  return true;
 }
 
 const handleUploadChange = (option, index) => {
-	state.loading = true;
-	const formData = new FormData();
-	formData.append("file", option.file);
-	formData.append("image_type", "bridge");
+  state.loading = true;
+  const formData = new FormData();
+  formData.append("file", option.file);
+  formData.append("image_type", "bridge");
 
-	AuthRequest.post(
-		process.env.VUE_APP_API_URL + "/api/upload/image",
-		formData
-	).then(res => {
-		if (res.status !== '2000') {
-			message.error('이미지 업로드 실패');
-            return false;
-		}
-		state.form.items[index].prdImage = res?.data?.img_url;
-	}).finally(() => {
-		state.loading = false;
-	})
+  AuthRequest.post(
+    process.env.VUE_APP_API_URL + "/api/upload/image",
+    formData
+  ).then(res => {
+    if (res.status !== '2000') {
+      message.error('이미지 업로드 실패');
+      return false;
+    }
+    state.form.items[index].prdImage = res?.data?.img_url;
+  }).finally(() => {
+    state.loading = false;
+  })
 }
 
 // 개인통관부호 change 이벤트
@@ -1361,32 +1387,32 @@ const copyItem = (index) => {
   calculateTotal();
 };
 
-const parseMarketOrderData = reactive({show : false, orderData : {} })
+const parseMarketOrderData = reactive({ show: false, orderData: {} })
 const parseMarketOrder = (index) => {
   parseMarketOrderData.show = true
 };
 
 // item 기본구조 정의
 const initItem = {
-    unitPrice: 0,
-    quantity: 1,
-    prdUrl: "",
-    prdImage: "",
-    hs_code: "",
-    rrn_no_con: "N",
-    prdUrl_kr: "",
-    origin_text: "",
-    user_code: "",
-    brand_en: "",
-    brand_cn: "",
-    product_weight: "",
-    option_color: "",
-    option_size: "",
-    product_unit: "",
-    cn_order_id: "",
-    arc_seq: "",
-    prd_name_en: "",
-    prd_name_cn: "",
+  unitPrice: 0,
+  quantity: 1,
+  prdUrl: "",
+  prdImage: "",
+  hs_code: "",
+  rrn_no_con: "N",
+  prdUrl_kr: "",
+  origin_text: "",
+  user_code: "",
+  brand_en: "",
+  brand_cn: "",
+  product_weight: "",
+  option_color: "",
+  option_size: "",
+  product_unit: "",
+  cn_order_id: "",
+  arc_seq: "",
+  prd_name_en: "",
+  prd_name_cn: "",
 }
 
 const addItem = () => {
@@ -1437,7 +1463,7 @@ watchEffect(() => {
     // parseMarketOrderData.orderDat 의 데이타를 initItem 구조에 맞게 매핑하고
     // state.form.items 에 넣어준다.
     state.form.items = parseMarketOrderData.orderData.items.map(item => {
-      const newItem = {...initItem};
+      const newItem = { ...initItem };
       newItem.cn_order_id = parseMarketOrderData.orderData.orderNo;
       newItem.unitPrice = item.price;
       newItem.prd_name_cn = item.prdName;
@@ -1455,6 +1481,29 @@ watchEffect(() => {
 
 });
 
+function limitStringLength(item,key,maxLength,e) {
+  const encoder = new TextEncoder();
+  const inputValue = e.target.value;
+  const byteArray = encoder.encode(inputValue);
+  if (byteArray.buffer.byteLength > maxLength) {
+
+    let truncatedValue = '';
+    let byteLength = 0;
+
+    for (let char of inputValue) {
+      const charByteLength = encoder.encode(char).length;
+      byteLength += charByteLength;
+
+      if (byteLength > maxLength) {
+        break;
+      }
+
+      truncatedValue += char;
+    }
+    item[key] = truncatedValue;
+    e.target.value = truncatedValue;
+  }
+}
 </script>
 <style>
 .showModal::-webkit-scrollbar {
@@ -1649,16 +1698,17 @@ watchEffect(() => {
 }
 
 .avatar-uploader > .ant-upload {
-	width: 128px;
-	height: 128px;
+  width: 128px;
+  height: 128px;
 }
+
 .ant-upload-select-picture-card i {
-	font-size: 32px;
-	color: #999;
+  font-size: 32px;
+  color: #999;
 }
 
 .ant-upload-select-picture-card .ant-upload-text {
-	margin-top: 8px;
-	color: #666;
+  margin-top: 8px;
+  color: #666;
 }
 </style>
