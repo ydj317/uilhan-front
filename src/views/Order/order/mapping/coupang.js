@@ -54,7 +54,8 @@ export class Coupang {
   }
 
   mappingItems() {
-    const { shippingPrice } = this.#orderData.orgData || {};
+    let { shippingPrice } = this.#orderData.orgData || {};
+    shippingPrice = shippingPrice ? shippingPrice : 0 ;
     const items = this.#orderData.items.map(item => {
       return {
         id: item.id,
