@@ -7,8 +7,7 @@
     <a-flex class="mb30 color-2171E2 br20 p8 pl20 bg-fafafa">
       <span class="fs12 font-SCDream5 mr80"><InfoCircleFilled class="mr10" />유일 배송대행지 이벤트 진행중</span>
       <span class="fs11 font-SCDream4">
-        <span class="mr10">1,배송대행 VIP 등업</span>
-        <span>2.상품포장 내 에어캡 비용 무료</span>
+        <span class="mr10">배송대행 VIP 등업</span>
       </span>
     </a-flex>
 		<a-flex justify="space-between" class="board-wrap">
