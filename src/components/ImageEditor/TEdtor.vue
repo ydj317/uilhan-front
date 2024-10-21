@@ -92,6 +92,10 @@ export default {
   data(){
     return {
       init: {
+        // 允许内联样式标签
+        extended_valid_elements: 'style',
+        // 禁用自动清理 HTML 标签
+        valid_children: '+body[style]',
         language_url: '/tinymce/langs/ko_KR.js',  //引入语言包文件
         language: 'ko_KR',  //语言类型
 
