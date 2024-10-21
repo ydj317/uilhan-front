@@ -403,12 +403,12 @@ export default {
     getOptionTable(columnCount) {
       let imgWrapWidth = columnCount == 1 ? '100%' : 'calc((100% - 14px) / 2)';
       let imgPaddingWidth = columnCount == 1 ? '0 15%' : '0';
-      let html = `<div style="width: 100% !important; display: flex !important;gap: 10px !important;flex-wrap: wrap !important; margin: 10px 0 !important;">`
+      let html = `<div style="width: 100%;display: flex;gap: 10px;flex-wrap: wrap; margin: 10px 0;">`
       forEach(this.product.sku, (item) => {
         html += `
-        <div style="display: flex !important;flex-direction: column !important; width: ${imgWrapWidth} !important;padding: ${imgPaddingWidth} !important;">
-        <img src="${item.img}" style="width: calc(100% - 2px) !important;border: 1px solid #e8e8e8 !important;border-bottom: 0 !important;">
-        <div style="display: flex !important;align-items: center !important;justify-content: center !important;padding: 15px 0 !important;font-size: 16px !important;border: 1px solid #e8e8e8 !important;">${item.spec}</div>
+        <div style="display: flex;flex-direction: column; width: ${imgWrapWidth};padding: ${imgPaddingWidth};">
+        <img src="${item.img}" style="width: calc(100% - 2px);border: 1px solid #e8e8e8;border-bottom: 0;">
+        <div style="display: flex;align-items: center;justify-content: center;padding: 15px 0;font-size: 16px;border: 1px solid #e8e8e8;">${item.spec}</div>
         </div>`;
       });
       html += "</div>";
