@@ -12,7 +12,8 @@ const state = () => ({
     dataLoaded: false, // 表示产品详情是否加载完毕
 
     showOptionModify: false,    // 옵션수정 모달노출여부
-    showOptionPreview: false
+    showOptionPreview: false,
+    showOptionBatchChange: false
 // 옵션 정보 초기화
 });
 
@@ -31,6 +32,11 @@ const mutations = {
         state.showOptionPreview = value;
     },
 
+    setShowOptionBatchChange(state, value) {
+        console.log(1, state);
+        console.log(2, value);
+        state.showOptionBatchChange = value;
+    },
 
     // 添加一个状态表示数据是否加载完成
     setDataLoaded(state, loaded) {

@@ -18,6 +18,9 @@
     <div class="body-section">
       <OptionPreview></OptionPreview>
     </div>
+    <div class="body-section">
+      <OptionBatchChange></OptionBatchChange>
+    </div>
   </div>
 </template>
 <script>
@@ -26,6 +29,7 @@ import { forEach, cloneDeep} from "lodash";
 import {mapState, useStore} from "vuex";
 import SpecGroup from "./SpecGroup";
 import OptionPreview from "./OptionPreview";
+import OptionBatchChange from "./OptionBatchChange";
 import { message } from "ant-design-vue";
 import {computed,ref} from "vue";
 
@@ -33,7 +37,8 @@ export default {
   name: "productDetailNewSpec",
   components:{
     SpecGroup,
-    OptionPreview
+    OptionPreview,
+    OptionBatchChange
   },
   computed: {
     ...mapState({

@@ -73,6 +73,18 @@
                 <span class="spec-count"><span :style="option.name.length > 25 ? 'color:red;' : ''">{{
                     option.name.length
                   }}</span> / 25</span>
+
+                <span class="option-plus">
+                  <button @click="plusFunction()">
+                    <PlusOutlined />
+                  </button>
+                </span>
+                <span class="option-minus">
+                  <button>
+                    <minus-outlined />
+                  </button>
+                </span>
+
               </div>
 
               <div v-if="showRecommendOpt" class="spec-option-group"
@@ -771,6 +783,14 @@ export default {
           itemCateInfo.meta_data.recommendedOptList = recommendedOptList;
           this.recommendedMarketList.push(itemCateInfo)
         }})
+    },
+
+    plusFunction() {
+      alert('+ 추가');
+    },
+
+    minusFunction() {
+      alert('- 삭제');
     }
   },
 
@@ -1045,6 +1065,22 @@ export default {
 }
 .option-detail>td{
   width:100%;
+}
+
+.option-plus{
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-right: 40px;
+  margin-top: 10px;
+}
+
+.option-minus{
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-right: 10px;
+  margin-top: 10px;
 }
 
 </style>

@@ -117,9 +117,9 @@
         <!--품목삭제-->
         <a-button @click="deleteSku" >삭제</a-button>
         <!--일괄적용-->
-        <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 판매가)" @confirm="skuBatch">
-          <a-button>일괄변경</a-button>
-        </a-popconfirm>
+<!--        <a-popconfirm title="첫번째 품목값으로 일괄적용하시겠습니까?(재고, 판매가)" @confirm="skuBatch">-->
+          <a-button @click="skuBatch">일괄변경</a-button>
+<!--        </a-popconfirm>-->
         <div style="display: flex;gap: 5px">
           <a-input-group compact>
             <a-select v-model:value="setting_price_type" style="width: 175px">
@@ -130,7 +130,7 @@
 
           <a-tooltip class="ml5">
             <template #title>
-              <div>옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 삭제 합니다.</div>
+              <div>옵션가 50%±허용 범위를 벗어 나는 옵션들을 자동으로 등록안함으로 변경 합니다.</div>
             </template>
             <QuestionCircleOutlined/>
           </a-tooltip>
@@ -143,8 +143,8 @@
         <div>
           <a-space>
             <a-button @click="showOptionConPop" >옵션 미리보기</a-button>
-            <a-button @click="showOptionPop" >옵션 수정</a-button>
-            <a-button type="primary" @click="resetOption" class="reset">옵션정보 초기화</a-button>
+            <a-button type="primary" @click="showOptionPop" class="reset">옵션 수정</a-button>
+            <a-button type="primary" @click="resetOption" class="reset" hidden="hidden">옵션정보 초기화</a-button>
           </a-space>
         </div>
       </div>
@@ -340,6 +340,21 @@
               </label>
             </div>
           </template>
+
+          <!-- 옵션등록상태 -->
+          <template v-else-if="column.key === 'sku_status'">
+            <div class="center-select">
+              <a-select
+                v-model:value="record.is_sku_status"
+                style="width: 120px"
+                @change="handleChange"
+              >
+                <a-select-option value="Y">등록함</a-select-option>
+                <a-select-option value="N">등록안함</a-select-option>
+              </a-select>
+            </div>
+          </template>
+
           <!--보여주기-->
           <template v-else>
             <div
@@ -460,6 +475,11 @@ export default defineComponent({
         {
           title: "예상수익/원",
           key: "expected_return",
+          width: "7%",
+        },
+        {
+          title: "옵션등록상태",
+          key: "sku_status",
           width: "7%",
         },
       ],
@@ -663,23 +683,27 @@ export default defineComponent({
 
     // 일괄적용
     skuBatch() {
-      this.product.sku.map((sku, i) => {
-        this.sku_columns.map((columns) => {
-          //custom price
-          if (["selling_price"].includes(columns.key)) {
-            this.product.sku[i]["custom_" + columns.key] = Number(this.product.sku[0]["custom_" + columns.key]);
-          }
-          //original_price_ko
-          // if (["original_price_ko"].includes(columns.key)) {
-          //   this.product.sku[i]["original_price_ko"] = Number(this.product.sku[0]["original_price_ko"]);
-          // }
-          if (!["checked", "code", "spec", "img", "is_option_reference_price", "original_price_cn"].includes(columns.key)) {
-            this.product.sku[i][columns.key] = this.product.sku[0][columns.key];
-            // this.product.sku[i].price_kor = this.product.sku[0].price_kor;
-            this.product.sku[i].expected_return = (Number(this.product.sku[i].selling_price) - Number(this.product.sku[i].original_price_ko)).toFixed(0);
-          }
-        });
+      this.$nextTick(() => {
+        this.$store.commit('product/setShowOptionBatchChange', true)
       });
+
+      // this.product.sku.map((sku, i) => {
+      //   this.sku_columns.map((columns) => {
+      //     //custom price
+      //     if (["selling_price"].includes(columns.key)) {
+      //       this.product.sku[i]["custom_" + columns.key] = Number(this.product.sku[0]["custom_" + columns.key]);
+      //     }
+      //     //original_price_ko
+      //     // if (["original_price_ko"].includes(columns.key)) {
+      //     //   this.product.sku[i]["original_price_ko"] = Number(this.product.sku[0]["original_price_ko"]);
+      //     // }
+      //     if (!["checked", "code", "spec", "img", "is_option_reference_price", "original_price_cn"].includes(columns.key)) {
+      //       this.product.sku[i][columns.key] = this.product.sku[0][columns.key];
+      //       // this.product.sku[i].price_kor = this.product.sku[0].price_kor;
+      //       this.product.sku[i].expected_return = (Number(this.product.sku[i].selling_price) - Number(this.product.sku[i].original_price_ko)).toFixed(0);
+      //     }
+      //   });
+      // });
     },
 
     // 이미지 선택 팝업 노출
@@ -979,6 +1003,11 @@ export default defineComponent({
       });
     },
 
+    handleChange(value) {
+      // 得改背景色
+
+    },
+
   },
 
   mounted() {
@@ -1262,6 +1291,12 @@ export default defineComponent({
 }
 .big-img-wrap:hover .big-img{
   display: block;
+}
+
+.center-select {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 :deep .ant-table-wrapper .ant-table-column-sorters {
