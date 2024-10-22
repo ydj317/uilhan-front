@@ -126,13 +126,13 @@ export default defineComponent({
           return false;
         }
 
-        ChannelIO('boot', {
-          "pluginKey": "0415e1c8-2665-407e-b81c-8cb4f7d08a2e",
-          "memberId": res.data.member_name,
-          "profile": {
-            "name": res.data.member_name
-          }
-        });
+        // ChannelIO('boot', {
+        //   "pluginKey": "0415e1c8-2665-407e-b81c-8cb4f7d08a2e",
+        //   "memberId": res.data.member_name,
+        //   "profile": {
+        //     "name": res.data.member_name
+        //   }
+        // });
 
         // 아이디 저장하기
         tempSave();
