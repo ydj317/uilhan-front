@@ -239,6 +239,14 @@ export default {
       deep: true
     },
 
+    options: {
+      handler() {
+        this.selectedRows = this.options.map(option =>
+            option.data.filter(item => item.checked).map(item => item.key)
+        ).flat();
+      },
+      deep: true,
+    },
   },
   components: { PlusOutlined, MinusOutlined },
   data() {
@@ -389,15 +397,17 @@ export default {
       this._setCheckBoxInit();
     },
     setTrim() {
-      let selectItems = this.selectedRows.flat();
-      if (selectItems.length === 0) {
+      this.selectedRows = this.options.map(option =>
+          option.data.filter(item => item.checked).map(item => item.key)
+      ).flat();
+      if (this.selectedRows.length === 0) {
         message.warning("빈칸을 제거할 옵션명을 선택하세요.");
         return false;
       }
       const specialChars = /[ ]+/g;
       this.options.forEach(option => {
         option.data.forEach(item => {
-          if (selectItems.includes(item.key)) {
+          if (this.selectedRows.includes(item.key)) {
             item.name = item.name.replace(specialChars, "");
           }
         });
@@ -406,16 +416,18 @@ export default {
       // this._setCheckBoxInit();
     },
     replaceSpecialChars() {
-      let selectItems = this.selectedRows.flat();
+      this.selectedRows = this.options.map(option =>
+          option.data.filter(item => item.checked).map(item => item.key)
+      ).flat();
 
-      if (selectItems.length === 0) {
+      if (this.selectedRows.length === 0) {
         message.warning("특문을 제거할 옵션명을 선택하세요.");
         return false;
       }
       const specialChars = /[\[\]@#$^&*"?<>\\;,/{}()ㅥㅦㅧㅨㅩㅪㅫㅬㅭㅮㅯㅰㅱㅲㅳㅴㅵㅶㅷㅸㅹㅺㅻㅼㅽㅾㅿㆀㆁㆂㆃㆄㆅㆆㆇㆈㆉㆊㆋㆌㆍㆎ½⅓⅔¼¾⅛⅜⅝⅞¹²³⁴ⁿ₁₂₃₄ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭㉮㉯㉰㉱㉲㉳㉴㉵㉶㉷㉸㉹㉺㉻㈀㈁㈂㈃㈄㈅㈆㈇㈈㈉㈊㈋㈌㈍㈎㈏㈐㈑㈒㈓㈔㈕㈖㈗㈘㈙㈚㈛─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁╃╄╅╆╇╈╉╊＃＆＊＠§※☆★○●◎◇◆□■△▲▽▼→←↑↓↔〓◁◀▷▶♤♠♡♥♧♣⊙◈▣◐◑▒▤▥▨▧▦▩♨☏☎☜☞¶†‡↕↗↙↖↘♭♩♪♬㉿㈜№㏇™㏂㏘℡®ªº㉾＄％￦Ｆ′″℃Å￠￡￥¤℉‰€㎕㎖㎗ℓ㎘㏄㎣㎤㎥㎦㎙㎚㎛㎜㎝㎞㎟㎠㎡㎢㏊㎍㎎㎏㏏㎈㎉㏈㎧㎨㎰㎱㎲㎳㎴㎵㎶㎷㎸㎹㎀㎁㎂㎃㎄㎺㎻㎼㎽㎾㎿㎐㎑㎒㎓㎔Ω㏀㏁㎊㎋㎌㏖㏅㎭㎮㎯㏛㎩㎪㎫㎬㏝㏐㏓㏃㏉㏜㏆＋－＜＝＞±×÷≠≤≥∞∴♂♀∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∮∑∏＂（）［］｛｝‘’“”〔〕〈〉《》「」『』【】！＇，．／：；？＾＿｀｜￣、。·…¨〃­―∥＼∼～ˇ˘˝˚˙¸˛¿ː]+/g;
       this.options.forEach(option => {
         option.data.forEach(item => {
-          if (selectItems.includes(item.key)) {
+          if (this.selectedRows.includes(item.key)) {
             item.name = item.name.replace(specialChars, "");
           }
         });
@@ -487,15 +499,19 @@ export default {
     },
 
     cutOptName(){
-      let selectItems = this.selectedRows.flat();
-      if (selectItems.length === 0) {
+      // 重新计算初始化后的 selectedRows
+      this.selectedRows = this.options.map(option =>
+          option.data.filter(item => item.checked).map(item => item.key)
+      ).flat();
+
+      if (this.selectedRows.length === 0) {
         message.warning("25자로 자를 옵션명을 선택하세요.");
         return false;
       }
 
       this.options.forEach(option => {
         option.data.forEach(item => {
-          if (selectItems.includes(item.key)) {
+          if (this.selectedRows.includes(item.key)) {
             if (item.name.length > 25) {
               item.name = item.name.substring(0, 25);
             }
