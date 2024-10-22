@@ -407,8 +407,8 @@ export default {
       forEach(this.product.sku, (item) => {
         html += `
         <div style="display: flex !important;flex-direction: column !important; width: ${imgWrapWidth} !important;padding: ${imgPaddingWidth} !important;">
-        <img src="${item.img}" style="width: calc(100% - 2px) !important;border: 1px solid #e8e8e8 !important;border-bottom: 0 !important;">
-        <div style="display: flex !important;align-items: center !important;justify-content: center !important;padding: 15px 0 !important;font-size: 16px !important;border: 1px solid #e8e8e8 !important;">${item.spec}</div>
+        <img src="${item.img}" style="width: 100% !important;border: 1px solid #e8e8e8 !important;border-bottom: 0 !important;">
+        <div style="width: 100% !important;display: flex !important;align-items: center !important;justify-content: center !important;padding: 15px 0 !important;font-size: 16px !important;border: 1px solid #e8e8e8 !important;">${item.spec}</div>
         </div>`;
       });
       html += "</div>";
@@ -526,48 +526,48 @@ export default {
       let regex = /(top_img|bottom_img)/;
       this.imgRegexData = imgList.filter(obj => regex.test(obj.url));
       imgList = imgList.filter(obj => !regex.test(obj.url));
+
+      //#539 打开产品详情列表弹窗时去掉产品规格图片数据
+      const skuImages = this.product.sku.map(item => item.img);
+      imgList = imgList.filter(item => !skuImages.includes(item.url));
+
       if (imgList.length > 0) {
         imgList[0].checked = true;
       }
-
       this.translateImageList = imgList;
       this.visible = true;
     },
     updateTranslateImageListOld(imageList) {
       this.$refs.editor.clear();
-      let content = "<div style='display: flex; flex-direction: column;justify-content: center;align-items: center;'>";
-
-      // #456 상/하단 리스트에서 뺸 이미지 머지
-      let aMergedArray = imageList
-      if (this.showGuideImage) {
-        let aImgRegexData = this.imgRegexData;
-        let iCount = aImgRegexData.length;
-
-        aMergedArray = [
-          ...aImgRegexData.slice(0,1),
-          ...imageList,
-          ...aImgRegexData.slice(iCount-1)
-        ]
-      }
-
-      aMergedArray.forEach((item) => {
-        content += `<img src="${item.url}" style="max-width: 100%; height: auto;"/>`;
-        // if (item.translate_status === true) {
-        //   content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
-        // } else {
-        //   const nUrl = item.translate_url || item.url;
-        //   content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
-        // }
-      });
-      content += "</div>";
-      this.$refs.editor.contentValue = content;
-      this.product.item_detail = content;
-
       // #440 옵션테이블 사라지는 이슈
       if (this.showOptionTable) {
         this.handleOptionTableToggle();
       }
+      let content = '';
+      //规格图片
+      if(this.product.user.description_option.option_table.use){
+        let columnCount = this.product.user.description_option.option_table.column_length ?? 2;
+        let optionHtml = this.getOptionTable(columnCount);
+        content += optionHtml;
+      }
+      //主体图片
+      content = "<div style='display: flex; flex-direction: column;justify-content: center;align-items: center;'>";
+      imageList.forEach((item) => {
+        content += `<img src="${item.url}" style="max-width: 100%; height: auto;"/>`;
+      });
+      content += "</div>";
 
+      //首尾图片
+      if (this.showGuideImage && this.product.user.description_option.top_bottom_image.top_image_url !== "") {
+        const beforeCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
+        content = beforeCont + content;
+      }
+      if (this.showGuideImage && this.product.user.description_option.top_bottom_image.bottom_image_url !== "") {
+        const afterCont = `<div id="${this.guideAfterId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
+        content = content + afterCont;
+      }
+      this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
     },
     editorImage(res) {
       let aImagesUrl = [{url: res.url, old_url: res.old_url}];
