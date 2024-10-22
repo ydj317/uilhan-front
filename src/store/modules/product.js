@@ -33,8 +33,6 @@ const mutations = {
     },
 
     setShowOptionBatchChange(state, value) {
-        console.log(1, state);
-        console.log(2, value);
         state.showOptionBatchChange = value;
     },
 

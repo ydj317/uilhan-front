@@ -74,17 +74,32 @@
                     option.name.length
                   }}</span> / 25</span>
 
-                <span class="option-plus">
-                  <button @click="plusFunction()">
-                    <PlusOutlined />
-                  </button>
-                </span>
-                <span class="option-minus">
-                  <button>
-                    <minus-outlined />
-                  </button>
-                </span>
-
+                <template v-if="this.options.length === 1 && optionIndex === 0">
+                  <span class="option-plus">
+                    <button @click="plusFunction()">
+                      <PlusOutlined />
+                    </button>
+                  </span>
+                </template>
+                <template v-if="optionIndex === 1 && this.options.length > 1">
+                  <span class="option-plus" v-if="this.options.length === 2">
+                    <button @click="plusFunction()">
+                      <PlusOutlined />
+                   </button>
+                  </span>
+                  <span class="option-minus">
+                   <button>
+                    <MinusOutlined />
+                   </button>
+                 </span>
+                </template>
+                <template v-else-if="optionIndex > 1">
+                  <span class="option-minus">
+                    <button>
+                       <MinusOutlined />
+                    </button>
+                   </span>
+                </template>
               </div>
 
               <div v-if="showRecommendOpt" class="spec-option-group"
