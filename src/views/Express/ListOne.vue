@@ -392,7 +392,7 @@ const state = reactive({
 	listLoading: false,
 	searchParams: {
 		page: 1,
-		pageSize: 10,
+		pageSize: 30,
 		keyword: '',
 		bridge_order_id: '',
 		receiver_name: '',
@@ -472,7 +472,7 @@ const selectRange = (val, type) => {
 
 const searchBridgeOrderByFilter = () => {
 	state.searchParams.page = 1;
-	state.searchParams.pageSize = 10;
+	state.searchParams.pageSize = 30;
 	state.modal.open = false;
 	initTabs();
 	getBridgeList();
@@ -517,7 +517,7 @@ const searchKeyword = () => {
 		initSearchParams();
 	}
     state.searchParams.page = 1;
-	state.searchParams.pageSize = 10;
+	state.searchParams.pageSize = 30;
 	initTabs();
     getBridgeList();
 }
