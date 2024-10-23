@@ -238,15 +238,6 @@ export default {
       },
       deep: true
     },
-
-    options: {
-      handler() {
-        this.selectedRows = this.options.map(option =>
-            option.data.filter(item => item.checked).map(item => item.key)
-        ).flat();
-      },
-      deep: true,
-    },
   },
   components: { PlusOutlined, MinusOutlined },
   data() {
@@ -347,6 +338,10 @@ export default {
       this.product.item_option[optionIndex].data.splice(index, 1);
     },
     onCheckAllChange(option, optionIndex) {
+      if (!Array.isArray(this.selectedRows[optionIndex])) {
+        this.selectedRows[optionIndex] = [];
+      }
+
       if (option.checkAll === true) {
         this.selectedRows[optionIndex] = [];
         forEach(option.data, (item, index) => {
@@ -363,7 +358,7 @@ export default {
 
     updateSelectAll(item, option, optionIndex) {
       // item 에서 checked 가 true 일때 selectedRows 에 추가
-      if (!this.selectedRows[optionIndex]) {
+      if(!Array.isArray(this.selectedRows[optionIndex])) {
         this.selectedRows[optionIndex] = [];
       }
 
