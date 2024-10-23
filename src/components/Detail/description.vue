@@ -199,7 +199,7 @@ export default {
         return false;
       }
 
-      const videoContent = `<div id="${this.videoId}"><video width="auto;" height="400;" controls="controls"><source src="${this.product.item_video_url}" type="video/mp4"></video></div>`;
+      const videoContent = `<div id="${this.videoId}"><div style="display: flow;text-align: center"><video width="auto;" height="400;" controls="controls"><source src="${this.product.item_video_url}" type="video/mp4"></video></div></div>`;
       let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
       const match = regex.exec(this.product.item_detail);
       if (match !== null) {
@@ -316,10 +316,13 @@ export default {
 
           // 只有在 showOptionTable 为 true 时才创建或更新 optionTable
           if (optionTableDoc) {
+            optionTableDoc.style.display = 'flex';
+            optionTableDoc.style.alignItems = 'center';
+            optionTableDoc.style.justifyContent = 'center';
             optionTableDoc.innerHTML = optionHtml;
             this.product.item_detail = window.tinymce.editors[0].getContent();
           } else {
-            const optionTable = `<div id="${this.optionTableId}">${optionHtml}</div>`;
+            const optionTable = `<div id="${this.optionTableId}" style="display: flex;align-items: center;justify-content: center;">${optionHtml}</div>`;
             // top에 올라가게 변경
             let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
             // bottom에 올라가게 변경
@@ -380,6 +383,9 @@ export default {
       if (!optionTableDoc) {
         return;
       }
+      optionTableDoc.style.display = 'flex';
+      optionTableDoc.style.alignItems = 'center';
+      optionTableDoc.style.justifyContent = 'center';
       let optionHtml;
       //테이블 2줄로 추가
       if (optionTableDoc.querySelector(`table#${this.optionTableId}_2`)) {
@@ -395,40 +401,19 @@ export default {
       }
     },
     getOptionTable(columnCount) {
-      let tableId = `${this.optionTableId}_${columnCount}`;
-      //columnCount은 2줄로 보기 혹은 4줄로 보기
-      let optionHtml = `<table id="${tableId}" border="1" style="border-collapse: collapse; margin-left: auto; margin-right: auto;">`;
-      let i = 1;
-      let trStartTag = null;
-      let skuLength = this.product.sku.length;
+      let imgWrapWidth = columnCount == 1 ? '100%' : 'calc((100% - 14px) / 2)';
+      let imgPaddingWidth = columnCount == 1 ? '0 15%' : '0';
+      let html = `<span style="width: 100% !important; display: flex !important;gap: 10px !important;flex-wrap: wrap !important; margin: 10px 0 !important;">`
+      console.log('this.product.sku',this.product.sku);
       forEach(this.product.sku, (item) => {
-        if (i === 1 || i === trStartTag) {
-          //다음번 tr 시작 태그
-          trStartTag = i + columnCount;
-          optionHtml += "<tr>";
-        }
-        let imgHtml = item.img === null || item.img === "" ? `<div style="height:100px;width:100px;"></div>` : `<img style="height:100px;width:100px;" src="${item.img}">`;
-        optionHtml += `<td style="min-height:100px;min-width:100px;">${imgHtml}</td>`;
-        optionHtml += `<td style="min-height:100px;min-width:150px; text-align: center;">${item.spec}</td>`;
-        //1줄 이상의 데이타일 경우 부족한 td 추가해줌
-        if (i === skuLength) {
-          if (skuLength > columnCount && skuLength % columnCount !== 0) {
-            for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
-              optionHtml += `<td style="min-height:100px;min-width:100px;"></td>`;
-              optionHtml += `<td style="min-height:100px;min-width:150px;"></td>`;
-            }
-          }
-        }
-
-        //tr태그 닫음
-        if (i % columnCount === 0) {
-          optionHtml += "</tr>";
-        }
-        i++;
+        html += `
+        <span style="display: flex !important;flex-direction: column !important; width: ${imgWrapWidth} !important;padding: ${imgPaddingWidth} !important;">
+        <img src="${item.img}" style="width: 100% !important;border: 1px solid #e8e8e8 !important;border-bottom: 0 !important;">
+        <span style="width: 100% !important;display: flex !important;align-items: center !important;justify-content: center !important;padding: 15px 0 !important;font-size: 16px !important;border: 1px solid #e8e8e8 !important;">${item.spec}</span>
+        </span>`;
       });
-      optionHtml += "</table>";
-
-      return optionHtml;
+      html += "</span>";
+      return html;
     },
     contentUpdate(tinymce) {
       this.product.item_detail = tinymce.editors[0].getContent();
@@ -436,7 +421,7 @@ export default {
 
     getDetailContentsImage() {
       let content = window.tinymce.editors[0].getContent();
-      const regex = /<div id="editor_option_table">[\s\S]*?<\/div>/g;
+      const regex = /<div\s+id="editor_option_table"[^>]*>[\s\S]*?<\/div>/g;
       content = content.replace(regex, "");
       if (content === undefined || content.length === 0) {
         message.warning("이미지가 없습니다");
@@ -542,48 +527,44 @@ export default {
       let regex = /(top_img|bottom_img)/;
       this.imgRegexData = imgList.filter(obj => regex.test(obj.url));
       imgList = imgList.filter(obj => !regex.test(obj.url));
+
       if (imgList.length > 0) {
         imgList[0].checked = true;
       }
-
       this.translateImageList = imgList;
       this.visible = true;
     },
     updateTranslateImageListOld(imageList) {
       this.$refs.editor.clear();
-      let content = "<div style='display: flex; flex-direction: column;justify-content: center;align-items: center;'>";
-
-      // #456 상/하단 리스트에서 뺸 이미지 머지
-      let aMergedArray = imageList
-      if (this.showGuideImage) {
-        let aImgRegexData = this.imgRegexData;
-        let iCount = aImgRegexData.length;
-
-        aMergedArray = [
-          ...aImgRegexData.slice(0,1),
-          ...imageList,
-          ...aImgRegexData.slice(iCount-1)
-        ]
-      }
-
-      aMergedArray.forEach((item) => {
-        content += `<img src="${item.url}" style="max-width: 100%; height: auto;"/>`;
-        // if (item.translate_status === true) {
-        //   content += `<img src="${item.translate_url}" style="max-width: 100%; height: auto;"/>`;
-        // } else {
-        //   const nUrl = item.translate_url || item.url;
-        //   content += `<img src="${nUrl}" style="max-width: 100%; height: auto;"/>`;
-        // }
-      });
-      content += "</div>";
-      this.$refs.editor.contentValue = content;
-      this.product.item_detail = content;
-
       // #440 옵션테이블 사라지는 이슈
       if (this.showOptionTable) {
         this.handleOptionTableToggle();
       }
+      let content = '';
+      //规格图片
+      if(this.product.user.description_option.option_table.use){
+        let columnCount = this.product.user.description_option.option_table.column_length ?? 2;
+        let optionHtml = this.getOptionTable(columnCount);
+        content += optionHtml;
+      }
+      //主体图片
+      content = "<div style='display: flex; flex-direction: column;justify-content: center;align-items: center;'>";
+      imageList.forEach((item) => {
+        content += `<img src="${item.url}" style="max-width: 100%; height: auto;"/>`;
+      });
+      content += "</div>";
 
+      //首尾图片
+      if (this.showGuideImage && this.product.user.description_option.top_bottom_image.top_image_url !== "") {
+        const beforeCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="${this.product.user.description_option.top_bottom_image.top_image_url}" alt=""></div>`;
+        content = beforeCont + content;
+      }
+      if (this.showGuideImage && this.product.user.description_option.top_bottom_image.bottom_image_url !== "") {
+        const afterCont = `<div id="${this.guideAfterId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;" ><img src="${this.product.user.description_option.top_bottom_image.bottom_image_url}" alt=""></div>`;
+        content = content + afterCont;
+      }
+      this.$refs.editor.contentValue = content;
+      this.product.item_detail = content;
     },
     editorImage(res) {
       let aImagesUrl = [{url: res.url, old_url: res.old_url}];
@@ -628,6 +609,16 @@ export default {
       this.$refs.editor.contentValue = content;
       this.product.item_detail = content;
     },
+    isPhone(){
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobileDevice = /iphone|android|symbianos|windows phone|ipod/i.test(userAgent);
+      const isTabletDevice = /ipad|tablet/i.test(userAgent);
+
+      // 如果检测到是移动设备或者宽度小于某个阈值
+      const isSmallScreen = window.screen.width < 768; // 768px 作为判断阈值
+
+      return isMobileDevice || (isTabletDevice && isSmallScreen);
+    }
   }
 };
 </script>
