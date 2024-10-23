@@ -7,7 +7,7 @@
                 type="card"
                 @change="handleTabChange"
         >
-          <a-tab-pane v-for="pane in tabList" :key="pane.key">
+          <a-tab-pane v-for="pane in tabList" :key="pane.key" :disabled="product.loading? true : false">
             <template #tab>
               <div :style="{color: activeKey === pane.key ? '#ffffff' : '#000000'}">
                 {{pane.tab}}
@@ -263,8 +263,6 @@ export default defineComponent({
         message.error(res.message);
         return false;
       }
-      //自动保存后修改时间不为空,为了再次自动保存时相关的验证
-      this.product.item_upd = 1;
       this.lastSaveTime = new Date().getTime();
       this.showMessage();
       return true;
@@ -331,6 +329,7 @@ export default defineComponent({
     },
 
     handleCancel() {
+      this.activeKey = '1';
       if (this.autosave) {
         this.autoSave();
       }
@@ -379,7 +378,7 @@ export default defineComponent({
         spec: JSON.stringify(oProduct.item_option),
         stock: oProduct["item_stock"],
         image: JSON.stringify(oProduct.item_thumbnails),
-        detail: this.getProductDetail(),
+        detail: oProduct.item_detail,
         trans_name: oProduct.item_trans_name,
         trans_status: oProduct.item_is_trans,
         cross_border: oProduct.item_cross_border,
@@ -673,17 +672,17 @@ export default defineComponent({
     checkWordCount(){
       let itemOption = this.product.item_option;
       let checkWordCountOk = true;
-      for (let i = 0; i < itemOption.length; i++) {
-        for (let j = 0; j < itemOption[i].data.length; j++){
-           if (itemOption[i].data[j].name.length > 25) {
-             checkWordCountOk = false
-           }
-        }
-
-      }
-      if(checkWordCountOk === false){
-        message.warning("옵션값은 25자 이내로 입력해 주세요.");
-      }
+      // for (let i = 0; i < itemOption.length; i++) {
+      //   for (let j = 0; j < itemOption[i].data.length; j++){
+      //      if (itemOption[i].data[j].name.length > 25) {
+      //        checkWordCountOk = false
+      //      }
+      //   }
+      //
+      // }
+      // if(checkWordCountOk === false){
+      //   message.warning("옵션값은 25자 이내로 입력해 주세요.");
+      // }
       return checkWordCountOk;
     },
 
@@ -922,6 +921,7 @@ export default defineComponent({
     },
     onCancel() {
       console.log('cancel!');
+      this.activeKey = '1';
       this.$emit('update:visible');
     },
 
@@ -944,86 +944,25 @@ export default defineComponent({
         document.removeEventListener('keydown', this.handleTabsEvent);
       }
     },
-    getProductDetail(){
-      if(this.product.item_upd === null){
-        if(this.descriptionOption?.option_table?.use){
-          const productTable = new RegExp(`<div id="${this.optionTableId}".*?</div>`, "ig");
-          const matchProductTable = productTable.exec(this.product.item_detail);
-          if(matchProductTable == null){
-            const divElement = document.createElement('div');
-            divElement.id = `${this.optionTableId}`;
-            let optionHtml = this.getOptionTable(this.descriptionOption?.option_table?.column_length);
-            divElement.innerHTML = optionHtml;
-            if (optionHtml) {
-              if(this.descriptionOption?.option_table?.show_position == 'top'){
-                this.product.item_detail = divElement.outerHTML + this.product.item_detail;
-              }else{
-                this.product.item_detail = this.product.item_detail + divElement.outerHTML;
-              }
-            }
-          }
-        }
-        if(this.descriptionOption?.top_bottom_image?.use){
-          // 기존에 있는지 업는지 판단소스를 써줘``
-          const regexBefore = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "ig");
-          const regexAfter = new RegExp(`<div id="${this.guideAfterId}".*?</div>`, "ig");
-          const matchBefore = regexBefore.exec(this.product.item_detail);
-          const matchAfter = regexAfter.exec(this.product.item_detail);
-
-          if (matchBefore === null) {
-            const beforeCont = `<div id="${this.guideBeforeId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
-            this.product.item_detail = beforeCont + this.product.item_detail;
-          }
-
-          if (matchAfter === null) {
-            const afterCont = `<div id="${this.guideAfterId}" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;"></div>`;
-            this.product.item_detail = this.product.item_detail + afterCont;
-          }
-        }
-        if(this.descriptionOption?.show_video){
-          const regexVideo = new RegExp(`<div id="${this.videoId}".*?</div>`, "igs");
-          this.product.item_detail = this.product.item_detail.replace(regexVideo, "");
-          if (this.product.item_video_url === "" || this.product.item_video_url === null) {
-          }else{
-            const videoContent = `<div id="${this.videoId}"><video width="auto;" height="400;" controls="controls"><source src="${this.product.item_video_url}" type="video/mp4"></video></div>`;
-            let regex = new RegExp(`<div id="${this.guideBeforeId}".*?</div>`, "igs");
-            const match = regex.exec(this.product.item_detail);
-            if (match !== null) {
-              this.product.item_detail = this.product.item_detail.replace(regex, "");
-              this.product.item_detail = match[0] + videoContent + this.product.item_detail;
-            } else {
-              this.product.item_detail = videoContent + this.product.item_detail;
-            }
-          }
-        }
-      }
-      return this.product.item_detail;
-    },
     getOptionTable(columnCount) {
       let tableId = `${this.optionTableId}_${columnCount}`;
       //columnCount은 2줄로 보기 혹은 4줄로 보기
-      let optionHtml = `<table id="${tableId}" border="1" style="border-collapse: collapse; margin-left: auto; margin-right: auto;">`;
+      let optionHtml = `<table id="${tableId}" border="1"  style="border-collapse: separate; border-spacing: 10px;border: 0;">`;
       let i = 1;
       let trStartTag = null;
       let skuLength = this.product.sku.length;
+      let imgWidth = this.isPhone() ? '100%' :  columnCount == 1 ? '500px' : '330px';
       forEach(this.product.sku, (item) => {
         if (i === 1 || i === trStartTag) {
           //다음번 tr 시작 태그
           trStartTag = i + columnCount;
           optionHtml += "<tr>";
         }
-        let imgHtml = item.img === null || item.img === "" ? `<div style="height:100px;width:100px;"></div>` : `<img style="height:100px;width:100px;" src="${item.img}">`;
-        optionHtml += `<td style="min-height:100px;min-width:100px;">${imgHtml}</td>`;
-        optionHtml += `<td style="min-height:100px;min-width:150px; text-align: center;">${item.spec}</td>`;
-        //1줄 이상의 데이타일 경우 부족한 td 추가해줌
-        if (i === skuLength) {
-          if (skuLength > columnCount && skuLength % columnCount !== 0) {
-            for (let j = 0; j < (columnCount - skuLength % columnCount); j++) {
-              optionHtml += `<td style="min-height:100px;min-width:100px;"></td>`;
-              optionHtml += `<td style="min-height:100px;min-width:150px;"></td>`;
-            }
-          }
-        }
+        let imgHtml = item.img === null || item.img === "" ? `<div style="height:${imgWidth};width:${imgWidth};"></div>` : `<img style="height:${imgWidth};width:${imgWidth};" src="${item.img}">`;
+        optionHtml += `<td style="padding: 0;vertical-align: baseline;">
+                          <div style="height:${imgWidth};width:${imgWidth};display: flex;align-items: center;justify-content: center;">${imgHtml}</div>
+                            <div style="min-height:50px;width:calc(${imgWidth} - 20px);display: flex;align-items: center;justify-content: center;padding:10px;border-top: 1px solid #ccc;">${item.spec}</div>
+                      </td>`;
 
         //tr태그 닫음
         if (i % columnCount === 0) {
@@ -1035,6 +974,9 @@ export default defineComponent({
 
       return optionHtml;
     },
+    isPhone(){
+      return /ios|ipod|iPad|iphone|android|SymbianOS|Windows Phone/i.test(navigator.userAgent);
+    }
   },
 
   watch: {
