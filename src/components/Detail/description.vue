@@ -161,6 +161,19 @@ export default {
       immediate: true,
       deep: true
     },
+    activeKey:{
+      handler() {
+        if(this.activeKey == 3){
+          if (!!this.showOptionTable) {
+            this.$nextTick(() => {
+              this.handleOptionTableToggle();
+            })
+          }
+        }
+      },
+      immediate: true,
+      deep: true
+    }
   },
 
   mounted() {
@@ -404,7 +417,6 @@ export default {
       let imgWrapWidth = columnCount == 1 ? '100%' : 'calc((100% - 14px) / 2)';
       let imgPaddingWidth = columnCount == 1 ? '0 15%' : '0';
       let html = `<span style="width: 100% !important; display: flex !important;gap: 10px !important;flex-wrap: wrap !important; margin: 10px 0 !important;">`
-      console.log('this.product.sku',this.product.sku);
       forEach(this.product.sku, (item) => {
         html += `
         <span style="display: flex !important;flex-direction: column !important; width: ${imgWrapWidth} !important;padding: ${imgPaddingWidth} !important;">
