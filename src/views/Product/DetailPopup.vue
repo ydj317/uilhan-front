@@ -152,12 +152,18 @@ export default defineComponent({
         },
         {
           key: '2',
-          tab: '옵션/가격정보',
+          tab: '옵션',
+          icon: AndroidOutlined,
+          component: markRaw(),
+        },
+        {
+          key: '3',
+          tab: '가격정보',
           icon: AndroidOutlined,
           component: markRaw(OptionTab),
         },
         {
-          key: '3',
+          key: '4',
           tab: '상세페이지',
           icon: AndroidOutlined,
           component: markRaw(DetailInfoTab),

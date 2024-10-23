@@ -102,21 +102,33 @@
                 </template>
               </div>
 
-              <div v-if="showRecommendOpt" class="spec-option-group"
-                   v-for ="(market, marketIndex) in recommendedMarketList" :key="marketIndex" >
-                <span class="spec-font">[{{openMarketList[market.marketCode]}}] 추천옵션그룹{{ optionIndex + 1 }}</span>
+              <a-dropdown :trigger="['click']" class="dropdown-menu">
+                <a @click.prevent>
+                  추천옵션그룹
+                  <DownOutlined />
+                </a>
+                <template #overlay>
+                  <a-menu class="ant-dropdown-link">
+                    <div v-if="showRecommendOpt" class="spec-option-group"
+                         v-for ="(market, marketIndex) in recommendedMarketList" :key="marketIndex" >
+                      <span class="spec-font">[{{openMarketList[market.marketCode]}}] 추천옵션그룹{{ optionIndex + 1 }}</span>
 
-                <a-select v-model:value="product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id']"
-                          style="width: 100px; margin-left: 10px"
-                          @change="onChangeRecommendedOptionGroup(market, optionIndex, $event)"
-                          @dropdownVisibleChange="onDropdownVisibleChange(market, optionIndex, $event)"
-                >
-                  <a-select-option value="">자동매칭</a-select-option>
-                  <a-select-option v-for="(recOption, recOptionKey) in market.meta_data.recommendedOptList || []" :key="recOptionKey" >
-                    {{ recOption.recommendedOptName }}
-                  </a-select-option>
-                </a-select>
-              </div>
+                      <a-select v-model:value="product.item_cate[market.accountName]['meta_data']['recommendedOpt'][optionIndex]['recommended_id']"
+                                style="width: 100px; margin-left: 10px"
+                                @change="onChangeRecommendedOptionGroup(market, optionIndex, $event)"
+                                @dropdownVisibleChange="onDropdownVisibleChange(market, optionIndex, $event)"
+                      >
+                        <a-select-option value="">자동매칭</a-select-option>
+                        <a-select-option v-for="(recOption, recOptionKey) in market.meta_data.recommendedOptList || []" :key="recOptionKey" >
+                          {{ recOption.recommendedOptName }}
+                        </a-select-option>
+                      </a-select>
+                    </div>
+                  </a-menu>
+                </template>
+
+              </a-dropdown>
+
             </th>
           </tr>
           <!--옵션값 일괄 설정 영역-->
@@ -184,7 +196,7 @@
 <script>
 import { cloneDeep, forEach } from "lodash";
 import { mapState, useStore } from "vuex";
-import { PlusOutlined, MinusOutlined } from "@ant-design/icons-vue";
+import { PlusOutlined, MinusOutlined, DownOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import { nextTick, reactive, watch } from "vue";
 
@@ -267,7 +279,7 @@ export default {
     },
 
   },
-  components: { PlusOutlined, MinusOutlined },
+  components: { PlusOutlined, MinusOutlined, DownOutlined},
   data() {
     return {
       popoverVisible: false,
@@ -1096,6 +1108,16 @@ export default {
   top: 0;
   margin-right: 10px;
   margin-top: 10px;
+}
+
+.dropdown-menu{
+  display:flex;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+
+.ant-dropdown-link{
+  width: 300px;
 }
 
 </style>
