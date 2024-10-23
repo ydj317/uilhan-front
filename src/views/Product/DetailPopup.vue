@@ -672,17 +672,17 @@ export default defineComponent({
     checkWordCount(){
       let itemOption = this.product.item_option;
       let checkWordCountOk = true;
-      for (let i = 0; i < itemOption.length; i++) {
-        for (let j = 0; j < itemOption[i].data.length; j++){
-           if (itemOption[i].data[j].name.length > 25) {
-             checkWordCountOk = false
-           }
-        }
-
-      }
-      if(checkWordCountOk === false){
-        message.warning("옵션값은 25자 이내로 입력해 주세요.");
-      }
+      // for (let i = 0; i < itemOption.length; i++) {
+      //   for (let j = 0; j < itemOption[i].data.length; j++){
+      //      if (itemOption[i].data[j].name.length > 25) {
+      //        checkWordCountOk = false
+      //      }
+      //   }
+      //
+      // }
+      // if(checkWordCountOk === false){
+      //   message.warning("옵션값은 25자 이내로 입력해 주세요.");
+      // }
       return checkWordCountOk;
     },
 

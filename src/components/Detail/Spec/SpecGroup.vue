@@ -651,10 +651,10 @@ export default {
         });
       });
 
-      if (hasError) {
-        this.$message.warn('옵션값은 25자 이내로 입력해 주세요. ');
-        return true;
-      }
+      // if (hasError) {
+      //   this.$message.warn('옵션값은 25자 이내로 입력해 주세요. ');
+      //   return true;
+      // }
       return false;
     },
 
