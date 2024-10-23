@@ -87,6 +87,10 @@ onMounted(() => {
   // window title
   const site = lib.isWorldLink() ? `월드링크` : '유일';
   document.title = site + ' - ' + router.currentRoute.value.meta.title;
+
+  ChannelIO('boot', {
+    "pluginKey": "0415e1c8-2665-407e-b81c-8cb4f7d08a2e"
+  });
 })
 </script>
 <style>
