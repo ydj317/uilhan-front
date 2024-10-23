@@ -403,15 +403,16 @@ export default {
     getOptionTable(columnCount) {
       let imgWrapWidth = columnCount == 1 ? '100%' : 'calc((100% - 14px) / 2)';
       let imgPaddingWidth = columnCount == 1 ? '0 15%' : '0';
-      let html = `<div style="width: 100%;display: flex;gap: 10px;flex-wrap: wrap; margin: 10px 0;">`
+      let html = `<span style="width: 100% !important; display: flex !important;gap: 10px !important;flex-wrap: wrap !important; margin: 10px 0 !important;">`
+      console.log('this.product.sku',this.product.sku);
       forEach(this.product.sku, (item) => {
         html += `
-        <div style="display: flex;flex-direction: column; width: ${imgWrapWidth};padding: ${imgPaddingWidth};">
-        <img src="${item.img}" style="width: calc(100% - 2px);border: 1px solid #e8e8e8;border-bottom: 0;">
-        <div style="display: flex;align-items: center;justify-content: center;padding: 15px 0;font-size: 16px;border: 1px solid #e8e8e8;">${item.spec}</div>
-        </div>`;
+        <span style="display: flex !important;flex-direction: column !important; width: ${imgWrapWidth} !important;padding: ${imgPaddingWidth} !important;">
+        <img src="${item.img}" style="width: 100% !important;border: 1px solid #e8e8e8 !important;border-bottom: 0 !important;">
+        <span style="width: 100% !important;display: flex !important;align-items: center !important;justify-content: center !important;padding: 15px 0 !important;font-size: 16px !important;border: 1px solid #e8e8e8 !important;">${item.spec}</span>
+        </span>`;
       });
-      html += "</div>";
+      html += "</span>";
       return html;
     },
     contentUpdate(tinymce) {
@@ -420,7 +421,7 @@ export default {
 
     getDetailContentsImage() {
       let content = window.tinymce.editors[0].getContent();
-      const regex = /<div id="editor_option_table">[\s\S]*?<\/div>/g;
+      const regex = /<div\s+id="editor_option_table"[^>]*>[\s\S]*?<\/div>/g;
       content = content.replace(regex, "");
       if (content === undefined || content.length === 0) {
         message.warning("이미지가 없습니다");
@@ -526,10 +527,6 @@ export default {
       let regex = /(top_img|bottom_img)/;
       this.imgRegexData = imgList.filter(obj => regex.test(obj.url));
       imgList = imgList.filter(obj => !regex.test(obj.url));
-
-      //#539 打开产品详情列表弹窗时去掉产品规格图片数据
-      const skuImages = this.product.sku.map(item => item.img);
-      imgList = imgList.filter(item => !skuImages.includes(item.url));
 
       if (imgList.length > 0) {
         imgList[0].checked = true;
