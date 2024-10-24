@@ -55,7 +55,7 @@
         <div class="mt5">
           <a-button class="mr5" type="primary" @click="translateImage" :disabled="translateImageLoading">번역</a-button>
           <a-button class="mr5" @click="editorImage">편집</a-button>
-          <a-button class="mr5" @click="imageMatting" :disabled="imageMattingLoading" v-if="checkAdmin">AI 누끼 따기</a-button>
+          <a-button v-if="isDetail === false" class="mr5" @click="imageMatting" :disabled="imageMattingLoading">배경지우기</a-button>
           <a-dropdown v-if="isDetail === false" :disabled="resizeImageLoading">
             <template #overlay>
               <a-menu @click="resizeImage">
@@ -157,9 +157,6 @@ export default defineComponent({
     },
     selectedCollection() {
       return this.localTranslateImageList.find(item => item.checked === true);
-    },
-    checkAdmin() {
-      return Cookie.get("member_name") === "jwli";
     },
   },
   props: {
