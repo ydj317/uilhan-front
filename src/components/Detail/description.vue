@@ -421,7 +421,7 @@ export default {
         html += `
         <span style="display: flex !important;flex-direction: column !important; width: ${imgWrapWidth} !important;padding: ${imgPaddingWidth} !important;">
         <img src="${item.img}" style="width: 100% !important;border: 1px solid #e8e8e8 !important;border-bottom: 0 !important;">
-        <span style="width: 100% !important;display: flex !important;align-items: center !important;justify-content: center !important;padding: 15px 0 !important;font-size: 16px !important;border: 1px solid #e8e8e8 !important;">${item.spec}</span>
+        <span style="width: 100% !important;display: flex !important;align-items: center !important;justify-content: center !important;padding: 15px 0 !important;font-size: 16px !important;border: 1px solid #e8e8e8 !important;word-break: break-all !important;">${item.spec}</span>
         </span>`;
       });
       html += "</span>";
