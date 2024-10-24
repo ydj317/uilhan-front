@@ -238,7 +238,6 @@ export default {
       },
       deep: true
     },
-
   },
   components: { PlusOutlined, MinusOutlined },
   data() {
@@ -339,6 +338,10 @@ export default {
       this.product.item_option[optionIndex].data.splice(index, 1);
     },
     onCheckAllChange(option, optionIndex) {
+      if (!Array.isArray(this.selectedRows[optionIndex])) {
+        this.selectedRows[optionIndex] = [];
+      }
+
       if (option.checkAll === true) {
         this.selectedRows[optionIndex] = [];
         forEach(option.data, (item, index) => {
@@ -355,7 +358,7 @@ export default {
 
     updateSelectAll(item, option, optionIndex) {
       // item 에서 checked 가 true 일때 selectedRows 에 추가
-      if (!this.selectedRows[optionIndex]) {
+      if(!Array.isArray(this.selectedRows[optionIndex])) {
         this.selectedRows[optionIndex] = [];
       }
 
@@ -389,7 +392,12 @@ export default {
       this._setCheckBoxInit();
     },
     setTrim() {
+      this.selectedRows = this.options.map(option =>
+          option.data.filter(item => item.checked).map(item => item.key)
+      );
+
       let selectItems = this.selectedRows.flat();
+
       if (selectItems.length === 0) {
         message.warning("빈칸을 제거할 옵션명을 선택하세요.");
         return false;
@@ -406,6 +414,10 @@ export default {
       // this._setCheckBoxInit();
     },
     replaceSpecialChars() {
+      this.selectedRows = this.options.map(option =>
+          option.data.filter(item => item.checked).map(item => item.key)
+      );
+
       let selectItems = this.selectedRows.flat();
 
       if (selectItems.length === 0) {
@@ -487,7 +499,13 @@ export default {
     },
 
     cutOptName(){
+      // 重新计算初始化后的 selectedRows
+      this.selectedRows = this.options.map(option =>
+          option.data.filter(item => item.checked).map(item => item.key)
+      );
+
       let selectItems = this.selectedRows.flat();
+
       if (selectItems.length === 0) {
         message.warning("25자로 자를 옵션명을 선택하세요.");
         return false;
@@ -635,10 +653,10 @@ export default {
         });
       });
 
-      if (hasError) {
-        this.$message.warn('옵션값은 25자 이내로 입력해 주세요. ');
-        return true;
-      }
+      // if (hasError) {
+      //   this.$message.warn('옵션값은 25자 이내로 입력해 주세요. ');
+      //   return true;
+      // }
       return false;
     },
 
@@ -687,6 +705,11 @@ export default {
         option.checkAll = true;
         option.data = option.data.map(item => {
           item.checked = true;
+
+          if (!Array.isArray(this.selectedRows[index])) {
+            this.selectedRows[index] = [];
+          }
+
           this.selectedRows[index].push(item.key)
           return item;
         });
