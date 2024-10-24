@@ -619,6 +619,7 @@ const planTypeMap = {
     Extra3PlanMarketCollect200: 'ESM 원클릭 수집 200',
     Extra3PlanMarketCollect250: 'ESM 원클릭 수집 250',
     Extra3PlanMarketCollect300: 'ESM 원클릭 수집 300',
+    Extra1PlanAutoImageCount50: '이미지 자동번역50',
     Extra1PlanAutoImageCount100: '이미지 자동번역100',
     Extra1PlanAutoImageCount200: '이미지 자동번역200',
     Extra1PlanAutoImageCount300: '이미지 자동번역300',
