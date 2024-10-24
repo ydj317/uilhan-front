@@ -177,7 +177,8 @@ export default {
     logout() {
       cookieInit();
       sessionStorage.setItem("orderData", "");
-      router.push("/user/login");
+      //router.push("/user/login");
+      location.href = "/user/login";
       return false;
     },
     go(url){
