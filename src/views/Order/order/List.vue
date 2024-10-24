@@ -185,7 +185,7 @@
 
           <td :rowspan="calculateRowspan(order, _key)"
               v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
-            {{ item.totalPaymentAmount }}
+            {{ order.totalPaymentAmount }}
           </td>
           <td :rowspan="calculateRowspan(order, _key)"
               v-if="shouldDisplayRowspan(order, _key) || Object.keys(state.claimStatusData).includes(item.status) || !order.is_group">
@@ -400,12 +400,19 @@ const showDetail = async (orderData) => {
     state.loading = false;
     const {marketAccount, marketOrder} = res.data;
     const order = new OrderMapping(marketAccount.marketCode);
+
     orderDetail.value.orderData= order.mappingMarketOrder(marketOrder);
     // 마켓코드 설정
     openDetailMarketCode.value = marketAccount.marketCode.charAt(0).toUpperCase() + marketAccount.marketCode.slice(1);
     orderDetail.value.show = true;
+    orderDetail.value.orderData.totalPaymentAmount = orderDetail.value.orderData.items.reduce((acc, cur) => {
+      if (Object.keys(state.orderStatusData).includes(cur.status)) {
+        return acc + cur.totalPaymentAmount + cur.deliveryFee;
+      } else {
+        return acc
+      }
+    }, 0);
   });
-
 }
 
 const updateCourierInfo = (item) => {
@@ -556,6 +563,9 @@ const getTableData = async () => {
       acc[orderNo]["sellerId"] = sellerId;
       acc[orderNo]["marketCode"] = marketCode;
       acc[orderNo]["items"].push(cur);
+      acc[orderNo]["totalPaymentAmount"] = 0;
+      acc[orderNo]["totalPaymentAmount"] = Object.keys(state.orderStatusData).includes(cur.status) ? acc[orderNo]["totalPaymentAmount"] + cur.totalPaymentAmount + (cur.orgData.shippingPrice?cur.orgData.shippingPrice:0) / acc[orderNo]["items"].length  : acc[orderNo]["totalPaymentAmount"];
+
 
       return acc;
     }, {});

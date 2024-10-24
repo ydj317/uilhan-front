@@ -106,7 +106,7 @@
                           </div>
 
                           <div v-if="state.orderStatusList.hasOwnProperty(item.status)">
-                            결제금액 : {{ item.totalPaymentAmount.toLocaleString() }} 원
+                            구매금액 : {{ total.totalPaymentAmount.toLocaleString() }} 원
                           </div>
                           <div v-else>
                             결제금액 : -
@@ -198,7 +198,7 @@
             </div>
             <div class="summary">
               <div class="summary-item">
-                <span class="label">합계금액</span>
+                <span class="label">총 구매금액</span>
                 <span class="discounted-value">{{ total.price.toLocaleString() }} 원</span>
               </div>
               <div class="summary-item">
@@ -297,13 +297,7 @@ const total = computed(() => {
 
 
   /** 실 결제금액 */
-  const totalPaymentAmount = detail.value.orderData.items.reduce((acc, cur) => {
-    if (Object.keys(state.orderStatusList).includes(cur.status)) {
-      return acc + cur.totalPaymentAmount;
-    } else {
-      return acc
-    }
-  }, 0);
+  const totalPaymentAmount = detail.value.orderData.totalPaymentAmount;
 
   /** 배송비 */
   const deliveryFee = detail.value.orderData.items.reduce((acc, cur) => {

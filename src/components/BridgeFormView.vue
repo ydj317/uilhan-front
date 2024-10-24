@@ -1481,28 +1481,33 @@ watchEffect(() => {
 
 });
 
-function limitStringLength(item,key,maxLength,e) {
-  const encoder = new TextEncoder();
+function limitStringLength(item, key, maxLength, e) {
   const inputValue = e.target.value;
-  const byteArray = encoder.encode(inputValue);
-  if (byteArray.buffer.byteLength > maxLength) {
+  let byteLength = 0;
+  let truncatedValue = '';
 
-    let truncatedValue = '';
-    let byteLength = 0;
+  for (let char of inputValue) {
+    let charByteLength;
 
-    for (let char of inputValue) {
-      const charByteLength = encoder.encode(char).length;
-      byteLength += charByteLength;
-
-      if (byteLength > maxLength) {
-        break;
-      }
-
-      truncatedValue += char;
+    if (/^[\x00-\x7F]$/.test(char)) {
+      charByteLength = 1;
+    } else if (/^[\uAC00-\uD7A3]$/.test(char)) {
+      charByteLength = 2;
+    } else {
+      charByteLength = 3;
     }
-    item[key] = truncatedValue;
-    e.target.value = truncatedValue;
+
+    byteLength += charByteLength;
+
+    if (byteLength > maxLength) {
+      break;
+    }
+
+    truncatedValue += char;
   }
+
+  item[key] = truncatedValue;
+  e.target.value = truncatedValue;
 }
 </script>
 <style>
@@ -1701,7 +1706,6 @@ function limitStringLength(item,key,maxLength,e) {
   width: 128px;
   height: 128px;
 }
-
 .ant-upload-select-picture-card i {
   font-size: 32px;
   color: #999;
