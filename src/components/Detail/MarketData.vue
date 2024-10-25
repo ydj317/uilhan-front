@@ -446,6 +446,15 @@ export default {
           return false;
         }
 
+        if (res.data.length === 0) {
+          this.displayCategories[accountName].list = [];
+          this.displayCategories[accountName].visible = false;
+          this.product.item_disp_cate[accountName] = {};
+          message.error('해당 카테고리에 전시카테고리가 없습니다.');
+          return false;
+        }
+
+
         this.displayCategories[accountName].list = res.data;
         this.displayCategories[accountName].visible = true;
         this.product.item_disp_cate[accountName] = {
